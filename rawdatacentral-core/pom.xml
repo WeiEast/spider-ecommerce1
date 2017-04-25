@@ -52,9 +52,20 @@
 		</dependency>
 
 		<dependency>
+			<artifactId>rawdatacentral</artifactId>
+			<groupId>com.datatrees.rawdatacentral</groupId>
+			<version>${project-version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.datatrees.rawdatacentral</groupId>
 			<artifactId>rawdatacentral-api</artifactId>
 			<version>1.0.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.datatrees.rawdatacentral</groupId>
+			<artifactId>rawdatacentral-domain</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

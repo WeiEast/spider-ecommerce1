@@ -1,24 +1,23 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-
-import com.datatrees.rawdatacentral.core.dao.RedisDao;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
+import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
+import com.datatrees.rawdatacentral.domain.message.TaskMessage;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class GatewayServiceImpl implements DataResource {
@@ -95,6 +94,33 @@ public class GatewayServiceImpl implements DataResource {
             logger.info("send result message:" + mqMessage + "result:" + sendResult);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
                 return true;
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean sendMessage(Object message) {
+        if (null == message) {
+            return false;
+        }
+        if (message instanceof Map) {
+            return sendToQueue((Map<String, Object>) message);
+        }
+        try {
+            if (message instanceof TaskMessage) {
+                TaskMessage taskMessage = (TaskMessage) message;
+                Message mqMessage = new Message();
+                mqMessage.setTopic(taskMessage.getTopic());
+                String body = GsonUtils.toJson(taskMessage);
+                mqMessage.setBody(body.getBytes());
+                SendResult sendResult = producer.send(mqMessage);
+                logger.info("send result message:" + body + "result:" + sendResult);
+                if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
+                    return true;
+                }
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
