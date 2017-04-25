@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -361,6 +363,28 @@ public class ActorTest extends AbstractTest {
         message.setWebsiteName("alipay.com_enterprise");
         message.setEndURL("https://mbillexprod.alipay.com/enterprise/accountDetail.htm");
         collector.processMessage(message);
+    }
+
+    @Test
+    public void testQQFromFile() throws InterruptedException, IOException {
+        CollectorMessage message = readFromFile();
+        collector.processMessage(message);
+
+    }
+
+    private CollectorMessage readFromFile() throws IOException {
+        String content = FileUtils.readFileToString(new File("/data/json.txt"));
+        JSONObject json = JSON.parseObject(content);
+        String websiteName = json.getJSONObject("resultMsg").getString("websiteName");
+        Integer userId = json.getJSONObject("resultMsg").getInteger("userId");
+        String endURL = json.getJSONObject("startMsg").getString("endURL");
+        String cookie = json.getJSONObject("startMsg").getString("cookie");
+        CollectorMessage message = new CollectorMessage();
+        message.setCookie(cookie);
+        message.setUserId(userId);
+        message.setWebsiteName(websiteName);
+        message.setEndURL(endURL);
+        return message;
     }
 
     public static void main(String[] args) {
