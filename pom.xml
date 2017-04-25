@@ -12,7 +12,8 @@
 		<module>rawdatacentral-extractor</module>
 		<module>rawdatacentral-submitter</module>
 		<module>rawdatacentral-main</module>
-	</modules>
+        <module>rawdatacentral-domain</module>
+    </modules>
 	<packaging>pom</packaging>
 
 	<parent>

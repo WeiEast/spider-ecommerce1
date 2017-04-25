@@ -1,0 +1,12 @@
+package com.datatrees.rawdatacentral.domain;
+
+import java.io.Serializable;
+
+/**
+ * 扩展属性attributes
+ * Created by zhouxinghai on 2017/4/25.
+ */
+public class AttributeKey implements Serializable {
+
+    public static final String CAPTCHA = "captcha";//验证码
+}
