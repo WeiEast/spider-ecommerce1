@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<bean name="extractorActorSystem" class="com.datatrees.common.actor.ActorSystemFactory" factory-method="createActorSystem">
+		<constructor-arg index="0" value="extractorActorSystem" />
+		<constructor-arg index="1" value="ExtractorActorSystem" />
+	</bean>
+
+	<bean name="extractorWorkerRef" class="com.datatrees.common.actor.WrappedActorRef">
+		<property name="name" value="extractorActor" /><!-- ref to actot bean -->
+		<property name="instanceNum" value="${extractor.instance.num:40}" />
+		<property name="dispatcher" value="DefaultDispatcher" />
+	</bean>
+
+	<bean name="extractorActorContext" class="com.datatrees.common.actor.DefaultActorContext" init-method="init">
+		<property name="actorSystem" ref="extractorActorSystem" />
+		<property name="worker" ref="extractorWorkerRef" />
+	</bean>
+
+
+</beans>

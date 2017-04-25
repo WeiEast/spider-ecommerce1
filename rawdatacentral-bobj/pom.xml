@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.datatrees.rawdata</groupId>
+		<artifactId>rawdata</artifactId>
+		<version>${project-version}</version>
+	</parent>
+	<groupId>com.datatrees.rawdata.bobj</groupId>
+	<artifactId>rawdata-bobj</artifactId>
+	<name>rawdata-bobj</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<rocketmq.version>3.2.3</rocketmq.version>
+		<super-diamond-client.version>1.1.1</super-diamond-client.version>
+		<netty.version>4.0.24.Final</netty.version>
+	</properties>
+	<packaging>pom</packaging>
+	<modules>
+		<module>bobj-Interface</module>
+		<module>bobj-crawler</module>
+		<module>bobj-transfer</module>
+		<module>bobj-core</module>
+	</modules>
+</project>

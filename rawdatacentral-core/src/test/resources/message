@@ -1,0 +1,8 @@
+{
+    "websiteName": "qq.com", 
+    "userId": 123, 
+    "header": {
+        "Cookie": "ptui_loginuin=3323187495; pt2gguin=o3323187495; ptcz=3ee332f185b8ae85a74d1f104c50300354ec471107151811eb91450051b4bb53; CCSHOW=000031; edition=mail.qq.com; webp=0; pgv_pvid=2201712707; o_cookie=593237554; pgv_pvi=9041308672; pt_clientip=42397f000001e2ee; pt_serverip=0cc00abf0662fe17; ptisp=ctc; verifysession=h02E8GYcfrTShrIQ_vISrp1FqBkzUGMfVyAtL_1t6OR47_zU-PqVoJAhjk1Iaq3b8oMMVQlT4IlSRTWZEd8NNNqODdkZa_t9ViQ; uin=o3323187495; skey=@IsZFnjQ2X; RK=R6sDk4yc6j; p_uin=o3323187495; p_skey=KzsjqZ*w6NqRtCao-EGcOmQ1q*12T4fpXESD2*Af1YA_; pt4_token=ItVyzPnzIodk*3SxSrlbPA__; tinfo=1440125124.0000*; wimrefreshrun=0&; qm_antisky=-971779801&b0f67c47ff76c3d56aee03a8610bb3f9608687217623b0b0e89050df563d556b; qm_flag=0; qqmail_alias=3323187495@qq.com; sid=-971779801&ad39421550167283ce64615b055b4685,qS3pzanFaKnc2TnFSdENhby1FR2NPbVExcSoxMlQ0ZnBYRVNEMipBZjFZQV8.; qm_username=3323187495; qm_lg=qm_lg; new_mail_num=-971779801&0; qm_sid=ad39421550167283ce64615b055b4685,qS3pzanFaKnc2TnFSdENhby1FR2NPbVExcSoxMlQ0ZnBYRVNEMipBZjFZQV8.; qm_domain=http://mail.qq.com; qm_ptsk=-971779801&@IsZFnjQ2X; foxacc=-971779801&0; ssl_edition=mail.qq.com; username=-971779801&3323187495"
+    }, 
+    "url": "http://mail.qq.com/cgi-bin/frame_html?sid=CDpCsqRSDVGQHT5r&r=1972720a9b2390109bc8d0c353444987"
+}

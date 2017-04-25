@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="EBankExtractResult">
+
+	<insert id="insert" parameterClass="EBankExtractResult">
+		insert into t_ebank_extract_result (Id, UserId, TaskId, Duration,
+		WebsiteId, BankId, Status,
+		Remark, Url, UniqueSign,UniqueMd5,
+		ResultType, StoragePath, CreatedAt)
+		values (#id#, #userId#, #taskId#, #duration#,
+		#websiteId#,
+		#bankId#, #status#,
+		#remark#, #url#, #uniqueSign#,#uniqueMd5#,
+		#resultType#, #storagePath#, now())
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT @@IDENTITY AS id
+		</selectKey>
+	</insert>
+
+
+	<select id="getUserSuccessParsedBillKeySet" parameterClass="int" resultClass="string">
+		SELECT distinct UniqueMd5 FROM t_ebank_extract_result WHERE Status=0 AND UserId=#userId#;
+	</select>
+
+</sqlMap>

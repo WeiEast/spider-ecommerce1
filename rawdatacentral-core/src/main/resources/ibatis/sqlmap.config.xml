@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+
+	<settings cacheModelsEnabled="true" enhancementEnabled="true" lazyLoadingEnabled="true" maxRequests="128" maxSessions="10" maxTransactions="300" useStatementNamespaces="true"
+		statementCachingEnabled="true" classInfoCacheEnabled="true" />
+
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.Website" alias="Website" />
+	<typeAlias type="com.datatrees.rawdatacentral.api.model.WebsiteConf" alias="WebsiteConf" />
+
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.EcommerceExtractResult" alias="EcommerceExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.MailExtractResult" alias="MailExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.OperatorExtractResult" alias="OperatorExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.EBankExtractResult" alias="EBankExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.DefaultExtractResult" alias="DefaultExtractResult" />
+
+
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.Task" alias="Task" />
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.Bank" alias="Bank" />
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.Ecommerce" alias="Ecommerce" />
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.Keyword" alias="Keyword" />
+	<typeAlias type="com.datatrees.rawdatacentral.core.model.Operator" alias="Operator" />
+
+	<sqlMap resource="ibatis/mapper/website.map.xml" />
+	<sqlMap resource="ibatis/mapper/bank.map.xml" />
+	<sqlMap resource="ibatis/mapper/ecommerceextractresult.map.xml" />
+	<sqlMap resource="ibatis/mapper/mailextractresult.map.xml" />
+	<sqlMap resource="ibatis/mapper/operatorextractresult.map.xml" />
+	<sqlMap resource="ibatis/mapper/ebankextractresult.map.xml" />
+	<sqlMap resource="ibatis/mapper/defaultextractresult.map.xml" />
+
+
+	<sqlMap resource="ibatis/mapper/keyword.map.xml" />
+	<sqlMap resource="ibatis/mapper/task.map.xml" />
+	<sqlMap resource="ibatis/mapper/operator.map.xml" />
+	<sqlMap resource="ibatis/mapper/ecommerce.map.xml" />
+	<sqlMap resource="ibatis/mapper/properties.map.xml" />
+
+
+
+
+
+</sqlMapConfig>

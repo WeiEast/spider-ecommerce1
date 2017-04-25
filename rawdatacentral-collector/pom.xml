@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.datatrees.rawdatacentral</groupId>
+		<artifactId>rawdatacentral</artifactId>
+		<version>${project-version}</version>
+	</parent>
+
+	<artifactId>rawdatacentral-collector</artifactId>
+
+
+	<properties>
+		<rocketmq.version>3.2.3</rocketmq.version>
+		<netty.version>4.0.24.Final</netty.version>
+	</properties>
+	<dependencies>
+
+		<dependency>
+			<groupId>com.datatrees.rawdatacentral</groupId>
+			<artifactId>rawdatacentral-core</artifactId>
+			<version>${project-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.datatrees.rawdatacentral</groupId>
+			<artifactId>rawdatacentral-extractor</artifactId>
+			<version>${project-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sleepycat</groupId>
+			<artifactId>je</artifactId>
+			<version>5.0.73</version>
+		</dependency>
+	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<url>http://192.168.5.252:8081/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://192.168.5.252:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+</project>

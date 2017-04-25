@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+	<import resource="classpath:spring/core.diamond.xml" />
+	<bean id="beanResourceFactory" class="com.datatrees.crawler.core.processor.common.BeanResourceFactory" factory-method="getInstance">
+		<property name="beanResource" ref="beansFactory" />
+	</bean>
+
+
+	<bean id="zookeeperClient" class="com.datatrees.common.zookeeper.ZooKeeperClient">
+		<constructor-arg index="0" value="${core.zookeeper.address:192.168.5.241:2181}" />
+		<constructor-arg index="1" value="${core.zookeeper.sessionTimeOut:180000}" />
+	</bean>
+
+
+	<context:component-scan base-package="com.datatrees.rawdata" />
+	<import resource="classpath:spring/core.webrobot.xml" />
+	<import resource="classpath*:dtboss-consumer.xml" />
+	<import resource="classpath:spring/core.db.xml" />
+	<import resource="classpath:spring/core.jedis.xml" />
+	<import resource="classpath:spring/core.message.xml" />
+	<import resource="classpath:spring/core.dubbo.xml" />
+
+</beans>

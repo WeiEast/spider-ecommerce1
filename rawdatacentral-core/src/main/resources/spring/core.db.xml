@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" lazy-init="true">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver">
+		</property>
+		<property name="url">
+			<value><![CDATA[jdbc:mysql://${core.db.host:192.168.5.241}:${core.db.port:3306}/${core.db.database:rawdata}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull]]></value>
+		</property>
+		<property name="username" value="${core.db.username:root}" />
+		<property name="password" value="${core.db.password:dashu0701}" />
+		<property name="initialSize" value="${core.db.initialSize:8}" />
+		<property name="maxIdle" value="${core.db.maxIdle:8}" />
+		<property name="testWhileIdle" value="true" />
+		<property name="minEvictableIdleTimeMillis" value="600000" />
+		<property name="validationQuery" value="select 1" />
+		<property name="numTestsPerEvictionRun" value="10" />
+		<property name="maxActive" value="${core.db.maxConnection:30}" />
+	</bean>
+
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" lazy-init="true">
+		<property name="configLocation" value="classpath:ibatis/sqlmap.config.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="sqlMapClientTemplate" class="org.springframework.orm.ibatis.SqlMapClientTemplate" lazy-init="true">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+
+	<bean id="txTemplate" class="org.springframework.transaction.support.TransactionTemplate" lazy-init="true">
+		<property name="transactionManager">
+			<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+		</property>
+	</bean>
+</beans>

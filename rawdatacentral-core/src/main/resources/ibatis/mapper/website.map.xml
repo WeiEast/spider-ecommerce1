@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Website">
+	<resultMap class="Website" id="RM-Website-With-Config">
+		<result column="Id" property="id" />
+		<result column="WebsiteName" property="websiteName" />
+		<result column="WebsiteDomain" property="websiteDomain" />
+		<result column="WebsiteType" property="websiteType" />
+		<result column="SearchConfig" property="searchConfigSource" />
+		<result column="ExtractorConfig" property="extractorConfigSource" />
+	</resultMap>
+
+	<resultMap class="WebsiteConf" id="RM-WebsiteConf">
+		<result column="WebsiteName" property="websiteName" />
+		<result column="WebsiteType" property="websiteType" />
+		<result column="InitSetting" property="initSetting" />
+		<result column="LoginTip" property="loginTip" />
+		<result column="VerifyTip" property="verifyTip" />
+		<result column="InitTimeout" property="initTimeout" />
+		<result column="CodeWaitTime" property="codeWaitTime" />
+		<result column="LoginTimeout" property="loginTimeout" />
+		<result column="ResetType" property="resetType" />
+		<result column="SmsTemplate" property="smsTemplate" />
+		<result column="SmsReceiver" property="smsReceiver" />
+		<result column="ResetURL" property="resetURL" />
+		<result column="ResetTip" property="resetTip" />
+	</resultMap>
+
+
+	<select id="getWebsiteByName" parameterClass="string" resultMap="RM-Website-With-Config">
+		SELECT w.Id,w.WebsiteName,WebsiteDomain,WebsiteType,SearchConfig,ExtractorConfig from T_WEBSITE w LEFT JOIN T_WEBSITE_CONF wc ON
+		w.id = wc.WebsiteId WHERE w.IsEnabled ='true' AND w.WebsiteName = #WebsiteName#
+	</select>
+
+	<select id="getWebsiteById" parameterClass="int" resultMap="RM-Website-With-Config">
+		SELECT w.Id,w.WebsiteName,WebsiteDomain,WebsiteType,SearchConfig,ExtractorConfig from T_WEBSITE w LEFT JOIN T_WEBSITE_CONF wc ON
+		w.id
+		= wc.WebsiteId WHERE w.IsEnabled ='true' AND w.Id = #id#
+	</select>
+
+	<select id="getWebsiteConfById" parameterClass="int" resultMap="RM-WebsiteConf">
+		SELECT w.* from T_WEBSITE w WHERE w.Id = #id#
+	</select>
+	
+	<update id="updateWebsiteConfig" parameterClass="java.util.HashMap" >
+		UPDATE
+		t_website_conf 
+		<dynamic prepend="set ">
+			<isNotEmpty property="searchConfigSource" prepend=",">
+				SearchConfig=#searchConfigSource#
+			</isNotEmpty>
+			<isNotEmpty property="extractConfigSource" prepend=",">
+				ExtractorConfig=#extractConfigSource#
+			</isNotEmpty>
+		</dynamic>
+		WHERE WebsiteId =#websiteId#
+	</update>
+	
+	<insert id="insertWebsiteConfig" parameterClass="java.util.HashMap">
+		INSERT INTO t_website_conf (WebsiteId,SearchConfig,ExtractorConfig,CreatedAt,UpdatedAt)
+		values (#websiteId#,#searchConfigSource#,#extractConfigSource#,now(),now()) 
+		<selectKey keyProperty="id" resultClass="int">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey>
+	</insert>
+	
+	<select id="countWebsiteConfigByWebsiteId" parameterClass="int" resultClass="int">
+		SELECT COUNT(*) FROM t_website_conf WHERE WebsiteId = #websiteId#
+	</select>
+
+</sqlMap>
+	

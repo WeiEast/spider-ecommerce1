@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.datatrees.rawdatacentral</groupId>
+		<artifactId>rawdatacentral</artifactId>
+		<version>${project-version}</version>
+	</parent>
+	<artifactId>rawdatacentral-extractor</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>com.datatrees.rawdatacentral</groupId>
+			<artifactId>rawdatacentral-core</artifactId>
+			<version>${project-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.datatrees.rawdatacentral</groupId>
+			<artifactId>rawdatacentral-submitter</artifactId>
+			<version>${project-version}</version>
+		</dependency>
+	</dependencies>
+</project>

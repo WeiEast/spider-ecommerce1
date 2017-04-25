@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<!--STATUS OK-->
+<html>
+ <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <title>证据抓取</title>
+  <script type="text/javascript" src="/jquery-1.11.3.min.js"></script>
+  <style type="text/css">
+  .download{
+  	cursor: pointer
+  }
+
+  .hide{
+  	display: none;
+  }
+
+  </style>
+ </head>
+ <body>
+ 	<input type="hidden" value="0" id="pageNum" />
+ 	<input type="hidden" value="500" id="pageSize" />
+   <label>请输入你的User ID </label><input type="text" id="userId"/>
+   <input type="button" id="okBtn" value="确定"/>
+   <div id='queryCondion'>
+   	<label>查询条件</label>
+   	<select id="first-condition">
+	  <option value ="0">请选择</option>
+	  <option value ="1">运营商</option>
+	  <option value="2">电商</option>
+	  <option value="3">邮箱</option><!-- 
+	  <option value="6">信用卡</option> -->
+	  <option value="4">默认信息</option>
+	  <option value="5">网上银行</option>
+	</select>
+	<select id="second-condition">
+		<option value="0">请选择</option>
+	</select>
+	<select id="third-condition" class="hide">
+		<option value="0">请选择</option>
+	</select>
+   </div>
+   <div id="container">
+   	<table class="table-class"></table>
+   	<input type="button" id="lastPage" value="上一页" class="hide"/>
+   	<input type="button" id="nextPage" value="下一页" class="hide"/>
+   </div>
+ </body>
+ <script type="text/javascript">
+	 $(document).ready(function(){
+	 	var addressList = window.location.href.split("/");
+	 	var usedAddress =addressList[0]+'//'+addressList[2]+'/';
+	 	var originalNum = $('#pageNum').val();
+	 	var originalPagesize = $('#pageSize').val();
+
+	 	$('body').on('click','#lastPage',function(){
+	 		$('#nextPage').hide();
+	 		$('#lastPage').hide();
+	 		var pageSize = $('#pageSize').val();
+	 		var pageNum = $('#pageNum').val();
+	 		$('#pageNum').val(Number(pageNum)-1);
+	 		refresh();
+	 				
+	 	});
+
+	 	$('body').on('click','#nextPage',function(){
+	 		$('#nextPage').hide();
+	 		$('#lastPage').hide();
+	 		var pageSize = $('#pageSize').val();
+	 		var pageNum = $('#pageNum').val();
+	 		$('#pageNum').val(Number(pageNum)+1);
+	 		refresh();
+	 	});
+
+
+
+	 	function refresh(){
+	 		$('.table-class').empty();
+	 		var userId = $('#userId').val();
+	 		var firstCondition = $('#first-condition').val();
+	 		var secondCondition = $('#second-condition').val();
+	 		var thirdCondition = '-1';
+	 		var pageSize = $('#pageSize').val();
+	 		var pageNum = $('#pageNum').val();
+	 		if(!userId){
+		 		alert('UserID 不能为空');
+		 		return;
+	 		}
+	 		if(!firstCondition ||firstCondition=='0'){
+	 			alert('请选择查询条件');
+		 		return;
+	 		}
+	 		if(firstCondition=='3'){
+	 			thirdCondition =$('#third-condition').val();
+	 		}
+	 		$.ajax({
+	 			url:usedAddress+'getDetails/'+userId+'/'+firstCondition+'/'+secondCondition+'/'+thirdCondition+'/'+pageNum+'/'+pageSize,
+	 			type:'get',
+	 			dataType:'json',
+	 			error:function(xhr){
+	 				$('.table-class').empty().append('No results');
+	 			},
+	 			success:function(data){
+	 				var html = [],h=-1;
+	 				var flag = false;
+	 				for(var i=0;i<data.length;i++){
+	 					if(!flag){
+	 						html[++h] = '<thead><tr><td>Operation</td><td>TaskId</td><td>WebsiteName</td><td>ResultType</td><td>Status</td><td>Remark</td>';
+	 						if(data[i].flagId==3||data[i].flagId==6){
+	 							html[++h] ='<td>Sender</td><td>Subject</td><td>ReceivedAt</td>';
+	 						}
+	 						html[++h] = '<td>CreatedTime</td><td>Url</td></tr></thead><tbody>';
+	 						flag = true;
+	 					}
+	 					html[++h] = '<tr><td><input type="button" value="下载" class="download" path="';
+	 					html[++h] = data[i].storagePath;
+	 					html[++h] ='"></td><td>';
+	 					html[++h] = data[i].taskId;
+	 					html[++h] ='</td><td>';
+	 					html[++h] = data[i].websiteName;
+	 					html[++h] ='</td><td>';
+	 					html[++h] = data[i].resultType;
+	 					html[++h] ='</td><td>';
+	 					html[++h] = data[i].status;
+	 					html[++h] = '</td><td>';
+	 					html[++h] = data[i].remark;
+	 					html[++h] = '</td><td>';
+	 					if(data[i].flagId==3||data[i].flagId==6){
+	 						html[++h] = data[i].sender;
+	 						html[++h] = '</td><td>';
+	 						html[++h] = data[i].subject;
+	 						html[++h] = '</td><td>';
+	 						html[++h] = data[i].receivedAt;
+	 						html[++h] = '</td><td>';
+	 					}
+	 					html[++h] = data[i].createdAt;
+	 					html[++h] = '</td><td>';
+	 					html[++h] = data[i].url;
+	 					html[++h] ='</td></tr>';
+	 				}
+	 				html[++h] = '</tbody>';
+	 				$('.table-class').empty().append(html.join(''));
+	 				if(data.length==Number(pageSize)){
+	 					$('#nextPage').show();
+	 				}
+	 				if(pageNum!='0'){
+	 					$('#lastPage').show();
+	 				}
+	 			}
+	 		})
+	 	}
+
+	 	//确定按钮
+	 	$('body').on('click','#okBtn',function(){
+	 		$('#nextPage').hide();
+	 		$('#lastPage').hide();
+	 		$('#pageNum').val(originalNum);
+	 		$('#pageSize').val(originalPagesize);
+	 		refresh();
+	 	});
+
+	 	//下载文件
+	 	$('body').on('click','.download',function(){
+	 		var $that = $(this);
+	 		var path = $that.attr('path');
+	 		if(!path){
+	 			return;
+	 		}
+	 		window.open(usedAddress+'export?storeagePath='+path);
+	 	});
+
+	 	//第一个select框change事件
+	 	$('#first-condition').change(function(){
+	 		var $that = $(this);
+	 		if($that.val()!='3'){
+	 			$('#third-condition').hide();
+	 		}
+	 		else{
+	 			$.ajax({
+					url:usedAddress+'select/6',
+		 			type:'get',
+		 			dataType:'json',
+		 			error:function(xhr){
+		 			},
+		 			success:function(xhr){
+		 				var wrapper =[],k=-1;
+		 				wrapper[++k] ='<option value ="-1">请选择</option>';
+		 				for(var j=0;j<xhr.length;j++){
+		 					wrapper[++k] ='<option value ="';
+		 					wrapper[++k] =xhr[j].websiteId;
+		 					wrapper[++k] ='">';
+		 					wrapper[++k] =xhr[j].websiteName;
+		 					wrapper[++k] ='</option>';
+						}
+						wrapper[++k] ='<option value ="0">其他银行</option>';
+						$('#third-condition').empty().append(wrapper.join('')).show();
+		 			}
+				})
+
+	 		}
+	 		if($that.val()=='0'){
+	 			$('#second-condition').empty().append('<option value ="0">请选择</option>');
+	 			return;
+	 		}
+	 		$.ajax({
+	 			url:usedAddress+'select/'+$that.val(),
+	 			type:'get',
+	 			dataType:'json',
+	 			error:function(xhr){
+	 			},
+	 			success:function(data){
+	 				var html =[], h=-1;
+	 				html[++h] = '<option value ="0">请选择</option>';
+	 				for(var i=0;i<data.length;i++){
+	 					html[++h] ='<option value ="';
+	 					html[++h] =data[i].websiteId;
+	 					html[++h] ='">';
+	 					html[++h] =data[i].websiteName;
+	 					html[++h] ='</option>';
+	 				}
+	 				$('#second-condition').empty().append(html.join(''));
+	 			}
+	 		});
+	 	});
+
+	 	// $('#second-condition').change(function(){
+	 	// 	var $that = $(this);
+	 	// 	if($that.val()=='0'){
+	 	// 		$('#third-condition').empty().hide();
+	 	// 		return;
+	 	// 	}
+	 	// 	if($('#first-condition').val()=='3'&&$that.val()!='－1'){
+				
+	 	// 	}
+	 	// });		
+	 })
+
+ </script>
+</html>

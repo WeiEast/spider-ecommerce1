@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Task">
+
+	<insert id="insertTask" parameterClass="Task">
+		INSERT INTO T_TASKLOG ( UserId, WebsiteId,NodeName,
+		OpenUrlCount, OpenPageCount,
+		RequestFailedCount, RetryCount,FilteredCount, Status, Remark,Duration,
+		ExtractedCount, ExtractSucceedCount,
+		ExtractFailedCount,NotExtractCount,StoreFailedCount,NetworkTraffic,StartedAt,FinishedAt,CreatedAt)
+		values
+		(#userId#,#websiteId#,#nodeName#,#openUrlCount.value#,#openPageCount.value#,#requestFailedCount.value#,#retryCount.value#,#filteredCount.value#,#status#,#remark#,#duration#,
+		#extractedCount#,#extractSucceedCount#,#extractFailedCount#,#notExtractCount#,#storeFailedCount#,#networkTraffic.value#,#startedAt#,#finishedAt#,
+		now())
+		<selectKey keyProperty="id" resultClass="int">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey>
+	</insert>
+
+
+	<update id="updateTask" parameterClass="Task">
+		UPDATE
+		T_TASKLOG
+		SET
+		OpenUrlCount = #openUrlCount.value#,
+		OpenPageCount=#openPageCount.value#,
+		RequestFailedCount=#requestFailedCount.value#,
+		FilteredCount=
+		#filteredCount.value#,
+		RetryCount = #retryCount.value#,
+		Status=#status#,
+		Remark=#remark#,
+		Duration=#duration#,
+		ExtractedCount=#extractedCount#,
+		ExtractSucceedCount=#extractSucceedCount#,
+		ExtractFailedCount=#extractFailedCount#,
+		NotExtractCount=#notExtractCount#,
+		NetworkTraffic=#networkTraffic.value#,
+		StoreFailedCount=#storeFailedCount#,
+		StartedAt=#startedAt#,
+		FinishedAt=#finishedAt#,
+		ResultMessage=#resultMessage#
+		WHERE
+		id = #id#
+	</update>
+
+	<select id="selectNow" resultClass="date">
+		SELECT NOW()
+	</select>
+
+	<select id="selectWebisteTaskWithinPeriod" parameterClass="map" resultClass="Task">
+		SELECT Id id FROM T_TASKLOG WHERE UserId=#userId# AND WebsiteId=#websiteId# AND StartedAt > #startedAt#
+	</select>
+
+	<select id="selectTaskByBankBillsKey" parameterClass="map" resultClass="Task">
+		SELECT 
+		   Id id,
+		   UserId userId,
+		   ResultMessage resultMessage
+		FROM T_TASKLOG WHERE UserId=#userId# AND ResultMessage LIKE  CONCAT('%', #bankBillsKey#, '%')
+		ORDER BY id DESC LIMIT 1
+	</select>
+
+</sqlMap>
+	
