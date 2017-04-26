@@ -23,8 +23,8 @@ import com.datatrees.rawdatacentral.core.common.ErrorCode;
  */
 public class Task {
     private int id;
-    private int userId;
     private int websiteId;
+    private long taskId;
     private AtomicInteger openUrlCount = new AtomicInteger(0);
     private AtomicInteger openPageCount = new AtomicInteger(0);
     private AtomicInteger requestFailedCount = new AtomicInteger(0);
@@ -291,19 +291,6 @@ public class Task {
         this.id = id;
     }
 
-    /**
-     * @return the userId
-     */
-    public int getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     /**
      * @return the websiteId
@@ -380,5 +367,21 @@ public class Task {
             }
         }
     }
+
+    /**
+     * @return the taskId
+     */
+    public long getTaskId() {
+        return taskId;
+    }
+
+    /**
+     * @param taskId the taskId to set
+     */
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
+    }
+
+
 
 }

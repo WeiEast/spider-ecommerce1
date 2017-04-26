@@ -20,7 +20,6 @@ public class MailExtractResultDaoTest extends AbstractTest {
     public void doTest(){
         MailExtractResult domain = new MailExtractResult();
         MailExtractResult mailExtractResult = new MailExtractResult();
-        mailExtractResult.setUserId(1);
         mailExtractResult.setTaskId(1);
         mailExtractResult.setWebsiteId(1);
         mailExtractResult.setUniqueSign("test sign");

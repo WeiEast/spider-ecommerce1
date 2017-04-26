@@ -67,7 +67,6 @@ public class ResultDataHandler {
             ExtractMessage message = new ExtractMessage();
             message.setMessageObject(obj);
             message.setTaskId(task.getId());
-            message.setUserId(task.getUserId());
             message.setWebsiteId(task.getWebsiteId());
             message.setTask(parentTask);
             try {

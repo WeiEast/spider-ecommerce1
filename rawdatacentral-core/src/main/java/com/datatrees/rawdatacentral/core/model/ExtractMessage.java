@@ -24,8 +24,7 @@ import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
  * @since 2015年7月28日 下午11:12:56
  */
 public class ExtractMessage {
-    private int taskId;
-    private int userId;
+    private int taskId;//TaskLog Id
     private int websiteId;// search websiteid
 
     private ResultType ResultType;
@@ -70,19 +69,6 @@ public class ExtractMessage {
         this.taskId = taskId;
     }
 
-    /**
-     * @return the userId
-     */
-    public int getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     /**
      * @return the websiteId

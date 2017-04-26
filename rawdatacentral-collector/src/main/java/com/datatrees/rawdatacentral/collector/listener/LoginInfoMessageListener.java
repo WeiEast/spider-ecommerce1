@@ -65,7 +65,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             LoginInfo loginInfo = (LoginInfo) GsonUtils.fromJson(body, LoginInfo.class);
             if (loginInfo != null) {
                 log.info("Init logininfo:" + loginInfo);
-                collectorMessage.setUserId(loginInfo.getUserId());
+                collectorMessage.setTaskId(loginInfo.getTaskId());
                 collectorMessage.setWebsiteName(loginInfo.getWebsiteName());
                 collectorMessage.setEndURL(loginInfo.getUrl());
                 collectorMessage.setNeedDuplicate(loginInfo.isSupplyResult());

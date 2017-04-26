@@ -99,22 +99,23 @@ public class Collector {
         SearchProcessorContext context = null;
         Task task = new Task();
         try {
-            task.setUserId(message.getUserId());
+            task.setTaskId(message.getTaskId());
             task.setNodeName(NodeNameUtil.INSTANCE.getNodeName());
             context = websiteService.getSearchProcessorContext(message.getWebsiteName());
             context.setLoginCheckIgnore(message.isLoginCheckIgnore());
             task.setWebsiteId(context.getWebsite().getId());
             task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
-            ProcessorContextUtil.setAccountKey(context, message.getUserId() + "");
+            ProcessorContextUtil.setAccountKey(context, message.getTaskId() + "");
+            ProcessorContextUtil.setAccountNo(context, message.getAccountNo());
             // init cookie
             if (StringUtils.isNotBlank(message.getCookie())) {
                 ProcessorContextUtil.setCookieString(context, message.getCookie());
             }
             ProcessorContextUtil.setValue(context, "endurl", message.getEndURL());
             // 历史状态清理
-            String key = "verify_result_" + message.getWebsiteName() + "_" + message.getUserId();
-            redisDao.deleteKey(key);
-            logger.info("do verify_result data clear for key: {}", key);
+//            String key = "verify_result_" + message.getWebsiteName() + "_" + message.getUser Id();
+//            redisDao.deleteKey(key);
+//            logger.info("do verify_result data clear for key: {}", key);
         } catch (Exception e) {
             logger.warn("get context error with " + message, e);
             task.setErrorCode(ErrorCode.TASK_INIT_ERROR, "TASK_INIT_ERROR error with " + message);
@@ -137,7 +138,7 @@ public class Collector {
         }
         if (message instanceof TaskRelated) {
             taskMessage.setParentTaskID(((TaskRelated) message).getParentTaskID());
-            ProcessorContextUtil.setValue(context, "parentTaskID", ((TaskRelated) message).getParentTaskID());
+            ProcessorContextUtil.setValue(context, "parentTaskLogId", ((TaskRelated) message).getParentTaskID());
         }
         // set subtask parameter
         if (message instanceof SubTaskAble) {
@@ -156,12 +157,11 @@ public class Collector {
 
     private AbstractLockerWatcher actorLockWatchInit(TaskMessage taskMessage) {
         String websiteName = taskMessage.getWebsiteName();
-        int userid = taskMessage.getTask().getUserId();
         String templateId = taskMessage.getTemplateId();
         String uniqueSuffix = taskMessage.getUniqueSuffix();
         String serialNum = taskMessage.getCollectorMessage().getSerialNum();
-
-        String path = userid + "";
+        String accountNo = ProcessorContextUtil.getAccountNo(taskMessage.getContext());
+        String path = accountNo;
         path = StringUtils.isNotBlank(templateId) ? path + "_" + templateId : path;
         path = StringUtils.isNotBlank(uniqueSuffix) ? path + "_" + uniqueSuffix : path;
         path = StringUtils.isNotBlank(serialNum) ? path + "_" + serialNum : path;
@@ -259,7 +259,7 @@ public class Collector {
             String startMsgJson = GsonUtils.toJson(message);
 
             if (startMsgJson.length() > PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000)) {
-                String path = taskMessage.getTask().getUserId() + "/" + taskMessage.getTask().getWebsiteId() + "/" + taskMessage.getTask().getId();
+                String path = taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/" + taskMessage.getTask().getId();
                 taskMessage.getTask().setResultMessage(resultMessageBuilder.toString() + ",startMsgOSSPath:" + path);
                 SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -286,7 +286,7 @@ public class Collector {
         Task task = taskMessage.getTask();
         ResultMessage resultMessage = new ResultMessage();
         resultMessage.setRemark(GsonUtils.toJson(task));
-        resultMessage.setUserId(task.getUserId());
+        resultMessage.setTaskId(task.getTaskId());
         resultMessage.setWebsiteName(taskMessage.getWebsiteName());
         resultMessage.setWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType());
         Set<String> notEmptyTag = new HashSet<String>();
@@ -307,14 +307,14 @@ public class Collector {
             String keys = PropertiesConfiguration.getInstance().get("core.mq.tag." + tag + ".keys");
             if (StringUtils.isNotEmpty(keys)) {
                 for (String key : keys.split(",")) {
-                    result.put(key, RedisKeyUtils.genRedisKey(task.getUserId(), task.getId(), key));
+                    result.put(key, RedisKeyUtils.genRedisKey(task.getTaskId(), key));
                 }
             }
         }
         if (needSendToMQ) {
             if (submitkeyResult != null) result.putAll(submitkeyResult);
             result.putAll(taskMessage.getCollectorMessage().getSendBack());
-            result.put("userId", task.getUserId());
+            result.put("taskId", task.getTaskId());
             result.put("websiteName", resultMessage.getWebsiteName());
             result.put("websiteType", resultMessage.getWebsiteType());
             result.put("status", resultMessage.getStatus());

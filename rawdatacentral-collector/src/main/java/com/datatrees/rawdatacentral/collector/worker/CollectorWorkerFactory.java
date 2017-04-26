@@ -47,16 +47,16 @@ public class CollectorWorkerFactory {
 
     public CollectorWorker getCollectorWorker(TaskMessage taskMessage) {
         CollectorMessage message = taskMessage.getCollectorMessage();
-        DuplicateChecker duplicateChecker = null;
-        if (message.isNeedDuplicate()) {
-            // init duplicateChecker
-            duplicateChecker = duplicateCheckerFactory.duplicateCheckerBuild(taskMessage.getContext().getWebsite(), message.getUserId());
-        }
+        // DuplicateChecker duplicateChecker = null;
+        // if (message.isNeedDuplicate()) {
+        // // init duplicateChecker
+        // duplicateChecker =
+        // duplicateCheckerFactory.duplicateCheckerBuild(taskMessage.getContext().getWebsite(),
+        // message.getTaskId());
+        // }
         // init collectorWorker
-        CollectorWorker collectorWorker =
-                new CollectorWorker().setCrawlExcutorHandler(crawlExcutorHandler).setResultDataHandler(resultDataHandler)
-                        .setExtractorActorRef(extractorWorkerRef).setDuplicateChecker(duplicateChecker).setSubTaskManager(subTaskManager)
-                        .setRedisDao(redisDao);
+        CollectorWorker collectorWorker = new CollectorWorker().setCrawlExcutorHandler(crawlExcutorHandler).setResultDataHandler(resultDataHandler)
+                .setExtractorActorRef(extractorWorkerRef).setSubTaskManager(subTaskManager).setRedisDao(redisDao);
 
         return collectorWorker;
     }

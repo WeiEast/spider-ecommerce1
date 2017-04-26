@@ -88,9 +88,8 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
         message.setEndURL(task.getParentTask().getCollectorMessage().getEndURL());
         message.setNeedDuplicate(task.getParentTask().getCollectorMessage().isNeedDuplicate());
         message.setLevel1Status(task.getParentTask().getCollectorMessage().isLevel1Status());
-        message.setParentTaskID(task.getParentTask().getTaskId());
-        // set userid
-        message.setUserId(task.getUserId());
+        message.setParentTaskID(task.getParentTask().getTaskId());//taskLogId
+        message.setTaskId(task.getTaskId());
         message.setSubSeed(task.getSeed());
         // set from seed
         message.setSynced(BooleanUtils.isTrue(task.getSeed().isSync()));

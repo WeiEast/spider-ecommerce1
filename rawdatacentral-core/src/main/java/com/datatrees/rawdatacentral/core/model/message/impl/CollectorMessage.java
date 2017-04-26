@@ -24,7 +24,10 @@ import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
 public class CollectorMessage extends MessageInfo {
     private String cookie;
     private String websiteName;
-    private int userId;
+    private long taskId;
+    private String AccountNo;
+
+
     private String serialNum;
     private String endURL;
     private boolean needDuplicate;
@@ -131,19 +134,6 @@ public class CollectorMessage extends MessageInfo {
         this.websiteName = websiteName;
     }
 
-    /**
-     * @return the userId
-     */
-    public int getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     /**
      * @return the serialNum
@@ -195,7 +185,14 @@ public class CollectorMessage extends MessageInfo {
     public Map<String, Object> getSendBack() {
         return sendBack;
     }
+    
+    public long getTaskId() {
+        return taskId;
+    }
 
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
+    }
 
     /*
      * (non-Javadoc)
@@ -204,8 +201,22 @@ public class CollectorMessage extends MessageInfo {
      */
     @Override
     public String toString() {
-        return "CollectorMessage [ websiteName=" + websiteName + ", userId=" + userId + ", serialNum=" + serialNum + ", endURL=" + endURL
+        return "CollectorMessage [ websiteName=" + websiteName + ", taskId=" + taskId + ", serialNum=" + serialNum + ", endURL=" + endURL
                 + ", cookie=" + cookie + "]";
+    }
+
+    /**
+     * @return the accountNo
+     */
+    public String getAccountNo() {
+        return AccountNo;
+    }
+
+    /**
+     * @param accountNo the accountNo to set
+     */
+    public void setAccountNo(String accountNo) {
+        AccountNo = accountNo;
     }
 
 }

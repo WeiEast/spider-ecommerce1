@@ -18,7 +18,7 @@ import java.util.HashMap;
  * @since 2015年8月15日 上午2:43:21
  */
 public class ResultMessage extends HashMap<String, Object> {
-    public final static String USER_ID = "userId";
+    public final static String TASK_ID = "taskId";
     public final static String WEBSITE_NAME = "websiteName";
     public final static String STATUS = "status";// "status":SUCCESS/FAIL/WAITING_FOR_SMS_VERIFY/WAITING_FOR_PICTURE_VERIFY,
     public final static String ISRESULT_EMPTY = "isResultEmpty";
@@ -44,15 +44,15 @@ public class ResultMessage extends HashMap<String, Object> {
     /**
      * @return the userId
      */
-    public Integer getUserId() {
-        return (Integer) this.get(USER_ID);
+    public Long getTaskId() {
+        return (Long) this.get(TASK_ID);
     }
 
     /**
      * @param userId the userId to set
      */
-    public void setUserId(int userId) {
-        this.put(USER_ID, userId);
+    public void setTaskId(long taskId) {
+        this.put(TASK_ID, taskId);
     }
 
     /**

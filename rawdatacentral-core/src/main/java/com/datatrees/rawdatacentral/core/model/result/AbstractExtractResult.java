@@ -30,7 +30,6 @@ public abstract class AbstractExtractResult implements Serializable {
      */
     private static final long serialVersionUID = 3890382241592488877L;
     private int id;
-    private int userId;
     private int taskId;
     private int websiteId;
     private String uniqueSign;
@@ -112,19 +111,6 @@ public abstract class AbstractExtractResult implements Serializable {
         this.id = id;
     }
 
-    /**
-     * @return the userId
-     */
-    public int getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     /**
      * @return the taskId
@@ -260,7 +246,7 @@ public abstract class AbstractExtractResult implements Serializable {
      */
     @Override
     public String toString() {
-        return "ExtractResult [userId=" + userId + ", taskId=" + taskId + ", websiteId=" + websiteId + ", uniqueSign=" + uniqueSign + ", uniqueMd5="
+        return "ExtractResult [taskId=" + taskId + ", websiteId=" + websiteId + ", uniqueSign=" + uniqueSign + ", uniqueMd5="
                 + uniqueMd5 + "]";
     }
 

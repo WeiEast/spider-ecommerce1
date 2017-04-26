@@ -16,7 +16,7 @@ package com.datatrees.rawdatacentral.core.model.subtask;
  * @since 2015年12月19日 下午3:57:07
  */
 public class SubTask {
-    private int userId;
+    private long taskId;
     private ParentTask parentTask;
     private SubSeed seed;
 
@@ -49,9 +49,9 @@ public class SubTask {
      * @param parentTask
      * @param seed
      */
-    public SubTask(int userId, ParentTask parentTask, SubSeed seed) {
+    public SubTask(long taskId, ParentTask parentTask, SubSeed seed) {
         super();
-        this.userId = userId;
+        this.taskId = taskId;
         this.parentTask = parentTask;
         this.seed = seed;
     }
@@ -59,15 +59,15 @@ public class SubTask {
     /**
      * @return the userId
      */
-    public int getUserId() {
-        return userId;
+    public long getTaskId() {
+        return taskId;
     }
 
     /**
      * @param userId the userId to set
      */
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
     }
 
 
@@ -106,7 +106,7 @@ public class SubTask {
      */
     @Override
     public String toString() {
-        return "SubTask [userId=" + userId + ", parentTask=" + parentTask + ", seed=" + seed + "]";
+        return "SubTask [taskId=" + taskId + ", parentTask=" + parentTask + ", seed=" + seed + "]";
     }
 
 }

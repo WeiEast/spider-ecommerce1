@@ -93,7 +93,6 @@ public class DefaultExtractResultBuilder implements ExtractResultBuilder {
                 return null;
         }
         result.setUniqueMd5(UniqueKeyGenUtil.uniqueKeyGen(result.getUniqueSign()));
-        result.setUserId(extractMessage.getUserId());
         result.setTaskId(extractMessage.getTaskId());
         result.setWebsiteId(extractMessage.getWebsiteId());
         result.setStoragePath(StoragePathUtil.genStoragePath(extractMessage, result.getUniqueMd5()));

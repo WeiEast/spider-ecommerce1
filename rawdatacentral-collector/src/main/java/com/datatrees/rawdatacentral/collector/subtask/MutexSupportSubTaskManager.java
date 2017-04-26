@@ -151,7 +151,7 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
 
     private void submitMutexSubTask(SubTask task, Queue<SubTaskFuture> queue) {
         SubSeed seed = task.getSeed();
-        String mutexKey = task.getUserId() + "_" + task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
+        String mutexKey = task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
         logger.info("submit mutex sync subtask " + mutexKey + "queue:" + queue.hashCode() + " ,task:" + task);
         SubTaskFuture mutexSubTaskFuture = mutexSubTaskFutureMap.get(mutexKey);
         if (mutexSubTaskFuture == null) {
@@ -180,13 +180,13 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
             } else {
                 Container container = new SimpleSubTaskContainer();
                 container.addSubTask(task);
-                String mutexKey = task.getUserId() + "_" + task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
+                String mutexKey = task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
                 logger.info("submit normal sync subtask " + mutexKey + "queue:" + queue.hashCode() + " ,task:" + task);
                 queue.offer(new SubTaskFuture(mutexKey, container, taskExecutor.submit(container)));
             }
         } else {
             if (BooleanUtils.isTrue(seed.isMutex())) {
-                String mutexKey = task.getUserId() + "_" + task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
+                String mutexKey = task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
                 if (syncMutexSubTaskMap.containsKey(mutexKey)) {
                     logger.info("already contains  async & mutex task for key:" + mutexKey);
                 } else {
@@ -266,8 +266,7 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
                                 continue;
                             }
                             if (BooleanUtils.isTrue(subTask.getSeed().isMutex())) {
-                                String mutexKey =
-                                        subTask.getUserId() + "_" + subTask.getParentTask().getTaskId() + "_" + subTask.getSeed().getUniqueSuffix();
+                                String mutexKey = subTask.getParentTask().getTaskId() + "_" + subTask.getSeed().getUniqueSuffix();
                                 syncMutexSubTaskMap.remove(mutexKey);
                                 logger.info("submit async & mutex task " + subTask + " ,for mutexKey:" + mutexKey);
                             } else {

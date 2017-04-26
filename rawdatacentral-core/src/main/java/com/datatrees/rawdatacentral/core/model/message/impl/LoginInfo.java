@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class LoginInfo {
     private String websiteName;
-    private int userId;
+    private long taskId;
     private Map<String, String> header;
     private String url;
     private boolean supplyResult;// true:上次成功;false:上次失败
@@ -70,19 +70,6 @@ public class LoginInfo {
         this.websiteName = websiteName;
     }
 
-    /**
-     * @return the userId
-     */
-    public int getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     /**
      * @return the header
@@ -144,6 +131,20 @@ public class LoginInfo {
      */
     @Override
     public String toString() {
-        return "LoginInfo [websiteName=" + websiteName + ", userId=" + userId + ", header=" + header + ", url=" + url + "]";
+        return "LoginInfo [websiteName=" + websiteName + ", taskId=" + taskId + ", header=" + header + ", url=" + url + "]";
+    }
+
+    /**
+     * @return the taskId
+     */
+    public long getTaskId() {
+        return taskId;
+    }
+
+    /**
+     * @param taskId the taskId to set
+     */
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
     }
 }
