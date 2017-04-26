@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.domain.message;
 
 import com.datatrees.rawdatacentral.domain.enums.OperationEnum;
-import com.datatrees.rawdatacentral.domain.enums.TaskLogStatusEnum;
+import com.datatrees.rawdatacentral.domain.enums.TaskStatusEnum;
 
 /**
  * 任务状态日志
@@ -54,7 +54,7 @@ public class TaskStatusLogMessage extends TaskMessage {
      *
      * @param statusEnum 任务状态
      */
-    public void setStatus(TaskLogStatusEnum statusEnum) {
+    public void setStatus(TaskStatusEnum statusEnum) {
         this.statusCode = statusEnum.getCode();
         this.statusName = statusEnum.getName();
     }

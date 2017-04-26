@@ -6,10 +6,10 @@ package com.datatrees.rawdatacentral.domain.enums;
  */
 public enum OperationEnum {
 
-    LOGIN("login", "登录"),
-    SEARCH("search", "抓取页面"),
-    EXTRACT("extract", "解析页面"),
-    CRAWLER("crawler", "爬取");
+    LOGIN("LOGIN", "登录"),
+    SEARCH("SEARCH", "抓取页面"),
+    EXTRACT("EXTRACT", "解析页面"),
+    CRAWLER("CRAWLER", "爬取");
 
     /**
      * 操作代码
