@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.common;
+package com.datatrees.rawdatacentral.domain.enums;
 
 public enum ErrorCode {
 

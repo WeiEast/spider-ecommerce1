@@ -1,9 +1,9 @@
 package com.datatrees.rawdatacentral.core.model;
 
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import com.datatrees.rawdatacentral.core.model.result.AbstractExtractResult;
 
 /**
  * Created by wuminlang on 15/7/28.

@@ -1,6 +1,6 @@
-package com.datatrees.rawdata.evidence.oss;
+package com.datatrees.rawdatacentral.evidence.oss;
 
-import com.datatrees.rawdata.evidence.common.SubmitConstant;
+import com.datatrees.rawdatacentral.evidence.common.SubmitConstant;
 
 public class OssServiceProvider {
 	private static class OssServiceHolder {

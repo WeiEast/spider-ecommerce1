@@ -8,28 +8,25 @@
  */
 package com.datatrees.rawdatacentral.collector.worker;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import akka.dispatch.Future;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
-
 import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.datatrees.rawdatacentral.domain.common.Task;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.Task;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.core.service;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.core.model.Keyword;
+import com.datatrees.rawdatacentral.domain.model.Keyword;
 
 /**
  *

@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.core.service;
 
-import com.datatrees.rawdatacentral.core.model.Operator;
+import com.datatrees.rawdatacentral.domain.model.Operator;
 
 /**
  *

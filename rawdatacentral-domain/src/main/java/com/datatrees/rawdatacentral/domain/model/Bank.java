@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model;
+package com.datatrees.rawdatacentral.domain.model;
 
 import java.io.Serializable;
 
@@ -14,18 +14,16 @@ import java.io.Serializable;
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since 2015年7月27日 下午2:03:52
+ * @since 2015年7月26日 下午1:41:29
  */
-public class Operator implements Serializable {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -7359174255855841993L;
+public class Bank implements Serializable{
     private int id;
     private int websiteId;
-    private String operatorName;
-    private String region;
+    private String bankName;
+    private String bankEmailAddr;
     private boolean isEnabled;
+    private int orderIndex;
+    private String matchText;
 
     /**
      * @return the id
@@ -56,31 +54,31 @@ public class Operator implements Serializable {
     }
 
     /**
-     * @return the operatorName
+     * @return the bankName
      */
-    public String getOperatorName() {
-        return operatorName;
+    public String getBankName() {
+        return bankName;
     }
 
     /**
-     * @param operatorName the operatorName to set
+     * @param bankName the bankName to set
      */
-    public void setOperatorName(String operatorName) {
-        this.operatorName = operatorName;
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
     }
 
     /**
-     * @return the region
+     * @return the bankEmailAddr
      */
-    public String getRegion() {
-        return region;
+    public String getBankEmailAddr() {
+        return bankEmailAddr;
     }
 
     /**
-     * @param region the region to set
+     * @param bankEmailAddr the bankEmailAddr to set
      */
-    public void setRegion(String region) {
-        this.region = region;
+    public void setBankEmailAddr(String bankEmailAddr) {
+        this.bankEmailAddr = bankEmailAddr;
     }
 
     /**

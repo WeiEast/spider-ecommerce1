@@ -17,7 +17,7 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	</bean>
 
 
-	<context:component-scan base-package="com.datatrees.rawdata,com.datatrees.rawdatacentral" />
+	<context:component-scan base-package="com.datatrees.rawdatacentral,com.datatrees.rawdatacentral" />
 	<import resource="classpath:spring/core.webrobot.xml" />
 	<import resource="classpath*:dtboss-consumer.xml" />
 	<import resource="classpath:spring/core.db.xml" />

@@ -1,4 +1,4 @@
-package com.datatrees.rawdata.evidence.oss;
+package com.datatrees.rawdatacentral.evidence.oss;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -16,8 +16,8 @@ import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
-import com.datatrees.rawdata.evidence.common.StreamUtils;
-import com.datatrees.rawdata.evidence.common.SubmitConstant;
+import com.datatrees.rawdatacentral.evidence.common.StreamUtils;
+import com.datatrees.rawdatacentral.evidence.common.SubmitConstant;
 
 public class OssService {
 	

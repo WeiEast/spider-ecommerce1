@@ -28,7 +28,7 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
-import com.datatrees.rawdatacentral.core.model.Bank;
+import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
@@ -63,7 +63,7 @@ public class MailBillMessageNormalizer implements DataNormalizer {
      * (non-Javadoc)
      * 
      * @see
-     * com.datatrees.rawdata.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdata.
+     * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
      */
     @Override

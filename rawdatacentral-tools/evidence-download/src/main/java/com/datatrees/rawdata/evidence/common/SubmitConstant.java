@@ -1,4 +1,4 @@
-package com.datatrees.rawdata.evidence.common;
+package com.datatrees.rawdatacentral.evidence.common;
 
 public interface SubmitConstant {
 	String REDIS_KEY_SEPARATOR = "_";

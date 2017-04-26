@@ -8,7 +8,7 @@ import java.util.Set;
 import com.datatrees.rawdatacentral.core.dao.MailExtractResultDao;
 import org.springframework.stereotype.Component;
 
-import com.datatrees.rawdatacentral.core.model.result.MailExtractResult;
+import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
 
 /**
  * Created by wuminlang on 15/7/29.

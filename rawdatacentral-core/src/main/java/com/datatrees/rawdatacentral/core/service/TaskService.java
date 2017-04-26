@@ -11,7 +11,7 @@ package com.datatrees.rawdatacentral.core.service;
 import java.util.Date;
 import java.util.List;
 
-import com.datatrees.rawdatacentral.core.model.Task;
+import com.datatrees.rawdatacentral.domain.common.Task;
 
 /**
  *

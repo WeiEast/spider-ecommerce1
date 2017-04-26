@@ -5,4 +5,4 @@
  * @author luyuan
  *
  */
-package com.datatrees.rawdata.evidence.model;
+package com.datatrees.rawdatacentral.evidence.model;

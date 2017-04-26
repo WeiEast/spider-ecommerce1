@@ -50,7 +50,7 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
      * 
      * @see
      * SubTaskExecutor#submitSubTask(com.datatrees.
-     * rawdata.core.model.subtask.SubTask)
+     * rawdatacentral.core.model.subtask.SubTask)
      */
     @SuppressWarnings("rawtypes")
     @Override

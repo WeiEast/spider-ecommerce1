@@ -6,9 +6,9 @@
  *
  * Copyright (c) datatrees.com Inc. 2016
  */
-package com.datatrees.rawdatacentral.core.model;
+package com.datatrees.rawdatacentral.domain.common;
 
-import com.datatrees.rawdatacentral.api.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 
 /**
  *
@@ -18,10 +18,6 @@ import com.datatrees.rawdatacentral.api.model.WebsiteConf;
  */
 public class Website extends com.datatrees.crawler.core.domain.Website {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -8902564827416468057L;
     private WebsiteConf websiteConf;
 
     /**

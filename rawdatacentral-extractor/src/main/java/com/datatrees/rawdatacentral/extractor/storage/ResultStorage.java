@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.extractor.storage;
 
-import com.datatrees.rawdatacentral.core.model.result.AbstractExtractResult;
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 
 /**
  *

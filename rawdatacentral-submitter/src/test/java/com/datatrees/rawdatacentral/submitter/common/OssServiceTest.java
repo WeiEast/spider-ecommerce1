@@ -117,7 +117,7 @@ public class OssServiceTest {
     @Test
     public void changeName() throws IOException, MessagingException {
         BufferedReader reader = new BufferedReader(
-                new FileReader(new File("/Users/wangcheng/Documents/newworkspace/rawdata1/rawdata/rawdata-submitter/src/test/resource/keys")));
+                new FileReader(new File("/Users/wangcheng/Documents/newworkspace/rawdata1/rawdatacentral/rawdatacentral-submitter/src/test/resource/keys")));
         String tempString = null;
         OssService service = OssServiceProvider.getDefaultService();
         String imap = "imap.139.com";
@@ -203,7 +203,7 @@ public class OssServiceTest {
     @Test
     public void deleteKey() throws IOException, MessagingException {
         BufferedReader reader = new BufferedReader(
-                new FileReader(new File("/Users/wangcheng/Documents/newworkspace/rawdata1/rawdata/rawdata-submitter/src/test/resource/keys")));
+                new FileReader(new File("/Users/wangcheng/Documents/newworkspace/rawdata1/rawdatacentral/rawdatacentral-submitter/src/test/resource/keys")));
         String tempString = null;
         OssService service = OssServiceProvider.getDefaultService();
 

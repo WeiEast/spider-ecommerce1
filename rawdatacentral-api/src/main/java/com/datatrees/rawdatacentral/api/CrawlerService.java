@@ -3,20 +3,16 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
+ * <p>
  * Copyright (c) datatrees.com Inc. 2016
  */
 package com.datatrees.rawdatacentral.api;
 
-import java.util.Date;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+
 import java.util.List;
 
-import com.datatrees.rawdatacentral.api.model.StatusCode;
-import com.datatrees.rawdatacentral.api.model.TaskStatus;
-import com.datatrees.rawdatacentral.api.model.WebsiteConf;
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年11月5日 上午10:41:22
@@ -31,13 +27,5 @@ public interface CrawlerService {
 
     // 修改配置
     public boolean updateWebsiteConfig(String websiteName, String searchConfigSource, String extractConfigSource);
-
-    public Date getSystemTime();
-    
-    public int initLogin(int userid, String websiteName, Date initDate);
-
-    public boolean importStatus(int userid, String websiteName, StatusCode status, String attrJson);
-
-    public List<TaskStatus> fetchStatus(int userid, String websiteName, int sequenceId, Integer statusId);
 
 }

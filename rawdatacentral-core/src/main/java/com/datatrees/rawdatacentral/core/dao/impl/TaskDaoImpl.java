@@ -16,7 +16,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.datatrees.rawdatacentral.core.dao.TaskDao;
-import com.datatrees.rawdatacentral.core.model.Task;
+import com.datatrees.rawdatacentral.domain.common.Task;
 
 /**
  *

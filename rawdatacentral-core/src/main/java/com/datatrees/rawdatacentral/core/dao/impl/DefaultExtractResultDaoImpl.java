@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.core.dao.impl;
 
-import com.datatrees.rawdatacentral.core.model.result.DefaultExtractResult;
+import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
 import org.springframework.stereotype.Component;
 
 import com.datatrees.rawdatacentral.core.dao.DefaultExtractResultDao;

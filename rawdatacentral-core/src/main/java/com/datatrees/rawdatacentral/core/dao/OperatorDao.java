@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.core.dao;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.core.model.Operator;
+import com.datatrees.rawdatacentral.domain.model.Operator;
 
 /**
  *

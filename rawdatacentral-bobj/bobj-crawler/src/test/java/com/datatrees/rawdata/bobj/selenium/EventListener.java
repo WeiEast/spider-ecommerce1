@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdata.bobj.selenium;
+package com.datatrees.rawdatacentral.bobj.selenium;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

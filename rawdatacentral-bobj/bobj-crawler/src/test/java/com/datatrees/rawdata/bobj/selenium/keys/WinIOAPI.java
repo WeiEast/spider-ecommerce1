@@ -1,4 +1,4 @@
-package com.datatrees.rawdata.bobj.selenium.keys;
+package com.datatrees.rawdatacentral.bobj.selenium.keys;
 
 import org.xvolks.jnative.JNative;
 import org.xvolks.jnative.Type;

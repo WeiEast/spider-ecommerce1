@@ -1,4 +1,4 @@
-package com.datatrees.rawdata.bobj;
+package com.datatrees.rawdatacentral.bobj;
 
 /**
  * Hello world!

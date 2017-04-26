@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model;
+package com.datatrees.rawdatacentral.domain.model;
 
 import java.io.Serializable;
 
@@ -14,16 +14,13 @@ import java.io.Serializable;
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since 2015年7月27日 下午2:11:28
+ * @since 2015年7月27日 下午2:03:52
  */
-public class Ecommerce implements Serializable {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 7625576665769351192L;
+public class Operator implements Serializable {
     private int id;
     private int websiteId;
-    private String ecommerceName;
+    private String operatorName;
+    private String region;
     private boolean isEnabled;
 
     /**
@@ -55,17 +52,31 @@ public class Ecommerce implements Serializable {
     }
 
     /**
-     * @return the ecommerceName
+     * @return the operatorName
      */
-    public String getEcommerceName() {
-        return ecommerceName;
+    public String getOperatorName() {
+        return operatorName;
     }
 
     /**
-     * @param ecommerceName the ecommerceName to set
+     * @param operatorName the operatorName to set
      */
-    public void setEcommerceName(String ecommerceName) {
-        this.ecommerceName = ecommerceName;
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
+    }
+
+    /**
+     * @return the region
+     */
+    public String getRegion() {
+        return region;
+    }
+
+    /**
+     * @param region the region to set
+     */
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     /**
@@ -81,7 +92,5 @@ public class Ecommerce implements Serializable {
     public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
     }
-
-
 
 }

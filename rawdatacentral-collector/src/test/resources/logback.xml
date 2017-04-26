@@ -21,7 +21,7 @@
 		<!--<host>log-collector.dashu.ds</host>-->
 		<!--<port>7001</port>-->
 		<!--<encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
-			<!--<customFields>{"appname":"rawdata"}</customFields>-->
+			<!--<customFields>{"appnamrawdatacentraldata"}</customFields>-->
 		<!--</encoder>-->
 	<!--</appender>-->
 	<appender name="logback_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">

@@ -72,7 +72,7 @@ public class BDBOperatorTest {
         ClassLoader loader = null;
         for (int i = 0; i < 3; i++) {
             File file = new File(
-                    "/Users/wangcheng/Documents/newworkspace/plugins_new/rawdata-plugin/tj189Plugin/target/plugin-tj189Plugin-1.0.10-SNAPSHOT.jar");
+                    "/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/target/plugin-tj189Plugin-1.0.10-SNAPSHOT.jar");
             List<File> paked = new ArrayList<File>();
             paked.add(file);
             loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
@@ -81,7 +81,7 @@ public class BDBOperatorTest {
             System.out.println(pluginMain.process("dd"));
 
             file = new File(
-                    "/Users/wangcheng/Documents/newworkspace/plugins_new/rawdata-plugin/tj189Plugin/src/main/resources/tj189Plugin.jar_version2");
+                    "/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/src/main/resources/tj189Plugin.jar_version2");
             paked = new ArrayList<File>();
             paked.add(file);
             loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
@@ -91,7 +91,7 @@ public class BDBOperatorTest {
             Thread.sleep(5000);
         }
 
-        File file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdata-plugin/tj189Plugin/plugin-tj189Plugin.jar3");
+        File file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/plugin-tj189Plugin.jar3");
         List<File> paked = new ArrayList<File>();
         paked.add(file);
         loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
@@ -102,7 +102,7 @@ public class BDBOperatorTest {
 
         Thread.sleep(15000);
 
-        file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdata-plugin/tj189Plugin/target/plugin-tj189Plugin-1.0.10-SNAPSHOT.jar");
+        file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/target/plugin-tj189Plugin-1.0.10-SNAPSHOT.jar");
         paked = new ArrayList<File>();
         paked.add(file);
         loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());

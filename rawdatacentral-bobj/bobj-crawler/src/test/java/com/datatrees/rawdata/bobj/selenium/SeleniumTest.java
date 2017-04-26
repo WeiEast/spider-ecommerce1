@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdata.bobj.selenium;
+package com.datatrees.rawdatacentral.bobj.selenium;
 
 import java.awt.Dimension;
 import java.awt.Robot;
@@ -36,8 +36,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datatrees.rawdata.bobj.selenium.keys.VKMapping;
-import com.datatrees.rawdata.bobj.selenium.keys.VirtualKeyBoard;
+import com.datatrees.rawdatacentral.bobj.selenium.keys.VKMapping;
+import com.datatrees.rawdatacentral.bobj.selenium.keys.VirtualKeyBoard;
 
 
 /**

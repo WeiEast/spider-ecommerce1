@@ -19,7 +19,7 @@ import com.datatrees.rawdatacentral.core.dao.EcommerceDao;
 import org.springframework.stereotype.Service;
 
 import com.datatrees.common.util.CacheUtil;
-import com.datatrees.rawdatacentral.core.model.Ecommerce;
+import com.datatrees.rawdatacentral.domain.model.Ecommerce;
 import com.datatrees.rawdatacentral.core.service.EcommerceService;
 
 /**

@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.core.service;
 
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.rawdatacentral.core.model.Website;
+import com.datatrees.rawdatacentral.domain.common.Website;
 
 /**
  *

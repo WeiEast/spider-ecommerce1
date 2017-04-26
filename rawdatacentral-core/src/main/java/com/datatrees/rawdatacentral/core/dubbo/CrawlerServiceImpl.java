@@ -3,27 +3,22 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
+ * <p>
  * Copyright (c) datatrees.com Inc. 2016
  */
 package com.datatrees.rawdatacentral.core.dubbo;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import com.datatrees.rawdatacentral.api.model.StatusCode;
-import com.datatrees.rawdatacentral.api.model.TaskStatus;
-import com.datatrees.rawdatacentral.core.model.Website;
+import com.datatrees.rawdatacentral.api.CrawlerService;
+import com.datatrees.rawdatacentral.core.service.WebsiteService;
+import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.api.model.WebsiteConf;
-import com.datatrees.rawdatacentral.core.service.WebsiteService;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -102,23 +97,4 @@ public class CrawlerServiceImpl implements CrawlerService {
         return true;
     }
 
-    @Override
-    public Date getSystemTime() {
-        return null;
-    }
-
-    @Override
-    public int initLogin(int userid, String websiteName, Date initDate) {
-        return 0;
-    }
-
-    @Override
-    public boolean importStatus(int userid, String websiteName, StatusCode status, String attrJson) {
-        return false;
-    }
-
-    @Override
-    public List<TaskStatus> fetchStatus(int userid, String websiteName, int sequenceId, Integer statusId) {
-        return null;
-    }
 }

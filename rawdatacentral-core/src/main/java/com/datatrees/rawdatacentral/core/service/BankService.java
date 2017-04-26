@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.core.service;
 
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.core.model.Bank;
+import com.datatrees.rawdatacentral.domain.model.Bank;
 
 /**
  *

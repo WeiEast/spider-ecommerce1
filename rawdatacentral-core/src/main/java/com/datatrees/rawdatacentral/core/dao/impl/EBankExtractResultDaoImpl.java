@@ -11,7 +11,7 @@ package com.datatrees.rawdatacentral.core.dao.impl;
 import java.util.List;
 
 import com.datatrees.rawdatacentral.core.dao.EBankExtractResultDao;
-import com.datatrees.rawdatacentral.core.model.result.EBankExtractResult;
+import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,7 +28,7 @@ public class EBankExtractResultDaoImpl extends BaseDao implements EBankExtractRe
      * 
      * @see
      * EBankExtractResultDao#insertEBankExtractResult(com.datatrees
-     * .rawdata.core.model.result.MailExtractResult)
+     * .rawdatacentral.core.model.result.MailExtractResult)
      */
     @Override
     public int insertEBankExtractResult(EBankExtractResult result) {

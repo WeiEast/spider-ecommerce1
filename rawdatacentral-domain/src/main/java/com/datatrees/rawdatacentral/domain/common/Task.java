@@ -6,13 +6,14 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model;
+package com.datatrees.rawdatacentral.domain.common;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.datatrees.rawdatacentral.core.common.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+
 
 
 /**

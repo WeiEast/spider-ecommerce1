@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2016
  */
-package com.datatrees.rawdatacentral.api.model;
+package com.datatrees.rawdatacentral.domain.model;
 
 import java.io.Serializable;
 
@@ -17,10 +17,7 @@ import java.io.Serializable;
  * @since 2016年11月7日 下午4:30:49
  */
 public class WebsiteConf implements Serializable {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -4488630632381744273L;
+
     private String websiteName;
     private String websiteType;
 

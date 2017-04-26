@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.datatrees.rawdatacentral.core.model.result.MailExtractResult;
+import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
 
 /**
  *

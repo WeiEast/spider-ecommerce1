@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.core.service;
 
-import com.datatrees.rawdatacentral.core.model.Ecommerce;
+import com.datatrees.rawdatacentral.domain.model.Ecommerce;
 
 /**
  *

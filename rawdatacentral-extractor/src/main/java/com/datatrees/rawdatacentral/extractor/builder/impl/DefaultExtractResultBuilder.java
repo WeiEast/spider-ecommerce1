@@ -20,12 +20,12 @@ import com.datatrees.rawdatacentral.core.model.data.EBankData;
 import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
 import com.datatrees.rawdatacentral.core.model.data.OperatorData;
-import com.datatrees.rawdatacentral.core.model.result.AbstractExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.DefaultExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.EBankExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.EcommerceExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.MailExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.OperatorExtractResult;
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
+import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
+import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
+import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
+import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
+import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
 import com.datatrees.rawdatacentral.extractor.common.StoragePathUtil;
 
 /**
@@ -42,7 +42,7 @@ public class DefaultExtractResultBuilder implements ExtractResultBuilder {
      * 
      * @see
      * ExtractResultBuilder#buildExtractResult(com.datatrees
-     * .rawdata.core.model.ExtractMessage)
+     * .rawdatacentral.core.model.ExtractMessage)
      */
     @Override
     public AbstractExtractResult buildExtractResult(ExtractMessage extractMessage) {

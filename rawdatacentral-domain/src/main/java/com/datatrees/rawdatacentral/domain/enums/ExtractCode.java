@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.enums;
+package com.datatrees.rawdatacentral.domain.enums;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -8,31 +8,9 @@
  */
 package com.datatrees.rawdatacentral.collector.worker;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
-import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
-import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import akka.dispatch.Await;
 import akka.dispatch.Future;
 import akka.util.Timeout;
-
 import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
@@ -46,16 +24,28 @@ import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.login.Login;
+import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.search.CrawlExcutorHandler;
-import com.datatrees.rawdatacentral.core.common.ErrorCode;
+import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
+import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
-import com.datatrees.rawdatacentral.core.enums.ExtractCode;
+import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.Task;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.common.Task;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  *

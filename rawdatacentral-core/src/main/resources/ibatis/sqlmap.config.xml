@@ -5,21 +5,21 @@
 	<settings cacheModelsEnabled="true" enhancementEnabled="true" lazyLoadingEnabled="true" maxRequests="128" maxSessions="10" maxTransactions="300" useStatementNamespaces="true"
 		statementCachingEnabled="true" classInfoCacheEnabled="true" />
 
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.Website" alias="Website" />
-	<typeAlias type="com.datatrees.rawdatacentral.api.model.WebsiteConf" alias="WebsiteConf" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.common.Website" alias="Website" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.WebsiteConf" alias="WebsiteConf" />
 
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.EcommerceExtractResult" alias="EcommerceExtractResult" />
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.MailExtractResult" alias="MailExtractResult" />
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.OperatorExtractResult" alias="OperatorExtractResult" />
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.EBankExtractResult" alias="EBankExtractResult" />
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.result.DefaultExtractResult" alias="DefaultExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult" alias="EcommerceExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.MailExtractResult" alias="MailExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.OperatorExtractResult" alias="OperatorExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.EBankExtractResult" alias="EBankExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.DefaultExtractResult" alias="DefaultExtractResult" />
 
 
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.Task" alias="Task" />
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.Bank" alias="Bank" />
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.Ecommerce" alias="Ecommerce" />
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.Keyword" alias="Keyword" />
-	<typeAlias type="com.datatrees.rawdatacentral.core.model.Operator" alias="Operator" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.common.Task" alias="Task" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.Bank" alias="Bank" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.Ecommerce" alias="Ecommerce" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.Keyword" alias="Keyword" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.Operator" alias="Operator" />
 
 	<sqlMap resource="ibatis/mapper/website.map.xml" />
 	<sqlMap resource="ibatis/mapper/bank.map.xml" />

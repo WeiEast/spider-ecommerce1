@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdata.bobj.listener;
+package com.datatrees.rawdatacentral.bobj.listener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.executor.impl.AbstractTaskModule;
-import com.datatrees.rawdata.bobj.common.CrawlerConstant;
-import com.datatrees.rawdata.bobj.domain.CrawlerMessage;
+import com.datatrees.rawdatacentral.bobj.common.CrawlerConstant;
+import com.datatrees.rawdatacentral.bobj.domain.CrawlerMessage;
 
 /**
  *

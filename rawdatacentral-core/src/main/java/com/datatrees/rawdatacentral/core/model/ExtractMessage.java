@@ -8,13 +8,13 @@
  */
 package com.datatrees.rawdatacentral.core.model;
 
+import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
+import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.datatrees.rawdatacentral.core.enums.ExtractCode;
-import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 
 
 /**

@@ -37,7 +37,7 @@ public class DefaultMessageNormalizer implements DataNormalizer {
      * (non-Javadoc)
      * 
      * @see
-     * com.datatrees.rawdata.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdata.
+     * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
      */
     @Override

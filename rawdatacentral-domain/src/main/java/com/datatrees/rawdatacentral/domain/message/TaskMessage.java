@@ -33,7 +33,7 @@ public class TaskMessage implements Serializable {
     /**
      * 业务时间
      */
-    private Long timestamp = System.currentTimeMillis();
+    private long timestamp = System.currentTimeMillis();
 
     /**
      * 扩展属性
@@ -72,11 +72,11 @@ public class TaskMessage implements Serializable {
         this.attributes = attributes;
     }
 
-    public Long getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Long timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -87,4 +87,57 @@ public class TaskMessage implements Serializable {
     public void setTopic(String topic) {
         this.topic = topic;
     }
+
+    /**
+     * 设置属性
+     *
+     * @param key
+     * @param value
+     */
+    public void setAttribute(String key, Object value) {
+        if (null != key) {
+            attributes.put(key, value);
+        }
+    }
+
+    /**
+     * 从attributes获取属性
+     *
+     * @param key
+     * @return
+     */
+    public String getString(String key) {
+        if (attributes.containsKey(key)) {
+            return String.valueOf(key);
+        }
+        return null;
+    }
+
+    /**
+     * 从attributes获取属性
+     *
+     * @param key
+     * @return
+     */
+    public Long getLong(String key) {
+        if (attributes.containsKey(key)) {
+            return Long.valueOf(key);
+        }
+        return null;
+    }
+
+    /**
+     * 从attributes获取属性
+     *
+     * @param key
+     * @return
+     */
+    public Boolean getBoolean(String key) {
+        if (attributes.containsKey(key)) {
+            return Boolean.valueOf(key);
+        }
+        return null;
+    }
+
+
 }
