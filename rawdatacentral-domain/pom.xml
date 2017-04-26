@@ -5,7 +5,9 @@
     <parent>
         <artifactId>rawdatacentral</artifactId>
         <groupId>com.datatrees.rawdatacentral</groupId>
-        <version>1.4.0</version>
+        <!--3.0.1-SNAPSHOT  ${project-version}-->
+        <version>${project-version}</version>
+        <!--<version>3.0.1-SNAPSHOT</version>-->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

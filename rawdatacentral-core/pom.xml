@@ -56,6 +56,11 @@
 			<artifactId>rawdatacentral-api</artifactId>
 			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.datatrees.rawdatacentral</groupId>
+			<artifactId>rawdatacentral-domain</artifactId>
+			<version>${project-version}</version>
+		</dependency>
 	</dependencies>
 
 

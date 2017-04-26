@@ -11,6 +11,11 @@ import java.util.Map;
 public class TaskMessage implements Serializable {
 
     /**
+     * 消息topic
+     */
+    private String topic;
+
+    /**
      * 任务ID
      */
     private Long taskId;
@@ -73,5 +78,13 @@ public class TaskMessage implements Serializable {
 
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }

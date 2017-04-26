@@ -1,0 +1,60 @@
+package com.datatrees.rawdatacentral.domain.enums;
+
+/**
+ * 任务状态
+ * Created by zhouxinghai on 2017/4/25.
+ */
+public enum TaskStatusEnum {
+
+    PROCESSING("PROCESSING", "处理中"),
+    CRAWLER("CRAWLER", "进入爬取阶段"),
+    PREPARE_FOR_CRAWL("PREPARE_FOR_CRAWL", "初始化完成"),
+    REFRESH_LOGIN_RANDOMPASSWORD("REFRESH_LOGIN_RANDOMPASSWORD", "刷新登录短信验证码"),
+    REFRESH_LOGIN_CODE("REFRESH_LOGIN_CODE", "刷新登录图片验证码"),
+    REFRESH_LOGIN_QR_CODE("REFRESH_LOGIN_QR_CODE", "刷新登录二维码"),
+    START_LOGIN("START_LOGIN", "开始登录"),
+    WAITING_FOR_SMS_VERIFY("WAITING_FOR_SMS_VERIFY", "等待短信验证码"),
+    WAITING_FOR_PICTURE_VERIFY("WAITING_FOR_PICTURE_VERIFY", "等待图片验证码"),
+    WAITING_FOR_QR_VERIFY("WAITING_FOR_QR_VERIFY", "等待二维码"),
+    WAITING_FOR_URL_VERIFY("WAITING_FOR_URL_VERIFY", "等待前端页面返回"),
+    LOGIN_SUCCESS("LOGIN_SUCCESS", "登录成功"),
+    LOGIN_FAILED("LOGIN_FAILED", "登录失败"),
+    CRAWLER_FAILED("CRAWLER_FAILED", "爬取失败"),
+    CRAWLER_SUCCESS("CRAWLER_SUCCESS", "爬取成功"),
+    TASK_TIMEOUT("TASK_TIMEOUT", "任务超时"),
+    TASK_SUCCESS("TASK_SUCCESS", "任务成功"),
+    TASK_FAIL("TASK_FAIL", "任务失败"),;
+
+
+    /**
+     * 状态码
+     */
+    private String code;
+
+    /**
+     * 描述
+     */
+    private String name;
+
+    TaskStatusEnum(String statusCode, String remark) {
+        this.code = statusCode;
+        this.name = remark;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "TaskStatusEnum{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
+}
+

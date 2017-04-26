@@ -21,7 +21,7 @@
 		</fileSet>
 		<fileSet>
 			<outputDirectory>/conf</outputDirectory>
-			<directory>rawdata-main/src/main/resources/</directory>
+			<directory>rawdatacentral-main/src/main/resources/</directory>
 			<excludes>
 				<exclude>*.properties</exclude>
 			</excludes>
@@ -35,7 +35,7 @@
 		</fileSet>
 		<fileSet>
 			<outputDirectory>/lib</outputDirectory>
-			<directory>rawdata-main/target/lib/</directory>
+			<directory>rawdatacentral-main/target/lib/</directory>
 		</fileSet>
 	</fileSets>
 	<files>
@@ -44,9 +44,9 @@
 			<outputDirectory>/rawdata/</outputDirectory>
 		</file>
 		<file>
-			<source>rawdata-main/target/rawdata-main-${project-version}.jar</source>
+			<source>rawdatacentral-main/target/rawdatacentral-main-${project-version}.jar</source>
 			<outputDirectory>/rawdata/</outputDirectory>
-			<destName>rawdata-main.jar</destName>
+			<destName>rawdatacentral-main.jar</destName>
 		</file>
 	</files>
 </assembly>
