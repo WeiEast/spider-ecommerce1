@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 
 import com.datatrees.rawdatacentral.core.dao.EBankExtractResultDao;
 import com.datatrees.rawdatacentral.core.model.MailBill;
-import com.datatrees.rawdatacentral.core.model.result.EBankExtractResult;
+import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +19,10 @@ import com.datatrees.rawdatacentral.core.dao.DefaultExtractResultDao;
 import com.datatrees.rawdatacentral.core.dao.EcommerceExtractResultDao;
 import com.datatrees.rawdatacentral.core.dao.MailExtractResultDao;
 import com.datatrees.rawdatacentral.core.dao.OperatorExtractResultDao;
-import com.datatrees.rawdatacentral.core.model.result.DefaultExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.EcommerceExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.MailExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.OperatorExtractResult;
+import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
+import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
+import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
+import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
 
 /**
  * Created by wuminlang on 15/7/28.
@@ -78,7 +78,7 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
      * 
      * @see
      * ExtractorResultService#insertEBankExtractResult(com.datatrees
-     * .rawdata.core.model.result.EBankExtractResult)
+     * .rawdatacentral.core.model.result.EBankExtractResult)
      */
     @Override
     public int insertEBankExtractResult(EBankExtractResult result) {
@@ -104,7 +104,7 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
      * 
      * @see
      * ExtractorResultService#insertDefaultExtractResult(com.
-     * datatrees.rawdata.core.model.result.DefaultExtractResult)
+     * datatrees.rawdatacentral.core.model.result.DefaultExtractResult)
      */
     @Override
     public int insertDefaultExtractResult(DefaultExtractResult defaultExtractResult) {

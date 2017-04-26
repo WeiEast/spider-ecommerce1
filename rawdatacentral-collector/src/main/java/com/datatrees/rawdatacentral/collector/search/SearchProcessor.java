@@ -1,23 +1,6 @@
 package com.datatrees.rawdatacentral.collector.search;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
-import com.datatrees.rawdatacentral.collector.chain.FilterConstant;
-import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
-import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import akka.dispatch.Future;
-
 import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
@@ -32,11 +15,26 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.search.Crawler;
+import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.chain.Context;
+import com.datatrees.rawdatacentral.collector.chain.FilterConstant;
 import com.datatrees.rawdatacentral.collector.chain.FilterExecutor;
 import com.datatrees.rawdatacentral.collector.chain.FilterListFactory;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
-import com.datatrees.rawdatacentral.core.model.Task;
+import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
+import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
+import com.datatrees.rawdatacentral.domain.common.Task;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 
 
 /**

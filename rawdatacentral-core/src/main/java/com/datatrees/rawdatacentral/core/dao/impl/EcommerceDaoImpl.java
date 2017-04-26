@@ -13,7 +13,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.datatrees.rawdatacentral.core.dao.EcommerceDao;
-import com.datatrees.rawdatacentral.core.model.Ecommerce;
+import com.datatrees.rawdatacentral.domain.model.Ecommerce;
 
 /**
  *

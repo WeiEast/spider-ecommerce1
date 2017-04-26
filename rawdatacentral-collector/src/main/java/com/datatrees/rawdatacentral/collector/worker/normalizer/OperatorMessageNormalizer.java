@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.Operator;
+import com.datatrees.rawdatacentral.domain.model.Operator;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.OperatorData;
 import com.datatrees.rawdatacentral.core.service.OperatorService;
@@ -43,7 +43,7 @@ public class OperatorMessageNormalizer implements DataNormalizer {
      * (non-Javadoc)
      * 
      * @see
-     * com.datatrees.rawdata.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdata.
+     * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
      */
     @Override

@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.rawdatacentral.core.model.result.AbstractExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.DefaultExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.EBankExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.EcommerceExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.MailExtractResult;
-import com.datatrees.rawdatacentral.core.model.result.OperatorExtractResult;
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
+import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
+import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
+import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
+import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
+import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
 import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
 
@@ -46,7 +46,7 @@ public class ResultStorageImpl implements ResultStorage {
      * (non-Javadoc)
      * 
      * @see
-     * ResultStorage#doExtractResultSave(com.datatrees.rawdata
+     * ResultStorage#doExtractResultSave(com.datatrees.rawdatacentral
      * .core.model.result.AbstractExtractResult)
      */
     @Override

@@ -6,13 +6,13 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdata.bobj.crawler;
+package com.datatrees.rawdatacentral.bobj.crawler;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.rawdata.bobj.common.CrawlerConstant;
+import com.datatrees.rawdatacentral.bobj.common.CrawlerConstant;
 
 /**
  *

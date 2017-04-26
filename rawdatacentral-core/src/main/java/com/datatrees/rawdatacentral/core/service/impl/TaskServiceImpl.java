@@ -17,7 +17,7 @@ import com.datatrees.rawdatacentral.core.service.TaskService;
 import org.springframework.stereotype.Service;
 
 import com.datatrees.rawdatacentral.core.dao.TaskDao;
-import com.datatrees.rawdatacentral.core.model.Task;
+import com.datatrees.rawdatacentral.domain.common.Task;
 
 /**
  *
@@ -34,7 +34,7 @@ public class TaskServiceImpl implements TaskService {
      * (non-Javadoc)
      * 
      * @see
-     * TaskService#insertTask(com.datatrees.rawdata.core.model
+     * TaskService#insertTask(com.datatrees.rawdatacentral.core.model
      * .Task)
      */
     @Override
@@ -46,7 +46,7 @@ public class TaskServiceImpl implements TaskService {
      * (non-Javadoc)
      * 
      * @see
-     * TaskService#updateTask(com.datatrees.rawdata.core.model
+     * TaskService#updateTask(com.datatrees.rawdatacentral.core.model
      * .Task)
      */
     @Override

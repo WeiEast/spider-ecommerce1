@@ -6,13 +6,15 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model;
+package com.datatrees.rawdatacentral.domain.common;
 
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.datatrees.rawdatacentral.core.common.ErrorCode;
 
 
 /**
@@ -21,8 +23,12 @@ import com.datatrees.rawdatacentral.core.common.ErrorCode;
  * @version 1.0
  * @since 2015年7月27日 下午7:19:25
  */
-public class Task {
+public class Task implements Serializable{
     private int id;
+    /**
+     * 网关的taskId
+     */
+    private Long taskId;
     private int userId;
     private int websiteId;
     private AtomicInteger openUrlCount = new AtomicInteger(0);
@@ -363,6 +369,13 @@ public class Task {
         this.duration = duration;
     }
 
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
 
     public void setErrorCode(ErrorCode errorCode) {
         this.setErrorCode(errorCode, null);

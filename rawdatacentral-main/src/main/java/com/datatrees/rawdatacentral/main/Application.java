@@ -17,6 +17,6 @@ public class Application {
     
     public static void main(String[] args) {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring/main.spring.xml");
-        logger.info("rawdata main start...");
+        logger.info("rawdatacentral main start...");
     }
 }

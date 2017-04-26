@@ -1,4 +1,4 @@
-package com.datatrees.rawdata.evidence.controller;
+package com.datatrees.rawdatacentral.evidence.controller;
 
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.stereotype.Controller;

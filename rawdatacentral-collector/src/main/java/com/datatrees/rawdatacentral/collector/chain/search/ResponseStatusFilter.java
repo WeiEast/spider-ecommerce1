@@ -1,11 +1,5 @@
 package com.datatrees.rawdatacentral.collector.chain.search;
 
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
@@ -15,8 +9,13 @@ import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
 import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
-import com.datatrees.rawdatacentral.core.common.ErrorCode;
-import com.datatrees.rawdatacentral.core.model.Task;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.common.Task;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 
 /**

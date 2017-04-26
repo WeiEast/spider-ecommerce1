@@ -1,23 +1,5 @@
 package com.datatrees.rawdatacentral.collector.search;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-
-import javax.annotation.Resource;
-
-import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.domain.config.search.SearchType;
@@ -26,11 +8,27 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.format.unit.TimeUnit;
 import com.datatrees.crawler.core.processor.search.SearchTempldateCombine;
-import com.datatrees.rawdatacentral.core.common.ErrorCode;
+import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
-import com.datatrees.rawdatacentral.core.model.Keyword;
-import com.datatrees.rawdatacentral.core.model.Task;
+import com.datatrees.rawdatacentral.domain.model.Keyword;
 import com.datatrees.rawdatacentral.core.service.KeywordService;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.common.Task;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 
 
 /**

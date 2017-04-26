@@ -17,8 +17,8 @@ import javax.annotation.Resource;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
 import com.datatrees.rawdatacentral.core.dao.WebsiteDao;
-import com.datatrees.rawdatacentral.core.model.Bank;
-import com.datatrees.rawdatacentral.core.model.Website;
+import com.datatrees.rawdatacentral.domain.model.Bank;
+import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.core.service.BankService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import org.apache.commons.io.FileUtils;
@@ -234,7 +234,7 @@ public class WebsiteServiceImpl implements WebsiteService {
      * (non-Javadoc)
      * 
      * @see
-     * WebsiteService#updateWebsiteConfig(com.datatrees.rawdata.
+     * WebsiteService#updateWebsiteConfig(com.datatrees.rawdatacentral.
      * api.model.Website)
      */
     @Override
@@ -259,7 +259,7 @@ public class WebsiteServiceImpl implements WebsiteService {
      * (non-Javadoc)
      * 
      * @see
-     * WebsiteService#insertWebsiteConfig(com.datatrees.rawdata.
+     * WebsiteService#insertWebsiteConfig(com.datatrees.rawdatacentral.
      * core.model.Website)
      */
     @Override

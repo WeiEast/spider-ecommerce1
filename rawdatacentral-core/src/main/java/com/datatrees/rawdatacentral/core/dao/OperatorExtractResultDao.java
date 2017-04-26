@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.core.dao;
 
-import com.datatrees.rawdatacentral.core.model.result.OperatorExtractResult;
+import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
 
 
 /**

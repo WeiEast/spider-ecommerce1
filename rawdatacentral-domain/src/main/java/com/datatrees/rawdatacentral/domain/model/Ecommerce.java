@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model;
+package com.datatrees.rawdatacentral.domain.model;
 
 import java.io.Serializable;
 
@@ -14,20 +14,13 @@ import java.io.Serializable;
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since 2015年7月26日 下午1:41:29
+ * @since 2015年7月27日 下午2:11:28
  */
-public class Bank implements Serializable{
-    /**
-     *
-     */
-    private static final long serialVersionUID = 9126330761266448145L;
+public class Ecommerce implements Serializable {
     private int id;
     private int websiteId;
-    private String bankName;
-    private String bankEmailAddr;
+    private String ecommerceName;
     private boolean isEnabled;
-    private int orderIndex;
-    private String matchText;
 
     /**
      * @return the id
@@ -58,31 +51,17 @@ public class Bank implements Serializable{
     }
 
     /**
-     * @return the bankName
+     * @return the ecommerceName
      */
-    public String getBankName() {
-        return bankName;
+    public String getEcommerceName() {
+        return ecommerceName;
     }
 
     /**
-     * @param bankName the bankName to set
+     * @param ecommerceName the ecommerceName to set
      */
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
-
-    /**
-     * @return the bankEmailAddr
-     */
-    public String getBankEmailAddr() {
-        return bankEmailAddr;
-    }
-
-    /**
-     * @param bankEmailAddr the bankEmailAddr to set
-     */
-    public void setBankEmailAddr(String bankEmailAddr) {
-        this.bankEmailAddr = bankEmailAddr;
+    public void setEcommerceName(String ecommerceName) {
+        this.ecommerceName = ecommerceName;
     }
 
     /**
@@ -98,5 +77,7 @@ public class Bank implements Serializable{
     public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
     }
+
+
 
 }

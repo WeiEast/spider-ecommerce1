@@ -8,23 +8,6 @@
  */
 package com.datatrees.rawdatacentral.collector.actor;
 
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
@@ -42,14 +25,13 @@ import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.proxy.ProxyManagerWithScope;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
+import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
-import com.datatrees.rawdatacentral.core.common.ErrorCode;
 import com.datatrees.rawdatacentral.core.common.ProxySharedManager;
 import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
-import com.datatrees.rawdatacentral.core.model.Task;
 import com.datatrees.rawdatacentral.core.model.message.SubTaskAble;
 import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
@@ -57,11 +39,23 @@ import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
 import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
+import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.io.ByteArrayOutputStream;
+import java.util.*;
 
 /**
  *

@@ -44,7 +44,7 @@ public class MailBillReceiveTimeFilter implements Filter {
      * (non-Javadoc)
      * 
      * @see
-     * Filter#doFilter(com.datatrees.rawdata.collector.chain
+     * Filter#doFilter(com.datatrees.rawdatacentral.collector.chain
      * .Context, FilterChain)
      */
     @Override

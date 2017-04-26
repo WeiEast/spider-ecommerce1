@@ -6,11 +6,11 @@
     <context id="context1" targetRuntime="MyBatis3">
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
             connectionURL="jdbc:mysql://192.168.5.241:3306/rawdata" userId="root" password="dashu0701"/>
-        <javaModelGenerator targetPackage="com.datatrees.rawdata.evidence.model"
+        <javaModelGenerator targetPackage="com.datatrees.rawdatacentral.evidence.model"
             targetProject="/Users/luyuan/Documents/workspace/rawdata/rawdata-tools/evidence-download/src/main/java" />
         <sqlMapGenerator targetPackage="mapper"
             targetProject="/Users/luyuan/Documents/workspace/rawdata/rawdata-tools/evidence-download/src/main/resources" />
-        <javaClientGenerator targetPackage="com.datatrees.rawdata.evidence.dao"
+        <javaClientGenerator targetPackage="com.datatrees.rawdatacentral.evidence.dao"
             targetProject="/Users/luyuan/Documents/workspace/rawdata/rawdata-tools/evidence-download/src/main/java" type="XMLMAPPER" />
         <table tableName="t_website" domainObjectName="Website" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
     </context>

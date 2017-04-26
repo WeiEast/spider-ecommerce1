@@ -1,4 +1,4 @@
-package com.datatrees.rawdata.bobj;
+package com.datatrees.rawdatacentral.bobj;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

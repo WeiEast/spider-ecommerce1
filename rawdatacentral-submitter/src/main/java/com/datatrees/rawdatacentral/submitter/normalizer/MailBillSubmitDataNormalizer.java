@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
-import com.datatrees.rawdatacentral.core.model.result.MailExtractResult;
+import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
 
 /**
  *

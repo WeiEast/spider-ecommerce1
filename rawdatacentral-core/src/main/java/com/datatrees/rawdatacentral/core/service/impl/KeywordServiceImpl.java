@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.core.dao.KeywordDao;
-import com.datatrees.rawdatacentral.core.model.Keyword;
+import com.datatrees.rawdatacentral.domain.model.Keyword;
 import com.datatrees.rawdatacentral.core.service.KeywordService;
 
 /**

@@ -15,7 +15,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.datatrees.rawdatacentral.core.common.Constants;
-import com.datatrees.rawdatacentral.core.model.Operator;
+import com.datatrees.rawdatacentral.domain.model.Operator;
 import com.datatrees.rawdatacentral.core.service.OperatorService;
 import org.springframework.stereotype.Service;
 

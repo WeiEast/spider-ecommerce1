@@ -1,4 +1,4 @@
-package com.datatrees.rawdata.bobj.common;
+package com.datatrees.rawdatacentral.bobj.common;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 

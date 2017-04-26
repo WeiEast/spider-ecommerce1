@@ -8,14 +8,13 @@
  */
 package com.datatrees.rawdatacentral.core.dao.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.datatrees.rawdatacentral.core.dao.WebsiteDao;
+import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import org.springframework.stereotype.Component;
 
-import com.datatrees.rawdatacentral.api.model.WebsiteConf;
-import com.datatrees.rawdatacentral.core.dao.WebsiteDao;
-import com.datatrees.rawdatacentral.core.model.Website;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -60,7 +59,7 @@ public class WebsiteDaoImpl extends BaseDao implements WebsiteDao {
      * (non-Javadoc)
      * 
      * @see
-     * WebsiteDao#updateWebsiteConfig(com.datatrees.rawdata.api.model
+     * WebsiteDao#updateWebsiteConfig(com.datatrees.rawdatacentral.api.model
      * .Website)
      */
     @Override
@@ -87,7 +86,7 @@ public class WebsiteDaoImpl extends BaseDao implements WebsiteDao {
      * (non-Javadoc)
      * 
      * @see
-     * WebsiteDao#insertWebsiteConfig(com.datatrees.rawdata.core.
+     * WebsiteDao#insertWebsiteConfig(com.datatrees.rawdatacentral.core.
      * model.Website)
      */
     @Override

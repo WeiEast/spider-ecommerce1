@@ -6,33 +6,32 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model.result;
+package com.datatrees.rawdatacentral.domain.model;
+
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since 2015年7月27日 下午7:02:27
+ * @since 2015年7月27日 下午7:02:03
  */
-public class EcommerceExtractResult extends AbstractExtractResult {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 6800548467579558519L;
-    private int ecommerceId;
+public class OperatorExtractResult extends AbstractExtractResult {
+    private int operatorId;
 
     /**
-     * @return the ecommerceId
+     * @return the operatorId
      */
-    public int getEcommerceId() {
-        return ecommerceId;
+    public int getOperatorId() {
+        return operatorId;
     }
 
     /**
-     * @param ecommerceId the ecommerceId to set
+     * @param operatorId the operatorId to set
      */
-    public void setEcommerceId(int ecommerceId) {
-        this.ecommerceId = ecommerceId;
+    public void setOperatorId(int operatorId) {
+        this.operatorId = operatorId;
     }
+
 
 }

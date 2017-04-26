@@ -13,7 +13,7 @@
 		<constructor-arg index="0">
 			<list>
 				<!-- 监听器，用于触发资源的动态切换 -->
-				<bean class="com.datatrees.rawdata.core.common.ResourceChangeListener" />
+				<bean class="com.datatrees.rawdatacentral.core.common.ResourceChangeListener" />
 			</list>
 		</constructor-arg>
 	</bean>

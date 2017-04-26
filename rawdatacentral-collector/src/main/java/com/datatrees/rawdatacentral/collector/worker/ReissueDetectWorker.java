@@ -8,23 +8,22 @@
  */
 package com.datatrees.rawdatacentral.collector.worker;
 
-import javax.annotation.Resource;
-
-import com.datatrees.rawdatacentral.collector.actor.Collector;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.rawdatacentral.core.model.Task;
+import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ReissueDetectCollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ReissueDetectMessage;
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
 import com.datatrees.rawdatacentral.core.service.TaskService;
+import com.datatrees.rawdatacentral.domain.common.Task;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  *

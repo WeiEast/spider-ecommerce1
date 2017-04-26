@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain;
+package com.datatrees.rawdatacentral.domain.constant;
 
 import java.io.Serializable;
 

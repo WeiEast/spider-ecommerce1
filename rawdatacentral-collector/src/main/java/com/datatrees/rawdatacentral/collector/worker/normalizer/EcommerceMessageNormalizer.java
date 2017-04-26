@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
-import com.datatrees.rawdatacentral.core.model.Ecommerce;
+import com.datatrees.rawdatacentral.domain.model.Ecommerce;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
@@ -43,7 +43,7 @@ public class EcommerceMessageNormalizer implements DataNormalizer {
      * (non-Javadoc)
      * 
      * @see
-     * com.datatrees.rawdata.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdata.
+     * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
      */
     @Override

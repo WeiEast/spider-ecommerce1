@@ -6,15 +6,15 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model.result;
+package com.datatrees.rawdatacentral.domain.result;
+
+import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.datatrees.rawdatacentral.core.enums.ExtractCode;
 
 /**
  *

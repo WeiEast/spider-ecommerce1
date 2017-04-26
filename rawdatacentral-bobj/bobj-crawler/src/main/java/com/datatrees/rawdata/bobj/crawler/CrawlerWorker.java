@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdata.bobj.crawler;
+package com.datatrees.rawdatacentral.bobj.crawler;
 
 /**
  *

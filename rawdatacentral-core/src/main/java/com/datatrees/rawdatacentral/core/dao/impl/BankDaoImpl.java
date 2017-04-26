@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.core.dao.impl;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.core.model.Bank;
+import com.datatrees.rawdatacentral.domain.model.Bank;
 import org.springframework.stereotype.Component;
 
 import com.datatrees.rawdatacentral.core.dao.BankDao;

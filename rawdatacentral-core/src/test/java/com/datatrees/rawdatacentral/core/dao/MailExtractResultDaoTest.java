@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.core.dao;
 
 import com.datatrees.rawdatacentral.core.AbstractTest;
 import com.datatrees.rawdatacentral.core.model.ResultType;
-import com.datatrees.rawdatacentral.core.model.result.MailExtractResult;
+import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

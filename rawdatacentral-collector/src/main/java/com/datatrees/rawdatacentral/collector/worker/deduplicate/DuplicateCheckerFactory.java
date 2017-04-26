@@ -8,25 +8,23 @@
  */
 package com.datatrees.rawdatacentral.collector.worker.deduplicate;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.collector.chain.common.WebsiteType;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.impl.DuplicateCheckerImpl;
+import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
+import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
+import com.datatrees.rawdatacentral.core.service.TaskService;
+import com.datatrees.rawdatacentral.domain.common.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
-import com.datatrees.rawdatacentral.core.model.Task;
-import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
-import com.datatrees.rawdatacentral.core.service.TaskService;
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  *

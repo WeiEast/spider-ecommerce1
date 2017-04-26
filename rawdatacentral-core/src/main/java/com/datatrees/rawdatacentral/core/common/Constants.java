@@ -31,8 +31,8 @@ public interface Constants {
     String GSON_TYPE = "GSON_TYPE";
     String SUBMIT_TO_GATEWAY_KEY = "CLAWER_REQUEST_";
     String OBTAIN_FROM_GATEWAY_KEY = "GATEWAY_RESPONSE_";
-    int REDIS_KEY_TIMEOUT = PropertiesConfiguration.getInstance().getInt("rawdata.redisKey.timeout", 600);
-    int GATEWAY_MAX_WAITTIME = PropertiesConfiguration.getInstance().getInt("rawdata.gateway.timeout", 90000);
+    int REDIS_KEY_TIMEOUT = PropertiesConfiguration.getInstance().getInt("rawdatacentral.redisKey.timeout", 600);
+    int GATEWAY_MAX_WAITTIME = PropertiesConfiguration.getInstance().getInt("rawdatacentral.gateway.timeout", 90000);
     String DEFAULT_ENCODE_CHARSETNAME = "UTF-8";
 
 

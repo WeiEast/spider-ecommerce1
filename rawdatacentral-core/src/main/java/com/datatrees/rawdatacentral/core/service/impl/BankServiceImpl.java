@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.rawdatacentral.core.dao.BankDao;
-import com.datatrees.rawdatacentral.core.model.Bank;
+import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.core.service.BankService;
 
 /**

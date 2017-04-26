@@ -6,7 +6,9 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model.result;
+package com.datatrees.rawdatacentral.domain.model;
+
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 
 import java.util.Date;
 
@@ -18,10 +20,6 @@ import java.util.Date;
  */
 public class MailExtractResult extends AbstractExtractResult {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 4334254919313021998L;
     private int bankId;
     private String sender;
     private String subject;

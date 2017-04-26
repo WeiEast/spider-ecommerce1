@@ -6,35 +6,31 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model.result;
+package com.datatrees.rawdatacentral.domain.model;
 
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since 2015年7月27日 下午2:52:15
+ * @since 2015年7月27日 下午7:02:27
  */
-public class EBankExtractResult extends AbstractExtractResult {
+public class EcommerceExtractResult extends AbstractExtractResult {
+    private int ecommerceId;
 
     /**
-     *
+     * @return the ecommerceId
      */
-    private static final long serialVersionUID = -943085805385884533L;
-    private int bankId;
-
-    /**
-     * @return the bankId
-     */
-    public int getBankId() {
-        return bankId;
+    public int getEcommerceId() {
+        return ecommerceId;
     }
 
     /**
-     * @param bankId the bankId to set
+     * @param ecommerceId the ecommerceId to set
      */
-    public void setBankId(int bankId) {
-        this.bankId = bankId;
+    public void setEcommerceId(int ecommerceId) {
+        this.ecommerceId = ecommerceId;
     }
 
 }

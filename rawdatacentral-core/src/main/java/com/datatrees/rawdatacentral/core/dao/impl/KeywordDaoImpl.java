@@ -11,7 +11,7 @@ package com.datatrees.rawdatacentral.core.dao.impl;
 import java.util.List;
 
 import com.datatrees.rawdatacentral.core.dao.KeywordDao;
-import com.datatrees.rawdatacentral.core.model.Keyword;
+import com.datatrees.rawdatacentral.domain.model.Keyword;
 import org.springframework.stereotype.Component;
 
 /**

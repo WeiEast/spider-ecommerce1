@@ -9,7 +9,7 @@
 package com.datatrees.rawdatacentral.extractor.builder;
 
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.result.AbstractExtractResult;
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 
 /**
  *
