@@ -1,0 +1,6 @@
+dependencies {
+  compile project(':rawdatacentral-core')
+  compile project(':rawdatacentral-extractor')
+  compile project(':rawdatacentral-submitter')
+  compile project(':rawdatacentral-collector')
+}

@@ -1,0 +1,8 @@
+rootProject.name = 'rawdatacentral'
+include ':rawdatacentral-domain'
+include ':rawdatacentral-api'
+include ':rawdatacentral-core'
+include ':rawdatacentral-collector'
+include ':rawdatacentral-extractor'
+include ':rawdatacentral-submitter'
+include ':rawdatacentral-main'
