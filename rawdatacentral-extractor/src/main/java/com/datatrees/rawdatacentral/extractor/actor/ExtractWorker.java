@@ -61,7 +61,6 @@ public class ExtractWorker {
                     subExtractMessage.setResultType(extractMessage.getResultType());
                     subExtractMessage.setTaskId(extractMessage.getTaskId());
                     subExtractMessage.setTypeId(extractMessage.getTypeId());
-                    subExtractMessage.setUserId(extractMessage.getUserId());
                     subExtractMessage.setWebsiteId(extractMessage.getWebsiteId());
                     subExtractMessage.setMessageIndex(messageIndex);
                     this.process(subExtractMessage);

@@ -6,7 +6,7 @@
 		<property name="driverClassName" value="com.mysql.jdbc.Driver">
 		</property>
 		<property name="url">
-			<value><![CDATA[jdbc:mysql://${core.db.host:192.168.5.241}:${core.db.port:3306}/${core.db.database:rawdata}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull]]></value>
+			<value><![CDATA[jdbc:mysql://${core.db.host:192.168.5.241}:${core.db.port:3306}/${core.db.radatacentral.database:rawdatacentral}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull]]></value>
 		</property>
 		<property name="username" value="${core.db.username:root}" />
 		<property name="password" value="${core.db.password:dashu0701}" />

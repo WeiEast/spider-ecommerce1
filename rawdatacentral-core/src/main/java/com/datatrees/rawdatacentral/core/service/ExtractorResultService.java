@@ -25,10 +25,4 @@ public interface ExtractorResultService {
 
     public int insertDefaultExtractResult(DefaultExtractResult defaultExtractResult);
 
-    Set<String> getUserSuccessParsedMailKeySet(int userId);
-
-    Set<String> getUserSuccessParsedEBankBillSet(int userId);
-
-    List<Map> getReissueDetectMails(int userId, int taskid, List<MailBill> lists);
-
 }

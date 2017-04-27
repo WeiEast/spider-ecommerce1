@@ -44,11 +44,6 @@ public class SubTask {
         this.submitAt = submitAt;
     }
 
-    /**
-     * @param userId
-     * @param parentTask
-     * @param seed
-     */
     public SubTask(long taskId, ParentTask parentTask, SubSeed seed) {
         super();
         this.taskId = taskId;
@@ -56,16 +51,10 @@ public class SubTask {
         this.seed = seed;
     }
 
-    /**
-     * @return the userId
-     */
     public long getTaskId() {
         return taskId;
     }
 
-    /**
-     * @param userId the userId to set
-     */
     public void setTaskId(long taskId) {
         this.taskId = taskId;
     }

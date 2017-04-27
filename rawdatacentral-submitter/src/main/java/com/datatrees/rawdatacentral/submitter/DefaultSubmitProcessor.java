@@ -69,11 +69,11 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         }
     }
 
-    private void submitSubTask(int userId, ParentTask parentTask, Object seed) {
+    private void submitSubTask(int taskId, ParentTask parentTask, Object seed) {
         SubSeed subSeed = this.getSubSeed(seed);
         if (subSeed != null) {
             logger.info("submit subseed " + subSeed);
-            subTaskManager.submitSubTask(new SubTask(userId, parentTask, subSeed));
+            subTaskManager.submitSubTask(new SubTask(taskId, parentTask, subSeed));
             if (BooleanUtils.isTrue(subSeed.getProxyShared())) {
                 try {
                     Proxy parentProxy = parentTask.getProcessorContext().getProxyManager().getProxy("");
@@ -93,17 +93,17 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
     private void submitSubTask(SubmitMessage submitMessage) {
         Map<String, Object> extractResultMap = submitMessage.getExtractResultMap();
         ExtractMessage extractMessage = submitMessage.getExtractMessage();
-        int userId = extractMessage.getUserId();
+        int taskId = extractMessage.getTaskId();
         ParentTask parentTask = extractMessage.getTask();
         if (MapUtils.isNotEmpty(extractResultMap)) {
             for (Entry<String, Object> entry : extractResultMap.entrySet()) {
                 if ("subSeed".equals(entry.getKey())) {
                     if (entry.getValue() instanceof Collection) {
                         for (Object obj : (Collection) entry.getValue()) {
-                            this.submitSubTask(userId, parentTask, obj);
+                            this.submitSubTask(taskId, parentTask, obj);
                         }
                     } else {
-                        this.submitSubTask(userId, parentTask, entry.getValue());
+                        this.submitSubTask(taskId, parentTask, entry.getValue());
                     }
                 }
             }
@@ -124,10 +124,9 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
             return true;
         }
         submitNormalizerFactory.normalize(submitMessage);
-        int userId = extractMessage.getUserId();
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
-            String redisKey = RedisKeyUtils.genRedisKey(userId, taskId, entry.getKey());
+            String redisKey = RedisKeyUtils.genRedisKey(taskId, entry.getKey());
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();

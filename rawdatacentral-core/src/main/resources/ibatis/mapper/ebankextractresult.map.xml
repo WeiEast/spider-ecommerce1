@@ -3,11 +3,11 @@
 <sqlMap namespace="EBankExtractResult">
 
 	<insert id="insert" parameterClass="EBankExtractResult">
-		insert into t_ebank_extract_result (Id, UserId, TaskId, Duration,
+		insert into t_ebank_extract_result (Id, TaskId, Duration,
 		WebsiteId, BankId, Status,
 		Remark, Url, UniqueSign,UniqueMd5,
 		ResultType, StoragePath, CreatedAt)
-		values (#id#, #userId#, #taskId#, #duration#,
+		values (#id#, #taskId#, #duration#,
 		#websiteId#,
 		#bankId#, #status#,
 		#remark#, #url#, #uniqueSign#,#uniqueMd5#,
@@ -18,8 +18,5 @@
 	</insert>
 
 
-	<select id="getUserSuccessParsedBillKeySet" parameterClass="int" resultClass="string">
-		SELECT distinct UniqueMd5 FROM t_ebank_extract_result WHERE Status=0 AND UserId=#userId#;
-	</select>
 
 </sqlMap>

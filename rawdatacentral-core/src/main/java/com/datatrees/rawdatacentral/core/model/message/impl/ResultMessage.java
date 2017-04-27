@@ -41,16 +41,10 @@ public class ResultMessage extends HashMap<String, Object> {
     }
 
 
-    /**
-     * @return the userId
-     */
     public Long getTaskId() {
         return (Long) this.get(TASK_ID);
     }
 
-    /**
-     * @param userId the userId to set
-     */
     public void setTaskId(long taskId) {
         this.put(TASK_ID, taskId);
     }

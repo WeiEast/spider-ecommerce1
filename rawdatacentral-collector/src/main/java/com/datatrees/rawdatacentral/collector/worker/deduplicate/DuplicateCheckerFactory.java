@@ -46,36 +46,36 @@ public class DuplicateCheckerFactory {
     private TaskService taskService;
 
     public DuplicateChecker duplicateCheckerBuild(Website website, int userId) {
-        List<Task> tasks =
-                taskService.selectWebisteTaskWithinPeriod(userId, website.getId(), new Date(UnifiedSysTime.INSTANCE.getSystemTime().getTime()
-                        - duplicateCheckerWithinHours * 3600 * 1000));
+//        List<Task> tasks =
+//                taskService.selectWebisteTaskWithinPeriod(userId, website.getId(), new Date(UnifiedSysTime.INSTANCE.getSystemTime().getTime()
+//                        - duplicateCheckerWithinHours * 3600 * 1000));
 
         Set<String> existedKeySet = null;
         // task not empty means user retry to import data, and don't do duplicate check,
         // websiteTaskCountThreshold min=2;去除当前次task
-        if (CollectionUtils.isEmpty(tasks) || tasks.size() < websiteTaskCountThreshold) {
-            log.info("try to load duplicateChecker for userId:{}, website:{}", userId, website);
-            WebsiteType type = WebsiteType.getWebsiteType(website.getWebsiteType());
-            if (type != null) {
-                switch (type) {
-                    case MAIL:
-                        existedKeySet = extractorResultService.getUserSuccessParsedMailKeySet(userId);
-                        break;
-                    case OPERATOR:
-                        break;
-                    case ECOMMERCE:
-                        break;
-                    case BANK:
-                        existedKeySet = extractorResultService.getUserSuccessParsedEBankBillSet(userId);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } else {
-            log.warn("no need to do duplicate check for websiteid:" + website.getId() + "," + "userid:" + userId + ",withinHours:"
-                    + duplicateCheckerWithinHours + ",size:" + tasks.size() + ",threshold:" + websiteTaskCountThreshold);
-        }
+//        if (CollectionUtils.isEmpty(tasks) || tasks.size() < websiteTaskCountThreshold) {
+//            log.info("try to load duplicateChecker for userId:{}, website:{}", userId, website);
+//            WebsiteType type = WebsiteType.getWebsiteType(website.getWebsiteType());
+//            if (type != null) {
+//                switch (type) {
+//                    case MAIL:
+//                        existedKeySet = extractorResultService.getUserSuccessParsedMailKeySet(userId);
+//                        break;
+//                    case OPERATOR:
+//                        break;
+//                    case ECOMMERCE:
+//                        break;
+//                    case BANK:
+//                        existedKeySet = extractorResultService.getUserSuccessParsedEBankBillSet(userId);
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//        } else {
+//            log.warn("no need to do duplicate check for websiteid:" + website.getId() + "," + "userid:" + userId + ",withinHours:"
+//                    + duplicateCheckerWithinHours + ",size:" + tasks.size() + ",threshold:" + websiteTaskCountThreshold);
+//        }
 
         DuplicateChecker checker = new DuplicateCheckerImpl(existedKeySet);
         return checker;

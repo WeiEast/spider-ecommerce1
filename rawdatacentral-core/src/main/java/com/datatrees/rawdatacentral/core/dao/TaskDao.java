@@ -26,8 +26,5 @@ public interface TaskDao {
 
     public Date selectNow();
 
-    public List<Task> selectWebisteTaskWithinPeriod(int userId, int webitseid, Date startedAt);
-    
-    public Task selectTaskByBankBillsKey(int userId, String bankBillsKey);
 
 }

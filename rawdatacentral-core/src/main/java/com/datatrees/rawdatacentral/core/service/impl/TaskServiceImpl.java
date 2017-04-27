@@ -64,25 +64,6 @@ public class TaskServiceImpl implements TaskService {
         return taskDao.selectNow();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see TaskService#selectWebisteTaskWithinPeriod(int, long)
-     */
-    @Override
-    public List<Task> selectWebisteTaskWithinPeriod(int userid, int webitseid, Date startedAt) {
-        return taskDao.selectWebisteTaskWithinPeriod(userid, webitseid, startedAt);
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see TaskService#selectTaskByBankBillsKey(int,
-     * java.lang.String)
-     */
-    @Override
-    public Task selectTaskByBankBillsKey(int userId, String bankBillsKey) {
-        return taskDao.selectTaskByBankBillsKey(userId, bankBillsKey);
-    }
 
 }

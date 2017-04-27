@@ -60,18 +60,6 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
         return operatorExtractResultDao.insertOperatorExtractResult(operatorExtractResult);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ExtractorResultService#getUserSuccessParsedMailKeySet(int)
-     */
-    @Override
-    public Set<String> getUserSuccessParsedMailKeySet(int userId) {
-        Set<String> set = new HashSet<String>();
-        set.addAll(mailExtractResultDao.getUserSuccessParsedMailKeySet(userId));
-        return set;
-    }
 
     /*
      * (non-Javadoc)
@@ -85,19 +73,6 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
         return eBankExtractResultDao.insertEBankExtractResult(result);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ExtractorResultService#getUserSuccessParsedEBankBillSet
-     * (int)
-     */
-    @Override
-    public Set<String> getUserSuccessParsedEBankBillSet(int userId) {
-        Set<String> set = new HashSet<String>();
-        set.addAll(eBankExtractResultDao.getUserSuccessParsedEBankBillSet(userId));
-        return set;
-    }
 
     /*
      * (non-Javadoc)
@@ -111,31 +86,4 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
         return defaultExtractResultDao.insertDefaultExtractResult(defaultExtractResult);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ExtractorResultService#getReissueDetectMails(int,
-     * int, java.util.List)
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Override
-    public List<Map> getReissueDetectMails(int userId, int taskid, List<MailBill> lists) {
-        Map<String, Map> mailBillMaps = new HashMap<String, Map>();
-        for (MailBill mailBill : lists) {
-            Map mailNode = mailBillMaps.get(mailBill.getMailId());
-            if (mailNode != null) {
-                mailNode.put("billIds", mailNode.get("billIds") + "," + mailBill.getBillId());
-            } else {
-                mailNode = new HashMap();
-                mailNode.put("billIds", mailBill.getBillId());
-                mailNode.put("mailId", mailBill.getMailId());
-                mailBillMaps.put(mailBill.getMailId(), mailNode);
-            }
-        }
-        List<Map> mailMapList = mailExtractResultDao.getReissueDetectMails(userId, taskid, mailBillMaps.keySet());
-        for (Map mailMap : mailMapList) {
-            mailBillMaps.get(mailMap.get("mailId")).putAll(mailMap);
-        }
-        return new ArrayList<Map>(mailBillMaps.values());
-    }
 }

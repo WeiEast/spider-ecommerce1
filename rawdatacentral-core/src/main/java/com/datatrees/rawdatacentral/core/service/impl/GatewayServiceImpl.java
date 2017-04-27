@@ -72,7 +72,7 @@ public class GatewayServiceImpl implements DataResource {
     @Override
     public boolean sendToQueue(Map<String, Object> parameters) {
         try {
-            String userId = String.valueOf(parameters.get("userId"));
+            String taskId = String.valueOf(parameters.get("taskId"));
             String websiteName = String.valueOf(parameters.get("websiteName"));
             String status = String.valueOf(parameters.get("status"));
             String isEmpty = String.valueOf(parameters.get("isResultEmpty"));
@@ -82,14 +82,14 @@ public class GatewayServiceImpl implements DataResource {
             ResultMessage resultMessage = new ResultMessage();
             resultMessage.putAll(parameters);
             resultMessage.setRemark(remark);
-            resultMessage.setUserId(Integer.valueOf(userId));
+            resultMessage.setTaskId(Long.valueOf(taskId));
             resultMessage.setWebsiteName(websiteName);
             resultMessage.setResultEmpty(Boolean.valueOf(isEmpty));
             resultMessage.setStatus(status);
             if (logger.isDebugEnabled()) {
                 logger.debug("send to queue:" + GsonUtils.toJson(resultMessage));
             }
-            Message mqMessage = messageFactory.getMessage("rawData_result_status", tag, GsonUtils.toJson(resultMessage), userId);
+            Message mqMessage = messageFactory.getMessage("rawData_result_status", tag, GsonUtils.toJson(resultMessage), taskId);
             SendResult sendResult = producer.send(mqMessage);
             logger.info("send result message:" + mqMessage + "result:" + sendResult);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {

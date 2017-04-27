@@ -33,7 +33,7 @@ public class StoragePathUtil {
     public static String genStoragePath(ExtractMessage extractMessage, String uniqueMd5) {
         String bucket;
         if (useOriginalPathFlag) {
-            bucket = extractMessage.getUserId() + "/" + extractMessage.getWebsiteId();
+            bucket = extractMessage.getTaskId() + "/" + extractMessage.getWebsiteId();
         } else {
             String date = new SimpleDateFormat("yyyyMM").format(new Date());
             ResultType resultType = extractMessage.getResultType();
@@ -43,7 +43,7 @@ public class StoragePathUtil {
             } else {
                 resultTypeStr = "UnKnown";
             }
-            bucket = resultTypeStr + "/" + date + "/" + extractMessage.getUserId() + "/" + extractMessage.getWebsiteId();
+            bucket = resultTypeStr + "/" + date + "/" + extractMessage.getTaskId() + "/" + extractMessage.getWebsiteId();
         }
         return extractMessage.getMessageIndex() == null
                 ? bucket + "/" + uniqueMd5

@@ -35,15 +35,5 @@ public class EBankExtractResultDaoImpl extends BaseDao implements EBankExtractRe
         return (int) sqlMapClientTemplate.insert("EBankExtractResult.insert", result);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * EBankExtractResultDao#getUserSuccessParsedEBankBillSet(int)
-     */
-    @Override
-    public List<String> getUserSuccessParsedEBankBillSet(int userId) {
-        return sqlMapClientTemplate.queryForList("EBankExtractResult.getUserSuccessParsedBillKeySet", userId);
-    }
 
 }

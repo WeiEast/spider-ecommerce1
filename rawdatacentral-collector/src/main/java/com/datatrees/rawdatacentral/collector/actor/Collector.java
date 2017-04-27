@@ -40,6 +40,7 @@ import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
 import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
@@ -97,10 +98,11 @@ public class Collector {
             task.setNodeName(NodeNameUtil.INSTANCE.getNodeName());
             context = websiteService.getSearchProcessorContext(message.getWebsiteName());
             context.setLoginCheckIgnore(message.isLoginCheckIgnore());
+            context.set(AttributeKey.TASK_ID, message.getTaskId());
+            context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId()+"");
+            context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo());
             task.setWebsiteId(context.getWebsite().getId());
             task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
-            ProcessorContextUtil.setAccountKey(context, message.getTaskId() + "");
-            ProcessorContextUtil.setAccountNo(context, message.getAccountNo());
             // init cookie
             if (StringUtils.isNotBlank(message.getCookie())) {
                 ProcessorContextUtil.setCookieString(context, message.getCookie());

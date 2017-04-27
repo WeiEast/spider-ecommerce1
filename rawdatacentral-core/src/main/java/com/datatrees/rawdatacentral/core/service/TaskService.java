@@ -26,8 +26,5 @@ public interface TaskService {
 
     public Date selectNow();
 
-    public List<Task> selectWebisteTaskWithinPeriod(int userId, int webitseid, Date period);
-
-    public Task selectTaskByBankBillsKey(int userId, String bankBillsKey);
 
 }

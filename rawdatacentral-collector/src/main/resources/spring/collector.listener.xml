@@ -32,47 +32,6 @@
 		<property name="topicJson" value="${core.message.verifyResult.topic:{rawData_input:verify_result}}" />
 	</bean>
 
-	<bean id="reissueDetectMessageMqConsumer" class="com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer" destroy-method="shutdown">
-		<property name="namesrvAddr" value="${core.mq.host:192.168.0.243:9876}" />
-		<property name="consumerGroup" value="${core.mq.reissueDetect.consumerGroup:rawdata_reissueDetect_group}" />
-		<property name="consumeThreadMin" value="${reissue.core.instance.num:10}" />
-		<property name="consumeThreadMax" value="${reissue.instance.num:30}" />
-		<property name="consumeName" value="${reissueDetect.consume.name:reissueDetectConsumer}" />
-	</bean>
-
-	<bean id="reissueDetectMessageListener" class="com.datatrees.rawdatacentral.collector.listener.MailReissueDetectListener" init-method="init">
-		<property name="mqConsumer" ref="reissueDetectMessageMqConsumer" />
-		<property name="reissueDetectWorker" ref="reissueDetectWorker" />
-		<property name="topicJson" value="${core.message.reissueDetect.topic:{rawData_input:reissue_detect}}" />
-	</bean>
-
-	<bean id="businessDetectMessageMqConsumer" class="com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer" destroy-method="shutdown">
-		<property name="namesrvAddr" value="${core.mq.host:192.168.0.243:9876}" />
-		<property name="consumerGroup" value="${core.mq.businessDetect.consumerGroup:rawdata_crawlerInfo_group}" />
-		<property name="consumeThreadMin" value="${business.core.instance.num:3}" />
-		<property name="consumeThreadMax" value="${business.instance.num:10}" />
-		<property name="consumeName" value="${businessDetect.consume.name:businessDetectConsumer}" />
-	</bean>
-
-	<bean id="businessDetectMessageListener" class="com.datatrees.rawdatacentral.collector.listener.BusinessDetectListener" init-method="init">
-		<property name="mqConsumer" ref="businessDetectMessageMqConsumer" />
-		<property name="businessDetectWorker" ref="businessDetectWorker" />
-		<property name="topicJson" value="${core.message.businessDetect.topic:{rawData_input:crawler_info}}" />
-	</bean>
-
-	<bean id="rong360DetectMessageMqConsumer" class="com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer" destroy-method="shutdown">
-		<property name="namesrvAddr" value="${core.mq.host:192.168.0.243:9876}" />
-		<property name="consumerGroup" value="${core.mq.rong360Info.consumerGroup:rawdata_rong360Info_group}" />
-		<property name="consumeThreadMin" value="${rong360Info.core.instance.num:3}" />
-		<property name="consumeThreadMax" value="${rong360Info.instance.num:10}" />
-		<property name="consumeName" value="${rong360Info.consume.name:rong360InfoConsumer}" />
-	</bean>
-
-	<bean id="rong360DetectMessageListener" class="com.datatrees.rawdatacentral.collector.listener.Rong360InfoListener" init-method="init">
-		<property name="mqConsumer" ref="rong360DetectMessageMqConsumer" />
-		<property name="worker" ref="rong360InfoWorker" />
-		<property name="topicJson" value="${core.message.Rong360Info.topic:{rawData_input:rong360_info}}" />
-	</bean>
 
 
 </beans>

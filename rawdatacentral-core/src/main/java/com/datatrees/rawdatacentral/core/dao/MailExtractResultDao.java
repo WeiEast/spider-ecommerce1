@@ -23,8 +23,5 @@ import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
 public interface MailExtractResultDao {
     public int insertMailExtractResult(MailExtractResult result);
 
-    List<String> getUserSuccessParsedMailKeySet(int userId);
-
-    List<Map> getReissueDetectMails(int userId, int taskid, Set<String> mailIds);
 
 }

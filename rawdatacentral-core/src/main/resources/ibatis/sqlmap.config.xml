@@ -7,12 +7,11 @@
 
 	<typeAlias type="com.datatrees.rawdatacentral.domain.common.Website" alias="Website" />
 	<typeAlias type="com.datatrees.rawdatacentral.domain.model.WebsiteConf" alias="WebsiteConf" />
-
-	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult" alias="EcommerceExtractResult" />
-	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.MailExtractResult" alias="MailExtractResult" />
-	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.OperatorExtractResult" alias="OperatorExtractResult" />
-	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.EBankExtractResult" alias="EBankExtractResult" />
-	<typeAlias type="com.datatrees.rawdatacentral.com.datatrees.rawdatacentral.domain.model.DefaultExtractResult" alias="DefaultExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult" alias="EcommerceExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.MailExtractResult" alias="MailExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.OperatorExtractResult" alias="OperatorExtractResult" />
+	<typeAlias type="com.datatrees.rawdatacentral.domain.model.EBankExtractResult" alias="EBankExtractResult" />
+	<typeAlias type="scom.datatrees.rawdatacentral.domain.model.DefaultExtractResult" alias="DefaultExtractResult" />
 
 
 	<typeAlias type="com.datatrees.rawdatacentral.domain.common.Task" alias="Task" />

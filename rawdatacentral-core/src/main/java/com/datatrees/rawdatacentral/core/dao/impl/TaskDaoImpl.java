@@ -57,32 +57,5 @@ public class TaskDaoImpl extends BaseDao implements TaskDao {
         return (Date) sqlMapClientTemplate.queryForObject("Task.selectNow");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see TaskDao#selectWebisteTaskWithinPeriod(int, int,
-     * java.util.Date)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Task> selectWebisteTaskWithinPeriod(int userId, int webitseid, Date startedAt) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("userId", userId);
-        map.put("websiteId", webitseid);
-        map.put("startedAt", startedAt);
-        return sqlMapClientTemplate.queryForList("Task.selectWebisteTaskWithinPeriod", map);
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see TaskDao#selectTaskByBankBillsKey(int, java.lang.String)
-     */
-    @Override
-    public Task selectTaskByBankBillsKey(int userId, String bankBillsKey) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("userId", userId);
-        map.put("bankBillsKey", bankBillsKey);
-        return (Task) sqlMapClientTemplate.queryForObject("Task.selectTaskByBankBillsKey", map);
-    }
 }

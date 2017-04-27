@@ -11,25 +11,24 @@ public class RedisKeyUtils {
     private static final Logger log = LoggerFactory.getLogger(RedisKeyUtils.class);
     private static String REDIS_PREFIX = PropertiesConfiguration.getInstance().get("core.redis.redis.prefix", "rawdata_");
 
-    public static String genRedisKey(int userId, int taskId, String resultClass) {
-        if (StringUtils.isEmpty(resultClass)) {
-            return null;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append(REDIS_PREFIX).append(userId).append(SubmitConstant.REDIS_KEY_SEPARATOR).append(taskId).append(SubmitConstant.REDIS_KEY_SEPARATOR)
-                .append(resultClass);
-        String redisKey = sb.toString();
-        log.debug("generate redis key " + redisKey);
-        return redisKey;
-    }
-    
-    public static String genRedisKey(long taskId, String resultClass) {
+    public static String genRedisKey(int taskId, String resultClass) {
         if (StringUtils.isEmpty(resultClass)) {
             return null;
         }
         StringBuilder sb = new StringBuilder();
         sb.append(REDIS_PREFIX).append(taskId).append(SubmitConstant.REDIS_KEY_SEPARATOR)
-        .append(resultClass);
+                .append(resultClass);
+        String redisKey = sb.toString();
+        log.debug("generate redis key " + redisKey);
+        return redisKey;
+    }
+
+    public static String genRedisKey(long taskId, String resultClass) {
+        if (StringUtils.isEmpty(resultClass)) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(REDIS_PREFIX).append(taskId).append(SubmitConstant.REDIS_KEY_SEPARATOR).append(resultClass);
         String redisKey = sb.toString();
         log.debug("generate redis key " + redisKey);
         return redisKey;

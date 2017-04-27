@@ -21,5 +21,4 @@ import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
 public interface EBankExtractResultDao {
     public int insertEBankExtractResult(EBankExtractResult result);
 
-    List<String> getUserSuccessParsedEBankBillSet(int userId);
 }
