@@ -3,7 +3,6 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
 package com.datatrees.rawdatacentral.collector.actor;
@@ -42,6 +41,8 @@ import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Task;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.OperationEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
@@ -59,36 +60,41 @@ import java.io.ByteArrayOutputStream;
 import java.util.*;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年12月22日 下午7:35:45
  */
 @Service
 public class Collector {
-    private static final Logger logger = LoggerFactory.getLogger(Collector.class);
+
+    private static final Logger    logger                     = LoggerFactory.getLogger(Collector.class);
+
     @Resource
-    private WebsiteService websiteService;
+    private WebsiteService         websiteService;
+
     @Resource
-    private TaskService taskService;
+    private TaskService            taskService;
+
     @Resource
-    private MessageFactory messageFactory;
+    private MessageFactory         messageFactory;
+
     @Resource
-    private MQProducer producer;
+    private MQProducer             producer;
+
     @Resource
-    private ZooKeeperClient zookeeperClient;
+    private ZooKeeperClient        zookeeperClient;
+
     @Resource
     private CollectorWorkerFactory collectorWorkerFactory;
+
     @Resource
-    private RedisDao redisDao;
+    private RedisDao               redisDao;
 
-    private static String duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
+    private static String          duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
 
-    private static String mqStatusTags = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
+    private static String          mqStatusTags               = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
 
-    private static String mqMessageSendTagPattern =
-            PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
-
+    private static String          mqMessageSendTagPattern    = PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
 
     private TaskMessage taskMessageInit(CollectorMessage message) {
         SearchProcessorContext context = null;
@@ -99,7 +105,7 @@ public class Collector {
             context = websiteService.getSearchProcessorContext(message.getWebsiteName());
             context.setLoginCheckIgnore(message.isLoginCheckIgnore());
             context.set(AttributeKey.TASK_ID, message.getTaskId());
-            context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId()+"");
+            context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
             context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo());
             task.setWebsiteId(context.getWebsite().getId());
             task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
@@ -109,9 +115,9 @@ public class Collector {
             }
             ProcessorContextUtil.setValue(context, "endurl", message.getEndURL());
             // 历史状态清理
-//            String key = "verify_result_" + message.getWebsiteName() + "_" + message.getUser Id();
-//            redisDao.deleteKey(key);
-//            logger.info("do verify_result data clear for key: {}", key);
+            // String key = "verify_result_" + message.getWebsiteName() + "_" + message.getUser Id();
+            // redisDao.deleteKey(key);
+            // logger.info("do verify_result data clear for key: {}", key);
         } catch (Exception e) {
             logger.warn("get context error with " + message, e);
             task.setErrorCode(ErrorCode.TASK_INIT_ERROR, "TASK_INIT_ERROR error with " + message);
@@ -144,8 +150,7 @@ public class Collector {
                 taskMessage.setUniqueSuffix(((SubTaskAble) message).getSubSeed().getUniqueSuffix());
                 ProxyManager proxyManager = context.getProxyManager();
                 if (((SubTaskAble) message).getSubSeed().getProxy() != null && proxyManager instanceof ProxyManagerWithScope) {
-                    ((ProxyManagerWithScope) proxyManager)
-                            .setManager(new ProxySharedManager(((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
+                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
                 }
             }
         }
@@ -222,15 +227,25 @@ public class Collector {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             if (e instanceof LoginTimeOutException) {
-                taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR,
-                        ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMessage() + " " + e.getMessage());
+                taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMessage() + " " + e.getMessage());
             } else if (e instanceof InterruptedException) {
-                taskMessage.getTask().setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR,
-                        ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage() + " " + e.getMessage());
+                taskMessage.getTask().setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR, ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage() + " " + e.getMessage());
             } else {
                 taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
             }
         } finally {
+            try {
+                Message logMsg = new Message();
+                logMsg.setTopic(TopicEnum.TASK_LOG.getCode());
+                Map<String, Object> map = new HashMap<>();
+                map.put("taskId", taskMessage.getTask().getTaskId());
+                map.put("action", OperationEnum.CRAWLER.getCode());
+                map.put("result", taskMessage.getTask().getStatus() == 0 ? "SUCCESS" : "FAIL");
+                logMsg.setBody(GsonUtils.toJson(map).getBytes());
+                producer.send(logMsg);
+            } catch (Exception e) {
+                logger.error("send log status error", e);
+            }
             this.actorLockWatchRelease(watcher);
         }
         this.messageComplement(taskMessage, (CollectorMessage) message);
@@ -250,8 +265,7 @@ public class Collector {
             }
 
             StringBuilder resultMessageBuilder = new StringBuilder();
-            resultMessageBuilder.append("\"resultMsg\":").append(taskMessage.getTask().getResultMessage()).append(",\"processorLog\":")
-                    .append(GsonUtils.toJson(taskMessage.getContext().getProcessorLog()));
+            resultMessageBuilder.append("\"resultMsg\":").append(taskMessage.getTask().getResultMessage()).append(",\"processorLog\":").append(GsonUtils.toJson(taskMessage.getContext().getProcessorLog()));
             String startMsgJson = GsonUtils.toJson(message);
 
             if (startMsgJson.length() > PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000)) {
@@ -277,7 +291,7 @@ public class Collector {
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void sendResult(TaskMessage taskMessage, Map submitkeyResult, Set<String> resultTagSet) {
         Task task = taskMessage.getTask();
         ResultMessage resultMessage = new ResultMessage();
@@ -350,8 +364,7 @@ public class Collector {
                         keyResult.setResultEmpty(!notEmptyTag.contains(key));
                     }
                     try {
-                        Message mqMessage = messageFactory.getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult),
-                                "" + taskMessage.getTask().getId());
+                        Message mqMessage = messageFactory.getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
                         SendResult sendResult = producer.send(mqMessage);
                         logger.info("send result message:" + mqMessage + "result:" + sendResult);
                     } catch (Exception e) {

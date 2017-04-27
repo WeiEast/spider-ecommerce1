@@ -6,8 +6,9 @@ package com.datatrees.rawdatacentral.domain.enums;
  */
 public enum TopicEnum {
 
-    RAWDATA_INTER_DIRECTIVE("rawdata_inter_directive", "交互指令"),
-    RAWDATA_TASK_LOG("rawdata_task_log", "任务状态日志"),;
+    TASK_NEXT_DIRECTIVE("task_next_directive", "交互指令"),
+    TASK_LOG("task_log", "任务状态日志"),
+    ;
 
     /**
      * topic代码
@@ -34,9 +35,6 @@ public enum TopicEnum {
 
     @Override
     public String toString() {
-        return "TopicEnum{" +
-                "code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+        return "TopicEnum{" + "code='" + code + '\'' + ", name='" + name + '\'' + '}';
     }
 }

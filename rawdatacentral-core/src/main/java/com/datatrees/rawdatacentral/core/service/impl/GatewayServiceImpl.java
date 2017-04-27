@@ -9,12 +9,10 @@ import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
-import com.datatrees.rawdatacentral.domain.message.TaskMessage;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,11 +23,13 @@ public class GatewayServiceImpl implements DataResource {
     private static final Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
 
     @Resource
-    private RedisDao redisDao;
+    private RedisDao            redisDao;
+
     @Resource
-    private MessageFactory messageFactory;
+    private MessageFactory      messageFactory;
+
     @Resource
-    private MQProducer producer;
+    private MQProducer          producer;
 
     private String genRedisKey(String userId, String websiteName) {
         StringBuilder sb = new StringBuilder();
@@ -45,7 +45,6 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
-     * 
      * @see com.datatrees.crawler.core.processor.common.resource.DataResource#getData
      * (java.util.Map)
      */
@@ -65,7 +64,6 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
-     * 
      * @see com.datatrees.crawler.core.processor.common.resource.DataResource#setData
      * (java.util.Map, java.lang.Object)
      */
@@ -102,34 +100,6 @@ public class GatewayServiceImpl implements DataResource {
     }
 
     @Override
-    public boolean sendMessage(Object message) {
-        if (null == message) {
-            return false;
-        }
-        if (message instanceof Map) {
-            return sendToQueue((Map<String, Object>) message);
-        }
-        try {
-            if (message instanceof TaskMessage) {
-                TaskMessage taskMessage = (TaskMessage) message;
-                Message mqMessage = new Message();
-                mqMessage.setTopic(taskMessage.getTopic());
-                String body = GsonUtils.toJson(taskMessage);
-                mqMessage.setBody(body.getBytes());
-                SendResult sendResult = producer.send(mqMessage);
-                logger.info("send result message:" + body + "result:" + sendResult);
-                if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        return false;
-    }
-
-
-    @Override
     public boolean ttlSave(String key, String value, long timeOut) {
         try {
             redisDao.getRedisTemplate().opsForValue().set(key, value);
@@ -143,7 +113,6 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * com.datatrees.crawler.core.processor.common.resource.DataResource#ttlPush(java.lang.String,
      * java.lang.String, long)
@@ -162,7 +131,6 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * com.datatrees.crawler.core.processor.common.resource.DataResource#deleteKey(java.lang.String)
      */
@@ -177,5 +145,25 @@ public class GatewayServiceImpl implements DataResource {
             logger.error(e.getMessage(), e);
             return false;
         }
+    }
+
+    @Override
+    public boolean sendMessage(String topic, Map<String, Object> body) {
+        int retry = 0;
+        while (retry++ <= 3) {
+            try {
+                Message mqMessage = new Message();
+                mqMessage.setTopic(topic);
+                mqMessage.setBody(GsonUtils.toJson(body).getBytes());
+                SendResult sendResult = producer.send(mqMessage);
+                logger.info("send result message:" + GsonUtils.toJson(body) + "result:" + sendResult);
+                if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
+                    return true;
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return false;
     }
 }
