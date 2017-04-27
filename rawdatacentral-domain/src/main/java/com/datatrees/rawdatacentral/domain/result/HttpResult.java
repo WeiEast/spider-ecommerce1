@@ -84,7 +84,7 @@ public class HttpResult<T> implements Serializable {
         this.failure();
     }
 
-    public HttpResult failure() {
+    public HttpResult<T> failure() {
         this.setStatus(false);
         this.setResponseCode(-1);
         this.setMessage("处理失败");
@@ -92,7 +92,7 @@ public class HttpResult<T> implements Serializable {
         return this;
     }
 
-    public HttpResult success() {
+    public HttpResult<T> success() {
         this.setStatus(true);
         this.setResponseCode(1);
         this.setMessage("处理成功!");
@@ -100,7 +100,7 @@ public class HttpResult<T> implements Serializable {
         return this;
     }
 
-    public HttpResult success(T data) {
+    public HttpResult<T> success(T data) {
         this.success();
         this.setData(data);
         return this;
