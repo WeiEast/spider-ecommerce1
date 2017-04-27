@@ -12,6 +12,7 @@ import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -95,6 +97,21 @@ public class CrawlerServiceImpl implements CrawlerService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public HttpResult<String> importStatus(long taskId, int type, Map<String, Object> extra) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<String> fetchStatus(long taskId, int type, Map<String, Object> extra) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<Boolean> verifyQr(long taskId, Map<String, Object> extra) {
+        return null;
     }
 
 }
