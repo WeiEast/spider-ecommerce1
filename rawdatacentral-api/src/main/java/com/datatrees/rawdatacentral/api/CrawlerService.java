@@ -34,13 +34,13 @@ public interface CrawlerService {
      * APP向rawdata传入短信验证码、图片验证码等状态 type 0:短信验证码 1:图片验证码 
      * 
      */
-    public HttpResult importStatus(long taskId, int type, Map<String, Object> extra);
+    public HttpResult<String> importStatus(long taskId, int type, Map<String, Object> extra);
 
     // APP模拟登录前获取或者刷新短信、二维码、验证码等 type 0:短信验证码 1:图片验证码 2:二维码
-    public HttpResult fetchStatus(long taskId, int type, Map<String, Object> extra);
+    public HttpResult<String> fetchStatus(long taskId, int type, Map<String, Object> extra);
 
     // APP检测二维码扫描是否成功
-    public HttpResult verifyQr(long taskId, Map<String, Object> extra);
+    public HttpResult<Boolean> verifyQr(long taskId, Map<String, Object> extra);
 
 
 }
