@@ -1,3 +1,6 @@
 dependencies {
     compile project(':rawdatacentral-domain')
+    testCompile("com.alibaba:dubbo:${dubboVersion}") {
+        exclude(module: 'spring')
+    }
 }

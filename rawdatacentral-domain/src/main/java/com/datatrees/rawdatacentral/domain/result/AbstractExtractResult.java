@@ -8,13 +8,10 @@
  */
 package com.datatrees.rawdatacentral.domain.result;
 
+import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+
 import java.io.Serializable;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
 
 
 /**
@@ -24,7 +21,6 @@ import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
  * @since 2015年7月27日 下午2:55:43
  */
 public abstract class AbstractExtractResult implements Serializable {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractExtractResult.class);
 
     /**
      *

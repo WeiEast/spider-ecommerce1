@@ -1,0 +1,5 @@
+dependencies {
+    compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true){
+        transitive = false
+    }
+}
