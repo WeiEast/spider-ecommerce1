@@ -156,7 +156,7 @@ public class Collector {
         String templateId = taskMessage.getTemplateId();
         String uniqueSuffix = taskMessage.getUniqueSuffix();
         String serialNum = taskMessage.getCollectorMessage().getSerialNum();
-        String accountNo = ProcessorContextUtil.getAccountNo(taskMessage.getContext());
+        String accountNo = taskMessage.getContext().getString(AttributeKey.ACCOUNT_NO);
         String path = accountNo;
         path = StringUtils.isNotBlank(templateId) ? path + "_" + templateId : path;
         path = StringUtils.isNotBlank(uniqueSuffix) ? path + "_" + uniqueSuffix : path;
