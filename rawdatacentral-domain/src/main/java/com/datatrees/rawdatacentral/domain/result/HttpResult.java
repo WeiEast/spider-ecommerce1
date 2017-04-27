@@ -8,7 +8,7 @@ import java.util.Map;
  * http接口返回信息
  * Created by zhouxinghai on 2017/4/27.
  */
-public class HttpResult implements Serializable {
+public class HttpResult<T> implements Serializable {
 
     /**
      * true:操作成功 false:操作失败
@@ -28,7 +28,7 @@ public class HttpResult implements Serializable {
     /**
      * 返回数据
      */
-    private Object              data;
+    private T                   data;
 
     /**
      * 返回信息扩展
@@ -64,11 +64,11 @@ public class HttpResult implements Serializable {
         this.responseCode = responseCode;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
@@ -100,7 +100,7 @@ public class HttpResult implements Serializable {
         return this;
     }
 
-    public HttpResult success(Object data) {
+    public HttpResult success(T data) {
         this.success();
         this.setData(data);
         return this;
