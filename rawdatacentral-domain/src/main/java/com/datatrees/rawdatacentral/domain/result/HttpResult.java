@@ -1,21 +1,44 @@
 package com.datatrees.rawdatacentral.domain.result;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * http接口返回信息
  * Created by zhouxinghai on 2017/4/27.
  */
 public class HttpResult implements Serializable {
 
-    private boolean status       = false;
+    /**
+     * true:操作成功 false:操作失败
+     */
+    private boolean             status       = false;
 
-    private String  message      = "处理失败";
+    /**
+     * 返回提示信息
+     */
+    private String              message      = "处理失败";
 
-    private int     responseCode = -1;
+    /**
+     * 返回代码: 小于0:失败,大于0:操作成功
+     */
+    private int                 responseCode = -1;
 
-    private Object  data;
+    /**
+     * 返回数据
+     */
+    private Object              data;
 
-    private long    timestamp    = System.currentTimeMillis();
+    /**
+     * 返回信息扩展
+     */
+    private Map<String, Object> extra        = new HashMap<>();
+
+    /**
+     * 时间戳
+     */
+    private long                timestamp    = System.currentTimeMillis();
 
     public boolean getStatus() {
         return status;
@@ -57,31 +80,29 @@ public class HttpResult implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public static HttpResult Failure() {
-        HttpResult result = new HttpResult();
-        result.setStatus(false);
-        result.setResponseCode(-1);
-        result.setMessage("处理失败");
-        result.setTimestamp(System.currentTimeMillis());
-        return result;
+    public HttpResult() {
+        this.failure();
     }
 
-    public static HttpResult Success() {
-        HttpResult result = new HttpResult();
-        result.setStatus(true);
-        result.setResponseCode(1);
-        result.setMessage("处理成功!");
-        result.setTimestamp(System.currentTimeMillis());
-        return result;
+    public HttpResult failure() {
+        this.setStatus(false);
+        this.setResponseCode(-1);
+        this.setMessage("处理失败");
+        this.setTimestamp(System.currentTimeMillis());
+        return this;
     }
 
-    public static HttpResult Success(Object data) {
-        HttpResult result = new HttpResult();
-        result.setStatus(true);
-        result.setResponseCode(1);
-        result.setMessage("处理成功!");
-        result.setTimestamp(System.currentTimeMillis());
-        result.setData(data);
-        return result;
+    public HttpResult success() {
+        this.setStatus(true);
+        this.setResponseCode(1);
+        this.setMessage("处理成功!");
+        this.setTimestamp(System.currentTimeMillis());
+        return this;
+    }
+
+    public HttpResult success(Object data) {
+        this.success();
+        this.setData(data);
+        return this;
     }
 }
