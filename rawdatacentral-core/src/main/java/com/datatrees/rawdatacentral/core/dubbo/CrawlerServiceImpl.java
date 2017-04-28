@@ -14,16 +14,13 @@ import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -106,23 +103,17 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<String> importStatus(long taskId, int type, Map<String, Object> extra) {
-        String key = "verify_result_" + taskId;
-        HttpResult<String> result = new HttpResult<String>();
-        if(redisService.saveListString(key, Arrays.asList((String) extra.get("code")))){
-            return result.success();
-        }
-        
-        return result.failure();
-    }
-
-    @Override
-    public HttpResult<String> fetchStatus(long taskId, int type, Map<String, Object> extra) {
+    public HttpResult<String> importStatus(long taskId, int type, String attrJson) {
         return null;
     }
 
     @Override
-    public HttpResult<Boolean> verifyQr(long taskId, Map<String, Object> extra) {
+    public HttpResult<String> fetchStatus(long taskId, int type, String attrJson) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<Boolean> verifyQr(long taskId, String attrJson) {
         return null;
     }
 
