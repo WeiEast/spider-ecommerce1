@@ -1,0 +1,42 @@
+def mainClass = 'com.datatrees.rawdatacentral.main.Application';
+jar {
+    def libs = "";
+    configurations.compile.each { libs += "lib/" + it.name + " " }
+    manifest {
+        attributes 'Main-Class': mainClass
+        attributes 'Class-Path': libs
+    }
+}
+
+task tarApp(type: Tar) {
+    archiveName = "$rootProject.name" + "-" + "$version" + ".tar.gz"
+    compression = Compression.GZIP
+    destinationDir = file("$rootDir/target") //打包到目录下
+    extension = 'tar.gz'
+    into("$rootProject.name") {
+        from "$rootDir/target/$rootProject.name"
+    }
+}
+
+task releaseMain() {
+    doLast {
+        delete {
+            delete "$rootDir/target"
+        }
+        copy {
+            from file("$buildDir/libs/$project.name-$version" + ".jar")
+            into "$rootDir/target/$rootProject.name"
+        }
+        file("$rootDir/target/$rootProject.name/$project.name-$version" + ".jar").renameTo("$rootDir/target/$rootProject.name/$project.name" + ".jar")
+        copy {
+            from configurations.compile
+            into "$rootDir/target/$rootProject.name/lib"
+        }
+        copy {
+            from "$rootDir"
+            into "$rootDir/target/$rootProject.name"
+            include('bin', 'install', 'logs', 'plugin', 'PROG_VERSION.def')
+        }
+        println "源码文件:" + "$rootDir/target/$rootProject.name" + "-" + "$version" + ".tar.gz"
+    }
+}
