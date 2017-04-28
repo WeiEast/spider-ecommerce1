@@ -1,6 +1,93 @@
+apply plugin: 'application'
+
+mainClassName = "com.datatrees.rawdatacentral.main.Application"
+
+def app_name = rootProject.name;
+def target_dir = "$rootDir/target/$app_name"
+
 dependencies {
-  compile project(':rawdatacentral-core')
-  compile project(':rawdatacentral-extractor')
-  compile project(':rawdatacentral-submitter')
-  compile project(':rawdatacentral-collector')
+    compile project(':rawdatacentral-core')
+    compile project(':rawdatacentral-extractor')
+    compile project(':rawdatacentral-submitter')
+    compile project(':rawdatacentral-collector')
 }
+
+//task copyJars(type: Copy) {
+//    println '拷贝jar到lib'
+//    from configurations.compile
+//    into '../target/rawdata/lib'
+//}
+//
+//task copyResouces(type: Copy) {
+//    from ('../')
+//    into file("$buildDir/")
+//    include ('bin/*','install/*','logs/*','plugin/*')
+//}
+//
+////清除上次的编译过的文件
+//task clearPj(type: Delete) {
+//    println "清理数据"
+//    delete 'build', '../target'
+//}
+//
+////把JAR复制到目标目录
+//task releaseMain(type: Copy, dependsOn: [clearPj,copyResouces,copyJars]) {
+//    from('build/libs') {
+//        include '*.jar'
+//    }
+//    into('target')
+//    print "希望"
+//}
+//
+//
+//task mytask(){
+//    print '$buildDir'
+//}
+
+task tarApp(type: Tar) {
+    description "这里是打包哦"
+    group "Build"
+    archiveName = "$app_name" + "-" + "$version" + ".tar.gz"
+    compression = Compression.GZIP
+    destinationDir = file("$rootDir/target") //打包到目录下
+    extension = 'tar.gz'
+    into("$app_name") {
+        from "$target_dir"
+    }
+}
+
+task releaseMain() {
+    doLast {
+        delete {
+            delete "$rootDir/target"
+        }
+        copy {
+            from file("$buildDir/libs/$project.name-$version" + ".jar")
+            into "$target_dir"
+        }
+        file("$target_dir/$project.name-$version" + ".jar").renameTo("$target_dir/$project.name" + ".jar")
+        copy {
+            from configurations.compile
+            into "$target_dir/lib"
+        }
+        copy {
+            from "$rootDir/bin"
+            into "$target_dir/bin"
+        }
+        copy {
+            from "$rootDir/install"
+            into "$target_dir/install"
+        }
+        copy {
+            from "$rootDir/logs"
+            into "$target_dir/logs"
+        }
+        copy {
+            from "$rootDir/plugin"
+            into "$target_dir/plugin"
+        }
+        logger.info("哈哈这个比较好用")//要配合gradle clean --info 使用
+        println "$buildDir I'm $rootProject.rootDir  $rootDir $version"
+    }
+}
+//releaseMain.dependsOn rootProject.allprojects.clean

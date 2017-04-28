@@ -4,7 +4,7 @@ allprojects {
     apply plugin: "maven"
 
     group = 'com.datatrees.rawdatacentral'
-    version = '3.0.2-SNAPSHOT'
+    version = '3.0.3-SNAPSHOT'
     description = "爬虫核心"
 
     sourceCompatibility = 1.8
@@ -40,6 +40,21 @@ allprojects {
         mavenLocal()
     }
 
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                configuration = configurations.deployerJars
+                snapshotRepository(url: "http://192.168.5.252:8081/nexus/content/repositories/snapshots/") {
+                    authentication(userName: "admin", password: "admin123")
+                }
+                repository(url: "http://192.168.5.252:8081/nexus/content/repositories/releases/") {
+                    authentication(userName: "admin", password: "admin123")
+                }
+            }
+
+        }
+    }
+
 
     configurations.all {
         resolutionStrategy.cacheChangingModulesFor 0, "seconds"
@@ -49,6 +64,8 @@ allprojects {
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
     }
+
+
 
 }
 
@@ -88,3 +105,5 @@ subprojects {
         }
     }
 }
+
+
