@@ -26,7 +26,7 @@ import javax.mail.Store;
 public class IMAPMailClient {
 
     public static Folder getQQInbox(String host, String username, String password) throws MessagingException {
-        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+        int addProvider = Security.addProvider(null);
         final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 
         Properties props = System.getProperties();

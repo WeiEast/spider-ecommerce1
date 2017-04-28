@@ -23,28 +23,24 @@ public class GatewayServiceImpl implements DataResource {
     private static final Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
 
     @Resource
-    private RedisDao            redisDao;
+    private RedisDao redisDao;
 
     @Resource
-    private MessageFactory      messageFactory;
+    private MessageFactory messageFactory;
 
     @Resource
-    private MQProducer          producer;
+    private MQProducer producer;
 
-    private String genRedisKey(String userId, String websiteName) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("verify_result_").append(websiteName).append("_").append(userId);
-        return sb.toString();
-    }
 
     private String genRedisKey(Map<String, Object> parameters) {
-        String userId = String.valueOf(parameters.get("userId"));
-        String websiteName = String.valueOf(parameters.get("websiteName"));
-        return this.genRedisKey(userId, websiteName);
+        StringBuilder sb = new StringBuilder();
+        String taskId = String.valueOf(parameters.get("taskId"));
+        return sb.append("verify_result_").append("_").append(taskId).toString();
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see com.datatrees.crawler.core.processor.common.resource.DataResource#getData
      * (java.util.Map)
      */
@@ -64,6 +60,7 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
+     * 
      * @see com.datatrees.crawler.core.processor.common.resource.DataResource#setData
      * (java.util.Map, java.lang.Object)
      */
@@ -113,6 +110,7 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
+     * 
      * @see
      * com.datatrees.crawler.core.processor.common.resource.DataResource#ttlPush(java.lang.String,
      * java.lang.String, long)
@@ -131,6 +129,7 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
+     * 
      * @see
      * com.datatrees.crawler.core.processor.common.resource.DataResource#deleteKey(java.lang.String)
      */
