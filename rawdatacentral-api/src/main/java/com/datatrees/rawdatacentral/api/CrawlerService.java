@@ -40,7 +40,7 @@ public interface CrawlerService {
     public HttpResult<String> fetchStatus(long taskId, int type, String attrJson);
 
     // APP检测二维码扫描是否成功
-    public HttpResult<Boolean> verifyQr(long taskId, String attrJson);
+    public HttpResult<String> verifyQr(long taskId, String attrJson);
 
 
 }

@@ -8,7 +8,9 @@
  */
 package com.datatrees.rawdatacentral.core.dubbo;
 
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
@@ -111,17 +113,18 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<String> importStatus(long taskId, int type, String code) {
-        HttpResult<String> result = new HttpResult<String>();
-        String key = "verify_result_" + taskId;
-        Map<String, Object> map = new HashMap<String, Object>();
-        if (type == 0) {
-            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
-        } else if (type == 1) {
-            map.put("status", "REFRESH_LOGIN_CODE");
-        }
-
-        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
-        return result.failure();
+//        HttpResult<String> result = new HttpResult<String>();
+//        String key = "verify_result_" + taskId;
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        if (type == 0) {
+//            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
+//        } else if (type == 1) {
+//            map.put("status", "REFRESH_LOGIN_CODE");
+//        }
+//
+//        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
+//        return result.failure();
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -145,52 +148,66 @@ public class CrawlerServiceImpl implements CrawlerService {
         // }
         // }
         // return result.failure();
-        HttpResult<String> result = new HttpResult<String>();
-        String key = "verify_result_" + taskId;
-        Map<String, Object> map = new HashMap<String, Object>();
-        if (type == 0) {
-            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
-        } else if (type == 1) {
-            map.put("status", "REFRESH_LOGIN_CODE");
-        }
-
-        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
-
-        return result.failure();
+//        HttpResult<String> result = new HttpResult<String>();
+//        String key = "verify_result_" + taskId;
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        if (type == 0) {
+//            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
+//        } else if (type == 1) {
+//            map.put("status", "REFRESH_LOGIN_CODE");
+//        }
+//
+//        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
+//
+//        return result.failure();
+        return null;
 
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public HttpResult<Boolean> verifyQr(long taskId, String attrJson) {
-        HttpResult<Boolean> result = new HttpResult<Boolean>();
+    public HttpResult<String> verifyQr(long taskId, String attrJson) {
+        HttpResult<String> result = new HttpResult<String>();
         String key = "verify_result_" + taskId;
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("status", "VERIFY_LOGIN_QR_CODE");
-
+        map.put("status", "VERIFY_QR_CODE");
+        String getKey = "plugin_remark_" + taskId;
+        redisDao.deleteKey(getKey);
         if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
-            while (true) {
-                key = "plugin_remark_" + taskId;
-                String pullResult = redisDao.pullResult(key);
+            try {
 
-                Map<String, Object> resultMap =
-                        (Map<String, Object>) GsonUtils.fromJson(pullResult, new TypeToken<HashMap<String, Object>>() {}.getType());
-                String remark;
-                if (resultMap != null) {
-                    remark = StringUtils.defaultIfBlank((String) resultMap.get("remark"), "");
-                    if (remark.equals("LOGIN_SUCCESS")) {
+                while (!isTimeOut(System.currentTimeMillis(), "alipay.com")) {
+
+                    String pullResult = redisDao.pullResult(getKey);
+
+                    Map<String, Object> resultMap =
+                            (Map<String, Object>) GsonUtils.fromJson(pullResult, new TypeToken<HashMap<String, Object>>() {}.getType());
+                    String qrStatus;
+                    if (resultMap != null) {
+                        qrStatus = StringUtils.defaultIfBlank((String) resultMap.get(PluginConstants.FIELD), "");
                         result = result.success();
-                        result.setData(true);
+                        result.setData(qrStatus);
                         return result;
                     }
-
+                    Thread.sleep(3000);
                 }
+            } catch (Exception e) {
+                logger.warn(e.getMessage(), e);
             }
         }
 
         result = result.failure();
-        result.setData(false);
         return result;
+    }
+
+
+    private boolean isTimeOut(long startTime, String websiteName) throws Exception {
+        long now = System.currentTimeMillis();
+        int maxInterval = PropertiesConfiguration.getInstance().getInt(websiteName + ".default.max.waittime", 2 * 60 * 1000);
+        if (now <= startTime + maxInterval) {
+            return false;
+        }
+        return true;
     }
 
 
