@@ -110,36 +110,53 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<String> importStatus(long taskId, int type, String attrJson) {
+    public HttpResult<String> importStatus(long taskId, int type, String code) {
         HttpResult<String> result = new HttpResult<String>();
-
         String key = "verify_result_" + taskId;
-        if (redisDao.saveListString(key, Arrays.asList(attrJson))) {
-            return result.success();
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (type == 0) {
+            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
+        }else if(type ==1){
+            map.put("status", "REFRESH_LOGIN_CODE");
         }
 
+        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
+        }
         return result.failure();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public HttpResult<String> fetchStatus(long taskId, int type, String attrJson) {
+//        HttpResult<String> result = new HttpResult<String>();
+//        String key = "verify_result_" + taskId;
+//        Map<String, Object> resultMap;
+//        if (redisDao.saveListString(key, Arrays.asList(attrJson))) {
+//            while (true) {
+//                String pullResult = redisDao.pullResult("plugin_remark_" + taskId);
+//                if (StringUtils.isNotBlank(pullResult)) {
+//                    resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult, new TypeToken<HashMap<String, Object>>() {}.getType());
+//                    result = result.success();
+//                    if (StringUtils.isNotBlank((String) resultMap.get("remark"))) {
+//                        result.setData((String) resultMap.get("remark"));
+//                    }
+//                    return result;
+//                }
+//            }
+//        }
+//        return result.failure();
         HttpResult<String> result = new HttpResult<String>();
         String key = "verify_result_" + taskId;
-        Map<String, Object> resultMap;
-        if (redisDao.saveListString(key, Arrays.asList(attrJson))) {
-            while (true) {
-                String pullResult = redisDao.pullResult("plugin_remark_" + taskId);
-                if (StringUtils.isNotBlank(pullResult)) {
-                    resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult, new TypeToken<HashMap<String, Object>>() {}.getType());
-                    result = result.success();
-                    if (StringUtils.isNotBlank((String) resultMap.get("remark"))) {
-                        result.setData((String) resultMap.get("remark"));
-                    }
-                    return result;
-                }
-            }
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (type == 0) {
+            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
+        }else if(type ==1){
+            map.put("status", "REFRESH_LOGIN_CODE");
         }
+
+        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
+        }
+
         return result.failure();
 
     }
