@@ -1,7 +1,7 @@
 def mainClass = 'com.datatrees.rawdatacentral.main.Application'
 jar {
     sourceSets.main.resources.exclude('**/*')
-    sourceSets.main.resources.include('cacerts/*')
+//    sourceSets.main.resources.include('cacerts/*')
     def libs = "conf/";
     configurations.compile.each { libs += " lib/" + it.name }
     manifest {
