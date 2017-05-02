@@ -1,8 +1,6 @@
 dependencies {
-    compile project(':rawdatacentral-core')
-    compile project(':rawdatacentral-extractor')
-    compile project(':rawdatacentral-submitter')
-    compile project(':rawdatacentral-collector')
+  compile project(':rawdatacentral-core')
+  compile project(':rawdatacentral-extractor')
+  compile project(':rawdatacentral-submitter')
+  compile project(':rawdatacentral-collector')
 }
-apply from: rootProject.file('install.gradle');
-
