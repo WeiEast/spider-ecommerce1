@@ -8,27 +8,19 @@
  */
 package com.datatrees.rawdatacentral.core.dubbo;
 
-import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.service.RedisService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.google.gson.reflect.TypeToken;
-
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -43,7 +35,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     private WebsiteService websiteService;
 
     @Resource
-    private RedisDao redisDao;
+    private RedisService redisService;
 
     /*
      * (non-Javadoc)
@@ -112,35 +104,12 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<String> importStatus(long taskId, int type, String attrJson) {
-        HttpResult<String> result = new HttpResult<String>();
-
-        String key = "verify_result_" + taskId;
-        if (redisDao.saveListString(key, Arrays.asList(attrJson))) {
-            return result.success();
-        }
-
-        return result.failure();
+        return null;
     }
 
     @Override
     public HttpResult<String> fetchStatus(long taskId, int type, String attrJson) {
-        HttpResult<String> result = new HttpResult<String>();
-        String key = "verify_result_" + taskId;
-        Map<String, Object> resultMap;
-        if (redisDao.saveListString(key, Arrays.asList(attrJson))) {
-            while (true) {
-                String pullResult = redisDao.pullResult("plugin_remark_" + taskId);
-                if (StringUtils.isNotBlank(pullResult)) {
-                    resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult, new TypeToken<HashMap<String, Object>>() {}.getType());
-                    result = result.success();
-                    if(StringUtils.isNotBlank((String)resultMap.get("remark"))){
-                        result.setData((String)resultMap.get("remark"));
-                    }
-                    return result;
-                }
-            }
-        }
-        return result.failure();
+        return null;
     }
 
     @Override
