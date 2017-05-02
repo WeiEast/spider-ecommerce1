@@ -17,6 +17,8 @@ public enum TaskStatusEnum {
     WAITING_FOR_PICTURE_VERIFY("WAITING_FOR_PICTURE_VERIFY", "等待图片验证码"),
     WAITING_FOR_QR_VERIFY("WAITING_FOR_QR_VERIFY", "等待二维码"),
     WAITING_FOR_URL_VERIFY("WAITING_FOR_URL_VERIFY", "等待前端页面返回"),
+    VERIFY_QR_SUCCESS("VERIFY_QR_SUCCESS", "二维码验证成功"),
+    VERIFY_QR_FAILED("VERIFY_QR_FAILED", "二维码验证失败"),
     LOGIN_SUCCESS("LOGIN_SUCCESS", "登录成功"),
     LOGIN_FAILED("LOGIN_FAILED", "登录失败"),
     CRAWLER_FAILED("CRAWLER_FAILED", "爬取失败"),
@@ -24,7 +26,6 @@ public enum TaskStatusEnum {
     TASK_TIMEOUT("TASK_TIMEOUT", "任务超时"),
     TASK_SUCCESS("TASK_SUCCESS", "任务成功"),
     TASK_FAIL("TASK_FAIL", "任务失败"),;
-
 
     /**
      * 状态码
@@ -51,10 +52,6 @@ public enum TaskStatusEnum {
 
     @Override
     public String toString() {
-        return "TaskStatusEnum{" +
-                "code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+        return "TaskStatusEnum{" + "code='" + code + '\'' + ", name='" + name + '\'' + '}';
     }
 }
-

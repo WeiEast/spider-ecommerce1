@@ -34,7 +34,7 @@ public interface CrawlerService {
      * APP向rawdata传入短信验证码、图片验证码等状态 type 0:短信验证码 1:图片验证码 
      * 
      */
-    public HttpResult<String> importStatus(long taskId, int type, String attrJson);
+    public HttpResult<String> importStatus(long taskId, int type, String code);
 
     // APP模拟登录前获取或者刷新短信、二维码、验证码等 type 0:短信验证码 1:图片验证码 2:二维码
     public HttpResult<String> fetchStatus(long taskId, int type, String attrJson);
