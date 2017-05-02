@@ -1,30 +1,25 @@
 package com.datatrees.rawdatacentral.collector;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.datatrees.rawdatacentral.collector.actor.Collector;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.math.RandomUtils;
-import org.junit.Test;
-
 import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.crawler.core.processor.common.CalculateUtil;
-import com.datatrees.rawdatacentral.core.model.MailBill;
+import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
-import com.datatrees.rawdatacentral.core.model.message.impl.ReissueDetectMessage;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.math.RandomUtils;
+import org.junit.Test;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -355,6 +350,13 @@ public class ActorTest extends AbstractTest {
         CollectorMessage message = readFromFile();
         collector.processMessage(message);
 
+    }
+
+    @Test
+    public void testStart(){
+        while(true){
+            TimeUnit.SECONDS.toSeconds(60);
+        }
     }
 
     private CollectorMessage readFromFile() throws IOException {
