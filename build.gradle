@@ -4,7 +4,7 @@ allprojects {
     apply plugin: "maven"
 
     group = 'com.datatrees.rawdatacentral'
-    version = '3.0.3-SNAPSHOT'
+    version = '3.0.4-SNAPSHOT'
     description = "爬虫核心"
 
     sourceCompatibility = 1.8
@@ -72,7 +72,7 @@ allprojects {
 ext {
     crawlerCoreVersion = "3.0.5-SNAPSHOT"
     logstashLogbackEncoderVersion = "4.4"
-    abstractpluginVersion = "1000.1.4-SNAPSHOT"
+    abstractpluginVersion = "1000.1.5-SNAPSHOT"
     superDiamondClientVersion = "1.1.3-SNAPSHOT"
     webrobotClientVersion = "1.0.0-SNAPSHOT"
     databossApiClientSdkVersion = "1.0.8-SNAPSHOT"
