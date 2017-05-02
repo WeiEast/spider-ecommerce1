@@ -16,9 +16,6 @@
 		<result column="InitSetting" property="initSetting" />
 		<result column="LoginTip" property="loginTip" />
 		<result column="VerifyTip" property="verifyTip" />
-		<result column="InitTimeout" property="initTimeout" />
-		<result column="CodeWaitTime" property="codeWaitTime" />
-		<result column="LoginTimeout" property="loginTimeout" />
 		<result column="ResetType" property="resetType" />
 		<result column="SmsTemplate" property="smsTemplate" />
 		<result column="SmsReceiver" property="smsReceiver" />
