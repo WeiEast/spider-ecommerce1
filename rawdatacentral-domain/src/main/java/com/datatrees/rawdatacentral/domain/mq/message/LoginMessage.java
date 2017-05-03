@@ -32,6 +32,8 @@ public class LoginMessage implements Serializable {
      * head配置项:Set-Cookie
      */
     private String setCookie;
+    
+    private String accountNo;
 
     public String getWebsiteName() {
         return websiteName;
@@ -71,5 +73,19 @@ public class LoginMessage implements Serializable {
 
     public void setSetCookie(String setCookie) {
         this.setCookie = setCookie;
+    }
+
+    /**
+     * @return the accountNo
+     */
+    public String getAccountNo() {
+        return accountNo;
+    }
+
+    /**
+     * @param accountNo the accountNo to set
+     */
+    public void setAccountNo(String accountNo) {
+        this.accountNo = accountNo;
     }
 }
