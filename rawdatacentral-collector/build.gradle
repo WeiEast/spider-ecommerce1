@@ -2,4 +2,9 @@ dependencies {
     compile project(':rawdatacentral-core')
     compile project(':rawdatacentral-extractor')
     compile "com.sleepycat:je:${jeVersion}"
+    testCompile "junit:junit:${junitVersion}"
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
+        exclude(module: 'commons-logging')
+
+    }
 }
