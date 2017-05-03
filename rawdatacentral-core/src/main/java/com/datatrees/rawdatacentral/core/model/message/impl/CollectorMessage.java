@@ -25,7 +25,7 @@ public class CollectorMessage extends MessageInfo {
     private String cookie;
     private String websiteName;
     private long taskId;
-    private String AccountNo;
+    private String accountNo;
 
 
     private String serialNum;
@@ -209,14 +209,14 @@ public class CollectorMessage extends MessageInfo {
      * @return the accountNo
      */
     public String getAccountNo() {
-        return AccountNo;
+        return accountNo;
     }
 
     /**
      * @param accountNo the accountNo to set
      */
     public void setAccountNo(String accountNo) {
-        AccountNo = accountNo;
+        accountNo = accountNo;
     }
 
 }
