@@ -57,26 +57,29 @@ public class CrawlerServiceImpl implements CrawlerService {
     public WebsiteConf getWebsiteConf(String websiteName) {
         Map<String, String> map = (Map<String, String>) CacheUtil.INSTANCE.getObject("WEBSITENAME_TRANSFORM_MAP");
         String newWebsiteName;
-        if(map!=null){
+        if (map != null) {
             newWebsiteName = map.get(websiteName);
-        }else{
-            map = (Map<String, String>) GsonUtils.fromJson(PropertiesConfiguration.getInstance().get("WEBSITENAME_TRANSFORM_MAP"), new TypeToken<HashMap<String, String>>() {}.getType());
+        } else {
+            map = (Map<String, String>) GsonUtils.fromJson(PropertiesConfiguration.getInstance().get("WEBSITENAME_TRANSFORM_MAP"),
+                    new TypeToken<HashMap<String, String>>() {}.getType());
             CacheUtil.INSTANCE.insertObject("WEBSITENAME_TRANSFORM_MAP", map);
             newWebsiteName = map.get(websiteName);
         }
-        if(StringUtils.isNotBlank(newWebsiteName)){
+        if (StringUtils.isNotBlank(newWebsiteName)) {
             Website website = websiteService.getCachedWebsiteByName(newWebsiteName);
-            if (website != null) {
-                return website.getWebsiteConf();
+            WebsiteConf conf = null;
+            if (website != null && (conf = website.getWebsiteConf()) != null) {
+                conf.setName(websiteName);
+                return conf;
             } else {
                 logger.warn("no active website named {}", newWebsiteName);
             }
-        }else{
+        } else {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
         }
-        return null; 
-        
-        
+        return null;
+
+
     }
 
     /*
@@ -130,17 +133,17 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<String> importStatus(long taskId, int type, String code) {
-//        HttpResult<String> result = new HttpResult<String>();
-//        String key = "verify_result_" + taskId;
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        if (type == 0) {
-//            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
-//        } else if (type == 1) {
-//            map.put("status", "REFRESH_LOGIN_CODE");
-//        }
-//
-//        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
-//        return result.failure();
+        // HttpResult<String> result = new HttpResult<String>();
+        // String key = "verify_result_" + taskId;
+        // Map<String, Object> map = new HashMap<String, Object>();
+        // if (type == 0) {
+        // map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
+        // } else if (type == 1) {
+        // map.put("status", "REFRESH_LOGIN_CODE");
+        // }
+        //
+        // if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
+        // return result.failure();
         return null;
     }
 
@@ -165,18 +168,18 @@ public class CrawlerServiceImpl implements CrawlerService {
         // }
         // }
         // return result.failure();
-//        HttpResult<String> result = new HttpResult<String>();
-//        String key = "verify_result_" + taskId;
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        if (type == 0) {
-//            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
-//        } else if (type == 1) {
-//            map.put("status", "REFRESH_LOGIN_CODE");
-//        }
-//
-//        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
-//
-//        return result.failure();
+        // HttpResult<String> result = new HttpResult<String>();
+        // String key = "verify_result_" + taskId;
+        // Map<String, Object> map = new HashMap<String, Object>();
+        // if (type == 0) {
+        // map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
+        // } else if (type == 1) {
+        // map.put("status", "REFRESH_LOGIN_CODE");
+        // }
+        //
+        // if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
+        //
+        // return result.failure();
         return null;
 
     }
