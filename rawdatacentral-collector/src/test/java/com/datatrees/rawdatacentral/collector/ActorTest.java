@@ -6,9 +6,13 @@ import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.processor.common.CalculateUtil;
+import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -32,11 +36,17 @@ public class ActorTest extends AbstractTest {
 
     @Resource
     private Collector collector;
-
+    @Resource
+    private CrawlerService cs;
 
     @Test
     public void testName() throws Exception {
         System.out.println(CalculateUtil.calculate("936.25 -(-57.61 )+468.85999999999996", 1));
+    }
+    @Test
+    public void ddd() throws Exception {
+        System.out.println(PropertiesConfiguration.getInstance());
+        WebsiteConf websiteConf = cs.getWebsiteConf("浙江移动");
     }
 
     @Test
@@ -45,11 +55,11 @@ public class ActorTest extends AbstractTest {
         message.setAccountNo("33");
         message.setTaskId(1);
         message.setCookie(
-                "device=;pgv_pvi=5292525568;qzone_token=1206282229;ptdrvs=EaVo4ubmAMbNHAvRKRkc13DJcakqiFLWqC1NayzAnvI_;ptisp=ctc;superkey=EsMhJem0aJm6kzoKNv5HrfGpVEUZpmD3OOQSbRya-aw_;superuin=o0179047740;qzone_p_skey=;sid=179047740&b3b25e29fef6b47cba1d786837e4bb15,qVnpsa3FTNW5WcGQ4cy1KTmpTQnpPWndHby1VQmdxVHJKcVoxcnl2cUZQUV8.;qm_lg=qm_lg;edition=mail.qq.com;uin=o0179047740;qm_sk=179047740&4L3T6vN8;ssl_edition=sail.qq.com;pt2gguin=o0179047740;qm_flag=0;skey=@c7JkfOER5;confirmuin=0;pt_login_sig=S0XTM3lghtvkKSjc3jmrgUJQAlzgyscW0D-zgaIGgwAXlbvVYzjHSWGY*eJXPp8p;pt_clientip=1dbede48e6c63f66;qzone_skey=;p_luin=o0179047740;pt_serverip=8e3b0abf066221b3;x-stgw-ssl-info=b7d6666af943085f381d1494a901bf15_0.347_1493727371.987_1_3.1_N_Y_TLSv1.2_ECDHE-RSA-AES128-GCM-SHA256_12000_0:0:0:0:0:0:0;pgv_si=s6194349056;username=179047740&179047740;new_mail_num=179047740&0;supertoken=796402280;pt_user_id=5451982806120007992;qm_username=179047740;mpwd=46ecfd2effed85dMTQ5NjMxOTM3Mw@179047740@4;p_lskey=000400005ac7ae255d87f4a7e9ab9675cf3ec66be34a0d95243e9379e7830b3c0e83e9ad558af60ecb0436f9;ptvfsession=e6b71d3bf7d7005dcbdad313501bf6b4b8808fb60956b70d3a1071e4504f9328ca5f9f16a88e42ff04076bee6581fd6001ada02d97c7c419;p_uin=o0179047740;pt4_token=bd-Xr9oPMyXd6pE-6lJYpBQo5hRJh5o75DO2wXURzlI_;msid=9MhFpqvTIIyEfHYvXM3TivMc,4,qVnpsa3FTNW5WcGQ4cy1KTmpTQnpPWndHby1VQmdxVHJKcVoxcnl2cUZQUV8.;qm_ssum=179047740&0543a558c8d343ded85df68884c5310b;ptui_identifier=000D5530F605F7CA6A915F6F26789393973D987C90E49EF856848009;qqmail_alias=179047740@qq.com;p_skey=VzlkqS5nVpd8s-JNjSBzOZwGo-UBgqTrJqZ1ryvqFPQ_;pcache=46ecfd2effed85dMTQ5NjMxOTM3Mw@179047740@4;");
+                "new_mail_num=946315435&0; device=; superkey=H3Ra-VFgwsOz4qPEc*VIfnrrXpuG3yrO9GVBOd8UnmQ_; p_luin=o0946315435; p_lskey=00040000701f0a206e05f957dcc7b961c90220a010999bbaf3f32ce85bacf3ccd6b22ad99f302d51bd283c36; p_uin=o0946315435; pt_user_id=4261842138710356380; pt2gguin=o0946315435; qm_lg=qm_lg; ptdrvs=LuPA5*9grbmn*GXZachDbtO7cNgdzVzhgj-amTV7Jmc_; ptvfsession=0ba82bf54ecf8f9a019d47edc7290e41fd6331117e9fc60a83650b4df61ccdf4c7760cb7dbea66d978a223b08d718e16a0099bb25e853419; sid=946315435&5c305699e33af0f5f3f84a4128cdb880,qWVYwYWFUOHVvaEZZUTRza1JJQi1RVzYwbkloTHdodVpXU2hHeWQyTm1BZ18.; edition=mail.qq.com; qzone_token=2092816715; superuin=o0946315435; ptui_identifier=000D1EB7B9B469618CD6FBF46BCF1E4E14EF675ECF8032F641B02155; msid=z2TVljZ9O1xVVGw1XM3TivMc,4,qWVYwYWFUOHVvaEZZUTRza1JJQi1RVzYwbkloTHdodVpXU2hHeWQyTm1BZ18.; ptisp=cnc; confirmuin=0; skey=@V3VKZ9AsU; uin=o0946315435; qzone_p_skey=; pt4_token=fFU4-uO6N5vpXUkFTJ9jH6uNTTFLieQw3v*lSvqzamQ_; pt_serverip=3fda0af1726387dc; supertoken=3321753955; ssl_edition=sail.qq.com; pgv_si=s9322518528; qzone_skey=; pt_clientip=64a0af2bf60deab8; qm_username=946315435; p_skey=YV0aaT8uohFYQ4skRIB-QW60nIhLwhuZWShGyd2NmAg_; username=946315435&946315435; pgv_pvi=8086326272; pt_login_sig=sC7ahu6U6nugu4gNqnoiurUtgy-y2fF3j6JJN7W3x42c7rQqNF2dJJkmG74acQTG; qqmail_alias=946315435@qq.com; qm_flag=0");
         message.setTaskId(2100000146);
         message.setWebsiteName("qq.com");
         message.setEndURL(
-                "https://w.mail.qq.com/cgi-bin/today?sid=9MhFpqvTIIyEfHYvXM3TivMc,4,qVnpsa3FTNW5WcGQ4cy1KTmpTQnpPWndHby1VQmdxVHJKcVoxcnl2cUZQUV8.&first=1&mcookie=disabled");
+                "https://w.mail.qq.com/cgi-bin/today?sid=z2TVljZ9O1xVVGw1XM3TivMc,4,qWVYwYWFUOHVvaEZZUTRza1JJQi1RVzYwbkloTHdodVpXU2hHeWQyTm1BZ18.&first=1");
 
         collector.processMessage(message);
 
@@ -316,7 +326,7 @@ public class ActorTest extends AbstractTest {
                 "https://ebill.spdbccc.com.cn/cloudbank-portal/loginController/toLoGwxxhgKshkz9X30Gi28FUoxFSvEIqexT6lbFpZVcNCA8xDh$PQzQNV9TX8FDfkU5ZrC0xcD6LOH0fup2EDRei0a8$V3baSLisjCZlA==");
         message.setWebsiteName("spdb.com.cn");
         message.getProperty().put("seedurl",
-                "https://ebill.spdbccc.com.cn/cloudbank-portal/loginController/toLogin.action?zrz4ofxhgKshkz9XlazxjPjIgkgLejwa30Gi28FUoxFSvEIqexT6lbFpZVcNCA8xDh$PQzQNV9TX8FDfkU5ZrC0xcD6LOH0fup2EDRei0a8$V3baSLisjCZlA==");
+                "https://ebill.spdbccc.com.cn/cloudbank-portal/loginController/toLogin.action?zrz4ofa8h5IFb1udd/JAcjoWQd1OZbTumNYxL2UdZrb4uQ4thGA5DGWaIVJK2YX8Z1/5NNDAOkquZRzQb/NywFfXQAEMsqEUZUqxDbRxXvVt9KC30uyoWbGOBAOX7QuRPmiARNAWAfzg37VWDUz5iA==");
         collector.processMessage(message);
     }
 
