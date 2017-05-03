@@ -5,5 +5,10 @@ classes
 target
 build/
 log.txt
+.project
+.settings
+.classpath
+
+
 
 

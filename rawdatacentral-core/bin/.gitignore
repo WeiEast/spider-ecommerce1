@@ -1,0 +1,8 @@
+/application.properties
+/com/
+/db.properties
+/ibatis/
+/message
+/redis.properties
+/spring/
+/test.spring.xml
