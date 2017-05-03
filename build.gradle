@@ -54,7 +54,7 @@ subprojects {
         deployerJars
 
 //        all*.exclude group: "org.springframework", module: "spring"
-//        all*.exclude group: "asm", module: "asm"
+        all*.exclude group: "log4j", module: "log4j"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {

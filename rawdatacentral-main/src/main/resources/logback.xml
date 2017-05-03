@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration scan="true" scanPeriod="60 seconds">
 	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
-	<property name="LOG_FILE" value="/dashu/log/rawdata.log" />
+	<property name="LOG_FILE" value="/dashu/log/rawdatacentral.log" />
 	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<encoder>
@@ -43,7 +43,7 @@
 		<appender-ref ref="logback_FILE" />
 		<includeCallerData>true</includeCallerData>
 	</appender>
-	<root level="INFO">
+	<root level="DEBUG">
 		<appender-ref ref="ASYNC_logback" />
 		<appender-ref ref="STASH" />
 	</root>
