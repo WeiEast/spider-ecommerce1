@@ -53,7 +53,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.util.*;
@@ -66,35 +65,34 @@ import java.util.*;
 @Service
 public class Collector {
 
-    private static final Logger logger = LoggerFactory.getLogger(Collector.class);
+    private static final Logger    logger                     = LoggerFactory.getLogger(Collector.class);
 
     @Resource
-    private WebsiteService websiteService;
+    private WebsiteService         websiteService;
 
     @Resource
-    private TaskService taskService;
+    private TaskService            taskService;
 
     @Resource
-    private MessageFactory messageFactory;
+    private MessageFactory         messageFactory;
 
     @Resource
-    private MQProducer producer;
+    private MQProducer             producer;
 
     @Resource
-    private ZooKeeperClient zookeeperClient;
+    private ZooKeeperClient        zookeeperClient;
 
     @Resource
     private CollectorWorkerFactory collectorWorkerFactory;
 
     @Resource
-    private RedisDao redisDao;
+    private RedisDao               redisDao;
 
-    private static String duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
+    private static String          duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
 
-    private static String mqStatusTags = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
+    private static String          mqStatusTags               = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
 
-    private static String mqMessageSendTagPattern =
-            PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
+    private static String          mqMessageSendTagPattern    = PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
 
     private TaskMessage taskMessageInit(CollectorMessage message) {
         SearchProcessorContext context = null;
@@ -113,7 +111,7 @@ public class Collector {
             if (StringUtils.isNotBlank(message.getCookie())) {
                 ProcessorContextUtil.setCookieString(context, message.getCookie());
             }
-            ProcessorContextUtil.setValue(context, "endurl", message.getEndURL());
+            context.set(AttributeKey.END_URL, message.getEndURL());
             // 历史状态清理
             // String key = "verify_result_" + message.getWebsiteName() + "_" + message.getUser
             // Id();
@@ -151,8 +149,7 @@ public class Collector {
                 taskMessage.setUniqueSuffix(((SubTaskAble) message).getSubSeed().getUniqueSuffix());
                 ProxyManager proxyManager = context.getProxyManager();
                 if (((SubTaskAble) message).getSubSeed().getProxy() != null && proxyManager instanceof ProxyManagerWithScope) {
-                    ((ProxyManagerWithScope) proxyManager)
-                            .setManager(new ProxySharedManager(((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
+                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
                 }
             }
         }
@@ -229,11 +226,9 @@ public class Collector {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             if (e instanceof LoginTimeOutException) {
-                taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR,
-                        ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMessage() + " " + e.getMessage());
+                taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMessage() + " " + e.getMessage());
             } else if (e instanceof InterruptedException) {
-                taskMessage.getTask().setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR,
-                        ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage() + " " + e.getMessage());
+                taskMessage.getTask().setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR, ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage() + " " + e.getMessage());
             } else {
                 taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
             }
@@ -269,8 +264,7 @@ public class Collector {
             }
 
             StringBuilder resultMessageBuilder = new StringBuilder();
-            resultMessageBuilder.append("\"resultMsg\":").append(taskMessage.getTask().getResultMessage()).append(",\"processorLog\":")
-                    .append(GsonUtils.toJson(taskMessage.getContext().getProcessorLog()));
+            resultMessageBuilder.append("\"resultMsg\":").append(taskMessage.getTask().getResultMessage()).append(",\"processorLog\":").append(GsonUtils.toJson(taskMessage.getContext().getProcessorLog()));
             String startMsgJson = GsonUtils.toJson(message);
 
             if (startMsgJson.length() > PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000)) {
@@ -296,7 +290,7 @@ public class Collector {
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void sendResult(TaskMessage taskMessage, Map submitkeyResult, Set<String> resultTagSet) {
         Task task = taskMessage.getTask();
         ResultMessage resultMessage = new ResultMessage();
@@ -369,8 +363,7 @@ public class Collector {
                         keyResult.setResultEmpty(!notEmptyTag.contains(key));
                     }
                     try {
-                        Message mqMessage = messageFactory.getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult),
-                                "" + taskMessage.getTask().getId());
+                        Message mqMessage = messageFactory.getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
                         SendResult sendResult = producer.send(mqMessage);
                         logger.info("send result message:" + mqMessage + "result:" + sendResult);
                     } catch (Exception e) {
