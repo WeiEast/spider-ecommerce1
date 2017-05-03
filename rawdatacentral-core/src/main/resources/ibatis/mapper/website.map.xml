@@ -13,7 +13,7 @@
 	<resultMap class="WebsiteConf" id="RM-WebsiteConf">
 		<result column="WebsiteName" property="websiteName" />
 		<result column="WebsiteType" property="websiteType" />
-		<result column="InitSetting" property="initSetting" />
+		<result column="Conf" property="initSetting" />
 		<result column="LoginTip" property="loginTip" />
 		<result column="VerifyTip" property="verifyTip" />
 		<result column="ResetType" property="resetType" />
@@ -21,6 +21,7 @@
 		<result column="SmsReceiver" property="smsReceiver" />
 		<result column="ResetURL" property="resetURL" />
 		<result column="ResetTip" property="resetTip" />
+		<result column="Simulate" property="simulate" />
 	</resultMap>
 
 
@@ -36,7 +37,7 @@
 	</select>
 
 	<select id="getWebsiteConfById" parameterClass="int" resultMap="RM-WebsiteConf">
-		SELECT w.* from T_WEBSITE w WHERE w.Id = #id#
+		SELECT w.*,wt.conf,wt.name from T_WEBSITE w LEFT JOIN T_WEBSITE_TEMPLATE wt ON w.TemplateId = wt.id WHERE w.Id = #id#
 	</select>
 	
 	<update id="updateWebsiteConfig" parameterClass="java.util.HashMap" >
