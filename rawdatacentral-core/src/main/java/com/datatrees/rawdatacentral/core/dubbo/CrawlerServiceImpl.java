@@ -9,6 +9,7 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.rawdatacentral.api.CrawlerService;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,13 +55,28 @@ public class CrawlerServiceImpl implements CrawlerService {
      */
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
-        Website website = websiteService.getCachedWebsiteByName(websiteName);
-        if (website != null) {
-            return website.getWebsiteConf();
-        } else {
-            logger.warn("no active website named {}", websiteName);
-            return null;
+        Map<String, String> map = (Map<String, String>) CacheUtil.INSTANCE.getObject("WEBSITENAME_TRANSFORM_MAP");
+        String newWebsiteName;
+        if(map!=null){
+            newWebsiteName = map.get(websiteName);
+        }else{
+            map = (Map<String, String>) GsonUtils.fromJson(PropertiesConfiguration.getInstance().get("WEBSITENAME_TRANSFORM_MAP"), new TypeToken<HashMap<String, String>>() {}.getType());
+            CacheUtil.INSTANCE.insertObject("WEBSITENAME_TRANSFORM_MAP", map);
+            newWebsiteName = map.get(websiteName);
         }
+        if(StringUtils.isNotBlank(newWebsiteName)){
+            Website website = websiteService.getCachedWebsiteByName(newWebsiteName);
+            if (website != null) {
+                return website.getWebsiteConf();
+            } else {
+                logger.warn("no active website named {}", newWebsiteName);
+            }
+        }else{
+            logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
+        }
+        return null; 
+        
+        
     }
 
     /*

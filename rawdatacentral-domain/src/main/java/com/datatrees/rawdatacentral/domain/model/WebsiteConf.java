@@ -22,7 +22,7 @@ public class WebsiteConf implements Serializable {
    *
    */
   private static final long serialVersionUID = -4488630632381744273L;
-  private boolean simulate;
+  private Boolean simulate;
   private String websiteName;
   private String websiteType;
 
@@ -37,11 +37,11 @@ public class WebsiteConf implements Serializable {
   private String resetURL;
   private String resetTip;
 
-  public boolean isSimulate() {
+  public Boolean getSimulate() {
     return simulate;
   }
 
-  public void setSimulate(boolean simulate) {
+  public void setSimulate(Boolean simulate) {
     this.simulate = simulate;
   }
 

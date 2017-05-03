@@ -24,6 +24,7 @@ import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
 import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
 import com.datatrees.rawdatacentral.core.service.RedisService;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.FileStoreService;
 
@@ -69,7 +70,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         }
     }
 
-    private void submitSubTask(int taskId, ParentTask parentTask, Object seed) {
+    private void submitSubTask(long taskId, ParentTask parentTask, Object seed) {
         SubSeed subSeed = this.getSubSeed(seed);
         if (subSeed != null) {
             logger.info("submit subseed " + subSeed);
@@ -93,7 +94,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
     private void submitSubTask(SubmitMessage submitMessage) {
         Map<String, Object> extractResultMap = submitMessage.getExtractResultMap();
         ExtractMessage extractMessage = submitMessage.getExtractMessage();
-        int taskId = extractMessage.getTaskId();
+        Long taskId = submitMessage.getExtractMessage().getTask().getProcessorContext().getLong(AttributeKey.TASK_ID);
         ParentTask parentTask = extractMessage.getTask();
         if (MapUtils.isNotEmpty(extractResultMap)) {
             for (Entry<String, Object> entry : extractResultMap.entrySet()) {
