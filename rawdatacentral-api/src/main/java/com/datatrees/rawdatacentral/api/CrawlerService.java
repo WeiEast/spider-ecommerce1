@@ -42,5 +42,6 @@ public interface CrawlerService {
     // APP检测二维码扫描是否成功
     public HttpResult<String> verifyQr(long taskId, String attrJson);
 
+    public HttpResult<Boolean> cancel(long taskId, String attrJson);
 
 }

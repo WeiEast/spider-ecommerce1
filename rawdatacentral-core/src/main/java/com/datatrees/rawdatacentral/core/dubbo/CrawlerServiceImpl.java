@@ -168,19 +168,20 @@ public class CrawlerServiceImpl implements CrawlerService {
         // }
         // }
         // return result.failure();
-        // HttpResult<String> result = new HttpResult<String>();
-        // String key = "verify_result_" + taskId;
-        // Map<String, Object> map = new HashMap<String, Object>();
-        // if (type == 0) {
-        // map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
-        // } else if (type == 1) {
-        // map.put("status", "REFRESH_LOGIN_CODE");
-        // }
-        //
-        // if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {}
-        //
-        // return result.failure();
-        return null;
+         HttpResult<String> result = new HttpResult<String>();
+         String key = "verify_result_" + taskId;
+         Map<String, Object> map = new HashMap<String, Object>();
+         if (type == 0) {
+         map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
+         } else if (type == 1) {
+         map.put("status", "REFRESH_LOGIN_CODE");
+         }
+        
+         if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
+             
+         }
+        
+         return result.failure();
 
     }
 
