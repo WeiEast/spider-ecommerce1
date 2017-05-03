@@ -231,5 +231,13 @@ public class CrawlerServiceImpl implements CrawlerService {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see com.datatrees.rawdatacentral.api.CrawlerService#cancel(long, java.lang.String)
+     */
+    @Override
+    public HttpResult<Boolean> cancel(long taskId, String attrJson) {
+        return null;
+    }
+
 
 }
