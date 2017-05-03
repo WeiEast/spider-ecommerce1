@@ -22,4 +22,9 @@ dependencies {
     compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
     compile(group: "com.datatrees.data", name: "databoss-api-client-sdk", version: "${databossApiClientSdkVersion}", changing: true)
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true)
+    testCompile "junit:junit:${junitVersion}"
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
+        exclude(module: 'commons-logging')
+
+    }
 }

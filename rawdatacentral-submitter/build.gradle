@@ -3,4 +3,9 @@ dependencies {
     compile "com.aliyun.oss:aliyun-sdk-oss:${aliyunSdkOssVersion}"
     compile "ant:ant:${antVersion}"
     compile "javax.mail:mail:${mailVersion}"
+    testCompile "junit:junit:${junitVersion}"
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
+        exclude(module: 'commons-logging')
+
+    }
 }

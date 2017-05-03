@@ -1,72 +1,7 @@
 allprojects {
-    apply plugin: "java"
-    apply plugin: "idea"
-    apply plugin: "maven"
-
     group = 'com.datatrees.rawdatacentral'
     version = '3.0.5-SNAPSHOT'
     description = "爬虫核心"
-
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
-    idea {
-        module {
-            downloadSources = true
-            downloadJavadoc = true
-        }
-    }
-
-    configurations {
-        provided
-        compile.extendsFrom provided
-        deployerJars
-
-        all*.exclude group: "org.springframework", module: "spring"
-        all*.exclude group: "asm", module: "asm"
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = "sources"
-        from sourceSets.main.allSource
-    }
-
-    artifacts {
-        archives sourcesJar
-    }
-
-    repositories {
-        maven { url "http://192.168.5.252:8081/nexus/content/groups/public/" }
-        mavenLocal()
-    }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                configuration = configurations.deployerJars
-                snapshotRepository(url: "http://192.168.5.252:8081/nexus/content/repositories/snapshots/") {
-                    authentication(userName: "admin", password: "admin123")
-                }
-                repository(url: "http://192.168.5.252:8081/nexus/content/repositories/releases/") {
-                    authentication(userName: "admin", password: "admin123")
-                }
-            }
-
-        }
-    }
-
-
-    configurations.all {
-        resolutionStrategy.cacheChangingModulesFor 0, "seconds"
-    }
-
-
-    tasks.withType(JavaCompile) {
-        options.encoding = "UTF-8"
-    }
-
-
-
 }
 
 ext {
@@ -97,12 +32,50 @@ ext {
 }
 
 subprojects {
-    dependencies {
-        testCompile "junit:junit:${junitVersion}"
-        testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
-            exclude(module: 'commons-logging')
 
+    apply plugin: "java"
+    apply plugin: "idea"
+    apply plugin: "maven"
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    idea {
+        module {
+            downloadSources = true
+            downloadJavadoc = true
         }
+    }
+
+    configurations {
+        provided
+        compile.extendsFrom provided
+        deployerJars
+
+//        all*.exclude group: "org.springframework", module: "spring"
+//        all*.exclude group: "asm", module: "asm"
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = "sources"
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives sourcesJar
+    }
+
+    repositories {
+        maven { url "http://192.168.5.252:8081/nexus/content/groups/public/" }
+        mavenLocal()
+    }
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, "seconds"
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
     }
 }
 
