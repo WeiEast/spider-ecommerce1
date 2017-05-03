@@ -11,8 +11,12 @@ package com.datatrees.rawdatacentral.core.dubbo;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.common.zookeeper.EventWatcher;
+import com.datatrees.common.zookeeper.ZooKeeperClient;
+import com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.rawdatacentral.api.CrawlerService;
+import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
@@ -41,6 +45,9 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Resource
     private RedisDao redisDao;
+    
+    @Resource
+    private ZooKeeperClient zooKeeperClient;
 
     /*
      * (non-Javadoc)
@@ -228,6 +235,23 @@ public class CrawlerServiceImpl implements CrawlerService {
             return false;
         }
         return true;
+    }
+
+    /* (non-Javadoc)
+     * @see com.datatrees.rawdatacentral.api.CrawlerService#cancel(long, java.lang.String)
+     */
+    @Override
+    public HttpResult<Boolean> cancel(long taskId,String websiteName, String attrJson) {
+        AbstractLockerWatcher watcher = new ActorLockEventWatcher("CollectorActor/" + websiteName, taskId+"", Thread.currentThread(), zooKeeperClient);
+        HttpResult<Boolean> result = new HttpResult<Boolean>();
+        result.setData(false);
+        zooKeeperClient.registerWatcher(watcher);
+        if(watcher.init()){
+            result.setData(true);
+            zooKeeperClient.unregisterWatcher(watcher);
+            return result;
+        }
+        return result;
     }
 
 
