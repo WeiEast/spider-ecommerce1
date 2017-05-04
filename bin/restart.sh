@@ -7,8 +7,8 @@ JAVA_APP=`cd $APP_HOME;ls *.jar`
 echo $JAVA_APP
 pid=`$JAVA_HOME/bin/jps -l |grep $JAVA_APP |awk '{print $1}'`
 echo $pid
-echo "启动脚本本地上传"
-if [-n "$pid"]
+echo "启动脚本本地上传1"
+if [ -n "$pid" ]
 then
         echo -e "\e[00;31mStoping java\e[00m"
         kill $pid

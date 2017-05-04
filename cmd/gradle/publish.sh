@@ -17,7 +17,7 @@ ssh root@116.62.242.180 << EOF
     sleep 1;
     sh restart.sh;
     echo $file;
-    tail -100f /dashu/log/rawdatacentral.log
+    #tail -100f /dashu/log/rawdatacentral.log
     exit;
 EOF
 
