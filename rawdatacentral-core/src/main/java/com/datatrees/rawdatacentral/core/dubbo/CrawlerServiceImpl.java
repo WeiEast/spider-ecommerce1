@@ -11,7 +11,6 @@ package com.datatrees.rawdatacentral.core.dubbo;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.zookeeper.EventWatcher;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
