@@ -18,6 +18,7 @@ import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
+import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
@@ -47,13 +48,13 @@ import java.util.Map;
 public class CrawlerServiceImpl implements CrawlerService {
     private static final Logger logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
     @Resource
-    private WebsiteService websiteService;
+    private WebsiteService      websiteService;
 
     @Resource
-    private RedisDao redisDao;
-    
+    private RedisDao            redisDao;
+
     @Resource
-    private ZooKeeperClient zooKeeperClient;
+    private ZooKeeperClient     zooKeeperClient;
 
     /*
      * (non-Javadoc)
@@ -67,8 +68,10 @@ public class CrawlerServiceImpl implements CrawlerService {
         if (map != null) {
             newWebsiteName = map.get(websiteName);
         } else {
-            map = (Map<String, String>) GsonUtils.fromJson(PropertiesConfiguration.getInstance().get("WEBSITENAME_TRANSFORM_MAP"),
-                    new TypeToken<HashMap<String, String>>() {}.getType());
+            map = (Map<String, String>) GsonUtils.fromJson(
+                PropertiesConfiguration.getInstance().get("WEBSITENAME_TRANSFORM_MAP"),
+                new TypeToken<HashMap<String, String>>() {
+                }.getType());
             CacheUtil.INSTANCE.insertObject("WEBSITENAME_TRANSFORM_MAP", map);
             newWebsiteName = map.get(websiteName);
         }
@@ -85,7 +88,6 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
         }
         return null;
-
 
     }
 
@@ -175,20 +177,22 @@ public class CrawlerServiceImpl implements CrawlerService {
         // }
         // }
         // return result.failure();
-         HttpResult<String> result = new HttpResult<String>();
-         String key = "verify_result_" + taskId;
-         Map<String, Object> map = new HashMap<String, Object>();
-         if (type == 0) {
-         map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
-         } else if (type == 1) {
-         map.put("status", "REFRESH_LOGIN_CODE");
-         }
-        
-         if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
-             
-         }
-        
-         return result.failure();
+        HttpResult<String> result = new HttpResult<String>();
+        String key = "verify_result_" + taskId;
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("type", type);
+        if (type == 0) {
+            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
+        } else if (type == 1) {
+            map.put("status", "REFRESH_LOGIN_CODE");
+        }
+        String getKey = "plugin_remark_" + type + "_" + taskId;
+        redisDao.deleteKey(getKey);
+        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
+
+        }
+
+        return result.failure();
 
     }
 
@@ -208,8 +212,9 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                     String pullResult = redisDao.pullResult(getKey);
 
-                    Map<String, Object> resultMap =
-                            (Map<String, Object>) GsonUtils.fromJson(pullResult, new TypeToken<HashMap<String, Object>>() {}.getType());
+                    Map<String, Object> resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult,
+                        new TypeToken<HashMap<String, Object>>() {
+                        }.getType());
                     String qrStatus;
                     if (resultMap != null) {
                         qrStatus = StringUtils.defaultIfBlank((String) resultMap.get(PluginConstants.FIELD), "");
@@ -228,10 +233,10 @@ public class CrawlerServiceImpl implements CrawlerService {
         return result;
     }
 
-
     private boolean isTimeOut(long startTime, String websiteName) throws Exception {
         long now = System.currentTimeMillis();
-        int maxInterval = PropertiesConfiguration.getInstance().getInt(websiteName + ".default.max.waittime", 2 * 60 * 1000);
+        int maxInterval = PropertiesConfiguration.getInstance().getInt(websiteName + ".default.max.waittime",
+            2 * 60 * 1000);
         if (now <= startTime + maxInterval) {
             return false;
         }
@@ -242,18 +247,18 @@ public class CrawlerServiceImpl implements CrawlerService {
      * @see com.datatrees.rawdatacentral.api.CrawlerService#cancel(long, java.lang.String)
      */
     @Override
-    public HttpResult<Boolean> cancel(long taskId,String websiteName, String attrJson) {
-        AbstractLockerWatcher watcher = new ActorLockEventWatcher("CollectorActor/" + websiteName, taskId+"", Thread.currentThread(), zooKeeperClient);
+    public HttpResult<Boolean> cancel(long taskId, String attrJson) {
+        AbstractLockerWatcher watcher = new ActorLockEventWatcher("CollectorActor/", taskId + "",
+            Thread.currentThread(), zooKeeperClient);
         HttpResult<Boolean> result = new HttpResult<Boolean>();
         result.setData(false);
         zooKeeperClient.registerWatcher(watcher);
-        if(watcher.init()){
+        if (watcher.init()) {
             result.setData(true);
             zooKeeperClient.unregisterWatcher(watcher);
             return result;
         }
         return result;
     }
-
 
 }

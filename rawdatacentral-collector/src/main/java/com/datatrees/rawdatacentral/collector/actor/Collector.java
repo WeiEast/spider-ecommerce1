@@ -167,7 +167,7 @@ public class Collector {
         path = StringUtils.isNotBlank(templateId) ? path + "_" + templateId : path;
         path = StringUtils.isNotBlank(uniqueSuffix) ? path + "_" + uniqueSuffix : path;
         path = StringUtils.isNotBlank(serialNum) ? path + "_" + serialNum : path;
-        AbstractLockerWatcher watcher = new ActorLockEventWatcher("CollectorActor/" + websiteName, path, Thread.currentThread(), zookeeperClient);
+        AbstractLockerWatcher watcher = new ActorLockEventWatcher("CollectorActor/", path, Thread.currentThread(), zookeeperClient);
         zookeeperClient.registerWatcher(watcher);
         if (watcher.init()) {
             logger.info("Get actorLock begin to start ...");
