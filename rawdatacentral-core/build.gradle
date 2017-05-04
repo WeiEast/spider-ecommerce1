@@ -22,6 +22,13 @@ dependencies {
     compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
     compile(group: "com.datatrees.data", name: "databoss-api-client-sdk", version: "${databossApiClientSdkVersion}", changing: true)
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true)
+
+    compile 'org.codehaus.groovy:groovy-all:2.4.6'
+    compile "ch.qos.logback:logback-classic:${logbackVersion}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+    compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
+
     testCompile "junit:junit:${junitVersion}"
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
         exclude(module: 'commons-logging')

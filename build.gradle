@@ -5,6 +5,8 @@ allprojects {
 }
 
 ext {
+    slf4jVersion = "1.7.18"
+    logbackVersion = "1.1.6"
     crawlerCoreVersion = "3.0.5-SNAPSHOT"
     logstashLogbackEncoderVersion = "4.4"
     abstractpluginVersion = "1000.1.5-SNAPSHOT"
@@ -54,7 +56,7 @@ subprojects {
         deployerJars
 
 //        all*.exclude group: "org.springframework", module: "spring"
-//        all*.exclude group: "asm", module: "asm"
+        all*.exclude group: "log4j", module: "log4j"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {

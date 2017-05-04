@@ -174,7 +174,7 @@ public class CrawlerServiceImpl implements CrawlerService {
         HttpResult<String> result = new HttpResult<String>();
         String key = "verify_result_" + taskId;
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("type", type);
+        map.put("dubboType", type);
         if (type == 0) {
             map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
         } else if (type == 1) {
@@ -183,7 +183,27 @@ public class CrawlerServiceImpl implements CrawlerService {
         String getKey = "plugin_remark_" + type + "_" + taskId;
         redisDao.deleteKey(getKey);
         if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
+            try {
+                long startTime = System.currentTimeMillis();
+                while (!isTimeOut(startTime, "alipay.com")) {
 
+                    String pullResult = redisDao.pullResult(getKey);
+
+                    Map<String, Object> resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult,
+                        new TypeToken<HashMap<String, Object>>() {
+                        }.getType());
+                    String qrStatus;
+                    if (resultMap != null) {
+                        qrStatus = StringUtils.defaultIfBlank((String) resultMap.get(PluginConstants.FIELD), "");
+                        result = result.success();
+                        result.setData(qrStatus);
+                        return result;
+                    }
+                    Thread.sleep(3000);
+                }
+            } catch (Exception e) {
+                logger.warn(e.getMessage(), e);
+            }
         }
 
         return result.failure();
@@ -201,8 +221,8 @@ public class CrawlerServiceImpl implements CrawlerService {
         redisDao.deleteKey(getKey);
         if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
             try {
-
-                while (!isTimeOut(System.currentTimeMillis(), "alipay.com")) {
+                long startTime = System.currentTimeMillis();
+                while (!isTimeOut(startTime, "alipay.com")) {
 
                     String pullResult = redisDao.pullResult(getKey);
 

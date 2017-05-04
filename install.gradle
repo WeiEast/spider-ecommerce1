@@ -1,7 +1,7 @@
 def mainClass = 'com.datatrees.rawdatacentral.main.Application'
 jar {
     sourceSets.main.resources.exclude('**/*')
-//    sourceSets.main.resources.include('cacerts/*')
+    sourceSets.main.resources.include('cacerts/*')
     def libs = "conf/";
     configurations.compile.each { libs += " lib/" + it.name }
     manifest {
@@ -12,18 +12,7 @@ jar {
 
 def buildTime = new Date().format("yyMMddHHmmss")
 
-task tarApp(type: Tar) {
-    baseName = rootProject.name
-    classifier = buildTime
-    compression = Compression.GZIP
-    destinationDir = file("$rootDir/target") //打包到目录下
-    extension = 'tar.gz'
-    into("$rootProject.name") {
-        from "$rootDir/target/$rootProject.name"
-    }
-}
-
-task releaseMain() {
+task copyResources() {
     doLast {
         delete {
             delete "$rootDir/target"
@@ -49,5 +38,16 @@ task releaseMain() {
             exclude("*.properties")
         }
         println "源码文件:$rootDir/target/$rootProject.name-$version-$buildTime" + ".tar.gz"
+    }
+}
+
+task installApp(type: Tar, dependsOn: 'copyResources') {
+    baseName = rootProject.name
+    classifier = buildTime
+    compression = Compression.GZIP
+    destinationDir = file("$rootDir/target") //打包到目录下
+    extension = 'tar.gz'
+    into("$rootProject.name") {
+        from "$rootDir/target/$rootProject.name"
     }
 }

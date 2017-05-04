@@ -1,5 +1,5 @@
 #!/bin/sh
-gradle clean build releaseMain tarApp -x test
+gradle clean build installApp -x test
 
 
 

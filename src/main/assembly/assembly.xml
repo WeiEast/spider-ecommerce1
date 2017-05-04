@@ -5,7 +5,7 @@
 		<format>tar.gz</format>
 	</formats>
 	<includeBaseDirectory>true</includeBaseDirectory>
-	<baseDirectory>/rawdata/</baseDirectory>
+	<baseDirectory>/rawdatacentral/</baseDirectory>
 	<fileSets>
 		<fileSet>
 			<outputDirectory>/install</outputDirectory>
@@ -41,11 +41,11 @@
 	<files>
 		<file>
 			<source>PROG_VERSION.def</source>
-			<outputDirectory>/rawdata/</outputDirectory>
+			<outputDirectory>/rawdatacentral/</outputDirectory>
 		</file>
 		<file>
 			<source>rawdatacentral-main/target/rawdatacentral-main-${project-version}.jar</source>
-			<outputDirectory>/rawdata/</outputDirectory>
+			<outputDirectory>/rawdatacentral/</outputDirectory>
 			<destName>rawdatacentral-main.jar</destName>
 		</file>
 	</files>
