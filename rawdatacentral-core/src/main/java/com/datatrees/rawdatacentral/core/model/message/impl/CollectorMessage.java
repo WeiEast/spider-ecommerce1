@@ -8,11 +8,12 @@
  */
 package com.datatrees.rawdatacentral.core.model.message.impl;
 
+import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
 
 
 /**
