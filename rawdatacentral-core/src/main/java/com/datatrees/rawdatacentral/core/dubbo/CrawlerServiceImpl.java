@@ -154,7 +154,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
         } else if (type == 1) {
             map.put("status", "REFRESH_LOGIN_CODE");
-        }else if (type == 2){
+        } else if (type == 2) {
             map.put("status", "REFRESH_LOGIN_QR_CODE");
         }
         String getKey = "plugin_remark_" + type + "_" + taskId;
@@ -239,17 +239,15 @@ public class CrawlerServiceImpl implements CrawlerService {
      */
     @Override
     public HttpResult<Boolean> cancel(long taskId, String attrJson) {
-        AbstractLockerWatcher watcher = new ActorLockEventWatcher("CollectorActor/", taskId + "",
-            Thread.currentThread(), zooKeeperClient);
+        ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null,
+            zooKeeperClient);
         HttpResult<Boolean> result = new HttpResult<Boolean>();
         result.setData(false);
-        zooKeeperClient.registerWatcher(watcher);
-        if (watcher.init()) {
+        if(watcher.cancel()){
             result.setData(true);
-            zooKeeperClient.unregisterWatcher(watcher);
-            return result;
+            result.success();
         }
-        return result;
+        return result.failure();
     }
 
 }
