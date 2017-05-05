@@ -89,5 +89,14 @@ public class ActorLockEventWatcher extends AbstractLockerWatcher {
     public boolean unLock() {
         return releaseLeader();
     }
+    
+    public boolean cancel() {
+        zookeeperClient.registerWatcher(this);
+        if (this.init()) {
+            zookeeperClient.unregisterWatcher(this);
+            return true;
+        }
+        return false;
+    }
 
 }
