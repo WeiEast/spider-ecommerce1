@@ -239,11 +239,11 @@ public class CrawlerServiceImpl implements CrawlerService {
      */
     @Override
     public HttpResult<Boolean> cancel(long taskId, String attrJson) {
-        ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null,
-            zooKeeperClient);
+        ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
+        logger.info("cancel taskId:" + taskId);
         HttpResult<Boolean> result = new HttpResult<Boolean>();
         result.setData(false);
-        if(watcher.cancel()){
+        if (watcher.cancel()) {
             result.setData(true);
             result.success();
         }
