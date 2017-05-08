@@ -7,7 +7,7 @@
 	<dubbo:monitor protocol="registry" />
 
 	<!-- 使用multicast广播注册中心暴露发现服务地址 -->
-	<dubbo:registry address="${dubbo.zookeeper.address:zookeeper://192.168.5.241:2181}" />
+	<dubbo:registry address="${dubbo.zookeeper.address:zookeeper://192.168.5.24:2181}" />
 	<dubbo:protocol name="dubbo" port="20192" />
 
 	<dubbo:provider timeout="30000" retries="3" />
