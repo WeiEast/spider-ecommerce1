@@ -65,35 +65,37 @@ import java.util.*;
 @Service
 public class Collector {
 
-    private static final Logger logger = LoggerFactory.getLogger(Collector.class);
+    private static final Logger    logger                     = LoggerFactory.getLogger(Collector.class);
 
     @Resource
-    private WebsiteService websiteService;
+    private WebsiteService         websiteService;
 
     @Resource
-    private TaskService taskService;
+    private TaskService            taskService;
 
     @Resource
-    private MessageFactory messageFactory;
+    private MessageFactory         messageFactory;
 
     @Resource
-    private MQProducer producer;
+    private MQProducer             producer;
 
     @Resource
-    private ZooKeeperClient zookeeperClient;
+    private ZooKeeperClient        zookeeperClient;
 
     @Resource
     private CollectorWorkerFactory collectorWorkerFactory;
 
     @Resource
-    private RedisDao redisDao;
+    private RedisDao               redisDao;
 
-    private static String duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
+    private static String          duplicateRemovedResultKeys = PropertiesConfiguration.getInstance()
+        .get("duplicate.removed.result.keys", "bankbill");
 
-    private static String mqStatusTags = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
+    private static String          mqStatusTags               = PropertiesConfiguration.getInstance()
+        .get("core.mq.status.tags", "bankbill,ecommerce,operator");
 
-    private static String mqMessageSendTagPattern =
-            PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
+    private static String          mqMessageSendTagPattern    = PropertiesConfiguration.getInstance()
+        .get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
 
     private TaskMessage taskMessageInit(CollectorMessage message) {
         SearchProcessorContext context = null;
@@ -114,10 +116,9 @@ public class Collector {
             }
             context.set(AttributeKey.END_URL, message.getEndURL());
             // 历史状态清理
-            // String key = "verify_result_" + message.getWebsiteName() + "_" + message.getUser
-            // Id();
-            // redisDao.deleteKey(key);
-            // logger.info("do verify_result data clear for key: {}", key);
+            String key = "verify_result_" + message.getTaskId();
+            redisDao.deleteKey(key);
+            logger.info("do verify_result data clear for key: {}", key);
         } catch (Exception e) {
             logger.warn("get context error with " + message, e);
             task.setErrorCode(ErrorCode.TASK_INIT_ERROR, "TASK_INIT_ERROR error with " + message);
@@ -134,7 +135,8 @@ public class Collector {
         return taskMessage;
     }
 
-    private void collectorMessageComplement(TaskMessage taskMessage, CollectorMessage message, SearchProcessorContext context) {
+    private void collectorMessageComplement(TaskMessage taskMessage, CollectorMessage message,
+                                            SearchProcessorContext context) {
         if (message instanceof TemplteAble) {
             taskMessage.setTemplateId(((TemplteAble) message).getTemplateId());
         }
@@ -149,9 +151,10 @@ public class Collector {
             if (((SubTaskAble) message).getSubSeed() != null) {
                 taskMessage.setUniqueSuffix(((SubTaskAble) message).getSubSeed().getUniqueSuffix());
                 ProxyManager proxyManager = context.getProxyManager();
-                if (((SubTaskAble) message).getSubSeed().getProxy() != null && proxyManager instanceof ProxyManagerWithScope) {
-                    ((ProxyManagerWithScope) proxyManager)
-                            .setManager(new ProxySharedManager(((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
+                if (((SubTaskAble) message).getSubSeed().getProxy() != null
+                    && proxyManager instanceof ProxyManagerWithScope) {
+                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(
+                        ((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
                 }
             }
         }
@@ -163,11 +166,23 @@ public class Collector {
         String uniqueSuffix = taskMessage.getUniqueSuffix();
         String serialNum = taskMessage.getCollectorMessage().getSerialNum();
         String taskId = taskMessage.getContext().getString(AttributeKey.TASK_ID);
+        String accountNo = taskMessage.getContext().getString(AttributeKey.ACCOUNT_NO);
+        //将同一网站的相同账号的线程kill
+        if (StringUtils.isNotBlank(accountNo)) {
+            String redisKey = websiteName + accountNo;
+            String lastTaskId = redisDao.getRedisTemplate().opsForValue().getAndSet(redisKey, taskId);
+            if (StringUtils.isNotBlank(lastTaskId)) {
+                ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", lastTaskId,
+                    Thread.currentThread(), zookeeperClient);
+                watcher.cancel();
+            }
+        }
         String path = taskId;
         path = StringUtils.isNotBlank(templateId) ? path + "_" + templateId : path;
         path = StringUtils.isNotBlank(uniqueSuffix) ? path + "_" + uniqueSuffix : path;
         path = StringUtils.isNotBlank(serialNum) ? path + "_" + serialNum : path;
-        AbstractLockerWatcher watcher = new ActorLockEventWatcher("CollectorActor/", path, Thread.currentThread(), zookeeperClient);
+        AbstractLockerWatcher watcher = new ActorLockEventWatcher("CollectorActor", path, Thread.currentThread(),
+            zookeeperClient);
         zookeeperClient.registerWatcher(watcher);
         if (watcher.init()) {
             logger.info("Get actorLock begin to start ...");
@@ -200,15 +215,18 @@ public class Collector {
             // init collectorWorker
             CollectorWorker collectorWorker = collectorWorkerFactory.getCollectorWorker(taskMessage);
 
-            Set<String> websiteTagSet = new HashSet<String>(taskMessage.getContext().getWebsite().getSearchConfig().getResultTagList());
+            Set<String> websiteTagSet = new HashSet<String>(
+                taskMessage.getContext().getWebsite().getSearchConfig().getResultTagList());
 
             // set status level 1 status
-            taskMessage.getContext().getStatusContext().put(ResultMessage.LEVAL_1_STATUS, ((CollectorMessage) message).isLevel1Status());
+            taskMessage.getContext().getStatusContext().put(ResultMessage.LEVAL_1_STATUS,
+                ((CollectorMessage) message).isLevel1Status());
 
             // do process
             submitkeyResult = collectorWorker.process(taskMessage);
             if (submitkeyResult == null && message instanceof TaskRelated) {
-                logger.info("current task related to: " + ((TaskRelated) message).getParentTaskID() + ", set empty submitkeyResult.");
+                logger.info("current task related to: " + ((TaskRelated) message).getParentTaskID()
+                            + ", set empty submitkeyResult.");
                 submitkeyResult = new HashMap();
             }
             Set<String> resultTagSet = collectorWorker.getResultTagSet();
@@ -229,10 +247,10 @@ public class Collector {
             logger.error(e.getMessage(), e);
             if (e instanceof LoginTimeOutException) {
                 taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR,
-                        ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMessage() + " " + e.getMessage());
+                    ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMessage() + " " + e.getMessage());
             } else if (e instanceof InterruptedException) {
                 taskMessage.getTask().setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR,
-                        ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage() + " " + e.getMessage());
+                    ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage() + " " + e.getMessage());
             } else {
                 taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
             }
@@ -268,12 +286,14 @@ public class Collector {
             }
 
             StringBuilder resultMessageBuilder = new StringBuilder();
-            resultMessageBuilder.append("\"resultMsg\":").append(taskMessage.getTask().getResultMessage()).append(",\"processorLog\":")
-                    .append(GsonUtils.toJson(taskMessage.getContext().getProcessorLog()));
+            resultMessageBuilder.append("\"resultMsg\":").append(taskMessage.getTask().getResultMessage())
+                .append(",\"processorLog\":").append(GsonUtils.toJson(taskMessage.getContext().getProcessorLog()));
             String startMsgJson = GsonUtils.toJson(message);
 
-            if (startMsgJson.length() > PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000)) {
-                String path = taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/" + taskMessage.getTask().getId();
+            if (startMsgJson.length() > PropertiesConfiguration.getInstance()
+                .getInt("default.startMsgJson.length.threshold", 20000)) {
+                String path = taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/"
+                              + taskMessage.getTask().getId();
                 taskMessage.getTask().setResultMessage(resultMessageBuilder.toString() + ",startMsgOSSPath:" + path);
                 SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -281,21 +301,23 @@ public class Collector {
                     Map<String, SubmitFile> uploadMap = new HashMap<>();
                     uploadMap.put("startMsg.json", file);
                     ZipCompressUtils.compress(baos, uploadMap);
-                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, path, baos.toByteArray());
+                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, path,
+                        baos.toByteArray());
                 } catch (Exception e) {
                     logger.error("upload startMsg.json error:" + e.getMessage(), e);
                 } finally {
                     IOUtils.closeQuietly(baos);
                 }
             } else {
-                taskMessage.getTask().setResultMessage(resultMessageBuilder.toString() + ",\"startMsg\":" + startMsgJson);
+                taskMessage.getTask()
+                    .setResultMessage(resultMessageBuilder.toString() + ",\"startMsg\":" + startMsgJson);
             }
         } catch (Exception e) {
             logger.error("messageComplement error:" + e.getMessage(), e);
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void sendResult(TaskMessage taskMessage, Map submitkeyResult, Set<String> resultTagSet) {
         Task task = taskMessage.getTask();
         ResultMessage resultMessage = new ResultMessage();
@@ -326,7 +348,8 @@ public class Collector {
             }
         }
         if (needSendToMQ) {
-            if (submitkeyResult != null) result.putAll(submitkeyResult);
+            if (submitkeyResult != null)
+                result.putAll(submitkeyResult);
             result.putAll(taskMessage.getCollectorMessage().getSendBack());
             result.put("taskId", task.getTaskId());
             result.put("websiteName", resultMessage.getWebsiteName());
@@ -355,7 +378,8 @@ public class Collector {
         this.sendTaskStatus(taskMessage, resultMessage, resultTagSet, notEmptyTag);
     }
 
-    private void sendTaskStatus(TaskMessage taskMessage, ResultMessage resultMessage, Set<String> resultTagSet, Set<String> notEmptyTag) {
+    private void sendTaskStatus(TaskMessage taskMessage, ResultMessage resultMessage, Set<String> resultTagSet,
+                                Set<String> notEmptyTag) {
         if (taskMessage.getMessageSend() && taskMessage.getStatusSend()) {
             Task task = taskMessage.getTask();
             for (String key : resultTagSet) {
@@ -368,8 +392,8 @@ public class Collector {
                         keyResult.setResultEmpty(!notEmptyTag.contains(key));
                     }
                     try {
-                        Message mqMessage = messageFactory.getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult),
-                                "" + taskMessage.getTask().getId());
+                        Message mqMessage = messageFactory.getMessage("rawData_result_status", key,
+                            GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
                         SendResult sendResult = producer.send(mqMessage);
                         logger.info("send result message:" + mqMessage + "result:" + sendResult);
                     } catch (Exception e) {
