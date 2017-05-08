@@ -8,16 +8,15 @@
  */
 package com.datatrees.rawdatacentral.submitter.normalizer;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.stereotype.Service;
-
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
 import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
+import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -64,5 +63,6 @@ public class MailBillSubmitDataNormalizer implements DataNormalizer {
         map.put("PageExtractId", result.getPageExtractId());// Distinguish between jianban &
                                                             // xiangban
         map.put("ExtraInfo", result.getExtraInfo());
+        map.put("mailHeader", result.getMailHeader());
     }
 }

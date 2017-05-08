@@ -26,6 +26,8 @@ public class MailExtractResult extends AbstractExtractResult {
     private Date receiveAt;
     private String receiver;
     private Boolean firstHand;
+    private String mailHeader;//邮件头
+
 
     /**
      * @return the firstHand
@@ -111,5 +113,11 @@ public class MailExtractResult extends AbstractExtractResult {
         this.receiver = receiver;
     }
 
+    public String getMailHeader() {
+        return mailHeader;
+    }
 
+    public void setMailHeader(String mailHeader) {
+        this.mailHeader = mailHeader;
+    }
 }
