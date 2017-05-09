@@ -12,9 +12,7 @@ import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
 
@@ -355,7 +353,7 @@ public class ActorTest extends AbstractTest {
     }
 
     @Test
-    public void testQQFromFile() throws InterruptedException, IOException {
+    public void testFromFile() throws InterruptedException, IOException {
         CollectorMessage message = readFromFile();
         collector.processMessage(message);
 

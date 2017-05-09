@@ -61,6 +61,7 @@ public class DefaultExtractResultBuilder implements ExtractResultBuilder {
                 ((MailExtractResult) result).setUrl(((MailBillData) object).getUrl());
                 ((MailExtractResult) result).setFirstHand(BooleanUtils.isTrue(((MailBillData) object).getFirstHand()));
                 ((MailExtractResult) result).setExtraInfo(((MailBillData) object).getExtraInfo());
+                ((MailExtractResult) result).setMailHeader(((MailBillData) object).getMailHeader());
                 break;
             case OPERATOR:
                 result = new OperatorExtractResult();

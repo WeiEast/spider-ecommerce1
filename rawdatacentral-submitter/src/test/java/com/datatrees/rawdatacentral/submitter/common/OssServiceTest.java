@@ -1,36 +1,28 @@
 package com.datatrees.rawdatacentral.submitter.common;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import com.datatrees.common.util.DateUtils;
+import com.datatrees.common.util.ResourceUtil;
+import com.datatrees.crawler.core.processor.mail.Mail;
+import com.datatrees.rawdatacentral.submitter.filestore.oss.OssService;
+import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.james.mime4j.field.address.Address;
+import org.apache.tools.zip.ZipEntry;
+import org.apache.tools.zip.ZipFile;
+import org.joda.time.DateTime;
+import org.junit.Test;
 
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-
-import com.datatrees.rawdatacentral.submitter.filestore.oss.OssService;
-import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
-import org.apache.commons.io.IOUtils;
-import org.apache.james.mime4j.field.address.Address;
-import org.apache.tools.zip.ZipEntry;
-import org.apache.tools.zip.ZipFile;
-import org.junit.Test;
-
-import com.datatrees.common.util.DateUtils;
-import com.datatrees.common.util.ResourceUtil;
-import com.datatrees.crawler.core.processor.mail.Mail;
-
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class OssServiceTest {
 
@@ -67,7 +59,6 @@ public class OssServiceTest {
     // 20150826_151_c741223df08f7523ceca38d0764cc482
     // 20150826_151_7e9501abcadd22439292f1b886714dd9
 
-
     @Test
     public void testGet() {
         OssService service = OssServiceProvider.getDefaultService();
@@ -88,7 +79,8 @@ public class OssServiceTest {
             try {
                 byte[] returnObject = service.getObjectContent(key);
 
-                FileOutputStream fos = new FileOutputStream("fileoutput/" + path + "/" + date + key.replaceAll("/", "-") + ".zip");
+                FileOutputStream fos = new FileOutputStream(
+                    "fileoutput/" + path + "/" + date + key.replaceAll("/", "-") + ".zip");
                 fos.write(returnObject);
                 fos.flush();
                 fos.close();
@@ -116,8 +108,8 @@ public class OssServiceTest {
 
     @Test
     public void changeName() throws IOException, MessagingException {
-        BufferedReader reader = new BufferedReader(
-                new FileReader(new File("/Users/wangcheng/Documents/newworkspace/rawdata1/rawdatacentral/rawdatacentral-submitter/src/test/resource/keys")));
+        BufferedReader reader = new BufferedReader(new FileReader(new File(
+            "/Users/wangcheng/Documents/newworkspace/rawdata1/rawdatacentral/rawdatacentral-submitter/src/test/resource/keys")));
         String tempString = null;
         OssService service = OssServiceProvider.getDefaultService();
         String imap = "imap.139.com";
@@ -170,13 +162,11 @@ public class OssServiceTest {
                     string = string.replaceAll("\\w+, \\d+ \\w+ \\d{4}", mydate.format(billMonth));
                 }
 
-
                 List<Replace> list = new ArrayList<Replace>();
                 list.add(new Replace(nameFrom, nameTO));
 
                 Mail mimeMsg = MailParserImpl.INSTANCE.parseMessage(mailTo, IOUtils.toInputStream(string), list);
                 mimeMsg.setTo(Address.parse(accoutTO + "@" + mailTo));
-
 
                 if (mimeMsg.getSubject() != null) {
                     mimeMsg.setSubject(mimeMsg.getSubject().replace(nameFrom, nameTO));
@@ -191,19 +181,17 @@ public class OssServiceTest {
                 mimeMsg.dispose();
 
                 Message message = new MimeMessage(null, new FileInputStream(mailfile));
-                folder.appendMessages(new Message[] {message});
+                folder.appendMessages(new Message[] { message });
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-
-
     @Test
     public void deleteKey() throws IOException, MessagingException {
-        BufferedReader reader = new BufferedReader(
-                new FileReader(new File("/Users/wangcheng/Documents/newworkspace/rawdata1/rawdatacentral/rawdatacentral-submitter/src/test/resource/keys")));
+        BufferedReader reader = new BufferedReader(new FileReader(new File(
+            "/Users/wangcheng/Documents/newworkspace/rawdata1/rawdatacentral/rawdatacentral-submitter/src/test/resource/keys")));
         String tempString = null;
         OssService service = OssServiceProvider.getDefaultService();
 
@@ -216,5 +204,16 @@ public class OssServiceTest {
         }
     }
 
+    @Test
+    public void testGetByKey() throws IOException {
+        OssService service = OssServiceProvider.getDefaultService();
+        String ossFileName = "1001767139/30/cc146fe608a88373d7884c3dc1e04e85";
+        byte[] content = service.getObjectContent(ossFileName);
+        String savaPath = "/data/oss/";
+        String fileName = DateTime.now().toString("yyyyMMddHHmmss") + ".zip";
+        FileUtils.forceMkdir(new File(savaPath));
+        FileUtils.writeByteArrayToFile(new File(savaPath + fileName), content);
+
+    }
 
 }
