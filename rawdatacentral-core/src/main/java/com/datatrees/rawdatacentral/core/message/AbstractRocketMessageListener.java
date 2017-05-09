@@ -63,6 +63,7 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
             throw new RuntimeException("params init error!");
         }
         Map<String, String> topicMap = (Map<String, String>) GsonUtils.fromJson(topicJson, new TypeToken<Map<String, String>>() {}.getType());
+        logger.debug("listener topicJson is {}",topicJson);
         for (Entry<String, String> entry : topicMap.entrySet()) {
             mqConsumer.subscribe(entry.getKey(), entry.getValue());
         }
