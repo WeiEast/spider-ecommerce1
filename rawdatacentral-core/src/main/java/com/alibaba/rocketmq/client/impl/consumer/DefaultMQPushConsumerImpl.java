@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.rocketmq.client.QueryResult;
 import com.alibaba.rocketmq.client.Validators;
@@ -91,7 +92,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
     private static final long BrokerSuspendMaxTimeMillis = 1000 * 15;
     // 长轮询模式，Consumer超时时间（必须要大于brokerSuspendMaxTimeMillis）
     private static final long ConsumerTimeoutMillisWhenSuspend = 1000 * 30;
-    private final Logger log = ClientLogger.getLog();
+    private final Logger log = LoggerFactory.getLogger(DefaultMQPushConsumerImpl.class);
     private final DefaultMQPushConsumer defaultMQPushConsumer;
     // Rebalance实现
     private final RebalanceImpl rebalanceImpl = new RebalancePushImpl(this);
