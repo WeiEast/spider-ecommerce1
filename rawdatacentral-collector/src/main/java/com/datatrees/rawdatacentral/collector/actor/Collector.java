@@ -39,6 +39,7 @@ import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Task;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.OperationEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
@@ -264,6 +265,15 @@ public class Collector {
                 map.put("result", taskMessage.getTask().getStatus() == 0 ? "SUCCESS" : "FAIL");
                 logMsg.setBody(GsonUtils.toJson(map).getBytes());
                 producer.send(logMsg);
+                if (taskMessage.getTask().getStatus() != 0) {
+                    Map<String, Object> directiveMap = new HashMap<String, Object>();
+                    directiveMap.put("taskId", taskMessage.getTask().getTaskId());
+                    directiveMap.put("directive", DirectiveEnum.TASK_FAIL.getCode());
+                    Message directiveMsg = new Message();
+                    directiveMsg.setTopic(TopicEnum.TASK_NEXT_DIRECTIVE.getCode());
+                    directiveMsg.setBody(GsonUtils.toJson(directiveMap).getBytes());
+                    producer.send(logMsg);
+                }
             } catch (Exception e) {
                 logger.error("send log status error", e);
             }
