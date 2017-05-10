@@ -272,7 +272,7 @@ public class Collector {
                     Message directiveMsg = new Message();
                     directiveMsg.setTopic(TopicEnum.TASK_NEXT_DIRECTIVE.getCode());
                     directiveMsg.setBody(GsonUtils.toJson(directiveMap).getBytes());
-                    producer.send(logMsg);
+                    producer.send(directiveMsg);
                 }
             } catch (Exception e) {
                 logger.error("send log status error", e);
