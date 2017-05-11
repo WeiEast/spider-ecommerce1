@@ -3,20 +3,20 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="mqProducer" class="com.alibaba.rocketmq.client.producer.DefaultMQProducer" init-method="start" destroy-method="shutdown">
-		<property name="namesrvAddr" value="${core.mq.host:192.168.5.243:9876}" />
-		<property name="pollNameServerInteval" value="${core.mq.pollNameServer.inteval:30000}" />
-		<property name="heartbeatBrokerInterval" value="${core.mq.heartbeatBroker.host.inteval:30000}" />
-		<property name="persistConsumerOffsetInterval" value="${core.mq.persistConsumerOffset.inteval:5000}" />
-		<property name="producerGroup" value="${core.mq.producerGroup:basisdata_group}" />
+		<property name="namesrvAddr" value="${core.mq.host}" />
+		<property name="pollNameServerInteval" value="${core.mq.pollNameServer.inteval}" />
+		<property name="heartbeatBrokerInterval" value="${core.mq.heartbeatBroker.host.inteval}" />
+		<property name="persistConsumerOffsetInterval" value="${core.mq.persistConsumerOffset.inteval}" />
+		<property name="producerGroup" value="${core.mq.producerGroup}" />
 	</bean>
 
 
 	<bean id="messageFactory" class="com.datatrees.rawdatacentral.core.message.MessageFactory">
-		<property name="defaultTopic" value="${core.mq.default.topic:rawdata_output}" />
-		<property name="flag" value="${core.mq.flag:0}" />
-		<property name="defaultTags" value="${core.mq.default.tags:bankbill}" />
-		<property name="defaultKeys" value="${core.mq.default.keys:}" />
-		<property name="waitStoreMsgOK" value="${core.mq.waitStoreMsgOK:true}" />
+		<property name="defaultTopic" value="${core.mq.default.topic}" />
+		<property name="flag" value="${core.mq.flag}" />
+		<property name="defaultTags" value="${core.mq.default.tags}" />
+		<property name="defaultKeys" value="${core.mq.default.keys}" />
+		<property name="waitStoreMsgOK" value="${core.mq.waitStoreMsgOK}" />
 	</bean>
 
 	<bean id="rocketMessageSender" class="com.datatrees.rawdatacentral.core.message.RocketMessageSender">

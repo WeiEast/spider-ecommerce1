@@ -10,7 +10,7 @@
 
 	<bean name="extractorWorkerRef" class="com.datatrees.common.actor.WrappedActorRef">
 		<property name="name" value="extractorActor" /><!-- ref to actot bean -->
-		<property name="instanceNum" value="${extractor.instance.num:40}" />
+		<property name="instanceNum" value="${extractor.instance.num}" />
 		<property name="dispatcher" value="DefaultDispatcher" />
 	</bean>
 

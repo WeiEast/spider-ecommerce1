@@ -4,18 +4,18 @@
 
 
 	<bean id="loginInfoMqConsumer" class="com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer" destroy-method="shutdown">
-		<property name="namesrvAddr" value="${core.mq.host:192.168.0.243:9876}" />
-		<property name="consumerGroup" value="${core.mq.loginInfo.consumerGroup:rawdata_loginInfo_group}" />
-		<property name="consumeThreadMin" value="${collector.core.instance.num:30}" />
-		<property name="consumeThreadMax" value="${collector.instance.num:64}" />
-		<property name="consumeName" value="${collector.consume.name:collectorConsumer}" />
-		<property name="adjustThreadPoolNumsThreshold" value="${collector.adjust.threshold:10}" />
+		<property name="namesrvAddr" value="${core.mq.host}" />
+		<property name="consumerGroup" value="${core.mq.loginInfo.consumerGroup}" />
+		<property name="consumeThreadMin" value="${collector.core.instance.num}" />
+		<property name="consumeThreadMax" value="${collector.instance.num}" />
+		<property name="consumeName" value="${collector.consume.name}" />
+		<property name="adjustThreadPoolNumsThreshold" value="${collector.adjust.threshold}" />
 	</bean>
 
 	<bean id="loginInfoMessageListener" class="com.datatrees.rawdatacentral.collector.listener.LoginInfoMessageListener" init-method="init">
 		<property name="mqConsumer" ref="loginInfoMqConsumer" />
 		<property name="collector" ref="collector" />
-		<property name="topicJson" value="${core.message.loginInfo.topic:{rawData_input:login_info}}" />
+		<property name="topicJson" value="${core.message.loginInfo.topic}" />
 	</bean>
 
 </beans>

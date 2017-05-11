@@ -6,17 +6,17 @@
 		<property name="driverClassName" value="com.mysql.jdbc.Driver">
 		</property>
 		<property name="url">
-			<value><![CDATA[jdbc:mysql://${core.db.host:192.168.5.241}:${core.db.port:3306}/${core.db.radatacentral.database:rawdatacentral}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull]]></value>
+			<value><![CDATA[jdbc:mysql://${core.db.host}:3306/${core.db.database}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull]]></value>
 		</property>
-		<property name="username" value="${core.db.username:root}" />
-		<property name="password" value="${core.db.password:dashu0701}" />
-		<property name="initialSize" value="${core.db.initialSize:8}" />
-		<property name="maxIdle" value="${core.db.maxIdle:8}" />
+		<property name="username" value="${core.db.username}" />
+		<property name="password" value="${core.db.password}" />
+		<property name="initialSize" value="${core.db.initialSize}" />
+		<property name="maxIdle" value="${core.db.maxIdle}" />
 		<property name="testWhileIdle" value="true" />
 		<property name="minEvictableIdleTimeMillis" value="600000" />
 		<property name="validationQuery" value="select 1" />
 		<property name="numTestsPerEvictionRun" value="10" />
-		<property name="maxActive" value="${core.db.maxConnection:30}" />
+		<property name="maxActive" value="${core.db.maxConnection}" />
 	</bean>
 
 	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" lazy-init="true">
