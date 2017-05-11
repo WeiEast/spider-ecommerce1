@@ -56,16 +56,17 @@ public class CrawlerServiceImpl implements CrawlerService {
      */
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
-        Map<String, String> map = (Map<String, String>) CacheUtil.INSTANCE.getObject("WEBSITENAME_TRANSFORM_MAP");
+        logger.info("websiteName:{} getWebsiteConf Start",websiteName);
+        Map<String, String> map = (Map<String, String>) CacheUtil.INSTANCE.getObject("websitename_transform_map");
         String newWebsiteName;
         if (map != null) {
             newWebsiteName = map.get(websiteName);
         } else {
             map = (Map<String, String>) GsonUtils.fromJson(
-                PropertiesConfiguration.getInstance().get("WEBSITENAME_TRANSFORM_MAP"),
+                PropertiesConfiguration.getInstance().get("websitename_transform_map"),
                 new TypeToken<HashMap<String, String>>() {
                 }.getType());
-            CacheUtil.INSTANCE.insertObject("WEBSITENAME_TRANSFORM_MAP", map);
+            CacheUtil.INSTANCE.insertObject("websitename_transform_map", map);
             newWebsiteName = map.get(websiteName);
         }
         if (StringUtils.isNotBlank(newWebsiteName)) {
@@ -240,6 +241,7 @@ public class CrawlerServiceImpl implements CrawlerService {
         HttpResult<Boolean> result = new HttpResult<Boolean>();
         result.setData(false);
         if (watcher.cancel()) {
+            logger.info("cancel task success,taskId :" + taskId);
             result.setData(true);
             result.success();
         }
