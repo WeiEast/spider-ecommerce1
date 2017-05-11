@@ -29,4 +29,4 @@ appender("sysFile", RollingFileAppender) {
 
 
 
-root(DEBUG, ["console", "sysFile"])
+root(info, ["console", "sysFile"])

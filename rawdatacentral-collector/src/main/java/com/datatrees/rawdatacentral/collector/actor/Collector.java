@@ -117,9 +117,7 @@ public class Collector {
             }
             context.set(AttributeKey.END_URL, message.getEndURL());
             // 历史状态清理
-            String key = "verify_result_" + message.getTaskId();
-            redisDao.deleteKey(key);
-            logger.info("do verify_result data clear for key: {}", key);
+            this.clearStatus(message.getTaskId());
         } catch (Exception e) {
             logger.warn("get context error with " + message, e);
             task.setErrorCode(ErrorCode.TASK_INIT_ERROR, "TASK_INIT_ERROR error with " + message);
@@ -134,6 +132,18 @@ public class Collector {
         this.collectorMessageComplement(taskMessage, message, context);
         ProcessorContextUtil.addValues(context, message.getProperty());
         return taskMessage;
+    }
+
+    /**
+     * 
+     * @param taskId
+     */
+    private void clearStatus(long taskId) {
+        String key = "verify_result_" + taskId;
+        String getKey = "plugin_remark_" + taskId;
+        redisDao.deleteKey(key);
+        redisDao.deleteKey(getKey);
+        logger.info("do verify_result and plugin_remark  data clear for taskId: {}", taskId);
     }
 
     private void collectorMessageComplement(TaskMessage taskMessage, CollectorMessage message,

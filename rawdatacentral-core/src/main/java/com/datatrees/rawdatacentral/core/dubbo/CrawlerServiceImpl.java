@@ -191,35 +191,31 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public HttpResult<String> verifyQr(long taskId, String attrJson) {
         HttpResult<String> result = new HttpResult<String>();
-        String key = "verify_result_" + taskId;
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("status", "VERIFY_QR_CODE");
         String getKey = "plugin_remark_" + taskId;
-        redisDao.deleteKey(getKey);
-        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
-            try {
-                long startTime = System.currentTimeMillis();
-                while (!isTimeOut(startTime, "verifyQr")) {
-
-                    String pullResult = redisDao.pullResult(getKey);
-
-                    Map<String, Object> resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult,
-                        new TypeToken<HashMap<String, Object>>() {
-                        }.getType());
-                    String qrStatus;
-                    if (resultMap != null) {
-                        qrStatus = StringUtils.defaultIfBlank((String) resultMap.get(PluginConstants.FIELD), "");
-                        result = result.success();
-                        result.setData(qrStatus);
-                        return result;
-                    }
-                    Thread.sleep(3000);
-                }
-            } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
+        String pullResult = redisDao.pullResult(getKey);
+        if (StringUtils.isNotBlank(pullResult)) {
+            Map<String, Object> resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult,
+                new TypeToken<HashMap<String, Object>>() {
+                }.getType());
+            String qrStatus = "FAILURE";
+            if (resultMap != null) {
+                qrStatus = StringUtils.defaultIfBlank((String) resultMap.get(PluginConstants.FIELD), "");
+            }
+            result = result.success();
+            result.setData(qrStatus);
+            logger.debug(taskId + "verifyQr return" + qrStatus);
+            return result;
+        } else {
+            String key = "verify_result_" + taskId;
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("status", "VERIFY_QR_CODE");
+            if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
+                result = result.success();
+                result.setData("WAITTING");
+                logger.debug(taskId + "verifyQr return" + "WAITTING");
+                return result;
             }
         }
-
         result = result.failure();
         return result;
     }
