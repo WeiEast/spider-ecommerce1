@@ -35,13 +35,13 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
+import com.datatrees.rawdatacentral.core.service.MessageService;
 import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Task;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.OperationEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
@@ -54,6 +54,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.util.*;
@@ -88,6 +89,9 @@ public class Collector {
 
     @Resource
     private RedisDao               redisDao;
+
+    @Resource
+    private MessageService         messageService;
 
     private static String          duplicateRemovedResultKeys = PropertiesConfiguration.getInstance()
         .get("duplicate.removed.result.keys", "bankbill");
@@ -267,14 +271,7 @@ public class Collector {
             }
         } finally {
             try {
-                Message logMsg = new Message();
-                logMsg.setTopic(TopicEnum.TASK_LOG.getCode());
-                Map<String, Object> map = new HashMap<>();
-                map.put("taskId", taskMessage.getTask().getTaskId());
-                map.put("action", OperationEnum.CRAWLER.getCode());
-                map.put("result", taskMessage.getTask().getStatus() == 0 ? "SUCCESS" : "FAIL");
-                logMsg.setBody(GsonUtils.toJson(map).getBytes());
-                producer.send(logMsg);
+                messageService.sendTaskLog(taskMessage.getTask().getStatus() == 0 ? "抓取成功" : "抓取失败");
                 if (taskMessage.getTask().getStatus() != 0) {
                     Map<String, Object> directiveMap = new HashMap<String, Object>();
                     directiveMap.put("taskId", taskMessage.getTask().getTaskId());

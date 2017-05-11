@@ -30,6 +30,7 @@ import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
+import com.datatrees.rawdatacentral.core.service.MessageService;
 import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
@@ -42,6 +43,8 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -54,9 +57,11 @@ public class CollectorWorker {
 
     private static final Logger log                       = LoggerFactory.getLogger(CollectorWorker.class);
 
-    private Integer             maxExecuteMinutes         = PropertiesConfiguration.getInstance().getInt("default.collector.execute.minutes", 7);
+    private Integer             maxExecuteMinutes         = PropertiesConfiguration.getInstance()
+        .getInt("default.collector.execute.minutes", 7);
 
-    private Integer             interactiveTimeoutSeconds = PropertiesConfiguration.getInstance().getInt("interactive.timeout.seconds", 300);
+    private Integer             interactiveTimeoutSeconds = PropertiesConfiguration.getInstance()
+        .getInt("interactive.timeout.seconds", 300);
 
     private CrawlExcutorHandler crawlExcutorHandler;
 
@@ -74,7 +79,11 @@ public class CollectorWorker {
 
     private RedisDao            redisDao;
 
-    private final long          maxLiveTime               = TimeUnit.SECONDS.toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
+    private final long          maxLiveTime               = TimeUnit.SECONDS
+        .toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
+
+    @Resource
+    private MessageService      messageService;
 
     public Map<String, Object> process(TaskMessage taskMessage) throws InterruptedException {
         Task task = taskMessage.getTask();
@@ -91,7 +100,7 @@ public class CollectorWorker {
             // "${emailAccount}"));
 
             // task begin
-
+            messageService.sendTaskLog("开始抓取");
             List<Future<Object>> futureList = new ArrayList<Future<Object>>();
             if (!doSearch(taskMessage, futureList)) {
                 return null;
@@ -133,8 +142,10 @@ public class CollectorWorker {
                     return false;
                 }
                 if ((System.currentTimeMillis() - taskMessage.getCollectorMessage().getBornTimestamp()) > maxLiveTime) {
-                    log.warn("Message bornTime out ,system is busy now ,drop message bornTime :{} ...", new Date(taskMessage.getCollectorMessage().getBornTimestamp()));
-                    task.setErrorCode(ErrorCode.MESSAGE_DROP, "Message drop! Born at " + taskMessage.getCollectorMessage().getBornTimestamp());
+                    log.warn("Message bornTime out ,system is busy now ,drop message bornTime :{} ...",
+                        new Date(taskMessage.getCollectorMessage().getBornTimestamp()));
+                    task.setErrorCode(ErrorCode.MESSAGE_DROP,
+                        "Message drop! Born at " + taskMessage.getCollectorMessage().getBornTimestamp());
                     return false;
                 }
 
@@ -180,7 +191,8 @@ public class CollectorWorker {
         Task task = taskMessage.getTask();
         SearchProcessorContext context = taskMessage.getContext();
         try {
-            Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig().getSearchTemplateConfigList();
+            Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig()
+                .getSearchTemplateConfigList();
             if (CollectionUtils.isEmpty(templateList)) {
                 log.error("templateList is empty," + "websiteId:" + task.getWebsiteId());
                 task.setErrorCode(ErrorCode.CONFIG_ERROR);
@@ -217,22 +229,29 @@ public class CollectorWorker {
                     }
 
                     if (StringUtils.isEmpty(searchTemplate)) {
-                        log.error(taskMessage + " searchTemplate is empty or null , websiteId : . " + task.getWebsiteId());
+                        log.error(
+                            taskMessage + " searchTemplate is empty or null , websiteId : . " + task.getWebsiteId());
                         continue;
                     }
                     searchTemplate = ReplaceUtils.replaceMap(context.getContext(), searchTemplate);
-                    maxExecuteMinutes = request.getMaxExecuteMinutes() != null ? request.getMaxExecuteMinutes() : maxExecuteMinutes;
+                    maxExecuteMinutes = request.getMaxExecuteMinutes() != null ? request.getMaxExecuteMinutes()
+                        : maxExecuteMinutes;
                     String headerString = request.getDefaultHeader();
                     if (StringUtils.isNotBlank(headerString)) {
                         headerString = SourceUtil.sourceExpression(context.getContext(), headerString);
-                        Map<String, String> defaultHeader = (Map<String, String>) GsonUtils.fromJson(headerString, Map.class);
+                        Map<String, String> defaultHeader = (Map<String, String>) GsonUtils.fromJson(headerString,
+                            Map.class);
                         if (MapUtils.isNotEmpty(defaultHeader)) {
                             context.getDefaultHeader().putAll(defaultHeader);
                         }
                     }
                     // get all the possible result tag
                     resultTagSet.addAll(templateConfig.getResultTagList());
-                    SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate).setTemplateId(templateConfig.getId()).setSearchTemplateConfig(templateConfig).setMaxExecuteMinutes(maxExecuteMinutes).setResultDataHandler(resultDataHandler).setExtractorActorRef(extractorActorRef).setDuplicateChecker(duplicateChecker).setInitLinkNodeList(initLinkNodeList);
+                    SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate)
+                        .setTemplateId(templateConfig.getId()).setSearchTemplateConfig(templateConfig)
+                        .setMaxExecuteMinutes(maxExecuteMinutes).setResultDataHandler(resultDataHandler)
+                        .setExtractorActorRef(extractorActorRef).setDuplicateChecker(duplicateChecker)
+                        .setInitLinkNodeList(initLinkNodeList);
 
                     crawlExcutorHandler.crawlExecutor(searchProcessor);
                     futureList.addAll(searchProcessor.getFutureList());
@@ -272,7 +291,8 @@ public class CollectorWorker {
             Exception exception = null;
             for (Future future : futureList) {
                 try {
-                    ExtractMessage message = (ExtractMessage) Await.result(future, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT).duration());
+                    ExtractMessage message = (ExtractMessage) Await.result(future,
+                        new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT).duration());
                     this.extractCodeCount(extractCount, message, submitkeyResult);
                 } catch (Exception e) {
                     exception = e;
@@ -325,7 +345,8 @@ public class CollectorWorker {
         ExtractCount extractCount = new ExtractCount();
         for (Future future : futureList) {
             try {
-                ExtractMessage message = (ExtractMessage) Await.result(future, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT).duration());
+                ExtractMessage message = (ExtractMessage) Await.result(future,
+                    new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT).duration());
                 this.extractCodeCount(extractCount, message, submitkeyResult);
             } catch (Exception e) {
                 extractCount.extractFailedCount++;
@@ -340,7 +361,8 @@ public class CollectorWorker {
         return submitkeyResult;
     }
 
-    private void extractCodeCount(ExtractCount extractCount, ExtractMessage message, Map<String, Object> submitkeyResult) {
+    private void extractCodeCount(ExtractCount extractCount, ExtractMessage message,
+                                  Map<String, Object> submitkeyResult) {
         extractCount.extractedCount++;
         ExtractCode result = message.getExtractCode();
         if (result == null) {
