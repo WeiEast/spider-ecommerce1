@@ -100,7 +100,7 @@ public class CollectorWorker {
             // "${emailAccount}"));
 
             // task begin
-            messageService.sendTaskLog("开始抓取");
+            messageService.sendTaskLog(task.getTaskId(), "开始抓取");
             List<Future<Object>> futureList = new ArrayList<Future<Object>>();
             if (!doSearch(taskMessage, futureList)) {
                 return null;

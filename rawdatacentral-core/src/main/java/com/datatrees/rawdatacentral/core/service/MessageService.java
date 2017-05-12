@@ -7,17 +7,19 @@ package com.datatrees.rawdatacentral.core.service;
 public interface MessageService {
 
     /**
-     * 发送任务日志消息
+     * 向网关发送任务日志消息
+     * @param taskId 任务id
      * @param msg 操作信息
      * @param errorDetail 错误信息
      * @return
      */
-    public boolean sendTaskLog(String msg, String errorDetail);
+    public boolean sendTaskLog(Long taskId, String msg, String errorDetail);
 
     /**
-     * 发送任务日志消息
+     * 向网关发送任务日志消息
+     * @param taskId 任务id
      * @param msg 操作信息
      * @return
      */
-    public boolean sendTaskLog(String msg);
+    public boolean sendTaskLog(Long taskId, String msg);
 }

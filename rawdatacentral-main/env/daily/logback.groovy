@@ -1,4 +1,8 @@
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
+import ch.qos.logback.core.ConsoleAppender
+import ch.qos.logback.core.rolling.RollingFileAppender
+import ch.qos.logback.core.rolling.TimeBasedRollingPolicy
+
 // 30秒扫描一次日志配置更新
 scan("30 seconds")
 
@@ -12,7 +16,6 @@ appender("console", ConsoleAppender) {
         pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%L] %m%n"
     }
 }
-
 
 // 业务日志
 appender("sysFile", RollingFileAppender) {
