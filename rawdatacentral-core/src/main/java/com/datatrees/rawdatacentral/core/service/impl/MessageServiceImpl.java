@@ -33,14 +33,12 @@ public class MessageServiceImpl implements MessageService {
         map.put("timestamp", System.currentTimeMillis());
         map.put("msg", msg);
         map.put("errorDetail", errorDetail);
-
-        Message mqMessage = new Message();
-        mqMessage.setTopic(TopicEnum.TASK_LOG.getCode());
-        mqMessage.setBody(GsonUtils.toJson(map).getBytes());
-
         int retry = 0;
         while (retry++ <= 3) {
             try {
+                Message mqMessage = new Message();
+                mqMessage.setTopic(TopicEnum.TASK_LOG.getCode());
+                mqMessage.setBody(GsonUtils.toJson(map).getBytes("UTF-8"));
                 SendResult sendResult = producer.send(mqMessage);
                 logger.info("send result message={},status={}", GsonUtils.toJson(map), sendResult.getSendStatus());
                 if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {

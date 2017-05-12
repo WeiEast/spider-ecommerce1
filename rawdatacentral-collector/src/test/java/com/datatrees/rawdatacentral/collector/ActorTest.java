@@ -11,7 +11,7 @@ import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
-import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.core.service.MessageService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
@@ -38,6 +38,8 @@ public class ActorTest extends AbstractTest {
     @Resource
     private CrawlerService      cs;
 
+    @Resource
+    private MessageService      messageService;
     private static final Logger logger = LoggerFactory.getLogger(ActorTest.class);
 
     @Test
@@ -50,9 +52,10 @@ public class ActorTest extends AbstractTest {
         System.out.println(PropertiesConfiguration.getInstance());
         cs.verifyQr(333, "");
     }
+
     @Test
     public void testQQMail() throws Exception {
-        while(true){
+        while (true) {
             Thread.sleep(1000);
         }
     }
@@ -360,7 +363,8 @@ public class ActorTest extends AbstractTest {
     @Test
     public void testStart() {
         while (true) {
-            logger.info("哈哈哈");
+            //            logger.info("哈哈哈");
+            messageService.sendTaskLog(RandomUtils.nextLong(),"测试信息","不告诉你");
             TimeUnit.SECONDS.toSeconds(60);
         }
     }
