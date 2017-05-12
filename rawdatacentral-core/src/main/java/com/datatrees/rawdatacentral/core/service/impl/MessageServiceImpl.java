@@ -5,8 +5,6 @@ import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.core.service.MessageService;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import org.slf4j.Logger;
@@ -30,11 +28,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public boolean sendTaskLog(Long taskId, String msg, String errorDetail) {
-        AbstractProcessorContext context = PluginFactory.getProcessorContext();
-        String websiteName = context.getWebsiteName();
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("taskId", taskId);
-        map.put("websiteName", websiteName);
         map.put("timestamp", System.currentTimeMillis());
         map.put("msg", msg);
         map.put("errorDetail", errorDetail);
