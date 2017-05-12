@@ -271,7 +271,8 @@ public class Collector {
             }
         } finally {
             try {
-                messageService.sendTaskLog(taskMessage.getTask().getStatus() == 0 ? "抓取成功" : "抓取失败");
+                messageService.sendTaskLog(taskMessage.getTask().getTaskId(),
+                    taskMessage.getTask().getStatus() == 0 ? "抓取成功" : "抓取失败");
                 if (taskMessage.getTask().getStatus() != 0) {
                     Map<String, Object> directiveMap = new HashMap<String, Object>();
                     directiveMap.put("taskId", taskMessage.getTask().getTaskId());

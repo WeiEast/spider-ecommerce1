@@ -8,7 +8,6 @@ import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.core.service.MessageService;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +29,8 @@ public class MessageServiceImpl implements MessageService {
     private MQProducer          producer;
 
     @Override
-    public boolean sendTaskLog(String msg, String errorDetail) {
+    public boolean sendTaskLog(Long taskId, String msg, String errorDetail) {
         AbstractProcessorContext context = PluginFactory.getProcessorContext();
-        Long taskId = context.getLong(AttributeKey.TASK_ID);
         String websiteName = context.getWebsiteName();
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("taskId", taskId);
@@ -61,7 +59,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public boolean sendTaskLog(String msg) {
-        return sendTaskLog(msg, null);
+    public boolean sendTaskLog(Long taskId, String msg) {
+        return sendTaskLog(taskId, msg, null);
     }
 }
