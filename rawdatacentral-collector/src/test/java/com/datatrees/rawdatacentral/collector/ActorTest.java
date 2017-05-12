@@ -360,7 +360,6 @@ public class ActorTest extends AbstractTest {
     @Test
     public void testStart() {
         while (true) {
-            logger.info("hell {}", "中国你好");
             TimeUnit.SECONDS.toSeconds(60);
         }
     }
@@ -369,12 +368,11 @@ public class ActorTest extends AbstractTest {
         String content = FileUtils.readFileToString(new File("/data/json.txt"));
         JSONObject json = JSON.parseObject(content);
         String websiteName = json.getJSONObject("resultMsg").getString("websiteName");
-        Integer userId = json.getJSONObject("resultMsg").getInteger("userId");
         String endURL = json.getJSONObject("startMsg").getString("endURL");
         String cookie = json.getJSONObject("startMsg").getString("cookie");
         CollectorMessage message = new CollectorMessage();
         message.setCookie(cookie);
-        message.setTaskId(userId);
+        message.setTaskId(RandomUtils.nextLong());
         message.setWebsiteName(websiteName);
         message.setEndURL(endURL);
         return message;
