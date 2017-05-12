@@ -8,18 +8,17 @@
  */
 package com.datatrees.rawdatacentral.collector.worker;
 
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.search.CrawlExcutorHandler;
-import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateCheckerFactory;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.rawdatacentral.core.service.MessageService;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  *
@@ -42,6 +41,8 @@ public class CollectorWorkerFactory {
     private SubTaskManager subTaskManager;
     @Resource
     private RedisDao redisDao;
+    @Resource
+    private MessageService messageService;
 
 
 
@@ -56,7 +57,7 @@ public class CollectorWorkerFactory {
         // }
         // init collectorWorker
         CollectorWorker collectorWorker = new CollectorWorker().setCrawlExcutorHandler(crawlExcutorHandler).setResultDataHandler(resultDataHandler)
-                .setExtractorActorRef(extractorWorkerRef).setSubTaskManager(subTaskManager).setRedisDao(redisDao);
+                .setExtractorActorRef(extractorWorkerRef).setSubTaskManager(subTaskManager).setRedisDao(redisDao).setMessageService(messageService);
 
         return collectorWorker;
     }

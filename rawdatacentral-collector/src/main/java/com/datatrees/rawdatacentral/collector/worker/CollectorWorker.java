@@ -30,12 +30,12 @@ import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
-import com.datatrees.rawdatacentral.core.service.MessageService;
-import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.rawdatacentral.core.service.MessageService;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -44,7 +44,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -82,7 +81,6 @@ public class CollectorWorker {
     private final long          maxLiveTime               = TimeUnit.SECONDS
         .toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
 
-    @Resource
     private MessageService      messageService;
 
     public Map<String, Object> process(TaskMessage taskMessage) throws InterruptedException {
@@ -506,4 +504,8 @@ public class CollectorWorker {
         return this;
     }
 
+    public CollectorWorker setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+        return this;
+    }
 }
