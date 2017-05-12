@@ -8,23 +8,15 @@
  */
 package com.datatrees.rawdatacentral.collector.subtask;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
+import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.rawdatacentral.collector.subtask.container.Container;
 import com.datatrees.rawdatacentral.collector.subtask.container.Mutex;
+import com.datatrees.rawdatacentral.collector.subtask.container.impl.MutexSubTaskContainer;
+import com.datatrees.rawdatacentral.collector.subtask.container.impl.SimpleSubTaskContainer;
 import com.datatrees.rawdatacentral.collector.subtask.pool.SubTaskExecutor;
+import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
+import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
+import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,13 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.rawdatacentral.collector.subtask.container.Container;
-import com.datatrees.rawdatacentral.collector.subtask.container.impl.MutexSubTaskContainer;
-import com.datatrees.rawdatacentral.collector.subtask.container.impl.SimpleSubTaskContainer;
-import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
-import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
-import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  *
@@ -279,7 +268,7 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
                             submitCount++;
                         }
                     }
-                    logger.info("active thread count " + activeCount + ", asyncSubTask need wait sleep " + scheduleInterval + "ms");
+                    logger.info("active thread count " + activeCount + ", asyncSubTask need wait sleep " + scheduleInterval + "毫秒");
                     Thread.sleep(scheduleInterval);
                 } catch (Exception e) {
                     logger.warn("AsyncSubTaskScheduleThread interrupted", e);
