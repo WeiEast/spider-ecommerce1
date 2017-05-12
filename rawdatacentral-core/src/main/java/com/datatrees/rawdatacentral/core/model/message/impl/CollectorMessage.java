@@ -217,7 +217,7 @@ public class CollectorMessage extends MessageInfo {
      * @param accountNo the accountNo to set
      */
     public void setAccountNo(String accountNo) {
-        accountNo = accountNo;
+        this.accountNo = accountNo;
     }
 
 }
