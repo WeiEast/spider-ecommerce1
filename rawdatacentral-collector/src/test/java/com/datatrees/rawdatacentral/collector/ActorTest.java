@@ -42,9 +42,15 @@ public class ActorTest extends AbstractTest {
         System.out.println(CalculateUtil.calculate("936.25 -(-57.61 )+468.85999999999996", 1));
     }
     @Test
-    public void ddd() throws Exception {
+    public void testCrawlerService() throws Exception {
         System.out.println(PropertiesConfiguration.getInstance());
-        WebsiteConf websiteConf = cs.getWebsiteConf("浙江移动");
+        cs.verifyQr(333, "");
+    }
+    @Test
+    public void testQQMail() throws Exception {
+        while(true){
+            Thread.sleep(1000);
+        }
     }
 
     @Test
