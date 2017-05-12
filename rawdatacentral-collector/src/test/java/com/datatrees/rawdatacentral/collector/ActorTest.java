@@ -354,6 +354,7 @@ public class ActorTest extends AbstractTest {
     @Test
     public void testStart() {
         while (true) {
+            logger.info("哈哈哈");
             TimeUnit.SECONDS.toSeconds(60);
         }
     }
