@@ -6,12 +6,12 @@ package com.datatrees.rawdatacentral.domain.enums;
  */
 public enum DirectiveEnum {
 
-    REQUIRE_SMS("REQUIRE_SMS", "需要短信验证码"),
-    REQUIRE_PICTURE("REQUIRE_PICTURE", "需要图片验证码"),
-    REQUIRE_QR("REQUIRE_QR", "需要二维码"),
-    GRAB_URL("GRAB_URL", "抓取URL"),
-    TASK_SUCCESS("TASK_SUCCESS", "成功"),
-    TASK_FAIL("TASK_FAIL", "失败"),;
+    REQUIRE_SMS("require_sms", "需要短信验证码"),
+    REQUIRE_PICTURE("require_picture", "需要图片验证码"),
+    REQUIRE_QR("require_qr", "需要二维码"),
+    GRAB_URL("grab_url", "抓取URL"),
+    TASK_SUCCESS("task_success", "成功"),
+    TASK_FAIL("task_fail", "失败"),;
 
     /**
      * 指令
