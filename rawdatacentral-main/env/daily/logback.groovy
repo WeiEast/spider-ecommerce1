@@ -29,4 +29,5 @@ appender("sysFile", RollingFileAppender) {
 
 
 
-root(INFO, ["console", "sysFile"])
+root(DEBUG, ["console", "sysFile"])
+logger("service com.alibaba.dubbo.monitor",OFF)
