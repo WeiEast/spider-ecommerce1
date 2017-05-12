@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,18 +63,26 @@ public class ActorTest extends AbstractTest {
     }
 
     @Test
-    public void testQQ() throws InterruptedException {
+    public void testQQ1() throws InterruptedException {
         CollectorMessage message = new CollectorMessage();
         message.setAccountNo("33");
         message.setTaskId(1);
         message.setCookie(
-            "new_mail_num=946315435&0; device=; superkey=H3Ra-VFgwsOz4qPEc*VIfnrrXpuG3yrO9GVBOd8UnmQ_; p_luin=o0946315435; p_lskey=00040000701f0a206e05f957dcc7b961c90220a010999bbaf3f32ce85bacf3ccd6b22ad99f302d51bd283c36; p_uin=o0946315435; pt_user_id=4261842138710356380; pt2gguin=o0946315435; qm_lg=qm_lg; ptdrvs=LuPA5*9grbmn*GXZachDbtO7cNgdzVzhgj-amTV7Jmc_; ptvfsession=0ba82bf54ecf8f9a019d47edc7290e41fd6331117e9fc60a83650b4df61ccdf4c7760cb7dbea66d978a223b08d718e16a0099bb25e853419; sid=946315435&5c305699e33af0f5f3f84a4128cdb880,qWVYwYWFUOHVvaEZZUTRza1JJQi1RVzYwbkloTHdodVpXU2hHeWQyTm1BZ18.; edition=mail.qq.com; qzone_token=2092816715; superuin=o0946315435; ptui_identifier=000D1EB7B9B469618CD6FBF46BCF1E4E14EF675ECF8032F641B02155; msid=z2TVljZ9O1xVVGw1XM3TivMc,4,qWVYwYWFUOHVvaEZZUTRza1JJQi1RVzYwbkloTHdodVpXU2hHeWQyTm1BZ18.; ptisp=cnc; confirmuin=0; skey=@V3VKZ9AsU; uin=o0946315435; qzone_p_skey=; pt4_token=fFU4-uO6N5vpXUkFTJ9jH6uNTTFLieQw3v*lSvqzamQ_; pt_serverip=3fda0af1726387dc; supertoken=3321753955; ssl_edition=sail.qq.com; pgv_si=s9322518528; qzone_skey=; pt_clientip=64a0af2bf60deab8; qm_username=946315435; p_skey=YV0aaT8uohFYQ4skRIB-QW60nIhLwhuZWShGyd2NmAg_; username=946315435&946315435; pgv_pvi=8086326272; pt_login_sig=sC7ahu6U6nugu4gNqnoiurUtgy-y2fF3j6JJN7W3x42c7rQqNF2dJJkmG74acQTG; qqmail_alias=946315435@qq.com; qm_flag=0");
+            "device=;pgv_pvi=9200936960;qzone_token=1087946064;ptdrvs=ljuG6i3htNpPh6al3FFV6fLjsii4cClJqP*VK4XK12A_;ptisp=cnc;superkey=HofjJo4ftB0HYqhfutt8svVqT1AAxJQNwc-sudBDYlo_;superuin=o0646730541;qzone_p_skey=;sid=646730541&4649a69fb0ec11a216eeea3cc36a88b6,qTVUxeXNvVTJKbW1VVHcxWWdEV1hObUt0R2tCTkpYNDNiTjhaVnBabDFpVV8.;qm_lg=qm_lg;edition=mail.qq.com;uin=o0646730541;qm_sk=646730541&73nT6vN8;ssl_edition=sail.qq.com;pt2gguin=o0646730541;uikey=610cf7a510dd7b636998253cb80a8e6616a58c1eeb4407ddd8673b80d63e800c;skey=@TG19wJkSg;qm_flag=0;confirmuin=0;pt_login_sig=UwF-g6JUfOomWaD-sPQCfODLKjRswxeHZso3uCeaTqRmj9KT-eGK0evY8aoOM9TK;pt_clientip=1575de8960d4af11;qzone_skey=;p_luin=o0646730541;pt_serverip=70330af49810b266;x-stgw-ssl-info=5cf08fd5d9bcd77a2ce1adc7349bace1_0.228_1494569647.514_1_3.1_N_Y_TLSv1.2_ECDHE-RSA-AES128-GCM-SHA256_48000_0:0:0:0:0:0:0;pgv_si=s9358526464;username=646730541&646730541;new_mail_num=646730541&0;supertoken=3916179705;pt_user_id=10053240378383537612;login_param=style%3D9%26appid%3D522005705%26daid%3D4%26s_url%3Dhttp%253A%2F%2Fm.qzone.com%2Finfocenter%253Fg_f%253D275%2526g_ut%253D3%26hln_css%3Dhttp%253A%252F%252Fmail.qq.com%252Fzh_CN%252Fhtmledition%252Fimages%252Flogo%252Fqqmail%252Fqqmail_logo_default_200h.png;mpwd=0fbdea795452d30MTQ5NzE2MTY0OA@646730541@4;qm_username=646730541;p_lskey=0004000093c5998b670626a930f845b103ec78236179c99c132401bc15b6f39027cd60efc9b81a4e843b7d87;ptvfsession=fbd460ee062c2baeb0cc2c2275651146af3414a41ccb580787ab6619ca944f39cd7862d76677e35ca9fc54a883a143136b6e2daa412721a9;p_uin=o0646730541;pt4_token=e0MfUN1za38o9DdH1XsxnZDeSGc3wfFhY5XULmJn2*U_;msid=aEW1Xww-B4ueNxFI0F7TgfMX,4,qTVUxeXNvVTJKbW1VVHcxWWdEV1hObUt0R2tCTkpYNDNiTjhaVnBabDFpVV8.;qm_ssum=646730541&82e0cb9fb16d2425d9c879f0e7705e14;ptui_identifier=000DC96BBE46B0221544C9CEFD43CB716B9C6B1580D84DE8120B520F;qqmail_alias=646730541@qq.com;p_skey=MU1ysoU2JmmUTw1YgDWXNmKtGkBNJX43bN8ZVpZl1iU_;pcache=0fbdea795452d30MTQ5NzE2MTY0OA@646730541@4;");
         message.setTaskId(2100000146);
         message.setWebsiteName("qq.com");
         message.setEndURL(
-            "https://w.mail.qq.com/cgi-bin/today?sid=z2TVljZ9O1xVVGw1XM3TivMc,4,qWVYwYWFUOHVvaEZZUTRza1JJQi1RVzYwbkloTHdodVpXU2hHeWQyTm1BZ18.&first=1");
-
-        collector.processMessage(message);
+            "https://w.mail.qq.com/cgi-bin/today?sid=aEW1Xww-B4ueNxFI0F7TgfMX,4,qTVUxeXNvVTJKbW1VVHcxWWdEV1hObUt0R2tCTkpYNDNiTjhaVnBabDFpVV8.&first=1&mcookie=disabled");
+        ExecutorService es = Executors.newFixedThreadPool(5);
+        for(int i = 0 ; i<3;i++){
+            message.setTaskId(System.currentTimeMillis());
+            es.submit(()->{
+                collector.processMessage(message);
+            });
+        }
+        while(true){
+            
+        }
 
     }
 

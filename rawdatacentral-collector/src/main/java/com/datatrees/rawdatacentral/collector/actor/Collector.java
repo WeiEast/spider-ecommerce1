@@ -58,6 +58,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -186,10 +187,12 @@ public class Collector {
         if (StringUtils.isNotBlank(accountNo)) {
             String redisKey = websiteName + accountNo;
             String lastTaskId = redisDao.getRedisTemplate().opsForValue().getAndSet(redisKey, taskId);
+            redisDao.getRedisTemplate().expire(redisKey, 10, TimeUnit.MINUTES);
             if (StringUtils.isNotBlank(lastTaskId)) {
                 ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", lastTaskId,
                     Thread.currentThread(), zookeeperClient);
                 watcher.cancel();
+                logger.info("lastTaskId {} thread not needn't run",lastTaskId);
             }
         }
         String path = taskId;
