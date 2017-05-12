@@ -46,9 +46,15 @@ public class ActorTest extends AbstractTest {
     }
 
     @Test
-    public void ddd() throws Exception {
+    public void testCrawlerService() throws Exception {
         System.out.println(PropertiesConfiguration.getInstance());
-        WebsiteConf websiteConf = cs.getWebsiteConf("浙江移动");
+        cs.verifyQr(333, "");
+    }
+    @Test
+    public void testQQMail() throws Exception {
+        while(true){
+            Thread.sleep(1000);
+        }
     }
 
     @Test
