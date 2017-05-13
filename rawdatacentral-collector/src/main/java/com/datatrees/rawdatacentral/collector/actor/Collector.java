@@ -6,6 +6,7 @@
  */
 package com.datatrees.rawdatacentral.collector.actor;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
@@ -273,6 +274,7 @@ public class Collector {
                 taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
             }
         } finally {
+            Task task = taskMessage.getTask();
             try {
                 String logMsg = null;
                 switch (taskMessage.getTask().getStatus()) {
@@ -289,11 +291,10 @@ public class Collector {
                         logMsg = "抓取失败";
                         break;
                 }
-                messageService.sendTaskLog(taskMessage.getTask().getTaskId(), logMsg);
-                if (taskMessage.getTask().getStatus() != 0
-                    && taskMessage.getTask().getStatus() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
+                messageService.sendTaskLog(task.getTaskId(), logMsg);
+                if (task.getStatus() != 0 && task.getStatus() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
                     Map<String, Object> directiveMap = new HashMap<String, Object>();
-                    directiveMap.put("taskId", taskMessage.getTask().getTaskId());
+                    directiveMap.put("taskId", task.getTaskId());
                     directiveMap.put("directive", DirectiveEnum.TASK_FAIL.getCode());
                     Message directiveMsg = new Message();
                     directiveMsg.setTopic(TopicEnum.TASK_NEXT_DIRECTIVE.getCode());
@@ -304,6 +305,8 @@ public class Collector {
                 logger.error("send log status error", e);
             }
             this.actorLockWatchRelease(watcher);
+            logger.info("task complete taskId={},taskCode={},remark={},message={}", task.getTaskId(), task.getStatus(),
+                task.getRemark(), JSON.toJSONString(message));
         }
         this.messageComplement(taskMessage, (CollectorMessage) message);
         message.setFinish(true);// mark message finish
