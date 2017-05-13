@@ -129,7 +129,8 @@ public class Collector {
             // 历史状态清理
             this.clearStatus(message.getTaskId());
         } catch (Exception e) {
-            logger.warn("get context error with " + message, e);
+            logger.error("taskMessageInit error taskId={},message={} ", message.getTaskId(), GsonUtils.toJson(message),
+                e);
             task.setErrorCode(ErrorCode.TASK_INIT_ERROR, "TASK_INIT_ERROR error with " + message);
         }
         // insert task
@@ -267,7 +268,7 @@ public class Collector {
                 this.sendResult(taskMessage, submitkeyResult, resultTagSet);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("processMessage error taskId={}", taskMessage.getTask().getTaskId(), e);
             if (e instanceof LoginTimeOutException) {
                 taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR,
                     ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMessage() + " " + e.getMessage());
