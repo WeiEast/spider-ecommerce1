@@ -13,6 +13,7 @@ import akka.util.Timeout;
 import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.domain.config.login.LoginType;
 import com.datatrees.crawler.core.domain.config.search.Request;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
@@ -88,7 +89,10 @@ public class CollectorWorker {
         SearchProcessorContext context = taskMessage.getContext();
         try {
             boolean needLogin = context.needLogin();
-            log.info("start process taskId={},needLogin={}", task.getTaskId(), needLogin);
+            LoginType loginType = context.getLoginConfig() != null ? context.getLoginConfig().getType() : null;
+
+            log.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin,
+                loginType, context.getWebsiteName());
             if (needLogin) {
                 if (!doLogin(taskMessage)) {
                     return null;
