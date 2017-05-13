@@ -23,9 +23,9 @@ import com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher;
  */
 public class ActorLockEventWatcher extends AbstractLockerWatcher {
     private static final Logger logger = LoggerFactory.getLogger(ActorLockEventWatcher.class);
-    private Thread actorThread;
-    private ZooKeeperClient zookeeperClient;
-    private String root;
+    private Thread              actorThread;
+    private ZooKeeperClient     zookeeperClient;
+    private String              root;
 
     /**
      * @param name
@@ -43,7 +43,8 @@ public class ActorLockEventWatcher extends AbstractLockerWatcher {
      * @see com.datatrees.common.zookeeper.Locker#await()
      */
     @Override
-    public void await() {}
+    public void await() {
+    }
 
     /*
      * (non-Javadoc)
@@ -58,17 +59,17 @@ public class ActorLockEventWatcher extends AbstractLockerWatcher {
             if (!childPath.equals(leader)) {
                 logger.info(childPath + " lose lock from zookeeper with lastFollower: " + leader);
                 if (actorThread != null && actorThread.isAlive()) {
-                    logger.info(" interrupt thread:" + actorThread);
+                    logger.info(" interrupt thread={},threadId={},childPath={},root={}", actorThread,
+                        actorThread.getId(), childPath, root);
                     // actorThread.interrupt();
                     ThreadInterruptedUtil.setInterrupt(actorThread);
                     zookeeperClient.unregisterWatcher(this);
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("detectLeader error", e);
         }
     }
-
 
     @Override
     protected boolean releaseLeader() {
@@ -89,7 +90,7 @@ public class ActorLockEventWatcher extends AbstractLockerWatcher {
     public boolean unLock() {
         return releaseLeader();
     }
-    
+
     public boolean cancel() {
         zookeeperClient.registerWatcher(this);
         if (this.init()) {

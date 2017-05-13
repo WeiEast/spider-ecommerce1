@@ -263,7 +263,8 @@ public class Collector {
             }
 
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                throw new InterruptedException("Thread interrupt check failed bafore result send to queue.");
+                throw new InterruptedException(
+                    "Thread interrupt check failed bafore result send to queue. threadId=" + Thread.currentThread().getId());
             } else {
                 this.sendResult(taskMessage, submitkeyResult, resultTagSet);
             }
