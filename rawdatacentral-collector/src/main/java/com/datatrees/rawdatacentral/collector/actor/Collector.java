@@ -296,7 +296,7 @@ public class Collector {
                         logMsg += "抓取成功";
                         break;
                     case 306:
-                        logMsg = isRepeatTask ? "用户刷新任务或者重试,抓取中断" : "抓取中断";
+                        logMsg = isRepeatTask ? "用户刷新任务或者重试," + logMsg + "抓取中断" : logMsg + "抓取中断";
                         break;
                     case 308:
                         logMsg += "抓取失败,登陆超时";
