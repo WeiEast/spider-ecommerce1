@@ -87,10 +87,14 @@ public class CollectorWorker {
         Task task = taskMessage.getTask();
         SearchProcessorContext context = taskMessage.getContext();
         try {
-            if (context.needLogin()) {
+            boolean needLogin = context.needLogin();
+            log.info("start process taskId={},needLogin={}", task.getTaskId(), needLogin);
+            if (needLogin) {
                 if (!doLogin(taskMessage)) {
                     return null;
                 }
+            } else {
+                messageService.sendTaskLog(task.getTaskId(), "接收到登陆成功信息!");
             }
             //
             // // set accout,just use email account for temporary
