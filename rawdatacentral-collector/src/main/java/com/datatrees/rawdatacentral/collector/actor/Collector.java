@@ -192,7 +192,7 @@ public class Collector {
                 ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", lastTaskId,
                     Thread.currentThread(), zookeeperClient);
                 watcher.cancel();
-                logger.info("lastTaskId {} thread not needn't run",lastTaskId);
+                logger.info("lastTaskId {} thread not needn't run", lastTaskId);
             }
         }
         String path = taskId;
@@ -274,9 +274,24 @@ public class Collector {
             }
         } finally {
             try {
-                messageService.sendTaskLog(taskMessage.getTask().getTaskId(),
-                    taskMessage.getTask().getStatus() == 0 ? "抓取成功" : "抓取失败");
-                if (taskMessage.getTask().getStatus() != 0) {
+                String logMsg = null;
+                switch (taskMessage.getTask().getStatus()) {
+                    case 0:
+                        logMsg = "抓取成功";
+                        break;
+                    case 306:
+                        logMsg = "用户刷新任务或者重试,抓取中断";
+                        break;
+                    case 308:
+                        logMsg = "抓取失败,登陆超时";
+                        break;
+                    default:
+                        logMsg = "抓取失败";
+                        break;
+                }
+                messageService.sendTaskLog(taskMessage.getTask().getTaskId(), logMsg);
+                if (taskMessage.getTask().getStatus() != 0
+                    && taskMessage.getTask().getStatus() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
                     Map<String, Object> directiveMap = new HashMap<String, Object>();
                     directiveMap.put("taskId", taskMessage.getTask().getTaskId());
                     directiveMap.put("directive", DirectiveEnum.TASK_FAIL.getCode());
