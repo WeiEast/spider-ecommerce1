@@ -44,7 +44,6 @@ public class CollectorMessage extends MessageInfo {
      */
     private long                totalRun   = 0;
 
-    private long                rootTaskId = 0;
 
     public long getTotalRun() {
         return totalRun;
@@ -228,11 +227,4 @@ public class CollectorMessage extends MessageInfo {
         this.sendBack = sendBack;
     }
 
-    public long getRootTaskId() {
-        return rootTaskId;
-    }
-
-    public void setRootTaskId(long rootTaskId) {
-        this.rootTaskId = rootTaskId;
-    }
 }

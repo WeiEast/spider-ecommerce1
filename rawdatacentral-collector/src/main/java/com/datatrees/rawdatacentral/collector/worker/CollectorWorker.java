@@ -98,7 +98,7 @@ public class CollectorWorker {
                     return null;
                 }
             } else {
-                if (task.getParentTaskId() == 0) {
+                if (!task.isSubTask()) {
                     messageService.sendTaskLog(task.getTaskId(), "接收到登陆成功信息!");
                 }
             }
@@ -108,7 +108,7 @@ public class CollectorWorker {
             // "${emailAccount}"));
 
             // task begin
-            messageService.sendTaskLog(task.getTaskId(), task.getParentTaskId() > 0 ? "子任务开始抓取" : "开始抓取");
+            messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务开始抓取" : "开始抓取");
             List<Future<Object>> futureList = new ArrayList<Future<Object>>();
             if (!doSearch(taskMessage, futureList)) {
                 return null;

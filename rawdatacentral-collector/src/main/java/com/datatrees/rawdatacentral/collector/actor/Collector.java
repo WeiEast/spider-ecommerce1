@@ -109,8 +109,7 @@ public class Collector {
         SearchProcessorContext context = null;
         Task task = new Task();
         if (message instanceof SubTaskCollectorMessage) {
-            SubTaskCollectorMessage subTaskCollectorMessage = (SubTaskCollectorMessage) message;
-            task.setParentTaskId(subTaskCollectorMessage.getRootTaskId());
+            task.setSubTask(true);
         }
         try {
             task.setTaskId(message.getTaskId());
@@ -282,16 +281,15 @@ public class Collector {
             Task task = taskMessage.getTask();
 
             try {
-                String logMsg = task.getParentTaskId() > 0 ? "子任务" : "";
-                String redisKey = "run_count:"
-                                  + (task.getParentTaskId() == 0 ? task.getTaskId() : task.getParentTaskId());
+                String logMsg = task.isSubTask() ? "子任务" : "";
+                String redisKey = "run_count:" + task.getTaskId();
                 long totalRun = 0;
                 if (redisDao.getRedisTemplate().hasKey(redisKey)) {
                     totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(redisKey));
                 }
                 boolean isRepeatTask = totalRun > message.getTotalRun();
-                logger.info("task run complete taskId={},parentTaskId={},newTotalRun={},oldTotalRun={},isRepeatTask={}",
-                    task.getId(), task.getParentTaskId(), totalRun, message.getTotalRun(), isRepeatTask);
+                logger.info("ready complete task taskId={},isSubTask={},newTotalRun={},oldTotalRun={},isRepeatTask={}",
+                    task.getTaskId(), task.isSubTask(), totalRun, message.getTotalRun(), isRepeatTask);
 
                 switch (taskMessage.getTask().getStatus()) {
                     case 0:
@@ -321,8 +319,8 @@ public class Collector {
                 logger.error("send log status error", e);
             }
             this.actorLockWatchRelease(watcher);
-            logger.info("task complete taskId={},parentTaskId={},taskCode={},remark={},message={}", task.getTaskId(),
-                task.getParentTaskId(), task.getStatus(), task.getRemark(), JSON.toJSONString(message));
+            logger.info("task complete taskId={},isSubTask={},taskCode={},remark={},message={}", task.getTaskId(),
+                task.isSubTask(), task.getStatus(), task.getRemark(), JSON.toJSONString(message));
         }
         this.messageComplement(taskMessage, (CollectorMessage) message);
         message.setFinish(true);// mark message finish

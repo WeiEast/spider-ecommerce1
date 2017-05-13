@@ -48,10 +48,7 @@ public class Task {
 
     private boolean       isDuplicateRemoved;
 
-    /**
-     * 父任务
-     */
-    private long          parentTaskId;
+    private boolean       isSubTask          = false;
 
     /**
      * @return the openUrlCount
@@ -378,11 +375,11 @@ public class Task {
         this.taskId = taskId;
     }
 
-    public long getParentTaskId() {
-        return parentTaskId;
+    public boolean isSubTask() {
+        return isSubTask;
     }
 
-    public void setParentTaskId(long parentTaskId) {
-        this.parentTaskId = parentTaskId;
+    public void setSubTask(boolean subTask) {
+        isSubTask = subTask;
     }
 }
