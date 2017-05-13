@@ -8,6 +8,7 @@
  */
 package com.datatrees.rawdatacentral.collector.subtask.pool;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.collector.subtask.container.Container;
@@ -76,6 +77,7 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private SubTaskCollectorMessage initSubTaskCollectorMessage(SubTask task) {
+        logger.info("task={}", JSON.toJSONString(task));
         SubTaskCollectorMessage message = new SubTaskCollectorMessage();
         // set from parent tassk
         message.setCookie(task.getParentTask().getCookie());
