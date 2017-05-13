@@ -36,6 +36,7 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
+import com.datatrees.rawdatacentral.core.model.message.impl.SubTaskCollectorMessage;
 import com.datatrees.rawdatacentral.core.service.MessageService;
 import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
@@ -107,6 +108,10 @@ public class Collector {
     private TaskMessage taskMessageInit(CollectorMessage message) {
         SearchProcessorContext context = null;
         Task task = new Task();
+        if (message instanceof SubTaskCollectorMessage) {
+            SubTaskCollectorMessage subTaskCollectorMessage = (SubTaskCollectorMessage) message;
+            task.setParentTaskId(subTaskCollectorMessage.getParentTaskID());
+        }
         try {
             task.setTaskId(message.getTaskId());
             task.setNodeName(NodeNameUtil.INSTANCE.getNodeName());
@@ -276,19 +281,19 @@ public class Collector {
         } finally {
             Task task = taskMessage.getTask();
             try {
-                String logMsg = null;
+                String logMsg = task.getParentTaskId() > 0 ? "子任务" : "";
                 switch (taskMessage.getTask().getStatus()) {
                     case 0:
-                        logMsg = "抓取成功";
+                        logMsg += "抓取成功";
                         break;
                     case 306:
                         logMsg = "用户刷新任务或者重试,抓取中断";
                         break;
                     case 308:
-                        logMsg = "抓取失败,登陆超时";
+                        logMsg += "抓取失败,登陆超时";
                         break;
                     default:
-                        logMsg = "抓取失败";
+                        logMsg += "抓取失败";
                         break;
                 }
                 messageService.sendTaskLog(task.getTaskId(), logMsg);

@@ -8,13 +8,11 @@
  */
 package com.datatrees.rawdatacentral.domain.common;
 
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-
-
 
 /**
  *
@@ -23,33 +21,37 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
  * @since 2015年7月27日 下午7:19:25
  */
 public class Task {
-    private int id;
-    private int websiteId;
-    private long taskId;
-    private AtomicInteger openUrlCount = new AtomicInteger(0);
-    private AtomicInteger openPageCount = new AtomicInteger(0);
+    private int           id;
+    private int           websiteId;
+    private long          taskId;
+    private AtomicInteger openUrlCount       = new AtomicInteger(0);
+    private AtomicInteger openPageCount      = new AtomicInteger(0);
     private AtomicInteger requestFailedCount = new AtomicInteger(0);
-    private AtomicInteger retryCount = new AtomicInteger(0);
-    private AtomicInteger filteredCount = new AtomicInteger(0);
-    private AtomicLong networkTraffic = new AtomicLong(0);
+    private AtomicInteger retryCount         = new AtomicInteger(0);
+    private AtomicInteger filteredCount      = new AtomicInteger(0);
+    private AtomicLong    networkTraffic     = new AtomicLong(0);
 
-    private int status;
-    private String remark;
-    private long duration;
-    private int extractedCount;
-    private int extractSucceedCount;
-    private int extractFailedCount;
-    private int storeFailedCount;
-    private int notExtractCount;
+    private int           status;
+    private String        remark;
+    private long          duration;
+    private int           extractedCount;
+    private int           extractSucceedCount;
+    private int           extractFailedCount;
+    private int           storeFailedCount;
+    private int           notExtractCount;
 
-    private Date startedAt;
-    private Date finishedAt;
+    private Date          startedAt;
+    private Date          finishedAt;
 
-    private String resultMessage;
-    private String nodeName;
+    private String        resultMessage;
+    private String        nodeName;
 
-    private boolean isDuplicateRemoved;
+    private boolean       isDuplicateRemoved;
 
+    /**
+     * 父任务
+     */
+    private long          parentTaskId;
 
     /**
      * @return the openUrlCount
@@ -113,8 +115,6 @@ public class Task {
     public AtomicInteger getFilteredCount() {
         return filteredCount;
     }
-
-
 
     /**
      * @return the extractedCount
@@ -277,7 +277,6 @@ public class Task {
         this.finishedAt = finishedAt;
     }
 
-
     /**
      * @return the id
      */
@@ -292,7 +291,6 @@ public class Task {
         this.id = id;
     }
 
-
     /**
      * @return the websiteId
      */
@@ -306,8 +304,6 @@ public class Task {
     public void setWebsiteId(int websiteId) {
         this.websiteId = websiteId;
     }
-
-
 
     /**
      * @return the status
@@ -351,7 +347,6 @@ public class Task {
         this.duration = duration;
     }
 
-
     public void setErrorCode(ErrorCode errorCode) {
         this.setErrorCode(errorCode, null);
     }
@@ -383,6 +378,11 @@ public class Task {
         this.taskId = taskId;
     }
 
+    public long getParentTaskId() {
+        return parentTaskId;
+    }
 
-
+    public void setParentTaskId(long parentTaskId) {
+        this.parentTaskId = parentTaskId;
+    }
 }
