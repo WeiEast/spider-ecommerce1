@@ -77,7 +77,7 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private SubTaskCollectorMessage initSubTaskCollectorMessage(SubTask task) {
-        logger.info("task={}", JSON.toJSONString(task));
+        logger.info("initSubTaskCollectorMessage task={}", JSON.toJSONString(task));
         SubTaskCollectorMessage message = new SubTaskCollectorMessage();
         // set from parent tassk
         message.setCookie(task.getParentTask().getCookie());
