@@ -110,7 +110,7 @@ public class Collector {
         Task task = new Task();
         if (message instanceof SubTaskCollectorMessage) {
             SubTaskCollectorMessage subTaskCollectorMessage = (SubTaskCollectorMessage) message;
-            task.setParentTaskId(subTaskCollectorMessage.getParentTaskID());
+            task.setParentTaskId(subTaskCollectorMessage.getRootTaskId());
         }
         try {
             task.setTaskId(message.getTaskId());

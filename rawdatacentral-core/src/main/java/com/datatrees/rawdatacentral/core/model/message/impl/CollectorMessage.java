@@ -30,19 +30,21 @@ public class CollectorMessage extends MessageInfo {
     private String              endURL;
     private boolean             needDuplicate;
 
-    private boolean             level1Status;                            // 标识本网站是否需要发送一级状态
+    private boolean             level1Status;                              // 标识本网站是否需要发送一级状态
 
     private boolean             loginCheckIgnore;
 
-    private Map<String, Object> property = new HashMap<String, Object>();
-    private Map<String, Object> sendBack = new HashMap<String, Object>();
+    private Map<String, Object> property   = new HashMap<String, Object>();
+    private Map<String, Object> sendBack   = new HashMap<String, Object>();
 
     private boolean             finish;
 
     /**
      * 总共运行次数
      */
-    private long                totalRun = 0;
+    private long                totalRun   = 0;
+
+    private long                rootTaskId = 0;
 
     public long getTotalRun() {
         return totalRun;
@@ -224,5 +226,13 @@ public class CollectorMessage extends MessageInfo {
 
     public void setSendBack(Map<String, Object> sendBack) {
         this.sendBack = sendBack;
+    }
+
+    public long getRootTaskId() {
+        return rootTaskId;
+    }
+
+    public void setRootTaskId(long rootTaskId) {
+        this.rootTaskId = rootTaskId;
     }
 }
