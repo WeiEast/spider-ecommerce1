@@ -11,6 +11,7 @@ import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
+import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.AbstractRocketMessageListener;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
@@ -27,9 +28,12 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
 
     private static final Logger  log                   = LoggerFactory.getLogger(LoginInfoMessageListener.class);
 
-    private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance().getBoolean("set.cookie.format.switch", false);
+    private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance()
+        .getBoolean("set.cookie.format.switch", false);
 
     private Collector            collector;
+
+    private RedisDao             redisDao;
 
     public Collector getCollector() {
         return collector;
@@ -39,14 +43,23 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         this.collector = collector;
     }
 
+    public void setRedisDao(RedisDao redisDao) {
+        this.redisDao = redisDao;
+    }
+
     /*
-     * (non-Javadoc)
-     * @see
-     * AbstractRocketMessageListener#process(java.lang.Object)
-     */
+         * (non-Javadoc)
+         * @see
+         * AbstractRocketMessageListener#process(java.lang.Object)
+         */
     @Override
     public void process(CollectorMessage message) {
-        collector.processMessage(message);
+        if (message.getTaskId() > 0) {
+            Long totalRun = redisDao.increaseAndGet(String.valueOf(message.getTaskId()));
+            message.setTotalRun(totalRun);
+            log.info("receve login message taskId={},totalRun={}", message.getTaskId(), totalRun);
+            collector.processMessage(message);
+        }
     }
 
     /*
@@ -68,11 +81,12 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 collectorMessage.setEndURL(loginInfo.getEndUrl());
                 collectorMessage.setCookie(loginInfo.getCookie());
                 if (setCookieFormatSwitch && StringUtils.isNotBlank(loginInfo.getSetCookie())) {
-                    if(StringUtils.isBlank(loginInfo.getCookie())){
+                    if (StringUtils.isBlank(loginInfo.getCookie())) {
                         collectorMessage.setCookie(loginInfo.getSetCookie());
-                    }else {
-                        String cookie = collectorMessage.getCookie().endsWith(";") ? collectorMessage.getCookie() + loginInfo.getSetCookie()
-                                : collectorMessage.getCookie() + ";" + loginInfo.getSetCookie();
+                    } else {
+                        String cookie = collectorMessage.getCookie().endsWith(";")
+                            ? collectorMessage.getCookie() + loginInfo.getSetCookie()
+                            : collectorMessage.getCookie() + ";" + loginInfo.getSetCookie();
                         collectorMessage.setCookie(cookie);
                     }
                 }

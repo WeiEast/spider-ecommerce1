@@ -280,14 +280,23 @@ public class Collector {
             }
         } finally {
             Task task = taskMessage.getTask();
+
             try {
                 String logMsg = task.getParentTaskId() > 0 ? "子任务" : "";
+                boolean isRepeatTask = false;
+                if (task.getParentTaskId() == 0) {
+                    long totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(task.getId()));
+                    isRepeatTask = totalRun > message.getTotalRun();
+                    logger.info("task Interrupted taskId={},isRepeatTask={},newTotalRun={},oldTotalRun={}",
+                        task.getId(), isRepeatTask, totalRun, message.getTotalRun());
+                }
+
                 switch (taskMessage.getTask().getStatus()) {
                     case 0:
                         logMsg += "抓取成功";
                         break;
                     case 306:
-                        logMsg = "用户刷新任务或者重试,抓取中断";
+                        logMsg = isRepeatTask ? "用户刷新任务或者重试,抓取中断" : "抓取中断";
                         break;
                     case 308:
                         logMsg += "抓取失败,登陆超时";
@@ -297,7 +306,7 @@ public class Collector {
                         break;
                 }
                 messageService.sendTaskLog(task.getTaskId(), logMsg);
-                if (task.getStatus() != 0 && task.getStatus() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
+                if (task.getStatus() != 0 && !isRepeatTask) {
                     Map<String, Object> directiveMap = new HashMap<String, Object>();
                     directiveMap.put("taskId", task.getTaskId());
                     directiveMap.put("directive", DirectiveEnum.TASK_FAIL.getCode());

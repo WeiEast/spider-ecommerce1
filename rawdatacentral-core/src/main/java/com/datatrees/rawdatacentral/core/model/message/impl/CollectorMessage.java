@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-
-
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -23,29 +21,36 @@ import java.util.Set;
  * @since 2015年7月28日 下午4:14:22
  */
 public class CollectorMessage extends MessageInfo {
-    private String cookie;
-    private String websiteName;
-    private long taskId;
-    private String accountNo;
+    private String              cookie;
+    private String              websiteName;
+    private long                taskId;
+    private String              accountNo;
 
+    private String              serialNum;
+    private String              endURL;
+    private boolean             needDuplicate;
 
-    private String serialNum;
-    private String endURL;
-    private boolean needDuplicate;
+    private boolean             level1Status;                            // 标识本网站是否需要发送一级状态
 
-    private boolean level1Status;// 标识本网站是否需要发送一级状态
-
-    private boolean loginCheckIgnore;
-
+    private boolean             loginCheckIgnore;
 
     private Map<String, Object> property = new HashMap<String, Object>();
     private Map<String, Object> sendBack = new HashMap<String, Object>();
 
+    private boolean             finish;
 
+    /**
+     * 总共运行次数
+     */
+    private long                totalRun = 0;
 
-    private boolean finish;
+    public long getTotalRun() {
+        return totalRun;
+    }
 
-
+    public void setTotalRun(long totalRun) {
+        this.totalRun = totalRun;
+    }
 
     public Set<String> getResultTagSet() {
         return null;
@@ -135,7 +140,6 @@ public class CollectorMessage extends MessageInfo {
         this.websiteName = websiteName;
     }
 
-
     /**
      * @return the serialNum
      */
@@ -150,7 +154,6 @@ public class CollectorMessage extends MessageInfo {
         this.serialNum = serialNum;
     }
 
-
     /**
      * @return the endURL
      */
@@ -164,7 +167,6 @@ public class CollectorMessage extends MessageInfo {
     public void setEndURL(String endURL) {
         this.endURL = endURL;
     }
-
 
     /**
      * @return the needDuplicate
@@ -186,7 +188,7 @@ public class CollectorMessage extends MessageInfo {
     public Map<String, Object> getSendBack() {
         return sendBack;
     }
-    
+
     public long getTaskId() {
         return taskId;
     }
@@ -202,8 +204,8 @@ public class CollectorMessage extends MessageInfo {
      */
     @Override
     public String toString() {
-        return "CollectorMessage [ websiteName=" + websiteName + ", taskId=" + taskId + ", serialNum=" + serialNum + ", endURL=" + endURL
-                + ", cookie=" + cookie + "]";
+        return "CollectorMessage [ websiteName=" + websiteName + ", taskId=" + taskId + ", serialNum=" + serialNum
+               + ", endURL=" + endURL + ", cookie=" + cookie + "]";
     }
 
     /**
@@ -220,4 +222,7 @@ public class CollectorMessage extends MessageInfo {
         this.accountNo = accountNo;
     }
 
+    public void setSendBack(Map<String, Object> sendBack) {
+        this.sendBack = sendBack;
+    }
 }

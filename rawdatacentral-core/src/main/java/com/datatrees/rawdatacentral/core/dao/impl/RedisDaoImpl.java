@@ -1,9 +1,5 @@
 package com.datatrees.rawdatacentral.core.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import org.slf4j.Logger;
@@ -12,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 @Component
 public class RedisDaoImpl implements RedisDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(RedisDaoImpl.class);
-
+    private static final Logger   logger = LoggerFactory.getLogger(RedisDaoImpl.class);
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -84,5 +83,12 @@ public class RedisDaoImpl implements RedisDao {
         redisTemplate.delete(key);
     }
 
+    @Override
+    public Long increaseAndGet(String key) {
+        if (!redisTemplate.hasKey(key)) {
+            redisTemplate.opsForValue().setIfAbsent(key, "0");
+        }
+        return redisTemplate.opsForValue().increment(key, 1);
+    }
 
 }

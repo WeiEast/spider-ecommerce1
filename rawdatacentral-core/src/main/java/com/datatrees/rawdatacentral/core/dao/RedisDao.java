@@ -1,8 +1,8 @@
 package com.datatrees.rawdatacentral.core.dao;
 
-import java.util.List;
-
 import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.List;
 
 public interface RedisDao {
     public boolean saveListString(final String key, final List<String> valueList);
@@ -20,4 +20,11 @@ public interface RedisDao {
     public RedisTemplate<String, String> getRedisTemplate();
 
     public void deleteKey(String key);
+
+    /**
+     * key的值+1,并返回增加后的值
+     * @param key 如果没有,设置为1
+     * @return
+     */
+    public Long increaseAndGet(String key);
 }
