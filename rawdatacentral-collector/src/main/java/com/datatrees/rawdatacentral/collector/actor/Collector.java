@@ -283,13 +283,11 @@ public class Collector {
 
             try {
                 String logMsg = task.getParentTaskId() > 0 ? "子任务" : "";
-                boolean isRepeatTask = false;
-                if (task.getParentTaskId() == 0) {
-                    long totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(task.getId()));
-                    isRepeatTask = totalRun > message.getTotalRun();
-                    logger.info("task Interrupted taskId={},isRepeatTask={},newTotalRun={},oldTotalRun={}",
-                        task.getId(), isRepeatTask, totalRun, message.getTotalRun());
-                }
+                long totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue()
+                    .get(task.getParentTaskId() > 0 ? task.getId() : task.getParentTaskId()));
+                boolean isRepeatTask = totalRun > message.getTotalRun();
+                logger.info("task run complete taskId={},parentTaskId={},newTotalRun={},oldTotalRun={},isRepeatTask={}",
+                    task.getId(), task.getParentTaskId(), totalRun, message.getTotalRun(), isRepeatTask);
 
                 switch (taskMessage.getTask().getStatus()) {
                     case 0:
@@ -319,8 +317,8 @@ public class Collector {
                 logger.error("send log status error", e);
             }
             this.actorLockWatchRelease(watcher);
-            logger.info("task complete taskId={},taskCode={},remark={},message={}", task.getTaskId(), task.getStatus(),
-                task.getRemark(), JSON.toJSONString(message));
+            logger.info("task complete taskId={},parentTaskId={},taskCode={},remark={},message={}", task.getTaskId(),
+                task.getParentTaskId(), task.getStatus(), task.getRemark(), JSON.toJSONString(message));
         }
         this.messageComplement(taskMessage, (CollectorMessage) message);
         message.setFinish(true);// mark message finish
