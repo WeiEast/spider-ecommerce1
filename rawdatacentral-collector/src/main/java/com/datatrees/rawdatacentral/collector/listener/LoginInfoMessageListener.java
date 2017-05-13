@@ -55,7 +55,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
     @Override
     public void process(CollectorMessage message) {
         if (message.getTaskId() > 0) {
-            String redisKey = String.valueOf(message.getTaskId());
+            String redisKey = "run_count:" + message.getTaskId();
             if (!redisTemplate.hasKey(redisKey)) {
                 redisTemplate.opsForValue().setIfAbsent(redisKey, "0");
             }
