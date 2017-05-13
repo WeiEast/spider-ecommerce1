@@ -283,8 +283,9 @@ public class Collector {
 
             try {
                 String logMsg = task.getParentTaskId() > 0 ? "子任务" : "";
-                long taskId = task.getParentTaskId() > 0 ? task.getId() : task.getParentTaskId();
-                long totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get("run_count:" + taskId));
+                long taskId = task.getParentTaskId() == 0 ? task.getTaskId() : task.getParentTaskId();
+                long totalRun = Long
+                    .valueOf(redisDao.getRedisTemplate().opsForValue().get("run_count:" + taskId).toString());
                 boolean isRepeatTask = totalRun > message.getTotalRun();
                 logger.info("task run complete taskId={},parentTaskId={},newTotalRun={},oldTotalRun={},isRepeatTask={}",
                     task.getId(), task.getParentTaskId(), totalRun, message.getTotalRun(), isRepeatTask);
