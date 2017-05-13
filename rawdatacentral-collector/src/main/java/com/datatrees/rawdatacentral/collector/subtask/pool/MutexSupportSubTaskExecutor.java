@@ -8,28 +8,22 @@
  */
 package com.datatrees.rawdatacentral.collector.subtask.pool;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import javax.annotation.Resource;
-
+import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
+import com.datatrees.rawdatacentral.collector.subtask.container.Container;
+import com.datatrees.rawdatacentral.collector.subtask.container.Mutex;
+import com.datatrees.rawdatacentral.core.model.message.impl.SubTaskCollectorMessage;
+import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.rocketmq.common.ThreadFactoryImpl;
-import com.datatrees.rawdatacentral.collector.subtask.container.Container;
-import com.datatrees.rawdatacentral.collector.subtask.container.Mutex;
-import com.datatrees.rawdatacentral.core.model.message.impl.SubTaskCollectorMessage;
-import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  *
@@ -40,10 +34,10 @@ import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
 @Service
 public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
     private static final Logger logger = LoggerFactory.getLogger(MutexSupportSubTaskExecutor.class);
-    private ExecutorService pool = Executors.newCachedThreadPool(new ThreadFactoryImpl("SubTaskExecutor_"));
+    private ExecutorService     pool   = Executors.newCachedThreadPool(new ThreadFactoryImpl("SubTaskExecutor_"));
 
     @Resource
-    private Collector collector;
+    private Collector           collector;
 
     /*
      * (non-Javadoc)
@@ -80,7 +74,7 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
         });
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private SubTaskCollectorMessage initSubTaskCollectorMessage(SubTask task) {
         SubTaskCollectorMessage message = new SubTaskCollectorMessage();
         // set from parent tassk
@@ -106,7 +100,7 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
     @SuppressWarnings("rawtypes")
     private Map execute(SubTask task) {
         try {
-            logger.info("start to execute sub task:" + task);
+            logger.info("start to execute sub task taskId={}", task.getTaskId());
             Map resultObject = collector.processMessage(initSubTaskCollectorMessage(task));
             if (resultObject != null && MapUtils.isNotEmpty(resultObject)) {
                 return (Map) resultObject;
