@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.collector.chain.search;
 
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.datatrees.crawler.core.processor.bean.CrawlResponse;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-
 
 /**
  *
@@ -33,7 +33,7 @@ public class SleepModeFilter implements Filter {
                 try {
                     Thread.currentThread().sleep(waitIntervalMillis);
                 } catch (InterruptedException e) {
-                    // ignore error
+                    log.error("doFilter error context={}", GsonUtils.toJson(context), e);
                 }
             }
             log.debug("Execute SleepModeFilter end...");

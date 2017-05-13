@@ -14,7 +14,6 @@ import com.datatrees.rawdatacentral.collector.bdb.operator.BDBOperator;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.EnvironmentLockedException;
 
-
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -22,12 +21,12 @@ import com.sleepycat.je.EnvironmentLockedException;
  * @since 2015年7月29日 上午12:36:17
  */
 public class LinkQueue {
-    private static final Logger log = LoggerFactory.getLogger(LinkQueue.class);
+    private static final Logger  log       = LoggerFactory.getLogger(LinkQueue.class);
 
-    private BDBOperator bdbOperator;
+    private BDBOperator          bdbOperator;
     private SearchTemplateConfig searchTemplateConfig;
-    private int queueSize = 0;
-    private boolean isFull = false;
+    private int                  queueSize = 0;
+    private boolean              isFull    = false;
 
     public LinkQueue(SearchTemplateConfig searchTemplateConfig) {
         this.searchTemplateConfig = searchTemplateConfig;
@@ -53,21 +52,20 @@ public class LinkQueue {
             try {
                 TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e1) {
-                // ignore
+                log.error("init error ", e1);
             }
         } catch (DatabaseException e) {
             log.error("LinkQueue init failed because of DatabaseException", e);
             try {
                 TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e1) {
-                // ignore
+                log.error("init error ", e1);
             }
         } catch (Exception e) {
             log.error("LinkQueue init failed ", e);
         }
         return false;
     }
-
 
     /**
      * add batch of links into BDB queue
@@ -81,7 +79,8 @@ public class LinkQueue {
             int newLinkNum = 0;
             long preId = bdbOperator.getCurrentId();
             for (LinkNode linkNode : links) {
-                if (linkNode == null) continue;
+                if (linkNode == null)
+                    continue;
                 try {
                     newLinkNum += addLink(linkNode);
                 } catch (Exception ex) {
@@ -90,8 +89,9 @@ public class LinkQueue {
                 }
             }
 
-            log.info("Added [" + (bdbOperator.getCurrentId() - preId) + "] links to link queue , total [" + (bdbOperator.getCurrentId() - 1)
-                    + "] in queue current position is " + bdbOperator.getLastFetchId());
+            log.info("Added [" + (bdbOperator.getCurrentId() - preId) + "] links to link queue , total ["
+                     + (bdbOperator.getCurrentId() - 1) + "] in queue current position is "
+                     + bdbOperator.getLastFetchId());
             log.info("New link added into BDB, new link num:" + newLinkNum);
             return newLinkNum;
         }
@@ -121,7 +121,8 @@ public class LinkQueue {
         int maxDepth = searchTemplateConfig.getMaxDepth();
 
         if (deep > maxDepth) {
-            log.debug("drop link [" + linkNode.getUrl() + "] for max depth reached, link depth = [" + deep + "] max depth = [" + maxDepth + "]");
+            log.debug("drop link [" + linkNode.getUrl() + "] for max depth reached, link depth = [" + deep
+                      + "] max depth = [" + maxDepth + "]");
 
             return true;
         } else if (queueSize > maxPage) {
