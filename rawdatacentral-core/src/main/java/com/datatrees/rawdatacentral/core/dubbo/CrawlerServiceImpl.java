@@ -12,12 +12,10 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
-import com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
-import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
@@ -39,7 +37,9 @@ import java.util.*;
  */
 @Service
 public class CrawlerServiceImpl implements CrawlerService {
+
     private static final Logger logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
+
     @Resource
     private WebsiteService      websiteService;
 
@@ -49,14 +49,9 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Resource
     private ZooKeeperClient     zooKeeperClient;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.datatrees.rawdata.api.CrawlerService#getWebsiteConf(java.lang.String)
-     */
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
-        logger.info("websiteName:{} getWebsiteConf Start",websiteName);
+        logger.info("websiteName:{} getWebsiteConf Start", websiteName);
         Map<String, String> map = (Map<String, String>) CacheUtil.INSTANCE.getObject("websitename_transform_map");
         String newWebsiteName;
         if (map != null) {
@@ -85,11 +80,6 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.datatrees.rawdata.api.CrawlerService#getWebsiteConf(java.util.List)
-     */
     @Override
     public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList) {
         List<WebsiteConf> confList = new ArrayList<>();
@@ -99,13 +89,6 @@ public class CrawlerServiceImpl implements CrawlerService {
         return confList;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.datatrees.rawdata.api.CrawlerService#updateWebsiteConfig(com.datatrees.rawdata.api.model.
-     * Website)
-     */
     @Override
     public boolean updateWebsiteConfig(String websiteName, String searchConfigSource, String extractConfigSource) {
         logger.info("crawlerService start update webiste:" + websiteName);
@@ -246,6 +229,15 @@ public class CrawlerServiceImpl implements CrawlerService {
             result.success();
         }
         return result.failure();
+    }
+
+    @Override
+    public HttpResult<Boolean> importClientCrawlResult(long taskId, String html, String cookies,
+                                                       Map<String, Object> extra) {
+
+        logger.info("importClientCrawlResult taskId={},html={},cookies={} ", taskId, html, cookies);
+        HttpResult<Boolean> result = new HttpResult();
+        return result.success(true);
     }
 
 }

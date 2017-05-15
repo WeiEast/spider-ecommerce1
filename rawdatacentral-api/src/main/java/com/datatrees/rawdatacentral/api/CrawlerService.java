@@ -8,10 +8,11 @@
  */
 package com.datatrees.rawdatacentral.api;
 
-import java.util.List;
-
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -42,5 +43,17 @@ public interface CrawlerService {
     public HttpResult<String> verifyQr(long taskId, String attrJson);
 
     public HttpResult<Boolean> cancel(long taskId, String attrJson);
+
+    /**
+     * 导入前端爬取结果
+     * 部分成果率比较低的url,让前端爬取后把cookie和html传给后端,后端搜索是单线程,一直等待前端结果
+     * @param taskId 任务id
+     * @param html 爬取后的网页内容
+     * @param cookies 爬取完成后前端cookie
+     * @param extra 附加信息,暂时没有
+     * @return
+     */
+    public HttpResult<Boolean> importClientCrawlResult(long taskId, String html, String cookies,
+                                                       Map<String, Object> extra);
 
 }
