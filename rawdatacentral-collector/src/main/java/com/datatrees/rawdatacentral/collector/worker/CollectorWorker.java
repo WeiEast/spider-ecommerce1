@@ -94,12 +94,16 @@ public class CollectorWorker {
             log.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin,
                 loginType, context.getWebsiteName());
             if (needLogin) {
-                if (!doLogin(taskMessage)) {
+                boolean loginStatus = doLogin(taskMessage);
+                if (!task.isSubTask()) {
+                    messageService.sendTaskLog(task.getTaskId(), loginStatus ? "登陆成功" : "登陆失败");
+                }
+                if(!loginStatus){
                     return null;
                 }
             } else {
                 if (!task.isSubTask()) {
-                    messageService.sendTaskLog(task.getTaskId(), "接收到登陆成功信息!");
+                    messageService.sendTaskLog(task.getTaskId(), "接收到登陆成功信息");
                 }
             }
             //
