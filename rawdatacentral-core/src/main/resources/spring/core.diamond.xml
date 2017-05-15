@@ -22,8 +22,8 @@
 
 
     <bean id="propertiesLoader" class="com.datatrees.common.conf.PropertiesLoader">
-        <!-- first load locations properties -->
-        <property name="localOverride" value="false"/>
+        <!-- true:优先加载super diamond 配置 -->
+        <property name="localOverride" value="true"/>
         <property name="properties" ref="propertiesConfiguration"/>
         <property name="locations">
             <list>
