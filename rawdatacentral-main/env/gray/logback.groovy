@@ -20,6 +20,7 @@ appender("console", ConsoleAppender) {
 // 业务日志
 appender("sysFile", RollingFileAppender) {
     file = "${logPath}/rawdatacentral.log"
+    append = true
     encoder(PatternLayoutEncoder) {
         pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%L] %m%n"
         charset = Charset.forName(charsetName)
