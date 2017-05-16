@@ -74,14 +74,14 @@ public class ActorTest extends AbstractTest {
         message.setEndURL(
             "https://w.mail.qq.com/cgi-bin/today?sid=aEW1Xww-B4ueNxFI0F7TgfMX,4,qTVUxeXNvVTJKbW1VVHcxWWdEV1hObUt0R2tCTkpYNDNiTjhaVnBabDFpVV8.&first=1&mcookie=disabled");
         ExecutorService es = Executors.newFixedThreadPool(5);
-        for(int i = 0 ; i<3;i++){
+        for (int i = 0; i < 3; i++) {
             message.setTaskId(System.currentTimeMillis());
-            es.submit(()->{
+            es.submit(() -> {
                 collector.processMessage(message);
             });
         }
-        while(true){
-            
+        while (true) {
+
         }
 
     }
@@ -374,8 +374,10 @@ public class ActorTest extends AbstractTest {
     public void testStart() {
         while (true) {
             //            logger.info("哈哈哈");
-            messageService.sendTaskLog(RandomUtils.nextLong(),"测试信息","不告诉你");
+            //            messageService.sendTaskLog(RandomUtils.nextLong(),"测试信息","不告诉你");
+            String hostname = PropertiesConfiguration.getInstance().get("core.redis.hostName");
             TimeUnit.SECONDS.toSeconds(60);
+
         }
     }
 

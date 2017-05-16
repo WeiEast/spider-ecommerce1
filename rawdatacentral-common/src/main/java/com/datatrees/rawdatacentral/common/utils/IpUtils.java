@@ -10,6 +10,10 @@ public class IpUtils {
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IpUtils.class);
 
+    /**
+     * 获取本地hostname
+     * @return
+     */
     public static String getLocalHostName() {
         try {
             InetAddress ia = InetAddress.getLocalHost();
