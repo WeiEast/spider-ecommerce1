@@ -6,17 +6,16 @@
  */
 package com.datatrees.rawdatacentral.collector.actor;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.NodeNameUtil;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher;
+import com.datatrees.crawler.core.domain.config.login.LoginType;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
@@ -25,6 +24,7 @@ import com.datatrees.crawler.core.processor.proxy.ProxyManagerWithScope;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
+import com.datatrees.rawdatacentral.common.utils.IpUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.common.ProxySharedManager;
 import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
@@ -36,7 +36,6 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
-import com.datatrees.rawdatacentral.core.model.message.impl.SubTaskCollectorMessage;
 import com.datatrees.rawdatacentral.core.service.MessageService;
 import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
@@ -45,6 +44,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
+import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
@@ -106,41 +106,53 @@ public class Collector {
         .get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
 
     private TaskMessage taskMessageInit(CollectorMessage message) {
-        SearchProcessorContext context = null;
         Task task = new Task();
-        if (message instanceof SubTaskCollectorMessage) {
-            task.setSubTask(true);
+        task.setTaskId(message.getTaskId());
+        task.setWebsiteName(message.getWebsiteName());
+        task.setNodeName(IpUtils.getLocalHostName());
+
+        SearchProcessorContext context = websiteService.getSearchProcessorContext(message.getWebsiteName());
+        context.setLoginCheckIgnore(message.isLoginCheckIgnore());
+        context.set(AttributeKey.TASK_ID, message.getTaskId());
+        context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
+        context.set(AttributeKey.ACCOUNT_NO, message.getTaskId() + "");//临时修改
+        task.setWebsiteId(context.getWebsite().getId());
+        task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
+        // init cookie
+        if (StringUtils.isNotBlank(message.getCookie())) {
+            ProcessorContextUtil.setCookieString(context, message.getCookie());
         }
-        try {
-            task.setTaskId(message.getTaskId());
-            task.setNodeName(NodeNameUtil.INSTANCE.getNodeName());
-            context = websiteService.getSearchProcessorContext(message.getWebsiteName());
-            context.setLoginCheckIgnore(message.isLoginCheckIgnore());
-            context.set(AttributeKey.TASK_ID, message.getTaskId());
-            context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
-            context.set(AttributeKey.ACCOUNT_NO,  message.getTaskId() + "");//临时修改
-            task.setWebsiteId(context.getWebsite().getId());
-            task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
-            // init cookie
-            if (StringUtils.isNotBlank(message.getCookie())) {
-                ProcessorContextUtil.setCookieString(context, message.getCookie());
-            }
-            context.set(AttributeKey.END_URL, message.getEndURL());
-            // 历史状态清理
-            this.clearStatus(message.getTaskId());
-        } catch (Exception e) {
-            logger.error("taskMessageInit error taskId={},message={} ", message.getTaskId(), GsonUtils.toJson(message),
-                e);
-            task.setErrorCode(ErrorCode.TASK_INIT_ERROR, "TASK_INIT_ERROR error with " + message);
-        }
-        // insert task
+        context.set(AttributeKey.END_URL, message.getEndURL());
+        // 历史状态清理
+        this.clearStatus(message.getTaskId());
         task.setId(taskService.insertTask(task));
         // set task unique sign
         ProcessorContextUtil.setTaskUnique(context, task.getId());
+
         TaskMessage taskMessage = new TaskMessage(task, context);
         taskMessage.setCollectorMessage(message);
-
-        this.collectorMessageComplement(taskMessage, message, context);
+        if (message instanceof TemplteAble) {
+            taskMessage.setTemplateId(((TemplteAble) message).getTemplateId());
+        }
+        if (message instanceof TaskRelated) {
+            taskMessage.setParentTaskID(((TaskRelated) message).getParentTaskID());
+            ProcessorContextUtil.setValue(context, "parentTaskLogId", ((TaskRelated) message).getParentTaskID());
+        }
+        // set subtask parameter
+        if (message instanceof SubTaskAble) {
+            task.setSubTask(true);//标记子任务
+            taskMessage.setMessageSend(!((SubTaskAble) message).isSynced());
+            taskMessage.setStatusSend(!((SubTaskAble) message).noStatus());
+            if (((SubTaskAble) message).getSubSeed() != null) {
+                taskMessage.setUniqueSuffix(((SubTaskAble) message).getSubSeed().getUniqueSuffix());
+                ProxyManager proxyManager = context.getProxyManager();
+                if (((SubTaskAble) message).getSubSeed().getProxy() != null
+                    && proxyManager instanceof ProxyManagerWithScope) {
+                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(
+                        ((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
+                }
+            }
+        }
         ProcessorContextUtil.addValues(context, message.getProperty());
         return taskMessage;
     }
@@ -155,31 +167,6 @@ public class Collector {
         redisDao.deleteKey(key);
         redisDao.deleteKey(getKey);
         logger.info("do verify_result and plugin_remark  data clear for taskId: {}", taskId);
-    }
-
-    private void collectorMessageComplement(TaskMessage taskMessage, CollectorMessage message,
-                                            SearchProcessorContext context) {
-        if (message instanceof TemplteAble) {
-            taskMessage.setTemplateId(((TemplteAble) message).getTemplateId());
-        }
-        if (message instanceof TaskRelated) {
-            taskMessage.setParentTaskID(((TaskRelated) message).getParentTaskID());
-            ProcessorContextUtil.setValue(context, "parentTaskLogId", ((TaskRelated) message).getParentTaskID());
-        }
-        // set subtask parameter
-        if (message instanceof SubTaskAble) {
-            taskMessage.setMessageSend(!((SubTaskAble) message).isSynced());
-            taskMessage.setStatusSend(!((SubTaskAble) message).noStatus());
-            if (((SubTaskAble) message).getSubSeed() != null) {
-                taskMessage.setUniqueSuffix(((SubTaskAble) message).getSubSeed().getUniqueSuffix());
-                ProxyManager proxyManager = context.getProxyManager();
-                if (((SubTaskAble) message).getSubSeed().getProxy() != null
-                    && proxyManager instanceof ProxyManagerWithScope) {
-                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(
-                        ((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
-                }
-            }
-        }
     }
 
     private AbstractLockerWatcher actorLockWatchInit(TaskMessage taskMessage) {
@@ -226,47 +213,79 @@ public class Collector {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     public ProcessorResult processMessage(CollectorMessage message) {
         logger.info("starting task worker for [" + message.toString() + "]");
-        TaskMessage taskMessage = this.taskMessageInit((CollectorMessage) message);
+        TaskMessage taskMessage = null;
+        Task task = null;
+        SearchProcessorContext context = null;
         AbstractLockerWatcher watcher = null;
-        // response to gateway already to process
-        // this.responseReadyProcess(taskMessage, websiteTagSet);
-        Map submitkeyResult = null;
         try {
+            //初始化,生成上下文,保存task
+            taskMessage = this.taskMessageInit(message);
+            task = taskMessage.getTask();
+            context = taskMessage.getContext();
+            //zookepper做去重处理,后来的线程活着,ThreadInterruptedUtil.isInterrupted(Thread.currentThread())手动判断,并停止
             watcher = this.actorLockWatchInit(taskMessage);
-            // init collectorWorker
             CollectorWorker collectorWorker = collectorWorkerFactory.getCollectorWorker(taskMessage);
 
-            Set<String> websiteTagSet = new HashSet<String>(
-                taskMessage.getContext().getWebsite().getSearchConfig().getResultTagList());
-
             // set status level 1 status
-            taskMessage.getContext().getStatusContext().put(ResultMessage.LEVAL_1_STATUS,
-                ((CollectorMessage) message).isLevel1Status());
+            taskMessage.getContext().getStatusContext().put(ResultMessage.LEVAL_1_STATUS, message.isLevel1Status());
 
-            // do process
-            submitkeyResult = collectorWorker.process(taskMessage);
-            if (submitkeyResult == null && message instanceof TaskRelated) {
-                logger.info("current task related to: " + ((TaskRelated) message).getParentTaskID()
-                            + ", set empty submitkeyResult.");
-                submitkeyResult = new HashMap();
-            }
-            Set<String> resultTagSet = collectorWorker.getResultTagSet();
-            if (CollectionUtils.isEmpty(resultTagSet)) {
-                if (CollectionUtils.isEmpty(message.getResultTagSet())) {
-                    resultTagSet = websiteTagSet;
-                } else {
-                    resultTagSet = message.getResultTagSet();
+            boolean needLogin = context.needLogin();
+            LoginType loginType = context.getLoginConfig() != null ? context.getLoginConfig().getType() : null;
+            logger.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin,
+                loginType, context.getWebsiteName());
+
+            HttpResult<Boolean> loginResult = new HttpResult<>();
+            if (needLogin) {
+                loginResult = collectorWorker.doLogin2(taskMessage);
+                if (!loginResult.getStatus()) {
+                    task.setStatus(loginResult.getResponseCode());
+                    task.setRemark(loginResult.getMessage());
                 }
             }
 
-            if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                throw new InterruptedException(
-                    "Thread interrupt check failed bafore result send to queue. threadId=" + Thread.currentThread().getId());
-            } else {
-                this.sendResult(taskMessage, submitkeyResult, resultTagSet);
+            boolean loginStatus = !needLogin || (null != loginResult && loginResult.getStatus());
+            if (!task.isSubTask()) {
+                messageService.sendTaskLog(task.getTaskId(), loginStatus ? "登陆成功" : "登陆失败");
+            }
+
+            if (loginStatus) {
+                messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务开始抓取" : "开始抓取");
+                HttpResult<Map<String, Object>> searchResult = collectorWorker.doSearch2(taskMessage);
+                if (!searchResult.getStatus()) {
+                    task.setStatus(searchResult.getResponseCode());
+                    task.setRemark(searchResult.getMessage());
+                    //                    messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务抓取失败" : "抓取失败");
+                } else {
+                    //                    messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务抓取成功" : "抓取成功");
+                    Map submitkeyResult = searchResult.getData();
+                    if (submitkeyResult == null && message instanceof TaskRelated) {
+                        logger.info("current task related to:{},set empty submitkeyResult.",
+                            ((TaskRelated) message).getParentTaskID());
+                        submitkeyResult = new HashMap();
+                    }
+                    Set<String> resultTagSet = collectorWorker.getResultTagSet();
+
+                    if (CollectionUtils.isEmpty(resultTagSet)) {
+                        if (CollectionUtils.isEmpty(message.getResultTagSet())) {
+                            resultTagSet = new HashSet<String>(
+                                taskMessage.getContext().getWebsite().getSearchConfig().getResultTagList());
+                        } else {
+                            resultTagSet = message.getResultTagSet();
+                        }
+                    }
+                    if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
+                        logger.error(
+                            "Thread interrupt bafore result send to queue. threadId={},taskId={},websiteName={}",
+                            Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
+                        task.setStatus(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode());
+                        task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage());
+                    } else {
+                        this.sendResult(taskMessage, submitkeyResult, resultTagSet);
+                    }
+
+                }
             }
         } catch (Exception e) {
             logger.error("processMessage error taskId={}", taskMessage.getTask().getTaskId(), e);
@@ -280,8 +299,6 @@ public class Collector {
                 taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
             }
         } finally {
-            Task task = taskMessage.getTask();
-
             try {
                 String logMsg = task.isSubTask() ? "子任务" : "";
                 String redisKey = "run_count:" + task.getTaskId();
@@ -318,15 +335,15 @@ public class Collector {
                     producer.send(directiveMsg);
                 }
             } catch (Exception e) {
-                logger.error("send log status error", e);
+                logger.error("send message error taskId={},websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
             }
             this.actorLockWatchRelease(watcher);
-            logger.info("task complete taskId={},isSubTask={},taskCode={},remark={},message={}", task.getTaskId(),
-                task.isSubTask(), task.getStatus(), task.getRemark(), JSON.toJSONString(message));
+            logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={}", task.getTaskId(),
+                task.isSubTask(), task.getStatus(), task.getRemark(), task.getWebsiteName());
         }
-        this.messageComplement(taskMessage, (CollectorMessage) message);
-        message.setFinish(true);// mark message finish
-        taskService.updateTask(taskMessage.getTask());
+        this.messageComplement(taskMessage, message);
+        message.setFinish(true);
+        taskService.updateTask(task);
         return taskMessage.getContext().getProcessorResult();
     }
 
