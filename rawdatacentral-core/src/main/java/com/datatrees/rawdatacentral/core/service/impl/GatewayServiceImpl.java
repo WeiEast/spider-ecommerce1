@@ -35,7 +35,7 @@ public class GatewayServiceImpl implements DataResource {
     private String genRedisKey(Map<String, Object> parameters) {
         StringBuilder sb = new StringBuilder();
         String taskId = String.valueOf(parameters.get("taskId"));
-        return sb.append("verify_result_").append("_").append(taskId).toString();
+        return sb.append("verify_result_").append(taskId).toString();
     }
 
     /*
