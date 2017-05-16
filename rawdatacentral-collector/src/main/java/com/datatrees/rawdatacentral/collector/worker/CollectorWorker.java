@@ -13,7 +13,6 @@ import akka.util.Timeout;
 import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.domain.config.login.LoginType;
 import com.datatrees.crawler.core.domain.config.search.Request;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
@@ -85,56 +84,6 @@ public class CollectorWorker {
         .toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
 
     private MessageService      messageService;
-
-    public Map<String, Object> process(TaskMessage taskMessage) throws InterruptedException {
-        Task task = taskMessage.getTask();
-        SearchProcessorContext context = taskMessage.getContext();
-        try {
-            boolean needLogin = context.needLogin();
-            LoginType loginType = context.getLoginConfig() != null ? context.getLoginConfig().getType() : null;
-
-            LOGGER.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin,
-                loginType, context.getWebsiteName());
-            if (needLogin) {
-                boolean loginStatus = doLogin(taskMessage);
-                if (!task.isSubTask()) {
-                    messageService.sendTaskLog(task.getTaskId(), loginStatus ? "登陆成功" : "登陆失败");
-                }
-                if (!loginStatus) {
-                    return null;
-                }
-            } else {
-                if (!task.isSubTask()) {
-                    messageService.sendTaskLog(task.getTaskId(), "接收到登陆成功信息");
-                }
-            }
-            //
-            // // set accout,just use email account for temporary
-            // task.setAccount(ReplaceUtils.replaceMapWithCheck(context.getContext(),
-            // "${emailAccount}"));
-
-            // task begin
-            messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务开始抓取" : "开始抓取");
-            List<Future<Object>> futureList = new ArrayList<Future<Object>>();
-            if (!doSearch(taskMessage, futureList)) {
-                return null;
-            }
-
-            Map<String, Object> resultMap = this.futureResultHander(futureList, taskMessage);
-            return mergeSubTaskResult(task.getId(), resultMap);
-        } catch (Exception e) {
-            LOGGER.error("process error websiteName={}", context.getWebsiteName(), e);
-            if (e instanceof InterruptedException) {
-                throw (InterruptedException) e;
-            }
-        } finally {
-            LOGGER.info("task " + task.getId() + " collect finish ...");
-            task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
-            task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
-            context.release();
-        }
-        return null;
-    }
 
     /**
      * 登录
@@ -348,108 +297,6 @@ public class CollectorWorker {
             task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
             context.release();
         }
-    }
-
-    /**
-     * 爬取数据
-     * 
-     * @param taskMessage
-     * @param futureList
-     * @return
-     */
-    private boolean doSearch(TaskMessage taskMessage, List<Future<Object>> futureList) throws Exception {
-        Task task = taskMessage.getTask();
-        SearchProcessorContext context = taskMessage.getContext();
-        try {
-            Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig()
-                .getSearchTemplateConfigList();
-            if (CollectionUtils.isEmpty(templateList)) {
-                LOGGER.error("templateList is empty," + "websiteId:" + task.getWebsiteId());
-                task.setErrorCode(ErrorCode.CONFIG_ERROR);
-                return false;
-            }
-            String templateId = taskMessage.getTemplateId();
-
-            for (SearchTemplateConfig templateConfig : templateList) {
-                if (StringUtils.isNotBlank(templateId)) {
-                    if (!templateId.contains(templateConfig.getId())) {
-                        LOGGER.warn(taskMessage + " filter template:" + templateConfig);
-                        continue;
-                    }
-                } else {
-                    if (BooleanUtils.isNotTrue(templateConfig.getAutoStart())) {
-                        LOGGER.warn(taskMessage + " filter template:" + templateConfig);
-                        continue;
-                    }
-                }
-                try {
-                    String searchTemplate = null;
-
-                    Request request = templateConfig.getRequest();
-                    if (null == request) {
-                        LOGGER.warn(templateConfig + "'s request is empty !");
-                        continue;
-                    }
-                    // get from context ,seedurl may given by sub task or other external task
-                    Object templateUrl = ProcessorContextUtil.getValue(context, templateConfig.getId());
-                    if (templateUrl != null) {
-                        searchTemplate = templateUrl.toString();
-                    } else if (CollectionUtils.isNotEmpty(request.getSearchTemplateList())) {
-                        searchTemplate = request.getSearchTemplateList().get(0);
-                    }
-
-                    if (StringUtils.isEmpty(searchTemplate)) {
-                        LOGGER.error(
-                            taskMessage + " searchTemplate is empty or null , websiteId : . " + task.getWebsiteId());
-                        continue;
-                    }
-                    searchTemplate = ReplaceUtils.replaceMap(context.getContext(), searchTemplate);
-                    maxExecuteMinutes = request.getMaxExecuteMinutes() != null ? request.getMaxExecuteMinutes()
-                        : maxExecuteMinutes;
-                    String headerString = request.getDefaultHeader();
-                    if (StringUtils.isNotBlank(headerString)) {
-                        headerString = SourceUtil.sourceExpression(context.getContext(), headerString);
-                        Map<String, String> defaultHeader = (Map<String, String>) GsonUtils.fromJson(headerString,
-                            Map.class);
-                        if (MapUtils.isNotEmpty(defaultHeader)) {
-                            context.getDefaultHeader().putAll(defaultHeader);
-                        }
-                    }
-                    // get all the possible result tag
-                    resultTagSet.addAll(templateConfig.getResultTagList());
-                    SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate)
-                        .setTemplateId(templateConfig.getId()).setSearchTemplateConfig(templateConfig)
-                        .setMaxExecuteMinutes(maxExecuteMinutes).setResultDataHandler(resultDataHandler)
-                        .setExtractorActorRef(extractorActorRef).setDuplicateChecker(duplicateChecker)
-                        .setInitLinkNodeList(initLinkNodeList);
-
-                    crawlExcutorHandler.crawlExecutor(searchProcessor);
-                    futureList.addAll(searchProcessor.getFutureList());
-                } catch (Exception e) {
-                    // 允许部分失败(除了抛出异常)
-                    LOGGER.error("doSearch error websiteName={}", context.getWebsiteName(), e);
-                    if (e instanceof InterruptedException) {
-                        throw (InterruptedException) e;
-                    }
-                    if (e instanceof ResponseCheckException) {
-                        task.setErrorCode(ErrorCode.RESPONSE_EMPTY_ERROR_CODE, e.getMessage());
-                        throw (ResultEmptyException) e;
-                    }
-                    if (e instanceof ResultEmptyException) {
-                        task.setErrorCode(ErrorCode.NOT_EMPTY_ERROR_CODE, e.getMessage());
-                        throw (ResultEmptyException) e;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            if (e instanceof InterruptedException) {
-                throw (InterruptedException) e;
-            } else {
-            }
-            throw e;
-        } finally {
-        }
-        return true;
     }
 
     public Map<String, Object> futureResultHander(List<Future<Object>> futureList, TaskMessage taskMessage) {
