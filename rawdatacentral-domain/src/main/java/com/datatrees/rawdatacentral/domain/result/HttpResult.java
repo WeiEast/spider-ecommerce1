@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.domain.result;
 
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,32 +14,32 @@ public class HttpResult<T> implements Serializable {
     /**
      * true:操作成功 false:操作失败
      */
-    private boolean status = false;
+    private boolean             status       = false;
 
     /**
      * 返回提示信息
      */
-    private String message = "处理失败";
+    private String              message      = "处理失败";
 
     /**
      * 返回代码: 小于0:失败,大于0:操作成功
      */
-    private int responseCode = -1;
+    private int                 responseCode = -1;
 
     /**
      * 返回数据
      */
-    private T data;
+    private T                   data;
 
     /**
      * 返回信息扩展
      */
-    private Map<String, Object> extra = new HashMap<>();
+    private Map<String, Object> extra        = new HashMap<>();
 
     /**
      * 时间戳
      */
-    private long timestamp = System.currentTimeMillis();
+    private long                timestamp    = System.currentTimeMillis();
 
     public boolean getStatus() {
         return status;
@@ -87,6 +89,22 @@ public class HttpResult<T> implements Serializable {
         this.setStatus(false);
         this.setResponseCode(-1);
         this.setMessage("处理失败");
+        this.setTimestamp(System.currentTimeMillis());
+        return this;
+    }
+
+    public HttpResult<T> failure(ErrorCode errorCode) {
+        this.setStatus(false);
+        this.setResponseCode(errorCode.getErrorCode());
+        this.setMessage(errorCode.getErrorMessage());
+        this.setTimestamp(System.currentTimeMillis());
+        return this;
+    }
+
+    public HttpResult<T> failure(int errorCode, String errorMsg) {
+        this.setStatus(false);
+        this.setResponseCode(errorCode);
+        this.setMessage(errorMsg);
         this.setTimestamp(System.currentTimeMillis());
         return this;
     }

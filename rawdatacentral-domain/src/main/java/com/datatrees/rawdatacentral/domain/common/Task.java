@@ -48,7 +48,15 @@ public class Task {
 
     private boolean       isDuplicateRemoved;
 
+    /**
+     * 是否子任务
+     */
     private boolean       isSubTask          = false;
+
+    /**
+     * 配置站点名称
+     */
+    private String        websiteName;
 
     /**
      * @return the openUrlCount
@@ -321,6 +329,14 @@ public class Task {
      */
     public String getRemark() {
         return remark;
+    }
+
+    public String getWebsiteName() {
+        return websiteName;
+    }
+
+    public void setWebsiteName(String websiteName) {
+        this.websiteName = websiteName;
     }
 
     /**
