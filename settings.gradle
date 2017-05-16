@@ -6,3 +6,5 @@ include ':rawdatacentral-collector'
 include ':rawdatacentral-extractor'
 include ':rawdatacentral-submitter'
 include ':rawdatacentral-main'
+include 'rawdatacentral-common'
+

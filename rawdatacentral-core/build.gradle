@@ -1,6 +1,7 @@
 dependencies {
     compile project(':rawdatacentral-api')
     compile project(':rawdatacentral-domain')
+    compile project(':rawdatacentral-common')
     compile "org.apache.ibatis:ibatis-sqlmap:${ibatisSqlmapVersion}"
     compile "org.springframework:spring-ibatis:${springIbatisVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
