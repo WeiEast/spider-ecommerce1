@@ -87,64 +87,6 @@ public class CollectorWorker {
 
     /**
      * 登录
-     * 
-     * @param taskMessage
-     * @return
-     * @throws InterruptedException
-     */
-    private boolean doLogin(TaskMessage taskMessage) throws InterruptedException {
-        Task task = taskMessage.getTask();
-        SearchProcessorContext context = taskMessage.getContext();
-        try {
-            if (context.needInteractive()) {
-                String keyString = RedisKeyUtils.genCollectorMessageRedisKey(taskMessage.getCollectorMessage());
-                String result = redisDao.pullResult(keyString);
-                if (StringUtils.isNotBlank(result)) {
-                    LOGGER.warn("Give up retry for " + taskMessage + " , " + taskMessage.getCollectorMessage());
-                    task.setErrorCode(ErrorCode.GIVE_UP_RETRY);
-                    return false;
-                }
-                if ((System.currentTimeMillis() - taskMessage.getCollectorMessage().getBornTimestamp()) > maxLiveTime) {
-                    LOGGER.warn("Message bornTime out ,system is busy now ,drop message bornTime :{} ...",
-                        new Date(taskMessage.getCollectorMessage().getBornTimestamp()));
-                    task.setErrorCode(ErrorCode.MESSAGE_DROP,
-                        "Message drop! Born at " + taskMessage.getCollectorMessage().getBornTimestamp());
-                    return false;
-                }
-
-                redisDao.pushMessage(keyString, keyString, interactiveTimeoutSeconds);
-                Login.INSTANCE.doLogin(context);
-                if (!context.getLoginStatus().equals(Login.Status.SUCCEED)) {
-                    task.setErrorCode(ErrorCode.COOKIE_INVALID);
-                    return false;
-                }
-            } else {
-                Login.INSTANCE.doLogin(context);
-                if (!context.getLoginStatus().equals(Login.Status.SUCCEED)) {
-                    task.setErrorCode(ErrorCode.COOKIE_INVALID);
-                    return false;
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            LOGGER.error("login error websiteName={}", context.getWebsiteName(), e);
-            if (e instanceof InterruptedException) {
-                throw (InterruptedException) e;
-            }
-            // 用户中断任务不算失败
-            if (e instanceof ResultEmptyException) {
-                task.setErrorCode(ErrorCode.NOT_EMPTY_ERROR_CODE, e.getMessage());
-            } else {
-                task.setErrorCode(ErrorCode.COOKIE_INVALID);
-            }
-            // 登录失败终止任务
-            return false;
-        } finally {
-        }
-    }
-
-    /**
-     * 登录
      *
      * @param taskMessage
      * @return
