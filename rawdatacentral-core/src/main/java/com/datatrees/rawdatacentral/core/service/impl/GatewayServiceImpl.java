@@ -153,7 +153,7 @@ public class GatewayServiceImpl implements DataResource {
             try {
                 Message mqMessage = new Message();
                 mqMessage.setTopic(topic);
-                mqMessage.setBody(GsonUtils.toJson(body).getBytes());
+                mqMessage.setBody(GsonUtils.toJson(body).getBytes("UTF-8"));
                 SendResult sendResult = producer.send(mqMessage);
                 logger.info("send result message:" + GsonUtils.toJson(body) + "result:" + sendResult);
                 if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
