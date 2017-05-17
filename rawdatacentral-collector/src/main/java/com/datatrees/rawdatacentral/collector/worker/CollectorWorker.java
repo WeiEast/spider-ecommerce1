@@ -92,7 +92,7 @@ public class CollectorWorker {
      * @return
      * @throws InterruptedException
      */
-    public HttpResult<Boolean> doLogin2(TaskMessage taskMessage) throws InterruptedException {
+    public HttpResult<Boolean> doLogin(TaskMessage taskMessage) throws InterruptedException {
         HttpResult<Boolean> loginResult = new HttpResult<>();
         Task task = taskMessage.getTask();
         SearchProcessorContext context = taskMessage.getContext();
@@ -139,7 +139,7 @@ public class CollectorWorker {
      * @param taskMessage
      * @return
      */
-    public HttpResult<Map<String, Object>> doSearch2(TaskMessage taskMessage) throws Exception {
+    public HttpResult<Map<String, Object>> doSearch(TaskMessage taskMessage) throws Exception {
         HttpResult<Map<String, Object>> searchResult = new HttpResult<>();
         Task task = taskMessage.getTask();
         SearchProcessorContext context = taskMessage.getContext();

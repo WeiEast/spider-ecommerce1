@@ -43,7 +43,6 @@ import com.datatrees.rawdatacentral.domain.common.Task;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
@@ -214,7 +213,6 @@ public class Collector {
     }
 
     public ProcessorResult processMessage(CollectorMessage message) {
-        logger.info("starting task worker for [" + message.toString() + "]");
         TaskMessage taskMessage = null;
         Task task = null;
         SearchProcessorContext context = null;
@@ -238,7 +236,7 @@ public class Collector {
 
             HttpResult<Boolean> loginResult = new HttpResult<>();
             if (needLogin) {
-                loginResult = collectorWorker.doLogin2(taskMessage);
+                loginResult = collectorWorker.doLogin(taskMessage);
                 if (!loginResult.getStatus()) {
                     task.setStatus(loginResult.getResponseCode());
                     task.setRemark(loginResult.getMessage());
@@ -252,7 +250,7 @@ public class Collector {
 
             if (loginStatus) {
                 messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务开始抓取" : "开始抓取");
-                HttpResult<Map<String, Object>> searchResult = collectorWorker.doSearch2(taskMessage);
+                HttpResult<Map<String, Object>> searchResult = collectorWorker.doSearch(taskMessage);
                 if (!searchResult.getStatus()) {
                     task.setStatus(searchResult.getResponseCode());
                     task.setRemark(searchResult.getMessage());
@@ -299,47 +297,40 @@ public class Collector {
                 taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
             }
         } finally {
-            try {
-                String logMsg = task.isSubTask() ? "子任务" : "";
+            if (!task.isSubTask()) {
                 String redisKey = "run_count:" + task.getTaskId();
                 long totalRun = 0;
                 if (redisDao.getRedisTemplate().hasKey(redisKey)) {
                     totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(redisKey));
                 }
                 boolean isRepeatTask = totalRun > message.getTotalRun();
-                logger.info("ready complete task taskId={},isSubTask={},newTotalRun={},oldTotalRun={},isRepeatTask={}",
-                    task.getTaskId(), task.isSubTask(), totalRun, message.getTotalRun(), isRepeatTask);
+                logger.info("ready complete task taskId={},newTotalRun={},oldTotalRun={},isRepeatTask={}",
+                    task.getTaskId(), totalRun, message.getTotalRun(), isRepeatTask);
 
+                String logMsg = null;
                 switch (taskMessage.getTask().getStatus()) {
                     case 0:
-                        logMsg += "抓取成功";
+                        logMsg = "抓取成功";
                         break;
                     case 306:
-                        logMsg = isRepeatTask ? "用户刷新任务或者重试," + logMsg + "抓取中断" : logMsg + "抓取中断";
+                        logMsg = isRepeatTask ? "用户刷新任务或者重试,抓取中断" : "抓取中断";
                         break;
                     case 308:
-                        logMsg += "抓取失败,登陆超时";
+                        logMsg = "抓取失败,登陆超时";
                         break;
                     default:
-                        logMsg += "抓取失败";
+                        logMsg = "抓取失败";
                         break;
                 }
                 messageService.sendTaskLog(task.getTaskId(), logMsg);
                 if (task.getStatus() != 0 && !isRepeatTask) {
-                    Map<String, Object> directiveMap = new HashMap<String, Object>();
-                    directiveMap.put("taskId", task.getTaskId());
-                    directiveMap.put("directive", DirectiveEnum.TASK_FAIL.getCode());
-                    Message directiveMsg = new Message();
-                    directiveMsg.setTopic(TopicEnum.TASK_NEXT_DIRECTIVE.getCode());
-                    directiveMsg.setBody(GsonUtils.toJson(directiveMap).getBytes());
-                    producer.send(directiveMsg);
+                    messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), null);
                 }
-            } catch (Exception e) {
-                logger.error("send message error taskId={},websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
             }
             this.actorLockWatchRelease(watcher);
-            logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={}", task.getTaskId(),
-                task.isSubTask(), task.getStatus(), task.getRemark(), task.getWebsiteName());
+            logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={},status={}",
+                task.getTaskId(), task.isSubTask(), task.getStatus(), task.getRemark(), task.getWebsiteName(),
+                task.getStatus());
         }
         this.messageComplement(taskMessage, message);
         message.setFinish(true);

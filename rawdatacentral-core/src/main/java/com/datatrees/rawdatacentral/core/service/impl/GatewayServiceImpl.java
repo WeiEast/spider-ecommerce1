@@ -9,6 +9,7 @@ import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
+import com.datatrees.rawdatacentral.core.service.MessageService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +24,16 @@ public class GatewayServiceImpl implements DataResource {
     private static final Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
 
     @Resource
-    private RedisDao redisDao;
+    private RedisDao            redisDao;
 
     @Resource
-    private MessageFactory messageFactory;
+    private MessageFactory      messageFactory;
 
     @Resource
-    private MQProducer producer;
+    private MQProducer          producer;
 
+    @Resource
+    private MessageService      messageService;
 
     private String genRedisKey(Map<String, Object> parameters) {
         StringBuilder sb = new StringBuilder();
@@ -84,7 +87,8 @@ public class GatewayServiceImpl implements DataResource {
             if (logger.isDebugEnabled()) {
                 logger.debug("send to queue:" + GsonUtils.toJson(resultMessage));
             }
-            Message mqMessage = messageFactory.getMessage("rawData_result_status", tag, GsonUtils.toJson(resultMessage), taskId);
+            Message mqMessage = messageFactory.getMessage("rawData_result_status", tag, GsonUtils.toJson(resultMessage),
+                taskId);
             SendResult sendResult = producer.send(mqMessage);
             logger.info("send result message:" + mqMessage + "result:" + sendResult);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
@@ -148,21 +152,6 @@ public class GatewayServiceImpl implements DataResource {
 
     @Override
     public boolean sendMessage(String topic, Map<String, Object> body) {
-        int retry = 0;
-        while (retry++ <= 3) {
-            try {
-                Message mqMessage = new Message();
-                mqMessage.setTopic(topic);
-                mqMessage.setBody(GsonUtils.toJson(body).getBytes("UTF-8"));
-                SendResult sendResult = producer.send(mqMessage);
-                logger.info("send result message:" + GsonUtils.toJson(body) + "result:" + sendResult);
-                if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                    return true;
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-        return false;
+        return messageService.sendMessage(topic, body);
     }
 }
