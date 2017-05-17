@@ -375,10 +375,21 @@ public class ActorTest extends AbstractTest {
         while (true) {
             //            logger.info("哈哈哈");
             //            messageService.sendTaskLog(RandomUtils.nextLong(),"测试信息","不告诉你");
-            String hostname = PropertiesConfiguration.getInstance().get("core.redis.hostName");
+            String hostname = PropertiesConfiguration.getInstance().get("trade.remark");
             TimeUnit.SECONDS.toSeconds(60);
 
         }
+    }
+
+    @Test
+    public void ali1() throws InterruptedException {
+        CollectorMessage message = new CollectorMessage();
+        message.setCookie(
+                "ubn=p; thw=cn; spanner=Jhue7xCq0DB1LjfjizZbnkQVjCyBGQUKXt2T4qEYgj0=; lid=%E5%8F%B2%E4%BA%8C%E5%B9%B3%E7%88%B1%E4%BD%A0; _l_g_=Ug%3D%3D; JSESSIONID=RZ12NpXJSA3Dh0bbb9aFAtwVNaNiFyauthRZ24GZ00; mobileSendTime=-1; cookie1=ACuySV7VjQIsk2ARHq0fVrI0hN8QYxz1EeWmj0guTdI%3D; cookie2=12fc15055de4d8073688e8728af1d3e5; uss=U7Y7QZFjC7Gn%2Fd2%2FIdxv84fRd7Z1N5JpsR%2FlJugTG%2FTy1hhVPtUS4XwvjsM%3D; zone=RZ24B; CHAIR_SESS=JWYmdXvINYrjfJhNfnAOApEy7drxxpERpaBXObg17RbIKNEAtyvEOZ4QbekehwNGEWdFdrMdTEgxjpmpPqgglJnsKWqD6lZlgjfoqn6-oIN8soNRHZaPtzNaUKvVSWuT9luPvs5q2AS1dA-sMem-Xg==; CLUB_ALIPAY_COM=2088022954760902; ALIPAYJSESSIONID.sig=CnhJNsKPCIyGlk_YNsBW34Jb81-MUaD_NKbci8FgTrI; skt=e699962941112ee9; iw.userid=K1iSL1mnW5gJwO2aWx2lPA==; ucn=unsz; riskCredibleMobileSendTime=-1; _umdata=ED82BDCEC1AA6EB9864C872E17D6058993F875F279997C08B9DB68EB3BD5D59843943117D81447F3CD43AD3E795C914C8B6F457ED96A4AD595BA5BD2F1AC4547; tracknick=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; mt=np=; riskMobileAccoutSendTime=-1; _nk_=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; log=lty=Tmc%3D; lgc=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; existShop=MTQ5NTAyNjUwNg%3D%3D; credibleMobileSendTime=-1; sg=%E4%BD%A096; ALIPAYJSESSIONID=RZ12NpXJSA3Dh0bbb9aFAtwVNaNiFyauthRZ24GZ00; cna=BTmjEcril2ICAXWIVkG7mFAK; session.cookieNameId=ALIPAYJSESSIONID; LoginForm=alipay_login; umt=HBb535b50a63a17bf2637f16a4ecd1a19e; _tb_token_=eede7d1ee0310; riskMobileCreditSendTime=-1; uc1=cbu=1&cookie14=UoW%2BvfoR2k74RA%3D%3D&lng=zh_CN&cookie16=Vq8l%2BKCLySLZMFWHxqs8fwqnEw%3D%3D&existShop=false&cookie21=UtASsssmeW6khGmdJha8&tag=8&cookie15=VT5L2FSpMGV7TQ%3D%3D&pas=0; alipay=K1iSL1mnW5gJwO2aWx2lPMcmJ+8kTs4kAtvGzDV+SA==; uc3=sg2=ACJc9qbL5F5J1clhBSR%2BT8Gvti4QlYaJ%2Bk%2Brta3P6oA%3D&nk2=qSWTmKtGAzh38A%3D%3D&id2=UU6m39NZmsUJ6Q%3D%3D&vt3=F8dARVDUWC%2Fz6EsIkN8%3D&lg2=VFC%2FuZ9ayeYq2g%3D%3D; riskMobileBankSendTime=-1; unb=2670856439; _cc_=VT5L2FSpdA%3D%3D; riskOriginalAccountMobileSendTime=-1; cookie17=UU6m39NZmsUJ6Q%3D%3D; ctuMobileSendTime=-1; ctoken=Ggwi7a2CFN-lzgXA; ali_apache_tracktmp=uid=2088022954760902; tg=0; t=6f6e2513e1794d2f86e48f709d48eb22; v=0; lc=Vy%2BWeXGTwf6sqdtweWIz");
+        message.setTaskId(1000000146);
+        message.setWebsiteName("alipay.com");
+        message.setEndURL("https://buyertrade.taobao.com/trade/itemlist/list_bought_items.htm");
+        collector.processMessage(message);
     }
 
     private CollectorMessage readFromFile() throws IOException {
