@@ -24,6 +24,7 @@
     <bean id="propertiesLoader" class="com.datatrees.common.conf.PropertiesLoader">
         <!-- true:优先加载super diamond 配置 -->
         <property name="localOverride" value="true"/>
+        <!--否则*.properties文件中文乱码-->
         <property name="fileEncoding" value="UTF-8" />
         <property name="properties" ref="propertiesConfiguration"/>
         <property name="locations">
