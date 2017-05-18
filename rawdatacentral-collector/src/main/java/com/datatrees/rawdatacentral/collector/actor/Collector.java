@@ -249,14 +249,14 @@ public class Collector {
             }
 
             if (loginStatus) {
-                messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务开始抓取" : "开始抓取");
+                if (!task.isSubTask()) {
+                    messageService.sendTaskLog(task.getTaskId(), "开始抓取");
+                }
                 HttpResult<Map<String, Object>> searchResult = collectorWorker.doSearch(taskMessage);
                 if (!searchResult.getStatus()) {
                     task.setStatus(searchResult.getResponseCode());
                     task.setRemark(searchResult.getMessage());
-                    //                    messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务抓取失败" : "抓取失败");
                 } else {
-                    //                    messageService.sendTaskLog(task.getTaskId(), task.isSubTask() ? "子任务抓取成功" : "抓取成功");
                     Map submitkeyResult = searchResult.getData();
                     if (submitkeyResult == null && message instanceof TaskRelated) {
                         logger.info("current task related to:{},set empty submitkeyResult.",
