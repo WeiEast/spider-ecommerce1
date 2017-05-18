@@ -63,6 +63,6 @@ public class MailBillSubmitDataNormalizer implements DataNormalizer {
         map.put("PageExtractId", result.getPageExtractId());// Distinguish between jianban &
                                                             // xiangban
         map.put("ExtraInfo", result.getExtraInfo());
-        map.put("mailHeader", result.getMailHeader());
+        map.put("MailHeader", result.getMailHeader());
     }
 }
