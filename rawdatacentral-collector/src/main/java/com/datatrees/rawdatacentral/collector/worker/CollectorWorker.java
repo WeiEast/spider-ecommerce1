@@ -32,7 +32,7 @@ import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.service.MessageService;
+import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.rawdatacentral.domain.common.Task;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;

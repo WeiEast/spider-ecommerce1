@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.core.model.SubmitMessage;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
 import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
-import com.datatrees.rawdatacentral.core.service.RedisService;
+import com.datatrees.rawdatacentral.share.RedisService;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;

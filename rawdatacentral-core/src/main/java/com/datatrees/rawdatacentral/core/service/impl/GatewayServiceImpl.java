@@ -9,7 +9,7 @@ import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
-import com.datatrees.rawdatacentral.core.service.MessageService;
+import com.datatrees.rawdatacentral.share.MessageService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,18 +150,4 @@ public class GatewayServiceImpl implements DataResource {
         }
     }
 
-    @Override
-    public boolean sendMessage(String topic, Map<String, Object> body) {
-        return messageService.sendMessage(topic, body);
-    }
-
-    @Override
-    public boolean sendTaskLog(Long taskId, String msg) {
-        return messageService.sendTaskLog(taskId, msg);
-    }
-
-    @Override
-    public boolean sendDirective(Long taskId, String directive, String remark) {
-        return messageService.sendDirective(taskId, directive, remark);
-    }
 }

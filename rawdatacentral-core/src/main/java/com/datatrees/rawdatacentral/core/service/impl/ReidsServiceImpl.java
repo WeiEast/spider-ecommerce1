@@ -1,7 +1,8 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
+import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.core.common.Constants;
-import com.datatrees.rawdatacentral.core.service.RedisService;
+import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +21,34 @@ public class ReidsServiceImpl implements RedisService {
     private StringRedisTemplate redisTemplate;
 
     @Override
+    public boolean hasKey(String key) {
+        return redisTemplate.hasKey(key);
+    }
+
+    @Override
+    public String getString(String key) {
+        if (StringUtils.isBlank(key) || !redisTemplate.hasKey(key)) {
+            logger.warn("invalid param key={}", key);
+            return null;
+        }
+        return redisTemplate.opsForValue().get(key);
+    }
+
+    @Override
     public boolean saveString(String key, String value) {
         try {
             redisTemplate.opsForValue().set(key, value, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+            return true;
+        } catch (Exception e) {
+            logger.error("save to redis error key={}", key, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean saveString(String key, String value, long timeout, TimeUnit unit) {
+        try {
+            redisTemplate.opsForValue().set(key, value, timeout, unit);
             return true;
         } catch (Exception e) {
             logger.error("save to redis error key={}", key, e);
