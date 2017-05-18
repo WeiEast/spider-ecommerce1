@@ -154,4 +154,14 @@ public class GatewayServiceImpl implements DataResource {
     public boolean sendMessage(String topic, Map<String, Object> body) {
         return messageService.sendMessage(topic, body);
     }
+
+    @Override
+    public boolean sendTaskLog(Long taskId, String msg) {
+        return messageService.sendTaskLog(taskId, msg);
+    }
+
+    @Override
+    public boolean sendDirective(Long taskId, String directive, String remark) {
+        return messageService.sendDirective(taskId, directive, remark);
+    }
 }
