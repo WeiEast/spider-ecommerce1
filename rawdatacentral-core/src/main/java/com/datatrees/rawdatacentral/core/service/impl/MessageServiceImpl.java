@@ -6,7 +6,7 @@ import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
-import com.datatrees.rawdatacentral.core.service.MessageService;
+import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

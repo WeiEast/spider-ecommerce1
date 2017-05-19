@@ -1,5 +1,6 @@
 dependencies {
     compile project(':rawdatacentral-api')
+    compile project(':rawdatacentral-share')
     compile project(':rawdatacentral-domain')
     compile project(':rawdatacentral-common')
     compile "org.apache.ibatis:ibatis-sqlmap:${ibatisSqlmapVersion}"

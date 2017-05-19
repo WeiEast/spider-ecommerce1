@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.collector.search.CrawlExcutorHandler;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateCheckerFactory;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
-import com.datatrees.rawdatacentral.core.service.MessageService;
+import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import org.springframework.stereotype.Service;
 

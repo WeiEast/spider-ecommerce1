@@ -32,7 +32,7 @@ public class MailBillSubmitDataNormalizer implements DataNormalizer {
      * 
      * @see DataNormalizer#normalize(java.lang.Object)
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public boolean normalize(Object data) {
         SubmitMessage message = ((SubmitMessage) data);
@@ -54,7 +54,7 @@ public class MailBillSubmitDataNormalizer implements DataNormalizer {
         return false;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void mailNormalize(Map map, MailExtractResult result) {
         map.put("BankId", result.getBankId());
         map.put("ReceiveAt", result.getReceiveAt());
@@ -63,6 +63,6 @@ public class MailBillSubmitDataNormalizer implements DataNormalizer {
         map.put("PageExtractId", result.getPageExtractId());// Distinguish between jianban &
                                                             // xiangban
         map.put("ExtraInfo", result.getExtraInfo());
-        map.put("mailHeader", result.getMailHeader());
+        map.put("MailHeader", null == result.getMailHeader() ? "" : result.getMailHeader());
     }
 }

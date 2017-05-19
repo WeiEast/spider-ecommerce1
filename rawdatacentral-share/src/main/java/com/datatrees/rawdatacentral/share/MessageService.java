@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.service;
+package com.datatrees.rawdatacentral.share;
 
 /**
  * 消息服务
