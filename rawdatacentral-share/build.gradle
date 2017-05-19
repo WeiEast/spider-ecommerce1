@@ -1,1 +1,4 @@
 apply from: rootProject.file('upload.gradle')
+dependencies {
+    compile project(':rawdatacentral-domain')
+}
