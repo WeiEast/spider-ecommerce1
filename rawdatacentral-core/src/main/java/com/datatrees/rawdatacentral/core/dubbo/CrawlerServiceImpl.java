@@ -236,8 +236,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                                                        Map<String, Object> extra) {
 
         logger.info("importClientCrawlResult taskId={},html={},cookies={} ", taskId, html, cookies);
-        HttpResult<Boolean> result = new HttpResult();
-        return result.success(true);
+        return null;
     }
 
 }

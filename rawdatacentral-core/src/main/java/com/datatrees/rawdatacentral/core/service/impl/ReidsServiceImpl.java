@@ -1,8 +1,10 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
+import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -80,7 +82,7 @@ public class ReidsServiceImpl implements RedisService {
         if (StringUtils.isBlank(key) || null == value) {
             throw new RuntimeException("invalid param key or value");
         }
-        if(timeout <= 0){
+        if (timeout <= 0) {
             throw new RuntimeException("invalid param timeout");
         }
         try {
@@ -103,7 +105,6 @@ public class ReidsServiceImpl implements RedisService {
             if (CollectionUtils.isNotEmpty(valueList)) {
                 redisTemplate.opsForList().rightPushAll(key, valueList.toArray(new String[valueList.size()]));
                 redisTemplate.expire(key, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
-                return true;
             }
             return true;
         } catch (Exception e) {
@@ -119,6 +120,27 @@ public class ReidsServiceImpl implements RedisService {
         }
         String key = CrawlConstant.VERIFY_RESULT_PREFIX + String.valueOf(taskId);
         return getString(key);
+    }
+
+    @Override
+    public boolean saveDirectiveResult(DirectiveResult result) {
+        if (null == result) {
+            throw new RuntimeException("saveDirectiveResult error param is null");
+        }
+        return saveString(result.getRedisKey(), JSON.toJSONString(result), Constants.REDIS_KEY_TIMEOUT,
+            TimeUnit.SECONDS);
+    }
+
+    @Override
+    public DirectiveResult getDirectiveResult(String key) {
+        if (StringUtils.isBlank(key)) {
+            throw new RuntimeException("getDirectiveResult error key is blank");
+        }
+        String value = getString(key);
+        if (StringUtils.isNotBlank(value)) {
+            return JSON.parseObject(value, DirectiveResult.class);
+        }
+        return null;
     }
 
 }

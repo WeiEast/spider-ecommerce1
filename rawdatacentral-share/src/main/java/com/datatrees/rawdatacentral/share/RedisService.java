@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.share;
 
+import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -71,5 +73,18 @@ public interface RedisService {
      * @return
      */
     String getResultFromApp(Object taskId);
+
+    /**
+     * 保存交互指令
+     * @param result
+     * @return
+     */
+    boolean saveDirectiveResult(DirectiveResult result);
+
+    /**
+     * 获取交互指令
+     * @return
+     */
+    DirectiveResult getDirectiveResult(String key);
 
 }
