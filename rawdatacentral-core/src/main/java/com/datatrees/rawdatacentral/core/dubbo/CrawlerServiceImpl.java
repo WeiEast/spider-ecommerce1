@@ -18,10 +18,14 @@ import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
+import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.share.RedisService;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,6 +49,9 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Resource
     private RedisDao            redisDao;
+
+    @Resource
+    private RedisService        redisService;
 
     @Resource
     private ZooKeeperClient     zooKeeperClient;
@@ -234,9 +241,27 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public HttpResult<Boolean> importClientCrawlResult(long taskId, String html, String cookies,
                                                        Map<String, Object> extra) {
-
-        logger.info("importClientCrawlResult taskId={},html={},cookies={} ", taskId, html, cookies);
-        return null;
+        HttpResult<Boolean> result = new HttpResult<>();
+        String redisKey = null;
+        try {
+            if (taskId <= 0 || StringUtils.isAnyBlank(html, cookies)) {
+                logger.warn("invalid param taskId={},html={},cookies={}", taskId, html, cookies);
+                return result.failure("参数为空或者参数不完整");
+            }
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.GRAB_URL, taskId);
+            Map<String, String> data = new HashMap<>();
+            data.put("html", html);
+            data.put("cookies", cookies);
+            //保存状态到redis
+            sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
+            redisKey = sendDirective.getRedisKey();
+            redisService.saveDirectiveResult(sendDirective);
+            logger.info("importClientCrawlResult success taskId={},redisKey={}", taskId, sendDirective.getRedisKey());
+            return result.success();
+        } catch (Exception e) {
+            logger.error("importClientCrawlResult error taskId={},redisKey={}", taskId, redisKey);
+            return result.failure();
+        }
     }
 
 }
