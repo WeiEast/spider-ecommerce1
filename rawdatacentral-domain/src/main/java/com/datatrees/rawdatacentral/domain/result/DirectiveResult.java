@@ -48,6 +48,7 @@ public class DirectiveResult<T> implements Serializable {
      */
     private T      data;
 
+    @Deprecated
     public DirectiveResult() {
     }
 
