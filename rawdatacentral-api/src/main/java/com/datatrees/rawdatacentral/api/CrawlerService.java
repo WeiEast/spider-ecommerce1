@@ -53,7 +53,7 @@ public interface CrawlerService {
      * @param extra 附加信息,暂时没有
      * @return
      */
-    public HttpResult<Boolean> importClientCrawlResult(long taskId, String html, String cookies,
-                                                       Map<String, Object> extra);
+    public HttpResult<Boolean> importAppCrawlResult(long taskId, String html, String cookies,
+                                                    Map<String, Object> extra);
 
 }

@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.share;
 
+import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -13,14 +15,21 @@ public interface RedisService {
      * @param key
      * @return
      */
-    public boolean hasKey(String key);
+    boolean hasKey(String key);
 
     /**
      * 获取
      * @param key
      * @return
      */
-    public String getString(String key);
+    String getString(String key);
+
+    /**
+     * 从list取最后一个值
+     * @param key 
+     * @return
+     */
+    String rightPop(String key);
 
     /**
      * 保存
@@ -28,7 +37,7 @@ public interface RedisService {
      * @param value
      * @return
      */
-    public boolean saveString(String key, String value);
+    boolean saveString(String key, Object value);
 
     /**
      * 保存
@@ -38,7 +47,17 @@ public interface RedisService {
      * @param unit 过期时间单位
      * @return
      */
-    public boolean saveString(String key, String value, long timeout, TimeUnit unit);
+    boolean saveString(String key, String value, long timeout, TimeUnit unit);
+
+    /**
+     * 保存到list
+     * @param key
+     * @param value
+     * @param timeout 过期时间
+     * @param unit 过期时间单位
+     * @return
+     */
+    boolean saveToList(String key, String value, long timeout, TimeUnit unit);
 
     /**
      * 保存
@@ -46,5 +65,26 @@ public interface RedisService {
      * @param value
      * @return
      */
-    public boolean saveListString(String key, List<String> value);
+    boolean saveListString(String key, List<String> value);
+
+    /**
+     * 从redis取app端交互的信息
+     * @param taskId 任务ID
+     * @return
+     */
+    String getResultFromApp(Object taskId);
+
+    /**
+     * 保存交互指令
+     * @param result
+     * @return
+     */
+    boolean saveDirectiveResult(DirectiveResult result);
+
+    /**
+     * 获取交互指令
+     * @return
+     */
+    DirectiveResult getDirectiveResult(String key);
+
 }
