@@ -239,8 +239,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<Boolean> importClientCrawlResult(long taskId, String html, String cookies,
-                                                       Map<String, Object> extra) {
+    public HttpResult<Boolean> importAppCrawlResult(long taskId, String html, String cookies,
+                                                    Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
         String redisKey = null;
         try {
@@ -256,10 +256,10 @@ public class CrawlerServiceImpl implements CrawlerService {
             sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
             redisKey = sendDirective.getRedisKey();
             redisService.saveDirectiveResult(sendDirective);
-            logger.info("importClientCrawlResult success taskId={},redisKey={}", taskId, sendDirective.getRedisKey());
+            logger.info("importAppCrawlResult success taskId={},redisKey={}", taskId, sendDirective.getRedisKey());
             return result.success();
         } catch (Exception e) {
-            logger.error("importClientCrawlResult error taskId={},redisKey={}", taskId, redisKey);
+            logger.error("importAppCrawlResult error taskId={},redisKey={}", taskId, redisKey);
             return result.failure();
         }
     }
