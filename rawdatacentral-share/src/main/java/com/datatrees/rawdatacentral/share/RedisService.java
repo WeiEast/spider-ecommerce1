@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * redis操作
+ * Created by zhouxinghai on 2017/5/23
  */
 public interface RedisService {
 
@@ -18,11 +19,45 @@ public interface RedisService {
     boolean hasKey(String key);
 
     /**
+     * 删除key
+     * @param key
+     * @return
+     */
+    boolean deleteKey(String key);
+
+    /**
+     * redis加锁
+     * @param key 
+     * @param timeout
+     * @param unit
+     * @return
+     */
+    boolean lock(String key, long timeout, TimeUnit unit);
+
+    /**
+     * redis解锁
+     * @param key
+     * @param timeout
+     * @param unit
+     * @return
+     */
+    boolean unlock(String key, long timeout, TimeUnit unit);
+
+    /**
      * 获取
      * @param key
      * @return
      */
     String getString(String key);
+
+    /**
+     * 获取,有超时时间
+     * @param key
+     * @param timeout
+     * @param timeUnit
+     * @return
+     */
+    String getString(String key, long timeout, TimeUnit timeUnit);
 
     /**
      * 从list取最后一个值
@@ -76,15 +111,25 @@ public interface RedisService {
 
     /**
      * 保存交互指令
+     * 保存到list,指令依次从最后一个读取
      * @param result
      * @return
      */
     boolean saveDirectiveResult(DirectiveResult result);
 
     /**
-     * 获取交互指令
+     * 获取还未执行的最后一条指令
      * @return
      */
-    DirectiveResult getDirectiveResult(String key);
+    DirectiveResult getNextDirectiveResult(String key);
+
+    /**
+     * 获取,有超时时间
+     * @param key
+     * @param timeout
+     * @param timeUnit
+     * @return
+     */
+    DirectiveResult getDirectiveResult(String key, long timeout, TimeUnit timeUnit);
 
 }

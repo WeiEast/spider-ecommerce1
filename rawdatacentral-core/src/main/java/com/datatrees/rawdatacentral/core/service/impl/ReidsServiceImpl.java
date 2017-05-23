@@ -1,12 +1,12 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,6 +38,56 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
+    public boolean deleteKey(String key) {
+        if (StringUtils.isBlank(key)) {
+            logger.warn("invalid param key is blank key={}", key);
+            return false;
+        }
+        try {
+            if (redisTemplate.hasKey(key)) {
+                redisTemplate.delete(key);
+                logger.info("deleteKey success key={}", key);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error("deleteKey error key={}", key, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean lock(String key, long timeout, TimeUnit unit) {
+        if (StringUtils.isBlank(key)) {
+            logger.warn("invalid param key is blank key={}", key);
+            return false;
+        }
+        try {
+            boolean b = redisTemplate.opsForValue().setIfAbsent(key, key);
+            if (!b) {
+                logger.warn("lock fail key={},timeout={},unit={}", key, timeout, unit);
+                return false;
+            }
+            redisTemplate.expire(key, timeout, unit);
+            logger.info("lock success key={},timeout={},unit={}", key, timeout, unit);
+            return true;
+        } catch (Exception e) {
+            logger.error("lock error key={},timeout={},unit={}", key, timeout, unit, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean unlock(String key, long timeout, TimeUnit unit) {
+        if (StringUtils.isBlank(key)) {
+            logger.warn("invalid param key is blank key={}", key);
+            return false;
+        }
+        boolean b = deleteKey(key);
+        logger.info("unlock {} key={},timeout={},unit={}", b ? "success" : "fail", key, timeout, unit);
+        return b;
+    }
+
+    @Override
     public String getString(String key) {
         if (!hasKey(key)) {
             return null;
@@ -48,6 +98,32 @@ public class ReidsServiceImpl implements RedisService {
             logger.error("redis getString error key={}", key, e);
             return null;
         }
+    }
+
+    @Override
+    public String getString(String key, long timeout, TimeUnit timeUnit) {
+        if (StringUtils.isBlank(key)) {
+            return null;
+        }
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + timeUnit.toMillis(timeout);
+        long sleeptime = 500;
+        if (timeUnit.toMillis(timeout) <= 500) {
+            sleeptime = timeUnit.toMillis(timeout);
+        }
+        try {
+            do {
+                TimeUnit.MILLISECONDS.sleep(sleeptime);
+                if (redisTemplate.hasKey(key)) {
+                    String value = redisTemplate.opsForValue().get(key);
+                    logger.info("get data key={},useTime={}ms", key, System.currentTimeMillis() - startTime);
+                    return value;
+                }
+            } while (System.currentTimeMillis() <= endTime);
+        } catch (Exception e) {
+            logger.error("redis error key={}", key);
+        }
+        return null;
     }
 
     @Override
@@ -70,6 +146,7 @@ public class ReidsServiceImpl implements RedisService {
         }
         try {
             redisTemplate.opsForValue().set(key, String.valueOf(value), Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+            logger.info("save to redis success key={}", key);
             return true;
         } catch (Exception e) {
             logger.error("save to redis error key={}", key, e);
@@ -96,7 +173,18 @@ public class ReidsServiceImpl implements RedisService {
 
     @Override
     public boolean saveToList(String key, String value, long timeout, TimeUnit unit) {
-        return false;
+        try {
+            if (StringUtils.isAnyBlank(key, value)) {
+                throw new RuntimeException("invalid param key or value");
+            }
+            redisTemplate.opsForList().rightPushAll(key, value);
+            redisTemplate.expire(key, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+            logger.info("save to redis success key={}", key);
+            return true;
+        } catch (Exception e) {
+            logger.error("save to redis error key={}", key, e);
+            return false;
+        }
     }
 
     @Override
@@ -127,18 +215,27 @@ public class ReidsServiceImpl implements RedisService {
         if (null == result) {
             throw new RuntimeException("saveDirectiveResult error param is null");
         }
-        return saveString(result.getRedisKey(), JSON.toJSONString(result), Constants.REDIS_KEY_TIMEOUT,
+        return saveToList(result.getSendKey(), JSON.toJSONString(result), Constants.REDIS_KEY_TIMEOUT,
             TimeUnit.SECONDS);
     }
 
     @Override
-    public DirectiveResult getDirectiveResult(String key) {
+    public DirectiveResult getNextDirectiveResult(String key) {
         if (StringUtils.isBlank(key)) {
             throw new RuntimeException("getDirectiveResult error key is blank");
         }
-        String value = getString(key);
+        String value = rightPop(key);
         if (StringUtils.isNotBlank(value)) {
             return JSON.parseObject(value, DirectiveResult.class);
+        }
+        return null;
+    }
+
+    @Override
+    public DirectiveResult getDirectiveResult(String key, long timeout, TimeUnit timeUnit) {
+        String result = getString(key, timeout, timeUnit);
+        if (StringUtils.isNoneBlank(result)) {
+            return JSON.parseObject(result, DirectiveResult.class);
         }
         return null;
     }
