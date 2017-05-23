@@ -121,7 +121,7 @@ public interface RedisService {
      * 获取还未执行的最后一条指令
      * @return
      */
-    DirectiveResult getNextDirectiveResult(String key);
+    <T> DirectiveResult<T> getNextDirectiveResult(String key);
 
     /**
      * 获取,有超时时间
@@ -130,6 +130,6 @@ public interface RedisService {
      * @param timeUnit
      * @return
      */
-    DirectiveResult getDirectiveResult(String key, long timeout, TimeUnit timeUnit);
+    <T> DirectiveResult getDirectiveResult(String key, long timeout, TimeUnit timeUnit);
 
 }

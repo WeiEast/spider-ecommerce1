@@ -1,5 +1,5 @@
 #!/bin/sh
-gradle clean rawdatacentral-api:upload rawdatacentral-domain:upload -x test
+gradle clean rawdatacentral-api:upload rawdatacentral-domain:upload rawdatacentral-share:upload -x test
 
 
 

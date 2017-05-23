@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
@@ -220,22 +221,24 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public DirectiveResult getNextDirectiveResult(String key) {
+    public <T> DirectiveResult<T> getNextDirectiveResult(String key) {
         if (StringUtils.isBlank(key)) {
             throw new RuntimeException("getDirectiveResult error key is blank");
         }
         String value = rightPop(key);
         if (StringUtils.isNotBlank(value)) {
-            return JSON.parseObject(value, DirectiveResult.class);
+            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
+            });
         }
         return null;
     }
 
     @Override
-    public DirectiveResult getDirectiveResult(String key, long timeout, TimeUnit timeUnit) {
-        String result = getString(key, timeout, timeUnit);
-        if (StringUtils.isNoneBlank(result)) {
-            return JSON.parseObject(result, DirectiveResult.class);
+    public <T> DirectiveResult<T> getDirectiveResult(String key, long timeout, TimeUnit timeUnit) {
+        String value = getString(key, timeout, timeUnit);
+        if (StringUtils.isNoneBlank(value)) {
+            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
+            });
         }
         return null;
     }
