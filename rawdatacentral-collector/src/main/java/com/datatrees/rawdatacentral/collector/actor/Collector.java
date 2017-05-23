@@ -161,6 +161,7 @@ public class Collector {
      * @param taskId
      */
     private void clearStatus(long taskId) {
+        //todo 这里会有问题,待处理
         String key = "verify_result_" + taskId;
         String getKey = "plugin_remark_" + taskId;
         redisDao.deleteKey(key);
@@ -322,7 +323,7 @@ public class Collector {
                         logMsg = "抓取失败";
                         break;
                 }
-                messageService.sendTaskLog(task.getTaskId(), logMsg);
+                messageService.sendTaskLog(task.getTaskId(), logMsg, task.getRemark());
                 if (task.getStatus() != 0 && !isRepeatTask) {
                     messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), null);
                 }
