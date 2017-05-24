@@ -52,7 +52,7 @@ public class ActorTest extends AbstractTest {
     @Test
     public void testCrawlerService() throws Exception {
         System.out.println(PropertiesConfiguration.getInstance());
-        cs.verifyQr(333, "");
+//        cs.verifyQr(333, "");
     }
 
     @Test
