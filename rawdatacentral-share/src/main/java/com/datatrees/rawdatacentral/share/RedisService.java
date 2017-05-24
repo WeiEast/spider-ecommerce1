@@ -37,11 +37,9 @@ public interface RedisService {
     /**
      * redis解锁
      * @param key
-     * @param timeout
-     * @param unit
      * @return
      */
-    boolean unlock(String key, long timeout, TimeUnit unit);
+    boolean unlock(String key);
 
     /**
      * 获取

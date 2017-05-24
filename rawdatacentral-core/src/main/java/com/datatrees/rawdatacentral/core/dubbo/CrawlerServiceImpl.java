@@ -147,9 +147,9 @@ public class CrawlerServiceImpl implements CrawlerService {
                     logger.warn("invalid param taskId={},type={}", taskId, type);
                     return result.failure("未知参数type");
             }
-            DirectiveResult<Map<String, Object>> sendDirective = new DirectiveResult<>(directiveType, taskId);
+            DirectiveResult<String> sendDirective = new DirectiveResult<>(directiveType, taskId);
             //保存交互指令到redis
-            sendDirective.fill(status, extra);
+            sendDirective.fill(status, code);
             redisKey = sendDirective.getSendKey();
             redisService.saveDirectiveResult(sendDirective);
             logger.info("importAppCrawlResult success taskId={},redisKey={}", taskId, redisKey);
@@ -202,6 +202,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 logger.warn("get result timeout key={},timeout={},timeUnit={}", resultKey, timeout, TimeUnit.SECONDS);
                 return result.failure("get data from plugin timeout");
             }
+            redisService.unlock(sendDirective.getLockKey());
             logger.info("fetchLoginCode success taskId={},status={}", taskId, status);
             return result.success(receiveResult.getData());
         } catch (Exception e) {

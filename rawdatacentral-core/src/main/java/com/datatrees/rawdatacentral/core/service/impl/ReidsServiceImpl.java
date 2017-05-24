@@ -78,13 +78,13 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean unlock(String key, long timeout, TimeUnit unit) {
+    public boolean unlock(String key) {
         if (StringUtils.isBlank(key)) {
             logger.warn("invalid param key is blank key={}", key);
             return false;
         }
         boolean b = deleteKey(key);
-        logger.info("unlock {} key={},timeout={},unit={}", b ? "success" : "fail", key, timeout, unit);
+        logger.info("unlock {} key={}", b ? "success" : "fail", key);
         return b;
     }
 
