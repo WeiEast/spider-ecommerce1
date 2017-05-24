@@ -115,6 +115,7 @@ public class ReidsServiceImpl implements RedisService {
         try {
             do {
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
+                logger.info("wait data sleep {}ms  key={}", sleeptime, key);
                 if (redisTemplate.hasKey(key)) {
                     String value = redisTemplate.opsForValue().get(key);
                     logger.info("get data key={},useTime={}ms", key, System.currentTimeMillis() - startTime);
