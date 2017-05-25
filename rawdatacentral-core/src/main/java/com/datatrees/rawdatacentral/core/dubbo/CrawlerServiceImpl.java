@@ -210,7 +210,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             DirectiveResult<String> receiveResult = redisService.getDirectiveResult(resultKey, timeout,
                 TimeUnit.SECONDS);
             if (null == receiveResult) {
-                logger.warn("get result timeout key={},timeout={},timeUnit={}", resultKey, timeout, TimeUnit.SECONDS);
+                logger.warn("fetchLoginCode get result timeout key={},timeout={},timeUnit={}", resultKey, timeout, TimeUnit.SECONDS);
                 return result.failure("get data from plugin timeout");
             }
             redisService.unlock(sendDirective.getLockKey());
@@ -287,7 +287,7 @@ public class CrawlerServiceImpl implements CrawlerService {
         String directiveKey = null;
         try {
             if (taskId <= 0 || StringUtils.isAnyBlank(html, cookies)) {
-                logger.warn("invalid param taskId={},html={},cookies={}", taskId, html, cookies);
+                logger.warn("importAppCrawlResult invalid param taskId={},html={},cookies={}", taskId, html, cookies);
                 return result.failure("参数为空或者参数不完整");
             }
             DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.GRAB_URL, taskId);
@@ -298,10 +298,10 @@ public class CrawlerServiceImpl implements CrawlerService {
             sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
             directiveKey = sendDirective.getDirectiveKey();
             redisService.saveDirectiveResult(sendDirective);
-            logger.info("import success taskId={},directiveKey={}", taskId, directiveKey);
+            logger.info("importAppCrawlResult success taskId={},directiveKey={}", taskId, directiveKey);
             return result.success();
         } catch (Exception e) {
-            logger.error("import error taskId={},directiveKey={}", taskId, directiveKey);
+            logger.error("importAppCrawlResult error taskId={},directiveKey={}", taskId, directiveKey);
             return result.failure();
         }
     }
