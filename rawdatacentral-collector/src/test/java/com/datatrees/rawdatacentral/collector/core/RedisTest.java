@@ -41,7 +41,7 @@ public class RedisTest extends AbstractTest {
         DirectiveResult<Boolean> result = new DirectiveResult("sms", taskId);
         result.fill(DirectiveRedisCode.CANCEL, false);
 
-        final String key = result.getSendKey();
+        final String key = result.getGroupKey();
 
         redisService.saveDirectiveResult(result);
 

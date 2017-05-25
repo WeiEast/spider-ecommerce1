@@ -219,16 +219,19 @@ public class ReidsServiceImpl implements RedisService {
         if (null == result) {
             throw new RuntimeException("saveDirectiveResult error param is null");
         }
-        return saveToList(result.getSendKey(), JSON.toJSONString(result), Constants.REDIS_KEY_TIMEOUT,
-            TimeUnit.SECONDS);
+        String json = JSON.toJSONString(result);
+
+        //TODO加入事物控制
+        saveToList(result.getGroupKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        return saveString(result.getDirectiveKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
     }
 
     @Override
-    public <T> DirectiveResult<T> getNextDirectiveResult(String key) {
-        if (StringUtils.isBlank(key)) {
+    public <T> DirectiveResult<T> getNextDirectiveResult(String groupKey) {
+        if (StringUtils.isBlank(groupKey)) {
             throw new RuntimeException("getDirectiveResult error key is blank");
         }
-        String value = rightPop(key);
+        String value = rightPop(groupKey);
         if (StringUtils.isNotBlank(value)) {
             return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
             });
@@ -237,8 +240,8 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public <T> DirectiveResult<T> getDirectiveResult(String key, long timeout, TimeUnit timeUnit) {
-        String value = getString(key, timeout, timeUnit);
+    public <T> DirectiveResult<T> getDirectiveResult(String directiveKey, long timeout, TimeUnit timeUnit) {
+        String value = getString(directiveKey, timeout, timeUnit);
         if (StringUtils.isNoneBlank(value)) {
             return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
             });

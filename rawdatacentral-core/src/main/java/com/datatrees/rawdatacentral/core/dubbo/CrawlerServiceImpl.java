@@ -130,7 +130,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public HttpResult<Boolean> importCrawlCode(long taskId, int type, String code, Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
-        String redisKey = null;
+        String directiveKey = null;
         try {
             if (null == extra) {
                 extra = new HashMap<>();
@@ -158,13 +158,13 @@ public class CrawlerServiceImpl implements CrawlerService {
             DirectiveResult<Map<String, Object>> sendDirective = new DirectiveResult<>(directiveType, taskId);
             //保存交互指令到redis
             sendDirective.fill(status, extra);
-            redisKey = sendDirective.getSendKey();
+            directiveKey = sendDirective.getDirectiveKey();
             redisService.saveDirectiveResult(sendDirective);
-            logger.info("importAppCrawlResult success taskId={},redisKey={},code={},extra={}", taskId, redisKey, code,
+            logger.info("import success taskId={},directiveKey={},code={},extra={}", taskId, directiveKey, code,
                 JSON.toJSONString(extra));
             return result.success(true);
         } catch (Exception e) {
-            logger.error("importAppCrawlResult error taskId={},redisKey={},code={},extra={}", taskId, redisKey, code,
+            logger.error("import error taskId={},directiveKey={},code={},extra={}", taskId, directiveKey, code,
                 JSON.toJSONString(extra));
             return result.failure();
         }
@@ -199,7 +199,8 @@ public class CrawlerServiceImpl implements CrawlerService {
 
             //保存交互指令到redis
             sendDirective.fill(status, extra);
-            String resultKey = sendDirective.getResultKey();
+            //todo 错的
+            String resultKey = sendDirective.getDirectiveKey();
 
             //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
             if (redisService.lock(sendDirective.getLockKey(), timeout, TimeUnit.SECONDS)) {
@@ -283,7 +284,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<Boolean> importAppCrawlResult(long taskId, String html, String cookies,
                                                     Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
-        String sendKey = null;
+        String directiveKey = null;
         try {
             if (taskId <= 0 || StringUtils.isAnyBlank(html, cookies)) {
                 logger.warn("invalid param taskId={},html={},cookies={}", taskId, html, cookies);
@@ -295,12 +296,12 @@ public class CrawlerServiceImpl implements CrawlerService {
             data.put("cookies", cookies);
             //保存交互指令到redis
             sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
-            sendKey = sendDirective.getSendKey();
+            directiveKey = sendDirective.getDirectiveKey();
             redisService.saveDirectiveResult(sendDirective);
-            logger.info("importAppCrawlResult success taskId={},sendKey={}", taskId, sendKey);
+            logger.info("import success taskId={},directiveKey={}", taskId, directiveKey);
             return result.success();
         } catch (Exception e) {
-            logger.error("importAppCrawlResult error taskId={},sendKey={}", taskId, sendKey);
+            logger.error("import error taskId={},directiveKey={}", taskId, directiveKey);
             return result.failure();
         }
     }
