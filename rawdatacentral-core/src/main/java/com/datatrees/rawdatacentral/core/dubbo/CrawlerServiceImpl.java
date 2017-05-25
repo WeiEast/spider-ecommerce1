@@ -8,6 +8,7 @@
  */
 package com.datatrees.rawdatacentral.core.dubbo;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
@@ -18,6 +19,7 @@ import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
@@ -130,8 +132,12 @@ public class CrawlerServiceImpl implements CrawlerService {
         HttpResult<Boolean> result = new HttpResult<>();
         String redisKey = null;
         try {
-            if (taskId <= 0 || type < 0) {
-                logger.warn("invalid param taskId={},type={}", taskId, type);
+            if (null == extra) {
+                extra = new HashMap<>();
+            }
+            if (taskId <= 0 || type < 0 || StringUtils.isBlank(code)) {
+                logger.warn("invalid param taskId={},type={},code={},extra={}", taskId, type, code,
+                    JSON.toJSONString(extra));
                 return result.failure("参数为空或者参数不完整");
             }
             String status = DirectiveRedisCode.WAIT_SERVER_PROCESS;
@@ -147,15 +153,19 @@ public class CrawlerServiceImpl implements CrawlerService {
                     logger.warn("invalid param taskId={},type={}", taskId, type);
                     return result.failure("未知参数type");
             }
-            DirectiveResult<String> sendDirective = new DirectiveResult<>(directiveType, taskId);
+
+            extra.put(AttributeKey.CODE, code);
+            DirectiveResult<Map<String, Object>> sendDirective = new DirectiveResult<>(directiveType, taskId);
             //保存交互指令到redis
-            sendDirective.fill(status, code);
+            sendDirective.fill(status, extra);
             redisKey = sendDirective.getSendKey();
             redisService.saveDirectiveResult(sendDirective);
-            logger.info("importAppCrawlResult success taskId={},redisKey={}", taskId, redisKey);
-            return result.success();
+            logger.info("importAppCrawlResult success taskId={},redisKey={},code={},extra={}", taskId, redisKey, code,
+                JSON.toJSONString(extra));
+            return result.success(true);
         } catch (Exception e) {
-            logger.error("importAppCrawlResult error taskId={},redisKey={}", taskId, redisKey);
+            logger.error("importAppCrawlResult error taskId={},redisKey={},code={},extra={}", taskId, redisKey, code,
+                JSON.toJSONString(extra));
             return result.failure();
         }
     }

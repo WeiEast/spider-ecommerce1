@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.core.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
@@ -113,15 +114,16 @@ public class ReidsServiceImpl implements RedisService {
             sleeptime = timeUnit.toMillis(timeout);
         }
         try {
+            logger.info("wait data key={}", sleeptime, key);
             do {
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
-                logger.info("wait data sleep {}ms  key={}", sleeptime, key);
                 if (redisTemplate.hasKey(key)) {
                     String value = redisTemplate.opsForValue().get(key);
-                    logger.info("get data key={},useTime={}ms", key, System.currentTimeMillis() - startTime);
+                    logger.info("get data ,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
                     return value;
                 }
             } while (System.currentTimeMillis() <= endTime);
+            logger.warn("redis get value timeout key={}", key);
         } catch (Exception e) {
             logger.error("redis error key={}", key);
         }
