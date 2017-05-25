@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -125,62 +126,95 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<String> importStatus(long taskId, int type, String attrJson) {
-        HttpResult<String> result = new HttpResult<String>();
-        String key = "verify_result_" + taskId;
-        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(attrJson)))) {
-            return result.success();
-        }
-        return result.failure();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public HttpResult<String> fetchStatus(long taskId, int type, String attrJson) {
-        HttpResult<String> result = new HttpResult<String>();
-        String key = "verify_result_" + taskId;
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("dubboType", type);
-        if (type == 0) {
-            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
-        } else if (type == 1) {
-            map.put("status", "REFRESH_LOGIN_CODE");
-        } else if (type == 2) {
-            map.put("status", "REFRESH_LOGIN_QR_CODE");
-        }
-        String getKey = "plugin_remark_" + type + "_" + taskId;
-        redisDao.deleteKey(getKey);
-        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
-            try {
-                long startTime = System.currentTimeMillis();
-                while (!isTimeOut(startTime, "alipay.com")) {
-
-                    String pullResult = redisDao.pullResult(getKey);
-
-                    Map<String, Object> resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult,
-                        new TypeToken<HashMap<String, Object>>() {
-                        }.getType());
-                    String remark;
-                    if (resultMap != null) {
-                        remark = StringUtils.defaultIfBlank((String) resultMap.get("remark"), "");
-                        result = result.success();
-                        result.setData(remark);
-                        return result;
-                    }
-                    Thread.sleep(3000);
-                }
-            } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
+    public HttpResult<Boolean> importCrawlCode(long taskId, int type, String code, Map<String, Object> extra) {
+        HttpResult<Boolean> result = new HttpResult<>();
+        String redisKey = null;
+        try {
+            if (taskId <= 0 || type < 0) {
+                logger.warn("invalid param taskId={},type={}", taskId, type);
+                return result.failure("参数为空或者参数不完整");
             }
+            String status = DirectiveRedisCode.WAIT_SERVER_PROCESS;
+            String directiveType = null;
+            switch (type) {
+                case 0:
+                    directiveType = DirectiveType.CRAWL_SMS;
+                    break;
+                case 1:
+                    directiveType = DirectiveType.CRAWL_CODE;
+                    break;
+                default:
+                    logger.warn("invalid param taskId={},type={}", taskId, type);
+                    return result.failure("未知参数type");
+            }
+            DirectiveResult<String> sendDirective = new DirectiveResult<>(directiveType, taskId);
+            //保存交互指令到redis
+            sendDirective.fill(status, code);
+            redisKey = sendDirective.getSendKey();
+            redisService.saveDirectiveResult(sendDirective);
+            logger.info("importAppCrawlResult success taskId={},redisKey={}", taskId, redisKey);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("importAppCrawlResult error taskId={},redisKey={}", taskId, redisKey);
+            return result.failure();
         }
+    }
 
-        return result.failure();
+    @Override
+    public HttpResult<String> fetchLoginCode(long taskId, int type, Map<String, Object> extra) {
+        long timeout = 60;
+        HttpResult<String> result = new HttpResult<>();
+        try {
+            if (taskId <= 0 || type < 0) {
+                logger.warn("invalid param taskId={},type={}", taskId, type);
+                return result.failure("参数为空或者参数不完整");
+            }
+            DirectiveResult<Map<String, Object>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN,
+                taskId);
+            String status = null;
+            switch (type) {
+                case 0:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_RANDOMPASSWORD;
+                    break;
+                case 1:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_CODE;
+                    break;
+                case 2:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_QR_CODE;
+                    break;
+                default:
+                    logger.warn("invalid param taskId={},type={}", taskId, type);
+                    return result.failure("未知参数type");
+            }
+
+            //保存交互指令到redis
+            sendDirective.fill(status, extra);
+            String resultKey = sendDirective.getResultKey();
+
+            //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
+            if (redisService.lock(sendDirective.getLockKey(), timeout, TimeUnit.SECONDS)) {
+                redisService.deleteKey(resultKey);
+                redisService.saveDirectiveResult(sendDirective);
+            }
+            DirectiveResult<String> receiveResult = redisService.getDirectiveResult(resultKey, timeout,
+                TimeUnit.SECONDS);
+            if (null == receiveResult) {
+                logger.warn("get result timeout key={},timeout={},timeUnit={}", resultKey, timeout, TimeUnit.SECONDS);
+                return result.failure("get data from plugin timeout");
+            }
+            redisService.unlock(sendDirective.getLockKey());
+            logger.info("fetchLoginCode success taskId={},status={}", taskId, status);
+            return result.success(receiveResult.getData());
+        } catch (Exception e) {
+            logger.error("fetchLoginCode error taskId={}", taskId, e);
+            return result.failure();
+        }
 
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public HttpResult<String> verifyQr(long taskId, String attrJson) {
+    public HttpResult<String> verifyQr(long taskId, Map<String, Object> extra) {
         HttpResult<String> result = new HttpResult<String>();
         String getKey = "plugin_remark_" + taskId;
         String pullResult = redisDao.pullResult(getKey);
@@ -221,11 +255,8 @@ public class CrawlerServiceImpl implements CrawlerService {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see com.datatrees.rawdatacentral.api.CrawlerService#cancel(long, java.lang.String)
-     */
     @Override
-    public HttpResult<Boolean> cancel(long taskId, String attrJson) {
+    public HttpResult<Boolean> cancel(long taskId, Map<String, Object> extra) {
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
         logger.info("cancel taskId:" + taskId);
         HttpResult<Boolean> result = new HttpResult<Boolean>();
@@ -242,7 +273,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<Boolean> importAppCrawlResult(long taskId, String html, String cookies,
                                                     Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
-        String redisKey = null;
+        String sendKey = null;
         try {
             if (taskId <= 0 || StringUtils.isAnyBlank(html, cookies)) {
                 logger.warn("invalid param taskId={},html={},cookies={}", taskId, html, cookies);
@@ -252,14 +283,14 @@ public class CrawlerServiceImpl implements CrawlerService {
             Map<String, String> data = new HashMap<>();
             data.put("html", html);
             data.put("cookies", cookies);
-            //保存状态到redis
+            //保存交互指令到redis
             sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
-            redisKey = sendDirective.getRedisKey();
+            sendKey = sendDirective.getSendKey();
             redisService.saveDirectiveResult(sendDirective);
-            logger.info("importAppCrawlResult success taskId={},redisKey={}", taskId, sendDirective.getRedisKey());
+            logger.info("importAppCrawlResult success taskId={},sendKey={}", taskId, sendKey);
             return result.success();
         } catch (Exception e) {
-            logger.error("importAppCrawlResult error taskId={},redisKey={}", taskId, redisKey);
+            logger.error("importAppCrawlResult error taskId={},sendKey={}", taskId, sendKey);
             return result.failure();
         }
     }
