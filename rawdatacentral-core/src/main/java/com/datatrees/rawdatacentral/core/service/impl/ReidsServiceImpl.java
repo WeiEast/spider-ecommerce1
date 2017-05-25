@@ -28,7 +28,7 @@ public class ReidsServiceImpl implements RedisService {
     @Override
     public boolean hasKey(String key) {
         if (StringUtils.isBlank(key)) {
-            logger.warn("invalid param key is blank key={}", key);
+            logger.warn("hasKey error,invalid param key is blank key={}", key);
             return false;
         }
         try {
@@ -42,7 +42,7 @@ public class ReidsServiceImpl implements RedisService {
     @Override
     public boolean deleteKey(String key) {
         if (StringUtils.isBlank(key)) {
-            logger.warn("invalid param key is blank key={}", key);
+            logger.warn("deleteKey fail,invalid param key is blank key={}", key);
             return false;
         }
         try {
@@ -60,7 +60,7 @@ public class ReidsServiceImpl implements RedisService {
     @Override
     public boolean lock(String key, long timeout, TimeUnit unit) {
         if (StringUtils.isBlank(key)) {
-            logger.warn("invalid param key is blank key={}", key);
+            logger.warn("lodk fail,invalid param key is blank key={}", key);
             return false;
         }
         try {
@@ -81,7 +81,7 @@ public class ReidsServiceImpl implements RedisService {
     @Override
     public boolean unlock(String key) {
         if (StringUtils.isBlank(key)) {
-            logger.warn("invalid param key is blank key={}", key);
+            logger.warn("unlock fail, invalid param key is blank key={}", key);
             return false;
         }
         boolean b = deleteKey(key);
@@ -97,7 +97,7 @@ public class ReidsServiceImpl implements RedisService {
         try {
             return redisTemplate.opsForValue().get(key);
         } catch (Exception e) {
-            logger.error("redis getString error key={}", key, e);
+            logger.error("getString error key={}", key, e);
             return null;
         }
     }
@@ -114,18 +114,18 @@ public class ReidsServiceImpl implements RedisService {
             sleeptime = timeUnit.toMillis(timeout);
         }
         try {
-            logger.info("wait data key={}", sleeptime, key);
+            logger.info("getString wait {}s, key={}", sleeptime, key, timeUnit.toSeconds(timeout));
             do {
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
                 if (redisTemplate.hasKey(key)) {
                     String value = redisTemplate.opsForValue().get(key);
-                    logger.info("get data ,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+                    logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
                     return value;
                 }
             } while (System.currentTimeMillis() <= endTime);
-            logger.warn("redis get value timeout key={}", key);
+            logger.warn("getString fail,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
         } catch (Exception e) {
-            logger.error("redis error key={}", key);
+            logger.error("getString error,useTime={}, key={}", DateUtils.getUsedTime(startTime), key, e);
         }
         return null;
     }
@@ -138,7 +138,7 @@ public class ReidsServiceImpl implements RedisService {
         try {
             return redisTemplate.opsForList().rightPop(key);
         } catch (Exception e) {
-            logger.error("redis getString error key={}", key, e);
+            logger.error("rightPop error key={}", key, e);
             return null;
         }
     }
@@ -146,14 +146,14 @@ public class ReidsServiceImpl implements RedisService {
     @Override
     public boolean saveString(String key, Object value) {
         if (StringUtils.isBlank(key) || null == value) {
-            throw new RuntimeException("invalid param key or value");
+            throw new RuntimeException("saveString invalid param key or value");
         }
         try {
             redisTemplate.opsForValue().set(key, String.valueOf(value), Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
-            logger.info("save to redis success key={}", key);
+            logger.info("saveString success key={}", key);
             return true;
         } catch (Exception e) {
-            logger.error("save to redis error key={}", key, e);
+            logger.error("saveString error key={}", key, e);
             return false;
         }
     }
@@ -161,16 +161,16 @@ public class ReidsServiceImpl implements RedisService {
     @Override
     public boolean saveString(String key, String value, long timeout, TimeUnit unit) {
         if (StringUtils.isBlank(key) || null == value) {
-            throw new RuntimeException("invalid param key or value");
+            throw new RuntimeException("saveString invalid param key or value");
         }
         if (timeout <= 0) {
-            throw new RuntimeException("invalid param timeout");
+            throw new RuntimeException("saveString invalid param timeout");
         }
         try {
             redisTemplate.opsForValue().set(key, value, timeout, unit);
             return true;
         } catch (Exception e) {
-            logger.error("save to redis error key={}", key, e);
+            logger.error("saveString error key={}", key, e);
             return false;
         }
     }
@@ -179,14 +179,14 @@ public class ReidsServiceImpl implements RedisService {
     public boolean saveToList(String key, String value, long timeout, TimeUnit unit) {
         try {
             if (StringUtils.isAnyBlank(key, value)) {
-                throw new RuntimeException("invalid param key or value");
+                throw new RuntimeException("saveToList invalid param key or value");
             }
             redisTemplate.opsForList().rightPushAll(key, value);
             redisTemplate.expire(key, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
-            logger.info("save to redis success key={}", key);
+            logger.info("saveToList success key={}", key);
             return true;
         } catch (Exception e) {
-            logger.error("save to redis error key={}", key, e);
+            logger.error("saveToList error key={}", key, e);
             return false;
         }
     }
@@ -198,9 +198,10 @@ public class ReidsServiceImpl implements RedisService {
                 redisTemplate.opsForList().rightPushAll(key, valueList.toArray(new String[valueList.size()]));
                 redisTemplate.expire(key, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
             }
+            logger.info("saveListString success key={}", key);
             return true;
         } catch (Exception e) {
-            logger.error("save to redis error key={}", key, e);
+            logger.error("saveListString error key={}", key, e);
             return false;
         }
     }
@@ -220,10 +221,14 @@ public class ReidsServiceImpl implements RedisService {
             throw new RuntimeException("saveDirectiveResult error param is null");
         }
         String json = JSON.toJSONString(result);
-
         //TODO加入事物控制
-        saveToList(result.getGroupKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
-        return saveString(result.getDirectiveKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        boolean b = saveToList(result.getGroupKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        if (b) {
+            b = saveString(result.getDirectiveKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        }
+        logger.info("saveDirectiveResult {},groupKey={},directiveKey={}", b ? "success" : "fail", result.getGroupKey(),
+            result.getDirectiveKey());
+        return b;
     }
 
     @Override
@@ -233,9 +238,11 @@ public class ReidsServiceImpl implements RedisService {
         }
         String value = rightPop(groupKey);
         if (StringUtils.isNotBlank(value)) {
+            logger.info("getNextDirectiveResult success groupKey={}", groupKey);
             return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
             });
         }
+        logger.info("getNextDirectiveResult fail groupKey={}", groupKey);
         return null;
     }
 
@@ -243,9 +250,11 @@ public class ReidsServiceImpl implements RedisService {
     public <T> DirectiveResult<T> getDirectiveResult(String directiveKey, long timeout, TimeUnit timeUnit) {
         String value = getString(directiveKey, timeout, timeUnit);
         if (StringUtils.isNoneBlank(value)) {
+            logger.info("getDirectiveResult success directiveKey={}", directiveKey);
             return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
             });
         }
+        logger.info("getDirectiveResult fail directiveKey={}", directiveKey);
         return null;
     }
 
