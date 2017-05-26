@@ -17,7 +17,7 @@
 		<!--<result column="UpdatedAt" property="updatedat" jdbcType="TIMESTAMP" /> -->
 	</resultMap>
 	<sql id="Base_Column_List">
-		Id, TaskId, WebsiteId, EcommerceId, Status, Remark, Url, UniqueSign, ResultType,
+		Id, TaskLogId, WebsiteId, EcommerceId, Status, Remark, Url, UniqueSign, ResultType,
 		StoragePath, CreatedAt, UpdatedAt
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterClass="java.lang.Integer">
@@ -31,7 +31,7 @@
 		where Id = #id#
 	</delete>
 	<insert id="insert" parameterClass="EcommerceExtractResult">
-		insert into t_ecommerce_extract_result (Id,  TaskId,
+		insert into t_ecommerce_extract_result (Id,  TaskLogId,
 		WebsiteId, EcommerceId, Status,
 		Remark, Url, UniqueSign,UniqueMd5,
 		ResultType, StoragePath, CreatedAt)
@@ -45,7 +45,7 @@
 	</insert>
 	<update id="updateByPrimaryKey" parameterClass="EcommerceExtractResult">
 		update t_ecommerce_extract_result
-		set TaskId = #taskId#,
+		set TaskLogId = #taskId#,
 		WebsiteId = #websiteId#,
 		EcommerceId = #ecommerceId#,
 		Status = #status#,

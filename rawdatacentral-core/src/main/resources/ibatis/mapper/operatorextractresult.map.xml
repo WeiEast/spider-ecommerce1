@@ -17,7 +17,7 @@
 		<!--<result column="UpdatedAt" property="updatedat" jdbcType="TIMESTAMP" /> -->
 	</resultMap>
 	<sql id="Base_Column_List">
-		Id, TaskId, WebsiteId, OperatorId, Status, Remark, Url, UniqueSign, ResultType,
+		Id, TaskLogId, WebsiteId, OperatorId, Status, Remark, Url, UniqueSign, ResultType,
 		StoragePath, CreatedAt, UpdatedAt
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterClass="java.lang.Integer">
@@ -31,7 +31,7 @@
 		where Id = #id#
 	</delete>
 	<insert id="insert" parameterClass="OperatorExtractResult">
-		insert into t_operator_extract_result (Id, TaskId, Duration,
+		insert into t_operator_extract_result (Id, TaskLogId, Duration,
 		WebsiteId, OperatorId, Status,
 		Remark, Url, UniqueSign,UniqueMd5,
 		ResultType, StoragePath, CreatedAt)

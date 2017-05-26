@@ -16,7 +16,7 @@
 		<!--<result column="UpdatedAt" property="updatedat" jdbcType="TIMESTAMP" /> -->
 	</resultMap>
 	<insert id="insert" parameterClass="DefaultExtractResult">
-		insert into t_default_extract_result (Id, TaskId, Duration,
+		insert into t_default_extract_result (Id, TaskLogId, Duration,
 		WebsiteId, Status,
 		Remark, Url, UniqueSign,UniqueMd5,
 		ResultType, StoragePath, CreatedAt)
@@ -29,8 +29,8 @@
 		</selectKey>
 	</insert>
 	<update id="updateByPrimaryKey" parameterClass="DefaultExtractResult">
-		update t_default_extract_result
-		set TaskId = #taskId#,
+		update t_default_extract_result 	
+		set TaskLogId = #taskId#,
 		WebsiteId = #websiteId#,
 		Status = #status#,
 		Remark = #remark#,
