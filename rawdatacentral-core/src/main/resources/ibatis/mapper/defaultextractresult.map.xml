@@ -3,7 +3,7 @@
 <sqlMap namespace="DefaultExtractResult">
 	<resultMap id="BaseResultMap" class="DefaultExtractResult">
 		<result column="Id" property="id" jdbcType="INTEGER" />
-		<result column="TaskId" property="taskId" jdbcType="INTEGER" />
+		<result column="TaskLogId" property="taskId" jdbcType="INTEGER" />
 		<result column="WebsiteId" property="websiteId" jdbcType="INTEGER" />
 		<result column="Status" property="status" jdbcType="TINYINT" />
 		<result column="Remark" property="remark" jdbcType="VARCHAR" />
