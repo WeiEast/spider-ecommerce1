@@ -3,7 +3,7 @@
 <sqlMap namespace="EcommerceExtractResult">
 	<resultMap id="BaseResultMap" class="EcommerceExtractResult">
 		<result column="Id" property="id" jdbcType="INTEGER" />
-		<result column="TaskId" property="taskId" jdbcType="INTEGER" />
+		<result column="TaskLogId" property="taskId" jdbcType="INTEGER" />
 		<result column="WebsiteId" property="websiteId" jdbcType="INTEGER" />
 		<result column="EcommerceId" property="ecommerceId" jdbcType="INTEGER" />
 		<result column="Status" property="status" jdbcType="TINYINT" />

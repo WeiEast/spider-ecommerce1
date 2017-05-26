@@ -3,7 +3,7 @@
 <sqlMap namespace="MailExtractResult">
 	<resultMap id="RM-MailExtractResultMap" class="MailExtractResult">
 		<result column="Id" property="id" jdbcType="INTEGER" />
-		<result column="TaskId" property="taskId" jdbcType="INTEGER" />
+		<result column="TaskLogId" property="taskId" jdbcType="INTEGER" />
 		<result column="WebsiteId" property="websiteId" jdbcType="INTEGER" />
 		<result column="UniqueMd5" property="uniqueMd5" jdbcType="CHAR" />
 		<result column="UniqueSign" property="uniqueSign" jdbcType="VARCHAR" />

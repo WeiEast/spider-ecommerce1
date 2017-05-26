@@ -32,6 +32,6 @@ appender("sysFile", RollingFileAppender) {
 
 
 
-root(info, ["console", "sysFile"])
+root(debug, ["console", "sysFile"])
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
 
