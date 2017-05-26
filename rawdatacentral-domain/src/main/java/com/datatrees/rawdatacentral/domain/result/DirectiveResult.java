@@ -70,18 +70,59 @@ public class DirectiveResult<T> implements Serializable {
     }
 
     /**
-     * 指令保存到Redis用的key(list的key)
+     * 获取指令池:一个插件就是一个指令池
      * @return
      */
-    public String getSendKey() {
+    public String getGroupKey() {
+        return getGroupKey(type, taskId);
+    }
+
+    /**
+     * 获取指令池:一个插件就是一个指令池
+     * @return
+     */
+    public static String getGroupKey(String type, long taskId) {
+        if (null == type || type.trim().length() == 0) {
+            throw new RuntimeException("getSendRedisKey type is blank");
+        }
+        if (taskId <= 0) {
+            throw new RuntimeException("getSendRedisKey taskId is blank");
+        }
+        //暂时不用多线程,不加线程threadId
+        return new StringBuilder(appName).append("_directive_").append(type).append("_").append(taskId).toString();
+    }
+
+    /**
+     * 指令独立存储key
+     * @return
+     */
+    public String getDirectiveKey() {
+        return getDirectiveKey(type, status, taskId);
+    }
+
+    /**
+     * 指令独立存储key
+     * @return
+     */
+    public String getDirectiveKey(String status) {
+        return getDirectiveKey(type, status, taskId);
+    }
+
+    /**
+     * 指令独立存储key
+     * @return
+     */
+    public static String getDirectiveKey(String type, String status, long taskId) {
         if (taskId <= 0) {
             throw new RuntimeException("getSendRedisKey taskId is blank");
         }
         if (null == type || type.trim().length() == 0) {
             throw new RuntimeException("getSendRedisKey type is blank");
         }
-        StringBuilder key = new StringBuilder(appName).append("directive").append(type).append(threadId);
-        key.append(taskId);
+        if (null == status || status.trim().length() == 0) {
+            throw new RuntimeException("getLockKey status is blank");
+        }
+        StringBuilder key = new StringBuilder(getGroupKey(type, taskId)).append("_").append(status);
         return key.toString();
     }
 
@@ -93,19 +134,7 @@ public class DirectiveResult<T> implements Serializable {
      * @return
      */
     public String getLockKey() {
-        if (taskId <= 0) {
-            throw new RuntimeException("getLockKey taskId is blank");
-        }
-        if (null == type || type.trim().length() == 0) {
-            throw new RuntimeException("getLockKey type is blank");
-        }
-        if (null == status || status.trim().length() == 0) {
-            throw new RuntimeException("getLockKey status is blank");
-        }
-        StringBuilder key = new StringBuilder(appName).append("directive_lock").append(type).append(threadId)
-                .append(status);
-        key.append(taskId);
-        return key.toString();
+        return getDirectiveKey(type, status, taskId);
     }
 
     /**
@@ -115,68 +144,8 @@ public class DirectiveResult<T> implements Serializable {
      * 加锁失败:进入等待结果
      * @return
      */
-    public String getResultKey() {
-        if (taskId <= 0) {
-            throw new RuntimeException("getResultKey taskId is blank");
-        }
-        if (null == type || type.trim().length() == 0) {
-            throw new RuntimeException("getResultKey type is blank");
-        }
-        if (null == status || status.trim().length() == 0) {
-            throw new RuntimeException("getResultKey status is blank");
-        }
-        StringBuilder key = new StringBuilder(appName).append("directive_result").append(type).append(threadId)
-                .append(status);
-        key.append(taskId);
-        return key.toString();
-    }
-
-    /**
-     * 指令枷锁的key
-     * 相同命令枷锁
-     * 加锁成功:发送指令,清除结果key,进入等待
-     * 加锁失败:进入等待结果
-     * @param  status 状态码
-     * @return
-     */
-    public String getResultKey(String status) {
-        if (taskId <= 0) {
-            throw new RuntimeException("getResultKey taskId is blank");
-        }
-        if (null == type || type.trim().length() == 0) {
-            throw new RuntimeException("getResultKey type is blank");
-        }
-        if (null == status || status.trim().length() == 0) {
-            throw new RuntimeException("getResultKey status is blank");
-        }
-        StringBuilder key = new StringBuilder(appName).append("directive_result").append(type).append(threadId)
-                .append(status);
-        key.append(taskId);
-        return key.toString();
-    }
-
-    /**
-     * 指令枷锁的key
-     * 相同命令枷锁
-     * 加锁成功:发送指令,清除结果key,进入等待
-     * 加锁失败:进入等待结果
-     * @param  status 状态码
-     * @return
-     */
-    public static String getResultKey(String type, long taskId, String status) {
-        if (taskId <= 0) {
-            throw new RuntimeException("getResultKey taskId is blank");
-        }
-        if (null == type || type.trim().length() == 0) {
-            throw new RuntimeException("getResultKey type is blank");
-        }
-        if (null == status || status.trim().length() == 0) {
-            throw new RuntimeException("getResultKey status is blank");
-        }
-        StringBuilder key = new StringBuilder(appName).append("directive_result").append(type).append(threadId)
-                .append(status);
-        key.append(taskId);
-        return key.toString();
+    public static String getLockKey(String type, String status, long taskId) {
+        return new StringBuilder(getDirectiveKey(type, status, taskId)).append("_directive_lock").toString();
     }
 
     /**

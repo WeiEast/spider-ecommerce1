@@ -8,6 +8,7 @@
  */
 package com.datatrees.rawdatacentral.core.dubbo;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
@@ -18,6 +19,7 @@ import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
@@ -128,10 +130,14 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public HttpResult<Boolean> importCrawlCode(long taskId, int type, String code, Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
-        String redisKey = null;
+        String directiveKey = null;
         try {
-            if (taskId <= 0 || type < 0) {
-                logger.warn("invalid param taskId={},type={}", taskId, type);
+            if (null == extra) {
+                extra = new HashMap<>();
+            }
+            if (taskId <= 0 || type < 0 || StringUtils.isBlank(code)) {
+                logger.warn("invalid param taskId={},type={},code={},extra={}", taskId, type, code,
+                    JSON.toJSONString(extra));
                 return result.failure("参数为空或者参数不完整");
             }
             String status = DirectiveRedisCode.WAIT_SERVER_PROCESS;
@@ -147,15 +153,19 @@ public class CrawlerServiceImpl implements CrawlerService {
                     logger.warn("invalid param taskId={},type={}", taskId, type);
                     return result.failure("未知参数type");
             }
-            DirectiveResult<String> sendDirective = new DirectiveResult<>(directiveType, taskId);
+
+            extra.put(AttributeKey.CODE, code);
+            DirectiveResult<Map<String, Object>> sendDirective = new DirectiveResult<>(directiveType, taskId);
             //保存交互指令到redis
-            sendDirective.fill(status, code);
-            redisKey = sendDirective.getSendKey();
+            sendDirective.fill(status, extra);
+            directiveKey = sendDirective.getDirectiveKey();
             redisService.saveDirectiveResult(sendDirective);
-            logger.info("importAppCrawlResult success taskId={},redisKey={}", taskId, redisKey);
-            return result.success();
+            logger.info("import success taskId={},directiveKey={},code={},extra={}", taskId, directiveKey, code,
+                JSON.toJSONString(extra));
+            return result.success(true);
         } catch (Exception e) {
-            logger.error("importAppCrawlResult error taskId={},redisKey={}", taskId, redisKey);
+            logger.error("import error taskId={},directiveKey={},code={},extra={}", taskId, directiveKey, code,
+                JSON.toJSONString(extra));
             return result.failure();
         }
     }
@@ -189,7 +199,8 @@ public class CrawlerServiceImpl implements CrawlerService {
 
             //保存交互指令到redis
             sendDirective.fill(status, extra);
-            String resultKey = sendDirective.getResultKey();
+            //todo 错的
+            String resultKey = sendDirective.getDirectiveKey();
 
             //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
             if (redisService.lock(sendDirective.getLockKey(), timeout, TimeUnit.SECONDS)) {
@@ -199,7 +210,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             DirectiveResult<String> receiveResult = redisService.getDirectiveResult(resultKey, timeout,
                 TimeUnit.SECONDS);
             if (null == receiveResult) {
-                logger.warn("get result timeout key={},timeout={},timeUnit={}", resultKey, timeout, TimeUnit.SECONDS);
+                logger.warn("fetchLoginCode get result timeout key={},timeout={},timeUnit={}", resultKey, timeout, TimeUnit.SECONDS);
                 return result.failure("get data from plugin timeout");
             }
             redisService.unlock(sendDirective.getLockKey());
@@ -273,10 +284,10 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<Boolean> importAppCrawlResult(long taskId, String html, String cookies,
                                                     Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
-        String sendKey = null;
+        String directiveKey = null;
         try {
             if (taskId <= 0 || StringUtils.isAnyBlank(html, cookies)) {
-                logger.warn("invalid param taskId={},html={},cookies={}", taskId, html, cookies);
+                logger.warn("importAppCrawlResult invalid param taskId={},html={},cookies={}", taskId, html, cookies);
                 return result.failure("参数为空或者参数不完整");
             }
             DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.GRAB_URL, taskId);
@@ -285,12 +296,12 @@ public class CrawlerServiceImpl implements CrawlerService {
             data.put("cookies", cookies);
             //保存交互指令到redis
             sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
-            sendKey = sendDirective.getSendKey();
+            directiveKey = sendDirective.getDirectiveKey();
             redisService.saveDirectiveResult(sendDirective);
-            logger.info("importAppCrawlResult success taskId={},sendKey={}", taskId, sendKey);
+            logger.info("importAppCrawlResult success taskId={},directiveKey={}", taskId, directiveKey);
             return result.success();
         } catch (Exception e) {
-            logger.error("importAppCrawlResult error taskId={},sendKey={}", taskId, sendKey);
+            logger.error("importAppCrawlResult error taskId={},directiveKey={}", taskId, directiveKey);
             return result.failure();
         }
     }

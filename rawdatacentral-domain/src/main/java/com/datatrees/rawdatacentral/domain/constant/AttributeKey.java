@@ -8,20 +8,28 @@ import java.io.Serializable;
  */
 public class AttributeKey implements Serializable {
 
-    public static final String CAPTCHA     = "captcha";    // 验证码
+    public static final String CAPTCHA       = "captcha";     // 验证码
 
-    public static final String STATUS      = "status";     // 状态
+    public static final String STATUS        = "status";      // 状态
 
-    public static final String REMARK      = "remark";     // 备注
+    public static final String REMARK        = "remark";      // 备注
 
-    public static final String TASK_ID     = "taskId";     // 任务ID
+    public static final String TASK_ID       = "taskId";      // 任务ID
 
-    public static final String QR          = "qr";         // 二维码图片
+    public static final String QR            = "qr";          // 二维码图片
 
-    public static final String ACCOUNT_NO  = "account_No";
+    public static final String ACCOUNT_NO    = "account_No";
 
-    public static final String ACCOUNT_KEY = "account_key";
+    public static final String ACCOUNT_KEY   = "account_key";
 
-    public static final String END_URL     = "endurl";     // 前段登陆成功跳转的url,里面有sig等可用信息
+    public static final String END_URL       = "endurl";      // 前段登陆成功跳转的url,里面有sig等可用信息
+
+    public static final String CODE          = "code";        // 短信验证码或者图片验证码
+
+    public static final String TIPS          = "tips";        // 提示信息
+
+    public static final String ERROR_CODE    = "errorCode";   // plugin返回消息,如果有,if (resultMap.containsKey("errorCode")) {throw new PluginExeception("error duing plugin invoke!");}
+
+    public static final String ERROR_MESSAGE = "errorMessage";//plugin返回错误消息
 
 }

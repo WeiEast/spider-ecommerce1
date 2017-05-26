@@ -109,7 +109,7 @@ public interface RedisService {
 
     /**
      * 保存交互指令
-     * 保存到list,指令依次从最后一个读取
+     * 保存到指令池和单条指令
      * @param result
      * @return
      */
@@ -117,17 +117,18 @@ public interface RedisService {
 
     /**
      * 获取还未执行的最后一条指令
+     * @param groupKey 指令池key
      * @return
      */
-    <T> DirectiveResult<T> getNextDirectiveResult(String key);
+    <T> DirectiveResult<T> getNextDirectiveResult(String groupKey);
 
     /**
      * 获取,有超时时间
-     * @param key
+     * @param directiveKey 单条指令key
      * @param timeout
      * @param timeUnit
      * @return
      */
-    <T> DirectiveResult getDirectiveResult(String key, long timeout, TimeUnit timeUnit);
+    <T> DirectiveResult getDirectiveResult(String directiveKey, long timeout, TimeUnit timeUnit);
 
 }
