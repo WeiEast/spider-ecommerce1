@@ -114,7 +114,7 @@ public class ReidsServiceImpl implements RedisService {
             sleeptime = timeUnit.toMillis(timeout);
         }
         try {
-            logger.info("getString wait {}s, key={}", sleeptime, key, timeUnit.toSeconds(timeout));
+            logger.info("getString wait {}s, key={}", timeUnit.toSeconds(timeout), key);
             do {
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
                 if (redisTemplate.hasKey(key)) {
