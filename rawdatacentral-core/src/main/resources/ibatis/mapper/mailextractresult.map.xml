@@ -19,7 +19,7 @@
 		<result column="StoragePath" property="storagePath" jdbcType="VARCHAR" />
 		<!--<result column="CreatedAt" property="createdat" jdbcType="TIMESTAMP" /> -->
 		<!--<result column="UpdatedAt" property="updatedat" jdbcType="TIMESTAMP" /> -->
-	</resultMap>
+	</resultMap> 
 	<sql id="Base_Column_List">
 		Id,  TaskLogId, WebsiteId, UniqueSign, ResultType, Status, Remark, BankId, Sender,
 		Subject, ReceiveAt, Receiver,StoragePath, CreatedAt, UpdatedAt
