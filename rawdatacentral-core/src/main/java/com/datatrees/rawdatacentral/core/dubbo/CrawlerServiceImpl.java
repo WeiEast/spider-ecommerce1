@@ -210,7 +210,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             DirectiveResult<String> receiveResult = redisService.getDirectiveResult(resultKey, timeout,
                 TimeUnit.SECONDS);
             if (null == receiveResult) {
-                logger.warn("fetchLoginCode get result timeout key={},timeout={},timeUnit={}", resultKey, timeout, TimeUnit.SECONDS);
+                logger.warn("fetchLoginCode get result timeout key={},timeout={},timeUnit={}", resultKey, timeout,
+                    TimeUnit.SECONDS);
                 return result.failure("get data from plugin timeout");
             }
             redisService.unlock(sendDirective.getLockKey());
@@ -292,8 +293,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             }
             DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.GRAB_URL, taskId);
             Map<String, String> data = new HashMap<>();
-            data.put("html", html);
-            data.put("cookies", cookies);
+            data.put(AttributeKey.HTML, html);
+            data.put(AttributeKey.COOKIES, cookies);
             //保存交互指令到redis
             sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
             directiveKey = sendDirective.getDirectiveKey();

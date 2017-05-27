@@ -32,4 +32,8 @@ public class AttributeKey implements Serializable {
 
     public static final String ERROR_MESSAGE = "errorMessage";//plugin返回错误消息
 
+    public static final String HTML          = "html";        //网页内容
+
+    public static final String COOKIES       = "cookies";     //cookies
+
 }
