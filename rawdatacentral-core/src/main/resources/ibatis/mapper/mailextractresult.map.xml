@@ -35,7 +35,7 @@
 		where Id = #id#
 	</delete>
 	<insert id="insert" parameterClass="MailExtractResult">
-		insert into t_mail_extract_result ( TaskId, Duration,
+		insert into t_mail_extract_result ( TaskLogId, Duration,
 		WebsiteId,PageExtractId, UniqueSign,UniqueMd5,Url, ResultType,FirstHand,
 		Status, Remark, BankId,
 		Sender, Subject, ReceiveAt,Receiver,
