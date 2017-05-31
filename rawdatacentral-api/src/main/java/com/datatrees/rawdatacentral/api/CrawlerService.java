@@ -44,22 +44,25 @@ public interface CrawlerService {
      * 抓取过程中导入图片验证码和短信验证码,如果后端校验失败会重新发出指令附带图片验证码信息
      * 例如:运营商通话记录获取
      * 目前只有短信验证码在用(运营商)
+     * @param directiveId  指令ID
      * @param taskId 网关任务id
      * @param type 0:短信验证码 1:图片验证码
      * @param code 验证码(图片或者短信)
      * @param extra 附加信息,目前null
      * @return
      */
-    public HttpResult<Boolean> importCrawlCode(long taskId, int type, String code, Map<String, Object> extra);
+    public HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code,
+                                               Map<String, Object> extra);
 
     /**
      * 爬取过程中,向APP端弹出二维码,前端扫描和确认,将这个动作告诉插件,后端调用相关接口校验是否是一件扫描或者确认
      * 这个一般支付宝或者淘宝用
+     * @param directiveId  指令ID
      * @param taskId 网关任务id
      * @param extra 附加信息,目前null
      * @return
      */
-    public HttpResult<String> verifyQr(long taskId, Map<String, Object> extra);
+    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, Object> extra);
 
     /**
      * 取消任务

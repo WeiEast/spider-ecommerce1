@@ -128,7 +128,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<Boolean> importCrawlCode(long taskId, int type, String code, Map<String, Object> extra) {
+    public HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code,
+                                               Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
         String directiveKey = null;
         try {
@@ -224,9 +225,8 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public HttpResult<String> verifyQr(long taskId, Map<String, Object> extra) {
+    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, Object> extra) {
         HttpResult<String> result = new HttpResult<String>();
         String getKey = "plugin_remark_" + taskId;
         String pullResult = redisDao.pullResult(getKey);
