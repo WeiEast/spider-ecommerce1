@@ -216,19 +216,33 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean saveDirectiveResult(DirectiveResult result) {
+    public String saveDirectiveResult(DirectiveResult result) {
         if (null == result) {
             throw new RuntimeException("saveDirectiveResult error param is null");
         }
+        String directiveId = createDirectiveId();
+        result.setDirectiveId(directiveId);
         String json = JSON.toJSONString(result);
         //TODO加入事物控制
-        boolean b = saveToList(result.getGroupKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
-        if (b) {
-            b = saveString(result.getDirectiveKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        saveToList(result.getGroupKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        saveString(result.getDirectiveKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        logger.info("saveDirectiveResult success,groupKey={},directiveKey={},directiveId={}", result.getGroupKey(),
+            result.getDirectiveKey(), directiveId);
+        return directiveId;
+    }
+
+    @Override
+    public String saveDirectiveResult(String directiveId, DirectiveResult result) {
+        if (null == result) {
+            throw new RuntimeException("saveDirectiveResult error param is null");
         }
-        logger.info("saveDirectiveResult {},groupKey={},directiveKey={}", b ? "success" : "fail", result.getGroupKey(),
-            result.getDirectiveKey());
-        return b;
+        result.setDirectiveId(directiveId);
+        String json = JSON.toJSONString(result);
+        //TODO加入事物控制
+        //        saveToList(result.getGroupKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        saveString(directiveId, json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
+        logger.info("saveDirectiveResult success,directiveKey={},directiveId={}", directiveId, directiveId);
+        return directiveId;
     }
 
     @Override
@@ -256,6 +270,23 @@ public class ReidsServiceImpl implements RedisService {
         }
         logger.info("getDirectiveResult fail directiveKey={}", directiveKey);
         return null;
+    }
+
+    @Override
+    public String createDirectiveId(String appName) {
+        if (StringUtils.isBlank(appName)) {
+            throw new RuntimeException("createDirectiveId error appName is blank");
+        }
+        String key = "directive_id_" + appName;
+        if (!redisTemplate.hasKey(appName)) {
+            redisTemplate.opsForValue().setIfAbsent(key, "1");
+        }
+        return appName + "_" + redisTemplate.opsForValue().increment(key, 1);
+    }
+
+    @Override
+    public String createDirectiveId() {
+        return createDirectiveId(DirectiveResult.getAppName());
     }
 
 }

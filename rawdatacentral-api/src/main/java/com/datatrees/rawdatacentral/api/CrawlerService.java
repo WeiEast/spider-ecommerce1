@@ -21,13 +21,13 @@ import java.util.Map;
 public interface CrawlerService {
 
     // 未来可以增加每个网页显示什么字段，给什么提示，有多少tab，点击每个tab访问什么连接的配置
-    WebsiteConf getWebsiteConf(String websiteName);
+    public WebsiteConf getWebsiteConf(String websiteName);
 
     // 未来可以增加每个网页显示什么字段，给什么提示，有多少tab，点击每个tab访问什么连接的配置
-    List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
+    public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
 
     // 修改配置
-    boolean updateWebsiteConfig(String websiteName, String searchConfigSource, String extractConfigSource);
+    public boolean updateWebsiteConfig(String websiteName, String searchConfigSource, String extractConfigSource);
 
     /**
      * 获取,这里是登陆插件用,插件里的是通过指令发出去了,而且不支持刷新
@@ -38,7 +38,7 @@ public interface CrawlerService {
      * @param extra 附加信息,目前null
      * @return 
      */
-    HttpResult<String> fetchLoginCode(long taskId, int type, Map<String, Object> extra);
+    public HttpResult<String> fetchLoginCode(long taskId, int type, Map<String, Object> extra);
 
     /**
      * 抓取过程中导入图片验证码和短信验证码,如果后端校验失败会重新发出指令附带图片验证码信息
@@ -50,7 +50,7 @@ public interface CrawlerService {
      * @param extra 附加信息,目前null
      * @return
      */
-    HttpResult<Boolean> importCrawlCode(long taskId, int type, String code, Map<String, Object> extra);
+    public HttpResult<Boolean> importCrawlCode(long taskId, int type, String code, Map<String, Object> extra);
 
     /**
      * 爬取过程中,向APP端弹出二维码,前端扫描和确认,将这个动作告诉插件,后端调用相关接口校验是否是一件扫描或者确认
@@ -59,7 +59,7 @@ public interface CrawlerService {
      * @param extra 附加信息,目前null
      * @return
      */
-    HttpResult<String> verifyQr(long taskId, Map<String, Object> extra);
+    public HttpResult<String> verifyQr(long taskId, Map<String, Object> extra);
 
     /**
      * 取消任务
@@ -67,18 +67,20 @@ public interface CrawlerService {
      * @param extra 附加信息,目前null
      * @return
      */
-    HttpResult<Boolean> cancel(long taskId, Map<String, Object> extra);
+    public HttpResult<Boolean> cancel(long taskId, Map<String, Object> extra);
 
     /**
      * 导入前端爬取结果
      * 以后可能运营商或者电商用
      * 部分成果率比较低的url,让前端爬取后把cookie和html传给后端,后端搜索是单线程,一直等待前端结果
+     * @param directiveId  指令ID
      * @param taskId 网关任务id
      * @param html 爬取后的网页内容
      * @param cookies 爬取完成后前端cookie
      * @param extra 附加信息,暂时没有
      * @return
      */
-    HttpResult<Boolean> importAppCrawlResult(long taskId, String html, String cookies, Map<String, Object> extra);
+    public HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies,
+                                                    Map<String, Object> extra);
 
 }

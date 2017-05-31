@@ -9,6 +9,11 @@ import java.io.Serializable;
 public class DirectiveResult<T> implements Serializable {
 
     /**
+     * 指令ID
+     */
+    private String              directiveId;
+
+    /**
      * 发送指令后,是否等待插件处理完成并返回数据
      */
     private boolean             requireReturn = false;
@@ -273,5 +278,13 @@ public class DirectiveResult<T> implements Serializable {
 
     public static String getAppName() {
         return appName;
+    }
+
+    public String getDirectiveId() {
+        return directiveId;
+    }
+
+    public void setDirectiveId(String directiveId) {
+        this.directiveId = directiveId;
     }
 }

@@ -35,5 +35,7 @@ public class AttributeKey implements Serializable {
     public static final String HTML          = "html";        //网页内容
 
     public static final String COOKIES       = "cookies";     //cookies
+    public static final String DIRECTIVE_ID  = "directiveId"; //指令ID
+    public static final String DIRECTIVE     = "directive";   //指令
 
 }

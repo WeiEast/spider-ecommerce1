@@ -282,13 +282,13 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<Boolean> importAppCrawlResult(long taskId, String html, String cookies,
+    public HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies,
                                                     Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
-        String directiveKey = null;
         try {
-            if (taskId <= 0 || StringUtils.isAnyBlank(html, cookies)) {
-                logger.warn("importAppCrawlResult invalid param taskId={},html={},cookies={}", taskId, html, cookies);
+            if (taskId <= 0 || StringUtils.isAnyBlank(directiveId, html, cookies)) {
+                logger.warn("importAppCrawlResult invalid param taskId={},directiveId={},html={},cookies={}", taskId,
+                    directiveId, html, cookies);
                 return result.failure("参数为空或者参数不完整");
             }
             DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.GRAB_URL, taskId);
@@ -297,12 +297,11 @@ public class CrawlerServiceImpl implements CrawlerService {
             data.put(AttributeKey.COOKIES, cookies);
             //保存交互指令到redis
             sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
-            directiveKey = sendDirective.getDirectiveKey();
-            redisService.saveDirectiveResult(sendDirective);
-            logger.info("importAppCrawlResult success taskId={},directiveKey={}", taskId, directiveKey);
+            redisService.saveDirectiveResult(directiveId, sendDirective);
+            logger.info("importAppCrawlResult success taskId={},directiveId={}", taskId, directiveId);
             return result.success();
         } catch (Exception e) {
-            logger.error("importAppCrawlResult error taskId={},directiveKey={}", taskId, directiveKey);
+            logger.error("importAppCrawlResult error taskId={},directiveId={}", taskId, directiveId);
             return result.failure();
         }
     }
