@@ -30,15 +30,19 @@ public interface CrawlerService {
     public boolean updateWebsiteConfig(String websiteName, String searchConfigSource, String extractConfigSource);
 
     /**
-     * 获取,这里是登陆插件用,插件里的是通过指令发出去了,而且不支持刷新
+     * 运营商登陆,获取验证码
+     * 这里是登陆插件用,插件里的是通过指令发出去了,而且不支持刷新
      * 模拟登陆时,刷新图片验证码,发送短信验证码,抓取过程中不用(抓取过程中用指令传输信息,且不支持刷新)
      *  
      * @param taskId 网关任务id
+     * @param username 用户名,一般是运营商手机号
+     * @param password 密码,一般是运营商服务密码
      * @param type 0:发送短信验证码到手机 1:刷新图片验证码 2:刷新二维码 (目前只有短信验证码和图片验证码)
      * @param extra 附加信息,目前null
      * @return 
      */
-    public HttpResult<String> fetchLoginCode(long taskId, int type, Map<String, Object> extra);
+    public HttpResult<String> fetchLoginCode(long taskId, int type, String username, String password,
+                                             Map<String, String> extra);
 
     /**
      * 抓取过程中导入图片验证码和短信验证码,如果后端校验失败会重新发出指令附带图片验证码信息
@@ -52,7 +56,7 @@ public interface CrawlerService {
      * @return
      */
     public HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code,
-                                               Map<String, Object> extra);
+                                               Map<String, String> extra);
 
     /**
      * 爬取过程中,向APP端弹出二维码,前端扫描和确认,将这个动作告诉插件,后端调用相关接口校验是否是一件扫描或者确认
@@ -70,7 +74,7 @@ public interface CrawlerService {
      * @param extra 附加信息,目前null
      * @return
      */
-    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, Object> extra);
+    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra);
 
     /**
      * 取消任务
@@ -78,7 +82,7 @@ public interface CrawlerService {
      * @param extra 附加信息,目前null
      * @return
      */
-    public HttpResult<Boolean> cancel(long taskId, Map<String, Object> extra);
+    public HttpResult<Boolean> cancel(long taskId, Map<String, String> extra);
 
     /**
      * 导入前端爬取结果
@@ -92,6 +96,6 @@ public interface CrawlerService {
      * @return
      */
     public HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies,
-                                                    Map<String, Object> extra);
+                                                    Map<String, String> extra);
 
 }

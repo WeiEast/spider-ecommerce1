@@ -131,7 +131,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code,
-                                               Map<String, Object> extra) {
+                                               Map<String, String> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
         try {
             if (null == extra) {
@@ -157,7 +157,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             }
 
             extra.put(AttributeKey.CODE, code);
-            DirectiveResult<Map<String, Object>> sendDirective = new DirectiveResult<>(directiveType, taskId);
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(directiveType, taskId);
             //保存交互指令到redis
             sendDirective.fill(status, extra);
             redisService.saveDirectiveResult(directiveId, sendDirective);
@@ -172,7 +172,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<String> fetchLoginCode(long taskId, int type, Map<String, Object> extra) {
+    public HttpResult<String> fetchLoginCode(long taskId, int type, String username, String password,
+                                             Map<String, String> extra) {
         long timeout = 60;
         HttpResult<String> result = new HttpResult<>();
         try {
@@ -180,11 +181,15 @@ public class CrawlerServiceImpl implements CrawlerService {
                 logger.warn("invalid param taskId={},type={}", taskId, type);
                 return result.failure("参数为空或者参数不完整");
             }
-            DirectiveResult<Map<String, Object>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN,
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN,
                 taskId);
             String status = null;
             switch (type) {
                 case 0:
+                    if (StringUtils.isBlank(username)) {
+                        logger.warn("invalid param taskId={},type={},username={}", taskId, type, username);
+                        return result.failure("参数username为空");
+                    }
                     status = DirectiveRedisCode.REFRESH_LOGIN_RANDOMPASSWORD;
                     break;
                 case 1:
@@ -226,7 +231,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, Object> extra) {
+    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra) {
         HttpResult<String> result = new HttpResult<>();
         try {
             if (taskId <= 0 || StringUtils.isBlank(directiveId)) {
@@ -259,7 +264,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<Boolean> cancel(long taskId, Map<String, Object> extra) {
+    public HttpResult<Boolean> cancel(long taskId, Map<String, String> extra) {
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
         logger.info("cancel taskId={}", taskId);
         HttpResult<Boolean> result = new HttpResult<Boolean>();
@@ -274,7 +279,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies,
-                                                    Map<String, Object> extra) {
+                                                    Map<String, String> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
         try {
             if (taskId <= 0 || StringUtils.isAnyBlank(directiveId, html, cookies)) {
