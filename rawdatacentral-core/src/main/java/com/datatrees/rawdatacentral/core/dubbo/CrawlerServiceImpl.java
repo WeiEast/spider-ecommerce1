@@ -13,7 +13,6 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
@@ -33,7 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -227,34 +229,25 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, Object> extra) {
-        HttpResult<String> result = new HttpResult<String>();
-        String getKey = "plugin_remark_" + taskId;
-        String pullResult = redisDao.pullResult(getKey);
-        if (StringUtils.isNotBlank(pullResult)) {
-            Map<String, Object> resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult,
-                new TypeToken<HashMap<String, Object>>() {
-                }.getType());
-            String qrStatus = "FAILURE";
-            if (resultMap != null) {
-                qrStatus = StringUtils.defaultIfBlank((String) resultMap.get(PluginConstants.FIELD), "");
+        HttpResult<String> result = new HttpResult<>();
+        try {
+            if (taskId <= 0 || StringUtils.isBlank(directiveId)) {
+                logger.warn("verifyQr invalid param taskId={},directiveId={}", taskId, directiveId);
+                return result.success(DirectiveRedisCode.FAILED);
             }
-            result = result.success();
-            result.setData(qrStatus);
-            logger.debug(taskId + "verifyQr return" + qrStatus);
-            return result;
-        } else {
-            String key = "verify_result_" + taskId;
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("status", "VERIFY_QR_CODE");
-            if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
-                result = result.success();
-                result.setData("WAITTING");
-                logger.debug(taskId + "verifyQr return" + "WAITTING");
-                return result;
+            DirectiveResult<String> directiveResult = redisService.getDirectiveResult(directiveId, 2, TimeUnit.SECONDS);
+            if (null == directiveResult) {
+                logger.warn("verifyQr timeout taskId={},directiveId={}", taskId, directiveId);
+                return result.success(DirectiveRedisCode.FAILED);
             }
+            TimeUnit.MILLISECONDS.sleep(500);//不能让前端一直轮询
+            logger.info("verifyQr result taskId={},directiveId={},qrStatus={}", taskId, directiveId,
+                directiveResult.getData());
+            return result.success(directiveResult.getData());
+        } catch (Exception e) {
+            logger.error("verifyQr error taskId={},directiveId={}", taskId, directiveId);
+            return result.success(DirectiveRedisCode.FAILED);
         }
-        result = result.failure();
-        return result;
     }
 
     private boolean isTimeOut(long startTime, String websiteName) throws Exception {

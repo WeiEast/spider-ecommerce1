@@ -51,4 +51,24 @@ public class DirectiveRedisCode {
      */
     public static final String REFRESH_LOGIN_QR_CODE        = "REFRESH_LOGIN_QR_CODE";
 
+    /**
+     * 等待
+     */
+    public static final String WAITTING                     = "WAITTING";
+
+    /**
+     * 用户已经扫码二维码
+     */
+    public static final String SCANNED                      = "SCANNED";
+
+    /**
+     * 验证失败
+     */
+    public static final String FAILED                       = "FAILED";
+
+    /**
+     * 验证成功
+     */
+    public static final String SUCCESS                      = "SUCCESS";
+
 }

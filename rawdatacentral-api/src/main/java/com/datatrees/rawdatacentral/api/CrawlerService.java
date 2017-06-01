@@ -57,6 +57,14 @@ public interface CrawlerService {
     /**
      * 爬取过程中,向APP端弹出二维码,前端扫描和确认,将这个动作告诉插件,后端调用相关接口校验是否是一件扫描或者确认
      * 这个一般支付宝或者淘宝用
+     * 
+     * APP弹出二维码后就不断verifyQr,APP是不知道用户是否扫码过,所以要不断轮询
+     *
+     * 二维码状态:
+     * WAITTING:继续verifyQr
+     * SCANNED:已经扫码,继续verifyQr
+     * FAILED:验证失败,结束verifyQr,等待任务结束或者下一条指令
+     * SUCCESS:验证失败,结束verifyQr,等待任务结束或者下一条指令
      * @param directiveId  指令ID
      * @param taskId 网关任务id
      * @param extra 附加信息,目前null

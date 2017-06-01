@@ -116,12 +116,12 @@ public class ReidsServiceImpl implements RedisService {
         try {
             logger.info("getString wait {}s, key={}", timeUnit.toSeconds(timeout), key);
             do {
-                TimeUnit.MILLISECONDS.sleep(sleeptime);
                 if (redisTemplate.hasKey(key)) {
                     String value = redisTemplate.opsForValue().get(key);
                     logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
                     return value;
                 }
+                TimeUnit.MILLISECONDS.sleep(sleeptime);
             } while (System.currentTimeMillis() <= endTime);
             logger.warn("getString fail,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
         } catch (Exception e) {

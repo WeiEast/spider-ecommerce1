@@ -25,4 +25,9 @@ public class DirectiveType {
      * 抓取过程中,短信验证码
      */
     public static final String CRAWL_SMS    = "crawl_sms";
+
+    /**
+     * 抓取过程中,二维码
+     */
+    public static final String CRAWL_QR     = "crawl_qr";
 }
