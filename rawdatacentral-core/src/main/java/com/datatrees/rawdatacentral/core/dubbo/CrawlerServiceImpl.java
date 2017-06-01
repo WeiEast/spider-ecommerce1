@@ -133,14 +133,13 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code,
                                                Map<String, Object> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
-        String directiveKey = null;
         try {
             if (null == extra) {
                 extra = new HashMap<>();
             }
-            if (taskId <= 0 || type < 0 || StringUtils.isBlank(code)) {
-                logger.warn("invalid param taskId={},type={},code={},extra={}", taskId, type, code,
-                    JSON.toJSONString(extra));
+            if (taskId <= 0 || type < 0 || StringUtils.isAnyBlank(directiveId, code)) {
+                logger.warn("invalid param taskId={},type={},directiveId={},code={},extra={}", taskId, type,
+                    directiveId, code, JSON.toJSONString(extra));
                 return result.failure("参数为空或者参数不完整");
             }
             String status = DirectiveRedisCode.WAIT_SERVER_PROCESS;
@@ -161,13 +160,12 @@ public class CrawlerServiceImpl implements CrawlerService {
             DirectiveResult<Map<String, Object>> sendDirective = new DirectiveResult<>(directiveType, taskId);
             //保存交互指令到redis
             sendDirective.fill(status, extra);
-            directiveKey = sendDirective.getDirectiveKey();
-            redisService.saveDirectiveResult(sendDirective);
-            logger.info("import success taskId={},directiveKey={},code={},extra={}", taskId, directiveKey, code,
+            redisService.saveDirectiveResult(directiveId, sendDirective);
+            logger.info("import success taskId={},directiveId={},code={},extra={}", taskId, directiveId, code,
                 JSON.toJSONString(extra));
             return result.success(true);
         } catch (Exception e) {
-            logger.error("import error taskId={},directiveKey={},code={},extra={}", taskId, directiveKey, code,
+            logger.error("import error taskId={},directiveId={},code={},extra={}", taskId, directiveId, code,
                 JSON.toJSONString(extra));
             return result.failure();
         }
@@ -263,11 +261,11 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public HttpResult<Boolean> cancel(long taskId, Map<String, Object> extra) {
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
-        logger.info("cancel taskId:" + taskId);
+        logger.info("cancel taskId={}", taskId);
         HttpResult<Boolean> result = new HttpResult<Boolean>();
         result.setData(false);
         if (watcher.cancel()) {
-            logger.info("cancel task success,taskId :" + taskId);
+            logger.info("cancel task success,taskId={}", taskId);
             result.setData(true);
             result.success();
         }
