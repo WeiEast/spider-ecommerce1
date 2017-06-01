@@ -242,8 +242,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             }
             TimeUnit.MILLISECONDS.sleep(500);//不能让前端一直轮询
             logger.info("verifyQr result taskId={},directiveId={},qrStatus={}", taskId, directiveId,
-                directiveResult.getData());
-            return result.success(directiveResult.getData());
+                directiveResult.getStatus());
+            return result.success(directiveResult.getStatus());
         } catch (Exception e) {
             logger.error("verifyQr error taskId={},directiveId={}", taskId, directiveId);
             return result.success(DirectiveRedisCode.FAILED);
