@@ -45,6 +45,19 @@ public interface CrawlerService {
                                              Map<String, String> extra);
 
     /**
+     * 模拟登陆,一般是运营商
+     * @param taskId 任务ID
+     * @param username 登陆名,例如:手机号
+     * @param password 登陆密码,例如:查询密码/服务密码
+     * @param code 图片验证码
+     * @param randomPassword 短信验证码
+     * @param extra 附加信息
+     * @return
+     */
+    public HttpResult<String> login(long taskId, String username, String password, String code, String randomPassword,
+                                    Map<String, String> extra);
+
+    /**
      * 抓取过程中导入图片验证码和短信验证码,如果后端校验失败会重新发出指令附带图片验证码信息
      * 例如:运营商通话记录获取
      * 目前只有短信验证码在用(运营商)
