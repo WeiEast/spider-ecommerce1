@@ -144,6 +144,19 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
+    public String rightPop(String key, long timeout, TimeUnit unit) {
+        if (!hasKey(key)) {
+            return null;
+        }
+        try {
+            return redisTemplate.opsForList().rightPop(key, timeout, unit);
+        } catch (Exception e) {
+            logger.error("rightPop error key={}", key, e);
+            return null;
+        }
+    }
+
+    @Override
     public boolean saveString(String key, Object value) {
         if (StringUtils.isBlank(key) || null == value) {
             throw new RuntimeException("saveString invalid param key or value");
@@ -251,6 +264,21 @@ public class ReidsServiceImpl implements RedisService {
             throw new RuntimeException("getDirectiveResult error key is blank");
         }
         String value = rightPop(groupKey);
+        if (StringUtils.isNotBlank(value)) {
+            logger.info("getNextDirectiveResult success groupKey={}", groupKey);
+            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
+            });
+        }
+        logger.info("getNextDirectiveResult fail groupKey={}", groupKey);
+        return null;
+    }
+
+    @Override
+    public <T> DirectiveResult<T> getNextDirectiveResult(String groupKey, long timeout, TimeUnit timeUnit) {
+        if (StringUtils.isBlank(groupKey)) {
+            throw new RuntimeException("getDirectiveResult error key is blank");
+        }
+        String value = rightPop(groupKey, timeout, timeUnit);
         if (StringUtils.isNotBlank(value)) {
             logger.info("getNextDirectiveResult success groupKey={}", groupKey);
             return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {

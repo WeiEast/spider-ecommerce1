@@ -65,6 +65,15 @@ public interface RedisService {
     public String rightPop(String key);
 
     /**
+     *  从list取最后一个值
+     * @param key
+     * @param timeout
+     * @param unit
+     * @return
+     */
+    public String rightPop(String key, long timeout, TimeUnit unit);
+
+    /**
      * 保存
      * @param key
      * @param value
@@ -130,6 +139,13 @@ public interface RedisService {
      * @return
      */
     public <T> DirectiveResult<T> getNextDirectiveResult(String groupKey);
+
+    /**
+     * 获取还未执行的最后一条指令
+     * @param groupKey 指令池key
+     * @return
+     */
+    public <T> DirectiveResult<T> getNextDirectiveResult(String groupKey, long timeout, TimeUnit timeUnit);
 
     /**
      * 获取,有超时时间
