@@ -81,6 +81,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             WebsiteConf conf = null;
             if (website != null && (conf = website.getWebsiteConf()) != null) {
                 conf.setName(websiteName);
+                logger.info("websiteName:{},return conf :{}", websiteName, conf.toString());
                 return conf;
             } else {
                 logger.warn("no active website named {}", newWebsiteName);
