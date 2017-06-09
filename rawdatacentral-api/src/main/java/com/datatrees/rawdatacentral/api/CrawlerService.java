@@ -112,5 +112,6 @@ public interface CrawlerService {
                                                     Map<String, String> extra);
 
     public HttpResult<Map<String,String>> getGroupMap();
-
+    
+    public HttpResult<Integer> getWebsiteIdByGroupId(String groupId);
 }

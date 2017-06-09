@@ -8,8 +8,6 @@
  */
 package com.datatrees.rawdatacentral.domain.enums;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -18,7 +16,7 @@ import java.util.Map;
  * @since   2017年6月8日 下午5:33:59 
  */
 public enum GroupEnum {
-                       ZHEJIANG10086("浙江移动", "zj.10086"), ZHEJIANG10000("浙江电信", "zj.10000");
+                       ZHEJIANG10086("浙江移动", "zj_10086"), ZHEJIANG10000("浙江电信", "zj_10000");
     String groupName;
 
     String groupId;
