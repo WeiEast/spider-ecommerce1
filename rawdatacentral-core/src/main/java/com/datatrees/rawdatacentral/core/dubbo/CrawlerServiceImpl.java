@@ -99,7 +99,10 @@ public class CrawlerServiceImpl implements CrawlerService {
     public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList) {
         List<WebsiteConf> confList = new ArrayList<>();
         for (String websiteName : websiteNameList) {
-            confList.add(getWebsiteConf(websiteName));
+            WebsiteConf websiteConf = getWebsiteConf(websiteName);
+            if (null != websiteConf) {
+                confList.add(websiteConf);
+            }
         }
         return confList;
     }
