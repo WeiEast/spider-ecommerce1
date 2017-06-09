@@ -176,22 +176,21 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public HttpResult<String> fetchLoginCode(long taskId, int type, String username, String password,
                                              Map<String, String> extra) {
-        long timeout = 60;
         HttpResult<String> result = new HttpResult<>();
+        long timeout = 30;
         try {
             if (taskId <= 0 || type < 0) {
-                logger.warn("invalid param taskId={},type={}", taskId, type);
+                logger.warn("fetchLoginCode invalid param taskId={},type={}", taskId, type);
                 return result.failure("参数为空或者参数不完整");
+            }
+            if (null == extra) {
+                extra = new HashMap<>();
             }
             DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN,
                 taskId);
             String status = null;
             switch (type) {
                 case 0:
-                    if (StringUtils.isBlank(username)) {
-                        logger.warn("invalid param taskId={},type={},username={}", taskId, type, username);
-                        return result.failure("参数username为空");
-                    }
                     status = DirectiveRedisCode.REFRESH_LOGIN_RANDOMPASSWORD;
                     break;
                 case 1:
@@ -201,35 +200,89 @@ public class CrawlerServiceImpl implements CrawlerService {
                     status = DirectiveRedisCode.REFRESH_LOGIN_QR_CODE;
                     break;
                 default:
-                    logger.warn("invalid param taskId={},type={}", taskId, type);
+                    logger.warn("fetchLoginCode invalid param taskId={},type={},username={},extra={}", taskId, type,
+                        username, JSON.toJSONString(extra));
                     return result.failure("未知参数type");
+            }
+            if (StringUtils.isNoneBlank(username)) {
+                extra.put(AttributeKey.USERNAME, username);
+            }
+            if (StringUtils.isNoneBlank(password)) {
+                extra.put(AttributeKey.PASSWORD, password);
             }
 
             //保存交互指令到redis
             sendDirective.fill(status, extra);
-            //todo 错的
-            String resultKey = sendDirective.getDirectiveKey();
 
             //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
-            if (redisService.lock(sendDirective.getLockKey(), timeout, TimeUnit.SECONDS)) {
-                redisService.deleteKey(resultKey);
-                redisService.saveDirectiveResult(sendDirective);
-            }
-            DirectiveResult<String> receiveResult = redisService.getDirectiveResult(resultKey, timeout,
+            String directiveId = redisService.saveDirectiveResult(sendDirective);
+
+            DirectiveResult<String> receiveResult = redisService.getDirectiveResult(directiveId, timeout,
                 TimeUnit.SECONDS);
             if (null == receiveResult) {
-                logger.warn("fetchLoginCode get result timeout key={},timeout={},timeUnit={}", resultKey, timeout,
-                    TimeUnit.SECONDS);
+                logger.warn("fetchLoginCode get result timeout taskId={},directiveId={},timeout={},timeUnit={}", taskId,
+                    directiveId, timeout, TimeUnit.SECONDS);
                 return result.failure("get data from plugin timeout");
             }
-            redisService.unlock(sendDirective.getLockKey());
-            logger.info("fetchLoginCode success taskId={},status={}", taskId, status);
+            logger.info("fetchLoginCode success taskId={},directiveId={},status={}", taskId, directiveId, status);
             return result.success(receiveResult.getData());
         } catch (Exception e) {
             logger.error("fetchLoginCode error taskId={}", taskId, e);
             return result.failure();
         }
 
+    }
+
+    @Override
+    public HttpResult<String> login(long taskId, String username, String password, String code, String randomPassword,
+                                    Map<String, String> extra) {
+
+        HttpResult<String> result = new HttpResult<>();
+        long timeout = 30;
+        String directiveId = null;
+        try {
+            if (taskId <= 0 || StringUtils.isBlank(username)) {
+                logger.warn("fetchLoginCode invalid param taskId={},username={}", taskId, username);
+                return result.failure("invalid params taskId or username");
+            }
+            if (StringUtils.isBlank(password)) {
+                logger.warn("fetchLoginCode  empty password, taskId={},username={}", taskId, username);
+                return result.failure("invalid params,empty password");
+            }
+            if (null == extra) {
+                extra = new HashMap<>();
+            }
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN,
+                taskId);
+            extra.put(AttributeKey.USERNAME, username);
+            extra.put(AttributeKey.PASSWORD, password);
+            extra.put(AttributeKey.CODE, code);
+            extra.put(AttributeKey.RANDOM_PASSWORD, randomPassword);
+
+            //保存交互指令到redis
+            sendDirective.fill(DirectiveRedisCode.START_LOGIN, extra);
+
+            //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
+            directiveId = redisService.saveDirectiveResult(sendDirective);
+
+            DirectiveResult<String> receiveResult = redisService.getDirectiveResult(directiveId, timeout,
+                TimeUnit.SECONDS);
+            if (null == receiveResult) {
+                logger.warn("login get result timeout taskId={},directiveId={},timeout={},timeUnit={},username={}",
+                    taskId, directiveId, timeout, TimeUnit.SECONDS, username);
+                return result.failure("登陆超时");
+            }
+            if (StringUtils.equals(DirectiveRedisCode.SERVER_FAIL, receiveResult.getStatus())) {
+                logger.error("login failtaskId={},directiveId={},status={},errorMsg={},username={}", taskId,
+                    directiveId, receiveResult.getErrorMsg(), username);
+                return result.failure(receiveResult.getErrorMsg());
+            }
+            logger.info("login success taskId={},directiveId={},username={}", taskId, directiveId, username);
+            return result.success("登陆成功!");
+        } catch (Exception e) {
+            logger.error("login error taskId={},directiveId={},username={}", taskId, directiveId, username, e);
+            return result.failure("登陆失败!");
+        }
     }
 
     @Override
