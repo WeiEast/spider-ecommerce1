@@ -21,6 +21,7 @@ import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -303,4 +304,17 @@ public class CrawlerServiceImpl implements CrawlerService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.datatrees.rawdatacentral.api.CrawlerService#getGroupList()
+     */
+    @Override
+    public HttpResult<Map<String, String>> getGroupMap() {
+        Map<String, String> groupEnumMap = new HashMap<>();
+        for(GroupEnum group : GroupEnum.values()){
+            groupEnumMap.put(group.getGroupName(), group.getGroupId());
+        }
+        
+        HttpResult<Map<String, String>> result = new HttpResult<>();
+        return result.success(groupEnumMap);
+    }
 }

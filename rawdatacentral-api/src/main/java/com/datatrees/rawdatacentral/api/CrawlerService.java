@@ -98,4 +98,6 @@ public interface CrawlerService {
     public HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies,
                                                     Map<String, String> extra);
 
+    public HttpResult<Map<String,String>> getGroupMap();
+
 }
