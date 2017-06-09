@@ -80,7 +80,8 @@ public class CrawlerServiceImpl implements CrawlerService {
         if (StringUtils.isNotBlank(newWebsiteName)) {
             Website website = websiteService.getCachedWebsiteByName(newWebsiteName);
             WebsiteConf conf = null;
-            if (website != null && (conf = website.getWebsiteConf()) != null) {
+            if (website != null && website.getWebsiteConf() != null) {
+                conf = website.getWebsiteConf();
                 conf.setName(websiteName);
                 logger.info("websiteName:{},return conf :{}", websiteName, conf.toString());
                 return conf;
