@@ -41,8 +41,4 @@ public enum WebsiteType {
         return WebsiteTypeMap.get(value);
     }
 
-    @Override
-    public String toString() {
-        return this.getValue();
-    }
 }

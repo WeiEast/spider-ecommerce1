@@ -33,5 +33,8 @@ public enum GroupEnum {
     public String getGroupName() {
         return groupName;
     }
+    public static void main(String[] args) {
+        System.out.println(GroupEnum.ZHEJIANG10000);
+    }
 
 }

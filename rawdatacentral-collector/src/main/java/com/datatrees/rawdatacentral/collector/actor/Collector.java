@@ -22,6 +22,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.proxy.ProxyManagerWithScope;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
+import com.datatrees.rawdatacentral.collector.chain.common.WebsiteType;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.utils.IpUtils;
@@ -388,7 +389,7 @@ public class Collector {
         resultMessage.setRemark(GsonUtils.toJson(task));
         resultMessage.setTaskId(task.getTaskId());
         resultMessage.setWebsiteName(taskMessage.getWebsiteName());
-        resultMessage.setWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType());
+        resultMessage.setWebsiteType(WebsiteType.getWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType()).toString());
         Set<String> notEmptyTag = new HashSet<String>();
         if (submitkeyResult != null) {
             resultMessage.setStatus("SUCCESS");
