@@ -8,6 +8,8 @@
  */
 package com.datatrees.rawdatacentral.domain.front;
 
+import java.util.List;
+
 /**
  *
  * @author  <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
@@ -22,7 +24,7 @@ public class FrontField {
     private String pattern;
     private String validationMsg;
     private String placeholder;
-    private String dependencies;
+    private List<String> dependencies;
     public String getName() {
         return name;
     }
@@ -65,10 +67,10 @@ public class FrontField {
     public void setPlaceholder(String placeholder) {
         this.placeholder = placeholder;
     }
-    public String getDependencies() {
+    public List<String> getDependencies() {
         return dependencies;
     }
-    public void setDependencies(String dependencies) {
+    public void setDependencies(List<String> dependencies) {
         this.dependencies = dependencies;
     }
     
