@@ -18,7 +18,7 @@ import java.util.Map;
  * @since   2015年8月7日 上午11:32:56 
  */
 public enum WebsiteType {
-    MAIL("mail"), OPERATOR("operator"), ECOMMERCE("ecommerce"), BANK("bank");
+    MAIL("1"), OPERATOR("2"), ECOMMERCE("3"), BANK("4"),INTERNAL("5");
     private final String value;
 
     WebsiteType(String value) {

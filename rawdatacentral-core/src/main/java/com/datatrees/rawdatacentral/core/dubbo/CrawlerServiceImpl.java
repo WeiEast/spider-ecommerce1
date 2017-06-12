@@ -376,12 +376,4 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<Integer> getWebsiteIdByGroupId(String groupId) {
         return null;
     }
-    public static void main(String[] args) {
-        Map<String, String> groupEnumMap = new HashMap<>();
-        for(GroupEnum group : GroupEnum.values()){
-            groupEnumMap.put(group.getGroupName(), group.getGroupId());
-        }
-        
-        System.out.println(GsonUtils.toJson(groupEnumMap));
-    }
 }
