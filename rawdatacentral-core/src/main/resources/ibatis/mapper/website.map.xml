@@ -33,7 +33,7 @@
 	<select id="getWebsiteById" parameterClass="int" resultMap="RM-Website-With-Config">
 		SELECT w.Id,w.WebsiteName,WebsiteDomain,WebsiteType,SearchConfig,ExtractorConfig from T_WEBSITE w LEFT JOIN T_WEBSITE_CONF wc ON
 		w.id
-		= wc.WebsiteId WHERE w.IsEnabled ='true' AND w.Id = #id#
+		= wc.WebsiteId WHERE w.IsEnabled =1 AND w.Id = #id#
 	</select>
 
 	<select id="getWebsiteConfById" parameterClass="int" resultMap="RM-WebsiteConf">

@@ -8,7 +8,7 @@
 	</resultMap>
 
 	<select id="getAllKeyword" resultMap="RM-Keyword">
-		SELECT * FROM T_KEYWORD WHERE IsEnabled='true';
+		SELECT * FROM T_KEYWORD WHERE IsEnabled=1;
 	</select>
 
 </sqlMap>
