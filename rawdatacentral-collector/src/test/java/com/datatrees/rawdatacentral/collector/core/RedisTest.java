@@ -41,11 +41,11 @@ public class RedisTest extends AbstractTest {
         DirectiveResult<Boolean> result = new DirectiveResult("sms", taskId);
         result.fill(DirectiveRedisCode.CANCEL, false);
 
-        final String key = result.getRedisKey();
+        final String key = result.getGroupKey();
 
         redisService.saveDirectiveResult(result);
 
-        DirectiveResult<Boolean> x = redisService.getDirectiveResult(key);
+        DirectiveResult<Boolean> x = redisService.getNextDirectiveResult(key);
 
         Assert.assertNotNull(x);
     }

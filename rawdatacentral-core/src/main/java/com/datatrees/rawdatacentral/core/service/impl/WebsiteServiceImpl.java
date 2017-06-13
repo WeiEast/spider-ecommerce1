@@ -8,25 +8,6 @@
  */
 package com.datatrees.rawdatacentral.core.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.datatrees.rawdatacentral.core.common.Constants;
-import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
-import com.datatrees.rawdatacentral.core.dao.WebsiteDao;
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.domain.common.Website;
-import com.datatrees.rawdatacentral.core.service.BankService;
-import com.datatrees.rawdatacentral.core.service.WebsiteService;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
@@ -35,8 +16,25 @@ import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.resource.PluginManager;
-import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
+import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
+import com.datatrees.rawdatacentral.core.common.Constants;
+import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
+import com.datatrees.rawdatacentral.core.dao.WebsiteDao;
+import com.datatrees.rawdatacentral.core.service.BankService;
+import com.datatrees.rawdatacentral.core.service.WebsiteService;
+import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.model.Bank;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  *
@@ -46,28 +44,31 @@ import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
  */
 @Service
 public class WebsiteServiceImpl implements WebsiteService {
-    private static final Logger log = LoggerFactory.getLogger(WebsiteServiceImpl.class);
-    private boolean testModeSwitch = PropertiesConfiguration.getInstance().getBoolean("test.mode.switch", false);
-    private String localConfigPath = PropertiesConfiguration.getInstance().get("local.config.path", "");
+    private static final Logger log                = LoggerFactory.getLogger(WebsiteServiceImpl.class);
+    private boolean             testModeSwitch     = PropertiesConfiguration.getInstance()
+        .getBoolean("test.mode.switch", false);
+    private String              localConfigPath    = PropertiesConfiguration.getInstance().get("local.config.path", "");
 
     @Resource
-    private WebsiteDao websiteDao;
+    private WebsiteDao          websiteDao;
 
     @Resource
-    private BankService bankService;
+    private BankService         bankService;
     @Resource
-    private PluginManager pluginManager;
+    private PluginManager       pluginManager;
 
-    private long websiteExpiredTime = PropertiesConfiguration.getInstance().getInt("website.expired.minute", 30) * 60 * 1000;
+    private long                websiteExpiredTime = PropertiesConfiguration.getInstance()
+        .getInt("website.expired.minute", 30) * 60 * 1000;
 
     class WebsiteParentConfigHandler implements ParentConfigHandler {
 
         @Override
         public <T> T parse(T type) throws Exception {
             if (type != null && type instanceof AbstractWebsiteConfig
-                    && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
+                && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
                 String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
-                log.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class " + type.getClass());
+                log.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class "
+                         + type.getClass());
                 Website website = getCachedWebsiteByName(parentWebsiteName);
                 if (website != null) {
                     if (type instanceof SearchConfig) {
@@ -106,37 +107,50 @@ public class WebsiteServiceImpl implements WebsiteService {
         }
     }
 
-
     public Website getCachedWebsiteByID(int id) {
-        Website website = (Website) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_ID_PREFIX + id, websiteExpiredTime);
+        Website website = (Website) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_ID_PREFIX + id,
+            websiteExpiredTime);
         if (website == null) {
             website = websiteDao.getWebsiteById(id);
             this.testModeHandle(website);
             if (website != null) {
                 website = this.websiteContextBuild(website);
                 CacheUtil.INSTANCE.insertObject(Constants.WEBSITE_CONTEXT_ID_PREFIX + website.getId(), website);
-                CacheUtil.INSTANCE.insertObject(Constants.WEBSITE_CONTEXT_NAME_PREFIX + website.getWebsiteName(), website);
+                CacheUtil.INSTANCE.insertObject(Constants.WEBSITE_CONTEXT_NAME_PREFIX + website.getWebsiteName(),
+                    website);
             }
         }
         return website;
     }
 
     public Website getCachedWebsiteByName(String websiteName) {
-        Website website = (Website) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_NAME_PREFIX + websiteName, websiteExpiredTime);
+        Website website = (Website) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_NAME_PREFIX + websiteName,
+            websiteExpiredTime);
         if (website == null) {
+            log.info("getCachedWebsiteByName not cache found websiteName={}", websiteName);
             website = websiteDao.getWebsiteByName(websiteName);
+            if(null == website){
+                log.error("getCachedWebsiteByName error website not found from db websiteName={}", websiteName);
+                throw new RuntimeException("website not found websiteName=" + websiteName);
+            }
             this.testModeHandle(website);
             if (website != null) {
                 website = this.websiteContextBuild(website);
                 CacheUtil.INSTANCE.insertObject(Constants.WEBSITE_CONTEXT_ID_PREFIX + website.getId(), website);
-                CacheUtil.INSTANCE.insertObject(Constants.WEBSITE_CONTEXT_NAME_PREFIX + website.getWebsiteName(), website);
+                CacheUtil.INSTANCE.insertObject(Constants.WEBSITE_CONTEXT_NAME_PREFIX + website.getWebsiteName(),
+                    website);
             }
+        }
+        if (null == website) {
+            log.error("getCachedWebsiteByName error website not found websiteName={}", websiteName);
+            throw new RuntimeException("website not found websiteName=" + websiteName);
         }
         return website;
     }
 
     public Website getWebsiteByName(String websiteName) {
-        if (StringUtils.isBlank(websiteName)) return null;
+        if (StringUtils.isBlank(websiteName))
+            return null;
         Website website = websiteDao.getWebsiteByName(websiteName);
         if (website != null) {
             this.testModeHandle(website);
@@ -151,8 +165,8 @@ public class WebsiteServiceImpl implements WebsiteService {
         if (website != null) {
             if (StringUtils.isNotEmpty(website.getSearchConfigSource())) {
                 try {
-                    SearchConfig searchConfig =
-                            XmlConfigParser.getInstance().parse(website.getSearchConfigSource(), SearchConfig.class, parentConfigHandler);
+                    SearchConfig searchConfig = XmlConfigParser.getInstance().parse(website.getSearchConfigSource(),
+                        SearchConfig.class, parentConfigHandler);
                     website.setSearchConfig(searchConfig);
                     website.setSearchConfigSource(null);
                 } catch (Exception e) {
@@ -161,8 +175,8 @@ public class WebsiteServiceImpl implements WebsiteService {
             }
             if (StringUtils.isNotEmpty(website.getExtractorConfigSource())) {
                 try {
-                    ExtractorConfig extractorConfig =
-                            XmlConfigParser.getInstance().parse(website.getExtractorConfigSource(), ExtractorConfig.class, parentConfigHandler);
+                    ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
+                        .parse(website.getExtractorConfigSource(), ExtractorConfig.class, parentConfigHandler);
                     website.setExtractorConfig(extractorConfig);
                     website.setExtractorConfigSource(null);
                 } catch (Exception e) {
@@ -172,7 +186,6 @@ public class WebsiteServiceImpl implements WebsiteService {
         }
         return website;
     }
-
 
     /*
      * (non-Javadoc)
@@ -229,7 +242,6 @@ public class WebsiteServiceImpl implements WebsiteService {
         return null;
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -242,7 +254,6 @@ public class WebsiteServiceImpl implements WebsiteService {
         return websiteDao.updateWebsiteConfig(website);
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -253,7 +264,6 @@ public class WebsiteServiceImpl implements WebsiteService {
     public Website getWebsiteNoConfByName(String websiteName) {
         return websiteDao.getWebsiteNoConfByName(websiteName);
     }
-
 
     /*
      * (non-Javadoc)
@@ -266,7 +276,6 @@ public class WebsiteServiceImpl implements WebsiteService {
     public int insertWebsiteConfig(Website website) {
         return websiteDao.insertWebsiteConfig(website);
     }
-
 
     /* (non-Javadoc)
      * @see WebsiteService#getWebsiteConfigCountByWebsiteId(int)

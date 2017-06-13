@@ -18,11 +18,12 @@ import java.util.Map;
  * @since   2015年8月7日 上午11:32:56 
  */
 public enum WebsiteType {
-    MAIL("mail"), OPERATOR("operator"), ECOMMERCE("ecommerce"), BANK("bank");
+    MAIL("mail","1"), OPERATOR("operator","2"), ECOMMERCE("ecommerce","3"), BANK("bank","4"),INTERNAL("internal","5");
     private final String value;
-
-    WebsiteType(String value) {
+    private final String type;
+    WebsiteType(String type,String value) {
         this.value = value;
+        this.type = type;
     }
 
     public String getValue() {
@@ -41,8 +42,8 @@ public enum WebsiteType {
         return WebsiteTypeMap.get(value);
     }
 
-    @Override
-    public String toString() {
-        return this.getValue();
+    public String getType() {
+        return type;
     }
+
 }

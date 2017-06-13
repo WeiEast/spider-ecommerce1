@@ -10,7 +10,7 @@
 	</resultMap>
 
 	<select id="getAllBank" resultMap="RM-Bank">
-		SELECT b.*,BankEmailAddr FROM T_BANK b,T_BANK_EMAIL WHERE IsEnabled='true' AND BankId=b.Id;
+		SELECT b.*,BankEmailAddr FROM T_BANK b,T_BANK_EMAIL WHERE IsEnabled=1 AND BankId=b.Id;
 	</select>
 
 </sqlMap>

@@ -9,45 +9,56 @@ import java.io.Serializable;
 public class DirectiveResult<T> implements Serializable {
 
     /**
+     * 指令ID
+     */
+    private String              directiveId;
+
+    /**
+     * 发送指令后,是否等待插件处理完成并返回数据
+     */
+    private boolean             requireReturn = false;
+
+    /**
      * 应用名称
      */
-    private String appName  = "rawdatacentral";
+    private static final String appName       = "rawdatacentral";
 
     /**
      * 交互类别
      */
-    private String type;
+    private String              type;
 
     /**
      * 任务ID
      */
-    private long   taskId;
+    private long                taskId;
 
     /**
      * 当前线程ID
      */
-    private String threadId = "t0";
+    private static String       threadId      = "t0";
 
     /**
      * 当前指令状态
      */
-    private String status;
+    private String              status;
 
     /**
      * 错误代码
      */
-    private String errorCode;
+    private String              errorCode;
 
     /**
      * 错误信息
      */
-    private String errorMsg;
+    private String              errorMsg;
 
     /**
      * 交互数据
      */
-    private T      data;
+    private T                   data;
 
+    @Deprecated
     public DirectiveResult() {
     }
 
@@ -56,14 +67,90 @@ public class DirectiveResult<T> implements Serializable {
         this.taskId = taskId;
     }
 
+    public DirectiveResult(String type, long taskId, String status, T data) {
+        this.type = type;
+        this.taskId = taskId;
+        this.status = status;
+        this.data = data;
+    }
+
     /**
-     * 交互指令redis key
+     * 获取指令池:一个插件就是一个指令池
      * @return
      */
-    public String getRedisKey() {
-        StringBuilder key = new StringBuilder(appName).append("directive").append(type).append(threadId);
-        key.append(taskId);
+    public String getGroupKey() {
+        return getGroupKey(type, taskId);
+    }
+
+    /**
+     * 获取指令池:一个插件就是一个指令池
+     * @return
+     */
+    public static String getGroupKey(String type, long taskId) {
+        if (null == type || type.trim().length() == 0) {
+            throw new RuntimeException("getSendRedisKey type is blank");
+        }
+        if (taskId <= 0) {
+            throw new RuntimeException("getSendRedisKey taskId is blank");
+        }
+        //暂时不用多线程,不加线程threadId
+        return new StringBuilder(appName).append("_directive_").append(type).append("_").append(taskId).toString();
+    }
+
+    /**
+     * 指令独立存储key
+     * @return
+     */
+    public String getDirectiveKey() {
+        return getDirectiveKey(type, status, taskId);
+    }
+
+    /**
+     * 指令独立存储key
+     * @return
+     */
+    public String getDirectiveKey(String status) {
+        return getDirectiveKey(type, status, taskId);
+    }
+
+    /**
+     * 指令独立存储key
+     * @return
+     */
+    public static String getDirectiveKey(String type, String status, long taskId) {
+        if (taskId <= 0) {
+            throw new RuntimeException("getSendRedisKey taskId is blank");
+        }
+        if (null == type || type.trim().length() == 0) {
+            throw new RuntimeException("getSendRedisKey type is blank");
+        }
+        if (null == status || status.trim().length() == 0) {
+            throw new RuntimeException("getLockKey status is blank");
+        }
+        StringBuilder key = new StringBuilder(getGroupKey(type, taskId)).append("_").append(status);
         return key.toString();
+    }
+
+    /**
+     * 指令枷锁的key
+     * 相同命令枷锁
+     * 加锁成功:发送指令,清除结果key,进入等待
+     * 加锁失败:进入等待结果
+     * @return
+     */
+    public String getLockKey() {
+        return getDirectiveKey(type, status, taskId);
+    }
+
+    /**
+     * 指令枷锁的key
+     * 相同命令枷锁
+     * 加锁成功:发送指令,清除结果key,进入等待
+     * 加锁失败:进入等待结果
+     * @return
+     */
+    public static String getLockKey(String type, String status, long taskId) {
+        return new StringBuilder(getDirectiveKey(type, status, taskId)).append("_directive_lock").toString();
     }
 
     /**
@@ -141,12 +228,12 @@ public class DirectiveResult<T> implements Serializable {
         this.taskId = taskId;
     }
 
-    public String getThreadId() {
+    public static String getThreadId() {
         return threadId;
     }
 
-    public void setThreadId(String threadId) {
-        this.threadId = threadId;
+    public static void setThreadId(String threadId) {
+        DirectiveResult.threadId = threadId;
     }
 
     public String getStatus() {
@@ -181,7 +268,23 @@ public class DirectiveResult<T> implements Serializable {
         this.data = data;
     }
 
-    public DirectiveResult(String appName) {
-        this.appName = appName;
+    public boolean isRequireReturn() {
+        return requireReturn;
+    }
+
+    public void setRequireReturn(boolean requireReturn) {
+        this.requireReturn = requireReturn;
+    }
+
+    public static String getAppName() {
+        return appName;
+    }
+
+    public String getDirectiveId() {
+        return directiveId;
+    }
+
+    public void setDirectiveId(String directiveId) {
+        this.directiveId = directiveId;
     }
 }

@@ -6,8 +6,10 @@ import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
+import com.datatrees.rawdatacentral.share.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class MessageServiceImpl implements MessageService {
     @Resource
     private MQProducer          producer;
 
+    @Resource
+    private RedisService        redisService;
+
     @Override
     public boolean sendTaskLog(Long taskId, String msg, String errorDetail) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -43,16 +48,19 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public boolean sendDirective(Long taskId, String directive, String remark) {
+    public String sendDirective(Long taskId, String directive, String remark) {
         if (null == taskId || StringUtils.isBlank(directive)) {
             logger.error("invalid param taskId={},directive={}", taskId, directive);
-            return false;
+            return null;
         }
+        String directiveId = redisService.createDirectiveId();
         Map<String, Object> msg = new HashMap<String, Object>();
-        msg.put("taskId", taskId);
-        msg.put("directive", directive);
-        msg.put("remark", remark);
-        return sendMessage(TopicEnum.TASK_NEXT_DIRECTIVE.getCode(), msg, DEFAULT_CHARSET_NAME, 3);
+        msg.put(AttributeKey.TASK_ID, taskId);
+        msg.put(AttributeKey.DIRECTIVE_ID, directiveId);
+        msg.put(AttributeKey.DIRECTIVE, directive);
+        msg.put(AttributeKey.REMARK, remark);
+        sendMessage(TopicEnum.TASK_NEXT_DIRECTIVE.getCode(), msg, DEFAULT_CHARSET_NAME, 3);
+        return directiveId;
     }
 
     @Override

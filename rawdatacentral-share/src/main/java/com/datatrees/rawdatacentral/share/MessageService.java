@@ -12,7 +12,7 @@ public interface MessageService {
      * @param msg 操作信息
      * @return
      */
-    public boolean sendTaskLog(Long taskId, String msg);
+    boolean sendTaskLog(Long taskId, String msg);
 
     /**
      * 向网关发送任务日志消息
@@ -21,16 +21,16 @@ public interface MessageService {
      * @param errorDetail 错误信息
      * @return
      */
-    public boolean sendTaskLog(Long taskId, String msg, String errorDetail);
+    boolean sendTaskLog(Long taskId, String msg, String errorDetail);
 
     /**
      * 发送交互指令
      * @param taskId 任务id
      * @param directive 指令
      * @param remark 指令内容 
-     * @return
+     * @return 指令ID
      */
-    public boolean sendDirective(Long taskId, String directive, String remark);
+    String sendDirective(Long taskId, String directive, String remark);
 
     /**
      * 发送消息
@@ -38,7 +38,7 @@ public interface MessageService {
      * @param msg 消息
      * @return
      */
-    public boolean sendMessage(String topic, Object msg);
+    boolean sendMessage(String topic, Object msg);
 
     /**
      * 发送消息
@@ -48,5 +48,5 @@ public interface MessageService {
      * @param maxRetry  失败重试次数
      * @return
      */
-    public boolean sendMessage(String topic, Object msg, String charsetName, int maxRetry);
+    boolean sendMessage(String topic, Object msg, String charsetName, int maxRetry);
 }
