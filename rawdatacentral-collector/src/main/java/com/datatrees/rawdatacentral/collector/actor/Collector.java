@@ -389,7 +389,7 @@ public class Collector {
         resultMessage.setRemark(GsonUtils.toJson(task));
         resultMessage.setTaskId(task.getTaskId());
         resultMessage.setWebsiteName(taskMessage.getWebsiteName());
-        resultMessage.setWebsiteType(WebsiteType.getWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType()).toString());
+        resultMessage.setWebsiteType(WebsiteType.getWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType()).getType());
         Set<String> notEmptyTag = new HashSet<String>();
         if (submitkeyResult != null) {
             resultMessage.setStatus("SUCCESS");
