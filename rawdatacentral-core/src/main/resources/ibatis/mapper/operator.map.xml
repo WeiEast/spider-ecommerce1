@@ -10,7 +10,7 @@
 	</resultMap>
 
 	<select id="getAllOperator" resultMap="RM-Operator">
-		SELECT * FROM T_OPERATOR WHERE IsEnabled='true'
+		SELECT * FROM T_OPERATOR WHERE IsEnabled=1
 	</select>
 
 </sqlMap>

@@ -9,7 +9,7 @@
 	</resultMap>
 
 	<select id="getAllEcommerce" resultMap="RM-Ecommerce">
-		SELECT * FROM T_ECOMMERCE WHERE IsEnabled='true'
+		SELECT * FROM T_ECOMMERCE WHERE IsEnabled=1
 	</select>
 
 </sqlMap>

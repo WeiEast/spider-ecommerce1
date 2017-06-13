@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * redis操作
+ * Created by zhouxinghai on 2017/5/23
  */
 public interface RedisService {
 
@@ -15,21 +16,62 @@ public interface RedisService {
      * @param key
      * @return
      */
-    boolean hasKey(String key);
+    public boolean hasKey(String key);
+
+    /**
+     * 删除key
+     * @param key
+     * @return
+     */
+    public boolean deleteKey(String key);
+
+    /**
+     * redis加锁
+     * @param key 
+     * @param timeout
+     * @param unit
+     * @return
+     */
+    public boolean lock(String key, long timeout, TimeUnit unit);
+
+    /**
+     * redis解锁
+     * @param key
+     * @return
+     */
+    public boolean unlock(String key);
 
     /**
      * 获取
      * @param key
      * @return
      */
-    String getString(String key);
+    public String getString(String key);
+
+    /**
+     * 获取,有超时时间
+     * @param key
+     * @param timeout
+     * @param timeUnit
+     * @return
+     */
+    public String getString(String key, long timeout, TimeUnit timeUnit);
 
     /**
      * 从list取最后一个值
      * @param key 
      * @return
      */
-    String rightPop(String key);
+    public String rightPop(String key);
+
+    /**
+     *  从list取最后一个值
+     * @param key
+     * @param timeout
+     * @param unit
+     * @return
+     */
+    public String rightPop(String key, long timeout, TimeUnit unit);
 
     /**
      * 保存
@@ -37,7 +79,7 @@ public interface RedisService {
      * @param value
      * @return
      */
-    boolean saveString(String key, Object value);
+    public boolean saveString(String key, Object value);
 
     /**
      * 保存
@@ -47,7 +89,7 @@ public interface RedisService {
      * @param unit 过期时间单位
      * @return
      */
-    boolean saveString(String key, String value, long timeout, TimeUnit unit);
+    public boolean saveString(String key, String value, long timeout, TimeUnit unit);
 
     /**
      * 保存到list
@@ -57,7 +99,7 @@ public interface RedisService {
      * @param unit 过期时间单位
      * @return
      */
-    boolean saveToList(String key, String value, long timeout, TimeUnit unit);
+    public boolean saveToList(String key, String value, long timeout, TimeUnit unit);
 
     /**
      * 保存
@@ -65,26 +107,66 @@ public interface RedisService {
      * @param value
      * @return
      */
-    boolean saveListString(String key, List<String> value);
+    public boolean saveListString(String key, List<String> value);
 
     /**
      * 从redis取app端交互的信息
      * @param taskId 任务ID
      * @return
      */
-    String getResultFromApp(Object taskId);
+    public String getResultFromApp(Object taskId);
 
     /**
      * 保存交互指令
+     * 保存到指令池和单条指令
      * @param result
      * @return
      */
-    boolean saveDirectiveResult(DirectiveResult result);
+    public String saveDirectiveResult(DirectiveResult result);
 
     /**
-     * 获取交互指令
+     * 保存交互指令
+     * 保存到指令池和单条指令
+     * @param directiveId 指令ID,作为redisKey
+     * @param result
      * @return
      */
-    DirectiveResult getDirectiveResult(String key);
+    public String saveDirectiveResult(String directiveId, DirectiveResult result);
+
+    /**
+     * 获取还未执行的最后一条指令
+     * @param groupKey 指令池key
+     * @return
+     */
+    public <T> DirectiveResult<T> getNextDirectiveResult(String groupKey);
+
+    /**
+     * 获取还未执行的最后一条指令
+     * @param groupKey 指令池key
+     * @return
+     */
+    public <T> DirectiveResult<T> getNextDirectiveResult(String groupKey, long timeout, TimeUnit timeUnit);
+
+    /**
+     * 获取,有超时时间
+     * @param directiveKey 单条指令key
+     * @param timeout
+     * @param timeUnit
+     * @return
+     */
+    public <T> DirectiveResult getDirectiveResult(String directiveKey, long timeout, TimeUnit timeUnit);
+
+    /**
+     * 创建指令ID
+     * @param appName 项目名称
+     * @return 指令ID
+     */
+    public String createDirectiveId(String appName);
+
+    /**
+     * 创建指令ID
+     * @return 指令ID
+     */
+    public String createDirectiveId();
 
 }

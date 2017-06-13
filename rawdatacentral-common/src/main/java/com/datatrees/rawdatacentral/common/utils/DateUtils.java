@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhouxinghai on 2017/5/16.
@@ -17,15 +18,15 @@ public class DateUtils {
     public static final String                                YMD    = "yyyy-MM-dd HH:mm:ss";
 
     private static ThreadLocal<Map<String, SimpleDateFormat>> sfs    = new ThreadLocal<Map<String, SimpleDateFormat>>() {
-         @Override
-         protected Map<String, SimpleDateFormat> initialValue() {
-             Map<String, SimpleDateFormat> map = new HashMap<>();
-             map.put(YMDHMS,
-                 new SimpleDateFormat(YMDHMS));
-             map.put(YMD, new SimpleDateFormat(YMD));
-             return map;
-         }
-     };
+                                                                         @Override
+                                                                         protected Map<String, SimpleDateFormat> initialValue() {
+                                                                             Map<String, SimpleDateFormat> map = new HashMap<>();
+                                                                             map.put(YMDHMS,
+                                                                                 new SimpleDateFormat(YMDHMS));
+                                                                             map.put(YMD, new SimpleDateFormat(YMD));
+                                                                             return map;
+                                                                         }
+                                                                     };
 
     /**
      * 返回一个SimpleDateFormat,每个线程只会new一次pattern对应的sdf 
@@ -69,6 +70,48 @@ public class DateUtils {
      */
     public static String formatYmd(Date date) {
         return getDateFormat(YMD).format(date);
+    }
+
+    /**
+     * 计算耗时
+     * @param start
+     * @return
+     */
+    public static String getUsedTime(long start) {
+        StringBuilder sb = new StringBuilder();
+        long usedTime = System.currentTimeMillis() - start;
+
+        long count = TimeUnit.MILLISECONDS.toDays(usedTime);
+        if (count > 0) {
+            sb.append(count).append("天");
+            usedTime -= TimeUnit.DAYS.toMillis(count);
+        }
+
+        count = TimeUnit.MILLISECONDS.toHours(usedTime);
+        if (count > 0 || sb.length() > 0) {
+            usedTime -= TimeUnit.HOURS.toMillis(count);
+            sb.append(count).append("小时");
+        }
+
+        count = TimeUnit.MILLISECONDS.toMinutes(usedTime);
+        if (count > 0) {
+            usedTime -= TimeUnit.MINUTES.toMillis(count);
+            sb.append(count).append("分");
+        }
+
+        count = TimeUnit.MILLISECONDS.toSeconds(usedTime);
+        if (count > 0) {
+            usedTime -= TimeUnit.SECONDS.toMillis(count);
+            sb.append(count).append("秒");
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+
+        System.out.println(getUsedTime(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1)));
+        System.out.println(
+            getUsedTime(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1) - TimeUnit.SECONDS.toMillis(4)));
     }
 
 }

@@ -26,7 +26,7 @@ appender("sysFile", RollingFileAppender) {
         charset = Charset.forName(charsetName)
     }
     rollingPolicy(TimeBasedRollingPolicy) {
-        fileNamePattern = "${logPath}/rawdatacentral.log.%d{yyyy-MM-dd}.gz"
+        fileNamePattern = "${logPath}/rawdatacentral.log.%d{yyyy-MM-dd}"
         maxHistory = 15 // 保留最近天数的日志
     }
 }

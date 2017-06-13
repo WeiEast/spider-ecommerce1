@@ -3,7 +3,7 @@
 <sqlMap namespace="DefaultExtractResult">
 	<resultMap id="BaseResultMap" class="DefaultExtractResult">
 		<result column="Id" property="id" jdbcType="INTEGER" />
-		<result column="TaskId" property="taskId" jdbcType="INTEGER" />
+		<result column="TaskLogId" property="taskId" jdbcType="INTEGER" />
 		<result column="WebsiteId" property="websiteId" jdbcType="INTEGER" />
 		<result column="Status" property="status" jdbcType="TINYINT" />
 		<result column="Remark" property="remark" jdbcType="VARCHAR" />
@@ -16,7 +16,7 @@
 		<!--<result column="UpdatedAt" property="updatedat" jdbcType="TIMESTAMP" /> -->
 	</resultMap>
 	<insert id="insert" parameterClass="DefaultExtractResult">
-		insert into t_default_extract_result (Id, TaskId, Duration,
+		insert into t_default_extract_result (Id, TaskLogId, Duration,
 		WebsiteId, Status,
 		Remark, Url, UniqueSign,UniqueMd5,
 		ResultType, StoragePath, CreatedAt)
@@ -29,8 +29,8 @@
 		</selectKey>
 	</insert>
 	<update id="updateByPrimaryKey" parameterClass="DefaultExtractResult">
-		update t_default_extract_result
-		set TaskId = #taskId#,
+		update t_default_extract_result 	
+		set TaskLogId = #taskId#,
 		WebsiteId = #websiteId#,
 		Status = #status#,
 		Remark = #remark#,

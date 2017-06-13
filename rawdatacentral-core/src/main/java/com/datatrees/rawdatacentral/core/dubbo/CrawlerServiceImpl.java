@@ -8,26 +8,36 @@
  */
 package com.datatrees.rawdatacentral.core.dubbo;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
+import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.share.RedisService;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -45,6 +55,9 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Resource
     private RedisDao            redisDao;
+
+    @Resource
+    private RedisService        redisService;
 
     @Resource
     private ZooKeeperClient     zooKeeperClient;
@@ -67,8 +80,10 @@ public class CrawlerServiceImpl implements CrawlerService {
         if (StringUtils.isNotBlank(newWebsiteName)) {
             Website website = websiteService.getCachedWebsiteByName(newWebsiteName);
             WebsiteConf conf = null;
-            if (website != null && (conf = website.getWebsiteConf()) != null) {
+            if (website != null && website.getWebsiteConf() != null) {
+                conf = website.getWebsiteConf();
                 conf.setName(websiteName);
+                logger.info("websiteName:{},return conf :{}", websiteName, conf.toString());
                 return conf;
             } else {
                 logger.warn("no active website named {}", newWebsiteName);
@@ -84,7 +99,10 @@ public class CrawlerServiceImpl implements CrawlerService {
     public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList) {
         List<WebsiteConf> confList = new ArrayList<>();
         for (String websiteName : websiteNameList) {
-            confList.add(getWebsiteConf(websiteName));
+            WebsiteConf websiteConf = getWebsiteConf(websiteName);
+            if (null != websiteConf) {
+                confList.add(websiteConf);
+            }
         }
         return confList;
     }
@@ -118,90 +136,180 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<String> importStatus(long taskId, int type, String attrJson) {
-        HttpResult<String> result = new HttpResult<String>();
-        String key = "verify_result_" + taskId;
-        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(attrJson)))) {
-            return result.success();
+    public HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code,
+                                               Map<String, String> extra) {
+        HttpResult<Boolean> result = new HttpResult<>();
+        try {
+            if (null == extra) {
+                extra = new HashMap<>();
+            }
+            if (taskId <= 0 || type < 0 || StringUtils.isAnyBlank(directiveId, code)) {
+                logger.warn("invalid param taskId={},type={},directiveId={},code={},extra={}", taskId, type,
+                    directiveId, code, JSON.toJSONString(extra));
+                return result.failure("参数为空或者参数不完整");
+            }
+            String status = DirectiveRedisCode.WAIT_SERVER_PROCESS;
+            String directiveType = null;
+            switch (type) {
+                case 0:
+                    directiveType = DirectiveType.CRAWL_SMS;
+                    break;
+                case 1:
+                    directiveType = DirectiveType.CRAWL_CODE;
+                    break;
+                default:
+                    logger.warn("invalid param taskId={},type={}", taskId, type);
+                    return result.failure("未知参数type");
+            }
+
+            extra.put(AttributeKey.CODE, code);
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(directiveType, taskId);
+            //保存交互指令到redis
+            sendDirective.fill(status, extra);
+            redisService.saveDirectiveResult(directiveId, sendDirective);
+            logger.info("import success taskId={},directiveId={},code={},extra={}", taskId, directiveId, code,
+                JSON.toJSONString(extra));
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("import error taskId={},directiveId={},code={},extra={}", taskId, directiveId, code,
+                JSON.toJSONString(extra));
+            return result.failure();
         }
-        return result.failure();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public HttpResult<String> fetchStatus(long taskId, int type, String attrJson) {
-        HttpResult<String> result = new HttpResult<String>();
-        String key = "verify_result_" + taskId;
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("dubboType", type);
-        if (type == 0) {
-            map.put("status", "REFRESH_LOGIN_RANDOMPASSWORD");
-        } else if (type == 1) {
-            map.put("status", "REFRESH_LOGIN_CODE");
-        } else if (type == 2) {
-            map.put("status", "REFRESH_LOGIN_QR_CODE");
-        }
-        String getKey = "plugin_remark_" + type + "_" + taskId;
-        redisDao.deleteKey(getKey);
-        if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
-            try {
-                long startTime = System.currentTimeMillis();
-                while (!isTimeOut(startTime, "alipay.com")) {
-
-                    String pullResult = redisDao.pullResult(getKey);
-
-                    Map<String, Object> resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult,
-                        new TypeToken<HashMap<String, Object>>() {
-                        }.getType());
-                    String remark;
-                    if (resultMap != null) {
-                        remark = StringUtils.defaultIfBlank((String) resultMap.get("remark"), "");
-                        result = result.success();
-                        result.setData(remark);
-                        return result;
-                    }
-                    Thread.sleep(3000);
-                }
-            } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
+    public HttpResult<String> fetchLoginCode(long taskId, int type, String username, String password,
+                                             Map<String, String> extra) {
+        HttpResult<String> result = new HttpResult<>();
+        long timeout = 30;
+        try {
+            if (taskId <= 0 || type < 0) {
+                logger.warn("fetchLoginCode invalid param taskId={},type={}", taskId, type);
+                return result.failure("参数为空或者参数不完整");
             }
-        }
+            if (null == extra) {
+                extra = new HashMap<>();
+            }
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN,
+                taskId);
+            String status = null;
+            switch (type) {
+                case 0:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_RANDOMPASSWORD;
+                    break;
+                case 1:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_CODE;
+                    break;
+                case 2:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_QR_CODE;
+                    break;
+                default:
+                    logger.warn("fetchLoginCode invalid param taskId={},type={},username={},extra={}", taskId, type,
+                        username, JSON.toJSONString(extra));
+                    return result.failure("未知参数type");
+            }
+            if (StringUtils.isNoneBlank(username)) {
+                extra.put(AttributeKey.USERNAME, username);
+            }
+            if (StringUtils.isNoneBlank(password)) {
+                extra.put(AttributeKey.PASSWORD, password);
+            }
 
-        return result.failure();
+            //保存交互指令到redis
+            sendDirective.fill(status, extra);
+
+            //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
+            String directiveId = redisService.saveDirectiveResult(sendDirective);
+
+            DirectiveResult<String> receiveResult = redisService.getDirectiveResult(directiveId, timeout,
+                TimeUnit.SECONDS);
+            if (null == receiveResult) {
+                logger.warn("fetchLoginCode get result timeout taskId={},directiveId={},timeout={},timeUnit={}", taskId,
+                    directiveId, timeout, TimeUnit.SECONDS);
+                return result.failure("get data from plugin timeout");
+            }
+            logger.info("fetchLoginCode success taskId={},directiveId={},status={}", taskId, directiveId, status);
+            return result.success(receiveResult.getData());
+        } catch (Exception e) {
+            logger.error("fetchLoginCode error taskId={}", taskId, e);
+            return result.failure();
+        }
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public HttpResult<String> verifyQr(long taskId, String attrJson) {
-        HttpResult<String> result = new HttpResult<String>();
-        String getKey = "plugin_remark_" + taskId;
-        String pullResult = redisDao.pullResult(getKey);
-        if (StringUtils.isNotBlank(pullResult)) {
-            Map<String, Object> resultMap = (Map<String, Object>) GsonUtils.fromJson(pullResult,
-                new TypeToken<HashMap<String, Object>>() {
-                }.getType());
-            String qrStatus = "FAILURE";
-            if (resultMap != null) {
-                qrStatus = StringUtils.defaultIfBlank((String) resultMap.get(PluginConstants.FIELD), "");
+    public HttpResult<String> login(long taskId, String username, String password, String code, String randomPassword,
+                                    Map<String, String> extra) {
+
+        HttpResult<String> result = new HttpResult<>();
+        long timeout = 30;
+        String directiveId = null;
+        try {
+            if (taskId <= 0 || StringUtils.isBlank(username)) {
+                logger.warn("fetchLoginCode invalid param taskId={},username={}", taskId, username);
+                return result.failure("invalid params taskId or username");
             }
-            result = result.success();
-            result.setData(qrStatus);
-            logger.debug(taskId + "verifyQr return" + qrStatus);
-            return result;
-        } else {
-            String key = "verify_result_" + taskId;
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("status", "VERIFY_QR_CODE");
-            if (redisDao.saveListString(key, Arrays.asList(GsonUtils.toJson(map)))) {
-                result = result.success();
-                result.setData("WAITTING");
-                logger.debug(taskId + "verifyQr return" + "WAITTING");
-                return result;
+            if (StringUtils.isBlank(password)) {
+                logger.warn("fetchLoginCode  empty password, taskId={},username={}", taskId, username);
+                return result.failure("invalid params,empty password");
             }
+            if (null == extra) {
+                extra = new HashMap<>();
+            }
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN,
+                taskId);
+            extra.put(AttributeKey.USERNAME, username);
+            extra.put(AttributeKey.PASSWORD, password);
+            extra.put(AttributeKey.CODE, code);
+            extra.put(AttributeKey.RANDOM_PASSWORD, randomPassword);
+
+            //保存交互指令到redis
+            sendDirective.fill(DirectiveRedisCode.START_LOGIN, extra);
+
+            //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
+            directiveId = redisService.saveDirectiveResult(sendDirective);
+
+            DirectiveResult<String> receiveResult = redisService.getDirectiveResult(directiveId, timeout,
+                TimeUnit.SECONDS);
+            if (null == receiveResult) {
+                logger.warn("login get result timeout taskId={},directiveId={},timeout={},timeUnit={},username={}",
+                    taskId, directiveId, timeout, TimeUnit.SECONDS, username);
+                return result.failure("登陆超时");
+            }
+            if (StringUtils.equals(DirectiveRedisCode.SERVER_FAIL, receiveResult.getStatus())) {
+                logger.error("login failtaskId={},directiveId={},status={},errorMsg={},username={}", taskId,
+                    directiveId, receiveResult.getErrorMsg(), username);
+                return result.failure(receiveResult.getErrorMsg());
+            }
+            logger.info("login success taskId={},directiveId={},username={}", taskId, directiveId, username);
+            return result.success("登陆成功!");
+        } catch (Exception e) {
+            logger.error("login error taskId={},directiveId={},username={}", taskId, directiveId, username, e);
+            return result.failure("登陆失败!");
         }
-        result = result.failure();
-        return result;
+    }
+
+    @Override
+    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra) {
+        HttpResult<String> result = new HttpResult<>();
+        try {
+            if (taskId <= 0 || StringUtils.isBlank(directiveId)) {
+                logger.warn("verifyQr invalid param taskId={},directiveId={}", taskId, directiveId);
+                return result.success(DirectiveRedisCode.FAILED);
+            }
+            DirectiveResult<String> directiveResult = redisService.getDirectiveResult(directiveId, 2, TimeUnit.SECONDS);
+            if (null == directiveResult) {
+                logger.warn("verifyQr timeout taskId={},directiveId={}", taskId, directiveId);
+                return result.success(DirectiveRedisCode.FAILED);
+            }
+            TimeUnit.MILLISECONDS.sleep(500);//不能让前端一直轮询
+            logger.info("verifyQr result taskId={},directiveId={},qrStatus={}", taskId, directiveId,
+                directiveResult.getStatus());
+            return result.success(directiveResult.getStatus());
+        } catch (Exception e) {
+            logger.error("verifyQr error taskId={},directiveId={}", taskId, directiveId);
+            return result.success(DirectiveRedisCode.FAILED);
+        }
     }
 
     private boolean isTimeOut(long startTime, String websiteName) throws Exception {
@@ -214,17 +322,14 @@ public class CrawlerServiceImpl implements CrawlerService {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see com.datatrees.rawdatacentral.api.CrawlerService#cancel(long, java.lang.String)
-     */
     @Override
-    public HttpResult<Boolean> cancel(long taskId, String attrJson) {
+    public HttpResult<Boolean> cancel(long taskId, Map<String, String> extra) {
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
-        logger.info("cancel taskId:" + taskId);
+        logger.info("cancel taskId={}", taskId);
         HttpResult<Boolean> result = new HttpResult<Boolean>();
         result.setData(false);
         if (watcher.cancel()) {
-            logger.info("cancel task success,taskId :" + taskId);
+            logger.info("cancel task success,taskId={}", taskId);
             result.setData(true);
             result.success();
         }
@@ -232,11 +337,43 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public HttpResult<Boolean> importClientCrawlResult(long taskId, String html, String cookies,
-                                                       Map<String, Object> extra) {
-
-        logger.info("importClientCrawlResult taskId={},html={},cookies={} ", taskId, html, cookies);
-        return null;
+    public HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies,
+                                                    Map<String, String> extra) {
+        HttpResult<Boolean> result = new HttpResult<>();
+        try {
+            if (taskId <= 0 || StringUtils.isAnyBlank(directiveId, html, cookies)) {
+                logger.warn("importAppCrawlResult invalid param taskId={},directiveId={},html={},cookies={}", taskId,
+                    directiveId, html, cookies);
+                return result.failure("参数为空或者参数不完整");
+            }
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.GRAB_URL, taskId);
+            Map<String, String> data = new HashMap<>();
+            data.put(AttributeKey.HTML, html);
+            data.put(AttributeKey.COOKIES, cookies);
+            //保存交互指令到redis
+            sendDirective.fill(DirectiveRedisCode.WAIT_SERVER_PROCESS, data);
+            redisService.saveDirectiveResult(directiveId, sendDirective);
+            logger.info("importAppCrawlResult success taskId={},directiveId={}", taskId, directiveId);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("importAppCrawlResult error taskId={},directiveId={}", taskId, directiveId);
+            return result.failure();
+        }
     }
 
+    @Override
+    public HttpResult<Map<String, String>> getGroupMap() {
+        Map<String, String> groupEnumMap = new HashMap<>();
+        for(GroupEnum group : GroupEnum.values()){
+            groupEnumMap.put(group.getGroupName(), group.getGroupId());
+        }
+        
+        HttpResult<Map<String, String>> result = new HttpResult<>();
+        return result.success(groupEnumMap);
+    }
+
+    @Override
+    public HttpResult<Integer> getWebsiteIdByGroupId(String groupId) {
+        return null;
+    }
 }
