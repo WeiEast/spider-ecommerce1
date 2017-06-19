@@ -115,7 +115,7 @@ public class Collector {
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
-        context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo() + "");//临时修改
+        context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo());//临时修改
         task.setWebsiteId(context.getWebsite().getId());
         task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
         // init cookie
