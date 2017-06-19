@@ -21,7 +21,7 @@ import java.util.Set;
  * @since 2015年7月28日 下午4:14:22
  */
 public class CollectorMessage extends MessageInfo {
-    private String              cookie;
+    private transient String              cookie;
     private String              websiteName;
     private long                taskId;
     private String              accountNo;

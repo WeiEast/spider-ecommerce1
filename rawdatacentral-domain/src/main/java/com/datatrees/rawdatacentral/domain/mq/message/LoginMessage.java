@@ -18,6 +18,7 @@ public class LoginMessage implements Serializable {
      */
     private long   taskId;
 
+
     /**
      * 结束url
      */
@@ -87,5 +88,11 @@ public class LoginMessage implements Serializable {
      */
     public void setAccountNo(String accountNo) {
         this.accountNo = accountNo;
+    }
+    
+    @Override
+    public String toString() {
+        return "LoginMessage [websiteName=" + websiteName + ", taskId=" + taskId + ", endUrl=" + endUrl + ", accountNo="
+               + accountNo + "]";
     }
 }

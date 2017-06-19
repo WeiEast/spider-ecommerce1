@@ -115,7 +115,7 @@ public class Collector {
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
-        context.set(AttributeKey.ACCOUNT_NO, message.getTaskId() + "");//临时修改
+        context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo() + "");//临时修改
         task.setWebsiteId(context.getWebsite().getId());
         task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
         // init cookie
@@ -186,7 +186,7 @@ public class Collector {
                 ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", lastTaskId,
                     Thread.currentThread(), zookeeperClient);
                 watcher.cancel();
-                logger.info("lastTaskId {} thread not needn't run", lastTaskId);
+                logger.info("lastTaskId {} thread needn't run", lastTaskId);
             }
         }
         String path = taskId;
@@ -389,7 +389,8 @@ public class Collector {
         resultMessage.setRemark(GsonUtils.toJson(task));
         resultMessage.setTaskId(task.getTaskId());
         resultMessage.setWebsiteName(taskMessage.getWebsiteName());
-        resultMessage.setWebsiteType(WebsiteType.getWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType()).getType());
+        resultMessage.setWebsiteType(
+            WebsiteType.getWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType()).getType());
         Set<String> notEmptyTag = new HashSet<String>();
         if (submitkeyResult != null) {
             resultMessage.setStatus("SUCCESS");
