@@ -24,21 +24,22 @@ import org.slf4j.LoggerFactory;
 
 public class UploadTask implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(UploadTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UploadTask.class);
 
-    private ExtractMessage extractMessage;
-    private List<String> fieldList;
-    private String ossKey;
+    private ExtractMessage      extractMessage;
+    private List<String>        fieldList;
+    private String              ossKey;
 
-    public UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
+    UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
         this.extractMessage = extractMessage;
         this.fieldList = fieldList;
         this.ossKey = OssUtils.getObjectKey(ossKey);
+        LOGGER.debug("OSS:ObjectKey: {}", this.ossKey);
     }
 
     @Override
     public void run() {
-        logger.debug("start upload task! id: " + extractMessage.getTaskId());
+        LOGGER.debug("start upload task! id: " + extractMessage.getTaskId());
         try {
             Map<String, SubmitFile> uploadMap = this.getSubmitFiles(extractMessage.getMessageObject());
             // after upload complete remove extractmessage object
@@ -47,17 +48,17 @@ public class UploadTask implements Runnable {
                 ZipCompressUtils.compress(baos, uploadMap);
                 OssService service = OssServiceProvider.getDefaultService();
                 service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, baos.toByteArray());
-                logger.debug("upload task completed! id: " + extractMessage.getTaskId() + ",osskey:" + ossKey);
+                LOGGER.debug("upload task completed! id: " + extractMessage.getTaskId() + ",osskey:" + ossKey);
             } else {
-                logger.info("no need to upload file for message:" + extractMessage);
+                LOGGER.info("no need to upload file for message:" + extractMessage);
             }
         } catch (Exception e) {
-            logger.error("upload task run failed! taskId:" + extractMessage.getTaskId(), e);
+            LOGGER.error("upload task run failed! taskId:" + extractMessage.getTaskId(), e);
         }
     }
 
     private Map<String, SubmitFile> getSubmitFiles(Object result) {
-        Map<String, SubmitFile> uploadFieldMap = new HashMap<String, SubmitFile>();
+        Map<String, SubmitFile> uploadFieldMap = new HashMap<>();
         if (result instanceof Map) {
             for (Map.Entry<String, Object> entry : ((Map<String, Object>) result).entrySet()) {
                 try {
@@ -70,19 +71,18 @@ public class UploadTask implements Runnable {
                         entry.setValue(null);
                     }
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         } else {
-            logger.warn("Error inpurt only support map for upload.Input:" + result);
+            LOGGER.warn("Error input only support map for upload.Input:" + result);
         }
         return uploadFieldMap;
     }
 
-    private byte[] readFileBytes(FileWapper inputObject) {
+    private byte[] readFileBytes(FileWapper fileWapper) {
         byte[] fileBytes = null;
-        if (inputObject != null) {
-            FileWapper fileWapper = (FileWapper) inputObject;
+        if (fileWapper != null) {
             FileInputStream stream = null;
             try {
                 stream = fileWapper.getFileInputStream();
@@ -91,7 +91,7 @@ public class UploadTask implements Runnable {
                     fileWapper.remove();
                 }
             } catch (Exception e) {
-                logger.error("read fileWapper error " + inputObject, e);
+                LOGGER.error("read fileWapper error " + fileWapper, e);
             } finally {
                 IOUtils.closeQuietly(stream);
             }
@@ -101,19 +101,21 @@ public class UploadTask implements Runnable {
 
     @SuppressWarnings("unused")
     private void setUploadFieldMap(Map<String, SubmitFile> uploadMap, List<SubmitFile> fileBytesList, String field) {
-        if (CollectionUtils.isNotEmpty(fileBytesList) && fileBytesList.size() > 1) {
-            int i = 1;
-            for (SubmitFile file : fileBytesList) {
-                uploadMap.put(field + i, file);
-                i++;
+        if (CollectionUtils.isNotEmpty(fileBytesList)) {
+            int size = fileBytesList.size();
+            if (size == 1) {
+                uploadMap.put(field, fileBytesList.get(0));
+            } else {
+                for (int i = 0; i < size; i++) {
+                    uploadMap.put(field + (i + 1), fileBytesList.get(i));
+                }
             }
-        } else if (CollectionUtils.isNotEmpty(fileBytesList) && fileBytesList.size() == 1) {
-            uploadMap.put(field, fileBytesList.get(0));
         }
+
     }
 
     private List<SubmitFile> valueFormat(Object obj) throws Exception {
-        List<SubmitFile> result = new ArrayList<SubmitFile>();
+        List<SubmitFile> result = new ArrayList<>();
         if (obj instanceof String) {
             SubmitFile file = new SubmitFile(null, ((String) obj).getBytes(Constants.DEFAULT_ENCODE_CHARSETNAME));
             result.add(file);
