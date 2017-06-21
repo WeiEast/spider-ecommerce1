@@ -84,6 +84,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 collectorMessage.setWebsiteName(loginInfo.getWebsiteName());
                 collectorMessage.setEndURL(loginInfo.getEndUrl());
                 collectorMessage.setCookie(loginInfo.getCookie());
+                collectorMessage.setAccountNo(loginInfo.getAccountNo());
                 if (setCookieFormatSwitch && StringUtils.isNotBlank(loginInfo.getSetCookie())) {
                     if (StringUtils.isBlank(loginInfo.getCookie())) {
                         collectorMessage.setCookie(loginInfo.getSetCookie());

@@ -17,10 +17,11 @@ public interface SubmitConstant {
     int SUBMITTER_UPLOAD_CORE_THREAD_NUM = PropertiesConfiguration.getInstance().getInt("submitter.upload.corePoolSize", 5);
     int SUBMITTER_UPLOAD_MAX_THREAD_NUM = PropertiesConfiguration.getInstance().getInt("submitter.upload.maximumPoolSize", 60);
     int SUBMITTER_UPLOAD_MAX_TASK_NUM = PropertiesConfiguration.getInstance().getInt("submitter.upload.maximumTaskNum", 10);
-    String ALIYUN_OSS_ENDPOINT = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossEndpoint", "");
-    String ALIYUN_OSS_ACCESSID = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossAccessId", "");
-    String ALIYUN_OSS_ACCESSSECRET = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossAccessSecret", "");
-    String ALIYUN_OSS_DEFAULTBUCKET = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossDefaultBucket", "");
+    String ALIYUN_OSS_ENDPOINT = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossEndpoint");
+    String ALIYUN_OSS_ACCESSID = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossAccessId");
+    String ALIYUN_OSS_ACCESSSECRET = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossAccessSecret");
+    String ALIYUN_OSS_DEFAULTBUCKET = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossDefaultBucket");
+    String ALIYUN_OSS_OBJECT_PATH_ROOT = PropertiesConfiguration.getInstance().get("oss.object.path.root");
     String SUBMITTER_NEEDUPLOAD_KEY = PropertiesConfiguration.getInstance().get("submitter.needUpload.keys", "mailHeader,pageContent,attachment");
 
 }
