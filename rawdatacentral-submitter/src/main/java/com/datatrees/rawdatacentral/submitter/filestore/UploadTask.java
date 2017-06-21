@@ -1,5 +1,14 @@
 package com.datatrees.rawdatacentral.submitter.filestore;
 
+import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.datatrees.rawdatacentral.core.common.Constants;
+import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
+import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
+import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
+import com.datatrees.rawdatacentral.submitter.filestore.oss.OssService;
+import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
+import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -7,21 +16,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
-import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
-import com.datatrees.rawdatacentral.submitter.filestore.oss.OssService;
-import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.rawdatacentral.core.common.Constants;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 
 public class UploadTask implements Runnable {
 
@@ -34,7 +33,7 @@ public class UploadTask implements Runnable {
     public UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
         this.extractMessage = extractMessage;
         this.fieldList = fieldList;
-        this.ossKey = ossKey;
+        this.ossKey = OssUtils.getObjectKey(ossKey);
     }
 
     @Override

@@ -37,7 +37,6 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
-import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.core.service.TaskService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Task;
@@ -45,22 +44,26 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
+import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -115,7 +118,7 @@ public class Collector {
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
-        context.set(AttributeKey.ACCOUNT_NO, message.getTaskId() + "");//临时修改
+        context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo());
         task.setWebsiteId(context.getWebsite().getId());
         task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
         // init cookie
@@ -176,19 +179,6 @@ public class Collector {
         String uniqueSuffix = taskMessage.getUniqueSuffix();
         String serialNum = taskMessage.getCollectorMessage().getSerialNum();
         String taskId = taskMessage.getContext().getString(AttributeKey.TASK_ID);
-        String accountNo = taskMessage.getContext().getString(AttributeKey.ACCOUNT_NO);
-        //将同一网站的相同账号的线程kill
-        if (StringUtils.isNotBlank(accountNo)) {
-            String redisKey = websiteName + accountNo;
-            String lastTaskId = redisDao.getRedisTemplate().opsForValue().getAndSet(redisKey, taskId);
-            redisDao.getRedisTemplate().expire(redisKey, 10, TimeUnit.MINUTES);
-            if (StringUtils.isNotBlank(lastTaskId)) {
-                ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", lastTaskId,
-                    Thread.currentThread(), zookeeperClient);
-                watcher.cancel();
-                logger.info("lastTaskId {} thread not needn't run", lastTaskId);
-            }
-        }
         String path = taskId;
         path = StringUtils.isNotBlank(templateId) ? path + "_" + templateId : path;
         path = StringUtils.isNotBlank(uniqueSuffix) ? path + "_" + uniqueSuffix : path;
@@ -357,7 +347,7 @@ public class Collector {
 
             if (startMsgJson.length() > PropertiesConfiguration.getInstance()
                 .getInt("default.startMsgJson.length.threshold", 20000)) {
-                String path = taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/"
+                String path = "task/"+taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/"
                               + taskMessage.getTask().getId();
                 taskMessage.getTask().setResultMessage(resultMessageBuilder.toString() + ",startMsgOSSPath:" + path);
                 SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
@@ -366,7 +356,7 @@ public class Collector {
                     Map<String, SubmitFile> uploadMap = new HashMap<>();
                     uploadMap.put("startMsg.json", file);
                     ZipCompressUtils.compress(baos, uploadMap);
-                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, path,
+                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path),
                         baos.toByteArray());
                 } catch (Exception e) {
                     logger.error("upload startMsg.json error:" + e.getMessage(), e);
@@ -389,7 +379,8 @@ public class Collector {
         resultMessage.setRemark(GsonUtils.toJson(task));
         resultMessage.setTaskId(task.getTaskId());
         resultMessage.setWebsiteName(taskMessage.getWebsiteName());
-        resultMessage.setWebsiteType(WebsiteType.getWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType()).getType());
+        resultMessage.setWebsiteType(
+            WebsiteType.getWebsiteType(taskMessage.getContext().getWebsite().getWebsiteType()).getType());
         Set<String> notEmptyTag = new HashSet<String>();
         if (submitkeyResult != null) {
             resultMessage.setStatus("SUCCESS");
