@@ -32,6 +32,10 @@ task copyResources() {
             into "$rootDir/target/$rootProject.name/plugin"
         }
         copy {
+            from "$rootDir/bin"
+            into "$rootDir/target/$rootProject.name/bin"
+        }
+        copy {
             from "$rootDir/logs"
             into "$rootDir/target/$rootProject.name/logs"
         }
@@ -51,11 +55,11 @@ task copyResources() {
                 env = System.properties['env']
                 if (env == null || env.equals("")) {
                     println 'no system property env defined, use inside-daily'
-                    env = 'inside-daily'
+                    env = 'dev'
                 }
             }
             println 'env=' + env
-            if (!['daily', 'gray', 'online'].contains(env)) {
+            if (!['dev','daily', 'gray', 'online'].contains(env)) {
                 throw new RuntimeException("invalid env=" + env)
             }
             from "$rootDir/$project.name/env/$env"
