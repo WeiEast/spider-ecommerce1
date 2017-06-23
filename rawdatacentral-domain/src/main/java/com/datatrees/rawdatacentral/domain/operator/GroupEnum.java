@@ -9,10 +9,8 @@
 package com.datatrees.rawdatacentral.domain.operator;
 
 /**
- *
- * @author  <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
- * @version 1.0
- * @since   2017年6月8日 下午5:33:59 
+ * 运营商
+ * Created by zhouxinghai on 2017/6/22
  */
 public enum GroupEnum {
 
