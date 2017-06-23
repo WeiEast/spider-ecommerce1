@@ -364,76 +364,82 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
-        List<OperatorCatalogue> list = new ArrayList<>();
-        Map<String, List<OperatorConfig>> map = new HashMap<>();
-        List<OperatorConfig> map10086 = new ArrayList<>();
-        List<OperatorConfig> map10000 = new ArrayList<>();
-        List<OperatorConfig> map10010 = new ArrayList<>();
-        list.add(new OperatorCatalogue("移动", map10086));
-        list.add(new OperatorCatalogue("联通", map10010));
-        list.add(new OperatorCatalogue("电信", map10000));
-        for (GroupEnum group : GroupEnum.values()) {
-            Website website = websiteService.getCachedWebsiteByName(group.getWebsiteName());
-            if (null == website) {
-                throw new RuntimeException("website not found websiteName=" + group.getWebsiteName());
-            }
-            WebsiteConf websiteConf = website.getWebsiteConf();
-            String initSetting = websiteConf.getInitSetting();
-            if (StringUtils.isBlank(initSetting)) {
-                throw new RuntimeException("initSetting is blank websiteName=" + group.getWebsiteName());
-            }
-            JSONObject json = JSON.parseObject(initSetting);
-            if (!json.containsKey("fields")) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
-            }
-            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"),
-                FieldInitSetting.class);
-            if (null == fieldInitSettings) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
-            }
+        HttpResult<List<OperatorCatalogue>> result = new HttpResult<>();
+        try {
+            List<OperatorCatalogue> list = new ArrayList<>();
+            Map<String, List<OperatorConfig>> map = new HashMap<>();
+            List<OperatorConfig> map10086 = new ArrayList<>();
+            List<OperatorConfig> map10000 = new ArrayList<>();
+            List<OperatorConfig> map10010 = new ArrayList<>();
+            list.add(new OperatorCatalogue("移动", map10086));
+            list.add(new OperatorCatalogue("联通", map10010));
+            list.add(new OperatorCatalogue("电信", map10000));
+            for (GroupEnum group : GroupEnum.values()) {
+                Website website = websiteService.getCachedWebsiteByName(group.getWebsiteName());
+                if (null == website) {
+                    throw new RuntimeException("website not found websiteName=" + group.getWebsiteName());
+                }
+                WebsiteConf websiteConf = website.getWebsiteConf();
+                String initSetting = websiteConf.getInitSetting();
+                if (StringUtils.isBlank(initSetting)) {
+                    throw new RuntimeException("initSetting is blank websiteName=" + group.getWebsiteName());
+                }
+                JSONObject json = JSON.parseObject(initSetting);
+                if (!json.containsKey("fields")) {
+                    throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
+                }
+                List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"),
+                    FieldInitSetting.class);
+                if (null == fieldInitSettings) {
+                    throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
+                }
 
-            OperatorConfig config = new OperatorConfig();
-            config.setGroopCode(group.getGroopCode());
-            config.setGroupName(group.getGroupName());
-            config.setWebsiteName(group.getWebsiteName());
-            config.setLoginTip(websiteConf.getLoginTip());
-            config.setResetTip(websiteConf.getResetTip());
-            config.setResetType(websiteConf.getResetType());
-            config.setResetURL(websiteConf.getResetURL());
-            config.setSmsReceiver(websiteConf.getSmsReceiver());
-            config.setSmsTemplate(websiteConf.getSmsTemplate());
-            config.setVerifyTip(websiteConf.getVerifyTip());
+                OperatorConfig config = new OperatorConfig();
+                config.setGroopCode(group.getGroopCode());
+                config.setGroupName(group.getGroupName());
+                config.setWebsiteName(group.getWebsiteName());
+                config.setLoginTip(websiteConf.getLoginTip());
+                config.setResetTip(websiteConf.getResetTip());
+                config.setResetType(websiteConf.getResetType());
+                config.setResetURL(websiteConf.getResetURL());
+                config.setSmsReceiver(websiteConf.getSmsReceiver());
+                config.setSmsTemplate(websiteConf.getSmsTemplate());
+                config.setVerifyTip(websiteConf.getVerifyTip());
 
-            for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
-                InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
-                if (null != field.getDependencies()) {
-                    for (String dependency : field.getDependencies()) {
-                        field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
+                for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
+                    InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
+                    if (null != field.getDependencies()) {
+                        for (String dependency : field.getDependencies()) {
+                            field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
+                        }
                     }
+                    if (StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
+                        config.setHasPicCode(true);
+                    }
+                    if (StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
+                        config.setHasSmsCode(true);
+                    }
+                    config.getFields().add(field);
                 }
-                if (StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
-                    config.setHasPicCode(true);
+                if (group.getGroupName().contains("移动")) {
+                    map10086.add(config);
+                    continue;
                 }
-                if (StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
-                    config.setHasSmsCode(true);
+                if (group.getGroupName().contains("联通")) {
+                    map10010.add(config);
+                    continue;
                 }
-                config.getFields().add(field);
+                if (group.getGroupName().contains("电信")) {
+                    map10000.add(config);
+                    continue;
+                }
             }
-            if (group.getGroopCode().contains("移动")) {
-                map10086.add(config);
-                continue;
-            }
-            if (group.getGroopCode().contains("联通")) {
-                map10010.add(config);
-                continue;
-            }
-            if (group.getGroopCode().contains("电信")) {
-                map10000.add(config);
-                continue;
-            }
+            return result.success(list);
+        } catch (Exception e) {
+            logger.error("queryAllOperatorConfig error", e);
+            return result.failure();
         }
 
-        return null;
     }
 
 }
