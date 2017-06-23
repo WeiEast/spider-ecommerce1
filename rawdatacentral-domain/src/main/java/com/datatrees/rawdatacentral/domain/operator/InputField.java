@@ -8,6 +8,7 @@
  */
 package com.datatrees.rawdatacentral.domain.operator;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
  * 表单input标签
  * Created by zhouxinghai on 2017/6/22
  */
-public class InputField {
+public class InputField implements Serializable{
     /**
      * name属性
      */

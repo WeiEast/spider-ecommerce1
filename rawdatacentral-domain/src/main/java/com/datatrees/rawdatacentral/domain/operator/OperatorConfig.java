@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.domain.operator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ import java.util.List;
  * 运营商登陆配置文件
  * Created by zhouxinghai on 2017/6/22.
  */
-public class OperatorConfig {
+public class OperatorConfig implements Serializable{
 
     /**
      * 运营商类别代码
