@@ -9,7 +9,7 @@
 package com.datatrees.rawdatacentral.api;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.operator.OperatorConfig;
+import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 import java.util.List;
@@ -118,5 +118,5 @@ public interface CrawlerService {
      * 每个运营商这里指定了,不可以缓存
      * @return
      */
-    public HttpResult<Map<String, List<OperatorConfig>>> queryAllOperatorConfig();
+    public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig();
 }

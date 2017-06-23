@@ -40,4 +40,16 @@ public enum GroupEnum {
         this.groupName = groupName;
         this.websiteName = websiteName;
     }
+
+    public String getGroopCode() {
+        return groopCode;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public String getWebsiteName() {
+        return websiteName;
+    }
 }

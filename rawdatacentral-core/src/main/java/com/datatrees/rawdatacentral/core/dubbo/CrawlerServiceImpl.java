@@ -9,6 +9,7 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
@@ -22,7 +23,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.operator.OperatorConfig;
+import com.datatrees.rawdatacentral.domain.operator.*;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.share.RedisService;
@@ -361,9 +362,76 @@ public class CrawlerServiceImpl implements CrawlerService {
         }
     }
 
-    @Override public HttpResult<Map<String, List<OperatorConfig>>> queryAllOperatorConfig() {
+    @Override
+    public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
+        List<OperatorCatalogue> list = new ArrayList<>();
+        Map<String, List<OperatorConfig>> map = new HashMap<>();
+        List<OperatorConfig> map10086 = new ArrayList<>();
+        List<OperatorConfig> map10000 = new ArrayList<>();
+        List<OperatorConfig> map10010 = new ArrayList<>();
+        list.add(new OperatorCatalogue("移动", map10086));
+        list.add(new OperatorCatalogue("联通", map10010));
+        list.add(new OperatorCatalogue("电信", map10000));
+        for (GroupEnum group : GroupEnum.values()) {
+            Website website = websiteService.getCachedWebsiteByName(group.getWebsiteName());
+            if (null == website) {
+                throw new RuntimeException("website not found websiteName=" + group.getWebsiteName());
+            }
+            WebsiteConf websiteConf = website.getWebsiteConf();
+            String initSetting = websiteConf.getInitSetting();
+            if (StringUtils.isBlank(initSetting)) {
+                throw new RuntimeException("initSetting is blank websiteName=" + group.getWebsiteName());
+            }
+            JSONObject json = JSON.parseObject(initSetting);
+            if (!json.containsKey("fields")) {
+                throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
+            }
+            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"),
+                FieldInitSetting.class);
+            if (null == fieldInitSettings) {
+                throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
+            }
 
+            OperatorConfig config = new OperatorConfig();
+            config.setGroopCode(group.getGroopCode());
+            config.setGroupName(group.getGroupName());
+            config.setWebsiteName(group.getWebsiteName());
+            config.setLoginTip(websiteConf.getLoginTip());
+            config.setResetTip(websiteConf.getResetTip());
+            config.setResetType(websiteConf.getResetType());
+            config.setResetURL(websiteConf.getResetURL());
+            config.setSmsReceiver(websiteConf.getSmsReceiver());
+            config.setSmsTemplate(websiteConf.getSmsTemplate());
+            config.setVerifyTip(websiteConf.getVerifyTip());
 
+            for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
+                InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
+                if (null != field.getDependencies()) {
+                    for (String dependency : field.getDependencies()) {
+                        field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
+                    }
+                }
+                if (StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
+                    config.setHasPicCode(true);
+                }
+                if (StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
+                    config.setHasSmsCode(true);
+                }
+                config.getFields().add(field);
+            }
+            if (group.getGroopCode().contains("移动")) {
+                map10086.add(config);
+                continue;
+            }
+            if (group.getGroopCode().contains("联通")) {
+                map10010.add(config);
+                continue;
+            }
+            if (group.getGroopCode().contains("电信")) {
+                map10000.add(config);
+                continue;
+            }
+        }
 
         return null;
     }
