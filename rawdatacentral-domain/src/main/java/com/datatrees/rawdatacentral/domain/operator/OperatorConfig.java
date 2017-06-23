@@ -32,12 +32,12 @@ public class OperatorConfig {
     /**
      * 是否有图片验证码
      */
-    private Boolean          hasPicCode;
+    private Boolean          hasPicCode = false;
 
     /**
      * 是否有短信验证码
      */
-    private Boolean          hasSmsCode;
+    private Boolean          hasSmsCode = false;
 
     /**
      * 登陆页面温馨提示
@@ -77,7 +77,7 @@ public class OperatorConfig {
     /**
      * 字段
      */
-    private List<InputField> fields = new ArrayList<>();
+    private List<InputField> fields     = new ArrayList<>();
 
     public String getGroopCode() {
         return groopCode;
