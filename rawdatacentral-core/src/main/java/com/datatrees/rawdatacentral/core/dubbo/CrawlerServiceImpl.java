@@ -280,7 +280,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             if (StringUtils.equals(DirectiveRedisCode.SERVER_FAIL, receiveResult.getStatus())) {
                 logger.error("login failtaskId={},directiveId={},status={},errorMsg={},username={}", taskId,
                     directiveId, receiveResult.getErrorMsg(), username);
-                return result.failure(receiveResult.getErrorMsg());
+                return result.failure(receiveResult.getData());
             }
             logger.info("login success taskId={},directiveId={},username={}", taskId, directiveId, username);
             return result.success("登陆成功!");
