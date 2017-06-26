@@ -395,7 +395,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 }
 
                 OperatorConfig config = new OperatorConfig();
-                config.setGroopCode(group.getGroopCode());
+                config.setGroupCode(group.getGroupCode());
                 config.setGroupName(group.getGroupName());
                 config.setWebsiteName(group.getWebsiteName());
                 config.setLoginTip(websiteConf.getLoginTip());
@@ -408,8 +408,8 @@ public class CrawlerServiceImpl implements CrawlerService {
 
                 for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
                     InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
-                    if (null != field.getDependencies()) {
-                        for (String dependency : field.getDependencies()) {
+                    if (null != fieldInitSetting.getDependencies()) {
+                        for (String dependency : fieldInitSetting.getDependencies()) {
                             field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
                         }
                     }

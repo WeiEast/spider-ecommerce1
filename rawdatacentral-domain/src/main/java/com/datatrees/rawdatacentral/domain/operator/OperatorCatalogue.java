@@ -1,12 +1,13 @@
 package com.datatrees.rawdatacentral.domain.operator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by zhouxinghai on 2017/6/23.
  */
-public class OperatorCatalogue {
+public class OperatorCatalogue implements Serializable{
 
     /**
      * 运营商:移动,电信,联通

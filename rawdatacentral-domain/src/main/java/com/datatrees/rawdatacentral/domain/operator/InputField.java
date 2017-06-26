@@ -8,6 +8,7 @@
  */
 package com.datatrees.rawdatacentral.domain.operator;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
  * 表单input标签
  * Created by zhouxinghai on 2017/6/22
  */
-public class InputField {
+public class InputField implements Serializable{
     /**
      * name属性
      */
@@ -38,7 +39,7 @@ public class InputField {
     /**
      * 验证input正确性的正则
      */
-    private String      validationattern;
+    private String      validationPattern;
 
     /**
      * 验证失败提示信息
@@ -87,12 +88,12 @@ public class InputField {
         this.label = label;
     }
 
-    public String getValidationattern() {
-        return validationattern;
+    public String getValidationPattern() {
+        return validationPattern;
     }
 
-    public void setValidationattern(String validationattern) {
-        this.validationattern = validationattern;
+    public void setValidationPattern(String validationPattern) {
+        this.validationPattern = validationPattern;
     }
 
     public String getValidationMsg() {

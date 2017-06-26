@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.domain.operator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,12 +8,12 @@ import java.util.List;
  * 运营商登陆配置文件
  * Created by zhouxinghai on 2017/6/22.
  */
-public class OperatorConfig {
+public class OperatorConfig implements Serializable{
 
     /**
      * 运营商类别代码
      */
-    private String           groopCode;
+    private String           groupCode;
 
     /**
      * 运营商类别名称
@@ -79,12 +80,12 @@ public class OperatorConfig {
      */
     private List<InputField> fields     = new ArrayList<>();
 
-    public String getGroopCode() {
-        return groopCode;
+    public String getGroupCode() {
+        return groupCode;
     }
 
-    public void setGroopCode(String groopCode) {
-        this.groopCode = groopCode;
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
     }
 
     public String getGroupName() {
