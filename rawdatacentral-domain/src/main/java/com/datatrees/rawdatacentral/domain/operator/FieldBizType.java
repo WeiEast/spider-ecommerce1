@@ -57,7 +57,7 @@ public enum FieldBizType {
                 case USERNAME:
                     field.setName("username");
                     field.setType("text");
-                    field.setValidationattern("\\d{11}");
+                    field.setValidationPattern("\\d{11}");
                     field.setValidationMsg("请输入正确的手机号");
                     field.setPlaceholder("请输入手机号码");
                     break;
@@ -70,7 +70,7 @@ public enum FieldBizType {
                 case SMS_CODE:
                     field.setName("randomPassword");
                     field.setType("text");
-                    field.setValidationattern("\\d{4,6}");
+                    field.setValidationPattern("\\d{4,6}");
                     field.setValidationMsg("请输入短信验证码");
                     field.setPlaceholder("请输入短信验证码");
                     break;

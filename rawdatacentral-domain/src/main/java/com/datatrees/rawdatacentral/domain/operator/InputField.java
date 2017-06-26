@@ -39,7 +39,7 @@ public class InputField implements Serializable{
     /**
      * 验证input正确性的正则
      */
-    private String      validationattern;
+    private String      validationPattern;
 
     /**
      * 验证失败提示信息
@@ -88,12 +88,12 @@ public class InputField implements Serializable{
         this.label = label;
     }
 
-    public String getValidationattern() {
-        return validationattern;
+    public String getValidationPattern() {
+        return validationPattern;
     }
 
-    public void setValidationattern(String validationattern) {
-        this.validationattern = validationattern;
+    public void setValidationPattern(String validationPattern) {
+        this.validationPattern = validationPattern;
     }
 
     public String getValidationMsg() {
