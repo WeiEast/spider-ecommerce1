@@ -13,7 +13,7 @@ public class OperatorConfig implements Serializable{
     /**
      * 运营商类别代码
      */
-    private String           groopCode;
+    private String           groupCode;
 
     /**
      * 运营商类别名称
@@ -80,12 +80,12 @@ public class OperatorConfig implements Serializable{
      */
     private List<InputField> fields     = new ArrayList<>();
 
-    public String getGroopCode() {
-        return groopCode;
+    public String getGroupCode() {
+        return groupCode;
     }
 
-    public void setGroopCode(String groopCode) {
-        this.groopCode = groopCode;
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
     }
 
     public String getGroupName() {

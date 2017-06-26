@@ -395,7 +395,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 }
 
                 OperatorConfig config = new OperatorConfig();
-                config.setGroopCode(group.getGroopCode());
+                config.setGroupCode(group.getGroupCode());
                 config.setGroupName(group.getGroupName());
                 config.setWebsiteName(group.getWebsiteName());
                 config.setLoginTip(websiteConf.getLoginTip());

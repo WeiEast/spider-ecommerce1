@@ -77,7 +77,7 @@ public enum GroupEnum {
     /**
      * 运营商类别代码
      */
-    private final String groopCode;
+    private final String groupCode;
 
     /**
      * 运营商类别名称
@@ -89,14 +89,14 @@ public enum GroupEnum {
      */
     private final String websiteName;
 
-    GroupEnum(String groopCode, String groupName, String websiteName) {
-        this.groopCode = groopCode;
+    GroupEnum(String groupCode, String groupName, String websiteName) {
+        this.groupCode = groupCode;
         this.groupName = groupName;
         this.websiteName = websiteName;
     }
 
-    public String getGroopCode() {
-        return groopCode;
+    public String getGroupCode() {
+        return groupCode;
     }
 
     public String getGroupName() {
