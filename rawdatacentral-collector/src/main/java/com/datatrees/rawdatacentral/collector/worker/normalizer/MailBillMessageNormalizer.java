@@ -8,32 +8,26 @@
  */
 package com.datatrees.rawdatacentral.collector.worker.normalizer;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
-import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
 import com.datatrees.rawdatacentral.core.service.BankService;
+import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -151,7 +145,7 @@ public class MailBillMessageNormalizer implements DataNormalizer {
             LOGGER.warn("get null bank with data sign " + data.getUniqueSign() + ", set default bankId 0");
             return 0;
         } else {
-            return bank.getId();
+            return bank.getBankId();
         }
     }
 

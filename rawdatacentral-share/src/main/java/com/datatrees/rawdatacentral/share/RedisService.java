@@ -169,4 +169,22 @@ public interface RedisService {
      */
     public String createDirectiveId();
 
+    /**
+     * 缓存
+     * @param key
+     * @param value
+     * @param timeout
+     * @param unit
+     */
+    public void cache(String key, Object value, long timeout, TimeUnit unit);
+
+    /**
+     * 查找缓存
+     * @param key
+     * @param cls
+     * @param <T>
+     * @return
+     */
+    public <T> T getCache(String key, Class<T> cls);
+
 }

@@ -1,6 +1,15 @@
 dependencies {
-    compile project(":rawdatacentral-dao")
     compile project(":rawdatacentral-common")
+    compile project(":rawdatacentral-dao")
+    compile project(":rawdatacentral-share")
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
+    compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
+
+    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true)
+
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testCompile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
+
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop     http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+           http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+
+           http://www.springframework.org/schema/tx      http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <!--工单CDL-->
+    <bean id="workorderConfigManager" class="com.shangou.cdl.client.config.DbConfigManager" init-method="init">
+        <property name="appId" value="${workorder.cdl.appid}"/>    <!-- appId,appKey及appName由DBA创建并提供给业务应用 -->
+        <property name="appKey" value="${workorder.cdl.appkey}"/>
+        <property name="appName" value="${workorder.cdl.appname}"/>
+        <property name="env" value="${workorder.configCenter.evn}"/>  <!-- dev、daily、gray、online -->
+    </bean>
+
+    <bean id="workorderDataSource" class="com.shangou.cdl.client.group.SGroupDataSource">
+        <property name="groupName" value="${workorder.cdl.workorder.master.group}"/>
+        <property name="dbConfigManager" ref="workorderConfigManager"/>
+    </bean>
+
+    <bean id="workorderSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="workorderDataSource"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:sqlmap/workorder/*DAO.xml</value>
+                <value>classpath*:sqlmap/workorder/mapper/*Mapper.xml</value>
+            </list>
+        </property>
+        <property name="typeAliasesPackage"
+                  value="com.shandiangou.workorder.domain.model,com.shandiangou.workorder.domain.example"/>
+        <property name="configLocation" value="classpath:rawdatacentral-mybatis-config.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="annotationClass" value="javax.annotation.Resource"/>
+        <property name="basePackage" value="com.shandiangou.workorder.dao"/>
+    </bean>
+
+    <bean id="workorderTransactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="workorderDataSource"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="workorderTransactionManager" proxy-target-class="true"/>
+
+    <tx:advice id="workorderTxAdvice" transaction-manager="workorderTransactionManager">
+        <tx:attributes>
+            <tx:method name="*" rollback-for="Exception" isolation="READ_COMMITTED" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="ao_service" expression="(execution(* com.shandiangou.workorder..impl.*.*(..)))"/>
+        <aop:advisor pointcut-ref="ao_service" advice-ref="workorderTxAdvice"/>
+    </aop:config>
+
+</beans>

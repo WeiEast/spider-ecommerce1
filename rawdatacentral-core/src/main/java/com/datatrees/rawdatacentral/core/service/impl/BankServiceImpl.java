@@ -8,19 +8,16 @@
  */
 package com.datatrees.rawdatacentral.core.service.impl;
 
+import com.datatrees.common.util.CacheUtil;
+import com.datatrees.rawdatacentral.core.common.Constants;
+import com.datatrees.rawdatacentral.core.dao.BankDao;
+import com.datatrees.rawdatacentral.core.service.BankService;
+import com.datatrees.rawdatacentral.domain.model.Bank;
+
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.datatrees.rawdatacentral.core.common.Constants;
-import org.springframework.stereotype.Service;
-
-import com.datatrees.common.util.CacheUtil;
-import com.datatrees.rawdatacentral.core.dao.BankDao;
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.core.service.BankService;
 
 /**
  *
@@ -28,7 +25,7 @@ import com.datatrees.rawdatacentral.core.service.BankService;
  * @version 1.0
  * @since 2015年7月28日 下午3:29:51
  */
-@Service
+//@Service
 public class BankServiceImpl implements BankService {
 
     @Resource
@@ -50,8 +47,8 @@ public class BankServiceImpl implements BankService {
             Map<String, Bank> bankEmailMap = new HashMap<String, Bank>();
             Map<Integer, Bank> bankWebisteMap = new HashMap<Integer, Bank>();
             for (Bank bank : bankList) {
-                bankMap.put(bank.getId(), bank);
-                bankEmailMap.put(bank.getBankEmailAddr().toLowerCase(), bank);
+                bankMap.put(bank.getBankId(), bank);
+//                bankEmailMap.put(bank.getBankEmailAddr().toLowerCase(), bank);
                 bankWebisteMap.put(bank.getWebsiteId(), bank);
             }
             CacheUtil.INSTANCE.insertObject(Constants.BANK_MAP_KEY, bankMap);

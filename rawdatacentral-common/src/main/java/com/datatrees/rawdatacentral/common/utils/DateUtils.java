@@ -107,11 +107,4 @@ public class DateUtils {
         return sb.toString();
     }
 
-    public static void main(String[] args) {
-
-        System.out.println(getUsedTime(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1)));
-        System.out.println(
-            getUsedTime(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1) - TimeUnit.SECONDS.toMillis(4)));
-    }
-
 }
