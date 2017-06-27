@@ -1,12 +1,14 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
+import com.datatrees.rawdatacentral.domain.model.BankMail;
 import com.datatrees.rawdatacentral.domain.model.example.BankMailExample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,8 +95,16 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public Map<String, Integer> getMailBankMap() {
-        BankMailExample example = new BankMailExample();
-//        example
-        return null;
+        String key = "rawdatacentral_mail_bank";
+        Map<String, Integer> map = redisService.getCache(key, Map.class);
+        if (null == map || map.isEmpty()) {
+            List<BankMail> list = bankMailDAO.selectByExample(new BankMailExample());
+            map = new HashMap<>();
+            for (BankMail bankMail : list) {
+                map.put(bankMail.getBankEmailAddr().toLowerCase(), bankMail.getBankId());
+            }
+            redisService.cache(key, map, 1, TimeUnit.DAYS);
+        }
+        return map;
     }
 }
