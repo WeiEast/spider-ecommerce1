@@ -8,10 +8,6 @@
  */
 package com.datatrees.rawdatacentral.core.service;
 
-import java.util.Map;
-
-import com.datatrees.rawdatacentral.domain.model.Bank;
-
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -20,12 +16,12 @@ import com.datatrees.rawdatacentral.domain.model.Bank;
  */
 public interface BankService {
 
-    public Map<Integer, Bank> getCachedBankMap();
-
-    public Map<String, Bank> getBankEmailMap();
-
-    public Bank getBank(String mailAddress);
-    
-    public Bank getBankByWebsiteId(int websiteId);
+//    public Map<Integer, Bank> getCachedBankMap();
+//
+//    public Map<String, Bank> getBankEmailMap();
+//
+//    public Bank getBank(String mailAddress);
+//
+//    public Bank getBankByWebsiteId(int websiteId);
 
 }

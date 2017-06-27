@@ -1,9 +1,7 @@
 package com.datatrees.rawdatacentral.service;
 
 import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.domain.model.BankMail;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,42 +11,38 @@ import java.util.Map;
 public interface BankService {
 
     /**
-     * 查询所有银行信息并缓存
-     * key:bankId
-     * value:bank
+     * 从缓存获取bank
+     * @param bankId
      * @return
      */
-    public Map<Integer, Bank> getCachedBankMap();
+    Bank getByBankIdFromCache(Integer bankId);
 
     /**
-     *
-     * @return
-     */
-    public Map<String, Bank> getBankEmailMap();
-
-    /**
-     * 根据邮箱获取银行信息
-     * @param mailAddress 邮箱
-     * @return
-     */
-    public Bank getBank(String mailAddress);
-
-    /**
-     * 根据websiteId获取银行信息
+     * 从缓存获取bank
      * @param websiteId
      * @return
      */
-    public Bank getBankByWebsiteId(int websiteId);
+    Bank getByWebsiteIdFromCache(Integer websiteId);
 
     /**
-     * 获取所有的银行信息
+     * 获取有效的bank
+     * @param bankId
      * @return
      */
-    public List<Bank> queryAllBank();
+    Bank getEnabledByBankId(Integer bankId);
 
     /**
-     * 获取所有的银行邮箱信息
+     * 获取bank
+     * @param websiteId
      * @return
      */
-    public List<BankMail> queryAllBankMail();
+    Bank getEnabledByWebsiteId(Integer websiteId);
+
+    /**
+     * key:mail
+     * value:bankId
+     * @return
+     */
+    Map<String, Integer> getMailBankMap();
+
 }

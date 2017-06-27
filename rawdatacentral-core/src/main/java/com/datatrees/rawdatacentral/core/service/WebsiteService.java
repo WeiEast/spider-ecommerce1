@@ -36,7 +36,7 @@ public interface WebsiteService {
     public Website getWebsiteNoConfByName(String websiteName);
 
     public int insertWebsiteConfig(Website website);
-    
+
     public int countWebsiteConfigByWebsiteId(int websiteId);
 
 

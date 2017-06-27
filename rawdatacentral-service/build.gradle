@@ -5,6 +5,8 @@ dependencies {
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
     compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
+//    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
+    compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
 
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true)
 

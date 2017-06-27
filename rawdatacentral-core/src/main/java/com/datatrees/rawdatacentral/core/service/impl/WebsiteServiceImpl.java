@@ -21,10 +21,10 @@ import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
 import com.datatrees.rawdatacentral.core.dao.WebsiteDao;
-import com.datatrees.rawdatacentral.core.service.BankService;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.model.Bank;
+import com.datatrees.rawdatacentral.service.BankService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  *
@@ -129,7 +128,7 @@ public class WebsiteServiceImpl implements WebsiteService {
         if (website == null) {
             log.info("getCachedWebsiteByName not cache found websiteName={}", websiteName);
             website = websiteDao.getWebsiteByName(websiteName);
-            if(null == website){
+            if (null == website) {
                 log.error("getCachedWebsiteByName error website not found from db websiteName={}", websiteName);
                 throw new RuntimeException("website not found websiteName=" + websiteName);
             }
@@ -234,8 +233,7 @@ public class WebsiteServiceImpl implements WebsiteService {
      */
     @Override
     public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId) {
-        Map<Integer, Bank> bankMap = bankService.getCachedBankMap();
-        Bank bank = bankMap.get(bankId);
+        Bank bank = bankService.getByBankIdFromCache(bankId);
         if (bank != null) {
             return this.getExtractorProcessorContext(bank.getWebsiteId());
         }

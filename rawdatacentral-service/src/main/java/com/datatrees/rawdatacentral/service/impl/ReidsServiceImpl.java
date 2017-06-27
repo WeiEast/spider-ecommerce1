@@ -352,8 +352,7 @@ public class ReidsServiceImpl implements RedisService {
     public <T> T getCache(String key, Class<T> cls) {
         String json = getString(key);
         if (StringUtils.isNoneBlank(json)) {
-            T result = JSON.parseObject(json, new TypeReference<T>() {
-            });
+            T result = JSON.parseObject(json, cls);
             logger.info("getCache success key={}", key);
             return result;
         }
