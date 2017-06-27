@@ -8,10 +8,6 @@
  */
 package com.datatrees.rawdatacentral.core.service;
 
-import java.util.List;
-
-import com.datatrees.rawdatacentral.domain.model.Keyword;
-
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -20,5 +16,5 @@ import com.datatrees.rawdatacentral.domain.model.Keyword;
  */
 public interface KeywordService {
 
-    public List<Keyword> getKeywordByType(String type);
+//    public List<Keyword> getKeywordByType(String type);
 }
