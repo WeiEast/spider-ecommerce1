@@ -6,21 +6,16 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.dao;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+package com.datatrees.rawdatacentral.dao;
 
 import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
 
 /**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月28日 下午3:26:42
+ * 
+ * Created by zhouxinghai on 2017/6/29
  */
-public interface MailExtractResultDao {
+public interface MailExtractResultDAO {
+
     public int insertMailExtractResult(MailExtractResult result);
 
 
