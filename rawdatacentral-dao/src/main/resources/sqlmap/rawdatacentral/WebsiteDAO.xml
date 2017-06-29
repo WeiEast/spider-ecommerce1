@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.datatrees.rawdatacentral.dao.WebsiteDAO">
+    <resultMap type="com.datatrees.rawdatacentral.domain.common.Website" id="RM-Website-With-Config">
+        <result column="Id" property="id"/>
+        <result column="WebsiteName" property="websiteName"/>
+        <result column="WebsiteDomain" property="websiteDomain"/>
+        <result column="WebsiteType" property="websiteType"/>
+        <result column="SearchConfig" property="searchConfigSource"/>
+        <result column="ExtractorConfig" property="extractorConfigSource"/>
+    </resultMap>
+
+    <resultMap type="com.datatrees.rawdatacentral.domain.model.WebsiteConf" id="RM-WebsiteConf">
+        <result column="WebsiteName" property="websiteName"/>
+        <result column="WebsiteType" property="websiteType"/>
+        <result column="Conf" property="initSetting"/>
+        <result column="LoginTip" property="loginTip"/>
+        <result column="VerifyTip" property="verifyTip"/>
+        <result column="ResetType" property="resetType"/>
+        <result column="SmsTemplate" property="smsTemplate"/>
+        <result column="SmsReceiver" property="smsReceiver"/>
+        <result column="ResetURL" property="resetURL"/>
+        <result column="ResetTip" property="resetTip"/>
+        <result column="Simulate" property="simulate"/>
+    </resultMap>
+
+
+    <select id="getWebsiteByName" parameterType="string" resultMap="RM-Website-With-Config">
+        SELECT w.Id,w.WebsiteName,WebsiteDomain,WebsiteType,SearchConfig,ExtractorConfig from T_WEBSITE w LEFT JOIN
+        T_WEBSITE_CONF wc ON
+        w.id = wc.WebsiteId WHERE w.IsEnabled =1 AND w.WebsiteName = #WebsiteName#
+    </select>
+
+    <select id="getWebsiteById" parameterType="int" resultMap="RM-Website-With-Config">
+        SELECT w.Id,w.WebsiteName,WebsiteDomain,WebsiteType,SearchConfig,ExtractorConfig from T_WEBSITE w LEFT JOIN
+        T_WEBSITE_CONF wc ON
+        w.id
+        = wc.WebsiteId WHERE w.IsEnabled =1 AND w.Id = #id#
+    </select>
+
+    <select id="getWebsiteConfById" parameterType="int" resultMap="RM-WebsiteConf">
+        SELECT w.*,wt.conf,wt.name from T_WEBSITE w LEFT JOIN T_WEBSITE_TEMPLATE wt ON w.TemplateId = wt.id WHERE w.Id =
+        #id#
+    </select>
+
+    <update id="updateWebsiteConfig" parameterType="java.util.HashMap">
+        UPDATE
+        t_website_conf
+        <set>
+            <if test="searchConfigSource != null">
+                SearchConfig = #{searchConfigSource,jdbcType=VARCHAR},
+            </if>
+            <if test="extractConfigSource != null">
+                ExtractorConfig = #{extractConfigSource,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE WebsiteId =#websiteId#
+    </update>
+
+    <insert id="insertWebsiteConfig" parameterType="java.util.HashMap">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO t_website_conf (WebsiteId,SearchConfig,ExtractorConfig,CreatedAt,UpdatedAt)
+        values (#websiteId#,#searchConfigSource#,#extractConfigSource#,now(),now())
+    </insert>
+
+    <select id="countWebsiteConfigByWebsiteId" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM t_website_conf WHERE WebsiteId = #websiteId#
+    </select>
+
+</mapper>
+	

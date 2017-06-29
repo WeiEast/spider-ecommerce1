@@ -6,17 +6,16 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.dao;
+package com.datatrees.rawdatacentral.dao;
 
 import com.datatrees.rawdatacentral.domain.common.Website;
 
 /**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年6月9日 下午11:28:15
+ * 
+ * Created by zhouxinghai on 2017/6/29
  */
-public interface WebsiteDao {
+public interface WebsiteDAO {
+
     public Website getWebsiteByName(String websiteName);
 
     public Website getWebsiteById(int id);

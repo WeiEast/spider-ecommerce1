@@ -20,7 +20,7 @@ import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
-import com.datatrees.rawdatacentral.core.dao.WebsiteDao;
+import com.datatrees.rawdatacentral.dao.WebsiteDAO;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.model.Bank;
@@ -49,7 +49,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     private String              localConfigPath    = PropertiesConfiguration.getInstance().get("local.config.path", "");
 
     @Resource
-    private WebsiteDao          websiteDao;
+    private WebsiteDAO websiteDAO;
 
     @Resource
     private BankService         bankService;
@@ -110,7 +110,7 @@ public class WebsiteServiceImpl implements WebsiteService {
         Website website = (Website) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_ID_PREFIX + id,
             websiteExpiredTime);
         if (website == null) {
-            website = websiteDao.getWebsiteById(id);
+            website = websiteDAO.getWebsiteById(id);
             this.testModeHandle(website);
             if (website != null) {
                 website = this.websiteContextBuild(website);
@@ -127,7 +127,7 @@ public class WebsiteServiceImpl implements WebsiteService {
             websiteExpiredTime);
         if (website == null) {
             log.info("getCachedWebsiteByName not cache found websiteName={}", websiteName);
-            website = websiteDao.getWebsiteByName(websiteName);
+            website = websiteDAO.getWebsiteByName(websiteName);
             if (null == website) {
                 log.error("getCachedWebsiteByName error website not found from db websiteName={}", websiteName);
                 throw new RuntimeException("website not found websiteName=" + websiteName);
@@ -150,7 +150,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     public Website getWebsiteByName(String websiteName) {
         if (StringUtils.isBlank(websiteName))
             return null;
-        Website website = websiteDao.getWebsiteByName(websiteName);
+        Website website = websiteDAO.getWebsiteByName(websiteName);
         if (website != null) {
             this.testModeHandle(website);
             website = this.websiteContextBuild(website);
@@ -249,7 +249,7 @@ public class WebsiteServiceImpl implements WebsiteService {
      */
     @Override
     public int updateWebsiteConfig(Website website) {
-        return websiteDao.updateWebsiteConfig(website);
+        return websiteDAO.updateWebsiteConfig(website);
     }
 
     /*
@@ -260,7 +260,7 @@ public class WebsiteServiceImpl implements WebsiteService {
      */
     @Override
     public Website getWebsiteNoConfByName(String websiteName) {
-        return websiteDao.getWebsiteNoConfByName(websiteName);
+        return websiteDAO.getWebsiteNoConfByName(websiteName);
     }
 
     /*
@@ -272,7 +272,7 @@ public class WebsiteServiceImpl implements WebsiteService {
      */
     @Override
     public int insertWebsiteConfig(Website website) {
-        return websiteDao.insertWebsiteConfig(website);
+        return websiteDAO.insertWebsiteConfig(website);
     }
 
     /* (non-Javadoc)
@@ -280,7 +280,7 @@ public class WebsiteServiceImpl implements WebsiteService {
      */
     @Override
     public int countWebsiteConfigByWebsiteId(int websiteId) {
-        return websiteDao.countWebsiteConfigByWebsiteId(websiteId);
+        return websiteDAO.countWebsiteConfigByWebsiteId(websiteId);
     }
 
 }
