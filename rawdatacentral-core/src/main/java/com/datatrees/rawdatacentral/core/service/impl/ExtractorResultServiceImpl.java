@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.core.service.impl;
 import com.datatrees.rawdatacentral.core.dao.EBankExtractResultDao;
 import com.datatrees.rawdatacentral.core.dao.EcommerceExtractResultDao;
 import com.datatrees.rawdatacentral.core.dao.MailExtractResultDao;
-import com.datatrees.rawdatacentral.core.dao.OperatorExtractResultDao;
+import com.datatrees.rawdatacentral.dao.OperatorExtractResultDAO;
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
 import com.datatrees.rawdatacentral.dao.DefaultExtractResultDAO;
 import com.datatrees.rawdatacentral.domain.model.*;
@@ -24,7 +24,7 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
     private EcommerceExtractResultDao ecommerceExtractResultDao;
 
     @Resource
-    private OperatorExtractResultDao operatorExtractResultDao;
+    private OperatorExtractResultDAO operatorExtractResultDao;
 
     @Resource
     private EBankExtractResultDao eBankExtractResultDao;
