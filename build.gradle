@@ -31,7 +31,7 @@ ext {
     logbackVersion = "1.1.6"
     crawlerCoreVersion = "3.0.5.1-SNAPSHOT"
     logstashLogbackEncoderVersion = "4.4"
-    abstractpluginVersion = "1000.1.5.2-SNAPSHOT"
+    abstractpluginVersion = "1000.1.5.3-SNAPSHOT"
     superDiamondClientVersion = "1.1.3-SNAPSHOT"
     webrobotClientVersion = "1.0.0-SNAPSHOT"
     databossApiClientSdkVersion = "1.0.8-SNAPSHOT"
