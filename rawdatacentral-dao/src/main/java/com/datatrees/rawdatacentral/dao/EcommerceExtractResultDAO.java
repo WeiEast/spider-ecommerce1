@@ -6,16 +6,15 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.dao;
+package com.datatrees.rawdatacentral.dao;
 
 import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
 
 /**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月28日 下午3:20:34
+ * 
+ * Created by zhouxinghai on 2017/6/29
  */
-public interface EcommerceExtractResultDao {
+public interface EcommerceExtractResultDAO {
+
     public int insertEcommerceExtractResult(EcommerceExtractResult result);
 }

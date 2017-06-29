@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
 import com.datatrees.rawdatacentral.core.dao.EBankExtractResultDao;
-import com.datatrees.rawdatacentral.core.dao.EcommerceExtractResultDao;
+import com.datatrees.rawdatacentral.dao.EcommerceExtractResultDAO;
 import com.datatrees.rawdatacentral.dao.MailExtractResultDAO;
 import com.datatrees.rawdatacentral.dao.OperatorExtractResultDAO;
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
@@ -21,7 +21,7 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
     private MailExtractResultDAO mailExtractResultDao;
 
     @Resource
-    private EcommerceExtractResultDao ecommerceExtractResultDao;
+    private EcommerceExtractResultDAO ecommerceExtractResultDao;
 
     @Resource
     private OperatorExtractResultDAO operatorExtractResultDao;
