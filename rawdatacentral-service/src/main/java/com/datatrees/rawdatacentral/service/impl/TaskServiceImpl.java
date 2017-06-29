@@ -6,56 +6,60 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.dao.impl;
+package com.datatrees.rawdatacentral.service.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Component;
-
-import com.datatrees.rawdatacentral.core.dao.TaskDao;
+import com.datatrees.rawdatacentral.dao.TaskDAO;
 import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.service.TaskService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since 2015年7月30日 上午12:11:31
+ * @since 2015年7月30日 上午12:09:08
  */
-@Component
-public class TaskDaoImpl extends BaseDao implements TaskDao {
+@Service
+public class TaskServiceImpl implements TaskService {
+
+    @Resource
+    private TaskDAO taskDAO;
 
     /*
      * (non-Javadoc)
      * 
-     * @see TaskDao#insertTask(Task)
+     * @see
+     * TaskService#insertTask(com.datatrees.rawdatacentral.core.model
+     * .Task)
      */
     @Override
     public int insertTask(Task task) {
-        return (int) sqlMapClientTemplate.insert("Task.insertTask", task);
+        return taskDAO.insertTask(task);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see TaskDao#updateTask(Task)
+     * @see
+     * TaskService#updateTask(com.datatrees.rawdatacentral.core.model
+     * .Task)
      */
     @Override
     public void updateTask(Task task) {
-        sqlMapClientTemplate.update("Task.updateTask", task);
+        taskDAO.updateTask(task);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see TaskDao#selectNow()
+     * @see TaskService#selectNow()
      */
     @Override
     public Date selectNow() {
-        return (Date) sqlMapClientTemplate.queryForObject("Task.selectNow");
+        return taskDAO.selectNow();
     }
-
 
 }

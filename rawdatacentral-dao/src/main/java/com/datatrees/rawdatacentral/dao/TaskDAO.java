@@ -6,20 +6,20 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.service;
-
-import java.util.Date;
-import java.util.List;
+package com.datatrees.rawdatacentral.dao;
 
 import com.datatrees.rawdatacentral.domain.common.Task;
 
+import javax.annotation.Resource;
+import java.util.Date;
+
 /**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月28日 下午5:38:06
+ * 
+ * Created by zhouxinghai on 2017/6/29
  */
-public interface TaskService {
+@Resource
+public interface TaskDAO {
+
     public int insertTask(Task task);
 
     public void updateTask(Task task);
