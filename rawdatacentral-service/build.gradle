@@ -1,0 +1,6 @@
+dependencies {
+    compile project(":rawdatacentral-dao")
+    compile project(":rawdatacentral-common")
+    compile "com.alibaba:druid:${druidVersion}"
+    compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
+}

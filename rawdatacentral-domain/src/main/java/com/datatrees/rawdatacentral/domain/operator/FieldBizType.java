@@ -64,12 +64,14 @@ public enum FieldBizType {
                 case PASSWORD:
                     field.setName("password");
                     field.setType("password");
+                    field.setValidationPattern("");
                     field.setValidationMsg("请输入服务密码");
                     field.setPlaceholder("请输入服务密码");
                     break;
                 case SMS_CODE:
                     field.setName("randomPassword");
                     field.setType("text");
+                    field.setValidationPattern("");
                     field.setValidationPattern("\\d{4,6}");
                     field.setValidationMsg("请输入短信验证码");
                     field.setPlaceholder("请输入短信验证码");
@@ -77,6 +79,7 @@ public enum FieldBizType {
                 case PIC_CODE:
                     field.setName("code");
                     field.setType("text");
+                    field.setValidationPattern("");
                     field.setValidationMsg("请输入验证码");
                     field.setPlaceholder("请输入验证码");
                     break;

@@ -30,10 +30,4 @@ dependencies {
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
     compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-
-    testCompile "junit:junit:${junitVersion}"
-    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
-        exclude(module: 'commons-logging')
-
-    }
 }
