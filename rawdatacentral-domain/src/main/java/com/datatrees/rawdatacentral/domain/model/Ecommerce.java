@@ -1,83 +1,75 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- *
- * Copyright (c) datatrees.com Inc. 2015
- */
 package com.datatrees.rawdatacentral.domain.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
-/**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月27日 下午2:11:28
- */
+ /** create by system from table t_ecommerce(ecommerce basic info)  */
 public class Ecommerce implements Serializable {
-    private int id;
-    private int websiteId;
-    private String ecommerceName;
-    private boolean isEnabled;
+    /** bank Id */
+    private Integer id;
 
-    /**
-     * @return the id
-     */
-    public int getId() {
+    /** not null if ecommerce support search */
+    private Integer websiteId;
+
+    /** ecommerce name */
+    private String ecommerceName;
+
+    /** 0:false,1:true */
+    private Boolean isenabled;
+
+    /**  */
+    private Date createdAt;
+
+    /**  */
+    private Date updatedAt;
+
+    private static final long serialVersionUID = 1L;
+
+    public Integer getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * @return the websiteId
-     */
-    public int getWebsiteId() {
+    public Integer getWebsiteId() {
         return websiteId;
     }
 
-    /**
-     * @param websiteId the websiteId to set
-     */
-    public void setWebsiteId(int websiteId) {
+    public void setWebsiteId(Integer websiteId) {
         this.websiteId = websiteId;
     }
 
-    /**
-     * @return the ecommerceName
-     */
     public String getEcommerceName() {
         return ecommerceName;
     }
 
-    /**
-     * @param ecommerceName the ecommerceName to set
-     */
     public void setEcommerceName(String ecommerceName) {
-        this.ecommerceName = ecommerceName;
+        this.ecommerceName = ecommerceName == null ? null : ecommerceName.trim();
     }
 
-    /**
-     * @return the isEnabled
-     */
-    public boolean isEnabled() {
-        return isEnabled;
+    public Boolean getIsenabled() {
+        return isenabled;
     }
 
-    /**
-     * @param isEnabled the isEnabled to set
-     */
-    public void setEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
+    public void setIsenabled(Boolean isenabled) {
+        this.isenabled = isenabled;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
