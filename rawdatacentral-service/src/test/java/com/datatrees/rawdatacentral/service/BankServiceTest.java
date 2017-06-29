@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.service;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -34,4 +35,11 @@ public class BankServiceTest extends BaseTest {
     }
 
 
+    @Test
+    public void testCache(){
+        Map<String, Integer> map = bankService.getMailBankMap();
+        map = bankService.getMailBankMap();
+        map = bankService.getMailBankMap();
+
+    }
 }
