@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.datatrees.rawdatacentral.dao.DefaultExtractResultDAO">
+
+	<insert id="insert" parameterType="DefaultExtractResult">
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into t_default_extract_result (Id, TaskLogId, Duration,
+		WebsiteId, Status,
+		Remark, Url, UniqueSign,UniqueMd5,
+		ResultType, StoragePath, CreatedAt)
+		values (#id#, #taskId#, #duration#,
+		#websiteId#, #status#,
+		#remark#, #url#, #uniqueSign#,#uniqueMd5#,
+		#resultType#, #storagePath#, now())
+	</insert>
+
+	<update id="updateByPrimaryKey" parameterType="DefaultExtractResult">
+		update t_default_extract_result 	
+		set TaskLogId = #taskId#,
+		WebsiteId = #websiteId#,
+		Status = #status#,
+		Remark = #remark#,
+		Url = #url#,
+		UniqueSign = #uniqueSign#,
+		ResultType = #resultType#,
+		StoragePath = #storagePath#,
+		UpdatedAt = now()
+		where Id = #id#
+	</update>
+</mapper>
