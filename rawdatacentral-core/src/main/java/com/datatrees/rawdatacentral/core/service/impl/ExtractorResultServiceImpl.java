@@ -1,11 +1,8 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
-import com.datatrees.rawdatacentral.core.dao.EBankExtractResultDao;
-import com.datatrees.rawdatacentral.dao.EcommerceExtractResultDAO;
-import com.datatrees.rawdatacentral.dao.MailExtractResultDAO;
-import com.datatrees.rawdatacentral.dao.OperatorExtractResultDAO;
+import com.datatrees.rawdatacentral.dao.*;
+import com.datatrees.rawdatacentral.dao.EbankExtractResultDAO;
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
-import com.datatrees.rawdatacentral.dao.DefaultExtractResultDAO;
 import com.datatrees.rawdatacentral.domain.model.*;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +24,7 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
     private OperatorExtractResultDAO operatorExtractResultDao;
 
     @Resource
-    private EBankExtractResultDao eBankExtractResultDao;
+    private EbankExtractResultDAO eBankExtractResultDao;
 
     @Resource
     private DefaultExtractResultDAO defaultExtractResultDAO;
