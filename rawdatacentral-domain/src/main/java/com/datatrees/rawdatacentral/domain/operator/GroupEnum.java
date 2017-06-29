@@ -49,7 +49,7 @@ public enum GroupEnum {
 //    FU_JIAN_10000("FU_JIAN_10000","福建电信","fu_jian_10000_web"),
 //    SHAN_XI_TY_10086("SHAN_XI_TY_10086","山西移动","shan_xi_ty_10086_web"),
 //    SHAN_XI_TY_10000("SHAN_XI_TY_10000","山西电信","shan_xi_ty_10000_web"),
-//    JI_LIN_10086("JI_LIN_10086","吉林移动","ji_lin_10086_shop"),
+    JI_LIN_10086("JI_LIN_10086","吉林移动","ji_lin_10086_shop"),
 //    JI_LIN_10000("JI_LIN_10000","吉林电信","ji_lin_10000_web"),
 //    LIAO_NING_10086("LIAO_NING_10086","辽宁移动","liao_ning_10086_web"),
 //    LIAO_NING_10000("LIAO_NING_10000","辽宁电信","liao_ning_10000_web"),
