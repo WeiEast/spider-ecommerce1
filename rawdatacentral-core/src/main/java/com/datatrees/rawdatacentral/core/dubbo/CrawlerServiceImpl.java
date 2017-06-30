@@ -18,7 +18,7 @@ import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
-import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
@@ -79,7 +79,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             newWebsiteName = map.get(websiteName);
         }
         if (StringUtils.isNotBlank(newWebsiteName)) {
-            Website website = websiteService.getCachedWebsiteByName(newWebsiteName);
+            WebsiteConfig website = websiteService.getCachedWebsiteByName(newWebsiteName);
             WebsiteConf conf = null;
             if (website != null && website.getWebsiteConf() != null) {
                 conf = website.getWebsiteConf();
@@ -113,7 +113,7 @@ public class CrawlerServiceImpl implements CrawlerService {
         logger.info("crawlerService start update webiste:" + websiteName);
         try {
             synchronized (websiteName) {
-                Website website = websiteService.getWebsiteNoConfByName(websiteName);
+                WebsiteConfig website = websiteService.getWebsiteNoConfByName(websiteName);
                 if (website != null) {
                     website.setSearchConfigSource(searchConfigSource);
                     website.setExtractorConfigSource(extractConfigSource);
@@ -375,7 +375,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             list.add(new OperatorCatalogue("联通", map10010));
             list.add(new OperatorCatalogue("电信", map10000));
             for (GroupEnum group : GroupEnum.values()) {
-                Website website = websiteService.getCachedWebsiteByName(group.getWebsiteName());
+                WebsiteConfig website = websiteService.getCachedWebsiteByName(group.getWebsiteName());
                 if (null == website) {
                     throw new RuntimeException("website not found websiteName=" + group.getWebsiteName());
                 }

@@ -20,9 +20,9 @@ import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.core.common.Constants;
 import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
-import com.datatrees.rawdatacentral.dao.WebsiteDAO;
+import com.datatrees.rawdatacentral.dao.MyWebsiteDAO;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
-import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.service.BankService;
 import org.apache.commons.io.FileUtils;
@@ -49,7 +49,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     private String              localConfigPath    = PropertiesConfiguration.getInstance().get("local.config.path", "");
 
     @Resource
-    private WebsiteDAO          websiteDAO;
+    private MyWebsiteDAO websiteDAO;
 
     @Resource
     private BankService         bankService;
@@ -68,7 +68,7 @@ public class WebsiteServiceImpl implements WebsiteService {
                 String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
                 log.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class "
                          + type.getClass());
-                Website website = getCachedWebsiteByName(parentWebsiteName);
+                WebsiteConfig website = getCachedWebsiteByName(parentWebsiteName);
                 if (website != null) {
                     if (type instanceof SearchConfig) {
                         ((SearchConfig) type).clone(website.getSearchConfig());
@@ -83,7 +83,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     private WebsiteParentConfigHandler parentConfigHandler = new WebsiteParentConfigHandler();
 
-    private void testModeHandle(Website website) {
+    private void testModeHandle(WebsiteConfig website) {
         if (website != null && testModeSwitch) {
             File configFile = new File(localConfigPath + website.getWebsiteName() + "_SearchConfig.xml");
             if (configFile.exists()) {
@@ -106,8 +106,8 @@ public class WebsiteServiceImpl implements WebsiteService {
         }
     }
 
-    public Website getCachedWebsiteByID(int id) {
-        Website website = (Website) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_ID_PREFIX + id,
+    public WebsiteConfig getCachedWebsiteByID(int id) {
+        WebsiteConfig website = (WebsiteConfig) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_ID_PREFIX + id,
             websiteExpiredTime);
         if (website == null) {
             website = websiteDAO.getWebsiteById(id);
@@ -122,8 +122,8 @@ public class WebsiteServiceImpl implements WebsiteService {
         return website;
     }
 
-    public Website getCachedWebsiteByName(String websiteName) {
-        Website website = (Website) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_NAME_PREFIX + websiteName,
+    public WebsiteConfig getCachedWebsiteByName(String websiteName) {
+        WebsiteConfig website = (WebsiteConfig) CacheUtil.INSTANCE.getObject(Constants.WEBSITE_CONTEXT_NAME_PREFIX + websiteName,
             websiteExpiredTime);
         if (website == null) {
             log.info("getCachedWebsiteByName not cache found websiteName={}", websiteName);
@@ -147,11 +147,11 @@ public class WebsiteServiceImpl implements WebsiteService {
         return website;
     }
 
-    public Website getWebsiteByName(String websiteName) {
+    public WebsiteConfig getWebsiteByName(String websiteName) {
         if (StringUtils.isBlank(websiteName)) {
             return null;
         }
-        Website website = websiteDAO.getWebsiteByName(websiteName);
+        WebsiteConfig website = websiteDAO.getWebsiteByName(websiteName);
         if (website != null) {
             this.testModeHandle(website);
             website = this.websiteContextBuild(website);
@@ -161,7 +161,7 @@ public class WebsiteServiceImpl implements WebsiteService {
         return website;
     }
 
-    private Website websiteContextBuild(Website website) {
+    private WebsiteConfig websiteContextBuild(WebsiteConfig website) {
         if (website != null) {
             if (StringUtils.isNotEmpty(website.getSearchConfigSource())) {
                 try {
@@ -189,7 +189,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     @Override
     public SearchProcessorContext getSearchProcessorContext(String websiteName) {
-        Website website = this.getCachedWebsiteByName(websiteName);
+        WebsiteConfig website = this.getCachedWebsiteByName(websiteName);
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
             searchProcessorContext.setPluginManager(pluginManager);
@@ -205,7 +205,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     @Override
     public ExtractorProcessorContext getExtractorProcessorContext(int websiteId) {
-        Website website = this.getCachedWebsiteByID(websiteId);
+        WebsiteConfig website = this.getCachedWebsiteByID(websiteId);
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website);
             extractorProcessorContext.setPluginManager(pluginManager);
@@ -225,17 +225,17 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
-    public int updateWebsiteConfig(Website website) {
+    public int updateWebsiteConfig(WebsiteConfig website) {
         return websiteDAO.updateWebsiteConfig(website);
     }
 
     @Override
-    public Website getWebsiteNoConfByName(String websiteName) {
+    public WebsiteConfig getWebsiteNoConfByName(String websiteName) {
         return websiteDAO.getWebsiteNoConfByName(websiteName);
     }
 
     @Override
-    public int insertWebsiteConfig(Website website) {
+    public int insertWebsiteConfig(WebsiteConfig website) {
         return websiteDAO.insertWebsiteConfig(website);
     }
 

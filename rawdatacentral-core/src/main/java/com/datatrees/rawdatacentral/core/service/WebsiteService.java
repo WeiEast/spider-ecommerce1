@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.core.service;
 
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
 
 /**
  *
@@ -25,17 +25,17 @@ public interface WebsiteService {
 
     public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId);
 
-    public Website getWebsiteByName(String websiteName);
+    public WebsiteConfig getWebsiteByName(String websiteName);
 
-    public Website getCachedWebsiteByID(int websiteId);
+    public WebsiteConfig getCachedWebsiteByID(int websiteId);
 
-    public Website getCachedWebsiteByName(String websiteName);
+    public WebsiteConfig getCachedWebsiteByName(String websiteName);
 
-    public int updateWebsiteConfig(Website website);
+    public int updateWebsiteConfig(WebsiteConfig website);
 
-    public Website getWebsiteNoConfByName(String websiteName);
+    public WebsiteConfig getWebsiteNoConfByName(String websiteName);
 
-    public int insertWebsiteConfig(Website website);
+    public int insertWebsiteConfig(WebsiteConfig website);
 
     public int countWebsiteConfigByWebsiteId(int websiteId);
 

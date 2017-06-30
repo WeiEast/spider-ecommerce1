@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.datatrees.rawdatacentral.dao.WebsiteDAO">
-    <resultMap type="com.datatrees.rawdatacentral.domain.common.Website" id="RM-Website-With-Config">
+<mapper namespace="com.datatrees.rawdatacentral.dao.MyWebsiteDAO">
+    <resultMap type="com.datatrees.rawdatacentral.domain.common.WebsiteConfig" id="RM-Website-With-Config">
         <result column="Id" property="id"/>
         <result column="WebsiteName" property="websiteName"/>
         <result column="WebsiteDomain" property="websiteDomain"/>

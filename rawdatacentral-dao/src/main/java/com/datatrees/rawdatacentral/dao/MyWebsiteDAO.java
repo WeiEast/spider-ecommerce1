@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.dao;
 
-import com.datatrees.rawdatacentral.domain.common.Website;
+import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
 
 import javax.annotation.Resource;
 
@@ -17,17 +17,17 @@ import javax.annotation.Resource;
  * Created by zhouxinghai on 2017/6/29
  */
 @Resource
-public interface WebsiteDAO {
+public interface MyWebsiteDAO {
 
-    public Website getWebsiteByName(String websiteName);
+    public WebsiteConfig getWebsiteByName(String websiteName);
 
-    public Website getWebsiteById(int id);
+    public WebsiteConfig getWebsiteById(int id);
 
-    public int updateWebsiteConfig(Website website);
+    public int updateWebsiteConfig(WebsiteConfig website);
 
-    public Website getWebsiteNoConfByName(String websiteName);
+    public WebsiteConfig getWebsiteNoConfByName(String websiteName);
 
-    public int insertWebsiteConfig(Website website);
+    public int insertWebsiteConfig(WebsiteConfig website);
 
     public int countWebsiteConfigByWebsiteId(int websiteId);
 }

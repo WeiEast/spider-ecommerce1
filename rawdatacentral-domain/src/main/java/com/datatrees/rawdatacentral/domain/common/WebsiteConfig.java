@@ -16,7 +16,7 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
  * @version 1.0
  * @since 2016年11月7日 下午3:54:23
  */
-public class Website extends com.datatrees.crawler.core.domain.Website {
+public class WebsiteConfig {
 
     private WebsiteConf websiteConf;
 
