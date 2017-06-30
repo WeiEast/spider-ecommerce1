@@ -20,7 +20,21 @@
         </constructor-arg>
     </bean>
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+    <!--<bean id="propertySourcesPlaceholderConfigurer"-->
+          <!--class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">-->
+        <!--&lt;!&ndash; true:优先加载super diamond 配置 &ndash;&gt;-->
+        <!--<property name="localOverride" value="true"/>-->
+        <!--&lt;!&ndash;否则*.properties文件中文乱码&ndash;&gt;-->
+        <!--<property name="fileEncoding" value="UTF-8"/>-->
+        <!--<property name="properties" ref="propertiesConfiguration"/>-->
+        <!--<property name="locations">-->
+            <!--<list>-->
+                <!--<value>classpath*:server.properties</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <bean id="propertiesLoader" class="com.datatrees.common.conf.PropertiesLoader">
         <!-- true:优先加载super diamond 配置 -->
         <property name="localOverride" value="true"/>
         <!--否则*.properties文件中文乱码-->
@@ -32,19 +46,5 @@
             </list>
         </property>
     </bean>
-
-
-    <!--<bean id="propertiesLoader" class="com.datatrees.common.conf.PropertiesLoader">-->
-    <!--&lt;!&ndash; true:优先加载super diamond 配置 &ndash;&gt;-->
-    <!--<property name="localOverride" value="true"/>-->
-    <!--&lt;!&ndash;否则*.properties文件中文乱码&ndash;&gt;-->
-    <!--<property name="fileEncoding" value="UTF-8"/>-->
-    <!--<property name="properties" ref="propertiesConfiguration"/>-->
-    <!--<property name="locations">-->
-    <!--<list>-->
-    <!--<value>classpath*:server.properties</value>-->
-    <!--</list>-->
-    <!--</property>-->
-    <!--</bean>-->
 
 </beans>

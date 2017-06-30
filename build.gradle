@@ -49,7 +49,7 @@ ext {
     antVersion = "1.6.5"
     mailVersion = "1.4.7"
     jeVersion = "5.0.73"
-    guavaVersion = "18.0"
+    guavaVersion = "22.0"
     junitVersion = "4.10"
     dubboVersion = "2.5.3"
     zkclientVersion = "0.5"
@@ -80,7 +80,9 @@ subprojects {
 
 //        all*.exclude group: "org.springframework", module: "spring"
         all*.exclude group: "log4j", module: "log4j"
+        all*.exclude group: "org.slf4j", module: "slf4j-log4j12"
         all*.exclude group: "org.jfrog.jade.plugins.common", module: "*"
+
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {

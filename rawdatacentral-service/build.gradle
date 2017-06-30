@@ -4,11 +4,14 @@ dependencies {
     compile project(":rawdatacentral-share")
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
+    compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
     compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
 //    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
     compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
 
-    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true)
+    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
+        exclude(module: 'guava')
+    }
 
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"

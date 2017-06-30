@@ -5,7 +5,10 @@
 http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 
-	<import resource="classpath:spring/core.diamond.xml" />
+	<import resource="classpath*:rawdatacentral-diamond.xml" />
+	<import resource="classpath*:rawdatacentral-redis.xml" />
+	<import resource="classpath*:rawdatacentral-datasource-mysql.xml" />
+	<!--<import resource="classpath:spring/core.diamond.xml" />-->
 	<bean id="beanResourceFactory" class="com.datatrees.crawler.core.processor.common.BeanResourceFactory" factory-method="getInstance">
 		<property name="beanResource" ref="beansFactory" />
 	</bean>
@@ -21,8 +24,8 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	<import resource="classpath:spring/core.webrobot.xml" />
 	<!---->
 	<import resource="classpath*:dtboss-consumer.xml" />
-	<import resource="classpath:spring/core.db.xml" />
-	<import resource="classpath:spring/core.jedis.xml" />
+	<!--<import resource="classpath:spring/core.db.xml" />-->
+	<!--<import resource="classpath:spring/core.jedis.xml" />-->
 	<import resource="classpath:spring/core.message.xml" />
 	<import resource="classpath:spring/core.dubbo.xml" />
 

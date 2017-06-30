@@ -10,10 +10,13 @@ package com.datatrees.rawdatacentral.dao;
 
 import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
 
+import javax.annotation.Resource;
+
 /**
  *
  * Created by zhouxinghai on 2017/6/29
  */
+@Resource
 public interface OperatorExtractResultDAO {
 
     public int insertOperatorExtractResult(OperatorExtractResult result);

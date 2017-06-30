@@ -8,4 +8,8 @@ dependencies {
     compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
     compile "commons-io:commons-io:${commonsIoVersion}"
     compile "com.alibaba:fastjson:${fastjsonVersion}"
+    compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+
+
+
 }

@@ -38,7 +38,7 @@
         where Id = #id#
     </delete>
 
-    <insert id="insert" parameterType="MailExtractResult">
+    <insert id="insert" parameterType="com.datatrees.rawdatacentral.domain.model.MailExtractResult">
         <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>

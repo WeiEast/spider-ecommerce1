@@ -49,7 +49,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     private String              localConfigPath    = PropertiesConfiguration.getInstance().get("local.config.path", "");
 
     @Resource
-    private WebsiteDAO websiteDAO;
+    private WebsiteDAO          websiteDAO;
 
     @Resource
     private BankService         bankService;
@@ -148,8 +148,9 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     public Website getWebsiteByName(String websiteName) {
-        if (StringUtils.isBlank(websiteName))
+        if (StringUtils.isBlank(websiteName)) {
             return null;
+        }
         Website website = websiteDAO.getWebsiteByName(websiteName);
         if (website != null) {
             this.testModeHandle(website);
@@ -186,12 +187,6 @@ public class WebsiteServiceImpl implements WebsiteService {
         return website;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * WebsiteService#getSearchProcessorContext(java.lang.String)
-     */
     @Override
     public SearchProcessorContext getSearchProcessorContext(String websiteName) {
         Website website = this.getCachedWebsiteByName(websiteName);
@@ -208,11 +203,6 @@ public class WebsiteServiceImpl implements WebsiteService {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see WebsiteService#getExtractorProcessorContext(int)
-     */
     @Override
     public ExtractorProcessorContext getExtractorProcessorContext(int websiteId) {
         Website website = this.getCachedWebsiteByID(websiteId);
@@ -225,12 +215,6 @@ public class WebsiteServiceImpl implements WebsiteService {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * WebsiteService#getExtractorProcessorContextWithBankId(int)
-     */
     @Override
     public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId) {
         Bank bank = bankService.getByBankIdFromCache(bankId);
@@ -240,44 +224,21 @@ public class WebsiteServiceImpl implements WebsiteService {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * WebsiteService#updateWebsiteConfig(com.datatrees.rawdatacentral.
-     * api.model.Website)
-     */
     @Override
     public int updateWebsiteConfig(Website website) {
         return websiteDAO.updateWebsiteConfig(website);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see WebsiteService#getWebsiteByName(java.lang.String,
-     * boolean)
-     */
     @Override
     public Website getWebsiteNoConfByName(String websiteName) {
         return websiteDAO.getWebsiteNoConfByName(websiteName);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * WebsiteService#insertWebsiteConfig(com.datatrees.rawdatacentral.
-     * core.model.Website)
-     */
     @Override
     public int insertWebsiteConfig(Website website) {
         return websiteDAO.insertWebsiteConfig(website);
     }
 
-    /* (non-Javadoc)
-     * @see WebsiteService#getWebsiteConfigCountByWebsiteId(int)
-     */
     @Override
     public int countWebsiteConfigByWebsiteId(int websiteId) {
         return websiteDAO.countWebsiteConfigByWebsiteId(websiteId);
