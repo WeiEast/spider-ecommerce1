@@ -4,10 +4,13 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-
 	<import resource="classpath*:rawdatacentral-diamond.xml" />
 	<import resource="classpath*:rawdatacentral-redis.xml" />
 	<import resource="classpath*:rawdatacentral-datasource-mysql.xml" />
+	<context:component-scan base-package="com.datatrees.rawdatacentral" />
+	<!--这里要改掉-->
+	<import resource="classpath*:dtboss-consumer.xml" />
+
 	<!--<import resource="classpath:spring/core.diamond.xml" />-->
 	<bean id="beanResourceFactory" class="com.datatrees.crawler.core.processor.common.BeanResourceFactory" factory-method="getInstance">
 		<property name="beanResource" ref="beansFactory" />
@@ -19,11 +22,9 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 		<constructor-arg index="1" value="${core.zookeeper.sessionTimeOut}" />
 	</bean>
 
-
-	<context:component-scan base-package="com.datatrees.rawdatacentral" />
+	<!--<context:component-scan base-package="com.datatrees.rawdatacentral" />-->
 	<import resource="classpath:spring/core.webrobot.xml" />
 	<!---->
-	<import resource="classpath*:dtboss-consumer.xml" />
 	<!--<import resource="classpath:spring/core.db.xml" />-->
 	<!--<import resource="classpath:spring/core.jedis.xml" />-->
 	<import resource="classpath:spring/core.message.xml" />

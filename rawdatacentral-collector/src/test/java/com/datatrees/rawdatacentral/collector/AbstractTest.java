@@ -1,18 +1,16 @@
 package com.datatrees.rawdatacentral.collector;
 
 import org.junit.runner.RunWith;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
-/**
- *
- * @author  <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since   2015年7月28日 上午11:59:35 
- */
-@ContextConfiguration(locations = {"classpath:/test.spring.xml"})
-@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootConfiguration
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@ImportResource(locations={ "test.spring.xml"})
 public abstract class AbstractTest {
 
 }

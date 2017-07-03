@@ -12,8 +12,8 @@
 		ExtractedCount, ExtractSucceedCount,
 		ExtractFailedCount,NotExtractCount,StoreFailedCount,NetworkTraffic,StartedAt,FinishedAt,CreatedAt)
 		values
-		(#taskId#,#websiteId#,#nodeName#,#openUrlCount.value#,#openPageCount.value#,#requestFailedCount.value#,#retryCount.value#,#filteredCount.value#,#status#,#remark#,#duration#,
-		#extractedCount#,#extractSucceedCount#,#extractFailedCount#,#notExtractCount#,#storeFailedCount#,#networkTraffic.value#,#startedAt#,#finishedAt#,
+		(#{taskId},#{websiteId},#{nodeName},#{openUrlCount.value},#{openPageCount.value},#{requestFailedCount.value},#{retryCount.value},#{filteredCount.value},#{status},#{remark},#{duration},
+		#{extractedCount},#{extractSucceedCount},#{extractFailedCount},#{notExtractCount},#{storeFailedCount},#{networkTraffic.value},#{startedAt},#{finishedAt},
 		now())
 	</insert>
 
@@ -22,26 +22,26 @@
 		UPDATE
 		T_TASKLOG
 		SET
-		OpenUrlCount = #openUrlCount.value#,
-		OpenPageCount=#openPageCount.value#,
-		RequestFailedCount=#requestFailedCount.value#,
+		OpenUrlCount = #{openUrlCount.value},
+		OpenPageCount=#{openPageCount.value},
+		RequestFailedCount=#{requestFailedCount.value},
 		FilteredCount=
-		#filteredCount.value#,
-		RetryCount = #retryCount.value#,
-		Status=#status#,
-		Remark=#remark#,
-		Duration=#duration#,
-		ExtractedCount=#extractedCount#,
-		ExtractSucceedCount=#extractSucceedCount#,
-		ExtractFailedCount=#extractFailedCount#,
-		NotExtractCount=#notExtractCount#,
-		NetworkTraffic=#networkTraffic.value#,
-		StoreFailedCount=#storeFailedCount#,
-		StartedAt=#startedAt#,
-		FinishedAt=#finishedAt#,
-		ResultMessage=#resultMessage#
+		#{filteredCount.value},
+		RetryCount = #{retryCount.value},
+		Status=#{status},
+		Remark=#{remark},
+		Duration=#{duration},
+		ExtractedCount=#{extractedCount},
+		ExtractSucceedCount=#{extractSucceedCount},
+		ExtractFailedCount=#{extractFailedCount},
+		NotExtractCount=#{notExtractCount},
+		NetworkTraffic=#{networkTraffic.value},
+		StoreFailedCount=#{storeFailedCount},
+		StartedAt=#{startedAt},
+		FinishedAt=#{finishedAt},
+		ResultMessage=#{resultMessage}
 		WHERE
-		id = #id#
+		id = #{id}
 	</update>
 
 	<select id="selectNow" resultType="date">

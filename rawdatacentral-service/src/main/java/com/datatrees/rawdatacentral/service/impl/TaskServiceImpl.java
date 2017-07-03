@@ -28,35 +28,16 @@ public class TaskServiceImpl implements TaskService {
     @Resource
     private TaskDAO taskDAO;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * TaskService#insertTask(com.datatrees.rawdatacentral.core.model
-     * .Task)
-     */
     @Override
     public int insertTask(Task task) {
         return taskDAO.insertTask(task);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * TaskService#updateTask(com.datatrees.rawdatacentral.core.model
-     * .Task)
-     */
     @Override
     public void updateTask(Task task) {
         taskDAO.updateTask(task);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see TaskService#selectNow()
-     */
     @Override
     public Date selectNow() {
         return taskDAO.selectNow();
