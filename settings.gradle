@@ -8,4 +8,8 @@ include ':rawdatacentral-extractor'
 include ':rawdatacentral-submitter'
 include ':rawdatacentral-main'
 include 'rawdatacentral-common'
+include 'rawdatacentral-dao'
+include 'rawdatacentral-service'
+include 'rawdatacentral-web'
+include 'rawdatacentral-biz'
 
