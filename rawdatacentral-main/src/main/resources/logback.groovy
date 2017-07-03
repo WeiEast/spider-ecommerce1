@@ -7,7 +7,7 @@ scan("30 seconds")
 def charsetName = "UTF-8"
 
 // 日志路径
-def logPath = "/dashu/log"
+def logPath = "/dashu/log/rawdatacentral"
 
 // 控制台
 appender("console", ConsoleAppender) {
