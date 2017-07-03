@@ -67,9 +67,9 @@ public enum GroupEnum {
     NEI_MENG_GU_10000("NEI_MENG_GU_10000","内蒙古电信","nei_meng_gu_10000_web"),
     HAI_NAN_10086("HAI_NAN_10086","海南移动","hai_nan_10086_web"),
     HAI_NAN_10000("HAI_NAN_10000","海南电信","hai_nan_10000_web"),
-    GUI_ZHOU_10086("GUI_ZHOU_10086","贵州移动","gui_zhou_10086_shop"),
-    QING_HAI_10086("QING_HAI_10086","青海移动","qing_hai_10086_shop"),
-    NING_XIA_10086("NING_XIA_10086","宁夏移动","ning_xia_10086_shop")
+//    GUI_ZHOU_10086("GUI_ZHOU_10086","贵州移动","gui_zhou_10086_shop"),
+//    QING_HAI_10086("QING_HAI_10086","青海移动","qing_hai_10086_shop"),
+//    NING_XIA_10086("NING_XIA_10086","宁夏移动","ning_xia_10086_shop")
     ;
 
 
