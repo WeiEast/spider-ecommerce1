@@ -124,10 +124,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         CheckUtils.checkNotBlank(extractConfig, "extractConfig is blank");
 
         WebsiteConfig websiteConfig = getWebsiteConfigByWebsiteName(websiteName);
-        if (null == websiteConfig) {
-            logger.warn("website not found websiteName={}", websiteName);
-            return;
-        }
+        CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + websiteName);
         com.datatrees.rawdatacentral.domain.model2.WebsiteConf confUpdate = new com.datatrees.rawdatacentral.domain.model2.WebsiteConf();
         confUpdate.setWebsiteConfId(websiteConfig.getWebsiteConfId());
         confUpdate.setExtractorConfig(extractConfig);
@@ -174,26 +171,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             return this.getExtractorProcessorContext(bank.getWebsiteId());
         }
         return null;
-    }
-
-    @Override
-    public int updateWebsiteConfig(WebsiteConfig website) {
-        return 0;
-    }
-
-    @Override
-    public WebsiteConfig getWebsiteNoConfByName(String websiteName) {
-        return null;
-    }
-
-    @Override
-    public int insertWebsiteConfig(WebsiteConfig website) {
-        return 0;
-    }
-
-    @Override
-    public int countWebsiteConfigByWebsiteId(int websiteId) {
-        return 0;
     }
 
     private Website websiteContextBuild(WebsiteConfig websiteConfig) {

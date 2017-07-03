@@ -68,11 +68,4 @@ public interface WebsiteConfigService {
 
     ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId);
 
-    int updateWebsiteConfig(WebsiteConfig website);
-
-    WebsiteConfig getWebsiteNoConfByName(String websiteName);
-
-    int insertWebsiteConfig(WebsiteConfig website);
-
-    int countWebsiteConfigByWebsiteId(int websiteId);
 }

@@ -15,9 +15,8 @@ import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerService;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
-import com.datatrees.rawdatacentral.core.dao.RedisDao;
-import com.datatrees.rawdatacentral.core.service.WebsiteService;
 import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
@@ -54,12 +53,6 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Resource
     private WebsiteConfigService websiteConfigService;
-
-    @Resource
-    private WebsiteService       websiteService;
-
-    @Resource
-    private RedisDao             redisDao;
 
     @Resource
     private RedisService         redisService;
@@ -345,12 +338,10 @@ public class CrawlerServiceImpl implements CrawlerService {
             list.add(new OperatorCatalogue("联通", map10010));
             list.add(new OperatorCatalogue("电信", map10000));
             for (GroupEnum group : GroupEnum.values()) {
-                WebsiteConfig website = websiteService.getCachedWebsiteByName(group.getWebsiteName());
-                if (null == website) {
-                    throw new RuntimeException("website not found websiteName=" + group.getWebsiteName());
-                }
-                WebsiteConf websiteConf = website.getWebsiteConf();
-                String initSetting = websiteConf.getInitSetting();
+                WebsiteConfig websiteConfig = websiteConfigService
+                    .getWebsiteConfigByWebsiteName(group.getWebsiteName());
+                CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + group.getWebsiteName());
+                String initSetting = websiteConfig.getInitSetting();
                 if (StringUtils.isBlank(initSetting)) {
                     throw new RuntimeException("initSetting is blank websiteName=" + group.getWebsiteName());
                 }
@@ -368,13 +359,13 @@ public class CrawlerServiceImpl implements CrawlerService {
                 config.setGroupCode(group.getGroupCode());
                 config.setGroupName(group.getGroupName());
                 config.setWebsiteName(group.getWebsiteName());
-                config.setLoginTip(websiteConf.getLoginTip());
-                config.setResetTip(websiteConf.getResetTip());
-                config.setResetType(websiteConf.getResetType());
-                config.setResetURL(websiteConf.getResetURL());
-                config.setSmsReceiver(websiteConf.getSmsReceiver());
-                config.setSmsTemplate(websiteConf.getSmsTemplate());
-                config.setVerifyTip(websiteConf.getVerifyTip());
+                config.setLoginTip(websiteConfig.getLoginTip());
+                config.setResetTip(websiteConfig.getResetTip());
+                config.setResetType(websiteConfig.getResetType());
+                config.setResetURL(websiteConfig.getResetURL());
+                config.setSmsReceiver(websiteConfig.getSmsReceiver());
+                config.setSmsTemplate(websiteConfig.getSmsTemplate());
+                config.setVerifyTip(websiteConfig.getVerifyTip());
 
                 for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
                     InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
