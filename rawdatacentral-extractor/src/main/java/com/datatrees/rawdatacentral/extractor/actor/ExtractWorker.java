@@ -1,11 +1,18 @@
 package com.datatrees.rawdatacentral.extractor.actor;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.extractor.Extractor;
+import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 import com.datatrees.rawdatacentral.extractor.builder.impl.DefaultExtractResultBuilder;
+import com.datatrees.rawdatacentral.extractor.builder.impl.DefaultProcessorContextBuilder;
+import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
+import com.datatrees.rawdatacentral.submitter.SubmitProcessor;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -13,19 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.extractor.Extractor;
-import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.SubmitMessage;
-import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
-import com.datatrees.rawdatacentral.core.service.WebsiteService;
-import com.datatrees.rawdatacentral.extractor.builder.impl.DefaultProcessorContextBuilder;
-import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
-import com.datatrees.rawdatacentral.submitter.SubmitProcessor;
+import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by wuminlang on 15/7/29.
@@ -34,8 +31,6 @@ import com.datatrees.rawdatacentral.submitter.SubmitProcessor;
 public class ExtractWorker {
     private static final Logger logger = LoggerFactory.getLogger(ExtractWorker.class);
 
-    @Resource
-    private WebsiteService websiteService;
     @Resource
     private ResultStorage resultStorage;
     @Resource

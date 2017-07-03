@@ -12,6 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootConfiguration
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ImportResource(locations={ "test-service.xml"})
+@ImportResource(locations={ "rawdatacentral-service.xml"})
 public class BaseTest {
 }

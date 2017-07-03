@@ -1,6 +1,5 @@
 package com.datatrees.rawdatacentral.collector.core;
 
-import com.datatrees.rawdatacentral.collector.AbstractTest;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.share.RedisService;
@@ -14,7 +13,7 @@ import java.util.Arrays;
 /**
  * Created by zhouxinghai on 2017/5/22.
  */
-public class RedisTest extends AbstractTest {
+public class RedisTest {
 
     @Resource
     private RedisService redisService;
