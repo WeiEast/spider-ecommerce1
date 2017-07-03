@@ -34,4 +34,6 @@ appender("sysFile", RollingFileAppender) {
 
 root(DEBUG, ["console", "sysFile"])
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
+logger("com.datatrees.databoss.action.client.service", OFF)
+
 

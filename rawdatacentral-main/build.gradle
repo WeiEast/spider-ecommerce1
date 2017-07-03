@@ -1,8 +1,19 @@
+
+def env = System.getProperty("env") ?: "dev";
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources", "profile/$env"]
+        }
+    }
+}
+
 dependencies {
     compile project(':rawdatacentral-core')
     compile project(':rawdatacentral-extractor')
     compile project(':rawdatacentral-submitter')
     compile project(':rawdatacentral-collector')
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
 }
 apply from: rootProject.file('install.gradle')
 

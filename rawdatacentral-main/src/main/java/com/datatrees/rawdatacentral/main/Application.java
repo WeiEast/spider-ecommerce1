@@ -2,21 +2,36 @@ package com.datatrees.rawdatacentral.main;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ImportResource;
 
-
+import java.util.Arrays;
 
 /**
- *
- * @author  <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since   2015年6月9日 下午5:26:25 
+ * 换成spring boot了
+ * Created by zhouxinghai on 2017/7/3
  */
+@SpringBootApplication
+@ImportResource(locations={ "spring.xml" })
 public class Application {
+
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
     
     public static void main(String[] args) {
-        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring/main.spring.xml");
-        logger.info("rawdatacentral main start...");
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner(ApplicationContext ctx) throws Exception {
+        String[] beanNames = ctx.getBeanDefinitionNames();
+        Arrays.sort(beanNames);
+        for (String beanName : beanNames) {
+            logger.info(beanName);
+        }
+        return null;
     }
 }
