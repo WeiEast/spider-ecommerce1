@@ -19,5 +19,5 @@ import javax.annotation.Resource;
 @Resource
 public interface EcommerceExtractResultDAO {
 
-    public int insertEcommerceExtractResult(EcommerceExtractResult result);
+    public int insert(EcommerceExtractResult result);
 }

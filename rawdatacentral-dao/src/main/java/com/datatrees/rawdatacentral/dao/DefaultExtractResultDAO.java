@@ -19,6 +19,6 @@ import javax.annotation.Resource;
 @Resource
 public interface DefaultExtractResultDAO {
 
-    public int insertDefaultExtractResult(DefaultExtractResult result);
+    public int insert(DefaultExtractResult result);
 
 }

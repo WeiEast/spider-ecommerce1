@@ -31,17 +31,17 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
 
     @Override
     public int insertMailExtractResult(MailExtractResult mailExtractResult) {
-        return mailExtractResultDao.insertMailExtractResult(mailExtractResult);
+        return mailExtractResultDao.insert(mailExtractResult);
     }
 
     @Override
     public int insertEcommerceExtractResult(EcommerceExtractResult ecommerceExtractResult) {
-        return ecommerceExtractResultDao.insertEcommerceExtractResult(ecommerceExtractResult);
+        return ecommerceExtractResultDao.insert(ecommerceExtractResult);
     }
 
     @Override
     public int insertOperatorExtractResult(OperatorExtractResult operatorExtractResult) {
-        return operatorExtractResultDao.insertOperatorExtractResult(operatorExtractResult);
+        return operatorExtractResultDao.insert(operatorExtractResult);
     }
 
 
@@ -49,12 +49,12 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
      * (non-Javadoc)
      * 
      * @see
-     * ExtractorResultService#insertEBankExtractResult(com.datatrees
+     * ExtractorResultService#insert(com.datatrees
      * .rawdatacentral.core.model.result.EBankExtractResult)
      */
     @Override
     public int insertEBankExtractResult(EBankExtractResult result) {
-        return eBankExtractResultDao.insertEBankExtractResult(result);
+        return eBankExtractResultDao.insert(result);
     }
 
 
@@ -62,12 +62,12 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
      * (non-Javadoc)
      * 
      * @see
-     * ExtractorResultService#insertDefaultExtractResult(com.
+     * ExtractorResultService#insert(com.
      * datatrees.rawdatacentral.core.model.result.DefaultExtractResult)
      */
     @Override
     public int insertDefaultExtractResult(DefaultExtractResult defaultExtractResult) {
-        return defaultExtractResultDAO.insertDefaultExtractResult(defaultExtractResult);
+        return defaultExtractResultDAO.insert(defaultExtractResult);
     }
 
 }

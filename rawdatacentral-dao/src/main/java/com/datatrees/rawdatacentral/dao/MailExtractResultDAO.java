@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 @Resource
 public interface MailExtractResultDAO {
 
-    public int insertMailExtractResult(MailExtractResult result);
+    public int insert(MailExtractResult result);
 
 
 }

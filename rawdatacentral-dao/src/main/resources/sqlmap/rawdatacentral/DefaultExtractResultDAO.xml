@@ -16,17 +16,4 @@
 		#{resultType}, #{storagePath}, now())
 	</insert>
 
-	<update id="updateByPrimaryKey" parameterType="com.datatrees.rawdatacentral.domain.model.DefaultExtractResult">
-		update t_default_extract_result 	
-		set TaskLogId = #{taskId},
-		WebsiteId = #{websiteId},
-		Status = #{status},
-		Remark = #{remark},
-		Url = #{url},
-		UniqueSign = #{uniqueSign},
-		ResultType = #{resultType},
-		StoragePath = #{storagePath},
-		UpdatedAt = now()
-		where Id = #{id}
-	</update>
 </mapper>

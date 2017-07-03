@@ -19,6 +19,6 @@ import javax.annotation.Resource;
 @Resource
 public interface EbankExtractResultDAO {
 
-    public int insertEBankExtractResult(EBankExtractResult result);
+    public int insert(EBankExtractResult result);
 
 }
