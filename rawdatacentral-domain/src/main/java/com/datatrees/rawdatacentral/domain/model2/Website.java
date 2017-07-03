@@ -1,25 +1,10 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- *
- * Copyright (c) datatrees.com Inc. 2016
- */
-package com.datatrees.rawdatacentral.domain.common;
+package com.datatrees.rawdatacentral.domain.model2;
 
+import java.io.Serializable;
 import java.util.Date;
 
-/**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2016年11月7日 下午3:54:23
- */
-public class WebsiteConfig {
-
-    private static final long serialVersionUID = 1L;
-
+ /** create by system from table t_website(website basic info)  */
+public class Website implements Serializable {
     /**  */
     private Integer websiteId;
 
@@ -77,21 +62,7 @@ public class WebsiteConfig {
     /**  */
     private Integer templateId;
 
-    /**  */
-    private Integer websiteConfId;
-
-    /** extractor config */
-    private String extractorConfig;
-
-    /** search config */
-    private String searchConfig;
-
-    /**  */
-    private String initSetting;
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
+    private static final long serialVersionUID = 1L;
 
     public Integer getWebsiteId() {
         return websiteId;
@@ -106,7 +77,7 @@ public class WebsiteConfig {
     }
 
     public void setWebsiteType(String websiteType) {
-        this.websiteType = websiteType;
+        this.websiteType = websiteType == null ? null : websiteType.trim();
     }
 
     public String getWebsiteName() {
@@ -114,7 +85,7 @@ public class WebsiteConfig {
     }
 
     public void setWebsiteName(String websiteName) {
-        this.websiteName = websiteName;
+        this.websiteName = websiteName == null ? null : websiteName.trim();
     }
 
     public String getWebsiteDomain() {
@@ -122,7 +93,7 @@ public class WebsiteConfig {
     }
 
     public void setWebsiteDomain(String websiteDomain) {
-        this.websiteDomain = websiteDomain;
+        this.websiteDomain = websiteDomain == null ? null : websiteDomain.trim();
     }
 
     public Boolean getIsenabled() {
@@ -138,7 +109,7 @@ public class WebsiteConfig {
     }
 
     public void setLoginTip(String loginTip) {
-        this.loginTip = loginTip;
+        this.loginTip = loginTip == null ? null : loginTip.trim();
     }
 
     public String getVerifyTip() {
@@ -146,7 +117,7 @@ public class WebsiteConfig {
     }
 
     public void setVerifyTip(String verifyTip) {
-        this.verifyTip = verifyTip;
+        this.verifyTip = verifyTip == null ? null : verifyTip.trim();
     }
 
     public Integer getInitTimeout() {
@@ -178,7 +149,7 @@ public class WebsiteConfig {
     }
 
     public void setResetType(String resetType) {
-        this.resetType = resetType;
+        this.resetType = resetType == null ? null : resetType.trim();
     }
 
     public String getSmsTemplate() {
@@ -186,7 +157,7 @@ public class WebsiteConfig {
     }
 
     public void setSmsTemplate(String smsTemplate) {
-        this.smsTemplate = smsTemplate;
+        this.smsTemplate = smsTemplate == null ? null : smsTemplate.trim();
     }
 
     public String getSmsReceiver() {
@@ -194,7 +165,7 @@ public class WebsiteConfig {
     }
 
     public void setSmsReceiver(String smsReceiver) {
-        this.smsReceiver = smsReceiver;
+        this.smsReceiver = smsReceiver == null ? null : smsReceiver.trim();
     }
 
     public String getResetURL() {
@@ -202,7 +173,7 @@ public class WebsiteConfig {
     }
 
     public void setResetURL(String resetURL) {
-        this.resetURL = resetURL;
+        this.resetURL = resetURL == null ? null : resetURL.trim();
     }
 
     public String getResetTip() {
@@ -210,7 +181,7 @@ public class WebsiteConfig {
     }
 
     public void setResetTip(String resetTip) {
-        this.resetTip = resetTip;
+        this.resetTip = resetTip == null ? null : resetTip.trim();
     }
 
     public Date getCreatedAt() {
@@ -244,37 +215,4 @@ public class WebsiteConfig {
     public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
     }
-
-    public Integer getWebsiteConfId() {
-        return websiteConfId;
-    }
-
-    public void setWebsiteConfId(Integer websiteConfId) {
-        this.websiteConfId = websiteConfId;
-    }
-
-    public String getExtractorConfig() {
-        return extractorConfig;
-    }
-
-    public void setExtractorConfig(String extractorConfig) {
-        this.extractorConfig = extractorConfig;
-    }
-
-    public String getSearchConfig() {
-        return searchConfig;
-    }
-
-    public void setSearchConfig(String searchConfig) {
-        this.searchConfig = searchConfig;
-    }
-
-    public String getInitSetting() {
-        return initSetting;
-    }
-
-    public void setInitSetting(String initSetting) {
-        this.initSetting = initSetting;
-    }
 }
-

@@ -12,6 +12,8 @@ dependencies {
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
         exclude(module: 'guava')
     }
+    compile(group: "com.datatrees.data", name: "databoss-api-client-sdk", version: "${databossApiClientSdkVersion}", changing: true)
+
 
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"

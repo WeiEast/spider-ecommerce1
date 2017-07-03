@@ -26,6 +26,7 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.*;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
@@ -49,19 +50,22 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class CrawlerServiceImpl implements CrawlerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
+    private static final Logger  logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
 
     @Resource
-    private WebsiteService      websiteService;
+    private WebsiteConfigService websiteConfigService;
 
     @Resource
-    private RedisDao            redisDao;
+    private WebsiteService       websiteService;
 
     @Resource
-    private RedisService        redisService;
+    private RedisDao             redisDao;
 
     @Resource
-    private ZooKeeperClient     zooKeeperClient;
+    private RedisService         redisService;
+
+    @Resource
+    private ZooKeeperClient      zooKeeperClient;
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -78,22 +82,11 @@ public class CrawlerServiceImpl implements CrawlerService {
             CacheUtil.INSTANCE.insertObject("websitename_transform_map", map);
             newWebsiteName = map.get(websiteName);
         }
-        if (StringUtils.isNotBlank(newWebsiteName)) {
-            WebsiteConfig website = websiteService.getCachedWebsiteByName(newWebsiteName);
-            WebsiteConf conf = null;
-            if (website != null && website.getWebsiteConf() != null) {
-                conf = website.getWebsiteConf();
-                conf.setName(websiteName);
-                logger.info("websiteName:{},return conf :{}", websiteName, conf.toString());
-                return conf;
-            } else {
-                logger.warn("no active website named {}", newWebsiteName);
-            }
-        } else {
+        if (StringUtils.isBlank(newWebsiteName)) {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
+            return null;
         }
-        return null;
-
+        return websiteConfigService.getWebsiteConf(newWebsiteName);
     }
 
     @Override
@@ -109,31 +102,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public boolean updateWebsiteConfig(String websiteName, String searchConfigSource, String extractConfigSource) {
-        logger.info("crawlerService start update webiste:" + websiteName);
-        try {
-            synchronized (websiteName) {
-                WebsiteConfig website = websiteService.getWebsiteNoConfByName(websiteName);
-                if (website != null) {
-                    website.setSearchConfigSource(searchConfigSource);
-                    website.setExtractorConfigSource(extractConfigSource);
-                    if (websiteService.countWebsiteConfigByWebsiteId(website.getId()) > 0) {
-                        websiteService.updateWebsiteConfig(website);
-                        logger.info("update websiteConfig success,webiste:" + websiteName);
-                    } else {
-                        websiteService.insertWebsiteConfig(website);
-                        logger.info("insert websiteConfig success,webiste:" + websiteName);
-                    }
-                } else {
-                    logger.warn("can't find website by websiteName:" + websiteName);
-                    return false;
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return false;
-        }
-        return true;
+    public boolean updateWebsiteConfig(String websiteName, String searchConfig, String extractConfig) {
+        return websiteConfigService.updateWebsiteConf(websiteName, searchConfig, extractConfig);
     }
 
     @Override

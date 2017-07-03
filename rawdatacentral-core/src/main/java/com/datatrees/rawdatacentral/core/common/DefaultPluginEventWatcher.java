@@ -1,31 +1,29 @@
 package com.datatrees.rawdatacentral.core.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.databoss.api.client.watcher.AbstractPluginEventWatcher;
-import com.datatrees.rawdatacentral.core.service.WebsiteService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DefaultPluginEventWatcher extends AbstractPluginEventWatcher {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultPluginEventWatcher.class);
+    private static final Logger  logger = LoggerFactory.getLogger(DefaultPluginEventWatcher.class);
     @Resource
-    private WebsiteService websiteService;
+    private WebsiteConfigService websiteConfigService;
     @Resource
-    private ZooKeeperClient zooKeeperClient;
+    private ZooKeeperClient      zooKeeperClient;
 
     @Override
     public List<AbstractPlugin> getAllPlugins(String websiteName) {
@@ -34,7 +32,7 @@ public class DefaultPluginEventWatcher extends AbstractPluginEventWatcher {
             logger.error("get plugin ids error! websiteName: " + websiteName);
             return resultList;
         }
-        Website website = websiteService.getWebsiteByName(websiteName);
+        Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
         if (website != null) {
             SearchConfig searchConfig = website.getSearchConfig();
             if (searchConfig != null) {
