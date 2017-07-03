@@ -8,14 +8,10 @@ dependencies {
 }
 
 def env = System.getProperty("env") ?: "dev";
-sourceSets {
-    main {
-        resources {
-            srcDirs = ["src/main/resources", "profile/$env"]
-        }
-    }
+processResources {
+    from "env/$env"
+    into "build/resources/main"
 }
-
 
 apply from: rootProject.file('install.gradle')
 

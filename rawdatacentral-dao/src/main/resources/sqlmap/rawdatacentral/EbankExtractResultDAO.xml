@@ -10,11 +10,11 @@
         WebsiteId, BankId, Status,
         Remark, Url, UniqueSign,UniqueMd5,
         ResultType, StoragePath, CreatedAt)
-        values (#id#, #taskId#, #duration#,
-        #websiteId#,
-        #bankId#, #status#,
-        #remark#, #url#, #uniqueSign#,#uniqueMd5#,
-        #resultType#, #storagePath#, now())
+        values (#{id}, #{taskId}, #{duration},
+        #{websiteId},
+        #{bankId}, #{status},
+        #{remark}, #{url}, #{uniqueSign},#{uniqueMd5},
+        #{resultType}, #{storagePath}, now())
     </insert>
 
 </mapper>

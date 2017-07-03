@@ -35,10 +35,10 @@
         left join t_website_template t on w.TemplateId = t.Id
         where w.isenabled = 1
         <if test="websiteId != null">
-            and Id = #{websiteId}
+            and w.Id = #{websiteId}
         </if>
         <if test="websiteName != null">
-            and WebsiteName = #{websiteName}
+            and w.WebsiteName = #{websiteName}
         </if>
     </select>
 

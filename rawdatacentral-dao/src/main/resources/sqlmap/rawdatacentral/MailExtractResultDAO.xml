@@ -30,12 +30,12 @@
         select
         <include refid="Base_Column_List"/>
         from t_mail_extract_result
-        where Id = #id#
+        where Id = #{id}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from t_mail_extract_result
-        where Id = #id#
+        where Id = #{id}
     </delete>
 
     <insert id="insert" parameterType="com.datatrees.rawdatacentral.domain.model.MailExtractResult">
@@ -50,12 +50,12 @@
         CreatedAt
         )
         values (
-        #taskId#, #duration#,
-        #websiteId#, #pageExtractId#,#uniqueSign#, #uniqueMd5#, #url#, #resultType#, #firstHand#,
-        #status#, #remark#, #bankId#,
-        #sender#, #subject#,
-        #receiveAt#,#receiver#,
-        #storagePath#, now())
+        #{taskId}, #{duration},
+        #{websiteId}, #{pageExtractId},#{uniqueSign}, #{uniqueMd5}, #{url}, #{resultType}, #{firstHand},
+        #{status}, #{remark}, #{bankId},
+        #{sender}, #{subject},
+        #{receiveAt},#{receiver},
+        #{storagePath}, now())
     </insert>
 
 

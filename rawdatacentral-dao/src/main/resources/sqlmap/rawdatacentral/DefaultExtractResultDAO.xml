@@ -10,23 +10,23 @@
 		WebsiteId, Status,
 		Remark, Url, UniqueSign,UniqueMd5,
 		ResultType, StoragePath, CreatedAt)
-		values (#id#, #taskId#, #duration#,
-		#websiteId#, #status#,
-		#remark#, #url#, #uniqueSign#,#uniqueMd5#,
-		#resultType#, #storagePath#, now())
+		values (#{id}, #{taskId}, #{duration},
+		#{websiteId}, #{status},
+		#{remark}, #{url}, #{uniqueSign},#{uniqueMd5},
+		#{resultType}, #{storagePath}, now())
 	</insert>
 
 	<update id="updateByPrimaryKey" parameterType="com.datatrees.rawdatacentral.domain.model.DefaultExtractResult">
 		update t_default_extract_result 	
-		set TaskLogId = #taskId#,
-		WebsiteId = #websiteId#,
-		Status = #status#,
-		Remark = #remark#,
-		Url = #url#,
-		UniqueSign = #uniqueSign#,
-		ResultType = #resultType#,
-		StoragePath = #storagePath#,
+		set TaskLogId = #{taskId},
+		WebsiteId = #{websiteId},
+		Status = #{status},
+		Remark = #{remark},
+		Url = #{url},
+		UniqueSign = #{uniqueSign},
+		ResultType = #{resultType},
+		StoragePath = #{storagePath},
 		UpdatedAt = now()
-		where Id = #id#
+		where Id = #{id}
 	</update>
 </mapper>

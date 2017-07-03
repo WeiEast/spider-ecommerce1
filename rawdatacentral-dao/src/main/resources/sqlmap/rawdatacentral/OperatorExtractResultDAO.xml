@@ -26,12 +26,12 @@
         select
         <include refid="Base_Column_List"/>
         from t_operator_extract_result
-        where Id = #id#
+        where Id = #{id}
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from t_operator_extract_result
-        where Id = #id#
+        where Id = #{id}
     </delete>
 
     <insert id="insert" parameterType="com.datatrees.rawdatacentral.domain.model.OperatorExtractResult">
@@ -42,9 +42,9 @@
         WebsiteId, OperatorId, Status,
         Remark, Url, UniqueSign,UniqueMd5,
         ResultType, StoragePath, CreatedAt)
-        values (#id#, #taskId#, #duration#,
-        #websiteId#, #operatorId#, #status#,
-        #remark#, #url#, #uniqueSign#,#uniqueMd5#,
-        #resultType#, #storagePath#, now())
+        values (#{id}, #{taskId}, #{duration},
+        #{websiteId}, #{operatorId}, #{status},
+        #{remark}, #{url}, #{uniqueSign},#{uniqueMd5},
+        #{resultType}, #{storagePath}, now())
     </insert>
 </mapper>
