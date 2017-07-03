@@ -1,7 +1,7 @@
-def mainClass = 'com.datatrees.rawdatacentral.main.Application'
+def mainClass = 'com.datatrees.rawdatacentral.web.Application'
 jar {
-//    sourceSets.main.resources.exclude('**/*')
-//    sourceSets.main.resources.include('cacerts/*')
+//    sourceSets.web.resources.exclude('**/*')
+//    sourceSets.web.resources.include('cacerts/*')
 //    def libs = "conf/";
     def libs = "";
     configurations.compile.each { libs += " lib/" + it.name }
@@ -41,7 +41,7 @@ task copyResources() {
             into "$rootDir/target/$rootProject.name/logs"
         }
 //        copy {
-//            from "$rootDir/$project.name/src/main/resources"
+//            from "$rootDir/$project.name/src/web/resources"
 //            into "$rootDir/target/$rootProject.name/conf"
 //            exclude("*.properties")
 //        }

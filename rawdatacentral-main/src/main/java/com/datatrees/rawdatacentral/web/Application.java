@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.main;
+package com.datatrees.rawdatacentral.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

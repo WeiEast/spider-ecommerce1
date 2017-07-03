@@ -76,16 +76,16 @@ public class BDBOperatorTest {
             List<File> paked = new ArrayList<File>();
             paked.add(file);
             loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
-            Class clazz = loader.loadClass("com.datatrees.crawler.plugin.main.PluginMain");
+            Class clazz = loader.loadClass("com.datatrees.crawler.plugin.web.PluginMain");
             AbstractClientPlugin pluginMain = (AbstractClientPlugin) clazz.newInstance();
             System.out.println(pluginMain.process("dd"));
 
             file = new File(
-                    "/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/src/main/resources/tj189Plugin.jar_version2");
+                    "/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/src/web/resources/tj189Plugin.jar_version2");
             paked = new ArrayList<File>();
             paked.add(file);
             loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
-            clazz = loader.loadClass("com.datatrees.crawler.plugin.main.PluginMain");
+            clazz = loader.loadClass("com.datatrees.crawler.plugin.web.PluginMain");
             pluginMain = (AbstractClientPlugin) clazz.newInstance();
             System.out.println(pluginMain.process("ddewfwe"));
             Thread.sleep(5000);
@@ -95,7 +95,7 @@ public class BDBOperatorTest {
         List<File> paked = new ArrayList<File>();
         paked.add(file);
         loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
-        Class clazz = loader.loadClass("com.datatrees.crawler.plugin.main.PluginMain");
+        Class clazz = loader.loadClass("com.datatrees.crawler.plugin.web.PluginMain");
         AbstractClientPlugin pluginMain = (AbstractClientPlugin) clazz.newInstance();
         System.out.println(pluginMain.process("dd"));
         System.out.println("waitng for jar replace...");
@@ -106,7 +106,7 @@ public class BDBOperatorTest {
         paked = new ArrayList<File>();
         paked.add(file);
         loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
-        clazz = loader.loadClass("com.datatrees.crawler.plugin.main.PluginMain");
+        clazz = loader.loadClass("com.datatrees.crawler.plugin.web.PluginMain");
         pluginMain = (AbstractClientPlugin) clazz.newInstance();
         System.out.println(pluginMain.process("dd"));
     }

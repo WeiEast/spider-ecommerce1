@@ -184,7 +184,7 @@ public class CrawlExcutorHandler {
                                 }
                             } else {
                                 /*
-                                 * 1. more Efficientive for muti thread mode, using main thread to
+                                 * 1. more Efficientive for muti thread mode, using web thread to
                                  * crawl the first linknode 2. can collect urlCount in mian thread
                                  */
                                 List<LinkNode> findLinks = searchProcessor.crawlOneURL(link);

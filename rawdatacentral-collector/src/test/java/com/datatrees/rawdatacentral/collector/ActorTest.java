@@ -81,7 +81,7 @@ public class ActorTest extends BaseTest {
             "MAIL_SESS=U3uBQg9koV20ORM9Zkv1tAsHwcJe6s2RrbMHKsp3Bw9N15ST1ltocJUuxOiIwQR3DL.mxWxI8JKD5a.NYTv2YEf03hYdioCZIF9IhySjTtwlZHXK20XFbO_yb9gUzltkPm_LKLdmoqsJBAAYaTlx25Jd7IPtNJ16qIxFn4BNevOpr; MAIL_MISC=tangbaiyuan223#biujqugss; S_INFO=1479107027|0|2&90##|tangbaiyuan223#biujqugss; NTES_PASSPORT=.bioTecdtV0vEXH4f3dWjumfk7PSRrNU3nW65tkkLwB3mVb8mPEkn1.RuMpGdJSKOF0SP6vO3CZPKw8yQ8YoECAjmQwL8N6X1ilWVQqHWeSpt; mail_idc=\"\"; JSESSIONID=4530AC22E4B1EC49014D0C8143BCDE1D; starttime=; locale=; cm_last_info=dT10YW5nYmFpeXVhbjIyMyU0MDE2My5jb20mZD1odHRwJTNBJTJGJTJGbWFpbC4xNjMuY29tJTJGbSUyRm1haW4uanNwJTNGc2lkJTNEekFFYm9YeHh2RU1XZlJrc0VreHhUbWlWbER6cGpKbVQmcz16QUVib1h4eHZFTVdmUmtzRWt4eFRtaVZsRHpwakptVCZoPWh0dHAlM0ElMkYlMkZtYWlsLjE2My5jb20lMkZtJTJGbWFpbi5qc3AlM0ZzaWQlM0R6QUVib1h4eHZFTVdmUmtzRWt4eFRtaVZsRHpwakptVCZ3PW1haWwuMTYzLmNvbSZsPTAmdD0xMQ==; SID=6b351085-3fbb-4a83-bb1c-01c1bc681ca6; MAIL_SINFO=1479107027|0|2&90##|tangbaiyuan223#biujqugss; NTES_SESS=U3uBQg9koV20ORM9Zkv1tAsHwcJe6s2RrbMHKsp3Bw9N15ST1ltocJUuxOiIwQR3DL.mxWxI8JKD5a.NYTv2YEf03hYdioCZIF9IhySjTtwlZHXK20XFbO_yb9gUzltkPm_LKLdmoqsJBAAYaTlx25Jd7IPtNJ16qIxFn4BNevOpr; mail_entry_sess=9a02e7dcb6638dfc6c9232ba65d8b10923455789d3b1d9f2e21f6c56b00641f020122db0356302bf519432d9e6db719c16c76e5b26666ce27a184459fdf270c8ed0ea397f398e4cf0f2ab706599ab79384457fe991ca99dfe431e925809df03e62cbb219c831f874dbb0311c2e4943bde61706a8359aa4a7fd675b70c77dfe5296c8eaeed245f22a48f52040e8de692b725ca5d7c7fc073f5b2fb1f832cbd8ea69fe9abf66bcb27540a4aa4ea2dfbb38f06a39fd955c7cdaf9846507b7406b63; secu_info=1; MAIL_PINFO=tangbaiyuan223@163.com|1479107027|1|mail163|11&21|zhj&1479106655&mail163#zhj&330100#10#0|&0|mail163|tangbaiyuan223@163.com; Coremail=1479107027742%zAEboXxxvEMWfRksEkxxTmiVlDzpjJmT%g6a48.mail.163.com; mail_upx=t6hz.mail.163.com|t7hz.mail.163.com|t8hz.mail.163.com|t10hz.mail.163.com|t11hz.mail.163.com|t12hz.mail.163.com|t13hz.mail.163.com|t1hz.mail.163.com|t2hz.mail.163.com|t4hz.mail.163.com|t5hz.mail.163.com|c2bj.mail.163.com|c3bj.mail.163.com|c4bj.mail.163.com|c5bj.mail.163.com|c6bj.mail.163.com|c7bj.mail.163.com|c1bj.mail.163.com; P_INFO=tangbaiyuan223@163.com|1479107027|1|mail163|11&21|zhj&1479106655&mail163#zhj&330100#10#0|&0|mail163|tangbaiyuan223@163.com; mail_upx_nf=");
         message.setTaskId(1000000174);
         message.setWebsiteName("163.com");
-        message.setEndURL("http://mail.163.com/m/main.jsp?sid=zAEboXxxvEMWfRksEkxxTmiVlDzpjJmT&df=smart_ios");
+        message.setEndURL("http://mail.163.com/m/web.jsp?sid=zAEboXxxvEMWfRksEkxxTmiVlDzpjJmT&df=smart_ios");
         collector.processMessage(message);
     }
 
@@ -102,7 +102,7 @@ public class ActorTest extends BaseTest {
         message.setWebsiteName("126.com");
         message.setNeedDuplicate(true);
 
-        message.setEndURL("http://mail.126.com/m/main.jsp?sid=tATgmGjRbxndudDCLjRRnYlfoLvKGRHd&df=smart_ios");
+        message.setEndURL("http://mail.126.com/m/web.jsp?sid=tATgmGjRbxndudDCLjRRnYlfoLvKGRHd&df=smart_ios");
         collector.processMessage(message);
         while (true) {
             Thread.sleep(5000);

@@ -5,12 +5,3 @@ dependencies {
     compile project(':rawdatacentral-collector')
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
 }
-
-def env = System.getProperty("env") ?: "dev";
-sourceSets {
-    main {
-        resources {
-            srcDirs = ["src/main/resources", "profile/$env"]
-        }
-    }
-}
