@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.dao;
 
-import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.rawdatacentral.dao.mapper.TaskMapper;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -18,13 +18,8 @@ import java.util.Date;
  * Created by zhouxinghai on 2017/6/29
  */
 @Resource
-public interface TaskDAO {
-
-    public int insertTask(Task task);
-
-    public void updateTask(Task task);
+public interface TaskDAO extends TaskMapper {
 
     public Date selectNow();
-
 
 }

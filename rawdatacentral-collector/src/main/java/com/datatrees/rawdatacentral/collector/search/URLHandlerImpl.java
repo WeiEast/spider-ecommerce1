@@ -39,7 +39,7 @@ public class URLHandlerImpl implements URLHandler {
      * (non-Javadoc)
      * 
      * @see
-     * com.datatrees.vt.core.domainimpl.page.handler.URLHandler#handle(com.datatrees.vt.core.domainimpl.
+     * com.datatrees.vt.core.domainimpl.page.typehandler.URLHandler#handle(com.datatrees.vt.core.domainimpl.
      * bean.LinkNode, com.datatrees.vt.core.domainimpl.bean.LinkNode)
      */
     @Override
@@ -55,7 +55,7 @@ public class URLHandlerImpl implements URLHandler {
             FilterExecutor.INSTANCE.execut(context, FilterListFactory.LINKNODE.getFilterList());
 
         } catch (Exception e) {
-            log.error("Caught Exception in HostingsiteURLHandler while invoke handler mthod . fetched url [" + fetched.getUrl() + "]", e);
+            log.error("Caught Exception in HostingsiteURLHandler while invoke typehandler mthod . fetched url [" + fetched.getUrl() + "]", e);
         }
         return fetched.isRemoved();
     }

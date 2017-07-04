@@ -61,6 +61,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.ByteArrayOutputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -111,6 +113,14 @@ public class Collector {
         task.setWebsiteName(message.getWebsiteName());
         task.setNodeName(IpUtils.getLocalHostName());
 
+        task.setOpenUrlCount(new AtomicInteger(0));
+        task.setOpenPageCount(new AtomicInteger(0));
+        task.setRequestFailedCount(new AtomicInteger(0));
+        task.setRetryCount(new AtomicInteger(0));
+        task.setFilteredCount(new AtomicInteger(0));
+        task.setNetworkTraffic(new AtomicLong(0));
+        task.setStatus(0);
+
         SearchProcessorContext context = websiteConfigService.getSearchProcessorContext(message.getWebsiteName());
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
@@ -125,7 +135,7 @@ public class Collector {
         context.set(AttributeKey.END_URL, message.getEndURL());
         // 历史状态清理
         this.clearStatus(message.getTaskId());
-        task.setId(taskService.insertTask(task));
+        taskService.insertTask(task);
         // set task unique sign
         ProcessorContextUtil.setTaskUnique(context, task.getId());
 
@@ -287,7 +297,7 @@ public class Collector {
             }
         } finally {
             if (!task.isSubTask()) {
-                String redisKey = "run_count:" + task.getTaskId();
+                String redisKey = "run_count_" + task.getTaskId();
                 long totalRun = 0;
                 if (redisDao.getRedisTemplate().hasKey(redisKey)) {
                     totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(redisKey));

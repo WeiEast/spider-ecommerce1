@@ -30,12 +30,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public int insertTask(Task task) {
-        return taskDAO.insertTask(task);
+        task.setCreatedAt(new Date());
+        return taskDAO.insertSelective(task);
     }
 
     @Override
     public void updateTask(Task task) {
-        taskDAO.updateTask(task);
+        task.setFinishedAt(new Date());
+        taskDAO.updateByPrimaryKeySelective(task);
     }
 
     @Override
