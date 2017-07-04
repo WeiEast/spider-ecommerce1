@@ -79,7 +79,12 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
             return null;
         }
-        return websiteConfigService.getWebsiteConf(newWebsiteName);
+        WebsiteConf conf = websiteConfigService.getWebsiteConf(newWebsiteName);
+        if(null != conf){
+            //中文
+            conf.setName(websiteName);
+        }
+        return conf;
     }
 
     @Override
