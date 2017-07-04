@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
+import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 
 /**

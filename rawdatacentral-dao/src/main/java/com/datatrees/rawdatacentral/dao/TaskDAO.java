@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.dao;
 
-import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.model.Task;
 
 import javax.annotation.Resource;
 import java.util.Date;

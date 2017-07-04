@@ -7,7 +7,7 @@ import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
 import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
-import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

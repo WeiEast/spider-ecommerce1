@@ -13,7 +13,7 @@ import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.domain.model.Keyword;
 import com.datatrees.rawdatacentral.service.KeywordService;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

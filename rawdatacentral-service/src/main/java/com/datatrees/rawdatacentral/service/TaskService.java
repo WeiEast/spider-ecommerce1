@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.model.Task;
 
 import java.util.Date;
 

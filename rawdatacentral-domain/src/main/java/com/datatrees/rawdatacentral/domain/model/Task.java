@@ -6,7 +6,7 @@
  *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.domain.common;
+package com.datatrees.rawdatacentral.domain.model;
 
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 

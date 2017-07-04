@@ -23,7 +23,7 @@ import com.datatrees.rawdatacentral.collector.chain.FilterListFactory;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
-import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

@@ -12,7 +12,7 @@ import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.databoss.api.client.common.SimpleProxyManager;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
-import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
+import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.service.BankService;

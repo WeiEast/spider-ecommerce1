@@ -17,7 +17,7 @@ import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
-import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
+import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;

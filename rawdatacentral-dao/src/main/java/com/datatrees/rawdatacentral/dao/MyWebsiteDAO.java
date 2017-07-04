@@ -8,7 +8,7 @@
  */
 package com.datatrees.rawdatacentral.dao;
 
-import com.datatrees.rawdatacentral.domain.common.WebsiteConfig;
+import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 
 import javax.annotation.Resource;
 

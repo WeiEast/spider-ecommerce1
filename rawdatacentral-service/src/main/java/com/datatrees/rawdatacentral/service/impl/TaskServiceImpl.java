@@ -9,7 +9,7 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import com.datatrees.rawdatacentral.dao.TaskDAO;
-import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.service.TaskService;
 import org.springframework.stereotype.Service;
 
