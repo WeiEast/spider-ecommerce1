@@ -97,13 +97,13 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
                 getMessageService().sendTaskLog(taskId, "短信验证码校验成功");
                 return resultMap;
             }
-            logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputPicCount={}", taskId,
-                websiteName, receiveDirective.getData(), retry, inputCode);
+            logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputSmsCount={}", taskId,
+                websiteName, inputCode, retry, inputSmsCount);
 
         } while (System.currentTimeMillis() < maxInterval);
         if (hasSms) {
             getMessageService().sendTaskLog(taskId, inputSmsCount == 0 ? "短信验证码校验超时" : "短信验证码校验失败");
-            throw new ResultEmptyException("get pic code error, inputSmsCount:" + inputSmsCount);
+            throw new ResultEmptyException("get pic code error,inputSmsCount:" + inputSmsCount);
         }
         return resultMap;
     }
