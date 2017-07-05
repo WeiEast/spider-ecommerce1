@@ -83,7 +83,8 @@ subprojects {
         all*.exclude group: "org.slf4j", module: "slf4j-log4j12"
         all*.exclude group: "com.datatrees.rawdata", module: "AbstractPlugin"
         all*.exclude group: "org.jfrog.jade.plugins.common", module: "*"
-
+        all*.exclude group: "org.apache.ibatis", module: "ibatis-sqlmap"
+        all*.exclude group: "org.springframework", module: "spring-ibatis"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
