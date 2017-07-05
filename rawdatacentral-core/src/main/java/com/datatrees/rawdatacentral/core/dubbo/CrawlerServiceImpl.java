@@ -9,21 +9,18 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.operator.*;
+import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
@@ -331,71 +328,11 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
         HttpResult<List<OperatorCatalogue>> result = new HttpResult<>();
         try {
-            List<OperatorCatalogue> list = new ArrayList<>();
-            Map<String, List<OperatorConfig>> map = new HashMap<>();
-            List<OperatorConfig> map10086 = new ArrayList<>();
-            List<OperatorConfig> map10000 = new ArrayList<>();
-            List<OperatorConfig> map10010 = new ArrayList<>();
-            list.add(new OperatorCatalogue("移动", map10086));
-            list.add(new OperatorCatalogue("联通", map10010));
-            list.add(new OperatorCatalogue("电信", map10000));
-            for (GroupEnum group : GroupEnum.values()) {
-                WebsiteConfig websiteConfig = websiteConfigService
-                    .getWebsiteConfigByWebsiteName(group.getWebsiteName());
-                CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + group.getWebsiteName());
-                String initSetting = websiteConfig.getInitSetting();
-                if (StringUtils.isBlank(initSetting)) {
-                    throw new RuntimeException("initSetting is blank websiteName=" + group.getWebsiteName());
-                }
-                JSONObject json = JSON.parseObject(initSetting);
-                if (!json.containsKey("fields")) {
-                    throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
-                }
-                List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"),
-                    FieldInitSetting.class);
-                if (null == fieldInitSettings) {
-                    throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
-                }
-
-                OperatorConfig config = new OperatorConfig();
-                config.setGroupCode(group.getGroupCode());
-                config.setGroupName(group.getGroupName());
-                config.setWebsiteName(group.getWebsiteName());
-                config.setLoginTip(websiteConfig.getLoginTip());
-                config.setResetTip(websiteConfig.getResetTip());
-                config.setResetType(websiteConfig.getResetType());
-                config.setResetURL(websiteConfig.getResetURL());
-                config.setSmsReceiver(websiteConfig.getSmsReceiver());
-                config.setSmsTemplate(websiteConfig.getSmsTemplate());
-                config.setVerifyTip(websiteConfig.getVerifyTip());
-
-                for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
-                    InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
-                    if (null != fieldInitSetting.getDependencies()) {
-                        for (String dependency : fieldInitSetting.getDependencies()) {
-                            field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
-                        }
-                    }
-                    if (StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
-                        config.setHasPicCode(true);
-                    }
-                    if (StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
-                        config.setHasSmsCode(true);
-                    }
-                    config.getFields().add(field);
-                }
-                if (group.getGroupName().contains("移动")) {
-                    map10086.add(config);
-                    continue;
-                }
-                if (group.getGroupName().contains("联通")) {
-                    map10010.add(config);
-                    continue;
-                }
-                if (group.getGroupName().contains("电信")) {
-                    map10000.add(config);
-                    continue;
-                }
+            List<OperatorCatalogue> list = redisService.getCache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, List.class);
+            if (null == list) {
+                logger.warn("not found OperatorCatalogue from cache");
+                list = websiteConfigService.queryAllOperatorConfig();
+                redisService.cache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, list);
             }
             return result.success(list);
         } catch (Exception e) {

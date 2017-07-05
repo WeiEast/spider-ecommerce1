@@ -7,6 +7,7 @@ public enum RedisKeyPrefixEnum {
 
     WEBSITENAME_TRANSFORM_MAP("websitename_transform_map", 60, "websitename中文转英文名称"),
     WEBSITE_CONF_WEBSITENAME("website_conf_websitename", 60 , "根据websitename查找website_conf"),
+    ALL_OPERATOR_CONFIG("all_operator_config", 60 , "运营商配置"),
 
     ;
 

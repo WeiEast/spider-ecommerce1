@@ -3,8 +3,11 @@ package com.datatrees.rawdatacentral.service;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+
+import java.util.List;
 
 /**
  * 站点配置
@@ -68,6 +71,12 @@ public interface WebsiteConfigService {
      * @param extractConfig
      */
     boolean updateWebsiteConf(String websiteName, String searchConfig, String extractConfig);
+
+    /**
+     * 获取运营商配置
+     * @return
+     */
+    List<OperatorCatalogue> queryAllOperatorConfig();
 
     SearchProcessorContext getSearchProcessorContext(String websiteName);
 
