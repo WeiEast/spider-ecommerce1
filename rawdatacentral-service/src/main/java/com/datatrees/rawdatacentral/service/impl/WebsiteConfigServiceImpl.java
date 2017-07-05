@@ -162,8 +162,16 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             logger.warn("updateWebsiteConf error websiteName={}", websiteName);
             return false;
         }
+        deleteCacheByWebsiteName(websiteName);
         logger.info("updateWebsiteConf success websiteName={}", websiteName);
         return true;
+    }
+
+    @Override
+    public void deleteCacheByWebsiteName(String websiteName) {
+        CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
+        redisService.deleteKey(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME.getRedisKey(websiteName));
+        redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
     }
 
     @Override

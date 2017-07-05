@@ -1,0 +1,50 @@
+package com.datatrees.rawdatacentral.web.controller;
+
+import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+
+/**
+ * Created by zhouxinghai on 2017/7/5.
+ */
+@RestController
+@RequestMapping("/website")
+public class WebsiteController {
+
+    private static final Logger  logger = LoggerFactory.getLogger(WebsiteController.class);
+
+    @Resource
+    private WebsiteConfigService websiteConfigService;
+
+    @RequestMapping("/deleteCacheByWebsiteName")
+    public HttpResult<Boolean> deleteCacheByWebsiteName(String websiteName) {
+        HttpResult<Boolean> result = new HttpResult<>();
+        try {
+            websiteConfigService.deleteCacheByWebsiteName(websiteName);
+            logger.info("delete cache success websiteName={}", websiteName);
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("deleteCacheByWebsiteName error websiteName={}", websiteName, e);
+            return result.failure();
+        }
+    }
+
+    @RequestMapping(value = "/updateWebsiteConf", method = RequestMethod.POST)
+    public HttpResult<Boolean> updateWebsiteConf(String websiteName, String searchConfig, String extractConfig) {
+        HttpResult<Boolean> result = new HttpResult<>();
+        try {
+            websiteConfigService.updateWebsiteConf(websiteName, searchConfig, extractConfig);
+            logger.info("updateWebsiteConf success websiteName={}", websiteName);
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("updateWebsiteConf error websiteName={}", websiteName, e);
+            return result.failure();
+        }
+    }
+}

@@ -73,6 +73,12 @@ public interface WebsiteConfigService {
     boolean updateWebsiteConf(String websiteName, String searchConfig, String extractConfig);
 
     /**
+     * 删除缓存
+     * @param websiteName
+     */
+    void deleteCacheByWebsiteName(String websiteName);
+
+    /**
      * 获取运营商配置
      * @return
      */
