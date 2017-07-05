@@ -13,4 +13,5 @@ include 'rawdatacentral-dao'
 include 'rawdatacentral-service'
 include 'rawdatacentral-web'
 include 'rawdatacentral-biz'
+include 'rawdatacentral-plugin'
 

@@ -4,6 +4,11 @@ dependencies {
     compile project(':rawdatacentral-domain')
     compile project(':rawdatacentral-common')
     compile project(':rawdatacentral-service')
+    compile project(':rawdatacentral-plugin')
+    compile "org.apache.ibatis:ibatis-sqlmap:${ibatisSqlmapVersion}"
+    compile "org.springframework:spring-ibatis:${springIbatisVersion}"
+    compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
+    compile "commons-dbcp:commons-dbcp:${commonsDbcpVersion}"
     compile "com.alibaba.rocketmq:rocketmq-client:${rocketmqClientVersion}"
     compile "redis.clients:jedis:${jedisVersion}"
     compile "org.apache.poi:poi:${poiVersion}"
@@ -15,7 +20,7 @@ dependencies {
     compile "com.101tec:zkclient:${zkclientVersion}"
     compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true)
     compile "net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}"
-    compile(group: "com.datatrees.rawdata", name: "AbstractPlugin", version: "${abstractpluginVersion}", changing: true)
+    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true)
     compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true)
 }
