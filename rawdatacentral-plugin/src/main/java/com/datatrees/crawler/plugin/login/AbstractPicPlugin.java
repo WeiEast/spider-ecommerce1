@@ -82,6 +82,7 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
             String picCode = requestPicCode(paramsMap);
             if (StringUtils.isEmpty(picCode)) {
                 logger.error("plugin request picCode error! taskId={},websiteName={}", taskId, websiteName);
+                TimeUnit.SECONDS.sleep(60);
                 continue;
             }
             logger.info("plugin request picCode success! taskId={},websiteName={}", taskId, websiteName);
