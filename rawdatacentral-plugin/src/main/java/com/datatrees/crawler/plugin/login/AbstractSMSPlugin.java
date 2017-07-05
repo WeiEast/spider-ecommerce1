@@ -59,6 +59,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             boolean flag = requestSMSCode(paramsMap);
             if (!flag) {
                 logger.error("plugin request smsCode error!taskId={},websiteName={}", taskId, websiteName);
+                TimeUnit.SECONDS.sleep(60);
                 continue;
             }
             hasSms = true;
