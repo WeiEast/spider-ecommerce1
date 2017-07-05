@@ -12,11 +12,13 @@ import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.databoss.api.client.common.SimpleProxyManager;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Resource
     private BankService                bankService;
+
+    @Resource
+    private RedisService               redisService;
 
     private WebsiteParentConfigHandler parentConfigHandler = new WebsiteParentConfigHandler();
 
@@ -115,6 +120,25 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             conf.setSmsTemplate(config.getSmsTemplate());
         }
         return conf;
+    }
+
+    @Override
+    public WebsiteConf getWebsiteConfFromCache(String websiteName) {
+        CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
+        WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName,
+            WebsiteConf.class);
+        if (null != conf) {
+            logger.info("find WebsiteConf from cache websiteName={}", websiteName);
+            return conf;
+        }
+        conf = getWebsiteConf(websiteName);
+        if (null != conf) {
+            logger.info("find WebsiteConf from db websiteName={}", websiteName);
+            redisService.cache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName, conf);
+            return conf;
+        }
+        logger.info("conf not found from db websiteName={}", websiteName);
+        return null;
     }
 
     @Override

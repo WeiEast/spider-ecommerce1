@@ -11,23 +11,21 @@ package com.datatrees.rawdatacentral.core.dubbo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.util.CacheUtil;
-import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
-import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.*;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.share.RedisService;
-import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,24 +61,23 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
         logger.info("websiteName:{} getWebsiteConf Start", websiteName);
-        Map<String, String> map = (Map<String, String>) CacheUtil.INSTANCE.getObject("websitename_transform_map");
+        Map<String, String> map = redisService.getCache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, Map.class);
         String newWebsiteName;
         if (map != null) {
             newWebsiteName = map.get(websiteName);
         } else {
-            map = (Map<String, String>) GsonUtils.fromJson(
-                PropertiesConfiguration.getInstance().get("websitename_transform_map"),
-                new TypeToken<HashMap<String, String>>() {
-                }.getType());
-            CacheUtil.INSTANCE.insertObject("websitename_transform_map", map);
+            String property = PropertiesConfiguration.getInstance()
+                .get(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP.getRedisKey());
+            map = JSON.parseObject(property, Map.class);
+            redisService.cache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, map);
             newWebsiteName = map.get(websiteName);
         }
         if (StringUtils.isBlank(newWebsiteName)) {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
             return null;
         }
-        WebsiteConf conf = websiteConfigService.getWebsiteConf(newWebsiteName);
-        if(null != conf){
+        WebsiteConf conf = websiteConfigService.getWebsiteConfFromCache(newWebsiteName);
+        if (null != conf) {
             //中文
             conf.setName(websiteName);
         }

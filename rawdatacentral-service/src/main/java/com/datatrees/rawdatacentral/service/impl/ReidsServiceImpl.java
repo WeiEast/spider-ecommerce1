@@ -1,10 +1,12 @@
 package com.datatrees.rawdatacentral.service.impl;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
+import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +15,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import com.datatrees.rawdatacentral.share.RedisService;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ReidsServiceImpl implements RedisService {
@@ -349,6 +347,17 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
+    public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Object value) {
+        cache(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(), TimeUnit.MINUTES);
+
+    }
+
+    @Override
+    public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object value) {
+        cache(redisKeyPrefixEnum.getRedisKey(), value, redisKeyPrefixEnum.getTimeout(), TimeUnit.MINUTES);
+    }
+
+    @Override
     public <T> T getCache(String key, Class<T> cls) {
         String json = getString(key);
         if (StringUtils.isNoneBlank(json)) {
@@ -357,6 +366,16 @@ public class ReidsServiceImpl implements RedisService {
             return result;
         }
         return null;
+    }
+
+    @Override
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, Class<T> cls) {
+        return getCache(redisKeyPrefixEnum.getRedisKey(), cls);
+    }
+
+    @Override
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Class<T> cls) {
+        return getCache(redisKeyPrefixEnum.getRedisKey(postfix), cls);
     }
 
 }

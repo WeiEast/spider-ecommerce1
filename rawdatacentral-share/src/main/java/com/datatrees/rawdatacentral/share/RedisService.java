@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.share;
 
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 
 import java.util.List;
@@ -179,6 +180,21 @@ public interface RedisService {
     public void cache(String key, Object value, long timeout, TimeUnit unit);
 
     /**
+     * 缓存
+     * @param redisKeyPrefixEnum  前缀
+     * @param postfix 后缀
+     * @param value 值
+     */
+    public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Object value);
+
+    /**
+     * 缓存
+     * @param redisKeyPrefixEnum  前缀
+     * @param value 值
+     */
+    public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object value);
+
+    /**
      * 查找缓存
      * @param key
      * @param cls
@@ -186,5 +202,24 @@ public interface RedisService {
      * @return
      */
     public <T> T getCache(String key, Class<T> cls);
+
+    /**
+     * 查找缓存
+     * @param redisKeyPrefixEnum
+     * @param cls
+     * @param <T>
+     * @return
+     */
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, Class<T> cls);
+
+    /**
+     * 查找缓存
+     * @param redisKeyPrefixEnum
+     * @param postfix
+     * @param cls
+     * @param <T>
+     * @return
+     */
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Class<T> cls);
 
 }

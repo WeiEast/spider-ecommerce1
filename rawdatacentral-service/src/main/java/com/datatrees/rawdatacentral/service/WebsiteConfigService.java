@@ -55,6 +55,13 @@ public interface WebsiteConfigService {
     WebsiteConf getWebsiteConf(String websiteName);
 
     /**
+     * 获取WebsiteConf
+     * @param websiteName
+     * @return
+     */
+    WebsiteConf getWebsiteConfFromCache(String websiteName);
+
+    /**
      * 根据websiteName更新searchConfigSource,extractConfigSource
      * @param websiteName
      * @param searchConfig
