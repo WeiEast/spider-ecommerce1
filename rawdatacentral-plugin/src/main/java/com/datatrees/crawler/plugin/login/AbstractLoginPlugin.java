@@ -171,7 +171,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                         ? String.valueOf(loginResultMap.get(AttributeKey.ERROR_CODE)) : StringUtils.EMPTY;
                     sendResult.fill(DirectiveRedisCode.SERVER_FAIL, errorCode);
                     getRedisService().saveDirectiveResult(directiveId, sendResult);
-                    //                    getMessageService().sendTaskLog(taskId, "登陆失败", errorCode);
+                    getMessageService().sendTaskLog(taskId, "登陆失败", errorCode);
                     logger.warn("login fail taskId={},websiteName={},directiveId={},errorCode={},loginCount={}", taskId,
                         websiteName, directiveId, errorCode, loginCount);
                     //清理,避免对下一次登陆产生影响
@@ -181,7 +181,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                 }
                 sendResult.fill(DirectiveRedisCode.SERVER_SUCCESS, null);
                 getRedisService().saveDirectiveResult(directiveId, sendResult);
-                //                getMessageService().sendTaskLog(taskId, "登陆成功");
+                getMessageService().sendTaskLog(taskId, "登陆成功");
                 logger.info("login successs taskId={},websiteName={},directiveId={},loginCount={}", taskId, websiteName,
                     directiveId, loginCount);
                 return GsonUtils.toJson(postLogin(loginResultMap));

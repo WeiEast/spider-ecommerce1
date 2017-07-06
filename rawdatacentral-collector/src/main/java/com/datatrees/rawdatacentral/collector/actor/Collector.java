@@ -51,19 +51,16 @@ import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
-import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.io.ByteArrayOutputStream;
+import java.util.*;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -236,7 +233,7 @@ public class Collector {
             }
 
             boolean loginStatus = !needLogin || (null != loginResult && loginResult.getStatus());
-            if (!task.isSubTask()) {
+            if (!task.isSubTask() && !context.needInteractive()) {
                 messageService.sendTaskLog(task.getTaskId(), loginStatus ? "登陆成功" : "登陆失败");
             }
 
@@ -308,7 +305,7 @@ public class Collector {
                         logMsg = isRepeatTask ? "用户刷新任务或者重试,抓取中断" : "抓取中断";
                         break;
                     case 308:
-                        logMsg = "抓取失败,登陆超时";
+                        logMsg = "登陆超时";
                         break;
                     default:
                         logMsg = "抓取失败";
@@ -347,8 +344,8 @@ public class Collector {
 
             if (startMsgJson.length() > PropertiesConfiguration.getInstance()
                 .getInt("default.startMsgJson.length.threshold", 20000)) {
-                String path = "task/"+taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/"
-                              + taskMessage.getTask().getId();
+                String path = "task/" + taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId()
+                              + "/" + taskMessage.getTask().getId();
                 taskMessage.getTask().setResultMessage(resultMessageBuilder.toString() + ",startMsgOSSPath:" + path);
                 SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -356,8 +353,8 @@ public class Collector {
                     Map<String, SubmitFile> uploadMap = new HashMap<>();
                     uploadMap.put("startMsg.json", file);
                     ZipCompressUtils.compress(baos, uploadMap);
-                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path),
-                        baos.toByteArray());
+                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET,
+                        OssUtils.getObjectKey(path), baos.toByteArray());
                 } catch (Exception e) {
                     logger.error("upload startMsg.json error:" + e.getMessage(), e);
                 } finally {
