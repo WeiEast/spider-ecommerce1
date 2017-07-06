@@ -6,6 +6,20 @@
  */
 package com.datatrees.rawdatacentral.collector.actor;
 
+import java.io.ByteArrayOutputStream;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
@@ -37,10 +51,10 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
-import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.TaskService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
@@ -51,18 +65,6 @@ import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -243,7 +245,7 @@ public class Collector {
             }
 
             boolean loginStatus = !needLogin || (null != loginResult && loginResult.getStatus());
-            if (!task.isSubTask()) {
+            if (!task.isSubTask() && !context.needInteractive()) {
                 messageService.sendTaskLog(task.getTaskId(), loginStatus ? "登陆成功" : "登陆失败");
             }
 
@@ -315,7 +317,7 @@ public class Collector {
                         logMsg = isRepeatTask ? "用户刷新任务或者重试,抓取中断" : "抓取中断";
                         break;
                     case 308:
-                        logMsg = "抓取失败,登陆超时";
+                        logMsg = "登陆超时";
                         break;
                     default:
                         logMsg = "抓取失败";
