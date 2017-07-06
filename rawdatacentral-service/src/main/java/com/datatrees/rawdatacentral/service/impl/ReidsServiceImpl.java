@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -26,11 +28,27 @@ public class ReidsServiceImpl implements RedisService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    private RedisTemplate       redisTemplate;
+
     /**
      * 默认超时时间(单位:秒),默认2分钟
      */
     @Value("${rawdatacentral.redisKey.timeout:120}")
     private long                defaultTimeOut;
+
+    @Override
+    public boolean saveBytes(String key, byte[] value) {
+        CheckUtils.checkNotBlank(key, "key is blank");
+        redisTemplate.opsForValue().set(key, value);
+        return true;
+    }
+
+    @Override
+    public byte[] getBytes(String key) {
+        CheckUtils.checkNotBlank(key, "key is blank");
+        return (byte[]) redisTemplate.opsForValue().get(key);
+    }
 
     @Override
     public boolean hasKey(String key) {

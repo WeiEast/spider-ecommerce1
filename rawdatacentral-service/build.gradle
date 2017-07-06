@@ -14,7 +14,7 @@ dependencies {
     }
     compile(group: "com.datatrees.data", name: "databoss-api-client-sdk", version: "${databossApiClientSdkVersion}", changing: true)
 
-
+    compile 'commons-codec:commons-codec:1.10'
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testCompile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"

@@ -13,6 +13,21 @@ import java.util.concurrent.TimeUnit;
 public interface RedisService {
 
     /**
+     * 保存
+     * @param key
+     * @param value
+     * @return
+     */
+    public boolean saveBytes(String key, byte[] value);
+
+    /**
+     *
+     * @param key
+     * @return
+     */
+    public byte[] getBytes(String key);
+
+    /**
      * 是否包含key
      * @param key
      * @return
