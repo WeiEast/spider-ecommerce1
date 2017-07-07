@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -45,25 +46,26 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
     }
 
     @Override
-    public boolean needUpgradePlugin(String fileName) {
+    public PluginUpgradeResult getPlugin(String fileName) {
+        File file = new File(pluginPath + fileName);
+        PluginUpgradeResult result = new PluginUpgradeResult();
         String md5 = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
-        boolean needUpgradlePlugin = !pluginMd5.containsKey(md5) || !StringUtils.equals(md5, pluginMd5.get(fileName));
-        if (needUpgradlePlugin) {
+        CheckUtils.checkNotBlank(md5, "plugin not found from redis");
+        boolean forceReload = !pluginMd5.containsKey(md5) || !StringUtils.equals(md5, pluginMd5.get(fileName));
+        if (forceReload) {
             byte[] bytes = redisService.getBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
             try {
-                FileUtils.writeByteArrayToFile(new File(pluginPath + fileName), bytes, false);
+                FileUtils.writeByteArrayToFile(file, bytes, false);
+                pluginMd5.put(fileName, md5);
                 logger.info("update plugin success fileName={},pluginPath={}", fileName, pluginPath);
             } catch (Exception e) {
                 logger.error("upgrade plugin error fileName={},pluginPath={}", fileName, pluginPath);
                 throw new RuntimeException("get plugin error", e);
             }
         }
-        return needUpgradlePlugin;
-    }
-
-    @Override
-    public File getPlugin(String fileName) {
-        return new File(pluginPath + fileName);
+        result.setForceReload(forceReload);
+        result.setFile(file);
+        return result;
     }
 
     @Override

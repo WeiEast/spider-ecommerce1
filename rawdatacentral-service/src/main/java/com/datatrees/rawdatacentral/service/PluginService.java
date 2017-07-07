@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.service;
 
-import java.io.File;
+import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 
 /**
  * 插件管理
@@ -16,17 +16,10 @@ public interface PluginService {
     String savePlugin(String fileName, byte[] bytes);
 
     /**
-     * 是否需要升级plugin
-     * @param fileName
-     * @return
-     */
-    boolean needUpgradePlugin(String fileName);
-
-    /**
      * 获取插件
      * @param fileName
      * @return
      */
-    File getPlugin(String fileName);
+    PluginUpgradeResult getPlugin(String fileName);
 
 }
