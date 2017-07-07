@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
@@ -46,11 +47,11 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
     }
 
     @Override
-    public PluginUpgradeResult getPlugin(String fileName) {
+    public PluginUpgradeResult getPluginFromRedis(String fileName) {
         File file = new File(pluginPath + fileName);
         PluginUpgradeResult result = new PluginUpgradeResult();
         String md5 = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
-        CheckUtils.checkNotBlank(md5, "plugin not found from redis");
+        CheckUtils.checkNotBlank(md5, "没有从redis读取到插件:" + fileName);
         boolean forceReload = !pluginMd5.containsKey(md5) || !StringUtils.equals(md5, pluginMd5.get(fileName));
         if (forceReload) {
             byte[] bytes = redisService.getBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
@@ -65,12 +66,28 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         }
         result.setForceReload(forceReload);
         result.setFile(file);
+        logger.info("getPluginFromRedis success fileName={},pluginPath={}", fileName, pluginPath);
+        return result;
+    }
+
+    @Override
+    public PluginUpgradeResult getPluginFromLocal(String websiteName, AbstractPlugin pluginDesc) {
+        String filePath = pluginPath + websiteName + "/" + pluginDesc.getId() + "." + pluginDesc.getType();
+        File file = new File(filePath);
+        if (!file.exists()) {
+            logger.error("local plugin not found filePath={}", filePath);
+            throw new RuntimeException("local plugin not found filePath=" + filePath);
+        }
+        PluginUpgradeResult result = new PluginUpgradeResult();
+        result.setFile(file);
+        result.setForceReload(false);
+        logger.info("getPluginFromLocal success filePath={}", filePath);
         return result;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (StringUtils.endsWith(pluginPath, "/")) {
+        if (!StringUtils.endsWith(pluginPath, "/")) {
             pluginPath += "/";
         }
     }

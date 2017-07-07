@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service;
 
+import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 
 /**
@@ -20,6 +21,13 @@ public interface PluginService {
      * @param fileName
      * @return
      */
-    PluginUpgradeResult getPlugin(String fileName);
+    PluginUpgradeResult getPluginFromRedis(String fileName);
+
+    /**
+     * 获取插件
+     * @param
+     * @return
+     */
+    PluginUpgradeResult getPluginFromLocal(String websiteName, AbstractPlugin pluginDesc);
 
 }
