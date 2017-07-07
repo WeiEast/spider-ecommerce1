@@ -1,5 +1,14 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import java.util.*;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.crawler.core.domain.Website;
@@ -9,26 +18,19 @@ import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.resource.PluginManager;
-import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
-import com.datatrees.databoss.api.client.common.SimpleProxyManager;
+import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.operator.*;
-import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.operator.*;
+import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.rawdatacentral.share.RedisService;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.*;
 
 /**
  * Created by zhouxinghai on 2017/6/30.

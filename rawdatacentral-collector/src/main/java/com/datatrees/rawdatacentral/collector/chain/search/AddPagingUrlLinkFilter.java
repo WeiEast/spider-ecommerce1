@@ -1,7 +1,13 @@
 package com.datatrees.rawdatacentral.collector.chain.search;
 
-import java.util.List;
-
+import com.datatrees.crawler.core.processor.bean.CrawlRequest;
+import com.datatrees.crawler.core.processor.bean.CrawlResponse;
+import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.bean.Status;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
+import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
 import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
@@ -10,14 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datatrees.crawler.core.processor.bean.CrawlRequest;
-import com.datatrees.crawler.core.processor.bean.CrawlResponse;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.bean.Status;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.search.SearchTempldateCombine;
-import com.datatrees.rawdatacentral.collector.chain.Context;
+import java.util.List;
 
 
 /**
@@ -73,7 +72,7 @@ public class AddPagingUrlLinkFilter implements Filter {
     private String getPageLinkUrl(int currentPageNum, SearchProcessor searchProcessor) {
         log.info("getPageLinkUrl currentPageNum:  " + currentPageNum);
         String pageLinkUrl =
-                SearchTempldateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(),
+                SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(),
                         searchProcessor.getEncoding(), currentPageNum, true, searchProcessor.getProcessorContext().getContext());
         return pageLinkUrl;
     }
@@ -81,7 +80,6 @@ public class AddPagingUrlLinkFilter implements Filter {
     /**
      * 
      * 
-     * @param linkNodeExtraInfo
      * @param current
      */
     private void copyProperties(LinkNode pageNumUrlLink, LinkNode current) {

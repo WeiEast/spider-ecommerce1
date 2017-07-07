@@ -1,12 +1,13 @@
 package com.datatrees.rawdatacentral.web.controller;
 
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.share.RedisService;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,8 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.util.List;
 
 /**
  * Created by zhouxinghai on 2017/7/5.
@@ -34,6 +33,9 @@ public class WebsiteController {
 
     @Resource
     private PluginService        pluginService;
+
+    @Resource
+    private RedisTemplate        redisTemplate;
 
     @RequestMapping("/deleteCacheByWebsiteName")
     public HttpResult<Boolean> deleteCacheByWebsiteName(String websiteName) {
@@ -62,8 +64,8 @@ public class WebsiteController {
     }
 
     @RequestMapping(value = "/uploadPluginJar", method = RequestMethod.POST)
-    public HttpResult<Boolean> uploadPluginJar(MultipartHttpServletRequest multiReq, String token) {
-        HttpResult<Boolean> result = new HttpResult<>();
+    public Object uploadPluginJar(MultipartHttpServletRequest multiReq, String token) {
+        StringBuilder result = new StringBuilder();
         try {
             MultipartFile jar = multiReq.getFile("jar");
             String uploadFilePath = jar.getOriginalFilename();
@@ -72,42 +74,35 @@ public class WebsiteController {
             String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1,
                 uploadFilePath.length());
             String fileName = uploadFileName + "." + uploadFileSuffix;
-            pluginService.savePlugin(fileName, jar.getBytes());
+            String md5 = pluginService.savePlugin(fileName, jar.getBytes());
             logger.info("uploadPluginJar success fileName={},token={}", fileName, token);
-            return result.success(true);
+            return result.append("成功上传插件:").append(fileName).append("md5:").append(md5).toString();
         } catch (Exception e) {
             logger.error("uploadPluginJar error token={}", token);
-            return result.failure();
+            return "上传失败";
         }
     }
 
-    @RequestMapping(value = "testUploadFiles", method = RequestMethod.POST)
-    public void handleFileUpload(MultipartHttpServletRequest request) {
-        List<MultipartFile> files = request.getFiles("jars");
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                try {
-                    String uploadFilePath = file.getOriginalFilename();
-                    System.out.println("uploadFlePath:" + uploadFilePath);
-                    // 截取上传文件的文件名
-                    String uploadFileName = uploadFilePath.substring(uploadFilePath.lastIndexOf('\\') + 1,
-                        uploadFilePath.indexOf('.'));
-                    System.out.println("multiReq.getFile()" + uploadFileName);
-                    // 截取上传文件的后缀
-                    String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1,
-                        uploadFilePath.length());
-                    System.out.println("uploadFileSuffix:" + uploadFileSuffix);
-                    String outPath = "/data/upload/" + uploadFileName + "." + uploadFileSuffix;
-                    FileUtils.writeByteArrayToFile(new File(outPath), file.getBytes());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                }
-            } else {
-                System.out.println("上传文件为空");
-            }
+    @RequestMapping(value = "/deletePluginJar", method = RequestMethod.POST)
+    public Object deletePluginJar(MultipartHttpServletRequest multiReq, String token) {
+        StringBuilder result = new StringBuilder();
+        try {
+            MultipartFile jar = multiReq.getFile("jar");
+            String uploadFilePath = jar.getOriginalFilename();
+            String uploadFileName = uploadFilePath.substring(uploadFilePath.lastIndexOf('\\') + 1,
+                    uploadFilePath.indexOf('.'));
+            String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1,
+                    uploadFilePath.length());
+            String fileName = uploadFileName + "." + uploadFileSuffix;
+            redisService.deleteKey(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
+            redisService.deleteKey(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
+            logger.info("delete plugin jar success fileName={},token={}", fileName, token);
+            return result.append("删除插件:").append(fileName).toString();
+        } catch (Exception e) {
+            logger.error("deletePluginJar error token={}", token);
+            return "删除失败";
         }
-        System.out.println("文件接受成功了");
     }
+
 
 }

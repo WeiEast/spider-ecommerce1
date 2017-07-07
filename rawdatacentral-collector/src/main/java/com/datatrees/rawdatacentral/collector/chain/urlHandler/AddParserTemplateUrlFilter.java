@@ -1,20 +1,19 @@
 package com.datatrees.rawdatacentral.collector.chain.urlHandler;
 
-import java.util.List;
-
+import com.datatrees.common.util.GsonUtils;
+import com.datatrees.common.util.PatternUtils;
+import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
+import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
 import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
+import com.datatrees.rawdatacentral.collector.search.URLHandlerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.search.SearchTempldateCombine;
-import com.datatrees.rawdatacentral.collector.chain.Context;
-import com.datatrees.rawdatacentral.collector.search.URLHandlerImpl;
+import java.util.List;
 
 
 /**
@@ -33,7 +32,7 @@ public class AddParserTemplateUrlFilter implements Filter {
             SearchProcessor searchProcessor = ContextUtil.getSearchProcessor(context);
             if (fetchLinkNode.isFromParser() && PatternUtils.match("\\#\\{page,", fetchLinkNode.getUrl())) {
                 int pageNum = 1;
-                String currentParserLinkUrl = SearchTempldateCombine.customTemplate(fetchLinkNode.getUrl(), pageNum);
+                String currentParserLinkUrl = SearchTemplateCombine.customTemplate(fetchLinkNode.getUrl(), pageNum);
 
                 if (!currentParserLinkUrl.equals(fetchLinkNode.getUrl())) {
                     log.info("AddParserTemplateUrlFilter : currentParserLinkUrl : " + currentParserLinkUrl);
@@ -47,7 +46,7 @@ public class AddParserTemplateUrlFilter implements Filter {
                     String lastParserLinkUrl = "";
                     while (!lastParserLinkUrl.equals(currentParserLinkUrl)) {
                         lastParserLinkUrl = currentParserLinkUrl;
-                        currentParserLinkUrl = SearchTempldateCombine.customTemplate(fetchLinkNode.getUrl(), ++pageNum);
+                        currentParserLinkUrl = SearchTemplateCombine.customTemplate(fetchLinkNode.getUrl(), ++pageNum);
                         if (lastParserLinkUrl.equals(currentParserLinkUrl)) {
                             break;
                         }

@@ -7,7 +7,7 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.format.unit.TimeUnit;
-import com.datatrees.crawler.core.processor.search.SearchTempldateCombine;
+import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.domain.model.Keyword;
@@ -70,7 +70,7 @@ public class CrawlExcutorHandler {
                 for (Keyword keyword : keywordList) {
                     searchProcessor.init(keyword.getKeyword());
                     ProcessorContextUtil.setKeyword(searchProcessor.getProcessorContext(), keyword.getKeyword());
-                    String url = SearchTempldateCombine.constructSearchURL(searchProcessor.getSearchTemplate(),
+                    String url = SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(),
                         keyword.getKeyword(), searchProcessor.getEncoding(), 0, true,
                         searchProcessor.getProcessorContext().getContext());
                     linkNode = new LinkNode(url).setDepth(0);
@@ -78,7 +78,7 @@ public class CrawlExcutorHandler {
                 }
             } else {
                 searchProcessor.init();
-                String url = SearchTempldateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), "",
+                String url = SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), "",
                     searchProcessor.getEncoding(), 0, true, searchProcessor.getProcessorContext().getContext());
                 linkNode = new LinkNode(url).setDepth(0);
                 this.doLoopCrawl(searchProcessor, linkQueue, linkNode, searchTemplateConfig.getThreadCount());

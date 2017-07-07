@@ -8,7 +8,5 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	<import resource="rawdatacentral-redis.xml" />
 	<import resource="rawdatacentral-datasource-mysql.xml" />
 	<context:component-scan base-package="com.datatrees.rawdatacentral" />
-	<!--这里要改掉-->
-	<import resource="classpath*:dtboss-consumer.xml" />
 
 </beans>
