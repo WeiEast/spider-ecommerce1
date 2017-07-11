@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public enum FieldBizType {
 
-    USERNAME("USERNAME", "手机号"),PASSWORD("PASSWORD", "服务密码"), SMS_CODE("SMS_CODE", "短信验证码"), PIC_CODE("PIC_CODE", "图片验证码");
+    USERNAME("USERNAME", "手机号"),PASSWORD("PASSWORD", "服务密码"), SMS_CODE("SMS_CODE", "短信验证码"), PIC_CODE("PIC_CODE", "图片验证码"), REAL_NAME("REAL_NAME", "真实姓名"), ID_CARD("ID_CARD", "身份证号码");
 
     /**
      * 字段类型
@@ -82,6 +82,20 @@ public enum FieldBizType {
                     field.setValidationPattern("");
                     field.setValidationMsg("请输入验证码");
                     field.setPlaceholder("请输入验证码");
+                    break;
+                case REAL_NAME:
+                    field.setName("realName");
+                    field.setType("text");
+                    field.setValidationPattern("");
+                    field.setValidationMsg("请输入真实姓名");
+                    field.setPlaceholder("请输入真实姓名");
+                    break;
+                case ID_CARD:
+                    field.setName("idCard");
+                    field.setType("text");
+                    field.setValidationPattern("^\\d{15}[0-9a-zA-Z]$");
+                    field.setValidationMsg("请输入身份证号码");
+                    field.setPlaceholder("请输入身份证号码");
                     break;
                 default:
                     throw new RuntimeException("not support input biz type" + type.getRemark());
