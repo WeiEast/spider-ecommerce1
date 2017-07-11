@@ -27,7 +27,7 @@ ssh root@$server_ip << EOF
     cd rawdatacentral
     sh bin/app.sh start;
     echo $file;
-    tail -100f $server_log_path/sys.log
+    tail -100f $server_log_path/rawdatacentral.log
     exit;
 EOF
 
