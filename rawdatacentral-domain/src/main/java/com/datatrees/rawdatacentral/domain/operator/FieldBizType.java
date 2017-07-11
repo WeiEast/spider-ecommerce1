@@ -93,7 +93,7 @@ public enum FieldBizType {
                 case ID_CARD:
                     field.setName("idCard");
                     field.setType("text");
-                    field.setValidationPattern("^\\d{15}[0-9a-zA-Z]$");
+                    field.setValidationPattern("^\\d{17}[0-9a-zA-Z]$");
                     field.setValidationMsg("请输入身份证号码");
                     field.setPlaceholder("请输入身份证号码");
                     break;
