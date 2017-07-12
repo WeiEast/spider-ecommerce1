@@ -19,7 +19,7 @@ EOF
 echo "find app file $file and upload"
 scp  $file root@$server_ip:$server_application/;
 
-ssh -tt root@$server_ip << EOF
+ssh root@$server_ip << EOF
     cd $server_application;
     rm -rf rawdatacentral
     tar -xzf $file;
