@@ -9,6 +9,7 @@ dependencies {
     compile "commons-io:commons-io:${commonsIoVersion}"
     compile "com.alibaba:fastjson:${fastjsonVersion}"
     compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+    compile 'org.apache.httpcomponents:httpclient:4.5'
 
 
 
