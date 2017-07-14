@@ -12,6 +12,15 @@ import java.util.Map;
 public interface OperatorLoginPlugin {
 
     /**
+     * 登陆初始化,获取基本信息
+     * @param taskId
+     * @param websiteName
+     * @param param
+     * @return
+     */
+    HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param);
+
+    /**
      * 刷新图片验证码
      * @param taskId
      * @param websiteName

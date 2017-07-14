@@ -11,6 +11,7 @@ ext {
 
 dependencies {
     compile project(':rawdatacentral-share')
+    compile project(':rawdatacentral-common')
     compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessage}", changing: true) {
         exclude(module: 'spring-amqp')
         exclude(module: 'spring-rabbit')

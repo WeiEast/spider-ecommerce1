@@ -1,8 +1,11 @@
 package com.datatrees.rawdatacentral.web.controller;
 
+import com.datatrees.crawler.plugin.operator.OperatorLoginPlugin;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
+import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.plugin.operator.op10086.zhe_jiang_10086_web.ZheJiangLogin10086;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,17 +21,20 @@ import java.util.List;
 @RequestMapping("/operator")
 public class OperatorController {
 
-    private static final Logger  logger = LoggerFactory.getLogger(OperatorController.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(OperatorController.class);
 
     @Resource
-    private CrawlerService crawlerService;
+    private CrawlerService      crawlerService;
 
     @RequestMapping("/queryAllOperatorConfig")
     public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
         return crawlerService.queryAllOperatorConfig();
     }
 
-
+    @RequestMapping("/refeshPicCode")
+    HttpResult<String> refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
+        OperatorLoginPlugin plugin = new ZheJiangLogin10086();
+        return plugin.refeshPicCode(taskId, websiteName, param);
+    }
 
 }
