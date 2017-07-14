@@ -1,4 +1,4 @@
-package com.datatrees.crawler.plugin.operator;
+package com.datatrees.rawdatacentral.service;
 
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -9,7 +9,7 @@ import java.util.Map;
  * 运营商登陆接口
  * Created by zhouxinghai on 2017/7/13.
  */
-public interface OperatorLoginPlugin {
+public interface OperatorLoginPluginService {
 
     /**
      * 登陆初始化,获取基本信息

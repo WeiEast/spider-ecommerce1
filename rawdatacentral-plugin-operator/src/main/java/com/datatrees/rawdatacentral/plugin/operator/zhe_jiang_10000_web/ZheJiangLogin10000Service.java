@@ -1,18 +1,18 @@
-package com.datatrees.rawdatacentral.plugin.operator.op10086.zhe_jiang_10086_web;
+package com.datatrees.rawdatacentral.plugin.operator.zhe_jiang_10000_web;
 
-import com.datatrees.crawler.plugin.operator.OperatorLoginPlugin;
 import com.datatrees.crawler.plugin.util.PluginHttpUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.Charset;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.OperatorLoginPluginService;
 import org.apache.commons.codec.binary.Base64;
 
 import java.util.Map;
 
 /**
- * 浙江10086登陆
-// * 操作:登陆(http://www.10086.cn/zj/index_571_571.html中国移动官方网站杭州)-->登陆网上营业厅(https://zj.ac.10086.cn/login)-->服务密码登陆
+ * 浙江10000登陆
+// * 操作:登陆(http://www.189.cn/zj中国移动官方网站杭州)-->登陆网上营业厅(https://zj.ac.10086.cn/login)-->服务密码登陆
 // * 跳转:登陆2次: 登陆一() --> 登陆二()
  *
  * 浙江移动掌上营业厅(http://wap.zj.10086.cn/szhy/index.html)
@@ -24,10 +24,10 @@ import java.util.Map;
  *
  * Created by zhouxinghai on 2017/7/13.
  */
-public class ZheJiangLogin10086 implements OperatorLoginPlugin {
+public class ZheJiangLogin10000Service implements OperatorLoginPluginService {
 
     private static final org.slf4j.Logger logger             = org.slf4j.LoggerFactory
-        .getLogger(ZheJiangLogin10086.class);
+        .getLogger(ZheJiangLogin10000Service.class);
 
     public static final String            picCodeUrlTemplate = "https://zj.ac.10086.cn/ImgDisp?tmp={}";
 
