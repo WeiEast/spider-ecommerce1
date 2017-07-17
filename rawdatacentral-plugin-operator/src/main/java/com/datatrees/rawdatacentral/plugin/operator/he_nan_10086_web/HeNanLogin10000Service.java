@@ -77,13 +77,12 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         try {
             byte[] data = PluginHttpUtils.doGet(url, taskId);
             String picCode = Base64.encodeBase64String(data);
-            logger.info("refeshPicCode success taskId={},websiteName={}", taskId, websiteName);
             Map<String, Object> map = new HashMap<>();
             map.put(RETURN_FIELD_PIC_CODE, picCode);
             logger.info("刷新图片验证码成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
             return result.success();
         } catch (Exception e) {
-            logger.error("refeshPicCode error taskId={},websiteName={},url={}", taskId, websiteName, url);
+            logger.error("刷新图片验证码失败 error taskId={},websiteName={},url={}", taskId, websiteName, url);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
     }
@@ -104,27 +103,27 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
                     logger.info("短信发送成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.success();
                 case "1":
-                    logger.error("对不起，短信随机码暂时不能发送，请一分钟以后再试,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("对不起，短信随机码暂时不能发送，请一分钟以后再试,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR, "对不起,短信随机码暂时不能发送，请一分钟以后再试");
                 case "2":
-                    logger.error("短信下发数已达上限，您可以使用服务密码方式登录,taskId={},websiteName={},url={}", taskId, websiteName, url);
-                    return result.failure(ErrorCode.REFESH_SMS_ERROR, "短信下发数已达上限，您可以使用服务密码方式登录");
+                    logger.warn("短信下发数已达上限，您可以使用服务密码方式登录,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    return result.failure(ErrorCode.REFESH_SMS_ERROR, "短信下发数已达上限");
                 case "3":
-                    logger.error("对不起，短信发送次数过于频繁,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("对不起，短信发送次数过于频繁,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR, "对不起，短信发送次数过于频繁");
                 case "4":
-                    logger.error("对不起，渠道编码不能为空,taskId={},websiteName={},url={}", taskId, websiteName, url);
-                    return result.failure(ErrorCode.REFESH_SMS_ERROR, "对不起，渠道编码不能为空");
+                    logger.warn("对不起，渠道编码不能为空,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    return result.failure(ErrorCode.REFESH_SMS_ERROR);
                 case "5":
-                    logger.error("对不起，渠道编码异常,taskId={},websiteName={},url={}", taskId, websiteName, url);
-                    return result.failure(ErrorCode.REFESH_SMS_ERROR, "对不起，渠道编码异常");
+                    logger.warn("对不起，渠道编码异常,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    return result.failure(ErrorCode.REFESH_SMS_ERROR);
                 case "4005":
-                    logger.error("手机号码有误，请重新输入,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("手机号码有误，请重新输入,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR, "手机号码有误，请重新输入");
                 default:
                     logger.error("短信验证码发送失败,taskId={},websiteName={},url={},result={}", taskId, websiteName,
                         pageContent);
-                    return result.failure(ErrorCode.REFESH_SMS_ERROR, "短信验证码发送失败,请重试");
+                    return result.failure(ErrorCode.REFESH_SMS_ERROR);
             }
         } catch (Exception e) {
             logger.error("短信验证码发送失败,请重试,taskId={},websiteName={},url={},pageContent={}", taskId, websiteName,
@@ -164,13 +163,13 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
                     logger.info("登陆成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.success();
                 case "2036":
-                    logger.error("账户名与密码不匹配,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("账户名与密码不匹配,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
                 case "6001":
-                    logger.error("短信随机码不正确或已过期,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 case "6002":
-                    logger.error("短信随机码不正确或已过期,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
                     logger.error("登陆失败,taskId={},websiteName={},url={},pageContent={}", taskId, websiteName,
@@ -179,11 +178,10 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
                         return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
                     }
                     if (StringUtils.contains(errorMsg, "短信")) {
-                        return result.failure(ErrorCode.REFESH_SMS_ERROR);
+                        return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                     }
                     return result.failure(ErrorCode.LOGIN_FAIL);
             }
-
         } catch (Exception e) {
             logger.error("登陆失败,taskId={},websiteName={},url={}", taskId, websiteName, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
@@ -200,7 +198,8 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
             String pateContent = PluginHttpUtils.getString(url, taskId);
             JSONObject json = JSON.parseObject(pateContent);
             if (!StringUtils.equals("0", json.getString("resultCode"))) {
-                logger.error("图片验证码验证失败,taskId={},websiteName={},url={}", taskId, websiteName);
+                logger.error("图片验证码验证失败,taskId={},websiteName={},url={},pateContent={}", taskId, websiteName,
+                    pateContent);
                 return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
             }
             logger.info("图片验证码验证成功,taskId={},websiteName={},url={}", taskId, websiteName);
