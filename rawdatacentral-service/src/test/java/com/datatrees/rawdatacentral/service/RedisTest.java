@@ -19,7 +19,7 @@ public class RedisTest extends BaseTest {
 
     @Test
     public void testRedisStart(){
-        String key = "zhouxinghai_01";
+        String key = "zhouxinghai_01.redis.cath";
         redisService.saveString(key, DateUtils.formatYmd(new Date()));
 
         Bank bank = new Bank();

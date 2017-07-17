@@ -34,7 +34,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
         CheckUtils.checkNotBlank(jarName, "jarName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
         PluginUpgradeResult plugin = pluginService.getPluginFromRedis(jarName);
-        String postfix = jarName + "_" + className.replace(".", "_");
+        String postfix = jarName + "_" + className;
         String cacheKey = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(postfix);
         Class mainClass = redisService.getCache(cacheKey, Class.class);
         if (null == mainClass || plugin.getForceReload()) {
