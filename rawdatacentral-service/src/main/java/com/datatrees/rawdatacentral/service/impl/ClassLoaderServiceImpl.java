@@ -67,7 +67,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
             String mainLoginClass = PropertiesConfiguration.getInstance().get(propertyName);
             CheckUtils.checkNotBlank(mainLoginClass, "get login class error websiteName=" + websiteName);
             Class loginClass = loadPlugin(jarName, mainLoginClass);
-            if (!loginClass.isAssignableFrom(OperatorLoginPluginService.class)) {
+            if (!OperatorLoginPluginService.class.isAssignableFrom(loginClass)) {
                 throw new RuntimeException(
                     "mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorLoginPluginService");
             }

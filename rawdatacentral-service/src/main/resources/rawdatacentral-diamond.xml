@@ -43,6 +43,7 @@
         <property name="locations">
             <list>
                 <value>classpath*:server.properties</value>
+                <value>classpath*:operator.properties</value>
             </list>
         </property>
     </bean>

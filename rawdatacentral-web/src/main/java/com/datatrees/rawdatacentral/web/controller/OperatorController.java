@@ -31,6 +31,13 @@ public class OperatorController {
         return crawlerService.queryAllOperatorConfig();
     }
 
+    @RequestMapping("/init")
+    public Object init(Long taskId, String websiteName, OperatorParam param) {
+        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        return longService.init(taskId, websiteName, param);
+    }
+
+
     @RequestMapping("/refeshPicCode")
     public Object refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
         OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
