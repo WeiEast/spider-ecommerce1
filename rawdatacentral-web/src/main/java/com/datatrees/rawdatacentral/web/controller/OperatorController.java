@@ -1,9 +1,7 @@
 package com.datatrees.rawdatacentral.web.controller;
 
 import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorLoginPluginService;
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * Created by zhouxinghai on 2017/7/5.
@@ -30,14 +27,26 @@ public class OperatorController {
     private ClassLoaderService  classLoaderService;
 
     @RequestMapping("/queryAllOperatorConfig")
-    public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
+    public Object queryAllOperatorConfig() {
         return crawlerService.queryAllOperatorConfig();
     }
 
     @RequestMapping("/refeshPicCode")
-    HttpResult<String> refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
+    public Object refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
         OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
         return longService.refeshPicCode(taskId, websiteName, param);
+    }
+
+    @RequestMapping("/refeshSmsCode")
+    public Object refeshSmsCode(Long taskId, String websiteName, OperatorParam param) {
+        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        return longService.refeshSmsCode(taskId, websiteName, param);
+    }
+
+    @RequestMapping("/login")
+    public Object login(Long taskId, String websiteName, OperatorParam param) {
+        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        return longService.login(taskId, websiteName, param);
     }
 
 }
