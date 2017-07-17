@@ -27,7 +27,7 @@ public interface OperatorLoginPluginService {
      * @param param
      * @return
      */
-    HttpResult<String> refeshPicCode(Long taskId, String websiteName, OperatorParam param);
+    HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, OperatorParam param);
 
     /**
      * 刷新短信验证码
@@ -36,7 +36,7 @@ public interface OperatorLoginPluginService {
      * @param param
      * @return
      */
-    HttpResult<Boolean> refeshSmsCode(Long taskId, String websiteName, OperatorParam param);
+    HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, OperatorParam param);
 
     /**
      * 刷新短信验证码

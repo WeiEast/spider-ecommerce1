@@ -43,8 +43,8 @@ public class ZheJiangLogin10000Service implements OperatorLoginPluginService {
     }
 
     @Override
-    public HttpResult<String> refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
-        HttpResult<String> result = new HttpResult<>();
+    public HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
         String url = TemplateUtils.format(picCodeUrlTemplate, System.currentTimeMillis());
         try {
             byte[] data = PluginHttpUtils.doGet(url, taskId);
@@ -58,7 +58,7 @@ public class ZheJiangLogin10000Service implements OperatorLoginPluginService {
     }
 
     @Override
-    public HttpResult<Boolean> refeshSmsCode(Long taskId, String websiteName, OperatorParam param) {
+    public HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, OperatorParam param) {
         return null;
     }
 
