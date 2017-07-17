@@ -3,6 +3,7 @@ package com.datatrees.crawler.plugin.util;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
+import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.io.IOUtils;
@@ -57,20 +58,20 @@ public class PluginHttpUtils {
 
     public static String getString(String url, String referer, Long taskId) throws IOException {
         Map<String, String> header = new HashMap<>();
-        header.put("Referer", referer);
+        header.put(HttpHeadKey.REFERER, referer);
         return IOUtils.toString(execute(MethodType.GET, url, null, header, taskId), DEFAULT_CHARSET);
     }
 
     public static String postString(String url, String referer, Long taskId) throws IOException {
         Map<String, String> header = new HashMap<>();
-        header.put("Referer", referer);
+        header.put(HttpHeadKey.REFERER, referer);
         return IOUtils.toString(execute(MethodType.POST, url, null, header, taskId), DEFAULT_CHARSET);
     }
 
     public static String postString(String url, Map<String, String> params, String referer,
                                     Long taskId) throws IOException {
         Map<String, String> header = new HashMap<>();
-        header.put("Referer", referer);
+        header.put(HttpHeadKey.REFERER, referer);
         return IOUtils.toString(execute(MethodType.POST, url, params, header, taskId), DEFAULT_CHARSET);
     }
 
@@ -80,7 +81,7 @@ public class PluginHttpUtils {
             charsetName = DEFAULT_CHARSET;
         }
         Map<String, String> header = new HashMap<>();
-        header.put("Referer", referer);
+        header.put(HttpHeadKey.REFERER, referer);
         return IOUtils.toString(execute(MethodType.POST, url, params, header, taskId), charsetName);
     }
 
@@ -155,6 +156,18 @@ public class PluginHttpUtils {
     public static String postString(String url, Map<String, String> params, Map<String, String> header, Long taskId,
                                     String charsetName) throws IOException {
         return IOUtils.toString(execute(MethodType.POST, url, params, header, taskId), charsetName);
+    }
+
+    /**
+     * HTTP get 获取内容
+     *
+     * @param url 请求的url地址 ?之前的地址
+     * @return 页面内容
+     */
+    public static byte[] doGet(String url, String referer, Long taskId) {
+        Map<String, String> header = new HashMap<>();
+        header.put(HttpHeadKey.REFERER, referer);
+        return execute(MethodType.GET, url, null, header, taskId);
     }
 
     /**

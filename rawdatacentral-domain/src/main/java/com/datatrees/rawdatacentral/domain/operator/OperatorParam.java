@@ -1,6 +1,8 @@
 package com.datatrees.rawdatacentral.domain.operator;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 运营商登陆过程中的参数
@@ -11,42 +13,47 @@ public class OperatorParam implements Serializable {
     /**
      * 任务id 必填
      */
-    private Long   taskId;
+    private Long                taskId;
 
     /**
      * website name 必填
      */
-    private String websiteName;
+    private String              websiteName;
 
     /**
      * 手机号
      */
-    private Long   mobile;
+    private Long                mobile;
 
     /**
      * 登陆密码或者服务密码
      */
-    private String password;
+    private String              password;
 
     /**
      * 图片验证码
      */
-    private String picCode;
+    private String              picCode;
 
     /**
      * 短信验证码
      */
-    private String smsCode;
+    private String              smsCode;
 
     /**
      * 真实姓名
      */
-    private String realName;
+    private String              realName;
 
     /**
      * 身份证号码
      */
-    private String idCard;
+    private String              idCard;
+
+    /**
+     * 扩展属性
+     */
+    private Map<String, Object> extral = new HashMap<>();
 
     public Long getTaskId() {
         return taskId;
@@ -110,5 +117,13 @@ public class OperatorParam implements Serializable {
 
     public void setIdCard(String idCard) {
         this.idCard = idCard;
+    }
+
+    public Map<String, Object> getExtral() {
+        return extral;
+    }
+
+    public void setExtral(Map<String, Object> extral) {
+        this.extral = extral;
     }
 }

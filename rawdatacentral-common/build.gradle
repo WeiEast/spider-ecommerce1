@@ -1,4 +1,5 @@
 dependencies {
+    compile project(":rawdatacentral-domain")
     testCompile "junit:junit:${junitVersion}"
     testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
     testCompile "ch.qos.logback:logback-classic:${logbackVersion}"
