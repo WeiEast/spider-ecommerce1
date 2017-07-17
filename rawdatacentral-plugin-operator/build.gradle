@@ -1,3 +1,4 @@
 dependencies {
     compile project(':rawdatacentral-plugin')
+    compile project(':rawdatacentral-service')
 }

@@ -50,7 +50,7 @@ public class ZheJiangLogin10000Service implements OperatorLoginPluginService {
             byte[] data = PluginHttpUtils.doGet(url, taskId);
             String picCode = Base64.encodeBase64String(data);
             logger.info("refeshPicCode success taskId={}", taskId);
-            return result.success(picCode);
+            return result.success();
         } catch (Exception e) {
             logger.error("refeshPicCode error taskId={},url={}", taskId, url);
             return result.failure();
