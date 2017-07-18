@@ -1,5 +1,4 @@
 dependencies {
     compile project(':rawdatacentral-plugin')
-    compile project(':rawdatacentral-plugin-operator')
     compile project(':rawdatacentral-service')
 }

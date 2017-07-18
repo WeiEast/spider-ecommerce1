@@ -56,4 +56,10 @@ public class OperatorController {
         return longService.login(taskId, websiteName, param);
     }
 
+    @RequestMapping("/validatePicCode")
+    public Object validatePicCode(Long taskId, String websiteName, OperatorParam param) {
+        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        return longService.validatePicCode(taskId, websiteName, param);
+    }
+
 }
