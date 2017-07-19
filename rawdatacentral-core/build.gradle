@@ -3,6 +3,7 @@ dependencies {
     compile project(':rawdatacentral-share')
     compile project(':rawdatacentral-domain')
     compile project(':rawdatacentral-common')
+    compile project(':rawdatacentral-plugin')
     compile "org.apache.ibatis:ibatis-sqlmap:${ibatisSqlmapVersion}"
     compile "org.springframework:spring-ibatis:${springIbatisVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
@@ -19,7 +20,6 @@ dependencies {
     compile "com.101tec:zkclient:${zkclientVersion}"
     compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true)
     compile "net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}"
-    compile(group: "com.datatrees.rawdata", name: "AbstractPlugin", version: "${abstractpluginVersion}", changing: true)
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true)
     compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
     compile(group: "com.datatrees.data", name: "databoss-api-client-sdk", version: "${databossApiClientSdkVersion}", changing: true)
@@ -30,10 +30,4 @@ dependencies {
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
     compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-
-    testCompile "junit:junit:${junitVersion}"
-    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
-        exclude(module: 'commons-logging')
-
-    }
 }

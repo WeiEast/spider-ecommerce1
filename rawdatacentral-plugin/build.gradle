@@ -1,0 +1,30 @@
+ext {
+    commonMessage = "2.0.0-SNAPSHOT"
+    javassist = "3.20.0-GA"
+    userCenterApi = "1.3.2"
+    pdfbox = "2.0.2"
+    fontverter = "1.2.18"
+    loanProviderApi = "3.0.3"
+    riskServiceApi = "1.5.0"
+    jxl = "2.6.12"
+}
+
+dependencies {
+    compile project(':rawdatacentral-share')
+    compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessage}", changing: true) {
+        exclude(module: 'spring-amqp')
+        exclude(module: 'spring-rabbit')
+    }
+    compile("com.alibaba:dubbo:${dubboVersion}") {
+        exclude(module: 'spring')
+    }
+    compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true)
+    compile "org.javassist:javassist:${javassist}"
+    compile "com.github.sgroschupf:zkclient:0.1"
+    compile "com.datatrees.usercenter:user-center-api:${userCenterApi}"
+    compile "org.apache.pdfbox:pdfbox:${pdfbox}"
+    compile "net.mabboud.fontverter:FontVerter:${fontverter}"
+    compile "com.datatrees.loan:loan-provider-api:${loanProviderApi}"
+    compile "com.treefinance:risk-service-api:${riskServiceApi}"
+    compile "net.sourceforge.jexcelapi:jxl:${jxl}"
+}
