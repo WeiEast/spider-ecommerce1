@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.share;
 
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-
+import com.alibaba.fastjson.TypeReference;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -212,29 +212,27 @@ public interface RedisService {
     /**
      * 查找缓存
      * @param key
-     * @param cls
+     * @param typeReference
      * @param <T>
      * @return
      */
-    public <T> T getCache(String key, Class<T> cls);
+    public <T> T getCache(String key, TypeReference<T> typeReference);
 
     /**
      * 查找缓存
      * @param redisKeyPrefixEnum
-     * @param cls
      * @param <T>
      * @return
      */
-    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, Class<T> cls);
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, TypeReference<T> typeReference);
 
     /**
      * 查找缓存
      * @param redisKeyPrefixEnum
      * @param postfix
-     * @param cls
      * @param <T>
      * @return
      */
-    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Class<T> cls);
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, TypeReference<T> typeReference);
 
 }

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.domain.model.BankMail;
 import com.datatrees.rawdatacentral.domain.model.example.BankMailExample;
 import org.slf4j.Logger;
@@ -38,7 +39,8 @@ public class BankServiceImpl implements BankService {
     @Override
     public Bank getByBankIdFromCache(Integer bankId) {
         String key = "rawdatacentral_bank_" + bankId;
-        Bank bank = redisService.getCache(key, Bank.class);
+        Bank bank = redisService.getCache(key, new TypeReference<Bank>() {
+        });
         if (null == bank) {
             bank = getEnabledByBankId(bankId);
             if (null != bank) {
@@ -51,7 +53,8 @@ public class BankServiceImpl implements BankService {
     @Override
     public Bank getByWebsiteIdFromCache(Integer websiteId) {
         String key = "rawdatacentral_bank_website_id" + websiteId;
-        Bank bank = redisService.getCache(key, Bank.class);
+        Bank bank = redisService.getCache(key, new TypeReference<Bank>() {
+        });
         if (null == bank) {
             bank = getEnabledByWebsiteId(websiteId);
             if (null != bank) {
@@ -96,7 +99,8 @@ public class BankServiceImpl implements BankService {
     @Override
     public Map<String, Integer> getMailBankMap() {
         String key = "rawdatacentral_mail_bank";
-        Map<String, Integer> map = redisService.getCache(key, Map.class);
+        Map<String, Integer> map = redisService.getCache(key, new TypeReference<Map<String, Integer>>() {
+        });
         if (null == map || map.isEmpty()) {
             List<BankMail> list = bankMailDAO.selectByExample(new BankMailExample());
             map = new HashMap<>();

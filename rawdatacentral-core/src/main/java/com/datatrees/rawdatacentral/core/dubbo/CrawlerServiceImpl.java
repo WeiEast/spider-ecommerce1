@@ -9,6 +9,7 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerService;
@@ -58,7 +59,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
         logger.info("websiteName:{} getWebsiteConf Start", websiteName);
-        Map<String, String> map = redisService.getCache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, Map.class);
+        Map<String, String> map = redisService.getCache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP,new TypeReference<Map<String, String>>(){});
         String newWebsiteName;
         if (map != null) {
             newWebsiteName = map.get(websiteName);
@@ -328,7 +329,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
         HttpResult<List<OperatorCatalogue>> result = new HttpResult<>();
         try {
-            List<OperatorCatalogue> list = redisService.getCache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, List.class);
+            List<OperatorCatalogue> list = redisService.getCache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG,new TypeReference<List<OperatorCatalogue>>(){});
             if (null == list) {
                 logger.warn("not found OperatorCatalogue from cache");
                 list = websiteConfigService.queryAllOperatorConfig();

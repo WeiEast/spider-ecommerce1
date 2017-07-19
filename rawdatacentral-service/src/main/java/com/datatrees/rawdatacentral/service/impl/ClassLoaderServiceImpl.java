@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
@@ -35,6 +36,9 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
     @Resource
     private RedisService        redisService;
 
+    @Value("${operator.Login.plugin.filename}")
+    private String              operatorLoginPlugin;
+
     @Override
     public Class loadPlugin(String jarName, String className) {
         CheckUtils.checkNotBlank(jarName, "jarName is blank");
@@ -45,7 +49,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
             }
             String postfix = jarName + "_" + className;
             String cacheKey = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(postfix);
-            Class mainClass = redisService.getCache(cacheKey, Class.class);
+            Class mainClass = redisService.getCache(cacheKey,new TypeReference<Class>(){});
             PluginUpgradeResult plugin = pluginService.getPluginFromRedis(jarName);
             if (null == mainClass || plugin.getForceReload()) {
                 mainClass = ClassLoaderUtils.loadClass(plugin.getFile(), className);
@@ -63,10 +67,9 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
     public OperatorLoginPluginService getOperatorLongService(String websiteName) {
         try {
             String propertyName = "login.class." + websiteName;
-            String jarName = websiteName + ".jar";
             String mainLoginClass = PropertiesConfiguration.getInstance().get(propertyName);
             CheckUtils.checkNotBlank(mainLoginClass, "get login class error websiteName=" + websiteName);
-            Class loginClass = loadPlugin(jarName, mainLoginClass);
+            Class loginClass = loadPlugin(operatorLoginPlugin, mainLoginClass);
             if (!OperatorLoginPluginService.class.isAssignableFrom(loginClass)) {
                 throw new RuntimeException(
                     "mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorLoginPluginService");

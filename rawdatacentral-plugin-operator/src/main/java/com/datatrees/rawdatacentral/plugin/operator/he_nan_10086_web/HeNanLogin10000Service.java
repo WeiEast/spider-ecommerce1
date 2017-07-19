@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +58,7 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
     /**
      * 登陆验证接口
      * 类型:GET
+     * 抓包:https://login.10086.cn/login.htm?accountType=01&account=18838224796&password=716253&pwdType=01&smsPwd=073442&inputCode=&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp=1500457115303
      */
     private static final String loginUrl        = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12002&protocol=https:&timestamp={}";
 
@@ -96,7 +98,7 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
             Map<String, String> header = new HashMap<>();
             header.put(HttpHeadKey.CONTENT_TYPE, "application/x-www-form-urlencoded; charset=UTF-8");
             header.put(HttpHeadKey.REFERER,
-                "https://login.10086.cn/html/login/login.html?channelID=12002&backUrl=http://shop.10086.cn/mall_371_371.html?forcelogin=1");
+                "https://login.10086.cn/html/login/login.html?channelID=12003&backUrl=http://shop.10086.cn/mall_371_371.html?forcelogin=1");
             pageContent = PluginHttpUtils.postString(url, header, taskId);
             switch (pageContent) {
                 case "0":
@@ -208,5 +210,24 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
             logger.error("图片验证码验证失败,taskId={},websiteName={},url={}", taskId, websiteName, e);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         }
+    }
+
+    public static void main(String[] args) {
+//        BasicCookieStore cookieStore = new BasicCookieStore();
+//        int i = 1;
+//        while (i++ <= 10) {
+//            Cookie cookie = new BasicClientCookie("name" + i, i + "");
+//            cookieStore.addCookie(cookie);
+//        }
+//        String json = JSON.toJSONString(cookieStore.getCookies());
+//        System.out.println(json);
+//        List<BasicClientCookie> list = JSON.parseArray(json, BasicClientCookie.class);
+//        for(Cookie c : list){
+//            System.out.println("c.getName() = " + c.getName());
+//        }
+//        System.out.println(11);
+
+        System.out.println(new Date().toGMTString());
+
     }
 }

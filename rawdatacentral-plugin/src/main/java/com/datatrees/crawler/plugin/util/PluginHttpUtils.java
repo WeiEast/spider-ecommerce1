@@ -1,8 +1,11 @@
 package com.datatrees.crawler.plugin.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
+import com.datatrees.rawdatacentral.common.utils.CookieUtils;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.share.RedisService;
@@ -237,11 +240,11 @@ public class PluginHttpUtils {
                 client.abort();
                 throw new RuntimeException("HttpClient doPost error, statusCode: " + statusCode);
             }
-            setCookie(taskId, cookieStore);
+            saveCookie(taskId, cookieStore);
             return EntityUtils.toByteArray(response.getEntity());
         } catch (Exception e) {
-            logger.error("http error url={}", url);
-            throw new RuntimeException("http error url=" + url);
+            logger.error("http error url={}", url, e);
+            throw new RuntimeException("http error url=" + url, e);
         } finally {
             IOUtils.closeQuietly(response);
         }
@@ -251,18 +254,27 @@ public class PluginHttpUtils {
     public static BasicCookieStore getCookie(Long taskId) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-        BasicCookieStore cookieStore = redisService.getCache(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId + ""),
-            BasicCookieStore.class);
-        if (null == cookieStore) {
-            cookieStore = new BasicCookieStore();
+        BasicCookieStore cookieStore = new BasicCookieStore();
+        List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies = null;
+        String cacheKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId + "");
+        String json = redisService.getString(cacheKey);
+        if (StringUtils.isNoneBlank(json)) {
+            cookies = JSON.parseObject(json,new TypeReference<List<com.datatrees.rawdatacentral.domain.vo.Cookie>>(){});
+        }
+        if (null == cookies || cookies.isEmpty()) {
+            return cookieStore;
+        }
+        for (com.datatrees.rawdatacentral.domain.vo.Cookie myCookie : cookies) {
+            cookieStore.addCookie(CookieUtils.getBasicClientCookie(myCookie));
         }
         return cookieStore;
     }
 
-    public static void setCookie(Long taskId, BasicCookieStore cookieStore) {
+    public static void saveCookie(Long taskId, BasicCookieStore cookieStore) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
+        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = CookieUtils.getCookies(cookieStore);
         BeanFactoryUtils.getBean(RedisService.class).cache(RedisKeyPrefixEnum.TASK_COOKIE, String.valueOf(taskId),
-            cookieStore);
+            list);
     }
 }

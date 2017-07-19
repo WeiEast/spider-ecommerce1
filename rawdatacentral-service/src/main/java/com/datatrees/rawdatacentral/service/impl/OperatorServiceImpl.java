@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class OperatorServiceImpl implements OperatorService {
             return null;
         }
         String key = "rawdatacentral_operator_websiteid_" + websiteId;
-        Operator operator = redisService.getCache(key, Operator.class);
+        Operator operator = redisService.getCache(key,new TypeReference<Operator>(){});
         if (null == operator) {
             OperatorExample example = new OperatorExample();
             example.createCriteria().andWebsiteidEqualTo(websiteId).andIsenabledEqualTo(true);

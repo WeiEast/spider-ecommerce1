@@ -376,10 +376,10 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public <T> T getCache(String key, Class<T> cls) {
+    public <T> T getCache(String key, TypeReference<T> typeReference) {
         String json = getString(key);
         if (StringUtils.isNoneBlank(json)) {
-            T result = JSON.parseObject(json, cls);
+            T result = JSON.parseObject(json, typeReference);
             logger.info("getCache success key={}", key);
             return result;
         }
@@ -387,13 +387,13 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, Class<T> cls) {
-        return getCache(redisKeyPrefixEnum.getRedisKey(), cls);
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, TypeReference<T> typeReference) {
+        return getCache(redisKeyPrefixEnum.getRedisKey(), typeReference);
     }
 
     @Override
-    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Class<T> cls) {
-        return getCache(redisKeyPrefixEnum.getRedisKey(postfix), cls);
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, TypeReference<T> typeReference) {
+        return getCache(redisKeyPrefixEnum.getRedisKey(postfix), typeReference);
     }
 
 }
