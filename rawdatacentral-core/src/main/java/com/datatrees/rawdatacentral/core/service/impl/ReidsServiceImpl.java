@@ -109,10 +109,7 @@ public class ReidsServiceImpl implements RedisService {
         }
         long startTime = System.currentTimeMillis();
         long endTime = startTime + timeUnit.toMillis(timeout);
-        long sleeptime = 500;
-        if (timeUnit.toMillis(timeout) <= 500) {
-            sleeptime = timeUnit.toMillis(timeout);
-        }
+        long sleeptime = 300;
         try {
             logger.info("getString wait {}s, key={}", timeUnit.toSeconds(timeout), key);
             do {
@@ -148,12 +145,26 @@ public class ReidsServiceImpl implements RedisService {
         if (!hasKey(key)) {
             return null;
         }
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + unit.toMillis(timeout);
+        long sleeptime = 300;
         try {
-            return redisTemplate.opsForList().rightPop(key, timeout, unit);
+            logger.info("rightPop wait {}s, key={}", unit.toSeconds(timeout), key);
+            do {
+                if (redisTemplate.hasKey(key)) {
+                    String value = redisTemplate.opsForList().rightPop(key);
+                    if (StringUtils.isNoneBlank(value)) {
+                        logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+                        return value;
+                    }
+                }
+                TimeUnit.MILLISECONDS.sleep(sleeptime);
+            } while (System.currentTimeMillis() <= endTime);
+            logger.warn("rightPop fail,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
         } catch (Exception e) {
-            logger.error("rightPop error key={}", key, e);
-            return null;
+            logger.error("rightPop error,useTime={}, key={}", DateUtils.getUsedTime(startTime), key, e);
         }
+        return null;
     }
 
     @Override

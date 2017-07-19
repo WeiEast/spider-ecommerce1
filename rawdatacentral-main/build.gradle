@@ -3,11 +3,6 @@ dependencies {
     compile project(':rawdatacentral-extractor')
     compile project(':rawdatacentral-submitter')
     compile project(':rawdatacentral-collector')
-    testCompile "junit:junit:${junitVersion}"
-    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
-        exclude(module: 'commons-logging')
-
-    }
 }
 apply from: rootProject.file('install.gradle')
 

@@ -9,6 +9,7 @@
 package com.datatrees.rawdatacentral.api;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 import java.util.List;
@@ -111,7 +112,11 @@ public interface CrawlerService {
     public HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies,
                                                     Map<String, String> extra);
 
-    public HttpResult<Map<String,String>> getGroupMap();
-    
-    public HttpResult<Integer> getWebsiteIdByGroupId(String groupId);
+    /**
+     * 获取所有运营商登陆配置
+     * 所有的可用的
+     * 每个运营商这里指定了,不可以缓存
+     * @return
+     */
+    public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig();
 }
