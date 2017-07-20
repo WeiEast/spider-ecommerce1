@@ -139,6 +139,7 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         }
         String url = TemplateUtils.format(loginUrl, param.getMobile(), param.getPassword(), param.getSmsCode(),
             param.getPicCode(), System.currentTimeMillis());
+        String pageContent = null;
         try {
             /**
              * 结果枚举:
@@ -149,16 +150,24 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
              短信验证码不正确:{"code":"6002","desc":"短信随机码不正确或已过期，请重新获取","islocal":false,"result":"8"}
              {"assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact","code":"2036","desc":"您的账户名与密码不匹配，请重
              新输入","islocal":false,"result":"2"}
+             重复登陆:{"islocal":false,"result":"9"}
              */
             //没有设置referer会出现connect reset
-            String pageContent = PluginHttpUtils.getString(url, preLoginUrl, taskId);
+            pageContent = PluginHttpUtils.getString(url, preLoginUrl, taskId);
             JSONObject json = JSON.parseObject(pageContent);
+
+            //重复登陆:{"islocal":false,"result":"9"}
+            if(StringUtils.equals("9",json.getString("result"))){
+                logger.info("登陆成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                return result.success();
+            }
+            //正常登陆
             String code = json.getString("code");
             String errorMsg = json.getString("desc");
             switch (code) {
                 case "0000":
                     logger.info("登陆成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
-                    return result.success();
+                    break;
                 case "2036":
                     logger.warn("账户名与密码不匹配,taskId={},websiteName={},url={}", taskId, websiteName, url);
                     return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
@@ -179,8 +188,11 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
                     }
                     return result.failure(ErrorCode.LOGIN_FAIL);
             }
+
+
+            return result.success();
         } catch (Exception e) {
-            logger.error("登陆失败,taskId={},websiteName={},url={}", taskId, websiteName, e);
+            logger.error("登陆失败,taskId={},websiteName={},url={},pageContent={}", taskId, websiteName, pageContent, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
     }
@@ -190,9 +202,10 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         String url = TemplateUtils.format(validPicCodeUrl, param.getPicCode());
         HttpResult<Map<String, Object>> result = new HttpResult<>();
+        String pateContent = null;
         try {
             //结果枚举:正确{"resultCode":"0"},错误{"resultCode":"1"}
-            String pateContent = PluginHttpUtils.getString(url, taskId);
+            pateContent = PluginHttpUtils.getString(url, taskId);
             JSONObject json = JSON.parseObject(pateContent);
             if (!StringUtils.equals("0", json.getString("resultCode"))) {
                 logger.error("图片验证码验证失败,taskId={},websiteName={},url={},pateContent={}", taskId, websiteName,
@@ -202,27 +215,10 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
             logger.info("图片验证码验证成功,taskId={},websiteName={},url={}", taskId, websiteName);
             return result.success();
         } catch (Exception e) {
-            logger.error("图片验证码验证失败,taskId={},websiteName={},url={}", taskId, websiteName, e);
+            logger.error("图片验证码验证失败,taskId={},websiteName={},url={},pateContent={}", taskId, websiteName, pateContent,
+                e);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         }
     }
 
-    //    public static void main(String[] args) {
-    //        //        BasicCookieStore cookieStore = new BasicCookieStore();
-    //        //        int i = 1;
-    //        //        while (i++ <= 10) {
-    //        //            Cookie cookie = new BasicClientCookie("name" + i, i + "");
-    //        //            cookieStore.addCookie(cookie);
-    //        //        }
-    //        //        String json = JSON.toJSONString(cookieStore.getCookies());
-    //        //        System.out.println(json);
-    //        //        List<BasicClientCookie> list = JSON.parseArray(json, BasicClientCookie.class);
-    //        //        for(Cookie c : list){
-    //        //            System.out.println("c.getName() = " + c.getName());
-    //        //        }
-    //        //        System.out.println(11);
-    //
-    //        System.out.println(new Date().toGMTString());
-    //
-    //    }
 }

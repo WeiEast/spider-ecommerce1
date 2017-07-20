@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.web.controller;
 
+import com.datatrees.crawler.plugin.util.PluginHttpUtils;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -8,6 +9,7 @@ import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorLoginPluginService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -94,6 +97,14 @@ public class OperatorController {
     public Object validatePicCode(Long taskId, String websiteName, OperatorParam param) {
         OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
         return longService.validatePicCode(taskId, websiteName, param);
+    }
+
+    @RequestMapping("/openPage")
+    public Object openPage(Long taskId, String url, String type) throws IOException {
+        if (StringUtils.equals("post", type)) {
+            return PluginHttpUtils.postString(url, taskId);
+        }
+        return PluginHttpUtils.getString(url, taskId);
     }
 
 }
