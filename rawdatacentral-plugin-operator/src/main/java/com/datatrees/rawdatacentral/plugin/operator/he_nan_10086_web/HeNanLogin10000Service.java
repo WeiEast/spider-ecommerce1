@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.datatrees.crawler.plugin.util.PluginHttpUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -15,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,14 +51,14 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
      * 刷新短信验证码
      * 类型:POST
      */
-    private static final String smsCodeUrl      = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID=12002&userName={}";
+    private static final String smsCodeUrl      = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID=12003&userName={}";
 
     /**
      * 登陆验证接口
      * 类型:GET
-     * 抓包:https://login.10086.cn/login.htm?accountType=01&account=18838224796&password=716253&pwdType=01&smsPwd=073442&inputCode=&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp=1500457115303
+     * 抓包:https://login.10086.cn/login.htm?accountType=01&account=18838224796&password=716253&pwdType=01&smsPwd=073442&inputCode=&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12001&protocol=https:&timestamp=1500457115303
      */
-    private static final String loginUrl        = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12002&protocol=https:&timestamp={}";
+    private static final String loginUrl        = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
 
     @Override
     public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
@@ -95,11 +93,7 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         String url = TemplateUtils.format(smsCodeUrl, param.getMobile());
         String pageContent = null;
         try {
-            Map<String, String> header = new HashMap<>();
-            header.put(HttpHeadKey.CONTENT_TYPE, "application/x-www-form-urlencoded; charset=UTF-8");
-            header.put(HttpHeadKey.REFERER,
-                "https://login.10086.cn/html/login/login.html?channelID=12003&backUrl=http://shop.10086.cn/mall_371_371.html?forcelogin=1");
-            pageContent = PluginHttpUtils.postString(url, header, taskId);
+            pageContent = PluginHttpUtils.postString(url, taskId);
             switch (pageContent) {
                 case "0":
                     logger.info("短信发送成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
@@ -156,7 +150,8 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
              {"assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact","code":"2036","desc":"您的账户名与密码不匹配，请重
              新输入","islocal":false,"result":"2"}
              */
-            String pageContent = PluginHttpUtils.getString(url, preLoginUrl, taskId);
+
+            String pageContent = PluginHttpUtils.getString(url, taskId);
             JSONObject json = JSON.parseObject(pageContent);
             String code = json.getString("code");
             String errorMsg = json.getString("desc");
@@ -212,22 +207,22 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         }
     }
 
-    public static void main(String[] args) {
-//        BasicCookieStore cookieStore = new BasicCookieStore();
-//        int i = 1;
-//        while (i++ <= 10) {
-//            Cookie cookie = new BasicClientCookie("name" + i, i + "");
-//            cookieStore.addCookie(cookie);
-//        }
-//        String json = JSON.toJSONString(cookieStore.getCookies());
-//        System.out.println(json);
-//        List<BasicClientCookie> list = JSON.parseArray(json, BasicClientCookie.class);
-//        for(Cookie c : list){
-//            System.out.println("c.getName() = " + c.getName());
-//        }
-//        System.out.println(11);
-
-        System.out.println(new Date().toGMTString());
-
-    }
+//    public static void main(String[] args) {
+//        //        BasicCookieStore cookieStore = new BasicCookieStore();
+//        //        int i = 1;
+//        //        while (i++ <= 10) {
+//        //            Cookie cookie = new BasicClientCookie("name" + i, i + "");
+//        //            cookieStore.addCookie(cookie);
+//        //        }
+//        //        String json = JSON.toJSONString(cookieStore.getCookies());
+//        //        System.out.println(json);
+//        //        List<BasicClientCookie> list = JSON.parseArray(json, BasicClientCookie.class);
+//        //        for(Cookie c : list){
+//        //            System.out.println("c.getName() = " + c.getName());
+//        //        }
+//        //        System.out.println(11);
+//
+//        System.out.println(new Date().toGMTString());
+//
+//    }
 }

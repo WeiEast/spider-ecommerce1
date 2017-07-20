@@ -39,21 +39,44 @@ import com.datatrees.rawdatacentral.share.RedisService;
 @Service
 public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
-    private static final Logger        logger              = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
 
     @Resource
-    private WebsiteConfigDAO           websiteConfigDAO;
+    private WebsiteConfigDAO    websiteConfigDAO;
 
     @Resource
-    private PluginManager              pluginManager;
+    private PluginManager       pluginManager;
 
     @Resource
-    private BankService                bankService;
+    private BankService         bankService;
 
     @Resource
-    private RedisService               redisService;
+    private RedisService        redisService;
 
-    private WebsiteParentConfigHandler parentConfigHandler = new WebsiteParentConfigHandler();
+    private ParentConfigHandler parentConfigHandler;
+
+    public WebsiteConfigServiceImpl() {
+        parentConfigHandler = new ParentConfigHandler() {
+            @Override
+            public <T> T parse(T type) throws Exception {
+                if (type != null && type instanceof AbstractWebsiteConfig
+                    && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
+                    String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
+                    logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName
+                                + " for class " + type.getClass());
+                    Website website = getWebsiteByWebsiteName(parentWebsiteName);
+                    if (website != null) {
+                        if (type instanceof SearchConfig) {
+                            ((SearchConfig) type).clone(website.getSearchConfig());
+                        } else if (type instanceof ExtractorConfig) {
+                            ((ExtractorConfig) type).clone(website.getExtractorConfig());
+                        }
+                    }
+                }
+                return type;
+            }
+        };
+    }
 
     @Override
     public WebsiteConfig getWebsiteConfigByWebsiteId(Integer websiteId) {
@@ -131,8 +154,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public WebsiteConf getWebsiteConfFromCache(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
-        WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName, new TypeReference<WebsiteConf>() {
-        });
+        WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName,
+            new TypeReference<WebsiteConf>() {
+            });
         if (null != conf) {
             logger.info("find WebsiteConf from cache websiteName={}", websiteName);
             return conf;
@@ -283,7 +307,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return null;
     }
 
-    private Website websiteContextBuild(WebsiteConfig websiteConfig) {
+    @Override
+    public Website websiteContextBuild(WebsiteConfig websiteConfig) {
         Website website = new Website();
         if (websiteConfig != null) {
             if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
@@ -310,28 +335,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             }
         }
         return website;
-    }
-
-    class WebsiteParentConfigHandler implements ParentConfigHandler {
-
-        @Override
-        public <T> T parse(T type) throws Exception {
-            if (type != null && type instanceof AbstractWebsiteConfig
-                && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
-                String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
-                logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class "
-                            + type.getClass());
-                Website website = getWebsiteByWebsiteName(parentWebsiteName);
-                if (website != null) {
-                    if (type instanceof SearchConfig) {
-                        ((SearchConfig) type).clone(website.getSearchConfig());
-                    } else if (type instanceof ExtractorConfig) {
-                        ((ExtractorConfig) type).clone(website.getExtractorConfig());
-                    }
-                }
-            }
-            return type;
-        }
     }
 
 }

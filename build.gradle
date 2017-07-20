@@ -3,7 +3,6 @@ allprojects {
     version = '3.0.7-SNAPSHOT'
     description = "爬虫核心"
 }
-19
 buildscript {
     repositories {
         maven { url "http://192.168.5.252:8081/nexus/content/groups/public/" }
@@ -56,6 +55,7 @@ ext {
     pluginUtilsVersion="1.2.0"
     htmlunitVersion="2.27"
     antVersion="1.6.5"
+    springVersion="4.3.9.RELEASE"
 }
 
 subprojects {

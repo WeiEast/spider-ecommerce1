@@ -9,6 +9,7 @@ import com.datatrees.rawdatacentral.common.utils.CookieUtils;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.share.RedisService;
+import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -18,6 +19,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -44,7 +46,7 @@ public class PluginHttpUtils {
     public static final String         DEFAULT_CHARSET = "UTF-8";
 
     static {
-        CONFIG = RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(3000).build();
+        CONFIG = RequestConfig.custom().setConnectTimeout(30000).setSocketTimeout(30000).build();
     }
 
     enum MethodType {
@@ -63,6 +65,10 @@ public class PluginHttpUtils {
         Map<String, String> header = new HashMap<>();
         header.put(HttpHeadKey.REFERER, referer);
         return IOUtils.toString(execute(MethodType.GET, url, null, header, taskId), DEFAULT_CHARSET);
+    }
+
+    public static String postString(String url, Long taskId) throws IOException {
+        return IOUtils.toString(execute(MethodType.POST, url, null, null, taskId), DEFAULT_CHARSET);
     }
 
     public static String postString(String url, String referer, Long taskId) throws IOException {
@@ -205,6 +211,10 @@ public class PluginHttpUtils {
     public static byte[] execute(MethodType type, String url, Map<String, String> params, Map<String, String> header,
                                  Long taskId) {
         CloseableHttpResponse response = null;
+        BasicCookieStore cookieStore = getCookie(taskId);
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG)
+            .setDefaultCookieStore(cookieStore).setConnectionManager(
+                        (HttpClientConnectionManager) new SimpleHttpConnectionManager()).build();
         try {
             List<NameValuePair> pairs = null;
             if (params != null && !params.isEmpty()) {
@@ -219,9 +229,7 @@ public class PluginHttpUtils {
                 logger.debug("httpClient doGet url = {},param={}", url, param);
                 url += "?" + param;
             }
-            BasicCookieStore cookieStore = getCookie(taskId);
-            CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG)
-                .setDefaultCookieStore(cookieStore).build();
+
             HttpRequestBase client = null;
             if (type == MethodType.GET) {
                 client = new HttpGet(url);
@@ -246,6 +254,7 @@ public class PluginHttpUtils {
             logger.error("http error url={}", url, e);
             throw new RuntimeException("http error url=" + url, e);
         } finally {
+            IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(response);
         }
 
@@ -259,7 +268,8 @@ public class PluginHttpUtils {
         String cacheKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId + "");
         String json = redisService.getString(cacheKey);
         if (StringUtils.isNoneBlank(json)) {
-            cookies = JSON.parseObject(json,new TypeReference<List<com.datatrees.rawdatacentral.domain.vo.Cookie>>(){});
+            cookies = JSON.parseObject(json, new TypeReference<List<com.datatrees.rawdatacentral.domain.vo.Cookie>>() {
+            });
         }
         if (null == cookies || cookies.isEmpty()) {
             return cookieStore;

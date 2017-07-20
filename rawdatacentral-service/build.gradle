@@ -6,8 +6,10 @@ dependencies {
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
     compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
     compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
-//    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
+    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
     compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
+
+    compile "org.springframework:spring-oxm:${springVersion}"
 
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
         exclude(module: 'guava')

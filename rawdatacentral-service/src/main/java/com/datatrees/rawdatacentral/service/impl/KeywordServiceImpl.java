@@ -6,14 +6,12 @@ import com.datatrees.rawdatacentral.domain.model.Keyword;
 import com.datatrees.rawdatacentral.domain.model.example.KeywordExample;
 import com.datatrees.rawdatacentral.service.KeywordService;
 import com.datatrees.rawdatacentral.share.RedisService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**

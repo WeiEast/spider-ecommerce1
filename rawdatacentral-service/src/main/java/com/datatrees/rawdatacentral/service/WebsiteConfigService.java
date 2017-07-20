@@ -90,4 +90,6 @@ public interface WebsiteConfigService {
 
     ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId);
 
+    Website websiteContextBuild(WebsiteConfig websiteConfig);
+
 }
