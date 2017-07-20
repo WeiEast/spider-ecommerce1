@@ -4,12 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.CookieUtils;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.share.RedisService;
-import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -19,7 +17,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -213,8 +210,7 @@ public class PluginHttpUtils {
         CloseableHttpResponse response = null;
         BasicCookieStore cookieStore = getCookie(taskId);
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG)
-            .setDefaultCookieStore(cookieStore).setConnectionManager(
-                        (HttpClientConnectionManager) new SimpleHttpConnectionManager()).build();
+            .setDefaultCookieStore(cookieStore).build();
         try {
             List<NameValuePair> pairs = null;
             if (params != null && !params.isEmpty()) {
@@ -236,11 +232,15 @@ public class PluginHttpUtils {
             } else {
                 client = new HttpPost(url);
             }
+            if(null == header){
+                header = new HashMap<>();
+            }
+            if(!header.containsKey(HttpHeadKey.CONNECTION)){
+                header.put(HttpHeadKey.CONNECTION,"close");
+            }
 
-            if (CollectionUtils.isNotEmpty(header)) {
-                for (Map.Entry<String, String> entry : header.entrySet()) {
-                    client.setHeader(entry.getKey(), entry.getValue());
-                }
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                client.setHeader(entry.getKey(), entry.getValue());
             }
             response = httpclient.execute(client);
             int statusCode = response.getStatusLine().getStatusCode();

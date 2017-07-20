@@ -82,7 +82,7 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
             logger.info("刷新图片验证码成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
             return result.success(map);
         } catch (Exception e) {
-            logger.error("刷新图片验证码失败 error taskId={},websiteName={},url={}", taskId, websiteName, url);
+            logger.error("刷新图片验证码失败 error taskId={},websiteName={},url={}", taskId, websiteName, url, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
     }
@@ -150,8 +150,8 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
              {"assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact","code":"2036","desc":"您的账户名与密码不匹配，请重
              新输入","islocal":false,"result":"2"}
              */
-
-            String pageContent = PluginHttpUtils.getString(url, taskId);
+            //没有设置referer会出现connect reset
+            String pageContent = PluginHttpUtils.getString(url, preLoginUrl, taskId);
             JSONObject json = JSON.parseObject(pageContent);
             String code = json.getString("code");
             String errorMsg = json.getString("desc");
@@ -207,22 +207,22 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         }
     }
 
-//    public static void main(String[] args) {
-//        //        BasicCookieStore cookieStore = new BasicCookieStore();
-//        //        int i = 1;
-//        //        while (i++ <= 10) {
-//        //            Cookie cookie = new BasicClientCookie("name" + i, i + "");
-//        //            cookieStore.addCookie(cookie);
-//        //        }
-//        //        String json = JSON.toJSONString(cookieStore.getCookies());
-//        //        System.out.println(json);
-//        //        List<BasicClientCookie> list = JSON.parseArray(json, BasicClientCookie.class);
-//        //        for(Cookie c : list){
-//        //            System.out.println("c.getName() = " + c.getName());
-//        //        }
-//        //        System.out.println(11);
-//
-//        System.out.println(new Date().toGMTString());
-//
-//    }
+    //    public static void main(String[] args) {
+    //        //        BasicCookieStore cookieStore = new BasicCookieStore();
+    //        //        int i = 1;
+    //        //        while (i++ <= 10) {
+    //        //            Cookie cookie = new BasicClientCookie("name" + i, i + "");
+    //        //            cookieStore.addCookie(cookie);
+    //        //        }
+    //        //        String json = JSON.toJSONString(cookieStore.getCookies());
+    //        //        System.out.println(json);
+    //        //        List<BasicClientCookie> list = JSON.parseArray(json, BasicClientCookie.class);
+    //        //        for(Cookie c : list){
+    //        //            System.out.println("c.getName() = " + c.getName());
+    //        //        }
+    //        //        System.out.println(11);
+    //
+    //        System.out.println(new Date().toGMTString());
+    //
+    //    }
 }
