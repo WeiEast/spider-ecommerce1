@@ -5,10 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.datatrees.crawler.plugin.util.PluginHttpUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.OperatorLoginPluginService;
+import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,14 +28,14 @@ import java.util.Map;
  *
  * Created by zhouxinghai on 2017/7/17.
  */
-public class HeNanLogin10000Service implements OperatorLoginPluginService {
+public class HeNan10000Service implements OperatorPluginService {
 
-    private static final Logger logger          = LoggerFactory.getLogger(HeNanLogin10000Service.class);
+    private static final Logger logger          = LoggerFactory.getLogger(HeNan10000Service.class);
 
     /**
      * 登陆页
      */
-    private static final String preLoginUrl     = "https://login.10086.cn/html/login/login.html";
+    private static final String preLoginUrl     = "https://login.10086.cn/html/submit/submit.html";
 
     /**
      * 刷新图片验证码
@@ -58,17 +59,59 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
      * 类型:GET
      * 抓包:https://login.10086.cn/login.htm?accountType=01&account=18838224796&password=716253&pwdType=01&smsPwd=073442&inputCode=&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12001&protocol=https:&timestamp=1500457115303
      */
-    private static final String loginUrl        = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
+    private static final String loginUrl        = "https://login.10086.cn/submit.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
 
     @Override
     public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
         //不必预登陆,cookie从刷新验证码中获取
         //预登陆可以先返回图片验证码
-        return refeshPicCode(taskId, websiteName, param);
+        return refeshPicCode(taskId, websiteName, FormType.LOGIN, param);
     }
 
     @Override
-    public HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
+    public HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, String type,
+                                                         OperatorParam param) {
+        switch (type) {
+            case FormType.LOGIN:
+                return refeshLoginPicCode(taskId, websiteName, param);
+            default:
+                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, String type,
+                                                         OperatorParam param) {
+        switch (type) {
+            case FormType.LOGIN:
+                return refeshLoginSmsCode(taskId, websiteName, param);
+            default:
+                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> submit(Long taskId, String websiteName, String type, OperatorParam param) {
+        switch (type) {
+            case FormType.LOGIN:
+                return loginSubmit(taskId, websiteName, param);
+            default:
+                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> validatePicCode(Long taskId, String websiteName, String type,
+                                                           OperatorParam param) {
+        switch (type) {
+            case FormType.LOGIN:
+                return validateLoginPicCode(taskId, websiteName, param);
+            default:
+                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> refeshLoginPicCode(Long taskId, String websiteName, OperatorParam param) {
         /**
          * 这里不一定有图片验证码,随机出现
          */
@@ -87,8 +130,7 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         }
     }
 
-    @Override
-    public HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, OperatorParam param) {
+    private HttpResult<Map<String, Object>> refeshLoginSmsCode(Long taskId, String websiteName, OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         String url = TemplateUtils.format(smsCodeUrl, param.getMobile());
         String pageContent = null;
@@ -128,12 +170,11 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         }
     }
 
-    @Override
-    public HttpResult<Map<String, Object>> login(Long taskId, String websiteName, OperatorParam param) {
+    private HttpResult<Map<String, Object>> loginSubmit(Long taskId, String websiteName, OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
-        HttpResult<Map<String, Object>> result = validatePicCode(taskId, websiteName, param);
+        HttpResult<Map<String, Object>> result = validateLoginPicCode(taskId, websiteName, param);
         if (!result.getStatus()) {
             return result;
         }
@@ -157,7 +198,7 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
             JSONObject json = JSON.parseObject(pageContent);
 
             //重复登陆:{"islocal":false,"result":"9"}
-            if(StringUtils.equals("9",json.getString("result"))){
+            if (StringUtils.equals("9", json.getString("result"))) {
                 logger.info("登陆成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
                 return result.success();
             }
@@ -189,7 +230,6 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
                     return result.failure(ErrorCode.LOGIN_FAIL);
             }
 
-
             return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,taskId={},websiteName={},url={},pageContent={}", taskId, websiteName, pageContent, e);
@@ -197,8 +237,7 @@ public class HeNanLogin10000Service implements OperatorLoginPluginService {
         }
     }
 
-    @Override
-    public HttpResult<Map<String, Object>> validatePicCode(Long taskId, String websiteName, OperatorParam param) {
+    private HttpResult<Map<String, Object>> validateLoginPicCode(Long taskId, String websiteName, OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         String url = TemplateUtils.format(validPicCodeUrl, param.getPicCode());
         HttpResult<Map<String, Object>> result = new HttpResult<>();

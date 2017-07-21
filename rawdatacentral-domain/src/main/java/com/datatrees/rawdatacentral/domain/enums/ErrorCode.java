@@ -2,6 +2,8 @@ package com.datatrees.rawdatacentral.domain.enums;
 
 public enum ErrorCode {
 
+    NOT_SUPORT_METHOD(-10,"方法不支持"),
+
     LOGIN_FAIL(-100,"登陆失败,请重试"),
     EMPTY_TASK_ID(-110,"taskId不能为空"),
     EMPTY_WEBSITE_NAME(-120,"websiteName不能为空"),

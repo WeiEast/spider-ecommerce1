@@ -18,6 +18,6 @@ public interface ClassLoaderService {
      * @param websiteName
      * @return
      */
-    OperatorLoginPluginService getOperatorLongService(String websiteName);
+    OperatorPluginService getOperatorPluginService(String websiteName);
 
 }

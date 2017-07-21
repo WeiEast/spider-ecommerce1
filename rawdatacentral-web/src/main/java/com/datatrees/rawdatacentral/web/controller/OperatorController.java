@@ -6,7 +6,7 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorLoginPluginService;
+import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
@@ -51,23 +51,23 @@ public class OperatorController {
     public Object init(Long taskId, String websiteName, OperatorParam param) {
         //重复任务清除cookie
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId.toString()));
-        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
         return longService.init(taskId, websiteName, param);
     }
 
     @RequestMapping("/refeshPicCode")
     public Object refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
-        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
         return longService.refeshPicCode(taskId, websiteName, param);
     }
 
     @RequestMapping("/refeshPicCodeAndDisplay")
     public ResponseEntity<InputStreamResource> refeshPicCodeAndDisplay(Long taskId, String websiteName,
                                                                        OperatorParam param) {
-        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
         HttpResult<Map<String, Object>> result = longService.refeshPicCode(taskId, websiteName, param);
         if (result.getStatus()) {
-            String picCode = result.getData().get(OperatorLoginPluginService.RETURN_FIELD_PIC_CODE).toString();
+            String picCode = result.getData().get(OperatorPluginService.RETURN_FIELD_PIC_CODE).toString();
             byte[] bytes = Base64.decodeBase64(picCode);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -83,19 +83,19 @@ public class OperatorController {
 
     @RequestMapping("/refeshSmsCode")
     public Object refeshSmsCode(Long taskId, String websiteName, OperatorParam param) {
-        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
         return longService.refeshSmsCode(taskId, websiteName, param);
     }
 
-    @RequestMapping("/login")
+    @RequestMapping("/submit")
     public Object login(Long taskId, String websiteName, OperatorParam param) {
-        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
-        return longService.login(taskId, websiteName, param);
+        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
+        return longService.submit(taskId, websiteName, param);
     }
 
     @RequestMapping("/validatePicCode")
     public Object validatePicCode(Long taskId, String websiteName, OperatorParam param) {
-        OperatorLoginPluginService longService = classLoaderService.getOperatorLongService(websiteName);
+        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
         return longService.validatePicCode(taskId, websiteName, param);
     }
 

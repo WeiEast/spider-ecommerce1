@@ -8,7 +8,7 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorLoginPluginService;
+import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
     @Resource
     private RedisService        redisService;
 
-    @Value("${operator.Login.plugin.filename}")
+    @Value("${operator.plugin.filename}")
     private String              operatorLoginPlugin;
 
     @Override
@@ -64,20 +64,20 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
     }
 
     @Override
-    public OperatorLoginPluginService getOperatorLongService(String websiteName) {
+    public OperatorPluginService getOperatorPluginService(String websiteName) {
         try {
-            String propertyName = "login.class." + websiteName;
+            String propertyName = "operator.plugin." + websiteName;
             String mainLoginClass = PropertiesConfiguration.getInstance().get(propertyName);
-            CheckUtils.checkNotBlank(mainLoginClass, "get login class error websiteName=" + websiteName);
+            CheckUtils.checkNotBlank(mainLoginClass, "get operator plugin class error websiteName=" + websiteName);
             Class loginClass = loadPlugin(operatorLoginPlugin, mainLoginClass);
-            if (!OperatorLoginPluginService.class.isAssignableFrom(loginClass)) {
+            if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
                 throw new RuntimeException(
-                    "mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorLoginPluginService");
+                    "mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorPluginService");
             }
-            return (OperatorLoginPluginService) loginClass.newInstance();
+            return (OperatorPluginService) loginClass.newInstance();
         } catch (Exception e) {
-            logger.error("getOperatorLongService error websiteName={}", websiteName);
-            throw new RuntimeException("getOperatorLongService error websiteName=" + websiteName);
+            logger.error("getOperatorService error websiteName={}", websiteName);
+            throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName);
         }
     }
 

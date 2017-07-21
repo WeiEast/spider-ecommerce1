@@ -73,6 +73,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     }
 
     private OperatorLoginPluginService getLoginService(String websiteName) {
-        return classLoaderService.getOperatorLongService(websiteName);
+        return classLoaderService.getOperatorPluginService(websiteName);
     }
 }
