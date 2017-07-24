@@ -8,12 +8,11 @@
  */
 package com.datatrees.rawdatacentral.extractor.common;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -22,7 +21,8 @@ import com.datatrees.rawdatacentral.core.model.ResultType;
  * @since 2015年7月30日 下午8:24:48
  */
 public class StoragePathUtil {
-    private static boolean useOriginalPathFlag = PropertiesConfiguration.getInstance().getBoolean("use.original.path.flag", false);
+    private static boolean useOriginalPathFlag = PropertiesConfiguration.getInstance()
+        .getBoolean("use.original.path.flag", false);
 
     public static String genStoragePath(int taskId, String uuid) {
         StringBuffer buffer = new StringBuffer();
@@ -43,11 +43,11 @@ public class StoragePathUtil {
             } else {
                 resultTypeStr = "UnKnown";
             }
-            bucket = resultTypeStr + "/" + date + "/" + extractMessage.getTaskId() + "/" + extractMessage.getWebsiteId();
+            bucket = resultTypeStr + "/" + date + "/" + extractMessage.getTaskId() + "/"
+                     + extractMessage.getWebsiteId();
         }
-        return extractMessage.getMessageIndex() == null
-                ? bucket + "/" + uniqueMd5
-                : bucket + "/" + uniqueMd5 + "/" + extractMessage.getMessageIndex();
+        return extractMessage.getMessageIndex() == null ? bucket + "/" + uniqueMd5
+            : bucket + "/" + uniqueMd5 + "_" + extractMessage.getMessageIndex();
 
     }
 }
