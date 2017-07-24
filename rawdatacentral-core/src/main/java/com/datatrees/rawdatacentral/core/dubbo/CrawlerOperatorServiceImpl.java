@@ -7,7 +7,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorLoginPluginService;
+import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -28,17 +28,19 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     private ClassLoaderService classLoaderService;
 
     @Override
-    public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
+    public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, String type, OperatorParam param) {
         return getLoginService(websiteName).init(taskId, websiteName, param);
     }
 
     @Override
-    public HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
-        return getLoginService(websiteName).refeshPicCode(taskId, websiteName, param);
+    public HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, String type,
+                                                         OperatorParam param) {
+        return getLoginService(websiteName).refeshPicCode(taskId, websiteName, type, param);
     }
 
     @Override
-    public HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, OperatorParam param) {
+    public HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, String type,
+                                                         OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         if (null == taskId || taskId <= 0) {
             return result.failure(ErrorCode.EMPTY_TASK_ID);
@@ -49,11 +51,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (null == param || null == param.getMobile() || 0 >= param.getMobile()) {
             return result.failure(ErrorCode.EMPTY_MOBILE);
         }
-        return getLoginService(websiteName).refeshSmsCode(taskId, websiteName, param);
+        return getLoginService(websiteName).refeshSmsCode(taskId, websiteName, type, param);
     }
 
     @Override
-    public HttpResult<Map<String, Object>> login(Long taskId, String websiteName, OperatorParam param) {
+    public HttpResult<Map<String, Object>> login(Long taskId, String websiteName, String type, OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         if (null == taskId || taskId <= 0) {
             return result.failure(ErrorCode.EMPTY_TASK_ID);
@@ -64,7 +66,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (null == param || null == param.getMobile() || 0 >= param.getMobile()) {
             return result.failure(ErrorCode.EMPTY_MOBILE);
         }
-        return getLoginService(websiteName).login(taskId, websiteName, param);
+        return getLoginService(websiteName).submit(taskId, websiteName, type, param);
     }
 
     @Override
@@ -72,7 +74,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         return crawlerService.queryAllOperatorConfig();
     }
 
-    private OperatorLoginPluginService getLoginService(String websiteName) {
+    private OperatorPluginService getLoginService(String websiteName) {
         return classLoaderService.getOperatorPluginService(websiteName);
     }
 }

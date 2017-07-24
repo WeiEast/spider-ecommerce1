@@ -20,7 +20,7 @@ public interface CrawlerOperatorService {
      * @param param
      * @return
      */
-    HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param);
+    HttpResult<Map<String, Object>> init(Long taskId, String websiteName, String type, OperatorParam param);
 
     /**
      * 刷新图片验证码
@@ -29,7 +29,7 @@ public interface CrawlerOperatorService {
      * @param param
      * @return
      */
-    HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, OperatorParam param);
+    HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, String type, OperatorParam param);
 
     /**
      * 刷新短信验证码
@@ -38,7 +38,7 @@ public interface CrawlerOperatorService {
      * @param param
      * @return
      */
-    HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, OperatorParam param);
+    HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, String type, OperatorParam param);
 
     /**
      * 刷新短信验证码
@@ -47,7 +47,7 @@ public interface CrawlerOperatorService {
      * @param param
      * @return
      */
-    HttpResult<Map<String, Object>> login(Long taskId, String websiteName, OperatorParam param);
+    HttpResult<Map<String, Object>> login(Long taskId, String websiteName, String type, OperatorParam param);
 
     /**
      * 获取所有运营商登陆配置

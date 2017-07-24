@@ -56,16 +56,16 @@ public class OperatorController {
     }
 
     @RequestMapping("/refeshPicCode")
-    public Object refeshPicCode(Long taskId, String websiteName, OperatorParam param) {
+    public Object refeshPicCode(Long taskId, String websiteName, String type, OperatorParam param) {
         OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.refeshPicCode(taskId, websiteName, param);
+        return longService.refeshPicCode(taskId, websiteName, type, param);
     }
 
     @RequestMapping("/refeshPicCodeAndDisplay")
-    public ResponseEntity<InputStreamResource> refeshPicCodeAndDisplay(Long taskId, String websiteName,
+    public ResponseEntity<InputStreamResource> refeshPicCodeAndDisplay(Long taskId, String websiteName, String type,
                                                                        OperatorParam param) {
         OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        HttpResult<Map<String, Object>> result = longService.refeshPicCode(taskId, websiteName, param);
+        HttpResult<Map<String, Object>> result = longService.refeshPicCode(taskId, websiteName, type, param);
         if (result.getStatus()) {
             String picCode = result.getData().get(OperatorPluginService.RETURN_FIELD_PIC_CODE).toString();
             byte[] bytes = Base64.decodeBase64(picCode);
@@ -82,21 +82,21 @@ public class OperatorController {
     }
 
     @RequestMapping("/refeshSmsCode")
-    public Object refeshSmsCode(Long taskId, String websiteName, OperatorParam param) {
+    public Object refeshSmsCode(Long taskId, String websiteName, String type, OperatorParam param) {
         OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.refeshSmsCode(taskId, websiteName, param);
+        return longService.refeshSmsCode(taskId, websiteName, type, param);
     }
 
     @RequestMapping("/submit")
-    public Object login(Long taskId, String websiteName, OperatorParam param) {
+    public Object login(Long taskId, String websiteName, String type, OperatorParam param) {
         OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.submit(taskId, websiteName, param);
+        return longService.submit(taskId, websiteName, type, param);
     }
 
     @RequestMapping("/validatePicCode")
-    public Object validatePicCode(Long taskId, String websiteName, OperatorParam param) {
+    public Object validatePicCode(Long taskId, String websiteName, String type, OperatorParam param) {
         OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.validatePicCode(taskId, websiteName, param);
+        return longService.validatePicCode(taskId, websiteName, type, param);
     }
 
     @RequestMapping("/openPage")

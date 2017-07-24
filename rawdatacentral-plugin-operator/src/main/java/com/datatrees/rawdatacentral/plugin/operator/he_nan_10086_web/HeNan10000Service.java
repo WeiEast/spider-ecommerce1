@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.datatrees.crawler.plugin.util.PluginHttpUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.JsonpUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -46,6 +47,8 @@ public class HeNan10000Service implements OperatorPluginService {
         switch (type) {
             case FormType.LOGIN:
                 return refeshPicCodeForLogin(taskId, websiteName, param);
+            case FormType.VALIDATE_CALL_LOGS:
+                return refeshPicCodeForCallLogs(taskId, websiteName, param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -57,6 +60,8 @@ public class HeNan10000Service implements OperatorPluginService {
         switch (type) {
             case FormType.LOGIN:
                 return refeshSmsCodeForLogin(taskId, websiteName, param);
+            case FormType.VALIDATE_CALL_LOGS:
+                return refeshSmsCodeForCallLogs(taskId, websiteName, param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -78,6 +83,8 @@ public class HeNan10000Service implements OperatorPluginService {
         switch (type) {
             case FormType.LOGIN:
                 return validatePicCodeForLogin(taskId, websiteName, param);
+            case FormType.VALIDATE_CALL_LOGS:
+                return validatePicCodeForCallLogs(taskId, websiteName, param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -206,8 +213,37 @@ public class HeNan10000Service implements OperatorPluginService {
         }
     }
 
+    private HttpResult<Map<String, Object>> refeshSmsCodeForCallLogs(Long taskId, String websiteName,
+                                                                     OperatorParam param) {
+        //https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/18838224796?callback=jQuery183002065868962851658_1500889079942&_=1500889136495
+        String templateUrl = "https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/{}?callback=jQuery183002065868962851658_{}&_={}";
+        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+        String mobile = redisService.getTaskShare(taskId, AttributeKey.MOBILE);
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        String url = TemplateUtils.format(templateUrl, param.getMobile(), System.currentTimeMillis(),
+            System.currentTimeMillis());
+        String pageContent = null;
+        try {
+            pageContent = PluginHttpUtils.postString(url, taskId);
+            String jsonString = JsonpUtil.getJsonString(pageContent);
+            JSONObject json = JSON.parseObject(jsonString);
+            if (!StringUtils.equals("000000", json.getString("retCode"))) {
+                logger.error("通话详单-->短信验证码,发送失败,taskId={},websiteName={},url={},formType={},pateContent={}", taskId,
+                    websiteName, url, FormType.VALIDATE_CALL_LOGS, pageContent);
+                return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+            }
+            logger.info("通话详单-->短信验证码,发送成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                FormType.VALIDATE_CALL_LOGS);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("通话详单-->短信验证码,发送失败,taskId={},websiteName={},url={},FormType.LOGIN,pageContent={}", taskId,
+                websiteName, url, FormType.LOGIN, pageContent, e);
+            return result.failure(ErrorCode.REFESH_SMS_ERROR);
+        }
+    }
+
     private HttpResult<Map<String, Object>> submitForLogin(Long taskId, String websiteName, OperatorParam param) {
-        String templateUrl = "https://login.10086.cn/submit.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
+        String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
