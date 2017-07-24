@@ -3,19 +3,20 @@ package com.datatrees.rawdatacentral.plugin.operator.he_nan_10086_web;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.crawler.plugin.util.PluginHttpUtils;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import org.apache.commons.codec.binary.Base64;
+import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,36 +31,7 @@ import java.util.Map;
  */
 public class HeNan10000Service implements OperatorPluginService {
 
-    private static final Logger logger          = LoggerFactory.getLogger(HeNan10000Service.class);
-
-    /**
-     * 登陆页
-     */
-    private static final String preLoginUrl     = "https://login.10086.cn/html/submit/submit.html";
-
-    /**
-     * 刷新图片验证码
-     * 类型:GET
-     */
-    private static final String picCodeUrl      = "https://login.10086.cn/captchazh.htm?type=05&timestamp={}";
-
-    /**
-     * 验证图片验证码
-     */
-    private static final String validPicCodeUrl = "https://login.10086.cn/verifyCaptcha?inputCode={}";
-
-    /**
-     * 刷新短信验证码
-     * 类型:POST
-     */
-    private static final String smsCodeUrl      = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID=12003&userName={}";
-
-    /**
-     * 登陆验证接口
-     * 类型:GET
-     * 抓包:https://login.10086.cn/login.htm?accountType=01&account=18838224796&password=716253&pwdType=01&smsPwd=073442&inputCode=&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12001&protocol=https:&timestamp=1500457115303
-     */
-    private static final String loginUrl        = "https://login.10086.cn/submit.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
+    private static final Logger logger = LoggerFactory.getLogger(HeNan10000Service.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
@@ -73,7 +45,7 @@ public class HeNan10000Service implements OperatorPluginService {
                                                          OperatorParam param) {
         switch (type) {
             case FormType.LOGIN:
-                return refeshLoginPicCode(taskId, websiteName, param);
+                return refeshPicCodeForLogin(taskId, websiteName, param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -84,7 +56,7 @@ public class HeNan10000Service implements OperatorPluginService {
                                                          OperatorParam param) {
         switch (type) {
             case FormType.LOGIN:
-                return refeshLoginSmsCode(taskId, websiteName, param);
+                return refeshSmsCodeForLogin(taskId, websiteName, param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -94,7 +66,7 @@ public class HeNan10000Service implements OperatorPluginService {
     public HttpResult<Map<String, Object>> submit(Long taskId, String websiteName, String type, OperatorParam param) {
         switch (type) {
             case FormType.LOGIN:
-                return loginSubmit(taskId, websiteName, param);
+                return submitForLogin(taskId, websiteName, param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -105,80 +77,145 @@ public class HeNan10000Service implements OperatorPluginService {
                                                            OperatorParam param) {
         switch (type) {
             case FormType.LOGIN:
-                return validateLoginPicCode(taskId, websiteName, param);
+                return validatePicCodeForLogin(taskId, websiteName, param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
     }
 
-    private HttpResult<Map<String, Object>> refeshLoginPicCode(Long taskId, String websiteName, OperatorParam param) {
+    private HttpResult<Map<String, Object>> refeshPicCodeForLogin(Long taskId, String websiteName,
+                                                                  OperatorParam param) {
         /**
          * 这里不一定有图片验证码,随机出现
          */
-        String url = TemplateUtils.format(picCodeUrl, System.currentTimeMillis());
+        String templateUrl = "https://login.10086.cn/captchazh.htm?type=05&timestamp={}";
+        String url = TemplateUtils.format(templateUrl, System.currentTimeMillis());
+        return PluginHttpUtils.refeshPicCodePicCode(taskId, websiteName, url, RETURN_FIELD_PIC_CODE, FormType.LOGIN);
+    }
+
+    private HttpResult<Map<String, Object>> validatePicCodeForLogin(Long taskId, String websiteName,
+                                                                    OperatorParam param) {
+        String templateUrl = "https://login.10086.cn/verifyCaptcha?inputCode={}";
+        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+        String url = TemplateUtils.format(templateUrl, param.getPicCode());
         HttpResult<Map<String, Object>> result = new HttpResult<>();
+        String pateContent = null;
         try {
-            byte[] data = PluginHttpUtils.doGet(url, taskId);
-            String picCode = Base64.encodeBase64String(data);
-            Map<String, Object> map = new HashMap<>();
-            map.put(RETURN_FIELD_PIC_CODE, picCode);
-            logger.info("刷新图片验证码成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
-            return result.success(map);
+            //结果枚举:正确{"resultCode":"0"},错误{"resultCode":"1"}
+            pateContent = PluginHttpUtils.getString(url, taskId);
+            JSONObject json = JSON.parseObject(pateContent);
+            if (!StringUtils.equals("0", json.getString("resultCode"))) {
+                logger.error("图片验证码验证失败,taskId={},websiteName={},url={},formType={},pateContent={}", taskId,
+                    websiteName, url, FormType.LOGIN, pateContent);
+                return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+            }
+            logger.info("图片验证码验证成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                FormType.LOGIN);
+            return result.success();
         } catch (Exception e) {
-            logger.error("刷新图片验证码失败 error taskId={},websiteName={},url={}", taskId, websiteName, url, e);
-            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+            logger.error("图片验证码验证失败,taskId={},websiteName={},url={},formType={},pateContent={}", taskId, websiteName,
+                url, FormType.LOGIN, pateContent, e);
+            return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         }
     }
 
-    private HttpResult<Map<String, Object>> refeshLoginSmsCode(Long taskId, String websiteName, OperatorParam param) {
+    private HttpResult<Map<String, Object>> refeshPicCodeForCallLogs(Long taskId, String websiteName,
+                                                                     OperatorParam param) {
+        String templateUrl = "http://shop.10086.cn/i/authImg?t={}";
+        String url = TemplateUtils.format(templateUrl, System.currentTimeMillis());
+        return PluginHttpUtils.refeshPicCodePicCode(taskId, websiteName, url, RETURN_FIELD_PIC_CODE,
+            FormType.VALIDATE_CALL_LOGS);
+    }
+
+    private HttpResult<Map<String, Object>> validatePicCodeForCallLogs(Long taskId, String websiteName,
+                                                                       OperatorParam param) {
+        //http://shop.10086.cn/i/v1/res/precheck/13735874566?captchaVal=123145&_=1500623358942
+        String templateUrl = "http://shop.10086.cn/i/v1/res/precheck/{}?captchaVal={}&_={}";
+        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+        //登陆成功是暂存
+        String mobile = redisService.getTaskShare(taskId, AttributeKey.MOBILE);
+        String url = TemplateUtils.format(templateUrl, mobile, param.getPicCode(), System.currentTimeMillis());
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        String url = TemplateUtils.format(smsCodeUrl, param.getMobile());
+        String pateContent = null;
+        try {
+            //结果枚举:正确{"data":null,"retCode":"000000","retMsg":"输入正确，校验成功","sOperTime":null},错误{"data":null,"retCode":"999999","retMsg":"输入错误，校验失败","sOperTime":null}
+            pateContent = PluginHttpUtils.getString(url, taskId);
+            JSONObject json = JSON.parseObject(pateContent);
+            if (!StringUtils.equals("000000", json.getString("retCode"))) {
+                logger.error("图片验证码验证失败,taskId={},websiteName={},url={},formType={},pateContent={}", taskId,
+                    websiteName, url, FormType.VALIDATE_CALL_LOGS, pateContent);
+                return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+            }
+            logger.info("图片验证码验证成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                FormType.VALIDATE_CALL_LOGS);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("图片验证码验证失败,taskId={},websiteName={},url={},formType={},pateContent={}", taskId, websiteName,
+                url, FormType.VALIDATE_CALL_LOGS, pateContent, e);
+            return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(Long taskId, String websiteName,
+                                                                  OperatorParam param) {
+        String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID=12003&userName={}";
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        String url = TemplateUtils.format(templateUrl, param.getMobile());
         String pageContent = null;
         try {
             pageContent = PluginHttpUtils.postString(url, taskId);
             switch (pageContent) {
                 case "0":
-                    logger.info("短信发送成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.info("短信发送成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                        FormType.LOGIN);
                     return result.success();
                 case "1":
-                    logger.warn("对不起，短信随机码暂时不能发送，请一分钟以后再试,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("对不起，短信随机码暂时不能发送，请一分钟以后再试,taskId={},websiteName={},url={},formType={}", taskId,
+                        websiteName, url, FormType.LOGIN);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR, "对不起,短信随机码暂时不能发送，请一分钟以后再试");
                 case "2":
-                    logger.warn("短信下发数已达上限，您可以使用服务密码方式登录,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("短信下发数已达上限，您可以使用服务密码方式登录,taskId={},websiteName={},url={},formType={}", taskId,
+                        websiteName, url, FormType.LOGIN);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR, "短信下发数已达上限");
                 case "3":
-                    logger.warn("对不起，短信发送次数过于频繁,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("对不起，短信发送次数过于频繁,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                        FormType.LOGIN);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR, "对不起，短信发送次数过于频繁");
                 case "4":
-                    logger.warn("对不起，渠道编码不能为空,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("对不起，渠道编码不能为空,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                        FormType.LOGIN);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR);
                 case "5":
-                    logger.warn("对不起，渠道编码异常,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("对不起，渠道编码异常,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                        FormType.LOGIN);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR);
                 case "4005":
-                    logger.warn("手机号码有误，请重新输入,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("手机号码有误，请重新输入,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                        FormType.LOGIN);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR, "手机号码有误，请重新输入");
                 default:
-                    logger.error("短信验证码发送失败,taskId={},websiteName={},url={},result={}", taskId, websiteName,
-                        pageContent);
+                    logger.error("短信验证码发送失败,taskId={},websiteName={},url={},formType={},result={}", taskId, websiteName,
+                        url, FormType.LOGIN, pageContent);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR);
             }
         } catch (Exception e) {
-            logger.error("短信验证码发送失败,请重试,taskId={},websiteName={},url={},pageContent={}", taskId, websiteName,
-                pageContent, e);
+            logger.error("短信验证码发送失败,请重试,taskId={},websiteName={},url={},FormType.LOGIN,pageContent={}", taskId,
+                websiteName, url, FormType.LOGIN, pageContent, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
 
-    private HttpResult<Map<String, Object>> loginSubmit(Long taskId, String websiteName, OperatorParam param) {
+    private HttpResult<Map<String, Object>> submitForLogin(Long taskId, String websiteName, OperatorParam param) {
+        String templateUrl = "https://login.10086.cn/submit.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
-        HttpResult<Map<String, Object>> result = validateLoginPicCode(taskId, websiteName, param);
+        HttpResult<Map<String, Object>> result = validatePicCodeForLogin(taskId, websiteName, param);
         if (!result.getStatus()) {
             return result;
         }
-        String url = TemplateUtils.format(loginUrl, param.getMobile(), param.getPassword(), param.getSmsCode(),
+        String url = TemplateUtils.format(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(),
             param.getPicCode(), System.currentTimeMillis());
         String pageContent = null;
         try {
@@ -194,33 +231,37 @@ public class HeNan10000Service implements OperatorPluginService {
              重复登陆:{"islocal":false,"result":"9"}
              */
             //没有设置referer会出现connect reset
-            pageContent = PluginHttpUtils.getString(url, preLoginUrl, taskId);
+            String referer = "https://login.10086.cn/html/login/login.html";
+            pageContent = PluginHttpUtils.getString(url, referer, taskId);
             JSONObject json = JSON.parseObject(pageContent);
-
-            //重复登陆:{"islocal":false,"result":"9"}
-            if (StringUtils.equals("9", json.getString("result"))) {
-                logger.info("登陆成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
-                return result.success();
-            }
-            //正常登陆
             String code = json.getString("code");
             String errorMsg = json.getString("desc");
+            //重复登陆:{"islocal":false,"result":"9"}
+            if (StringUtils.equals("9", json.getString("result")) || StringUtils.equals("0000", code)) {
+                logger.info("登陆成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                    FormType.LOGIN);
+                RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+                //保存手机号和服务密码,通话详单要用
+                redisService.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
+                redisService.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
+                return result.success();
+            }
             switch (code) {
-                case "0000":
-                    logger.info("登陆成功,taskId={},websiteName={},url={}", taskId, websiteName, url);
-                    break;
                 case "2036":
-                    logger.warn("账户名与密码不匹配,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("账户名与密码不匹配,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                        FormType.LOGIN);
                     return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
                 case "6001":
-                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                        FormType.LOGIN);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 case "6002":
-                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={}", taskId, websiteName, url);
+                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                        FormType.LOGIN);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
-                    logger.error("登陆失败,taskId={},websiteName={},url={},pageContent={}", taskId, websiteName,
-                        pageContent);
+                    logger.error("登陆失败,taskId={},websiteName={},url={},formType={},pageContent={}", taskId, websiteName,
+                        url, FormType.LOGIN, pageContent);
                     if (StringUtils.contains(errorMsg, "密码")) {
                         return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
                     }
@@ -229,34 +270,10 @@ public class HeNan10000Service implements OperatorPluginService {
                     }
                     return result.failure(ErrorCode.LOGIN_FAIL);
             }
-
-            return result.success();
         } catch (Exception e) {
-            logger.error("登陆失败,taskId={},websiteName={},url={},pageContent={}", taskId, websiteName, pageContent, e);
+            logger.error("登陆失败,taskId={},websiteName={},url={},formType={},pageContent={}", taskId, websiteName, url,
+                FormType.LOGIN, pageContent, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
-        }
-    }
-
-    private HttpResult<Map<String, Object>> validateLoginPicCode(Long taskId, String websiteName, OperatorParam param) {
-        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
-        String url = TemplateUtils.format(validPicCodeUrl, param.getPicCode());
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
-        String pateContent = null;
-        try {
-            //结果枚举:正确{"resultCode":"0"},错误{"resultCode":"1"}
-            pateContent = PluginHttpUtils.getString(url, taskId);
-            JSONObject json = JSON.parseObject(pateContent);
-            if (!StringUtils.equals("0", json.getString("resultCode"))) {
-                logger.error("图片验证码验证失败,taskId={},websiteName={},url={},pateContent={}", taskId, websiteName,
-                    pateContent);
-                return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
-            }
-            logger.info("图片验证码验证成功,taskId={},websiteName={},url={}", taskId, websiteName);
-            return result.success();
-        } catch (Exception e) {
-            logger.error("图片验证码验证失败,taskId={},websiteName={},url={},pateContent={}", taskId, websiteName, pateContent,
-                e);
-            return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         }
     }
 

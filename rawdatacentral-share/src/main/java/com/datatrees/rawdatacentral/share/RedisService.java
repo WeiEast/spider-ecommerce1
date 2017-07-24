@@ -235,4 +235,31 @@ public interface RedisService {
      */
     public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, TypeReference<T> typeReference);
 
+    /**
+     * 添加共享属性
+     * @param taskId
+     * @param name
+     * @param value
+     */
+    void addTaskShare(Long taskId, String name, String value);
+
+    /**
+     * 获取共享属性
+     * @param taskId
+     * @param name
+     */
+    String getTaskShare(Long taskId, String name);
+
+    /**
+     * 枷锁
+     * @param postfix
+     */
+    Boolean lock(Object postfix);
+
+    /**
+     * 解锁
+     * @param postfix
+     */
+    void unLock(Object postfix);
+
 }

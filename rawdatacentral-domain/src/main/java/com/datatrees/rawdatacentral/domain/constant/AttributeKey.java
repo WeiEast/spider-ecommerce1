@@ -27,5 +27,6 @@ public class AttributeKey implements Serializable {
     public static final String USERNAME        = "username";       //用户名
     public static final String PASSWORD        = "password";       //密码
     public static final String RANDOM_PASSWORD = "randomPassword"; //短信验证码
+    public static final String MOBILE = "mobile"; //手机号
 
 }

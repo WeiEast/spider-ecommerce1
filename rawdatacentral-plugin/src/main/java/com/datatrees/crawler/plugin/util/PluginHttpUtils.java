@@ -6,8 +6,11 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CookieUtils;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.share.RedisService;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -232,11 +235,11 @@ public class PluginHttpUtils {
             } else {
                 client = new HttpPost(url);
             }
-            if(null == header){
+            if (null == header) {
                 header = new HashMap<>();
             }
-            if(!header.containsKey(HttpHeadKey.CONNECTION)){
-                header.put(HttpHeadKey.CONNECTION,"close");
+            if (!header.containsKey(HttpHeadKey.CONNECTION)) {
+                header.put(HttpHeadKey.CONNECTION, "close");
             }
 
             for (Map.Entry<String, String> entry : header.entrySet()) {
@@ -287,4 +290,22 @@ public class PluginHttpUtils {
         BeanFactoryUtils.getBean(RedisService.class).cache(RedisKeyPrefixEnum.TASK_COOKIE, String.valueOf(taskId),
             list);
     }
+
+    public static HttpResult<Map<String, Object>> refeshPicCodePicCode(Long taskId, String websiteName, String url,
+                                                                       String returnName, String formType) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        try {
+            byte[] data = PluginHttpUtils.doGet(url, taskId);
+            String picCode = Base64.encodeBase64String(data);
+            Map<String, Object> map = new HashMap<>();
+            map.put(returnName, picCode);
+            logger.info("刷新图片验证码成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url, formType);
+            return result.success(map);
+        } catch (Exception e) {
+            logger.error("刷新图片验证码失败 error taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                formType, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
+    }
+
 }

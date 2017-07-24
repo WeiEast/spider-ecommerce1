@@ -7,7 +7,10 @@ public enum RedisKeyPrefixEnum {
 
     WEBSITENAME_TRANSFORM_MAP("websitename_transform_map", 60, "websitename中文转英文名称"),
 
+    LOCK("lock",1,"共享锁"),
+
     TASK_COOKIE("task_cookie",30," 根据taskId共享cookie"),
+    TASK_SHARE("task_share",30," 根据taskId共享中间属性"),
     PLUGIN_CLASS("plugin_class",60*24,"根据taskId共享cookie"),
 
     //website相关

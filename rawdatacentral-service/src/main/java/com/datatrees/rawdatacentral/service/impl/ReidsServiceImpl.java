@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -394,6 +396,54 @@ public class ReidsServiceImpl implements RedisService {
     @Override
     public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, TypeReference<T> typeReference) {
         return getCache(redisKeyPrefixEnum.getRedisKey(postfix), typeReference);
+    }
+
+    @Override
+    public void addTaskShare(Long taskId, String name, String value) {
+        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
+        boolean lock = lock(taskId);
+        while (!lock && System.currentTimeMillis() < endTime) {
+            lock = lock(taskId.toString());
+        }
+        if (!lock) {
+            throw new RuntimeException("lock error taskId=" + taskId);
+        }
+        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString());
+        Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
+        });
+        if (null == map) {
+            map = new HashMap<>();
+        }
+        map.put(name, value);
+        cache(cacheKey, map, RedisKeyPrefixEnum.TASK_SHARE.getTimeout(), TimeUnit.MINUTES);
+        unLock(taskId);
+    }
+
+    @Override
+    public String getTaskShare(Long taskId, String name) {
+        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString());
+        Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
+        });
+        if (null == map || map.isEmpty()) {
+            return null;
+        }
+        return map.get(name);
+    }
+
+    @Override
+    public Boolean lock(Object postfix) {
+        String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(postfix.toString());
+        if (stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "locked")) {
+            stringRedisTemplate.expire(lockKey, RedisKeyPrefixEnum.LOCK.getTimeout(), TimeUnit.SECONDS);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void unLock(Object postfix) {
+        String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(postfix.toString());
+        deleteKey(lockKey);
     }
 
 }
