@@ -36,9 +36,15 @@ public class HeNan10000Service implements OperatorPluginService {
 
     @Override
     public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
-        //不必预登陆,cookie从刷新验证码中获取
-        //预登陆可以先返回图片验证码
-        return refeshPicCode(taskId, websiteName, FormType.LOGIN, param);
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        try {
+            //登陆页没有获取任何cookie,https://login.10086.cn/login.html?channelID=12003&backUrl=http://shop.10086.cn/i/,不用登陆
+            //预登陆可以先返回图片验证码
+            return refeshPicCode(taskId, websiteName, FormType.LOGIN, param);
+        } catch (Exception e) {
+            logger.error("初始化失败,taskId={},websiteName={}", taskId, websiteName, e);
+            return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+        }
     }
 
     @Override
@@ -224,7 +230,8 @@ public class HeNan10000Service implements OperatorPluginService {
             System.currentTimeMillis());
         String pageContent = null;
         try {
-            pageContent = PluginHttpUtils.postString(url, taskId);
+            String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", mobile);
+            pageContent = PluginHttpUtils.getString(url, referer, taskId);
             String jsonString = JsonpUtil.getJsonString(pageContent);
             JSONObject json = JSON.parseObject(jsonString);
             if (!StringUtils.equals("000000", json.getString("retCode"))) {
@@ -236,7 +243,7 @@ public class HeNan10000Service implements OperatorPluginService {
                 FormType.VALIDATE_CALL_LOGS);
             return result.success();
         } catch (Exception e) {
-            logger.error("通话详单-->短信验证码,发送失败,taskId={},websiteName={},url={},FormType.LOGIN,pageContent={}", taskId,
+            logger.error("通话详单-->短信验证码,发送失败,taskId={},websiteName={},url={},formType={},pageContent={}", taskId,
                 websiteName, url, FormType.LOGIN, pageContent, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
@@ -270,16 +277,35 @@ public class HeNan10000Service implements OperatorPluginService {
             String referer = "https://login.10086.cn/html/login/login.html";
             pageContent = PluginHttpUtils.getString(url, referer, taskId);
             JSONObject json = JSON.parseObject(pageContent);
+            //重复登陆:{"islocal":false,"result":"9"}
+            if (StringUtils.equals("9", json.getString("result"))) {
+                logger.info("重复登陆,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                    FormType.LOGIN);
+                return result.success();
+            }
             String code = json.getString("code");
             String errorMsg = json.getString("desc");
-            //重复登陆:{"islocal":false,"result":"9"}
-            if (StringUtils.equals("9", json.getString("result")) || StringUtils.equals("0000", code)) {
+            if (StringUtils.equals("0000", code)) {
                 logger.info("登陆成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
                     FormType.LOGIN);
                 RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
                 //保存手机号和服务密码,通话详单要用
                 redisService.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
                 redisService.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
+
+                //
+                String artifact = json.getString("artifact");
+                String uid = json.getString("uid");
+                redisService.addTaskShare(taskId, "artifact", artifact);
+                redisService.addTaskShare(taskId, "uid", uid);
+
+                url = TemplateUtils.format(
+                    "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
+                    artifact);
+
+                //访问下主页,否则通话详单有些cookie没用
+                PluginHttpUtils.getString(url, taskId);
+
                 return result.success();
             }
             switch (code) {
