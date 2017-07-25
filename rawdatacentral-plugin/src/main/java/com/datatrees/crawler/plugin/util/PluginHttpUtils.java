@@ -20,6 +20,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -281,6 +282,19 @@ public class PluginHttpUtils {
             cookieStore.addCookie(CookieUtils.getBasicClientCookie(myCookie));
         }
         return cookieStore;
+    }
+
+    public static String getCookieValue(Long taskId, String cookieName) {
+        BasicCookieStore cookieStore = getCookie(taskId);
+        if (null != cookieStore && null != cookieStore.getCookies()) {
+            for (Cookie cookie : cookieStore.getCookies()) {
+                if (StringUtils.equals(cookieName, cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        logger.warn("not found cookieName={}", cookieName);
+        return null;
     }
 
     public static void saveCookie(Long taskId, BasicCookieStore cookieStore) {
