@@ -26,7 +26,7 @@ public interface OperatorPluginService {
      * 刷新图片验证码
      * @param taskId
      * @param websiteName
-     * @param type 表单类型,LOGIN:登陆,VALIDATE_CALL_LOGS:验证通话记录,VALIDATE_USER_INFO:验证个人信息
+     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
      * @param param
      * @return
      */
@@ -37,7 +37,7 @@ public interface OperatorPluginService {
      * 必填:手机号
      * @param taskId
      * @param websiteName
-     * @param type 表单类型,LOGIN:登陆,VALIDATE_CALL_LOGS:验证通话记录,VALIDATE_USER_INFO:验证个人信息
+     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
      * @param param
      * @return
      */
@@ -48,7 +48,7 @@ public interface OperatorPluginService {
      * 必填:手机号
      * @param taskId
      * @param websiteName
-     * @param type 表单类型,LOGIN:登陆,VALIDATE_CALL_LOGS:验证通话记录,VALIDATE_USER_INFO:验证个人信息
+     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
      * @param param
      * @return
      */
@@ -59,7 +59,7 @@ public interface OperatorPluginService {
      * 必填:picCode
      * @param taskId
      * @param websiteName
-     * @param type 表单类型,LOGIN:登陆,VALIDATE_CALL_LOGS:验证通话记录,VALIDATE_USER_INFO:验证个人信息
+     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
      * @param param
      * @return
      */
