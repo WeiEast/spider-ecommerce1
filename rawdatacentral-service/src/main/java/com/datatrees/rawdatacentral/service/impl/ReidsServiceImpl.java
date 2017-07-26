@@ -421,13 +421,19 @@ public class ReidsServiceImpl implements RedisService {
 
     @Override
     public String getTaskShare(Long taskId, String name) {
-        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString());
-        Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
-        });
+        Map<String, String> map = getTaskShares(taskId);
         if (null == map || map.isEmpty()) {
             return null;
         }
         return map.get(name);
+    }
+
+    @Override
+    public Map<String, String> getTaskShares(Long taskId) {
+        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString());
+        Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
+        });
+        return map;
     }
 
     @Override

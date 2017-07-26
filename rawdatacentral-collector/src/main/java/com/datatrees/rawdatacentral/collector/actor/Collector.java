@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Resource;
 
+import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -100,6 +101,9 @@ public class Collector {
     @Resource
     private MessageService         messageService;
 
+    @Resource
+    private RedisService           redisService;
+
     private static String          duplicateRemovedResultKeys = PropertiesConfiguration.getInstance()
         .get("duplicate.removed.result.keys", "bankbill");
 
@@ -128,6 +132,7 @@ public class Collector {
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
         context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo());
+
         task.setWebsiteId(context.getWebsite().getId());
         task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
         // init cookie
@@ -138,6 +143,14 @@ public class Collector {
         // 历史状态清理
         this.clearStatus(message.getTaskId());
         taskService.insertTask(task);
+
+        Map<String, String> shares = redisService.getTaskShares(task.getTaskId());
+        if(null != shares && ! shares.isEmpty()){
+            for(Map.Entry<String,String> entry : shares.entrySet()){
+                context.set(entry.getKey(),entry.getValue());
+            }
+        }
+
         // set task unique sign
         ProcessorContextUtil.setTaskUnique(context, task.getId());
 

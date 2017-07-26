@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -47,6 +48,7 @@ public class ApiTest extends BaseTest {
         message.setWebsiteName("china_10086_shop");
         message.setEndURL("");
         collector.processMessage(message);
+        TimeUnit.SECONDS.sleep(60);
 
     }
 

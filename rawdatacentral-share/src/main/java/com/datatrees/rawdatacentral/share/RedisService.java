@@ -4,6 +4,7 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.alibaba.fastjson.TypeReference;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -249,6 +250,12 @@ public interface RedisService {
      * @param name
      */
     String getTaskShare(Long taskId, String name);
+
+    /**
+     * 获取共享属性
+     * @param taskId
+     */
+    Map<String,String> getTaskShares(Long taskId);
 
     /**
      * 枷锁
