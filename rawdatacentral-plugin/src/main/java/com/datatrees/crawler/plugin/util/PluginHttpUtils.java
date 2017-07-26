@@ -297,6 +297,20 @@ public class PluginHttpUtils {
         return null;
     }
 
+    public static String getCookieString(Long taskId) {
+        StringBuilder sb = new StringBuilder();
+        BasicCookieStore cookieStore = getCookie(taskId);
+        if (null != cookieStore && null != cookieStore.getCookies()) {
+            for (Cookie cookie : cookieStore.getCookies()) {
+                sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
+            }
+        }
+        if(StringUtils.isBlank(sb)){
+            return "";
+        }
+        return sb.substring(1);
+    }
+
     public static void saveCookie(Long taskId, BasicCookieStore cookieStore) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
