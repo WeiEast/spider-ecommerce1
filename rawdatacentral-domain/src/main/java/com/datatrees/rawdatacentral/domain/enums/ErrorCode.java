@@ -5,6 +5,7 @@ public enum ErrorCode {
     NOT_SUPORT_METHOD(-10,"方法不支持"),
 
     LOGIN_FAIL(-100,"登陆失败,请重试"),
+    VALIDATE_FAIL(-101,"校验失败,请重试"),
     EMPTY_TASK_ID(-110,"taskId不能为空"),
     EMPTY_WEBSITE_NAME(-120,"websiteName不能为空"),
 
@@ -15,17 +16,17 @@ public enum ErrorCode {
 
     VALIDATE_PASSWORD_FAIL(-240, "您的账户名与密码不匹配，请重新输入"),
 
-    REFESH_PIC_CODE_ERROR(-250,"刷新图片验证码失败,请重试"),
+    REFESH_PIC_CODE_ERROR(-250,"图片验证码刷新失败,请重试"),
     VALIDATE_PIC_CODE_FAIL(-260,"请输入正确的图片验证码"),
 
     REFESH_SMS_ERROR(-270,"短信验证码发送失败,请重试"),
-    VALIDATE_SMS_FAIL(-280,"短信随机码不正确或已过期,请重新获取"),
+    VALIDATE_SMS_FAIL(-280,"短信验证码不正确或已过期,请重新获取"),
 
+    TASK_INIT_ERROR(-300, "初始化失败"),
 
 
     RESULT_SEND_ERROR(202, "Result send error!"),
 
-    TASK_INIT_ERROR(302, "Task init error!"),
 
     CONFIG_ERROR(304, "Config error!"),
 

@@ -313,11 +313,11 @@ public class PluginHttpUtils {
             String picCode = Base64.encodeBase64String(data);
             Map<String, Object> map = new HashMap<>();
             map.put(returnName, picCode);
-            logger.info("刷新图片验证码成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url, formType);
+            logger.info("刷新图片验证码成功,taskId={},websiteName={},formType={},url={}", taskId, websiteName, formType, url);
             return result.success(map);
         } catch (Exception e) {
-            logger.error("刷新图片验证码失败 error taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
-                formType, e);
+            logger.error("刷新图片验证码失败 error taskId={},websiteName={},formType={},url={}", taskId, websiteName, formType,
+                url, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
     }

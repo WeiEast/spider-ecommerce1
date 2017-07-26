@@ -56,6 +56,7 @@ ext {
     htmlunitVersion="2.27"
     antVersion="1.6.5"
     springVersion="4.3.9.RELEASE"
+    commonsCodecVersion="1.10"
 }
 
 subprojects {
