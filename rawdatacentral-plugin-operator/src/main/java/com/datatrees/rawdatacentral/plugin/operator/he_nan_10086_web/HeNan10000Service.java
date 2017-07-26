@@ -159,15 +159,15 @@ public class HeNan10000Service implements OperatorPluginService {
             pateContent = PluginHttpUtils.getString(url, taskId);
             JSONObject json = JSON.parseObject(pateContent);
             if (!StringUtils.equals("000000", json.getString("retCode"))) {
-                logger.error("通话记录-->图片验证码-->校验失败,taskId={},websiteName={},formType={},pateContent={}", taskId,
+                logger.error("详单-->图片验证码-->校验失败,taskId={},websiteName={},formType={},pateContent={}", taskId,
                     websiteName, FormType.VALIDATE_BILL_DETAIL, pateContent);
                 return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
             }
-            logger.info("通话记录-->图片验证码-->校验成功,taskId={},websiteName={},formType={}", taskId, websiteName,
+            logger.info("详单-->图片验证码-->校验成功,taskId={},websiteName={},formType={}", taskId, websiteName,
                 FormType.VALIDATE_BILL_DETAIL);
             return result.success();
         } catch (Exception e) {
-            logger.error("通话记录-->图片验证码-->校验失败,taskId={},websiteName={},formType={},pateContent={}", taskId, websiteName,
+            logger.error("详单-->图片验证码-->校验失败,taskId={},websiteName={},formType={},pateContent={}", taskId, websiteName,
                 FormType.VALIDATE_BILL_DETAIL, pateContent, e);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         }
@@ -237,15 +237,15 @@ public class HeNan10000Service implements OperatorPluginService {
             String jsonString = JsonpUtil.getJsonString(pageContent);
             JSONObject json = JSON.parseObject(jsonString);
             if (!StringUtils.equals("000000", json.getString("retCode"))) {
-                logger.error("通话详单-->短信验证码-->刷新失败,taskId={},websiteName={},formType={},pateContent={}", taskId,
+                logger.error("详单-->短信验证码-->刷新失败,taskId={},websiteName={},formType={},pateContent={}", taskId,
                     websiteName, FormType.VALIDATE_BILL_DETAIL, pageContent);
                 return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
             }
-            logger.info("通话详单-->短信验证码-->刷新成功,taskId={},websiteName={},formType={}", taskId, websiteName,
+            logger.info("详单-->短信验证码-->刷新成功,taskId={},websiteName={},formType={}", taskId, websiteName,
                 FormType.VALIDATE_BILL_DETAIL);
             return result.success();
         } catch (Exception e) {
-            logger.error("通话详单-->短信验证码-->刷新失败,taskId={},websiteName={},formType={},pageContent={}", taskId, websiteName,
+            logger.error("详单-->短信验证码-->刷新失败,taskId={},websiteName={},formType={},pageContent={}", taskId, websiteName,
                 FormType.LOGIN, pageContent, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
@@ -279,22 +279,22 @@ public class HeNan10000Service implements OperatorPluginService {
             JSONObject json = JSON.parseObject(jsonString);
             String code = json.getString("retCode");
             if (StringUtils.equals("000000", code)) {
-                logger.info("通话详单-->校验成功,taskId={},websiteName={},formType={}", taskId, websiteName,
+                logger.info("详单-->校验成功,taskId={},websiteName={},formType={}", taskId, websiteName,
                     FormType.VALIDATE_BILL_DETAIL);
                 return result.success();
             }
             switch (code) {
                 case "570005":
-                    logger.warn("通话详单-->短信验证码错误,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+                    logger.warn("详单-->短信验证码错误,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
                         FormType.VALIDATE_BILL_DETAIL);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
-                    logger.error("通话详单-->校验失败,taskId={},websiteName={},formType={},pageContent={}", taskId, websiteName,
+                    logger.error("详单-->校验失败,taskId={},websiteName={},formType={},pageContent={}", taskId, websiteName,
                         FormType.LOGIN, pageContent);
                     return result.failure(ErrorCode.LOGIN_FAIL);
             }
         } catch (Exception e) {
-            logger.error("通话详单-->校验失败,taskId={},websiteName={},formType={},pageContent={}", taskId, websiteName,
+            logger.error("详单-->校验失败,taskId={},websiteName={},formType={},pageContent={}", taskId, websiteName,
                 FormType.LOGIN, pageContent, e);
             return result.failure(ErrorCode.VALIDATE_FAIL);
         }
@@ -338,11 +338,11 @@ public class HeNan10000Service implements OperatorPluginService {
             if (StringUtils.equals("0000", code)) {
                 logger.info("登陆成功,taskId={},websiteName={},formType={}", taskId, websiteName, FormType.LOGIN);
                 RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-                //保存手机号和服务密码,通话详单要用
+                //保存手机号和服务密码,详单要用
                 redisService.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
                 redisService.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
 
-                //获取权限信息,必须访问下主页,否则通话详单有些cookie没用
+                //获取权限信息,必须访问下主页,否则详单有些cookie没用
                 String artifact = json.getString("artifact");
                 url = TemplateUtils.format(
                     "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
