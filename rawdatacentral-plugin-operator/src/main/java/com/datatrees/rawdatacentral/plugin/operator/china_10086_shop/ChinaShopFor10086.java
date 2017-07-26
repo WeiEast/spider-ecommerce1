@@ -1,7 +1,10 @@
-package com.datatrees.rawdatacentral.plugin.operator.he_nan_10086_web;
+package com.datatrees.rawdatacentral.plugin.operator.china_10086_shop;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.plugin.util.PluginHttpUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -9,6 +12,7 @@ import com.datatrees.rawdatacentral.common.utils.JsonpUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.rawdatacentral.domain.constant.PerpertyKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -31,9 +35,9 @@ import java.util.Map;
  *
  * Created by zhouxinghai on 2017/7/17.
  */
-public class HeNan10000Service implements OperatorPluginService {
+public class ChinaShopFor10086 implements OperatorPluginService {
 
-    private static final Logger logger = LoggerFactory.getLogger(HeNan10000Service.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChinaShopFor10086.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
@@ -135,7 +139,7 @@ public class HeNan10000Service implements OperatorPluginService {
     }
 
     private HttpResult<Map<String, Object>> refeshPicCodeForBillDetail(Long taskId, String websiteName,
-                                                                     OperatorParam param) {
+                                                                       OperatorParam param) {
         String templateUrl = "http://shop.10086.cn/i/authImg?t={}";
         String url = TemplateUtils.format(templateUrl, System.currentTimeMillis());
         return PluginHttpUtils.refeshPicCodePicCode(taskId, websiteName, url, RETURN_FIELD_PIC_CODE,
@@ -143,7 +147,7 @@ public class HeNan10000Service implements OperatorPluginService {
     }
 
     private HttpResult<Map<String, Object>> validatePicCodeForBillDetail(Long taskId, String websiteName,
-                                                                       OperatorParam param) {
+                                                                         OperatorParam param) {
         //http://shop.10086.cn/i/v1/res/precheck/13735874566?captchaVal=123145&_=1500623358942
         String templateUrl = "http://shop.10086.cn/i/v1/res/precheck/{}?captchaVal={}&_={}";
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
@@ -223,7 +227,7 @@ public class HeNan10000Service implements OperatorPluginService {
     }
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(Long taskId, String websiteName,
-                                                                     OperatorParam param) {
+                                                                       OperatorParam param) {
         //https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/18838224796?callback=jQuery183002065868962851658_1500889079942&_=1500889136495
         String templateUrl = "https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/{}?callback=jQuery183002065868962851658_1500889079942_={}";
         RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
@@ -344,6 +348,10 @@ public class HeNan10000Service implements OperatorPluginService {
 
                 //获取权限信息,必须访问下主页,否则详单有些cookie没用
                 String artifact = json.getString("artifact");
+                String provinceCode = json.getString("provinceCode");
+                String provinceName = getProvinceName(provinceCode);
+                redisService.addTaskShare(taskId,AttributeKey.PROVINCE_NAME,provinceName);
+
                 url = TemplateUtils.format(
                     "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
                     artifact);
@@ -379,6 +387,15 @@ public class HeNan10000Service implements OperatorPluginService {
                 FormType.LOGIN, pageContent, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
+    }
+
+    private String getProvinceName(String provinceCode) {
+        CheckUtils.checkNotBlank(provinceCode,"provinceCode is blank");
+        String json = PropertiesConfiguration.getInstance().get(PerpertyKey.OPERATOR_10086_SHOP_PROVINCE_CODE);
+        CheckUtils.checkNotBlank(json, "propery operator.10086.shop.province.code not found");
+        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {
+        });
+        return map.get(provinceCode);
     }
 
 }
