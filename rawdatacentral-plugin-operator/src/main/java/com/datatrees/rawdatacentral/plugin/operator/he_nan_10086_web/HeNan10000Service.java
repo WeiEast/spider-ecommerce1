@@ -249,102 +249,102 @@ public class HeNan10000Service implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> submitForCallLogs(Long taskId, String websiteName, OperatorParam param) {
-        //https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13844034615?callback=jQuery183042723042018780055_1500975082967&pwdTempSerCode=NzE2MjUz&pwdTempRandCode=NDI4MTUz&captchaVal=a3xeva&_=1500975147178";
-        //jQuery183042723042018780055_1500975082967({"data":null,"retCode":"000000","retMsg":"认证成功!","sOperTime":null})
-        String templateUrl = "https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13844034615?pwdTempSerCode=NzE2MjUz&pwdTempRandCode=NDI4MTUz&captchaVal=a3xeva&_=1500975147178";
-        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-        //保存手机号和服务密码,通话详单要用
-        redisService.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
-        redisService.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
-        String mobile =
-
-
-        HttpResult<Map<String, Object>> result = validatePicCodeForLogin(taskId, websiteName, param);
-        if (!result.getStatus()) {
-            return result;
-        }
-        String url = TemplateUtils.format(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(),
-            param.getPicCode(), System.currentTimeMillis());
-        String pageContent = null;
-        try {
-            /**
-             * 结果枚举:
-             * 登陆成功:{"artifact":"3490872f8d114992b44dc4e60f595fa0","assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact"
-             ,"code":"0000","desc":"认证成功","islocal":false,"provinceCode":"371","result":"0","uid":"b73f1d1210d94fadaf4ba9ce8c49aef1"
-             }
-             短信验证码过期:{"code":"6001","desc":"短信随机码不正确或已过期，请重新获取","islocal":false,"result":"8"}
-             短信验证码不正确:{"code":"6002","desc":"短信随机码不正确或已过期，请重新获取","islocal":false,"result":"8"}
-             {"assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact","code":"2036","desc":"您的账户名与密码不匹配，请重
-             新输入","islocal":false,"result":"2"}
-             重复登陆:{"islocal":false,"result":"9"}
-             */
-            //没有设置referer会出现connect reset
-            String referer = "https://login.10086.cn/html/login/login.html";
-            pageContent = PluginHttpUtils.getString(url, referer, taskId);
-            JSONObject json = JSON.parseObject(pageContent);
-            //重复登陆:{"islocal":false,"result":"9"}
-            if (StringUtils.equals("9", json.getString("result"))) {
-                logger.info("重复登陆,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
-                    FormType.LOGIN);
-                return result.success();
-            }
-            String code = json.getString("code");
-            String errorMsg = json.getString("desc");
-            if (StringUtils.equals("0000", code)) {
-                logger.info("登陆成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
-                    FormType.LOGIN);
-                RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-                //保存手机号和服务密码,通话详单要用
-                redisService.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
-                redisService.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
-
-                //
-                String artifact = json.getString("artifact");
-                //                String uid = json.getString("uid");
-                //                redisService.addTaskShare(taskId, "artifact", artifact);
-                //                redisService.addTaskShare(taskId, "uid", uid);
-
-                //获取权限信息,必须
-                url = TemplateUtils.format(
-                    "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
-                    artifact);
-
-                //访问下主页,否则通话详单有些cookie没用
-                PluginHttpUtils.getString(url, taskId);
-
-                return result.success();
-            }
-            switch (code) {
-                case "2036":
-                    logger.warn("账户名与密码不匹配,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
-                        FormType.LOGIN);
-                    return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
-                case "6001":
-                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
-                        FormType.LOGIN);
-                    return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
-                case "6002":
-                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
-                        FormType.LOGIN);
-                    return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
-                default:
-                    logger.error("登陆失败,taskId={},websiteName={},url={},formType={},pageContent={}", taskId, websiteName,
-                        url, FormType.LOGIN, pageContent);
-                    if (StringUtils.contains(errorMsg, "密码")) {
-                        return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
-                    }
-                    if (StringUtils.contains(errorMsg, "短信")) {
-                        return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
-                    }
-                    return result.failure(ErrorCode.LOGIN_FAIL);
-            }
-        } catch (Exception e) {
-            logger.error("登陆失败,taskId={},websiteName={},url={},formType={},pageContent={}", taskId, websiteName, url,
-                FormType.LOGIN, pageContent, e);
-            return result.failure(ErrorCode.LOGIN_FAIL);
-        }
-    }
+//    private HttpResult<Map<String, Object>> submitForCallLogs(Long taskId, String websiteName, OperatorParam param) {
+//        //https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13844034615?callback=jQuery183042723042018780055_1500975082967&pwdTempSerCode=NzE2MjUz&pwdTempRandCode=NDI4MTUz&captchaVal=a3xeva&_=1500975147178";
+//        //jQuery183042723042018780055_1500975082967({"data":null,"retCode":"000000","retMsg":"认证成功!","sOperTime":null})
+//        String templateUrl = "https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13844034615?pwdTempSerCode=NzE2MjUz&pwdTempRandCode=NDI4MTUz&captchaVal=a3xeva&_=1500975147178";
+//        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+//        //保存手机号和服务密码,通话详单要用
+//        redisService.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
+//        redisService.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
+//        String mobile =
+//
+//
+//        HttpResult<Map<String, Object>> result = validatePicCodeForLogin(taskId, websiteName, param);
+//        if (!result.getStatus()) {
+//            return result;
+//        }
+//        String url = TemplateUtils.format(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(),
+//            param.getPicCode(), System.currentTimeMillis());
+//        String pageContent = null;
+//        try {
+//            /**
+//             * 结果枚举:
+//             * 登陆成功:{"artifact":"3490872f8d114992b44dc4e60f595fa0","assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact"
+//             ,"code":"0000","desc":"认证成功","islocal":false,"provinceCode":"371","result":"0","uid":"b73f1d1210d94fadaf4ba9ce8c49aef1"
+//             }
+//             短信验证码过期:{"code":"6001","desc":"短信随机码不正确或已过期，请重新获取","islocal":false,"result":"8"}
+//             短信验证码不正确:{"code":"6002","desc":"短信随机码不正确或已过期，请重新获取","islocal":false,"result":"8"}
+//             {"assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact","code":"2036","desc":"您的账户名与密码不匹配，请重
+//             新输入","islocal":false,"result":"2"}
+//             重复登陆:{"islocal":false,"result":"9"}
+//             */
+//            //没有设置referer会出现connect reset
+//            String referer = "https://login.10086.cn/html/login/login.html";
+//            pageContent = PluginHttpUtils.getString(url, referer, taskId);
+//            JSONObject json = JSON.parseObject(pageContent);
+//            //重复登陆:{"islocal":false,"result":"9"}
+//            if (StringUtils.equals("9", json.getString("result"))) {
+//                logger.info("重复登陆,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+//                    FormType.LOGIN);
+//                return result.success();
+//            }
+//            String code = json.getString("code");
+//            String errorMsg = json.getString("desc");
+//            if (StringUtils.equals("0000", code)) {
+//                logger.info("登陆成功,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+//                    FormType.LOGIN);
+//                RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+//                //保存手机号和服务密码,通话详单要用
+//                redisService.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
+//                redisService.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
+//
+//                //
+//                String artifact = json.getString("artifact");
+//                //                String uid = json.getString("uid");
+//                //                redisService.addTaskShare(taskId, "artifact", artifact);
+//                //                redisService.addTaskShare(taskId, "uid", uid);
+//
+//                //获取权限信息,必须
+//                url = TemplateUtils.format(
+//                    "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
+//                    artifact);
+//
+//                //访问下主页,否则通话详单有些cookie没用
+//                PluginHttpUtils.getString(url, taskId);
+//
+//                return result.success();
+//            }
+//            switch (code) {
+//                case "2036":
+//                    logger.warn("账户名与密码不匹配,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+//                        FormType.LOGIN);
+//                    return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
+//                case "6001":
+//                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+//                        FormType.LOGIN);
+//                    return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
+//                case "6002":
+//                    logger.warn("短信随机码不正确或已过期,taskId={},websiteName={},url={},formType={}", taskId, websiteName, url,
+//                        FormType.LOGIN);
+//                    return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
+//                default:
+//                    logger.error("登陆失败,taskId={},websiteName={},url={},formType={},pageContent={}", taskId, websiteName,
+//                        url, FormType.LOGIN, pageContent);
+//                    if (StringUtils.contains(errorMsg, "密码")) {
+//                        return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
+//                    }
+//                    if (StringUtils.contains(errorMsg, "短信")) {
+//                        return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
+//                    }
+//                    return result.failure(ErrorCode.LOGIN_FAIL);
+//            }
+//        } catch (Exception e) {
+//            logger.error("登陆失败,taskId={},websiteName={},url={},formType={},pageContent={}", taskId, websiteName, url,
+//                FormType.LOGIN, pageContent, e);
+//            return result.failure(ErrorCode.LOGIN_FAIL);
+//        }
+//    }
 
     private HttpResult<Map<String, Object>> submitForLogin(Long taskId, String websiteName, OperatorParam param) {
         String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
