@@ -49,4 +49,10 @@ public interface MessageService {
      * @return
      */
     boolean sendMessage(String topic, Object msg, String charsetName, int maxRetry);
+
+    /**
+     * 发送登录成功消息
+     * @return
+     */
+    boolean sendLoginSuccessMessage(Long taskId, String websiteName);
 }

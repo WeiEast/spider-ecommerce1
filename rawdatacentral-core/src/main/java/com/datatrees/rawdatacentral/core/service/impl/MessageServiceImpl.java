@@ -6,7 +6,10 @@ import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
+import com.datatrees.crawler.plugin.util.PluginHttpUtils;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.share.RedisService;
@@ -103,6 +106,19 @@ public class MessageServiceImpl implements MessageService {
         logger.error("send message fail topic={},content={},retry={},maxRetry={},charsetName={}", topic, content, retry,
             maxRetry, charsetName);
         return false;
+    }
+
+    @Override
+    public boolean sendLoginSuccessMessage(Long taskId, String websiteName) {
+        CheckUtils.checkNotNull(taskId, "invalid taskId");
+        CheckUtils.checkNotBlank(websiteName, "blank websiteName");
+        LoginMessage loginMessage = new LoginMessage();
+        loginMessage.setTaskId(taskId);
+        loginMessage.setWebsiteName(websiteName);
+        String cookieString = PluginHttpUtils.getCookieString(taskId);
+        loginMessage.setCookie(cookieString);
+        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), JSON.toJSONString(loginMessage), DEFAULT_CHARSET_NAME, 3);
+        return true;
     }
 
 }

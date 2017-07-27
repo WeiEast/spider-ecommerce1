@@ -8,6 +8,7 @@ public enum TopicEnum {
 
     TASK_NEXT_DIRECTIVE("task_next_directive", "交互指令"),
     TASK_LOG("task_log", "任务状态日志"),
+    RAWDATA_INPUT("rawData_input", "登录成功消息"),
     ;
 
     /**

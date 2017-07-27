@@ -18,7 +18,6 @@ public class LoginMessage implements Serializable {
      */
     private long   taskId;
 
-
     /**
      * 结束url
      */
@@ -33,7 +32,10 @@ public class LoginMessage implements Serializable {
      * head配置项:Set-Cookie
      */
     private String setCookie;
-    
+
+    /**
+     * 用户账户
+     */
     private String accountNo;
 
     public String getWebsiteName() {
@@ -89,7 +91,7 @@ public class LoginMessage implements Serializable {
     public void setAccountNo(String accountNo) {
         this.accountNo = accountNo;
     }
-    
+
     @Override
     public String toString() {
         return "LoginMessage [websiteName=" + websiteName + ", taskId=" + taskId + ", endUrl=" + endUrl + ", accountNo="
