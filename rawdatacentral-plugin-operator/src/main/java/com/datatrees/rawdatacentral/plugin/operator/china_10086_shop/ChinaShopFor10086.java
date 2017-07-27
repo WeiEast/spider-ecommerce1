@@ -14,6 +14,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.constant.PerpertyKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
@@ -43,6 +44,8 @@ public class ChinaShopFor10086 implements OperatorPluginService {
     public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
+            BeanFactoryUtils.getBean(RedisService.class).deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId.toString()));
+            BeanFactoryUtils.getBean(RedisService.class).deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString()));
             //登陆页没有获取任何cookie,https://login.10086.cn/login.html?channelID=12003&backUrl=http://shop.10086.cn/i/,不用登陆
             //预登陆可以先返回图片验证码
             return refeshPicCode(taskId, websiteName, FormType.LOGIN, param);
@@ -243,7 +246,7 @@ public class ChinaShopFor10086 implements OperatorPluginService {
             if (!StringUtils.equals("000000", json.getString("retCode"))) {
                 logger.error("详单-->短信验证码-->刷新失败,taskId={},websiteName={},formType={},pateContent={}", taskId,
                     websiteName, FormType.VALIDATE_BILL_DETAIL, pageContent);
-                return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+                return result.failure(ErrorCode.REFESH_SMS_ERROR);
             }
             logger.info("详单-->短信验证码-->刷新成功,taskId={},websiteName={},formType={}", taskId, websiteName,
                 FormType.VALIDATE_BILL_DETAIL);
@@ -295,7 +298,7 @@ public class ChinaShopFor10086 implements OperatorPluginService {
                 default:
                     logger.error("详单-->校验失败,taskId={},websiteName={},formType={},pageContent={}", taskId, websiteName,
                         FormType.LOGIN, pageContent);
-                    return result.failure(ErrorCode.LOGIN_FAIL);
+                    return result.failure(ErrorCode.VALIDATE_FAIL);
             }
         } catch (Exception e) {
             logger.error("详单-->校验失败,taskId={},websiteName={},formType={},pageContent={}", taskId, websiteName,

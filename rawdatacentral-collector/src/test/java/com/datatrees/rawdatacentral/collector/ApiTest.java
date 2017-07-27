@@ -39,7 +39,7 @@ public class ApiTest extends BaseTest {
 
     @Test
     public void startTask() throws Exception {
-        Long taskId = 123456L;
+        Long taskId = 123789L;
         String cookieString = PluginHttpUtils.getCookieString(taskId);
         CollectorMessage message = new CollectorMessage();
         message.setAccountNo(taskId.toString());

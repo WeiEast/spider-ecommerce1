@@ -9,26 +9,14 @@ import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 
 public class RedisKeyUtils {
     private static final Logger log = LoggerFactory.getLogger(RedisKeyUtils.class);
-    private static String REDIS_PREFIX = PropertiesConfiguration.getInstance().get("core.redis.redis.prefix", "rawdata_");
-
-    public static String genRedisKey(int taskId, String resultClass) {
-        if (StringUtils.isEmpty(resultClass)) {
-            return null;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append(REDIS_PREFIX).append(taskId).append(SubmitConstant.REDIS_KEY_SEPARATOR)
-                .append(resultClass);
-        String redisKey = sb.toString();
-        log.debug("generate redis key " + redisKey);
-        return redisKey;
-    }
+    private static String REDIS_PREFIX = PropertiesConfiguration.getInstance().get("core.redis.redis.prefix", "raw_res_");
 
     public static String genRedisKey(long taskId, String resultClass) {
         if (StringUtils.isEmpty(resultClass)) {
             return null;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(REDIS_PREFIX).append(taskId).append(SubmitConstant.REDIS_KEY_SEPARATOR).append(resultClass);
+        sb.append(REDIS_PREFIX).append(taskId).append("_").append(resultClass);
         String redisKey = sb.toString();
         log.debug("generate redis key " + redisKey);
         return redisKey;
