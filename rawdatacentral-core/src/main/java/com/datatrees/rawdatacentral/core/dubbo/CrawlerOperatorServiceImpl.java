@@ -36,7 +36,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     private RedisService       redisService;
 
     @Override
-    public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, String type, OperatorParam param) {
+    public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId.toString()));
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString()));
         return getLoginService(websiteName).init(taskId, websiteName, param);
@@ -62,6 +62,22 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return result.failure(ErrorCode.EMPTY_MOBILE);
         }
         return getLoginService(websiteName).refeshSmsCode(taskId, websiteName, type, param);
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> validatePicCode(Long taskId, String websiteName, String type,
+                                                           OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        if (null == taskId || taskId <= 0) {
+            return result.failure(ErrorCode.EMPTY_TASK_ID);
+        }
+        if (StringUtils.isBlank(websiteName)) {
+            return result.failure(ErrorCode.EMPTY_WEBSITE_NAME);
+        }
+        if (StringUtils.isBlank(param.getPicCode())) {
+            return result.failure(ErrorCode.EMPTY_PIC_CODE);
+        }
+        return getLoginService(websiteName).validatePicCode(taskId, websiteName, type, param);
     }
 
     @Override

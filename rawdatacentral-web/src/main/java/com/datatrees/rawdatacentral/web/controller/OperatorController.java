@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.web.controller;
 
 import com.datatrees.crawler.plugin.util.PluginHttpUtils;
+import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -31,41 +32,30 @@ import java.util.Map;
 @RequestMapping("/operator")
 public class OperatorController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperatorController.class);
+    private static final Logger    logger = LoggerFactory.getLogger(OperatorController.class);
 
     @Resource
-    private CrawlerService      crawlerService;
-
-    @Resource
-    private ClassLoaderService  classLoaderService;
-
-    @Resource
-    private RedisService        redisService;
+    private CrawlerOperatorService crawlerOperatorService;
 
     @RequestMapping("/queryAllOperatorConfig")
     public Object queryAllOperatorConfig() {
-        return crawlerService.queryAllOperatorConfig();
+        return crawlerOperatorService.queryAllConfig();
     }
 
     @RequestMapping("/init")
     public Object init(Long taskId, String websiteName, OperatorParam param) {
-        //重复任务清除cookie
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId.toString()));
-        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.init(taskId, websiteName, param);
+        return crawlerOperatorService.init(taskId, websiteName, param);
     }
 
     @RequestMapping("/refeshPicCode")
     public Object refeshPicCode(Long taskId, String websiteName, String type, OperatorParam param) {
-        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.refeshPicCode(taskId, websiteName, type, param);
+        return crawlerOperatorService.refeshPicCode(taskId, websiteName, type, param);
     }
 
     @RequestMapping("/refeshPicCodeAndDisplay")
     public ResponseEntity<InputStreamResource> refeshPicCodeAndDisplay(Long taskId, String websiteName, String type,
                                                                        OperatorParam param) {
-        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        HttpResult<Map<String, Object>> result = longService.refeshPicCode(taskId, websiteName, type, param);
+        HttpResult<Map<String, Object>> result = crawlerOperatorService.refeshPicCode(taskId, websiteName, type, param);
         if (result.getStatus()) {
             String picCode = result.getData().get(OperatorPluginService.RETURN_FIELD_PIC_CODE).toString();
             byte[] bytes = Base64.decodeBase64(picCode);
@@ -83,20 +73,17 @@ public class OperatorController {
 
     @RequestMapping("/refeshSmsCode")
     public Object refeshSmsCode(Long taskId, String websiteName, String type, OperatorParam param) {
-        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.refeshSmsCode(taskId, websiteName, type, param);
+        return crawlerOperatorService.refeshSmsCode(taskId, websiteName, type, param);
     }
 
     @RequestMapping("/submit")
     public Object login(Long taskId, String websiteName, String type, OperatorParam param) {
-        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.submit(taskId, websiteName, type, param);
+        return crawlerOperatorService.submit(taskId, websiteName, type, param);
     }
 
     @RequestMapping("/validatePicCode")
     public Object validatePicCode(Long taskId, String websiteName, String type, OperatorParam param) {
-        OperatorPluginService longService = classLoaderService.getOperatorPluginService(websiteName);
-        return longService.validatePicCode(taskId, websiteName, type, param);
+        return crawlerOperatorService.validatePicCode(taskId, websiteName, type, param);
     }
 
     @RequestMapping("/openPage")

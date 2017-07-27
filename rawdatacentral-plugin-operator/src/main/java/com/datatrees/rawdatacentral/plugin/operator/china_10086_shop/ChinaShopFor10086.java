@@ -18,6 +18,7 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -286,6 +287,7 @@ public class ChinaShopFor10086 implements OperatorPluginService {
             if (StringUtils.equals("000000", code)) {
                 logger.info("详单-->校验成功,taskId={},websiteName={},formType={}", taskId, websiteName,
                     FormType.VALIDATE_BILL_DETAIL);
+                BeanFactoryUtils.getBean(MessageService.class).sendLoginSuccessMessage(taskId, websiteName);
                 return result.success();
             }
             switch (code) {
@@ -351,7 +353,7 @@ public class ChinaShopFor10086 implements OperatorPluginService {
                 String artifact = json.getString("artifact");
                 String provinceCode = json.getString("provinceCode");
                 String provinceName = getProvinceName(provinceCode);
-                redisService.addTaskShare(taskId,AttributeKey.PROVINCE_NAME,provinceName);
+                redisService.addTaskShare(taskId, AttributeKey.PROVINCE_NAME, provinceName);
 
                 url = TemplateUtils.format(
                     "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
@@ -391,7 +393,7 @@ public class ChinaShopFor10086 implements OperatorPluginService {
     }
 
     private String getProvinceName(String provinceCode) {
-        CheckUtils.checkNotBlank(provinceCode,"provinceCode is blank");
+        CheckUtils.checkNotBlank(provinceCode, "provinceCode is blank");
         String json = PropertiesConfiguration.getInstance().get(PerpertyKey.OPERATOR_10086_SHOP_PROVINCE_CODE);
         CheckUtils.checkNotBlank(json, "propery operator.10086.shop.province.code not found");
         Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {

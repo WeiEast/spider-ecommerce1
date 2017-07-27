@@ -15,6 +15,7 @@ public interface OperatorPluginService {
 
     /**
      * 登陆初始化,获取基本信息
+     * 这个很重要,开始或者重新开始task都要调用这个接口,否则用户更换手机号有风险
      * @param taskId
      * @param websiteName
      * @param param
@@ -64,14 +65,4 @@ public interface OperatorPluginService {
      * @return
      */
     HttpResult<Map<String, Object>> validatePicCode(Long taskId, String websiteName, String type, OperatorParam param);
-
-    //    /**
-    //     * 验证图片验证码
-    //     * 必填:picCode
-    //     * @param taskId
-    //     * @param websiteName
-    //     * @param param
-    //     * @return
-    //     */
-    //    HttpResult<Map<String, Object>> validateMobile(Long taskId, String websiteName, OperatorParam param);
 }
