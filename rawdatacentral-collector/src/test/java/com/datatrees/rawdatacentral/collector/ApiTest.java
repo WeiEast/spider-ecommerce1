@@ -48,8 +48,6 @@ public class ApiTest extends BaseTest {
         message.setWebsiteName("china_10086_shop");
         message.setEndURL("");
         collector.processMessage(message);
-//        TimeUnit.SECONDS.sleep(60);
-
     }
 
 }

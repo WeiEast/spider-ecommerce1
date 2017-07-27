@@ -27,4 +27,11 @@ public class CheckUtils {
             throw new RuntimeException(errorCode.getErrorMessage());
         }
     }
+
+    public static void checkNotPositiveNumber(Number number, ErrorCode errorCode) {
+        if (null == number || number.longValue() <= 0) {
+            throw new RuntimeException(errorCode.getErrorMessage());
+        }
+    }
+
 }

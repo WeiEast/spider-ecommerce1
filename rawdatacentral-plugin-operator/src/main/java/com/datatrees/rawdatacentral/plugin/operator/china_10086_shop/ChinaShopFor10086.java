@@ -44,8 +44,6 @@ public class ChinaShopFor10086 implements OperatorPluginService {
     public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
-            BeanFactoryUtils.getBean(RedisService.class).deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId.toString()));
-            BeanFactoryUtils.getBean(RedisService.class).deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString()));
             //登陆页没有获取任何cookie,https://login.10086.cn/login.html?channelID=12003&backUrl=http://shop.10086.cn/i/,不用登陆
             //预登陆可以先返回图片验证码
             return refeshPicCode(taskId, websiteName, FormType.LOGIN, param);

@@ -26,6 +26,7 @@ public interface CrawlerOperatorService {
      * 刷新图片验证码
      * @param taskId
      * @param websiteName
+     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
      * @param param
      * @return
      */
@@ -35,6 +36,7 @@ public interface CrawlerOperatorService {
      * 刷新短信验证码
      * @param taskId
      * @param websiteName
+     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
      * @param param
      * @return
      */
@@ -44,10 +46,11 @@ public interface CrawlerOperatorService {
      * 刷新短信验证码
      * @param taskId
      * @param websiteName
+     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
      * @param param
      * @return
      */
-    HttpResult<Map<String, Object>> login(Long taskId, String websiteName, String type, OperatorParam param);
+    HttpResult<Map<String, Object>> submit(Long taskId, String websiteName, String type, OperatorParam param);
 
     /**
      * 获取所有运营商登陆配置
