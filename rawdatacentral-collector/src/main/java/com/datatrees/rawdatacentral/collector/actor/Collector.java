@@ -421,7 +421,7 @@ public class Collector {
             String keys = PropertiesConfiguration.getInstance().get("core.mq.tag." + tag + ".keys");
             if (StringUtils.isNotEmpty(keys)) {
                 for (String key : keys.split(",")) {
-                    result.put(key, RedisKeyUtils.genRedisKey(task.getTaskId(), key));
+                    result.put(key, RedisKeyUtils.genRedisKey(task.getId(), key));
                 }
             }
         }
