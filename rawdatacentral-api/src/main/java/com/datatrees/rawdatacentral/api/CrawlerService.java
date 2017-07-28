@@ -38,7 +38,7 @@ public interface CrawlerService {
      * @param taskId 网关任务id
      * @param username 用户名,一般是运营商手机号
      * @param password 密码,一般是运营商服务密码
-     * @param type 0:发送短信验证码到手机 1:刷新图片验证码 2:刷新二维码 (目前只有短信验证码和图片验证码)
+     * @param type 0:发送短信验证码到手机 1:刷新图片验证码
      * @param extra 附加信息,目前null
      * @return 
      */

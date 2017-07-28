@@ -34,5 +34,6 @@ public class AttributeKey implements Serializable {
     public static final String ID_CARD         = "idCard";         //身份证号
     public static final String REAL_NAME       = "realName";       //姓名
     public static final String LOGIN_PIC_CODE  = "loginPicCode";   //登录-->图片验证码
+    public static final String PIC_CODE        = "picCode";        // 图片验证码
 
 }

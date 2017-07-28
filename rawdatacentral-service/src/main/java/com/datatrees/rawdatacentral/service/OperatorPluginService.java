@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service;
 
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
@@ -11,7 +12,7 @@ import java.util.Map;
  */
 public interface OperatorPluginService {
 
-    String RETURN_FIELD_PIC_CODE = "picCode";//返回图片验证码
+    String RETURN_FIELD_PIC_CODE = AttributeKey.PIC_CODE;//返回图片验证码
 
     /**
      * 登陆初始化,获取基本信息
