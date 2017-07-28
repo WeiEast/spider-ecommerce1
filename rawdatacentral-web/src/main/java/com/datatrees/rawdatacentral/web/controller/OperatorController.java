@@ -43,19 +43,18 @@ public class OperatorController {
     }
 
     @RequestMapping("/init")
-    public Object init(Long taskId, String websiteName, OperatorParam param) {
-        return crawlerOperatorService.init(taskId, websiteName, param);
+    public Object init(OperatorParam param) {
+        return crawlerOperatorService.init(param);
     }
 
     @RequestMapping("/refeshPicCode")
-    public Object refeshPicCode(Long taskId, String websiteName, String type, OperatorParam param) {
-        return crawlerOperatorService.refeshPicCode(taskId, websiteName, type, param);
+    public Object refeshPicCode(OperatorParam param) {
+        return crawlerOperatorService.refeshPicCode(param);
     }
 
     @RequestMapping("/refeshPicCodeAndDisplay")
-    public ResponseEntity<InputStreamResource> refeshPicCodeAndDisplay(Long taskId, String websiteName, String type,
-                                                                       OperatorParam param) {
-        HttpResult<Map<String, Object>> result = crawlerOperatorService.refeshPicCode(taskId, websiteName, type, param);
+    public ResponseEntity<InputStreamResource> refeshPicCodeAndDisplay(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = crawlerOperatorService.refeshPicCode(param);
         if (result.getStatus()) {
             String picCode = result.getData().get(OperatorPluginService.RETURN_FIELD_PIC_CODE).toString();
             byte[] bytes = Base64.decodeBase64(picCode);
@@ -72,18 +71,18 @@ public class OperatorController {
     }
 
     @RequestMapping("/refeshSmsCode")
-    public Object refeshSmsCode(Long taskId, String websiteName, String type, OperatorParam param) {
-        return crawlerOperatorService.refeshSmsCode(taskId, websiteName, type, param);
+    public Object refeshSmsCode(OperatorParam param) {
+        return crawlerOperatorService.refeshSmsCode(param);
     }
 
     @RequestMapping("/submit")
-    public Object login(Long taskId, String websiteName, String type, OperatorParam param) {
-        return crawlerOperatorService.submit(taskId, websiteName, type, param);
+    public Object login(OperatorParam param) {
+        return crawlerOperatorService.submit(param);
     }
 
     @RequestMapping("/validatePicCode")
-    public Object validatePicCode(Long taskId, String websiteName, String type, OperatorParam param) {
-        return crawlerOperatorService.validatePicCode(taskId, websiteName, type, param);
+    public Object validatePicCode(OperatorParam param) {
+        return crawlerOperatorService.validatePicCode(param);
     }
 
     @RequestMapping("/openPage")

@@ -16,53 +16,42 @@ public interface OperatorPluginService {
     /**
      * 登陆初始化,获取基本信息
      * 这个很重要,开始或者重新开始task都要调用这个接口,否则用户更换手机号有风险
-     * @param taskId
-     * @param websiteName
-     * @param param
+     * @param param 必填参数:taskId,websiteName,mobile,formType
      * @return
      */
-    HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param);
+    HttpResult<Map<String, Object>> init(OperatorParam param);
 
     /**
      * 刷新图片验证码
-     * @param taskId
-     * @param websiteName
-     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
+     * 依赖init
+     * 必填参数:taskId,formType
      * @param param
      * @return
      */
-    HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, String type, OperatorParam param);
+    HttpResult<Map<String, Object>> refeshPicCode(OperatorParam param);
 
     /**
      * 刷新短信验证码
-     * 必填:手机号
-     * @param taskId
-     * @param websiteName
-     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
+     * 依赖init
+     * 必填参数:taskId,formType
      * @param param
      * @return
      */
-    HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, String type, OperatorParam param);
+    HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param);
 
     /**
      * 刷新短信验证码
-     * 必填:手机号
-     * @param taskId
-     * @param websiteName
-     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
-     * @param param
+     * 依赖init
+     * 必填参数:taskId,formType
      * @return
      */
-    HttpResult<Map<String, Object>> submit(Long taskId, String websiteName, String type, OperatorParam param);
+    HttpResult<Map<String, Object>> submit(OperatorParam param);
 
     /**
      * 验证图片验证码
-     * 必填:picCode
-     * @param taskId
-     * @param websiteName
-     * @param type 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
-     * @param param
+     * 依赖init
+     * 必填参数:taskId,formType,pidCode
      * @return
      */
-    HttpResult<Map<String, Object>> validatePicCode(Long taskId, String websiteName, String type, OperatorParam param);
+    HttpResult<Map<String, Object>> validatePicCode(OperatorParam param);
 }

@@ -78,6 +78,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public boolean sendMessage(String topic, Object msg, String charsetName, int maxRetry) {
+        return sendMessage(topic, null, msg, charsetName, maxRetry);
+    }
+
+    private boolean sendMessage(String topic, String tags, Object msg, String charsetName, int maxRetry) {
         if (StringUtils.isBlank(topic) || null == msg) {
             logger.error("invalid param  topic={},msg={}", topic, msg);
             return false;
@@ -92,6 +96,9 @@ public class MessageServiceImpl implements MessageService {
                 Message mqMessage = new Message();
                 mqMessage.setTopic(topic);
                 mqMessage.setBody(content.getBytes(charsetName));
+                if (StringUtils.isNotBlank(tags)) {
+                    mqMessage.setTags(tags);
+                }
                 SendResult sendResult = producer.send(mqMessage);
                 if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
                     logger.info("send message success topic={},content={},retry={},charsetName={}", topic, content,
@@ -117,7 +124,7 @@ public class MessageServiceImpl implements MessageService {
         loginMessage.setWebsiteName(websiteName);
         String cookieString = PluginHttpUtils.getCookieString(taskId);
         loginMessage.setCookie(cookieString);
-        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), JSON.toJSONString(loginMessage), DEFAULT_CHARSET_NAME, 3);
+        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), "login_info", loginMessage, DEFAULT_CHARSET_NAME, 3);
         return true;
     }
 

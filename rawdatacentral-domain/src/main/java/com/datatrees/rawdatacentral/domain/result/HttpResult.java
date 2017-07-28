@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.domain.result;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 
 import java.io.Serializable;
@@ -125,7 +126,6 @@ public class HttpResult<T> implements Serializable {
         return this;
     }
 
-
     public HttpResult<T> success() {
         this.setStatus(true);
         this.setResponseCode(1);
@@ -152,5 +152,10 @@ public class HttpResult<T> implements Serializable {
      */
     public void setExtra(Map<String, Object> extra) {
         this.extra = extra;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

@@ -7,6 +7,7 @@
  */
 package com.datatrees.rawdatacentral.collector.listener;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
@@ -77,7 +78,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         CollectorMessage collectorMessage = new CollectorMessage();
         String body = new String(message.getBody());
         try {
-            LoginMessage loginInfo = (LoginMessage) GsonUtils.fromJson(body, LoginMessage.class);
+            LoginMessage loginInfo = JSON.parseObject(body, LoginMessage.class);
             if (loginInfo != null) {
                 log.info("Init logininfo:" + loginInfo);
                 collectorMessage.setTaskId(loginInfo.getTaskId());

@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.core.dubbo;
 
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.common.utils.BooleanUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -14,9 +14,11 @@ import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Map;
 
@@ -26,87 +28,98 @@ import java.util.Map;
 @Service
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
 
-    @Resource
-    private CrawlerService     crawlerService;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
 
     @Resource
-    private ClassLoaderService classLoaderService;
+    private CrawlerService                crawlerService;
 
     @Resource
-    private RedisService       redisService;
+    private ClassLoaderService            classLoaderService;
+
+    @Resource
+    private RedisService                  redisService;
 
     @Override
-    public HttpResult<Map<String, Object>> init(Long taskId, String websiteName, OperatorParam param) {
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId.toString()));
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString()));
-        return getLoginService(websiteName).init(taskId, websiteName, param);
+    public HttpResult<Map<String, Object>> init(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = checkParams(param);
+        if (!result.getStatus()) {
+            logger.warn("check param error,result={}", result);
+            return result;
+        }
+        if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+            //清理共享信息
+            redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
+            redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(param.getTaskId()));
+            //保存mobile和websiteName
+            redisService.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
+            redisService.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
+        }
+        return getLoginService(param).init(param);
     }
 
     @Override
-    public HttpResult<Map<String, Object>> refeshPicCode(Long taskId, String websiteName, String type,
-                                                         OperatorParam param) {
-        return getLoginService(websiteName).refeshPicCode(taskId, websiteName, type, param);
+    public HttpResult<Map<String, Object>> refeshPicCode(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = checkParams(param);
+        if (!result.getStatus()) {
+            logger.warn("check param error,result={}", result);
+            return result;
+        }
+        return getLoginService(param).refeshPicCode(param);
     }
 
     @Override
-    public HttpResult<Map<String, Object>> refeshSmsCode(Long taskId, String websiteName, String type,
-                                                         OperatorParam param) {
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
-        if (null == taskId || taskId <= 0) {
-            return result.failure(ErrorCode.EMPTY_TASK_ID);
+    public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = checkParams(param);
+        if (!result.getStatus()) {
+            logger.warn("check param error,result={}", result);
+            return result;
         }
-        if (StringUtils.isBlank(websiteName)) {
-            return result.failure(ErrorCode.EMPTY_WEBSITE_NAME);
-        }
-        if (null == param || null == param.getMobile() || 0 >= param.getMobile()) {
-            return result.failure(ErrorCode.EMPTY_MOBILE);
-        }
-        return getLoginService(websiteName).refeshSmsCode(taskId, websiteName, type, param);
+        return getLoginService(param).refeshSmsCode(param);
     }
 
     @Override
-    public HttpResult<Map<String, Object>> validatePicCode(Long taskId, String websiteName, String type,
-                                                           OperatorParam param) {
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
-        if (null == taskId || taskId <= 0) {
-            return result.failure(ErrorCode.EMPTY_TASK_ID);
+    public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
+        if (null != param && null != param.getTaskId()) {
+            redisService.removeTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE);
         }
-        if (StringUtils.isBlank(websiteName)) {
-            return result.failure(ErrorCode.EMPTY_WEBSITE_NAME);
+        HttpResult<Map<String, Object>> result = checkParams(param);
+        if (!result.getStatus()) {
+            logger.warn("check param error,result={}", result);
+            return result;
         }
         if (StringUtils.isBlank(param.getPicCode())) {
             return result.failure(ErrorCode.EMPTY_PIC_CODE);
         }
-        return getLoginService(websiteName).validatePicCode(taskId, websiteName, type, param);
+        result = getLoginService(param).validatePicCode(param);
+        if (result.getStatus()) {
+            switch (param.getFormType()) {
+                case FormType.LOGIN:
+                    redisService.addTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE, param.getPicCode());
+                    break;
+                default:
+                    break;
+            }
+        }
+        return result;
     }
 
     @Override
-    public HttpResult<Map<String, Object>> submit(Long taskId, String websiteName, String type, OperatorParam param) {
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
-        if (null == taskId || taskId <= 0) {
-            return result.failure(ErrorCode.EMPTY_TASK_ID);
+    public HttpResult<Map<String, Object>> submit(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = checkParams(param);
+        if (!result.getStatus()) {
+            logger.warn("check param error,result={}", result);
+            return result;
         }
-        if (StringUtils.isBlank(websiteName)) {
-            return result.failure(ErrorCode.EMPTY_WEBSITE_NAME);
-        }
-        if (StringUtils.equals(FormType.LOGIN, type)) {
-            if (null == param || null == param.getMobile() || 0 >= param.getMobile()) {
-                return result.failure(ErrorCode.EMPTY_MOBILE);
+        result = getLoginService(param).submit(param);
+        if (null != result && result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+            if (StringUtils.isNoneBlank(param.getPassword())) {
+                redisService.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());
             }
-            if (StringUtils.isBlank(param.getPassword())) {
-                return result.failure(ErrorCode.EMPTY_PASSWORD);
-            }
-        }
-        result = getLoginService(websiteName).submit(taskId, websiteName, type, param);
-        if (null != result && result.getStatus() && StringUtils.equals(FormType.LOGIN, type)) {
-            redisService.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, websiteName);
-            redisService.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
-            redisService.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
             if (StringUtils.isNoneBlank(param.getIdCard())) {
-                redisService.addTaskShare(taskId, AttributeKey.ID_CARD, param.getPassword());
+                redisService.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getPassword());
             }
             if (StringUtils.isNoneBlank(param.getRealName())) {
-                redisService.addTaskShare(taskId, AttributeKey.REAL_NAME, param.getPassword());
+                redisService.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getPassword());
             }
         }
         return result;
@@ -117,7 +130,62 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         return crawlerService.queryAllOperatorConfig();
     }
 
-    private OperatorPluginService getLoginService(String websiteName) {
-        return classLoaderService.getOperatorPluginService(websiteName);
+    private OperatorPluginService getLoginService(OperatorParam param) {
+        return classLoaderService.getOperatorPluginService(param.getWebsiteName());
+    }
+
+    /**
+     * 从前面的共享的信息中提取参数
+     * @param param
+     * @return
+     */
+    private void fillParamFromShares(OperatorParam param) {
+        Map<String, String> map = redisService.getTaskShares(param.getTaskId());
+        if (null != map) {
+            if (StringUtils.isBlank(param.getWebsiteName()) && map.containsKey(AttributeKey.WEBSITE_NAME)) {
+                param.setWebsiteName(map.get(AttributeKey.WEBSITE_NAME));
+            }
+            if (null == param.getMobile() && map.containsKey(AttributeKey.MOBILE)) {
+                param.setMobile(Long.valueOf(map.get(AttributeKey.MOBILE)));
+            }
+            if (StringUtils.isBlank(param.getPassword()) && map.containsKey(AttributeKey.PASSWORD)) {
+                param.setPassword(map.get(AttributeKey.PASSWORD));
+            }
+            if (StringUtils.isBlank(param.getIdCard()) && map.containsKey(AttributeKey.ID_CARD)) {
+                param.setIdCard(map.get(AttributeKey.ID_CARD));
+            }
+            if (StringUtils.isBlank(param.getRealName()) && map.containsKey(AttributeKey.REAL_NAME)) {
+                param.setRealName(map.get(AttributeKey.REAL_NAME));
+            }
+
+            if (StringUtils.equals(FormType.LOGIN, param.getFormType()) && StringUtils.isBlank(param.getPicCode())
+                && map.containsKey(AttributeKey.LOGIN_PIC_CODE)) {
+                param.setPicCode(map.get(AttributeKey.LOGIN_PIC_CODE));
+            }
+        }
+    }
+
+    /**
+     * 校验基本参数
+     * taskId,websiteName,mobile
+     * @param param
+     * @return
+     */
+    private HttpResult<Map<String, Object>> checkParams(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        if (null == param || BooleanUtils.isNotPositiveNumber(param.getTaskId())) {
+            return result.failure(ErrorCode.EMPTY_TASK_ID);
+        }
+        if (StringUtils.isBlank(param.getFormType())) {
+            return result.failure(ErrorCode.EMPTY_FORM_TYPE);
+        }
+        fillParamFromShares(param);
+        if (StringUtils.isBlank(param.getWebsiteName())) {
+            return result.failure(ErrorCode.EMPTY_WEBSITE_NAME);
+        }
+        if (BooleanUtils.isNotPositiveNumber(param.getMobile())) {
+            return result.failure(ErrorCode.EMPTY_MOBILE);
+        }
+        return result.success();
     }
 }

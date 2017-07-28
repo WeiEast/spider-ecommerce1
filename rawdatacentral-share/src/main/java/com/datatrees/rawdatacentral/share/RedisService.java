@@ -252,10 +252,17 @@ public interface RedisService {
     String getTaskShare(Long taskId, String name);
 
     /**
+     * 删除共享属性
+     * @param taskId
+     * @param name
+     */
+    void removeTaskShare(Long taskId, String name);
+
+    /**
      * 获取共享属性
      * @param taskId
      */
-    Map<String,String> getTaskShares(Long taskId);
+    Map<String, String> getTaskShares(Long taskId);
 
     /**
      * 枷锁

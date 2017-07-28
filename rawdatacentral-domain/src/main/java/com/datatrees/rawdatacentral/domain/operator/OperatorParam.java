@@ -1,5 +1,9 @@
 package com.datatrees.rawdatacentral.domain.operator;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.datatrees.crawler.core.util.json.JsonPathUtil;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +13,11 @@ import java.util.Map;
  * Created by zhouxinghai on 2017/7/13.
  */
 public class OperatorParam implements Serializable {
+
+    /**
+     * 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
+     */
+    private String              formType;
 
     /**
      * 任务id 必填
@@ -28,6 +37,7 @@ public class OperatorParam implements Serializable {
     /**
      * 登陆密码或者服务密码
      */
+    @JSONField(serialize = false)
     private String              password;
 
     /**
@@ -54,6 +64,14 @@ public class OperatorParam implements Serializable {
      * 扩展属性
      */
     private Map<String, Object> extral = new HashMap<>();
+
+    public String getFormType() {
+        return formType;
+    }
+
+    public void setFormType(String formType) {
+        this.formType = formType;
+    }
 
     public Long getTaskId() {
         return taskId;
@@ -125,5 +143,10 @@ public class OperatorParam implements Serializable {
 
     public void setExtral(Map<String, Object> extral) {
         this.extral = extral;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }

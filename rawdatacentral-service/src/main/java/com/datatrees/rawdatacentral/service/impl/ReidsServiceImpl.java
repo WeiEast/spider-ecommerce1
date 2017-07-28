@@ -429,6 +429,26 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
+    public void removeTaskShare(Long taskId, String name) {
+        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
+        boolean lock = lock(taskId);
+        while (!lock && System.currentTimeMillis() < endTime) {
+            lock = lock(taskId.toString());
+        }
+        if (!lock) {
+            throw new RuntimeException("lock error taskId=" + taskId);
+        }
+        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString());
+        Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
+        });
+        if (null != map && map.containsKey(name)) {
+            map.remove(name);
+            cache(cacheKey, map, RedisKeyPrefixEnum.TASK_SHARE.getTimeout(), TimeUnit.MINUTES);
+        }
+        unLock(taskId);
+    }
+
+    @Override
     public Map<String, String> getTaskShares(Long taskId) {
         String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString());
         Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
