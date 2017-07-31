@@ -2,4 +2,5 @@ version=""
 dependencies {
     compile project(':rawdatacentral-plugin')
     compile project(':rawdatacentral-service')
+    compile project(':rawdatacentral-api')
 }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CookieUtils;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -305,7 +306,7 @@ public class PluginHttpUtils {
                 sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
             }
         }
-        if(StringUtils.isBlank(sb)){
+        if (StringUtils.isBlank(sb)) {
             return "";
         }
         return sb.substring(1);
@@ -327,11 +328,12 @@ public class PluginHttpUtils {
             String picCode = Base64.encodeBase64String(data);
             Map<String, Object> map = new HashMap<>();
             map.put(returnName, picCode);
-            logger.info("刷新图片验证码成功,taskId={},websiteName={},formType={},url={}", taskId, websiteName, formType, url);
+            logger.info("{}-->图片验证码-->刷新成功,taskId={},websiteName={},formType={},url={}", FormType.getName(formType),
+                taskId, websiteName, formType, url);
             return result.success(map);
         } catch (Exception e) {
-            logger.error("刷新图片验证码失败 error taskId={},websiteName={},formType={},url={}", taskId, websiteName, formType,
-                url, e);
+            logger.error("{}-->图片验证码-->刷新失败 error taskId={},websiteName={},formType={},url={}",
+                FormType.getName(formType), taskId, websiteName, formType, url, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
     }

@@ -1,6 +1,8 @@
 package com.datatrees.rawdatacentral.domain.constant;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -9,20 +11,24 @@ import java.util.Set;
  */
 public class FormType {
 
-    public static final String       LOGIN                = "LOGIN";                //登陆表单
-    public static final String       VALIDATE_BILL_DETAIL = "VALIDATE_BILL_DETAIL"; //验证详单
-    public static final String       VALIDATE_USER_INFO   = "VALIDATE_USER_INFO";   //验证个人信息
+    public static final String               LOGIN                = "LOGIN";                //登陆表单
+    public static final String               VALIDATE_BILL_DETAIL = "VALIDATE_BILL_DETAIL"; //验证详单
+    public static final String               VALIDATE_USER_INFO   = "VALIDATE_USER_INFO";   //验证个人信息
 
-    private static final Set<String> allTypes             = new HashSet<>();
+    private static final Map<String, String> allTypes             = new HashMap<>();
 
     static {
-        allTypes.add(LOGIN);
-        allTypes.add(VALIDATE_BILL_DETAIL);
-        allTypes.add(VALIDATE_USER_INFO);
+        allTypes.put(LOGIN, "登录");
+        allTypes.put(VALIDATE_BILL_DETAIL, "详单");
+        allTypes.put(VALIDATE_USER_INFO, "个人信息");
     }
 
     public boolean validate(String type) {
-        return allTypes.contains(type);
+        return allTypes.containsKey(type);
+    }
+
+    public static String getName(String type) {
+        return allTypes.get(type);
     }
 
 }

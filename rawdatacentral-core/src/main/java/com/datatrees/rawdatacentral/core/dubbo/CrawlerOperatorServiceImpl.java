@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.core.dubbo;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.common.utils.BooleanUtils;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -12,6 +13,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     @Resource
     private RedisService                  redisService;
 
+    @Resource
+    private MessageService                messageService;
+
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = checkParams(param);
@@ -63,7 +68,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", result);
             return result;
         }
-        return getLoginService(param).refeshPicCode(param);
+        result = getLoginService(param).refeshPicCode(param);
+        messageService.sendTaskLog(param.getTaskId(),
+            TemplateUtils.format("{}-->图片验证码-->刷新{}!", FormType.getName(param.getFormType())),
+            result.getStatus() ? "成功" : "失败");
+        return result;
     }
 
     @Override
@@ -73,7 +82,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", result);
             return result;
         }
-        return getLoginService(param).refeshSmsCode(param);
+        result = getLoginService(param).refeshSmsCode(param);
+        messageService.sendTaskLog(param.getTaskId(),
+            TemplateUtils.format("{}-->短信验证码-->刷新{}!", FormType.getName(param.getFormType())),
+            result.getStatus() ? "成功" : "失败");
+        return result;
     }
 
     @Override
@@ -99,6 +112,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                     break;
             }
         }
+        messageService.sendTaskLog(param.getTaskId(),
+            TemplateUtils.format("{}-->图片验证码-->校验{}!", FormType.getName(param.getFormType())),
+            result.getStatus() ? "成功" : "失败");
         return result;
     }
 
@@ -121,6 +137,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 redisService.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getPassword());
             }
         }
+        messageService.sendTaskLog(param.getTaskId(),
+            TemplateUtils.format("{}-->校验{}!", FormType.getName(param.getFormType())),
+            result.getStatus() ? "成功" : "失败");
         return result;
     }
 

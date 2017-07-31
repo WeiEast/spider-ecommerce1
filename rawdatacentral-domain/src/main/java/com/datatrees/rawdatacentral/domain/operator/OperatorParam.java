@@ -65,6 +65,15 @@ public class OperatorParam implements Serializable {
      */
     private Map<String, Object> extral = new HashMap<>();
 
+    public OperatorParam() {
+    }
+
+    public OperatorParam(String formType, Long taskId, String websiteName) {
+        this.formType = formType;
+        this.taskId = taskId;
+        this.websiteName = websiteName;
+    }
+
     public String getFormType() {
         return formType;
     }
