@@ -86,16 +86,18 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", result);
             return result;
         }
+        //刷新短信间隔时间
+        int sendSmsInterval = PropertiesConfiguration.getInstance()
+            .getInt(RedisKeyPrefixEnum.SEND_SMS_INTERVAL.getRedisKey(param.getWebsiteName()), 0);
         String latestSendSmsTime = redisService.getTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME);
-        if (StringUtils.isNoneBlank(latestSendSmsTime)) {
-            long left = System.currentTimeMillis() - Long.valueOf(latestSendSmsTime);
-            if (left > 0) {
+        if (StringUtils.isNoneBlank(latestSendSmsTime) && sendSmsInterval > 0) {
+            long endTime = Long.valueOf(latestSendSmsTime) + TimeUnit.SECONDS.toMillis(sendSmsInterval);
+            if (System.currentTimeMillis() < endTime) {
                 try {
-
                     logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒",
                         DateUtils.formatYmdhms(Long.valueOf(latestSendSmsTime)),
-                        DateUtils.getUsedTime(Long.valueOf(latestSendSmsTime), Long.valueOf(latestSendSmsTime) + left));
-                    TimeUnit.MILLISECONDS.sleep(left);
+                        DateUtils.getUsedTime(System.currentTimeMillis(), endTime));
+                    TimeUnit.MILLISECONDS.sleep(endTime - System.currentTimeMillis());
                 } catch (InterruptedException e) {
                     throw new RuntimeException("refeshSmsCode error", e);
                 }
