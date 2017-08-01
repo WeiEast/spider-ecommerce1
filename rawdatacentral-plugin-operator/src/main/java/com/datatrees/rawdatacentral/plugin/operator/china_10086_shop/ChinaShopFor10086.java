@@ -260,8 +260,6 @@ public class ChinaShopFor10086 implements OperatorPluginService {
             String code = json.getString("retCode");
             if (StringUtils.equals("000000", code)) {
                 logger.info("详单-->校验成功,param={}", param);
-                BeanFactoryUtils.getBean(MessageService.class).sendLoginSuccessMessage(param.getTaskId(),
-                    param.getWebsiteName());
                 return result.success();
             }
             switch (code) {

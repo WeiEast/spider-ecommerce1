@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.common.utils.BooleanUtils;
@@ -57,6 +58,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             //保存mobile和websiteName
             redisService.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
             redisService.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
+            logger.info("初始化运营商插件taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
         }
         return getLoginService(param).init(param);
     }
@@ -126,20 +128,24 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return result;
         }
         result = getLoginService(param).submit(param);
-        if (null != result && result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
-            if (StringUtils.isNoneBlank(param.getPassword())) {
-                redisService.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());
-            }
-            if (StringUtils.isNoneBlank(param.getIdCard())) {
-                redisService.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getPassword());
-            }
-            if (StringUtils.isNoneBlank(param.getRealName())) {
-                redisService.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getPassword());
+        if (null != result && result.getStatus()) {
+            if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                //登录成功
+                if (StringUtils.isNoneBlank(param.getPassword())) {
+                    redisService.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());
+                }
+                if (StringUtils.isNoneBlank(param.getIdCard())) {
+                    redisService.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getPassword());
+                }
+                if (StringUtils.isNoneBlank(param.getRealName())) {
+                    redisService.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getPassword());
+                }
             }
         }
         messageService.sendTaskLog(param.getTaskId(),
             TemplateUtils.format("{}-->校验{}!", FormType.getName(param.getFormType())),
             result.getStatus() ? "成功" : "失败");
+        sendLoginSuccessMessage(result, param);
         return result;
     }
 
@@ -205,5 +211,21 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return result.failure(ErrorCode.EMPTY_MOBILE);
         }
         return result.success();
+    }
+
+    /**
+     * 发送消息,启动爬虫
+     * @param param
+     */
+    private void sendLoginSuccessMessage(HttpResult result, OperatorParam param) {
+        if (null != result && result.getStatus()) {
+            String sendLoginStage = PropertiesConfiguration.getInstance().get(
+                RedisKeyPrefixEnum.SEND_LOGIN_MSG_STAGE.getRedisKey(param.getWebsiteName()), "VALIDATE_BILL_DETAIL");
+            if (StringUtils.equals(sendLoginStage, param.getFormType())) {
+                messageService.sendLoginSuccessMessage(param.getTaskId(), param.getWebsiteName());
+                logger.info("发送消息,启动爬虫");
+            }
+        }
+
     }
 }
