@@ -44,9 +44,9 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
         CheckUtils.checkNotBlank(jarName, "jarName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
         try {
-            if (StringUtils.equals("local", env)) {
-                return Thread.currentThread().getContextClassLoader().loadClass(className);
-            }
+//            if (StringUtils.equals("local", env)) {
+//                return Thread.currentThread().getContextClassLoader().loadClass(className);
+//            }
             String postfix = jarName + "_" + className;
             String cacheKey = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(postfix);
             Class mainClass = redisService.getCache(cacheKey,new TypeReference<Class>(){});

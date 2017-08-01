@@ -4,7 +4,12 @@ jar {
 //    sourceSets.web.resources.include('cacerts/*')
 //    def libs = "conf/";
     def libs = "";
-    configurations.compile.each { libs += " lib/" + it.name }
+    configurations.compile.each {
+        if(it.name != "rawdatacentral-plugin-operator.jar"){
+            libs += " lib/" + it.name
+        }
+    }
+    println  libs
     manifest {
         attributes 'Main-Class': mainClass
         attributes 'Class-Path': libs
@@ -26,7 +31,7 @@ task copyResources() {
         copy {
             from configurations.compile
             into "$rootDir/target/$rootProject.name/lib"
-//            include ("rawdata*.jar")
+            exclude ("rawdatacentral-plugin-operator.jar")
         }
         copy {
             from "$rootDir/plugin"
@@ -40,32 +45,6 @@ task copyResources() {
             from "$rootDir/logs"
             into "$rootDir/target/$rootProject.name/logs"
         }
-//        copy {
-//            from "$rootDir/$project.name/src/web/resources"
-//            into "$rootDir/target/$rootProject.name/conf"
-//            exclude("*.properties")
-//        }
-//        copy {
-//            def env;
-//            if (project.hasProperty('env')) {
-//                // System.properties['env'] 系统属性会产生冲突，已有问题：shop-common库依赖env环境变量（ShopConfigClient）。所以改为使用profile，用法："gradle -Penv=xxx"
-//                env = project.env
-//            } else {
-//                println 'no project env defined, try system property env'
-//                // 为了更好地兼容升级过程，避免代码跟CI命令行参数配置不一致导致问题，还是检查一下env环境变量
-//                env = System.properties['env']
-//                if (env == null || env.equals("")) {
-//                    println 'no system property env defined, use inside-daily'
-//                    env = 'dev'
-//                }
-//            }
-//            println 'env=' + env
-//            if (!['dev','daily', 'gray', 'online'].contains(env)) {
-//                throw new RuntimeException("invalid env=" + env)
-//            }
-//            from "$rootDir/$project.name/env/$env"
-//            into "$rootDir/target/$rootProject.name/conf"
-//        }
         println "源码文件:$rootDir/target/$rootProject.name-$version-$buildTime" + ".tar.gz"
     }
 }

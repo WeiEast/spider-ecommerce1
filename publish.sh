@@ -4,6 +4,15 @@ server_application="/dashu/application/rawdatacentral"
 server_log_path="/dashu/log/rawdatacentral"
 
 gradle clean build installApp -x test --refresh-dependencies -Denv=dev
+
+url="http://192.168.5.15:6789/website/uploadPluginJar"
+list=`find rawdatacentral-plugin-operator/build/libs/ -name '*.jar' | grep -v 'sources'`
+for file in $list
+do
+    curl  -F "jar=@$file" $url
+    echo  \n
+done
+
 cd target/;
 file=`ls -rt *.tar.gz|tail -1`
 if [ ! -e "$file" ]
