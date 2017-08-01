@@ -18,7 +18,9 @@ public enum RedisKeyPrefixEnum {
     PLUGIN_FILE("plugin_file", 60 * 24 * 365,"插件jar存储"),
     PLUGIN_FILE_MD5("plugin_file_md5", 60 * 24 * 365, "插件md5"),
 
-    SEND_LOGIN_MSG_STAGE("send_login_msg_stage",50,"发送登录成功消息阶段")
+    SEND_LOGIN_MSG_STAGE("send_login_msg_stage",0,"发送登录成功消息阶段"),
+    //单位:秒
+    SEND_SMS_INTERVAL("SEND_SMS_INTERVAL",0,"发送短信间隔时间")
     ;
 
     /**

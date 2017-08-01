@@ -49,11 +49,11 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
                     message.getTags(), new String(message.getBody()));
             }
             logger.info("process message success: useTime={},msgId={},topic={},tags={},body={}",
-                DateUtils.getUsedTime(startTime), message.getMsgId(), message.getTopic(), message.getTags(),
+                DateUtils.getUsedTime(startTime,System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(),
                 new String(message.getBody()));
         } catch (Exception e) {
             logger.error("process message error: useTime={},msgId={},topic={},tags={},body={}",
-                DateUtils.getUsedTime(startTime), message.getMsgId(), message.getTopic(), message.getTags(),
+                DateUtils.getUsedTime(startTime,System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(),
                 new String(message.getBody()), e);
             return ConsumeConcurrentlyStatus.RECONSUME_LATER;
         }

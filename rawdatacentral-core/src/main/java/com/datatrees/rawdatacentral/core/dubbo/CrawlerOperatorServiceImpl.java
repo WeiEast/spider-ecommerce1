@@ -4,6 +4,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.common.utils.BooleanUtils;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhouxinghai on 2017/7/17.
@@ -84,7 +86,26 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", result);
             return result;
         }
+        String latestSendSmsTime = redisService.getTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME);
+        if (StringUtils.isNoneBlank(latestSendSmsTime)) {
+            long left = System.currentTimeMillis() - Long.valueOf(latestSendSmsTime);
+            if (left > 0) {
+                try {
+
+                    logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒",
+                        DateUtils.formatYmdhms(Long.valueOf(latestSendSmsTime)),
+                        DateUtils.getUsedTime(Long.valueOf(latestSendSmsTime), Long.valueOf(latestSendSmsTime) + left));
+                    TimeUnit.MILLISECONDS.sleep(left);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("refeshSmsCode error", e);
+                }
+            }
+        }
         result = getLoginService(param).refeshSmsCode(param);
+        if (result.getStatus()) {
+            redisService.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME,
+                System.currentTimeMillis() + "");
+        }
         messageService.sendTaskLog(param.getTaskId(),
             TemplateUtils.format("{}-->短信验证码-->刷新{}!", FormType.getName(param.getFormType())),
             result.getStatus() ? "成功" : "失败");
@@ -223,7 +244,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 RedisKeyPrefixEnum.SEND_LOGIN_MSG_STAGE.getRedisKey(param.getWebsiteName()), "VALIDATE_BILL_DETAIL");
             if (StringUtils.equals(sendLoginStage, param.getFormType())) {
                 messageService.sendLoginSuccessMessage(param.getTaskId(), param.getWebsiteName());
-                logger.info("发送消息,启动爬虫");
+                logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
             }
         }
 

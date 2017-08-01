@@ -77,9 +77,9 @@ public class DateUtils {
      * @param start
      * @return
      */
-    public static String getUsedTime(long start) {
+    public static String getUsedTime(long start,long end) {
         StringBuilder sb = new StringBuilder();
-        long usedTime = System.currentTimeMillis() - start;
+        long usedTime = end - start;
 
         long count = TimeUnit.MILLISECONDS.toDays(usedTime);
         if (count > 0) {

@@ -142,14 +142,17 @@ public class ReidsServiceImpl implements RedisService {
             do {
                 if (stringRedisTemplate.hasKey(key)) {
                     String value = stringRedisTemplate.opsForValue().get(key);
-                    logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+                    logger.info("getString success,useTime={}, key={}",
+                        DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
                     return value;
                 }
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
             } while (System.currentTimeMillis() <= endTime);
-            logger.warn("getString fail,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+            logger.warn("getString fail,useTime={}, key={}",
+                DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
         } catch (Exception e) {
-            logger.error("getString error,useTime={}, key={}", DateUtils.getUsedTime(startTime), key, e);
+            logger.error("getString error,useTime={}, key={}",
+                DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
         }
         return null;
     }
@@ -181,15 +184,18 @@ public class ReidsServiceImpl implements RedisService {
                 if (stringRedisTemplate.hasKey(key)) {
                     String value = stringRedisTemplate.opsForList().rightPop(key);
                     if (StringUtils.isNoneBlank(value)) {
-                        logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+                        logger.info("getString success,useTime={}, key={}",
+                            DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
                         return value;
                     }
                 }
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
             } while (System.currentTimeMillis() <= endTime);
-            logger.warn("rightPop fail,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+            logger.warn("rightPop fail,useTime={}, key={}",
+                DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
         } catch (Exception e) {
-            logger.error("rightPop error,useTime={}, key={}", DateUtils.getUsedTime(startTime), key, e);
+            logger.error("rightPop error,useTime={}, key={}",
+                DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
         }
         return null;
     }
