@@ -19,10 +19,11 @@ public enum ErrorCode {
 
     REFESH_PIC_CODE_ERROR(-250,"图片验证码刷新失败,请重试"),
     VALIDATE_PIC_CODE_FAIL(-260,"请输入正确的图片验证码"),
-    VALIDATE_PIC_CODE_FAIL_TIMEOUT(-261,"图片验证码,验证超时"),
+    VALIDATE_PIC_CODE_TIMEOUT(-261,"图片验证码,验证超时"),
 
     REFESH_SMS_ERROR(-270,"短信验证码发送失败,请重试"),
     VALIDATE_SMS_FAIL(-280,"短信验证码不正确或已过期,请重新获取"),
+    VALIDATE_SMS_TIMEOUT(-281,"图片验证码,验证超时"),
 
     TASK_INIT_ERROR(-300, "初始化失败"),
 

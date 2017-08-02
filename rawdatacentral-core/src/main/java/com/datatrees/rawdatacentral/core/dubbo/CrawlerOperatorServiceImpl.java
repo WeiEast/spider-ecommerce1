@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.swing.text.TabableView;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +63,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             redisService.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
             logger.info("初始化运营商插件taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
         }
+        messageService.sendTaskLog(param.getTaskId(),"准备登陆");
         return getLoginService(param).init(param);
     }
 
@@ -73,9 +75,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return result;
         }
         result = getLoginService(param).refeshPicCode(param);
-        messageService.sendTaskLog(param.getTaskId(),
-            TemplateUtils.format("{}-->图片验证码-->刷新{}!", FormType.getName(param.getFormType())),
-            result.getStatus() ? "成功" : "失败");
+        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->图片验证码-->刷新{}!",
+            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         return result;
     }
 
@@ -108,9 +109,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             redisService.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME,
                 System.currentTimeMillis() + "");
         }
-        messageService.sendTaskLog(param.getTaskId(),
-            TemplateUtils.format("{}-->短信验证码-->刷新{}!", FormType.getName(param.getFormType())),
-            result.getStatus() ? "成功" : "失败");
+        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->短信验证码-->刷新{}!",
+            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         return result;
     }
 
@@ -137,9 +137,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                     break;
             }
         }
-        messageService.sendTaskLog(param.getTaskId(),
-            TemplateUtils.format("{}-->图片验证码-->校验{}!", FormType.getName(param.getFormType())),
-            result.getStatus() ? "成功" : "失败");
+        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->图片验证码-->校验{}!",
+            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         return result;
     }
 
@@ -165,9 +164,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 }
             }
         }
-        messageService.sendTaskLog(param.getTaskId(),
-            TemplateUtils.format("{}-->校验{}!", FormType.getName(param.getFormType())),
-            result.getStatus() ? "成功" : "失败");
+        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->校验{}!",
+            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         sendLoginSuccessMessage(result, param);
         return result;
     }
