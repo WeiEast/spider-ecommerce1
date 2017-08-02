@@ -24,13 +24,13 @@ public class CheckUtils {
 
     public static void checkNotBlank(String param, ErrorCode errorCode) {
         if (StringUtils.isBlank(param)) {
-            throw new RuntimeException(errorCode.getErrorMessage());
+            throw new RuntimeException(errorCode.getErrorMsg());
         }
     }
 
     public static void checkNotPositiveNumber(Number number, ErrorCode errorCode) {
         if (null == number || number.longValue() <= 0) {
-            throw new RuntimeException(errorCode.getErrorMessage());
+            throw new RuntimeException(errorCode.getErrorMsg());
         }
     }
 

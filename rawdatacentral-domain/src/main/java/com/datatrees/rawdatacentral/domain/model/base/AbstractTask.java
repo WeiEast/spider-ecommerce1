@@ -27,7 +27,7 @@ public abstract class AbstractTask {
                 if (message != null) {
                     this.setRemark(message);
                 } else {
-                    this.setRemark(errorCode.getErrorMessage());
+                    this.setRemark(errorCode.getErrorMsg());
                 }
             }
         }

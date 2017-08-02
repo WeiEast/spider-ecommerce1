@@ -71,7 +71,7 @@ public enum ErrorCode {
         this.errorMessage = errorMessage;
     }
 
-    public String getErrorMessage() {
+    public String getErrorMsg() {
         return errorMessage;
     }
 

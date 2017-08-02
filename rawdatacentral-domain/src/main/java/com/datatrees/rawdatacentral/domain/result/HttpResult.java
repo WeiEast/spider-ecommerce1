@@ -105,7 +105,7 @@ public class HttpResult<T> implements Serializable {
     public HttpResult<T> failure(ErrorCode errorCode) {
         this.setStatus(false);
         this.setResponseCode(errorCode.getErrorCode());
-        this.setMessage(errorCode.getErrorMessage());
+        this.setMessage(errorCode.getErrorMsg());
         this.setTimestamp(System.currentTimeMillis());
         return this;
     }

@@ -75,7 +75,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             if (!result.getStatus()) {
                 //获取图片验证码失败超过3次,任务失败
                 if(errorCount >= 3){
-                    throw new RuntimeException(ErrorCode.REFESH_PIC_CODE_ERROR.getErrorMessage());
+                    throw new RuntimeException(ErrorCode.REFESH_PIC_CODE_ERROR.getErrorMsg());
                 }
                 errorCount++;
                 TimeUnit.SECONDS.sleep(10);
@@ -94,7 +94,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             if (null == receiveDirective) {
                 logger.error("详单-->等待用户输入图片验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId,
                     websiteName, directiveId);
-                throw new RuntimeException(ErrorCode.VALIDATE_PIC_CODE_FAIL_TIMEOUT.getErrorMessage());
+                throw new RuntimeException(ErrorCode.VALIDATE_PIC_CODE_FAIL_TIMEOUT.getErrorMsg());
             }
 
             picCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
@@ -112,7 +112,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
                 throw new InterruptedException("详单-->验证图片验证码-->用户刷新/取消任务");
             }
         } while (retry++ < 5);
-        throw new RuntimeException(ErrorCode.VALIDATE_PIC_CODE_FAIL.getErrorMessage());
+        throw new RuntimeException(ErrorCode.VALIDATE_PIC_CODE_FAIL.getErrorMsg());
     }
 
     /**
@@ -143,7 +143,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         if (null == receiveDirective) {
             logger.error("详单-->等待用户输入图片验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId,
                 websiteName, directiveId);
-            throw new RuntimeException(ErrorCode.VALIDATE_PIC_CODE_FAIL_TIMEOUT.getErrorMessage());
+            throw new RuntimeException(ErrorCode.VALIDATE_PIC_CODE_FAIL_TIMEOUT.getErrorMsg());
         }
         String smsCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
         String picCode = redisService.getTaskShare(taskId, AttributeKey.PIC_CODE);

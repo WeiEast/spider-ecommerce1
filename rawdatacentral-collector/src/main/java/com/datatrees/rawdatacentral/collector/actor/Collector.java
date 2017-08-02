@@ -292,7 +292,7 @@ public class Collector {
                             "Thread interrupt bafore result send to queue. threadId={},taskId={},websiteName={}",
                             Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
                         task.setStatus(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode());
-                        task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage());
+                        task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg());
                     } else {
                         this.sendResult(taskMessage, submitkeyResult, resultTagSet);
                     }
@@ -303,10 +303,10 @@ public class Collector {
             logger.error("processMessage error taskId={}", taskMessage.getTask().getTaskId(), e);
             if (e instanceof LoginTimeOutException) {
                 taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR,
-                    ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMessage() + " " + e.getMessage());
+                    ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMsg() + " " + e.getMessage());
             } else if (e instanceof InterruptedException) {
                 taskMessage.getTask().setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR,
-                    ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMessage() + " " + e.getMessage());
+                    ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg() + " " + e.getMessage());
             } else {
                 taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
             }
