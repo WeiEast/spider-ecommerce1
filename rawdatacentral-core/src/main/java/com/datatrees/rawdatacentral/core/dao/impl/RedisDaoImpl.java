@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.core.dao.impl;
 
-import com.datatrees.rawdatacentral.core.common.Constants;
+import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
