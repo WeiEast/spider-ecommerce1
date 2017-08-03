@@ -29,11 +29,11 @@ import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
  * @since Mar 15, 2014 10:52:51 AM
  */
 public class SimpleProxyManager extends ProxyManager {
-    private static final Logger log = LoggerFactory.getLogger(SimpleProxyManager.class);
+    private static final Logger       log               = LoggerFactory.getLogger(SimpleProxyManager.class);
     private static ThreadPoolExecutor proxyCallbackPool = null;
-    Protocol protocol;
+    Protocol                          protocol;
 
-    private Option option;
+    private Option                    option;
 
     public SimpleProxyManager() {
         try {
@@ -54,9 +54,8 @@ public class SimpleProxyManager extends ProxyManager {
 
     class ProxyResult {
         private String proxy;
-        private long timestamp;
+        private long   timestamp;
     }
-
 
     private Proxy doProxyGet(String url) {
         Proxy rs = null;
@@ -73,7 +72,6 @@ public class SimpleProxyManager extends ProxyManager {
         }
         return rs;
     }
-
 
     @Override
     public Proxy getProxy(String url) throws Exception {
@@ -119,16 +117,16 @@ public class SimpleProxyManager extends ProxyManager {
         if (proxyCallbackPool == null) {
             synchronized (SimpleProxyManager.class) {
                 if (proxyCallbackPool == null) {
-                    proxyCallbackPool =
-                            new ThreadPoolExecutor(Constants.PROXY_CALLBACK_CORE_POOL_SIZE, Constants.PROXY_CALLBACK_MAX_POOL_SIZE, 0L,
-                                    TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(Constants.PROXY_CALLBACK_MAX_TASK_SIZE),
-                                    new ThreadPoolExecutor.AbortPolicy());
+                    proxyCallbackPool = new ThreadPoolExecutor(Constants.PROXY_CALLBACK_CORE_POOL_SIZE,
+                        Constants.PROXY_CALLBACK_MAX_POOL_SIZE, 0L, TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<Runnable>(Constants.PROXY_CALLBACK_MAX_TASK_SIZE),
+                        new ThreadPoolExecutor.AbortPolicy());
                 }
             }
         }
-        String url =
-                callBackTemplate.replace("${status}", status.toString()).replace("${proxy}", proxy.getHost() + ":" + proxy.getPort())
-                        .replace("${timestamp}", proxy.getTimestamp() + "");
+        String url = callBackTemplate.replace("${status}", status.toString())
+            .replace("${proxy}", proxy.getHost() + ":" + proxy.getPort())
+            .replace("${timestamp}", proxy.getTimestamp() + "");
         if (log.isDebugEnabled()) {
             log.debug("init call back proxy url:" + url + ",status:" + status + ",proxy:" + proxy);
         }
@@ -151,9 +149,9 @@ public class SimpleProxyManager extends ProxyManager {
 
     @Override
     public void release(Proxy proxy, boolean aync) throws Exception {
-        String url =
-                callBackTemplate.replace("${status}", ProxyStatus.RELEASE.toString()).replace("${proxy}", proxy.getHost() + ":" + proxy.getPort())
-                        .replace("${timestamp}", proxy.getTimestamp() + "");
+        String url = callBackTemplate.replace("${status}", ProxyStatus.RELEASE.toString())
+            .replace("${proxy}", proxy.getHost() + ":" + proxy.getPort())
+            .replace("${timestamp}", proxy.getTimestamp() + "");
         log.info("release proxy url:" + url + ",proxy:" + proxy + ",aync:" + aync);
         if (aync) {
             if (proxyCallbackPool != null) {
@@ -173,7 +171,6 @@ public class SimpleProxyManager extends ProxyManager {
             protocol.getProtocolOutput(new ProtocolInput().setUrl(url).setFollowRedirect(true));
         }
     }
-
 
     @Override
     public void setModeOption(Option option) {

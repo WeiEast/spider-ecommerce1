@@ -145,9 +145,9 @@ public class Collector {
         taskService.insertTask(task);
 
         Map<String, String> shares = redisService.getTaskShares(task.getTaskId());
-        if(null != shares && ! shares.isEmpty()){
-            for(Map.Entry<String,String> entry : shares.entrySet()){
-                context.set(entry.getKey(),entry.getValue());
+        if (null != shares && !shares.isEmpty()) {
+            for (Map.Entry<String, String> entry : shares.entrySet()) {
+                context.set(entry.getKey(), entry.getValue());
             }
         }
 
