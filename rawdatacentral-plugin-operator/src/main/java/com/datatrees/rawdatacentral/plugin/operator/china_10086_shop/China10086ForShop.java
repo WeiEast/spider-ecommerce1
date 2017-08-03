@@ -1,7 +1,6 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10086_shop;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
@@ -17,7 +16,6 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,7 +25,7 @@ import java.util.Base64;
 import java.util.Map;
 
 /**
- * 河南移动
+ * 中国移动--全国通用
  * 登陆地址:https://login.10086.cn/html/login/login.html
  * 登陆方式:服务密码登陆
  * 图片验证码:支持
@@ -36,9 +34,9 @@ import java.util.Map;
  *
  * Created by zhouxinghai on 2017/7/17.
  */
-public class ChinaShopFor10086 implements OperatorPluginService {
+public class China10086ForShop implements OperatorPluginService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChinaShopFor10086.class);
+    private static final Logger logger = LoggerFactory.getLogger(China10086ForShop.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
