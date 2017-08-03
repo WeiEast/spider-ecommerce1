@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Resource;
 
+import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +44,6 @@ import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.utils.IpUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.common.ProxySharedManager;
-import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
