@@ -37,7 +37,7 @@ public class OperatorServiceImpl implements OperatorService {
             return null;
         }
         String key = "rawdatacentral_operator_websiteid_" + websiteId;
-        Operator operator = redisService.getCache(key,new TypeReference<Operator>(){});
+        Operator operator = redisService.getCache(key, new TypeReference<Operator>(){});
         if (null == operator) {
             OperatorExample example = new OperatorExample();
             example.createCriteria().andWebsiteidEqualTo(websiteId).andIsenabledEqualTo(true);

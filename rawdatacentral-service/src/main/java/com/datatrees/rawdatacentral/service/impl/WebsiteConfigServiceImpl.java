@@ -159,8 +159,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public WebsiteConf getWebsiteConfFromCache(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
         WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName,
-            new TypeReference<WebsiteConf>() {
-            });
+            new TypeReference<WebsiteConf>(){});
         if (null != conf) {
             logger.info("find WebsiteConf from cache websiteName={}", websiteName);
             return conf;

@@ -35,8 +35,7 @@ public class KeywordServiceImpl implements KeywordService {
             return null;
         }
         String key = "rawdatacentral_keyword_websitetype_" + websiteType;
-        List<Keyword> list = redisService.getCache(key, new TypeReference<List<Keyword>>() {
-        });
+        List<Keyword> list = redisService.getCache(key, new TypeReference<List<Keyword>>(){});
         if (null == list || list.isEmpty()) {
             KeywordExample example = new KeywordExample();
             example.createCriteria().andWebsiteTypeEqualTo(websiteType).andIsenabledEqualTo(true);

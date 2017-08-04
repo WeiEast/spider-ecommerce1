@@ -38,8 +38,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public Bank getByBankIdFromCache(Integer bankId) {
         String key = "rawdatacentral_bank_" + bankId;
-        Bank bank = redisService.getCache(key, new TypeReference<Bank>() {
-        });
+        Bank bank = redisService.getCache(key, new TypeReference<Bank>(){});
         if (null == bank) {
             bank = getEnabledByBankId(bankId);
             if (null != bank) {
@@ -52,8 +51,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public Bank getByWebsiteIdFromCache(Integer websiteId) {
         String key = "rawdatacentral_bank_website_id" + websiteId;
-        Bank bank = redisService.getCache(key, new TypeReference<Bank>() {
-        });
+        Bank bank = redisService.getCache(key, new TypeReference<Bank>(){});
         if (null == bank) {
             bank = getEnabledByWebsiteId(websiteId);
             if (null != bank) {
@@ -98,8 +96,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public Map<String, Integer> getMailBankMap() {
         String key = "rawdatacentral_mail_bank";
-        Map<String, Integer> map = redisService.getCache(key, new TypeReference<Map<String, Integer>>() {
-        });
+        Map<String, Integer> map = redisService.getCache(key, new TypeReference<Map<String, Integer>>(){});
         if (null == map || map.isEmpty()) {
             List<BankMail> list = bankMailDAO.selectByExample(new BankMailExample());
             map = new HashMap<>();

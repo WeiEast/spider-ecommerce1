@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.share;
 
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.alibaba.fastjson.TypeReference;

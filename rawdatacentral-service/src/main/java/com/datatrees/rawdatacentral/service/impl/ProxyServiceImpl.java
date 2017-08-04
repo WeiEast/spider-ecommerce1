@@ -64,12 +64,12 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
                 @Override
                 public Boolean call() throws Exception {
                     proxyProvider.release(taskId);
-                    logger.info("release proxy success taskId={}",taskId);
+                    logger.info("release proxy success taskId={}", taskId);
                     return null;
                 }
             });
         } catch (Exception e) {
-            logger.error("release proxy error taskId={},websiteName={}", taskId, websiteName, e);
+            logger.error("release proxy error taskId={}", taskId, e);
         }
     }
 
