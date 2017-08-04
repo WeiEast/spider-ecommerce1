@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service;
 
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.share.RedisService;
@@ -18,18 +19,18 @@ public class RedisTest extends BaseTest {
     private RedisService redisService;
 
     @Test
-    public void testRedisStart(){
+    public void testRedisStart() {
         String key = "zhouxinghai_01";
         redisService.saveString(key, DateUtils.formatYmd(new Date()));
 
         Bank bank = new Bank();
         bank.setBankName("哈哈");
         bank.setBankId(111);
-        redisService.cache(key,bank,60, TimeUnit.SECONDS);
-        bank = redisService.getCache(key,Bank.class);
+        redisService.cache(key, bank, 60, TimeUnit.SECONDS);
+        bank = redisService.getCache(key, new TypeReference<Bank>() {
+        });
         System.out.println(bank);
 
     }
-
 
 }

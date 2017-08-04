@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.dao.KeywordDAO;
 import com.datatrees.rawdatacentral.domain.model.Keyword;
 import com.datatrees.rawdatacentral.domain.model.example.KeywordExample;
@@ -35,7 +36,7 @@ public class KeywordServiceImpl implements KeywordService {
             return null;
         }
         String key = "rawdatacentral_keyword_websitetype_" + websiteType;
-        List<Keyword> list = redisService.getCache(key, List.class);
+        List<Keyword> list = redisService.getCache(key, new TypeReference<List<Keyword>>(){});
         if (null == list || list.isEmpty()) {
             KeywordExample example = new KeywordExample();
             example.createCriteria().andWebsiteTypeEqualTo(websiteType).andIsenabledEqualTo(true);

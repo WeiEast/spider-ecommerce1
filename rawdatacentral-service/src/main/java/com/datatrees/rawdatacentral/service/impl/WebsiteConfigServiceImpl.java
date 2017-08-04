@@ -4,6 +4,7 @@ import java.util.*;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.TypeReference;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +132,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public WebsiteConf getWebsiteConfFromCache(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
         WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName,
-            WebsiteConf.class);
+            new TypeReference<WebsiteConf>(){});
         if (null != conf) {
             logger.info("find WebsiteConf from cache websiteName={}", websiteName);
             return conf;

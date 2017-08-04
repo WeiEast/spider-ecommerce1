@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.dao.EcommerceDAO;
 import com.datatrees.rawdatacentral.domain.model.Ecommerce;
 import com.datatrees.rawdatacentral.domain.model.example.EcommerceExample;
@@ -32,7 +33,7 @@ public class EcommerceServiceImpl implements EcommerceService {
         Ecommerce ecommerce = null;
         if (null != websiteId) {
             String key = "rawdatacentral_ecommerce_websiteid_" + websiteId;
-            ecommerce = redisService.getCache(key, Ecommerce.class);
+            ecommerce = redisService.getCache(key, new TypeReference<Ecommerce>(){});
             if (null == ecommerce) {
                 EcommerceExample example = new EcommerceExample();
                 example.createCriteria().andWebsiteidEqualTo(websiteId).andIsenabledEqualTo(true);
