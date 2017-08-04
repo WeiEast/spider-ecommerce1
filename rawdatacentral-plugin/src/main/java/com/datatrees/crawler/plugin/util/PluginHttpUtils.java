@@ -1,5 +1,6 @@
 package com.datatrees.crawler.plugin.util;
 
+import com.treefinance.proxy.domain.Proxy;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
@@ -11,6 +12,7 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.share.RedisService;
+import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -336,6 +338,23 @@ public class PluginHttpUtils {
                 FormType.getName(formType), taskId, websiteName, formType, url, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
+    }
+
+    public static Proxy getProxy(Long taskId, String websiteName) {
+        Proxy proxy = null;
+        try {
+            RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+            if(null == proxy){
+                proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId),new TypeReference<Proxy>(){});
+            }
+            if(null == proxy){
+                ProxyProvider proxyProvider = BeanFactoryUtils.getBean(ProxyProvider.class);
+                proxy = proxyProvider.getProxy(taskId, websiteName);
+            }
+        } catch (Exception e) {
+            logger.error("getProxy error taskId={},websiteName={}", taskId, websiteName, e);
+        }
+        return proxy;
     }
 
 }
