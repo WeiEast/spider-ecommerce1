@@ -19,6 +19,9 @@ public class OperatorCatalogue implements Serializable{
      */
     private List<OperatorConfig> list = new ArrayList<>();
 
+    public OperatorCatalogue() {
+    }
+
     public OperatorCatalogue(String catalogue, List<OperatorConfig> list) {
         this.catalogue = catalogue;
         this.list = list;
