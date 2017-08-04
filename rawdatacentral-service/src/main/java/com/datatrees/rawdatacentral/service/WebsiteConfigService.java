@@ -84,7 +84,7 @@ public interface WebsiteConfigService {
      */
     List<OperatorCatalogue> queryAllOperatorConfig();
 
-    SearchProcessorContext getSearchProcessorContext(String websiteName);
+    SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName);
 
     ExtractorProcessorContext getExtractorProcessorContext(int websiteId);
 

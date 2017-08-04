@@ -16,6 +16,8 @@ dependencies {
     }
     compile 'com.datatrees.common:common-protocol:2.1.0'
 
+    compile "com.treefinance.proxy:proxy-api:${proxyApiVersion}"
+
 //    compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 
 

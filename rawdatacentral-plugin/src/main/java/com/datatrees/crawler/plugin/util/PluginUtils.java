@@ -65,7 +65,7 @@ public class PluginUtils {
         String proxyURL = null;
         AbstractProcessorContext context = PluginContext.getProcessorContext();
         if (context instanceof SearchProcessorContext && ((SearchProcessorContext) context).needProxyByUrl(url)) {
-            Proxy proxy = ((SearchProcessorContext) context).getProxyManager().getProxy(url);
+            Proxy proxy = ((SearchProcessorContext) context).getProxyManager().getProxy();
             if (proxy == null) {
                 logger.error("no active proxy use for cacertUrl={},use default ip");
             } else {

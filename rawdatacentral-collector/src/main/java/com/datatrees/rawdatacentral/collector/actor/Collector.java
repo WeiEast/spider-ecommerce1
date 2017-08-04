@@ -35,15 +35,12 @@ import com.datatrees.crawler.core.domain.config.login.LoginType;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
-import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
-import com.datatrees.crawler.core.processor.proxy.ProxyManagerWithScope;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
 import com.datatrees.rawdatacentral.collector.chain.common.WebsiteType;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.utils.IpUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
-import com.datatrees.rawdatacentral.core.common.ProxySharedManager;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
@@ -127,7 +124,8 @@ public class Collector {
         task.setNetworkTraffic(new AtomicLong(0));
         task.setStatus(0);
 
-        SearchProcessorContext context = websiteConfigService.getSearchProcessorContext(message.getWebsiteName());
+        SearchProcessorContext context = websiteConfigService.getSearchProcessorContext(message.getTaskId(),
+            message.getWebsiteName());
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
@@ -170,12 +168,12 @@ public class Collector {
             taskMessage.setStatusSend(!((SubTaskAble) message).noStatus());
             if (((SubTaskAble) message).getSubSeed() != null) {
                 taskMessage.setUniqueSuffix(((SubTaskAble) message).getSubSeed().getUniqueSuffix());
-                ProxyManager proxyManager = context.getProxyManager();
-                if (((SubTaskAble) message).getSubSeed().getProxy() != null
-                    && proxyManager instanceof ProxyManagerWithScope) {
-                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(
-                        ((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
-                }
+//                ProxyManager proxyManager = context.getProxyManager();
+//                if (((SubTaskAble) message).getSubSeed().getProxy() != null
+//                    && proxyManager instanceof ProxyManagerWithScope) {
+//                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(
+//                        ((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
+//                }
             }
         }
         ProcessorContextUtil.addValues(context, message.getProperty());

@@ -22,6 +22,9 @@
     <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerOperatorService"
                    ref="crawlerOperatorServiceImpl"/>
 
+    <!--代理-->
+    <dubbo:reference interface="com.treefinance.proxy.api.ProxyProvider" id="proxyProvider" check="false"/>
+
 </beans>
 
 

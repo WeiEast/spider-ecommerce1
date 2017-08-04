@@ -5,6 +5,7 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.TypeReference;
+import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Resource
     private RedisService        redisService;
+
+    @Resource
+    private ProxyProvider       proxyProvider;
 
     private ParentConfigHandler parentConfigHandler;
 
@@ -274,12 +278,12 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public SearchProcessorContext getSearchProcessorContext(String websiteName) {
+    public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
         Website website = this.getWebsiteByWebsiteName(websiteName);
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
             searchProcessorContext.setPluginManager(pluginManager);
-            searchProcessorContext.setProxyManager(new SimpleProxyManager());
+            searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, websiteName, proxyProvider));
             searchProcessorContext.init();
             return searchProcessorContext;
         }

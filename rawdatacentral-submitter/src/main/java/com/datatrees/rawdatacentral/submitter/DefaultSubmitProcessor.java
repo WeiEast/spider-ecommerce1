@@ -77,7 +77,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
             subTaskManager.submitSubTask(new SubTask(taskId, parentTask, subSeed));
             if (BooleanUtils.isTrue(subSeed.getProxyShared())) {
                 try {
-                    Proxy parentProxy = parentTask.getProcessorContext().getProxyManager().getProxy("");
+                    Proxy parentProxy = parentTask.getProcessorContext().getProxyManager().getProxy();
                     if (parentProxy != null) {
                         parentProxy.getShareCount().incrementAndGet();
                     }
