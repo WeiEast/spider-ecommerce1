@@ -2,13 +2,15 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.service.constants.Constants;
-import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.rawdatacentral.share.ProxyService;
 import com.datatrees.rawdatacentral.share.RedisService;
 import com.treefinance.proxy.api.ProxyProvider;
 import com.treefinance.proxy.domain.Proxy;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,6 +34,7 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
 
     @Override
     public Proxy getProxy(Long taskId, String websiteName) {
+        CheckUtils.checkNotNull(taskId, "taskId is null");
         Proxy proxy = null;
         try {
             RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
@@ -43,6 +46,12 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
                     proxy.getIp());
                 return proxy;
             }
+            if (StringUtils.isBlank(websiteName)) {
+                websiteName = redisService.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
+                if (StringUtils.isBlank(websiteName)) {
+                    websiteName = "website name not found";
+                }
+            }
             ProxyProvider proxyProvider = BeanFactoryUtils.getBean(ProxyProvider.class);
             proxy = proxyProvider.getProxy(taskId, websiteName);
             if (null != proxy) {
@@ -50,16 +59,19 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
                     proxy.getIp());
                 return proxy;
             }
+            logger.warn("getProxy error,user local network taskId={},websiteName={}", taskId, websiteName);
+            return proxy;
         } catch (Exception e) {
             logger.error("getProxy error taskId={},websiteName={}", taskId, websiteName, e);
+            return null;
         }
-        logger.warn("getProxy error,user local network taskId={},websiteName={}", taskId, websiteName);
-        return proxy;
+
     }
 
     @Override
     public void release(Long taskId) {
         try {
+            BeanFactoryUtils.getBean(RedisService.class).deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
             proxyCallbackPool.submit(new Callable<Boolean>() {
                 @Override
                 public Boolean call() throws Exception {

@@ -58,12 +58,13 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             //清理共享信息
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(param.getTaskId()));
+            redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(param.getTaskId()));
             //保存mobile和websiteName
             redisService.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
             redisService.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
             logger.info("初始化运营商插件taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
         }
-        messageService.sendTaskLog(param.getTaskId(),"准备登陆");
+        messageService.sendTaskLog(param.getTaskId(), "准备登陆");
         return getLoginService(param).init(param);
     }
 

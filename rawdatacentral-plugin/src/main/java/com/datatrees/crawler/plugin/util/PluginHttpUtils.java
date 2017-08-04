@@ -1,5 +1,6 @@
 package com.datatrees.crawler.plugin.util;
 
+import com.datatrees.rawdatacentral.share.ProxyService;
 import com.treefinance.proxy.domain.Proxy;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -16,6 +17,7 @@ import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -216,8 +218,15 @@ public class PluginHttpUtils {
                                  Long taskId) {
         CloseableHttpResponse response = null;
         BasicCookieStore cookieStore = getCookie(taskId);
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG)
+        HttpHost proxy = null;
+        Proxy proxyConfig = getProxy(taskId, null);
+        if (null != proxyConfig) {
+            proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()),
+                url.contains("https") ? "http" : "https");
+        }
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG).setProxy(proxy)
             .setDefaultCookieStore(cookieStore).build();
+
         try {
             List<NameValuePair> pairs = null;
             if (params != null && !params.isEmpty()) {
@@ -341,16 +350,10 @@ public class PluginHttpUtils {
     }
 
     public static Proxy getProxy(Long taskId, String websiteName) {
+        CheckUtils.checkNotNull(taskId, "taskId is null");
         Proxy proxy = null;
         try {
-            RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-            if(null == proxy){
-                proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId),new TypeReference<Proxy>(){});
-            }
-            if(null == proxy){
-                ProxyProvider proxyProvider = BeanFactoryUtils.getBean(ProxyProvider.class);
-                proxy = proxyProvider.getProxy(taskId, websiteName);
-            }
+            proxy = BeanFactoryUtils.getBean(ProxyService.class).getProxy(taskId, websiteName);
         } catch (Exception e) {
             logger.error("getProxy error taskId={},websiteName={}", taskId, websiteName, e);
         }

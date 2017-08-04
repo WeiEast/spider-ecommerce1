@@ -1,13 +1,7 @@
 package com.datatrees.rawdatacentral.service.proxy;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.service.constants.Constants;
-import com.treefinance.proxy.api.ProxyProvider;
+import com.datatrees.rawdatacentral.share.ProxyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,33 +14,31 @@ import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
  */
 public class SimpleProxyManager extends ProxyManager {
 
-    private static final Logger       logger            = LoggerFactory.getLogger(SimpleProxyManager.class);
-
-    private static ThreadPoolExecutor proxyCallbackPool = null;
+    private static final Logger logger = LoggerFactory.getLogger(SimpleProxyManager.class);
 
     /**
      * proxy dubbo service
      */
-    private ProxyProvider             proxyProvider;
+    private ProxyService        proxyService;
 
     /**
      * 当前代理
      */
-    private Proxy                     last;
+    private Proxy               last;
 
     /**
      * 根据taskId获取,全部session模式,
      */
-    private Long                      taskId;
+    private Long                taskId;
 
-    private String                    websiteName;
+    private String              websiteName;
 
-    public SimpleProxyManager(Long taskId, String websiteName, ProxyProvider proxyProvider) {
+    public SimpleProxyManager(Long taskId, String websiteName, ProxyService proxyService) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
-        CheckUtils.checkNotNull(proxyProvider, "proxyProvider is null");
+        CheckUtils.checkNotNull(proxyService, "proxyService is null");
         CheckUtils.checkNotBlank(websiteName, "websiteName is null");
         this.taskId = taskId;
-        this.proxyProvider = proxyProvider;
+        this.proxyService = proxyService;
         this.websiteName = websiteName;
     }
 
@@ -54,7 +46,7 @@ public class SimpleProxyManager extends ProxyManager {
     public Proxy getProxy() throws Exception {
         if (null == last) {
             try {
-                com.treefinance.proxy.domain.Proxy proxy = proxyProvider.getProxy(taskId, websiteName);
+                com.treefinance.proxy.domain.Proxy proxy = proxyService.getProxy(taskId, websiteName);
                 if (null != proxy) {
                     last = new Proxy(proxy.getIp(), Integer.valueOf(proxy.getPort()));
                 }
@@ -76,23 +68,7 @@ public class SimpleProxyManager extends ProxyManager {
     @Override
     public void release() throws Exception {
         try {
-            if (proxyCallbackPool == null) {
-                synchronized (SimpleProxyManager.class) {
-                    if (proxyCallbackPool == null) {
-                        proxyCallbackPool = new ThreadPoolExecutor(Constants.PROXY_CALLBACK_CORE_POOL_SIZE,
-                            Constants.PROXY_CALLBACK_MAX_POOL_SIZE, 0L, TimeUnit.MILLISECONDS,
-                            new LinkedBlockingQueue<Runnable>(Constants.PROXY_CALLBACK_MAX_TASK_SIZE),
-                            new ThreadPoolExecutor.AbortPolicy());
-                    }
-                }
-            }
-            proxyCallbackPool.submit(new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    proxyProvider.release(taskId);
-                    return null;
-                }
-            });
+            proxyService.release(taskId);
         } catch (Exception e) {
             logger.error("release proxy error taskId={},websiteName={}", taskId, websiteName, e);
         }

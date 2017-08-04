@@ -5,7 +5,7 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.TypeReference;
-import com.treefinance.proxy.api.ProxyProvider;
+import com.datatrees.rawdatacentral.share.ProxyService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     private RedisService        redisService;
 
     @Resource
-    private ProxyProvider       proxyProvider;
+    private ProxyService        proxyService;
 
     private ParentConfigHandler parentConfigHandler;
 
@@ -159,7 +159,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public WebsiteConf getWebsiteConfFromCache(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
         WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName,
-            new TypeReference<WebsiteConf>(){});
+            new TypeReference<WebsiteConf>() {
+            });
         if (null != conf) {
             logger.info("find WebsiteConf from cache websiteName={}", websiteName);
             return conf;
@@ -282,7 +283,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
             searchProcessorContext.setPluginManager(pluginManager);
-            searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, websiteName, proxyProvider));
+            searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, websiteName, proxyService));
             searchProcessorContext.init();
             return searchProcessorContext;
         }

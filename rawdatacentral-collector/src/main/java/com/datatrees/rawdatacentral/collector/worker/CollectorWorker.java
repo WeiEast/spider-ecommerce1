@@ -238,7 +238,10 @@ public class CollectorWorker {
             task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
             task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
             //释放代理
-            context.release();
+            if (null == searchResult
+                || searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
+                context.release();
+            }
         }
     }
 
