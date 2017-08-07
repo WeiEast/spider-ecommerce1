@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
@@ -26,7 +28,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  */
 public class LoginInfoMessageListener extends AbstractRocketMessageListener<CollectorMessage> {
 
-    private static final Logger  log                   = LoggerFactory.getLogger(LoginInfoMessageListener.class);
+    private static final Logger  logger                = LoggerFactory.getLogger(LoginInfoMessageListener.class);
 
     private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance()
         .getBoolean("set.cookie.format.switch", false);
@@ -47,33 +49,20 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         this.redisTemplate = redisTemplate;
     }
 
-    /*
-             * (non-Javadoc)
-             * @see
-             * AbstractRocketMessageListener#process(java.lang.Object)
-             */
     @Override
     public void process(CollectorMessage message) {
-        String key = "raw_task_run_"+message.getTaskId();
-
-        if (message.getTaskId() > 0) {
-            String redisKey = "run_count:" + message.getTaskId();
-            if (!redisTemplate.hasKey(redisKey)) {
-                redisTemplate.opsForValue().setIfAbsent(redisKey, "0");
-            }
-            Long totalRun = redisTemplate.opsForValue().increment(redisKey, 1);
-            message.setTotalRun(totalRun);
-            log.info("receve login message taskId={},totalRun={}", message.getTaskId(), totalRun);
-            collector.processMessage(message);
+        String key = "raw_task_run_" + message.getTaskId();
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(key, "run");
+        if (!ifAbsent) {
+            logger.warn("重复消息,不处理,taskId={},websiteName={}", message.getTaskId(), message.getWebsiteName());
+            return;
         }
+        //30分钟后删除
+        redisTemplate.expire(key, 10, TimeUnit.MINUTES);
+        logger.info("receve login message taskId={}", message.getTaskId());
+        collector.processMessage(message);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * AbstractRocketMessageListener#messageConvert(com.alibaba
-     * .rocketmq.common.message.Message)
-     */
     @Override
     public CollectorMessage messageConvert(MessageExt message) {
         CollectorMessage collectorMessage = new CollectorMessage();
@@ -81,7 +70,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         try {
             LoginMessage loginInfo = (LoginMessage) GsonUtils.fromJson(body, LoginMessage.class);
             if (loginInfo != null) {
-                log.info("Init logininfo:" + loginInfo);
+                logger.info("Init logininfo:" + loginInfo);
                 collectorMessage.setTaskId(loginInfo.getTaskId());
                 collectorMessage.setWebsiteName(loginInfo.getWebsiteName());
                 collectorMessage.setEndURL(loginInfo.getEndUrl());
@@ -99,7 +88,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 }
             }
         } catch (Exception e) {
-            log.error("Message convert error.." + e.getMessage(), e);
+            logger.error("Message convert error.." + e.getMessage(), e);
         }
         return collectorMessage;
     }
