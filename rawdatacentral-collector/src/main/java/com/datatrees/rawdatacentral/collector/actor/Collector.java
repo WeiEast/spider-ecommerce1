@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.rawdatacentral.share.RedisService;
@@ -364,9 +365,7 @@ public class Collector {
                 message.setCookie(ProcessorContextUtil.getCookieString(taskMessage.getContext()));
             }
             Map<String, Object> map = new HashMap<>();
-            map.put("resultMsg", taskMessage.getTask().getResultMessage());
-            map.put("processorLog", taskMessage.getContext().getProcessorLog());
-            map.put("processorLog", taskMessage.getContext().getProcessorLog());
+            map.put("resultMsg", JSON.parseObject(taskMessage.getTask().getResultMessage(),new TypeReference<Map<String,Object>>(){}));
             map.put("startMsg", message);
 
             String startMsgJson = GsonUtils.toJson(message);
