@@ -13,6 +13,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.collections.CollectionUtils;
@@ -63,6 +65,7 @@ import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
+import sun.nio.cs.ext.MacArabic;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -168,12 +171,12 @@ public class Collector {
             taskMessage.setStatusSend(!((SubTaskAble) message).noStatus());
             if (((SubTaskAble) message).getSubSeed() != null) {
                 taskMessage.setUniqueSuffix(((SubTaskAble) message).getSubSeed().getUniqueSuffix());
-//                ProxyManager proxyManager = context.getProxyManager();
-//                if (((SubTaskAble) message).getSubSeed().getProxy() != null
-//                    && proxyManager instanceof ProxyManagerWithScope) {
-//                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(
-//                        ((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
-//                }
+                //                ProxyManager proxyManager = context.getProxyManager();
+                //                if (((SubTaskAble) message).getSubSeed().getProxy() != null
+                //                    && proxyManager instanceof ProxyManagerWithScope) {
+                //                    ((ProxyManagerWithScope) proxyManager).setManager(new ProxySharedManager(
+                //                        ((SubTaskAble) message).getSubSeed().getProxy(), new SimpleProxyManager()));
+                //                }
             }
         }
         ProcessorContextUtil.addValues(context, message.getProperty());
@@ -351,6 +354,7 @@ public class Collector {
     }
 
     private void messageComplement(TaskMessage taskMessage, CollectorMessage message) {
+        String resultMsg = null;
         try {
             if (StringUtils.isBlank(taskMessage.getTask().getResultMessage())) {
                 taskMessage.getTask().setResultMessage(GsonUtils.toJson(taskMessage.getContext().getProcessorResult()));
@@ -359,17 +363,19 @@ public class Collector {
             if (StringUtils.isNotBlank(ProcessorContextUtil.getCookieString(taskMessage.getContext()))) {
                 message.setCookie(ProcessorContextUtil.getCookieString(taskMessage.getContext()));
             }
+            Map<String, Object> map = new HashMap<>();
+            map.put("resultMsg", taskMessage.getTask().getResultMessage());
+            map.put("processorLog", taskMessage.getContext().getProcessorLog());
+            map.put("processorLog", taskMessage.getContext().getProcessorLog());
+            map.put("startMsg", message);
 
-            StringBuilder resultMessageBuilder = new StringBuilder();
-            resultMessageBuilder.append("\"resultMsg\":").append(taskMessage.getTask().getResultMessage())
-                .append(",\"processorLog\":").append(GsonUtils.toJson(taskMessage.getContext().getProcessorLog()));
             String startMsgJson = GsonUtils.toJson(message);
 
             if (startMsgJson.length() > PropertiesConfiguration.getInstance()
                 .getInt("default.startMsgJson.length.threshold", 20000)) {
                 String path = "task/" + taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId()
                               + "/" + taskMessage.getTask().getId();
-                taskMessage.getTask().setResultMessage(resultMessageBuilder.toString() + ",startMsgOSSPath:" + path);
+                map.put("startMsgOSSPath", path);
                 SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 try {
@@ -383,10 +389,8 @@ public class Collector {
                 } finally {
                     IOUtils.closeQuietly(baos);
                 }
-            } else {
-                taskMessage.getTask()
-                    .setResultMessage(resultMessageBuilder.toString() + ",\"startMsg\":" + startMsgJson);
             }
+            taskMessage.getTask().setResultMessage(JSON.toJSONString(map, SerializerFeature.WriteDateUseDateFormat));
         } catch (Exception e) {
             logger.error("messageComplement error:" + e.getMessage(), e);
         }
