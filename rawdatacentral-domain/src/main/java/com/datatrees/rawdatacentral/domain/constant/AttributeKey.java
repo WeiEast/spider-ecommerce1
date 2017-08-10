@@ -36,5 +36,9 @@ public class AttributeKey implements Serializable {
     public static final String LOGIN_PIC_CODE       = "loginPicCode";   //登录-->图片验证码
     public static final String PIC_CODE             = "picCode";        // 图片验证码
     public static final String LATEST_SEND_SMS_TIME = "latestSendSmsTime";     //最后一次发送短信时间,有的短信验证码发送有间隔时间限制
+    public static final String LATEST_FULL_URL = "latestFullUrl";     // 最后一次请求url包含参数
+    public static final String LATEST_REQUEST_TIMESTAMP = "latestRequestimestamp";     // 最后一次请求时间
+    public static final String LATEST_REQUEST_COOKIE = "latestRequestCookie";     // 最后一次请求时间
+
 
 }
