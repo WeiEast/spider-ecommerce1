@@ -10,7 +10,6 @@ package com.datatrees.rawdatacentral.collector.listener;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.core.message.AbstractRocketMessageListener;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
