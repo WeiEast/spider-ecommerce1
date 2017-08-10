@@ -60,7 +60,7 @@ public class PluginHttpUtils {
                      GET, POST;
     }
 
-    public static String getString(String url, Long taskId, String remark) throws IOException {
+    public static String getString(String url, Long taskId) throws IOException {
         return IOUtils.toString(execute(MethodType.GET, url, null, null, taskId), DEFAULT_CHARSET);
     }
 
@@ -276,69 +276,69 @@ public class PluginHttpUtils {
         }
     }
 
-    /**
-     * HTTP Post 获取内容
-     *
-     */
-    public static byte[] execute(Request request) {
-        CloseableHttpResponse response = null;
-        BasicCookieStore cookieStore = getCookie(request.getTaskId());
-        HttpHost proxy = null;
-        Proxy proxyConfig = getProxy(request.getTaskId(), null);
-        if (null != proxyConfig) {
-            proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()),
-                request.getProtocol());
-        }
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG).setProxy(proxy)
-            .setDefaultCookieStore(cookieStore).build();
-
-        try {
-            List<NameValuePair> pairs = null;
-            if (params != null && !params.isEmpty()) {
-                pairs = new ArrayList<NameValuePair>(params.size());
-                for (Map.Entry<String, String> entry : params.entrySet()) {
-                    String value = entry.getValue();
-                    if (value != null) {
-                        pairs.add(new BasicNameValuePair(entry.getKey(), value));
-                    }
-                }
-                String param = EntityUtils.toString(new UrlEncodedFormEntity(pairs, DEFAULT_CHARSET));
-                logger.debug("httpClient doGet url = {},param={}", url, param);
-                url += "?" + param;
-            }
-
-            HttpRequestBase client = null;
-            if (type == MethodType.GET) {
-                client = new HttpGet(url);
-            } else {
-                client = new HttpPost(url);
-            }
-            if (null == header) {
-                header = new HashMap<>();
-            }
-            if (!header.containsKey(HttpHeadKey.CONNECTION)) {
-                header.put(HttpHeadKey.CONNECTION, "close");
-            }
-
-            for (Map.Entry<String, String> entry : header.entrySet()) {
-                client.setHeader(entry.getKey(), entry.getValue());
-            }
-            response = httpclient.execute(client);
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200) {
-                client.abort();
-                throw new RuntimeException("HttpClient doPost error, statusCode: " + statusCode);
-            }
-            saveCookie(taskId, cookieStore);
-            return EntityUtils.toByteArray(response.getEntity());
-        } catch (Exception e) {
-            logger.error("http error url={}", url, e);
-            throw new RuntimeException("http error url=" + url, e);
-        } finally {
-            IOUtils.closeQuietly(httpclient);
-            IOUtils.closeQuietly(response);
-        }
-    }
+//    /**
+//     * HTTP Post 获取内容
+//     *
+//     */
+//    public static byte[] execute(Request request) {
+//        CloseableHttpResponse response = null;
+//        BasicCookieStore cookieStore = getCookie(request.getTaskId());
+//        HttpHost proxy = null;
+//        Proxy proxyConfig = getProxy(request.getTaskId(), null);
+//        if (null != proxyConfig) {
+//            proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()),
+//                request.getProtocol());
+//        }
+//        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG).setProxy(proxy)
+//            .setDefaultCookieStore(cookieStore).build();
+//
+//        try {
+//            List<NameValuePair> pairs = null;
+//            if (params != null && !params.isEmpty()) {
+//                pairs = new ArrayList<NameValuePair>(params.size());
+//                for (Map.Entry<String, String> entry : params.entrySet()) {
+//                    String value = entry.getValue();
+//                    if (value != null) {
+//                        pairs.add(new BasicNameValuePair(entry.getKey(), value));
+//                    }
+//                }
+//                String param = EntityUtils.toString(new UrlEncodedFormEntity(pairs, DEFAULT_CHARSET));
+//                logger.debug("httpClient doGet url = {},param={}", url, param);
+//                url += "?" + param;
+//            }
+//
+//            HttpRequestBase client = null;
+//            if (type == MethodType.GET) {
+//                client = new HttpGet(url);
+//            } else {
+//                client = new HttpPost(url);
+//            }
+//            if (null == header) {
+//                header = new HashMap<>();
+//            }
+//            if (!header.containsKey(HttpHeadKey.CONNECTION)) {
+//                header.put(HttpHeadKey.CONNECTION, "close");
+//            }
+//
+//            for (Map.Entry<String, String> entry : header.entrySet()) {
+//                client.setHeader(entry.getKey(), entry.getValue());
+//            }
+//            response = httpclient.execute(client);
+//            int statusCode = response.getStatusLine().getStatusCode();
+//            if (statusCode != 200) {
+//                client.abort();
+//                throw new RuntimeException("HttpClient doPost error, statusCode: " + statusCode);
+//            }
+//            saveCookie(taskId, cookieStore);
+//            return EntityUtils.toByteArray(response.getEntity());
+//        } catch (Exception e) {
+//            logger.error("http error url={}", url, e);
+//            throw new RuntimeException("http error url=" + url, e);
+//        } finally {
+//            IOUtils.closeQuietly(httpclient);
+//            IOUtils.closeQuietly(response);
+//        }
+//    }
 
     public static BasicCookieStore getCookie(Long taskId) {
         CheckUtils.checkNotNull(taskId, "taskId is null");

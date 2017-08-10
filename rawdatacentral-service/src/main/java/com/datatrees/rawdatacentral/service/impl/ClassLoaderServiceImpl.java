@@ -44,12 +44,13 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
         CheckUtils.checkNotBlank(jarName, "jarName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
         try {
-//            if (StringUtils.equals("local", env)) {
-//                return Thread.currentThread().getContextClassLoader().loadClass(className);
-//            }
+            //            if (StringUtils.equals("local", env)) {
+            //                return Thread.currentThread().getContextClassLoader().loadClass(className);
+            //            }
             String postfix = jarName + "_" + className;
             String cacheKey = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(postfix);
-            Class mainClass = redisService.getCache(cacheKey,new TypeReference<Class>(){});
+            Class mainClass = redisService.getCache(cacheKey, new TypeReference<Class>() {
+            });
             PluginUpgradeResult plugin = pluginService.getPluginFromRedis(jarName);
             if (null == mainClass || plugin.getForceReload()) {
                 mainClass = ClassLoaderUtils.loadClass(plugin.getFile(), className);
@@ -76,7 +77,8 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
             }
             return (OperatorPluginService) loginClass.newInstance();
         } catch (Exception e) {
-            logger.error("getOperatorService error websiteName={}", websiteName);
+
+            logger.error("getOperatorService error websiteName={}", websiteName, e);
             throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName);
         }
     }
