@@ -55,7 +55,6 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
             logger.error("process message error: useTime={},msgId={},topic={},tags={},body={}",
                 DateUtils.getUsedTime(startTime,System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(),
                 new String(message.getBody()), e);
-            return ConsumeConcurrentlyStatus.RECONSUME_LATER;
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
