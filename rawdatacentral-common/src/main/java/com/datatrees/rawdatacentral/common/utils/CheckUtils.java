@@ -1,0 +1,22 @@
+package com.datatrees.rawdatacentral.common.utils;
+
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 检查
+ * Created by zhouxinghai on 2017/6/29.
+ */
+public class CheckUtils {
+
+    public static void checkNotNull(Object param, String errorMsg) {
+        if (null == param) {
+            throw new RuntimeException(errorMsg);
+        }
+    }
+
+    public static void checkNotBlank(String param, String errorMsg) {
+        if (StringUtils.isBlank(param)) {
+            throw new RuntimeException(errorMsg);
+        }
+    }
+}

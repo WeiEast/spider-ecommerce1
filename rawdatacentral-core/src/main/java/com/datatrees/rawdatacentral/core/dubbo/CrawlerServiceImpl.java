@@ -9,25 +9,21 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.util.CacheUtil;
-import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
-import com.datatrees.rawdatacentral.core.dao.RedisDao;
-import com.datatrees.rawdatacentral.core.service.WebsiteService;
-import com.datatrees.rawdatacentral.domain.common.Website;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.operator.*;
+import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.share.RedisService;
-import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,51 +45,43 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class CrawlerServiceImpl implements CrawlerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
+    private static final Logger  logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
 
     @Resource
-    private WebsiteService      websiteService;
+    private WebsiteConfigService websiteConfigService;
 
     @Resource
-    private RedisDao            redisDao;
+    private RedisService         redisService;
 
     @Resource
-    private RedisService        redisService;
-
-    @Resource
-    private ZooKeeperClient     zooKeeperClient;
+    private ZooKeeperClient      zooKeeperClient;
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
         logger.info("websiteName:{} getWebsiteConf Start", websiteName);
-        Map<String, String> map = (Map<String, String>) CacheUtil.INSTANCE.getObject("websitename_transform_map");
+        Map<String, String> map = redisService.getCache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP,
+            new TypeReference<Map<String, String>>() {
+            });
         String newWebsiteName;
         if (map != null) {
             newWebsiteName = map.get(websiteName);
         } else {
-            map = (Map<String, String>) GsonUtils.fromJson(
-                PropertiesConfiguration.getInstance().get("websitename_transform_map"),
-                new TypeToken<HashMap<String, String>>() {
-                }.getType());
-            CacheUtil.INSTANCE.insertObject("websitename_transform_map", map);
+            String property = PropertiesConfiguration.getInstance()
+                .get(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP.getRedisKey());
+            map = JSON.parseObject(property, Map.class);
+            redisService.cache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, map);
             newWebsiteName = map.get(websiteName);
         }
-        if (StringUtils.isNotBlank(newWebsiteName)) {
-            Website website = websiteService.getCachedWebsiteByName(newWebsiteName);
-            WebsiteConf conf = null;
-            if (website != null && website.getWebsiteConf() != null) {
-                conf = website.getWebsiteConf();
-                conf.setName(websiteName);
-                logger.info("websiteName:{},return conf :{}", websiteName, conf.toString());
-                return conf;
-            } else {
-                logger.warn("no active website named {}", newWebsiteName);
-            }
-        } else {
+        if (StringUtils.isBlank(newWebsiteName)) {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
+            return null;
         }
-        return null;
-
+        WebsiteConf conf = websiteConfigService.getWebsiteConfFromCache(newWebsiteName);
+        if (null != conf) {
+            //中文
+            conf.setName(websiteName);
+        }
+        return conf;
     }
 
     @Override
@@ -109,31 +97,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public boolean updateWebsiteConfig(String websiteName, String searchConfigSource, String extractConfigSource) {
-        logger.info("crawlerService start update webiste:" + websiteName);
-        try {
-            synchronized (websiteName) {
-                Website website = websiteService.getWebsiteNoConfByName(websiteName);
-                if (website != null) {
-                    website.setSearchConfigSource(searchConfigSource);
-                    website.setExtractorConfigSource(extractConfigSource);
-                    if (websiteService.countWebsiteConfigByWebsiteId(website.getId()) > 0) {
-                        websiteService.updateWebsiteConfig(website);
-                        logger.info("update websiteConfig success,webiste:" + websiteName);
-                    } else {
-                        websiteService.insertWebsiteConfig(website);
-                        logger.info("insert websiteConfig success,webiste:" + websiteName);
-                    }
-                } else {
-                    logger.warn("can't find website by websiteName:" + websiteName);
-                    return false;
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return false;
-        }
-        return true;
+    public boolean updateWebsiteConfig(String websiteName, String searchConfig, String extractConfig) {
+        return websiteConfigService.updateWebsiteConf(websiteName, searchConfig, extractConfig);
     }
 
     @Override
@@ -366,73 +331,13 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
         HttpResult<List<OperatorCatalogue>> result = new HttpResult<>();
         try {
-            List<OperatorCatalogue> list = new ArrayList<>();
-            Map<String, List<OperatorConfig>> map = new HashMap<>();
-            List<OperatorConfig> map10086 = new ArrayList<>();
-            List<OperatorConfig> map10000 = new ArrayList<>();
-            List<OperatorConfig> map10010 = new ArrayList<>();
-            list.add(new OperatorCatalogue("移动", map10086));
-            list.add(new OperatorCatalogue("联通", map10010));
-            list.add(new OperatorCatalogue("电信", map10000));
-            for (GroupEnum group : GroupEnum.values()) {
-                Website website = websiteService.getCachedWebsiteByName(group.getWebsiteName());
-                if (null == website) {
-                    throw new RuntimeException("website not found websiteName=" + group.getWebsiteName());
-                }
-                WebsiteConf websiteConf = website.getWebsiteConf();
-                String initSetting = websiteConf.getInitSetting();
-                if (StringUtils.isBlank(initSetting)) {
-                    throw new RuntimeException("initSetting is blank websiteName=" + group.getWebsiteName());
-                }
-                JSONObject json = JSON.parseObject(initSetting);
-                if (!json.containsKey("fields")) {
-                    throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
-                }
-                List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"),
-                    FieldInitSetting.class);
-                if (null == fieldInitSettings) {
-                    throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
-                }
-
-                OperatorConfig config = new OperatorConfig();
-                config.setGroupCode(group.getGroupCode());
-                config.setGroupName(group.getGroupName());
-                config.setWebsiteName(group.getWebsiteName());
-                config.setLoginTip(websiteConf.getLoginTip());
-                config.setResetTip(websiteConf.getResetTip());
-                config.setResetType(websiteConf.getResetType());
-                config.setResetURL(websiteConf.getResetURL());
-                config.setSmsReceiver(websiteConf.getSmsReceiver());
-                config.setSmsTemplate(websiteConf.getSmsTemplate());
-                config.setVerifyTip(websiteConf.getVerifyTip());
-
-                for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
-                    InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
-                    if (null != fieldInitSetting.getDependencies()) {
-                        for (String dependency : fieldInitSetting.getDependencies()) {
-                            field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
-                        }
-                    }
-                    if (StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
-                        config.setHasPicCode(true);
-                    }
-                    if (StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
-                        config.setHasSmsCode(true);
-                    }
-                    config.getFields().add(field);
-                }
-                if (group.getGroupName().contains("移动")) {
-                    map10086.add(config);
-                    continue;
-                }
-                if (group.getGroupName().contains("联通")) {
-                    map10010.add(config);
-                    continue;
-                }
-                if (group.getGroupName().contains("电信")) {
-                    map10000.add(config);
-                    continue;
-                }
+            List<OperatorCatalogue> list = redisService.getCache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG,
+                new TypeReference<List<OperatorCatalogue>>() {
+                });
+            if (null == list) {
+                logger.warn("not found OperatorCatalogue from cache");
+                list = websiteConfigService.queryAllOperatorConfig();
+                redisService.cache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, list);
             }
             return result.success(list);
         } catch (Exception e) {

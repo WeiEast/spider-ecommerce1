@@ -8,36 +8,33 @@
  */
 package com.datatrees.rawdatacentral.core.service;
 
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.rawdatacentral.domain.common.Website;
-
 /**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月28日 下午3:27:49
+ * 
+ * Created by zhouxinghai on 2017/6/30
  */
 public interface WebsiteService {
-    public SearchProcessorContext getSearchProcessorContext(String websiteName);
 
-    public ExtractorProcessorContext getExtractorProcessorContext(int websiteId);
-
-    public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId);
-
-    public Website getWebsiteByName(String websiteName);
-
-    public Website getCachedWebsiteByID(int websiteId);
-
-    public Website getCachedWebsiteByName(String websiteName);
-
-    public int updateWebsiteConfig(Website website);
-
-    public Website getWebsiteNoConfByName(String websiteName);
-
-    public int insertWebsiteConfig(Website website);
-    
-    public int countWebsiteConfigByWebsiteId(int websiteId);
+//    public Website  getCrawWebsite(String websiteName);
+//
+//    public SearchProcessorContext getSearchProcessorContext(String websiteName);
+//
+//    public ExtractorProcessorContext getExtractorProcessorContext(int websiteId);
+//
+//    public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId);
+//
+//    public Website getWebsiteByName(String websiteName);
+//
+//    public WebsiteConfig getCachedWebsiteByID(int websiteId);
+//
+//    public WebsiteConfig getCachedWebsiteByName(String websiteName);
+//
+//    public int updateWebsiteConfig(WebsiteConfig website);
+//
+//    public WebsiteConfig getWebsiteNoConfByName(String websiteName);
+//
+//    public int insertWebsiteConfig(WebsiteConfig website);
+//
+//    public int countWebsiteConfigByWebsiteId(int websiteId);
 
 
 }

@@ -8,23 +8,21 @@
  */
 package com.datatrees.rawdatacentral.collector.worker.normalizer;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.datatrees.crawler.core.processor.Constants;
+import com.datatrees.rawdatacentral.core.common.DataNormalizer;
+import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.rawdatacentral.core.model.data.EBankData;
+import com.datatrees.rawdatacentral.service.BankService;
+import com.datatrees.rawdatacentral.domain.model.Bank;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.rawdatacentral.core.common.DataNormalizer;
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.ResultType;
-import com.datatrees.rawdatacentral.core.model.data.EBankData;
-import com.datatrees.rawdatacentral.core.service.BankService;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -37,7 +35,7 @@ public class EbankMessageNormalizer implements DataNormalizer {
     private static final Logger LOGGER = LoggerFactory.getLogger(EbankMessageNormalizer.class);
 
     @Resource
-    private BankService bankService;
+    private BankService         bankService;
 
     /*
      * (non-Javadoc)
@@ -56,8 +54,8 @@ public class EbankMessageNormalizer implements DataNormalizer {
             ((EBankData) object).setBankId(message.getTypeId());
             ((EBankData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap
-                && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EBankData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && StringUtils.equals(
+            (String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EBankData.class.getSimpleName())) {
             EBankData eBankData = new EBankData();
             eBankData.putAll((Map) object);
             eBankData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
@@ -73,13 +71,12 @@ public class EbankMessageNormalizer implements DataNormalizer {
     }
 
     private int getBankId(ExtractMessage message) {
-        Bank bank = bankService.getBankByWebsiteId(message.getWebsiteId());
+        Bank bank = bankService.getByWebsiteIdFromCache(message.getWebsiteId());
         if (bank == null) {
-            LOGGER.warn("get null ecommerce with website id " + message.getWebsiteId() + ", set default EcommerceId 0");
+            LOGGER.warn("bank not found websiteId={}", message.getWebsiteId());
             return 0;
-        } else {
-            return bank.getId();
         }
+        return bank.getBankId();
     }
 
 }

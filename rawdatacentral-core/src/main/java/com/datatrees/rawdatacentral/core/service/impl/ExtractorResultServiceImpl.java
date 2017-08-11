@@ -1,28 +1,12 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import com.datatrees.rawdatacentral.core.dao.EBankExtractResultDao;
-import com.datatrees.rawdatacentral.core.model.MailBill;
-import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
+import com.datatrees.rawdatacentral.dao.*;
+import com.datatrees.rawdatacentral.dao.EbankExtractResultDAO;
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
+import com.datatrees.rawdatacentral.domain.model.*;
 import org.springframework.stereotype.Service;
 
-import com.datatrees.rawdatacentral.core.dao.DefaultExtractResultDao;
-import com.datatrees.rawdatacentral.core.dao.EcommerceExtractResultDao;
-import com.datatrees.rawdatacentral.core.dao.MailExtractResultDao;
-import com.datatrees.rawdatacentral.core.dao.OperatorExtractResultDao;
-import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
-import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
-import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
-import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
+import javax.annotation.Resource;
 
 /**
  * Created by wuminlang on 15/7/28.
@@ -31,33 +15,33 @@ import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
 public class ExtractorResultServiceImpl implements ExtractorResultService {
 
     @Resource
-    private MailExtractResultDao mailExtractResultDao;
+    private MailExtractResultDAO mailExtractResultDao;
 
     @Resource
-    private EcommerceExtractResultDao ecommerceExtractResultDao;
+    private EcommerceExtractResultDAO ecommerceExtractResultDao;
 
     @Resource
-    private OperatorExtractResultDao operatorExtractResultDao;
+    private OperatorExtractResultDAO operatorExtractResultDao;
 
     @Resource
-    private EBankExtractResultDao eBankExtractResultDao;
+    private EbankExtractResultDAO eBankExtractResultDao;
 
     @Resource
-    private DefaultExtractResultDao defaultExtractResultDao;
+    private DefaultExtractResultDAO defaultExtractResultDAO;
 
     @Override
     public int insertMailExtractResult(MailExtractResult mailExtractResult) {
-        return mailExtractResultDao.insertMailExtractResult(mailExtractResult);
+        return mailExtractResultDao.insert(mailExtractResult);
     }
 
     @Override
     public int insertEcommerceExtractResult(EcommerceExtractResult ecommerceExtractResult) {
-        return ecommerceExtractResultDao.insertEcommerceExtractResult(ecommerceExtractResult);
+        return ecommerceExtractResultDao.insert(ecommerceExtractResult);
     }
 
     @Override
     public int insertOperatorExtractResult(OperatorExtractResult operatorExtractResult) {
-        return operatorExtractResultDao.insertOperatorExtractResult(operatorExtractResult);
+        return operatorExtractResultDao.insert(operatorExtractResult);
     }
 
 
@@ -65,12 +49,12 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
      * (non-Javadoc)
      * 
      * @see
-     * ExtractorResultService#insertEBankExtractResult(com.datatrees
+     * ExtractorResultService#insert(com.datatrees
      * .rawdatacentral.core.model.result.EBankExtractResult)
      */
     @Override
     public int insertEBankExtractResult(EBankExtractResult result) {
-        return eBankExtractResultDao.insertEBankExtractResult(result);
+        return eBankExtractResultDao.insert(result);
     }
 
 
@@ -78,12 +62,12 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
      * (non-Javadoc)
      * 
      * @see
-     * ExtractorResultService#insertDefaultExtractResult(com.
+     * ExtractorResultService#insert(com.
      * datatrees.rawdatacentral.core.model.result.DefaultExtractResult)
      */
     @Override
     public int insertDefaultExtractResult(DefaultExtractResult defaultExtractResult) {
-        return defaultExtractResultDao.insertDefaultExtractResult(defaultExtractResult);
+        return defaultExtractResultDAO.insert(defaultExtractResult);
     }
 
 }

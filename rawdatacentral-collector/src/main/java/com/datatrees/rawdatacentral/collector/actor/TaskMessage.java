@@ -9,7 +9,7 @@
 package com.datatrees.rawdatacentral.collector.actor;
 
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.rawdatacentral.domain.common.Task;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 
 /**

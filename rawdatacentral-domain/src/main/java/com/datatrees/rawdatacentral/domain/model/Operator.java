@@ -1,96 +1,86 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- *
- * Copyright (c) datatrees.com Inc. 2015
- */
 package com.datatrees.rawdatacentral.domain.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
-/**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月27日 下午2:03:52
- */
+ /** create by system from table t_operator(operator basic info)  */
 public class Operator implements Serializable {
-    private int id;
-    private int websiteId;
-    private String operatorName;
-    private String region;
-    private boolean isEnabled;
+    /** operator Id */
+    private Integer id;
 
-    /**
-     * @return the id
-     */
-    public int getId() {
+    /** not null if operator support search */
+    private Integer websiteId;
+
+    /** operator name */
+    private String operatorName;
+
+    /** operator region */
+    private String region;
+
+    /** 0:false,1:true */
+    private Boolean isenabled;
+
+    /**  */
+    private Date createdAt;
+
+    /**  */
+    private Date updatedAt;
+
+    private static final long serialVersionUID = 1L;
+
+    public Integer getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * @return the websiteId
-     */
-    public int getWebsiteId() {
+    public Integer getWebsiteId() {
         return websiteId;
     }
 
-    /**
-     * @param websiteId the websiteId to set
-     */
-    public void setWebsiteId(int websiteId) {
+    public void setWebsiteId(Integer websiteId) {
         this.websiteId = websiteId;
     }
 
-    /**
-     * @return the operatorName
-     */
     public String getOperatorName() {
         return operatorName;
     }
 
-    /**
-     * @param operatorName the operatorName to set
-     */
     public void setOperatorName(String operatorName) {
-        this.operatorName = operatorName;
+        this.operatorName = operatorName == null ? null : operatorName.trim();
     }
 
-    /**
-     * @return the region
-     */
     public String getRegion() {
         return region;
     }
 
-    /**
-     * @param region the region to set
-     */
     public void setRegion(String region) {
-        this.region = region;
+        this.region = region == null ? null : region.trim();
     }
 
-    /**
-     * @return the isEnabled
-     */
-    public boolean isEnabled() {
-        return isEnabled;
+    public Boolean getIsenabled() {
+        return isenabled;
     }
 
-    /**
-     * @param isEnabled the isEnabled to set
-     */
-    public void setEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
+    public void setIsenabled(Boolean isenabled) {
+        this.isenabled = isenabled;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

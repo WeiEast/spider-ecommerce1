@@ -142,63 +142,63 @@ public class BankExample implements Serializable {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andIdIsNull() {
+        public Criteria andBankIdIsNull() {
             addCriterion("Id is null");
             return (Criteria) this;
         }
 
-        public Criteria andIdIsNotNull() {
+        public Criteria andBankIdIsNotNull() {
             addCriterion("Id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(Integer value) {
-            addCriterion("Id =", value, "id");
+        public Criteria andBankIdEqualTo(Integer value) {
+            addCriterion("Id =", value, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(Integer value) {
-            addCriterion("Id <>", value, "id");
+        public Criteria andBankIdNotEqualTo(Integer value) {
+            addCriterion("Id <>", value, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(Integer value) {
-            addCriterion("Id >", value, "id");
+        public Criteria andBankIdGreaterThan(Integer value) {
+            addCriterion("Id >", value, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("Id >=", value, "id");
+        public Criteria andBankIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("Id >=", value, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(Integer value) {
-            addCriterion("Id <", value, "id");
+        public Criteria andBankIdLessThan(Integer value) {
+            addCriterion("Id <", value, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(Integer value) {
-            addCriterion("Id <=", value, "id");
+        public Criteria andBankIdLessThanOrEqualTo(Integer value) {
+            addCriterion("Id <=", value, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdIn(List<Integer> values) {
-            addCriterion("Id in", values, "id");
+        public Criteria andBankIdIn(List<Integer> values) {
+            addCriterion("Id in", values, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<Integer> values) {
-            addCriterion("Id not in", values, "id");
+        public Criteria andBankIdNotIn(List<Integer> values) {
+            addCriterion("Id not in", values, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(Integer value1, Integer value2) {
-            addCriterion("Id between", value1, value2, "id");
+        public Criteria andBankIdBetween(Integer value1, Integer value2) {
+            addCriterion("Id between", value1, value2, "bankId");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("Id not between", value1, value2, "id");
+        public Criteria andBankIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("Id not between", value1, value2, "bankId");
             return (Criteria) this;
         }
 

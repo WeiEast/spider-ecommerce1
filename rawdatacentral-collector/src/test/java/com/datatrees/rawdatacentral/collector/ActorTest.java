@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @since 2015年7月29日 下午4:44:13
  */
-public class ActorTest extends AbstractTest {
+public class ActorTest extends BaseTest {
 
     @Resource
     private Collector           collector;
@@ -52,7 +50,7 @@ public class ActorTest extends AbstractTest {
     @Test
     public void testCrawlerService() throws Exception {
         System.out.println(PropertiesConfiguration.getInstance());
-//        cs.verifyQr(333, "");
+        //        cs.verifyQr(333, "");
     }
 
     @Test
@@ -74,7 +72,6 @@ public class ActorTest extends AbstractTest {
             "https://w.mail.qq.com/cgi-bin/today?sid=wIfp4pT5aR9YA0ceXcLT5vNw,4,qbTJSS0hBeXVTSy1LNzhuSDJDUlBBbSpJTmVmMmR6Um5JcFZWZkEqUkVxWV8.&first=1&mcookie=disabled");
         collector.processMessage(message);
 
-
     }
 
     @Test
@@ -84,7 +81,7 @@ public class ActorTest extends AbstractTest {
             "MAIL_SESS=U3uBQg9koV20ORM9Zkv1tAsHwcJe6s2RrbMHKsp3Bw9N15ST1ltocJUuxOiIwQR3DL.mxWxI8JKD5a.NYTv2YEf03hYdioCZIF9IhySjTtwlZHXK20XFbO_yb9gUzltkPm_LKLdmoqsJBAAYaTlx25Jd7IPtNJ16qIxFn4BNevOpr; MAIL_MISC=tangbaiyuan223#biujqugss; S_INFO=1479107027|0|2&90##|tangbaiyuan223#biujqugss; NTES_PASSPORT=.bioTecdtV0vEXH4f3dWjumfk7PSRrNU3nW65tkkLwB3mVb8mPEkn1.RuMpGdJSKOF0SP6vO3CZPKw8yQ8YoECAjmQwL8N6X1ilWVQqHWeSpt; mail_idc=\"\"; JSESSIONID=4530AC22E4B1EC49014D0C8143BCDE1D; starttime=; locale=; cm_last_info=dT10YW5nYmFpeXVhbjIyMyU0MDE2My5jb20mZD1odHRwJTNBJTJGJTJGbWFpbC4xNjMuY29tJTJGbSUyRm1haW4uanNwJTNGc2lkJTNEekFFYm9YeHh2RU1XZlJrc0VreHhUbWlWbER6cGpKbVQmcz16QUVib1h4eHZFTVdmUmtzRWt4eFRtaVZsRHpwakptVCZoPWh0dHAlM0ElMkYlMkZtYWlsLjE2My5jb20lMkZtJTJGbWFpbi5qc3AlM0ZzaWQlM0R6QUVib1h4eHZFTVdmUmtzRWt4eFRtaVZsRHpwakptVCZ3PW1haWwuMTYzLmNvbSZsPTAmdD0xMQ==; SID=6b351085-3fbb-4a83-bb1c-01c1bc681ca6; MAIL_SINFO=1479107027|0|2&90##|tangbaiyuan223#biujqugss; NTES_SESS=U3uBQg9koV20ORM9Zkv1tAsHwcJe6s2RrbMHKsp3Bw9N15ST1ltocJUuxOiIwQR3DL.mxWxI8JKD5a.NYTv2YEf03hYdioCZIF9IhySjTtwlZHXK20XFbO_yb9gUzltkPm_LKLdmoqsJBAAYaTlx25Jd7IPtNJ16qIxFn4BNevOpr; mail_entry_sess=9a02e7dcb6638dfc6c9232ba65d8b10923455789d3b1d9f2e21f6c56b00641f020122db0356302bf519432d9e6db719c16c76e5b26666ce27a184459fdf270c8ed0ea397f398e4cf0f2ab706599ab79384457fe991ca99dfe431e925809df03e62cbb219c831f874dbb0311c2e4943bde61706a8359aa4a7fd675b70c77dfe5296c8eaeed245f22a48f52040e8de692b725ca5d7c7fc073f5b2fb1f832cbd8ea69fe9abf66bcb27540a4aa4ea2dfbb38f06a39fd955c7cdaf9846507b7406b63; secu_info=1; MAIL_PINFO=tangbaiyuan223@163.com|1479107027|1|mail163|11&21|zhj&1479106655&mail163#zhj&330100#10#0|&0|mail163|tangbaiyuan223@163.com; Coremail=1479107027742%zAEboXxxvEMWfRksEkxxTmiVlDzpjJmT%g6a48.mail.163.com; mail_upx=t6hz.mail.163.com|t7hz.mail.163.com|t8hz.mail.163.com|t10hz.mail.163.com|t11hz.mail.163.com|t12hz.mail.163.com|t13hz.mail.163.com|t1hz.mail.163.com|t2hz.mail.163.com|t4hz.mail.163.com|t5hz.mail.163.com|c2bj.mail.163.com|c3bj.mail.163.com|c4bj.mail.163.com|c5bj.mail.163.com|c6bj.mail.163.com|c7bj.mail.163.com|c1bj.mail.163.com; P_INFO=tangbaiyuan223@163.com|1479107027|1|mail163|11&21|zhj&1479106655&mail163#zhj&330100#10#0|&0|mail163|tangbaiyuan223@163.com; mail_upx_nf=");
         message.setTaskId(1000000174);
         message.setWebsiteName("163.com");
-        message.setEndURL("http://mail.163.com/m/main.jsp?sid=zAEboXxxvEMWfRksEkxxTmiVlDzpjJmT&df=smart_ios");
+        message.setEndURL("http://mail.163.com/m/web.jsp?sid=zAEboXxxvEMWfRksEkxxTmiVlDzpjJmT&df=smart_ios");
         collector.processMessage(message);
     }
 
@@ -105,7 +102,7 @@ public class ActorTest extends AbstractTest {
         message.setWebsiteName("126.com");
         message.setNeedDuplicate(true);
 
-        message.setEndURL("http://mail.126.com/m/main.jsp?sid=tATgmGjRbxndudDCLjRRnYlfoLvKGRHd&df=smart_ios");
+        message.setEndURL("http://mail.126.com/m/web.jsp?sid=tATgmGjRbxndudDCLjRRnYlfoLvKGRHd&df=smart_ios");
         collector.processMessage(message);
         while (true) {
             Thread.sleep(5000);
@@ -376,7 +373,7 @@ public class ActorTest extends AbstractTest {
     public void ali1() throws InterruptedException {
         CollectorMessage message = new CollectorMessage();
         message.setCookie(
-                "ubn=p; thw=cn; spanner=Jhue7xCq0DB1LjfjizZbnkQVjCyBGQUKXt2T4qEYgj0=; lid=%E5%8F%B2%E4%BA%8C%E5%B9%B3%E7%88%B1%E4%BD%A0; _l_g_=Ug%3D%3D; JSESSIONID=RZ12NpXJSA3Dh0bbb9aFAtwVNaNiFyauthRZ24GZ00; mobileSendTime=-1; cookie1=ACuySV7VjQIsk2ARHq0fVrI0hN8QYxz1EeWmj0guTdI%3D; cookie2=12fc15055de4d8073688e8728af1d3e5; uss=U7Y7QZFjC7Gn%2Fd2%2FIdxv84fRd7Z1N5JpsR%2FlJugTG%2FTy1hhVPtUS4XwvjsM%3D; zone=RZ24B; CHAIR_SESS=JWYmdXvINYrjfJhNfnAOApEy7drxxpERpaBXObg17RbIKNEAtyvEOZ4QbekehwNGEWdFdrMdTEgxjpmpPqgglJnsKWqD6lZlgjfoqn6-oIN8soNRHZaPtzNaUKvVSWuT9luPvs5q2AS1dA-sMem-Xg==; CLUB_ALIPAY_COM=2088022954760902; ALIPAYJSESSIONID.sig=CnhJNsKPCIyGlk_YNsBW34Jb81-MUaD_NKbci8FgTrI; skt=e699962941112ee9; iw.userid=K1iSL1mnW5gJwO2aWx2lPA==; ucn=unsz; riskCredibleMobileSendTime=-1; _umdata=ED82BDCEC1AA6EB9864C872E17D6058993F875F279997C08B9DB68EB3BD5D59843943117D81447F3CD43AD3E795C914C8B6F457ED96A4AD595BA5BD2F1AC4547; tracknick=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; mt=np=; riskMobileAccoutSendTime=-1; _nk_=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; log=lty=Tmc%3D; lgc=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; existShop=MTQ5NTAyNjUwNg%3D%3D; credibleMobileSendTime=-1; sg=%E4%BD%A096; ALIPAYJSESSIONID=RZ12NpXJSA3Dh0bbb9aFAtwVNaNiFyauthRZ24GZ00; cna=BTmjEcril2ICAXWIVkG7mFAK; session.cookieNameId=ALIPAYJSESSIONID; LoginForm=alipay_login; umt=HBb535b50a63a17bf2637f16a4ecd1a19e; _tb_token_=eede7d1ee0310; riskMobileCreditSendTime=-1; uc1=cbu=1&cookie14=UoW%2BvfoR2k74RA%3D%3D&lng=zh_CN&cookie16=Vq8l%2BKCLySLZMFWHxqs8fwqnEw%3D%3D&existShop=false&cookie21=UtASsssmeW6khGmdJha8&tag=8&cookie15=VT5L2FSpMGV7TQ%3D%3D&pas=0; alipay=K1iSL1mnW5gJwO2aWx2lPMcmJ+8kTs4kAtvGzDV+SA==; uc3=sg2=ACJc9qbL5F5J1clhBSR%2BT8Gvti4QlYaJ%2Bk%2Brta3P6oA%3D&nk2=qSWTmKtGAzh38A%3D%3D&id2=UU6m39NZmsUJ6Q%3D%3D&vt3=F8dARVDUWC%2Fz6EsIkN8%3D&lg2=VFC%2FuZ9ayeYq2g%3D%3D; riskMobileBankSendTime=-1; unb=2670856439; _cc_=VT5L2FSpdA%3D%3D; riskOriginalAccountMobileSendTime=-1; cookie17=UU6m39NZmsUJ6Q%3D%3D; ctuMobileSendTime=-1; ctoken=Ggwi7a2CFN-lzgXA; ali_apache_tracktmp=uid=2088022954760902; tg=0; t=6f6e2513e1794d2f86e48f709d48eb22; v=0; lc=Vy%2BWeXGTwf6sqdtweWIz");
+            "ubn=p; thw=cn; spanner=Jhue7xCq0DB1LjfjizZbnkQVjCyBGQUKXt2T4qEYgj0=; lid=%E5%8F%B2%E4%BA%8C%E5%B9%B3%E7%88%B1%E4%BD%A0; _l_g_=Ug%3D%3D; JSESSIONID=RZ12NpXJSA3Dh0bbb9aFAtwVNaNiFyauthRZ24GZ00; mobileSendTime=-1; cookie1=ACuySV7VjQIsk2ARHq0fVrI0hN8QYxz1EeWmj0guTdI%3D; cookie2=12fc15055de4d8073688e8728af1d3e5; uss=U7Y7QZFjC7Gn%2Fd2%2FIdxv84fRd7Z1N5JpsR%2FlJugTG%2FTy1hhVPtUS4XwvjsM%3D; zone=RZ24B; CHAIR_SESS=JWYmdXvINYrjfJhNfnAOApEy7drxxpERpaBXObg17RbIKNEAtyvEOZ4QbekehwNGEWdFdrMdTEgxjpmpPqgglJnsKWqD6lZlgjfoqn6-oIN8soNRHZaPtzNaUKvVSWuT9luPvs5q2AS1dA-sMem-Xg==; CLUB_ALIPAY_COM=2088022954760902; ALIPAYJSESSIONID.sig=CnhJNsKPCIyGlk_YNsBW34Jb81-MUaD_NKbci8FgTrI; skt=e699962941112ee9; iw.userid=K1iSL1mnW5gJwO2aWx2lPA==; ucn=unsz; riskCredibleMobileSendTime=-1; _umdata=ED82BDCEC1AA6EB9864C872E17D6058993F875F279997C08B9DB68EB3BD5D59843943117D81447F3CD43AD3E795C914C8B6F457ED96A4AD595BA5BD2F1AC4547; tracknick=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; mt=np=; riskMobileAccoutSendTime=-1; _nk_=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; log=lty=Tmc%3D; lgc=%5Cu53F2%5Cu4E8C%5Cu5E73%5Cu7231%5Cu4F60; existShop=MTQ5NTAyNjUwNg%3D%3D; credibleMobileSendTime=-1; sg=%E4%BD%A096; ALIPAYJSESSIONID=RZ12NpXJSA3Dh0bbb9aFAtwVNaNiFyauthRZ24GZ00; cna=BTmjEcril2ICAXWIVkG7mFAK; session.cookieNameId=ALIPAYJSESSIONID; LoginForm=alipay_login; umt=HBb535b50a63a17bf2637f16a4ecd1a19e; _tb_token_=eede7d1ee0310; riskMobileCreditSendTime=-1; uc1=cbu=1&cookie14=UoW%2BvfoR2k74RA%3D%3D&lng=zh_CN&cookie16=Vq8l%2BKCLySLZMFWHxqs8fwqnEw%3D%3D&existShop=false&cookie21=UtASsssmeW6khGmdJha8&tag=8&cookie15=VT5L2FSpMGV7TQ%3D%3D&pas=0; alipay=K1iSL1mnW5gJwO2aWx2lPMcmJ+8kTs4kAtvGzDV+SA==; uc3=sg2=ACJc9qbL5F5J1clhBSR%2BT8Gvti4QlYaJ%2Bk%2Brta3P6oA%3D&nk2=qSWTmKtGAzh38A%3D%3D&id2=UU6m39NZmsUJ6Q%3D%3D&vt3=F8dARVDUWC%2Fz6EsIkN8%3D&lg2=VFC%2FuZ9ayeYq2g%3D%3D; riskMobileBankSendTime=-1; unb=2670856439; _cc_=VT5L2FSpdA%3D%3D; riskOriginalAccountMobileSendTime=-1; cookie17=UU6m39NZmsUJ6Q%3D%3D; ctuMobileSendTime=-1; ctoken=Ggwi7a2CFN-lzgXA; ali_apache_tracktmp=uid=2088022954760902; tg=0; t=6f6e2513e1794d2f86e48f709d48eb22; v=0; lc=Vy%2BWeXGTwf6sqdtweWIz");
         message.setTaskId(1000000146);
         message.setWebsiteName("alipay.com");
         message.setEndURL("https://buyertrade.taobao.com/trade/itemlist/list_bought_items.htm");

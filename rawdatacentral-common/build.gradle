@@ -5,4 +5,11 @@ dependencies {
     testCompile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
     testCompile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    compile "commons-io:commons-io:${commonsIoVersion}"
+    compile "com.alibaba:fastjson:${fastjsonVersion}"
+    compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+
+
+
 }
