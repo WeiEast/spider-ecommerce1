@@ -88,9 +88,9 @@ public class OperatorController {
     @RequestMapping("/openPage")
     public Object openPage(Long taskId, String url, String type) throws IOException {
         if (StringUtils.equals("post", type)) {
-            return PluginHttpUtils.postString(url, taskId);
+            return PluginHttpUtils.postString(taskId, null, url);
         }
-        return PluginHttpUtils.getString(url, taskId);
+        return PluginHttpUtils.getString(taskId, null, url);
     }
 
 }

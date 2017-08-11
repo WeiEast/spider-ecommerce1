@@ -1,5 +1,6 @@
 package com.datatrees.crawler.plugin.util;
 
+import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.domain.vo.Request;
 import com.datatrees.rawdatacentral.share.ProxyService;
 import com.treefinance.proxy.domain.Proxy;
@@ -14,7 +15,6 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.share.RedisService;
-import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhouxinghai on 2017/7/13.
@@ -56,289 +57,94 @@ public class PluginHttpUtils {
         CONFIG = RequestConfig.custom().setConnectTimeout(30000).setSocketTimeout(30000).build();
     }
 
-    enum MethodType {
-                     GET, POST;
+    public static String getString(Long taskId, String remarkId, String url) {
+        return executeString(new Request(taskId, remarkId, url));
     }
 
-    public static String getString(String url, Long taskId) throws IOException {
-        return IOUtils.toString(execute(MethodType.GET, url, null, null, taskId), DEFAULT_CHARSET);
+    public static String getString(Long taskId, String remarkId, String url, String referer) {
+        Request request = new Request(taskId, remarkId, url);
+        request.getHeader().put(HttpHeadKey.REFERER, referer);
+        return executeString(request);
     }
 
-    public static byte[] doGet(String url, Long taskId) throws IOException {
-        return execute(MethodType.GET, url, null, null, taskId);
-    }
-
-    public static String getString(String url, String referer, Long taskId) throws IOException {
-        Map<String, String> header = new HashMap<>();
-        header.put(HttpHeadKey.REFERER, referer);
-        return IOUtils.toString(execute(MethodType.GET, url, null, header, taskId), DEFAULT_CHARSET);
-    }
-
-    public static String postString(String url, Long taskId) throws IOException {
-        return IOUtils.toString(execute(MethodType.POST, url, null, null, taskId), DEFAULT_CHARSET);
-    }
-
-    public static String postString(String url, String referer, Long taskId) throws IOException {
-        Map<String, String> header = new HashMap<>();
-        header.put(HttpHeadKey.REFERER, referer);
-        return IOUtils.toString(execute(MethodType.POST, url, null, header, taskId), DEFAULT_CHARSET);
-    }
-
-    public static String postString(String url, Map<String, String> params, String referer,
-                                    Long taskId) throws IOException {
-        Map<String, String> header = new HashMap<>();
-        header.put(HttpHeadKey.REFERER, referer);
-        return IOUtils.toString(execute(MethodType.POST, url, params, header, taskId), DEFAULT_CHARSET);
-    }
-
-    public static String postString(String url, Map<String, String> params, String referer, Long taskId,
-                                    String charsetName) throws IOException {
-        if (StringUtils.isBlank(charsetName)) {
-            charsetName = DEFAULT_CHARSET;
-        }
-        Map<String, String> header = new HashMap<>();
-        header.put(HttpHeadKey.REFERER, referer);
-        return IOUtils.toString(execute(MethodType.POST, url, params, header, taskId), charsetName);
-    }
-
-    /**
-     * HTTP get 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
-     */
-    public static String getString(String url, Map<String, String> params, Long taskId) throws IOException {
-        return IOUtils.toString(execute(MethodType.GET, url, params, null, taskId), DEFAULT_CHARSET);
+    public static String postString(Long taskId, String remarkId, String url) throws IOException {
+        Request request = new Request(taskId, remarkId, url);
+        request.setType("post");
+        return executeString(request);
     }
 
     /**
      * HTTP Post 获取内容
      *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
      */
-    public static String postString(String url, Map<String, String> params, Long taskId) throws IOException {
-        return IOUtils.toString(execute(MethodType.POST, url, params, null, taskId), DEFAULT_CHARSET);
-    }
-
-    /**
-     * HTTP get 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
-     */
-    public static String getString(String url, Map<String, String> params, Map<String, String> header,
-                                   Long taskId) throws IOException {
-        return IOUtils.toString(execute(MethodType.GET, url, params, header, taskId), DEFAULT_CHARSET);
-    }
-
-    /**
-     * HTTP Post 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
-     */
-    public static String postString(String url, Map<String, String> params, Map<String, String> header,
-                                    Long taskId) throws IOException {
-        return IOUtils.toString(execute(MethodType.POST, url, params, header, taskId), DEFAULT_CHARSET);
-    }
-
-    /**
-     * HTTP get 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
-     */
-    public static String getString(String url, Map<String, String> params, Map<String, String> header, Long taskId,
-                                   String charsetName) throws IOException {
-        if (StringUtils.isBlank(charsetName)) {
-            charsetName = DEFAULT_CHARSET;
-        }
-        return IOUtils.toString(execute(MethodType.GET, url, params, header, taskId), charsetName);
-    }
-
-    /**
-     * HTTP Post 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
-     */
-    public static String postString(String url, Map<String, String> params, Map<String, String> header, Long taskId,
-                                    String charsetName) throws IOException {
-        return IOUtils.toString(execute(MethodType.POST, url, params, header, taskId), charsetName);
-    }
-
-    /**
-     * HTTP get 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @return 页面内容
-     */
-    public static byte[] doGet(String url, String referer, Long taskId) {
-        Map<String, String> header = new HashMap<>();
-        header.put(HttpHeadKey.REFERER, referer);
-        return execute(MethodType.GET, url, null, header, taskId);
-    }
-
-    /**
-     * HTTP get 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
-     */
-    public static byte[] doGet(String url, Map<String, String> params, Map<String, String> header, Long taskId) {
-        return execute(MethodType.GET, url, params, header, taskId);
-    }
-
-    /**
-     * HTTP Post 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
-     */
-    public static byte[] doPost(String url, Map<String, String> params, Map<String, String> header, Long taskId) {
-        return execute(MethodType.POST, url, params, header, taskId);
-    }
-
-    /**
-     * HTTP Post 获取内容
-     *
-     * @param url 请求的url地址 ?之前的地址
-     * @param params 请求的参数
-     * @return 页面内容
-     */
-    public static byte[] execute(MethodType type, String url, Map<String, String> params, Map<String, String> header,
-                                 Long taskId) {
+    public static String executeString(Request request) {
+        CheckUtils.checkNotNull(request, "reques is null");
+        CheckUtils.checkNotNull(request.getTaskId(), "taskId is null");
         CloseableHttpResponse response = null;
-        BasicCookieStore cookieStore = getCookie(taskId);
+        BasicCookieStore cookieStore = getCookie(request.getTaskId());
+        request.setSendCookies(getCookieString(cookieStore));
         HttpHost proxy = null;
-        Proxy proxyConfig = getProxy(taskId, null);
+        Proxy proxyConfig = getProxy(request.getTaskId(), null);
         if (null != proxyConfig) {
             proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()),
-                url.contains("https") ? "http" : "https");
+                request.getProtocol());
         }
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG).setProxy(proxy)
             .setDefaultCookieStore(cookieStore).build();
 
         try {
-            List<NameValuePair> pairs = null;
-            if (params != null && !params.isEmpty()) {
-                pairs = new ArrayList<NameValuePair>(params.size());
-                for (Map.Entry<String, String> entry : params.entrySet()) {
+            //参数处理
+            String url = null;
+            if (CollectionUtils.isEmpty(request.getParams())) {
+                url = StringUtils.isNoneBlank(request.getFullUrl()) ? request.getFullUrl() : request.getUrl();
+            } else {
+                CheckUtils.checkNotBlank(request.getUrl(), "url is blank");
+                List<NameValuePair> pairs = new ArrayList<NameValuePair>(request.getParams().size());
+                for (Map.Entry<String, String> entry : request.getParams().entrySet()) {
                     String value = entry.getValue();
                     if (value != null) {
                         pairs.add(new BasicNameValuePair(entry.getKey(), value));
                     }
                 }
-                String param = EntityUtils.toString(new UrlEncodedFormEntity(pairs, DEFAULT_CHARSET));
-                logger.debug("httpClient doGet url = {},param={}", url, param);
-                url += "?" + param;
+                url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, DEFAULT_CHARSET));
             }
 
-            HttpRequestBase client = null;
-            if (type == MethodType.GET) {
-                client = new HttpGet(url);
-            } else {
-                client = new HttpPost(url);
+            HttpRequestBase client = StringUtils.equalsIgnoreCase("post", request.getType()) ? new HttpPost(url)
+                : new HttpGet(url);
+            if (CollectionUtils.isNotEmpty(request.getHeader())) {
+                for (Map.Entry<String, String> entry : request.getHeader().entrySet()) {
+                    client.setHeader(entry.getKey(), entry.getValue());
+                }
             }
-            if (null == header) {
-                header = new HashMap<>();
-            }
-            if (!header.containsKey(HttpHeadKey.CONNECTION)) {
-                header.put(HttpHeadKey.CONNECTION, "close");
-            }
-
-            for (Map.Entry<String, String> entry : header.entrySet()) {
-                client.setHeader(entry.getKey(), entry.getValue());
-            }
+            client.setHeader(HttpHeadKey.CONTENT_TYPE, request.getContentType());
             response = httpclient.execute(client);
             int statusCode = response.getStatusLine().getStatusCode();
+
+            request.setStatusCode(statusCode);
+            request.setReceiveCookies(getReceiveCookieString(request.getSendCookies(), cookieStore));
             if (statusCode != 200) {
                 client.abort();
                 throw new RuntimeException("HttpClient doPost error, statusCode: " + statusCode);
             }
-            saveCookie(taskId, cookieStore);
-            return EntityUtils.toByteArray(response.getEntity());
+            saveCookie(request.getTaskId(), cookieStore);
+            byte[] data = EntityUtils.toByteArray(response.getEntity());
+            request.setResponse(data);
+
+            String pageContent = StringUtils.equalsIgnoreCase("base64", request.getCharsetName())
+                ? Base64.encodeBase64String(data) : IOUtils.toString(data, request.getCharsetName());
+            request.setPageContent(pageContent);
+            return pageContent;
         } catch (Exception e) {
-            logger.error("http error url={}", url, e);
-            throw new RuntimeException("http error url=" + url, e);
+            logger.error("http error request={}", JSON.toJSONString(request), e);
+            throw new RuntimeException("http error request=" + JSON.toJSONString(request), e);
         } finally {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(response);
+            RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+            redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()),
+                JSON.toJSONString(request), 1, TimeUnit.DAYS);
         }
     }
-
-//    /**
-//     * HTTP Post 获取内容
-//     *
-//     */
-//    public static byte[] execute(Request request) {
-//        CloseableHttpResponse response = null;
-//        BasicCookieStore cookieStore = getCookie(request.getTaskId());
-//        HttpHost proxy = null;
-//        Proxy proxyConfig = getProxy(request.getTaskId(), null);
-//        if (null != proxyConfig) {
-//            proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()),
-//                request.getProtocol());
-//        }
-//        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG).setProxy(proxy)
-//            .setDefaultCookieStore(cookieStore).build();
-//
-//        try {
-//            List<NameValuePair> pairs = null;
-//            if (params != null && !params.isEmpty()) {
-//                pairs = new ArrayList<NameValuePair>(params.size());
-//                for (Map.Entry<String, String> entry : params.entrySet()) {
-//                    String value = entry.getValue();
-//                    if (value != null) {
-//                        pairs.add(new BasicNameValuePair(entry.getKey(), value));
-//                    }
-//                }
-//                String param = EntityUtils.toString(new UrlEncodedFormEntity(pairs, DEFAULT_CHARSET));
-//                logger.debug("httpClient doGet url = {},param={}", url, param);
-//                url += "?" + param;
-//            }
-//
-//            HttpRequestBase client = null;
-//            if (type == MethodType.GET) {
-//                client = new HttpGet(url);
-//            } else {
-//                client = new HttpPost(url);
-//            }
-//            if (null == header) {
-//                header = new HashMap<>();
-//            }
-//            if (!header.containsKey(HttpHeadKey.CONNECTION)) {
-//                header.put(HttpHeadKey.CONNECTION, "close");
-//            }
-//
-//            for (Map.Entry<String, String> entry : header.entrySet()) {
-//                client.setHeader(entry.getKey(), entry.getValue());
-//            }
-//            response = httpclient.execute(client);
-//            int statusCode = response.getStatusLine().getStatusCode();
-//            if (statusCode != 200) {
-//                client.abort();
-//                throw new RuntimeException("HttpClient doPost error, statusCode: " + statusCode);
-//            }
-//            saveCookie(taskId, cookieStore);
-//            return EntityUtils.toByteArray(response.getEntity());
-//        } catch (Exception e) {
-//            logger.error("http error url={}", url, e);
-//            throw new RuntimeException("http error url=" + url, e);
-//        } finally {
-//            IOUtils.closeQuietly(httpclient);
-//            IOUtils.closeQuietly(response);
-//        }
-//    }
 
     public static BasicCookieStore getCookie(Long taskId) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
@@ -387,6 +193,37 @@ public class PluginHttpUtils {
         return sb.substring(1);
     }
 
+    public static String getReceiveCookieString(String sendCookies, BasicCookieStore cookieStore) {
+        if (StringUtils.isBlank(sendCookies)) {
+            return getCookieString(cookieStore);
+        }
+        StringBuilder sb = new StringBuilder();
+        if (null != cookieStore && null != cookieStore.getCookies()) {
+            for (Cookie cookie : cookieStore.getCookies()) {
+                if (!sendCookies.contains(cookie.getName() + "=")) {
+                    sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
+                }
+            }
+        }
+        if (StringUtils.isBlank(sb)) {
+            return "";
+        }
+        return sb.substring(1);
+    }
+
+    public static String getCookieString(BasicCookieStore cookieStore) {
+        StringBuilder sb = new StringBuilder();
+        if (null != cookieStore && null != cookieStore.getCookies()) {
+            for (Cookie cookie : cookieStore.getCookies()) {
+                sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
+            }
+        }
+        if (StringUtils.isBlank(sb)) {
+            return "";
+        }
+        return sb.substring(1);
+    }
+
     public static void saveCookie(Long taskId, BasicCookieStore cookieStore) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
@@ -395,12 +232,13 @@ public class PluginHttpUtils {
             list);
     }
 
-    public static HttpResult<Map<String, Object>> refeshPicCodePicCode(Long taskId, String websiteName, String url,
-                                                                       String returnName, String formType) {
+    public static HttpResult<Map<String, Object>> refeshPicCodePicCode(Long taskId, String websiteName, String remarkId,
+                                                                       String url, String returnName, String formType) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
-            byte[] data = PluginHttpUtils.doGet(url, taskId);
-            String picCode = Base64.encodeBase64String(data);
+            Request request = new Request(taskId, remarkId, url);
+            request.setCharsetName("base64");
+            String picCode = executeString(request);
             Map<String, Object> map = new HashMap<>();
             map.put(returnName, picCode);
             logger.info("{}-->图片验证码-->刷新成功,taskId={},websiteName={},formType={},url={}", FormType.getName(formType),

@@ -105,8 +105,8 @@ public class China10086ForShop implements OperatorPluginService {
          */
         String templateUrl = "https://login.10086.cn/captchazh.htm?type=05&timestamp={}";
         String url = TemplateUtils.format(templateUrl, System.currentTimeMillis());
-        return PluginHttpUtils.refeshPicCodePicCode(param.getTaskId(), param.getWebsiteName(), url,
-            RETURN_FIELD_PIC_CODE, param.getFormType());
+        return PluginHttpUtils.refeshPicCodePicCode(param.getTaskId(), param.getWebsiteName(), "china_10086_shop_001",
+            url, RETURN_FIELD_PIC_CODE, param.getFormType());
     }
 
     private HttpResult<Map<String, Object>> validatePicCodeForLogin(OperatorParam param) {
@@ -117,7 +117,7 @@ public class China10086ForShop implements OperatorPluginService {
         String pateContent = null;
         try {
             //结果枚举:正确{"resultCode":"0"},错误{"resultCode":"1"}
-            pateContent = PluginHttpUtils.getString(url, param.getTaskId());
+            pateContent = PluginHttpUtils.getString(param.getTaskId(), "china_10086_shop_002", url);
             JSONObject json = JSON.parseObject(pateContent);
             if (!StringUtils.equals("0", json.getString("resultCode"))) {
                 logger.error("登录-->图片验证码-->校验失败,param={},pateContent={}", param, pateContent);
@@ -134,8 +134,8 @@ public class China10086ForShop implements OperatorPluginService {
     private HttpResult<Map<String, Object>> refeshPicCodeForBillDetail(OperatorParam param) {
         String templateUrl = "http://shop.10086.cn/i/authImg?t={}";
         String url = TemplateUtils.format(templateUrl, System.currentTimeMillis());
-        return PluginHttpUtils.refeshPicCodePicCode(param.getTaskId(), param.getWebsiteName(), url,
-            RETURN_FIELD_PIC_CODE, param.getFormType());
+        return PluginHttpUtils.refeshPicCodePicCode(param.getTaskId(), param.getWebsiteName(), "china_10086_shop_006",
+            url, RETURN_FIELD_PIC_CODE, param.getFormType());
     }
 
     private HttpResult<Map<String, Object>> validatePicCodeForBillDetail(OperatorParam param) {
@@ -151,7 +151,7 @@ public class China10086ForShop implements OperatorPluginService {
         try {
             //结果枚举:正确{"data":null,"retCode":"000000","retMsg":"输入正确，校验成功","sOperTime":null},
             //错误{"data":null,"retCode":"999999","retMsg":"输入错误，校验失败","sOperTime":null}
-            pateContent = PluginHttpUtils.getString(url, param.getTaskId());
+            pateContent = PluginHttpUtils.getString(param.getTaskId(),"china_10086_shop_007", url);
             JSONObject json = JSON.parseObject(pateContent);
             if (!StringUtils.equals("000000", json.getString("retCode"))) {
                 logger.error("详单-->图片验证码-->校验失败,param={},pateContent={}", param, pateContent);
@@ -171,7 +171,7 @@ public class China10086ForShop implements OperatorPluginService {
         String url = TemplateUtils.format(templateUrl, param.getMobile());
         String pageContent = null;
         try {
-            pageContent = PluginHttpUtils.postString(url, param.getTaskId());
+            pageContent = PluginHttpUtils.postString(param.getTaskId(), "china_10086_shop_003", url);
             switch (pageContent) {
                 case "0":
                     logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -213,8 +213,8 @@ public class China10086ForShop implements OperatorPluginService {
         String url = TemplateUtils.format(templateUrl, param.getMobile(), System.currentTimeMillis());
         String pageContent = null;
         try {
-            String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", mobile);
-            pageContent = PluginHttpUtils.getString(url, referer, param.getTaskId());
+//            String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", mobile);
+            pageContent = PluginHttpUtils.getString(param.getTaskId(),"china_10086_shop_008", url);
             String jsonString = JsonpUtil.getJsonString(pageContent);
             JSONObject json = JSON.parseObject(jsonString);
             if (!StringUtils.equals("000000", json.getString("retCode"))) {
@@ -252,7 +252,7 @@ public class China10086ForShop implements OperatorPluginService {
              */
             //没有设置referer会出现connect reset
             String referer = "https://login.10086.cn/html/login/login.html";
-            pageContent = PluginHttpUtils.getString(url, referer, param.getTaskId());
+            pageContent = PluginHttpUtils.getString(param.getTaskId(),"china_10086_shop_009", url, referer);
             String jsonString = JsonpUtil.getJsonString(pageContent);
             JSONObject json = JSON.parseObject(jsonString);
             String code = json.getString("retCode");
@@ -300,7 +300,7 @@ public class China10086ForShop implements OperatorPluginService {
              */
             //没有设置referer会出现connect reset
             String referer = "https://login.10086.cn/html/login/login.html";
-            pageContent = PluginHttpUtils.getString(url, referer, param.getTaskId());
+            pageContent = PluginHttpUtils.getString(param.getTaskId(),"china_10086_shop_004", url, referer);
             JSONObject json = JSON.parseObject(pageContent);
             //重复登陆:{"islocal":false,"result":"9"}
             if (StringUtils.equals("9", json.getString("result"))) {
@@ -321,9 +321,9 @@ public class China10086ForShop implements OperatorPluginService {
                 url = TemplateUtils.format(
                     "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
                     artifact);
-                PluginHttpUtils.getString(url, param.getTaskId());
+                PluginHttpUtils.getString(param.getTaskId(), "china_10086_shop_005", url);
 
-                String provinceCode = PluginHttpUtils.getCookieValue(param.getTaskId(),"ssologinprovince");
+                String provinceCode = PluginHttpUtils.getCookieValue(param.getTaskId(), "ssologinprovince");
                 String provinceName = getProvinceName(provinceCode);
                 redisService.addTaskShare(param.getTaskId(), AttributeKey.PROVINCE_NAME, provinceName);
 

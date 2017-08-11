@@ -34,7 +34,7 @@ public class ReidsServiceImpl implements RedisService {
     private RedisTemplate       redisTemplate;
 
     /**
-     * 默认超时时间(单位:秒),默认2分钟
+     * 默认超时时间(单位:秒),默认1小时
      */
     @Value("${rawdatacentral.redisKey.timeout:3600}")
     private long                defaultTimeOut;

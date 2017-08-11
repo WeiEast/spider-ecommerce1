@@ -11,6 +11,7 @@ public enum RedisKeyPrefixEnum {
     TASK_COOKIE("task_cookie", 60, " 根据taskId共享cookie"),
     TASK_SHARE("task_share", 60, " 根据taskId共享中间属性"),
     TASK_PROXY("task_proxy", 60, " 根据taskId共享代理"),
+    TASK_REQUEST("task_request", 180, "根据taskId共享代理"),
 
     WEBSITE_CONF_WEBSITENAME("website_conf_websitename", 60,"根据websitename查找website_conf"),
     ALL_OPERATOR_CONFIG("all_operator_config", 60, "运营商配置"),
