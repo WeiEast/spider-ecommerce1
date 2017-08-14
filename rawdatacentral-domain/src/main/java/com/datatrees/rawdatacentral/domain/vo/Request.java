@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.domain.vo;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
@@ -14,34 +15,48 @@ import java.util.Map;
  */
 public class Request implements Serializable {
 
+    @JSONField(ordinal = 1)
     private Long                taskId;
 
+    @JSONField(ordinal = 2)
     private String              websiteName;
 
-    private String              remarkId;
+    @JSONField(ordinal = 3)
+    private String              proxy;
 
-    private String              url;
-
-    private Map<String, String> params      = new HashMap<>();
-
-    private Map<String, String> header      = new HashMap<>();
-
-    private String              requestTimestamp;
-
+    @JSONField(ordinal = 4)
     private String              fullUrl;
 
+    @JSONField(ordinal = 5)
+    private String              url;
+
+    @JSONField(ordinal = 6)
+    private Map<String, String> params      = new HashMap<>();
+
+    @JSONField(ordinal = 7)
+    private String              remarkId;
+
+
+    @JSONField(ordinal = 8)
+    private Map<String, String> header      = new HashMap<>();
+
+    @JSONField(ordinal = 9)
+    private long                requestTimestamp;
+
+    @JSONField(ordinal = 10)
     private String              sendCookies;
 
+    @JSONField(ordinal = 11)
     private String              protocol;
 
+    @JSONField(ordinal = 12)
     private String              contentType = "application/x-www-form-urlencoded";
 
+    @JSONField(ordinal = 13)
     private RequestType         requestType = RequestType.GET;
-
 
     public Request() {
     }
-
 
     public Long getTaskId() {
         return taskId;
@@ -91,11 +106,11 @@ public class Request implements Serializable {
         this.header = header;
     }
 
-    public String getRequestTimestamp() {
+    public long getRequestTimestamp() {
         return requestTimestamp;
     }
 
-    public void setRequestTimestamp(String requestTimestamp) {
+    public void setRequestTimestamp(long requestTimestamp) {
         this.requestTimestamp = requestTimestamp;
     }
 
@@ -137,5 +152,18 @@ public class Request implements Serializable {
 
     public void setRequestType(RequestType requestType) {
         this.requestType = requestType;
+    }
+
+    public String getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }
