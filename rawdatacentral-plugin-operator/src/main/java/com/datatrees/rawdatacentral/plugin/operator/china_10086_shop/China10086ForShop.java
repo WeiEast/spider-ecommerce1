@@ -4,19 +4,17 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.plugin.util.PluginHttpUtils;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.JsonpUtil;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.constant.PerpertyKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.share.RedisService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +40,8 @@ public class China10086ForShop implements OperatorPluginService {
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
-            //登陆页没有获取任何cookie,https://login.10086.cn/login.html?channelID=12003&backUrl=http://shop.10086.cn/i/,不用登陆
-            //预登陆可以先返回图片验证码
-            return refeshPicCode(param);
+            //登陆页没有获取任何cookie,不用登陆
+            return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={}", param, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
@@ -52,14 +49,14 @@ public class China10086ForShop implements OperatorPluginService {
     }
 
     @Override
-    public HttpResult<Map<String, Object>> refeshPicCode(OperatorParam param) {
+    public HttpResult<String> refeshPicCode(OperatorParam param) {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return refeshPicCodeForLogin(param);
             case FormType.VALIDATE_BILL_DETAIL:
                 return refeshPicCodeForBillDetail(param);
             default:
-                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+                return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
     }
 
@@ -99,80 +96,95 @@ public class China10086ForShop implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> refeshPicCodeForLogin(OperatorParam param) {
+    private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
         /**
          * 这里不一定有图片验证码,随机出现
          */
-        String templateUrl = "https://login.10086.cn/captchazh.htm?type=05&timestamp={}";
-        String url = TemplateUtils.format(templateUrl, System.currentTimeMillis());
-        return PluginHttpUtils.refeshPicCodePicCode(param.getTaskId(), param.getWebsiteName(), "china_10086_shop_001",
-            url, RETURN_FIELD_PIC_CODE, param.getFormType());
+        HttpResult<String> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "https://login.10086.cn/captchazh.htm?type=05&timestamp={}";
+            response = TaskHttpClient
+                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_001")
+                .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            logger.info("登录-->图片验证码-->刷新成功,param={}", param);
+            return result.success(response.getPateContentForBase64());
+        } catch (Exception e) {
+            logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
     }
 
     private HttpResult<Map<String, Object>> validatePicCodeForLogin(OperatorParam param) {
-        String templateUrl = "https://login.10086.cn/verifyCaptcha?inputCode={}";
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
-        String url = TemplateUtils.format(templateUrl, param.getPicCode());
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        String pateContent = null;
+        Response response = null;
         try {
+            String templateUrl = "https://login.10086.cn/verifyCaptcha?inputCode={}";
+            response = TaskHttpClient
+                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_002")
+                .setFullUrl(templateUrl, param.getPicCode()).invoke();
             //结果枚举:正确{"resultCode":"0"},错误{"resultCode":"1"}
-            pateContent = PluginHttpUtils.getString(param.getTaskId(), "china_10086_shop_002", url);
-            JSONObject json = JSON.parseObject(pateContent);
+            JSONObject json = response.getPateContentForJSON();
             if (!StringUtils.equals("0", json.getString("resultCode"))) {
-                logger.error("登录-->图片验证码-->校验失败,param={},pateContent={}", param, pateContent);
+                logger.error("登录-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPateContent());
                 return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
             }
             logger.info("登录-->图片验证码-->校验成功,param={}", param);
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->图片验证码-->校验失败,param={},pateContent={}", param, pateContent, e);
+            logger.error("登录-->图片验证码-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         }
     }
 
-    private HttpResult<Map<String, Object>> refeshPicCodeForBillDetail(OperatorParam param) {
-        String templateUrl = "http://shop.10086.cn/i/authImg?t={}";
-        String url = TemplateUtils.format(templateUrl, System.currentTimeMillis());
-        return PluginHttpUtils.refeshPicCodePicCode(param.getTaskId(), param.getWebsiteName(), "china_10086_shop_006",
-            url, RETURN_FIELD_PIC_CODE, param.getFormType());
+    private HttpResult<String> refeshPicCodeForBillDetail(OperatorParam param) {
+        HttpResult<String> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "http://shop.10086.cn/i/authImg?t={}";
+            response = TaskHttpClient
+                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_006")
+                .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            logger.info("详单-->图片验证码-->刷新成功,param={}", param);
+            return result.success(response.getPateContentForBase64());
+        } catch (Exception e) {
+            logger.error("详单-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
     }
 
     private HttpResult<Map<String, Object>> validatePicCodeForBillDetail(OperatorParam param) {
         //http://shop.10086.cn/i/v1/res/precheck/13735874566?captchaVal=123145&_=1500623358942
-        String templateUrl = "http://shop.10086.cn/i/v1/res/precheck/{}?captchaVal={}&_={}";
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
-        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-        //登陆成功是暂存
-        String mobile = redisService.getTaskShare(param.getTaskId(), AttributeKey.MOBILE);
-        String url = TemplateUtils.format(templateUrl, mobile, param.getPicCode(), System.currentTimeMillis());
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        String pateContent = null;
+        Response response = null;
         try {
+            String templateUrl = "http://shop.10086.cn/i/v1/res/precheck/{}?captchaVal={}&_={}";
             //结果枚举:正确{"data":null,"retCode":"000000","retMsg":"输入正确，校验成功","sOperTime":null},
             //错误{"data":null,"retCode":"999999","retMsg":"输入错误，校验失败","sOperTime":null}
-            pateContent = PluginHttpUtils.getString(param.getTaskId(),"china_10086_shop_007", url);
-            JSONObject json = JSON.parseObject(pateContent);
-            if (!StringUtils.equals("000000", json.getString("retCode"))) {
-                logger.error("详单-->图片验证码-->校验失败,param={},pateContent={}", param, pateContent);
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007")
+                .setFullUrl(templateUrl, param.getMobile(), param.getPicCode(), System.currentTimeMillis()).invoke();
+            if (!StringUtils.equals("000000", response.getPateContentForJSON().getString("retCode"))) {
+                logger.error("详单-->图片验证码-->校验失败,param={},pateContent={}", param, response.getPateContent());
                 return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
             }
             logger.info("详单-->图片验证码-->校验成功,param={}", param);
             return result.success();
         } catch (Exception e) {
-            logger.error("详单-->图片验证码-->校验失败,param={},pateContent={}", param, pateContent, e);
+            logger.error("详单-->图片验证码-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         }
     }
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
-        String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID=12003&userName={}";
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        String url = TemplateUtils.format(templateUrl, param.getMobile());
-        String pageContent = null;
+        Response response = null;
         try {
-            pageContent = PluginHttpUtils.postString(param.getTaskId(), "china_10086_shop_003", url);
-            switch (pageContent) {
+            String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID=12003&userName={}";
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_003")
+                .setFullUrl(templateUrl, param.getMobile()).invoke();
+            switch (response.getPateContent()) {
                 case "0":
                     logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                     return result.success();
@@ -195,36 +207,34 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.warn("登录-->短信验证码-->刷新失败,手机号码有误，请重新输入,param={}", param);
                     return result.failure(ErrorCode.REFESH_SMS_ERROR, "手机号码有误，请重新输入");
                 default:
-                    logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, pageContent);
+                    logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPateContent());
                     return result.failure(ErrorCode.REFESH_SMS_ERROR);
             }
         } catch (Exception e) {
-            logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, pageContent, e);
+            logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
         //https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/18838224796?callback=jQuery183002065868962851658_1500889079942&_=1500889136495
-        String templateUrl = "https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/{}?callback=jQuery183002065868962851658_1500889079942_={}";
-        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-        String mobile = redisService.getTaskShare(param.getTaskId(), AttributeKey.MOBILE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        String url = TemplateUtils.format(templateUrl, param.getMobile(), System.currentTimeMillis());
-        String pageContent = null;
+        Response response = null;
         try {
-//            String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", mobile);
-            pageContent = PluginHttpUtils.getString(param.getTaskId(),"china_10086_shop_008", url);
-            String jsonString = JsonpUtil.getJsonString(pageContent);
+            String templateUrl = "https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/{}?callback=jQuery183002065868962851658_1500889079942_={}";
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_008")
+                .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis()).invoke();
+            //String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", mobile);
+            String jsonString = JsonpUtil.getJsonString(response.getPateContent());
             JSONObject json = JSON.parseObject(jsonString);
             if (!StringUtils.equals("000000", json.getString("retCode"))) {
-                logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, pageContent);
+                logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPateContent());
                 return result.failure(ErrorCode.REFESH_SMS_ERROR);
             }
             logger.info("详单-->短信验证码-->刷新成功,param={}", param);
             return result.success();
         } catch (Exception e) {
-            logger.error("详单-->短信验证码-->刷新失败,param={},pageContent={}", param, pageContent, e);
+            logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
@@ -232,19 +242,15 @@ public class China10086ForShop implements OperatorPluginService {
     private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
         //https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13844034615?callback=jQuery183042723042018780055_1500975082967&pwdTempSerCode=NzE2MjUz&pwdTempRandCode=NDI4MTUz&captchaVal=a3xeva&_=1500975147178";
         String templateUrl = "https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/{}?pwdTempSerCode={}&pwdTempRandCode={}&captchaVal={}&_={}";
-        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-        String password = redisService.getTaskShare(param.getTaskId(), AttributeKey.PASSWORD);
-        String pwdTempSerCode = Base64.getEncoder().encodeToString(password.getBytes());
+        String pwdTempSerCode = Base64.getEncoder().encodeToString(param.getPassword().getBytes());
         String pwdTempRandCode = Base64.getEncoder().encodeToString(param.getSmsCode().getBytes());
-        String loginName = PluginHttpUtils.getCookieValue(param.getTaskId(), "loginName");
+        String loginName = CookieUtils.getCookieValue(param.getTaskId(), "loginName");
 
         HttpResult<Map<String, Object>> result = validatePicCodeForBillDetail(param);
         if (!result.getStatus()) {
             return result;
         }
-        String url = TemplateUtils.format(templateUrl, loginName, pwdTempSerCode, pwdTempRandCode, param.getPicCode(),
-            System.currentTimeMillis());
-        String pageContent = null;
+        Response response = null;
         try {
             /**
              * 结果枚举:
@@ -252,8 +258,11 @@ public class China10086ForShop implements OperatorPluginService {
              */
             //没有设置referer会出现connect reset
             String referer = "https://login.10086.cn/html/login/login.html";
-            pageContent = PluginHttpUtils.getString(param.getTaskId(),"china_10086_shop_009", url, referer);
-            String jsonString = JsonpUtil.getJsonString(pageContent);
+            response = TaskHttpClient
+                .create(param, RequestType.GET, "china_10086_shop_009").setReferer(referer).setFullUrl(templateUrl,
+                    loginName, pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
+                .invoke();
+            String jsonString = JsonpUtil.getJsonString(response.getPateContent());
             JSONObject json = JSON.parseObject(jsonString);
             String code = json.getString("retCode");
             if (StringUtils.equals("000000", code)) {
@@ -265,17 +274,16 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.warn("详单-->短信验证码错误,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
-                    logger.error("详单-->校验失败,param={},pageContent={}", param, pageContent);
+                    logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPateContent());
                     return result.failure(ErrorCode.VALIDATE_FAIL);
             }
         } catch (Exception e) {
-            logger.error("详单-->校验失败,param={},pageContent={}", param, pageContent, e);
+            logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_FAIL);
         }
     }
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
-        String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
@@ -283,10 +291,14 @@ public class China10086ForShop implements OperatorPluginService {
         if (!result.getStatus()) {
             return result;
         }
-        String url = TemplateUtils.format(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(),
-            param.getPicCode(), System.currentTimeMillis());
-        String pageContent = null;
+        Response response = null;
         try {
+            String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
+            String referer = "https://login.10086.cn/html/login/login.html";
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004").setReferer(referer)
+                .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode(),
+                    System.currentTimeMillis())
+                .invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"artifact":"3490872f8d114992b44dc4e60f595fa0","assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact"
@@ -299,9 +311,7 @@ public class China10086ForShop implements OperatorPluginService {
              重复登陆:{"islocal":false,"result":"9"}
              */
             //没有设置referer会出现connect reset
-            String referer = "https://login.10086.cn/html/login/login.html";
-            pageContent = PluginHttpUtils.getString(param.getTaskId(),"china_10086_shop_004", url, referer);
-            JSONObject json = JSON.parseObject(pageContent);
+            JSONObject json = response.getPateContentForJSON();
             //重复登陆:{"islocal":false,"result":"9"}
             if (StringUtils.equals("9", json.getString("result"))) {
                 logger.info("重复登陆,param={}", param);
@@ -318,12 +328,12 @@ public class China10086ForShop implements OperatorPluginService {
 
                 //获取权限信息,必须访问下主页,否则详单有些cookie没用
                 String artifact = json.getString("artifact");
-                url = TemplateUtils.format(
-                    "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
-                    artifact);
-                PluginHttpUtils.getString(param.getTaskId(), "china_10086_shop_005", url);
-
-                String provinceCode = PluginHttpUtils.getCookieValue(param.getTaskId(), "ssologinprovince");
+                TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_005")
+                    .setFullUrl(
+                        "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
+                        artifact)
+                    .invoke();
+                String provinceCode = CookieUtils.getCookieValue(param.getTaskId(), "ssologinprovince");
                 String provinceName = getProvinceName(provinceCode);
                 redisService.addTaskShare(param.getTaskId(), AttributeKey.PROVINCE_NAME, provinceName);
 
@@ -340,7 +350,7 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.warn("登录失败-->短信随机码不正确或已过期,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
-                    logger.error("登陆失败,param={},pageContent={}", param, pageContent);
+                    logger.error("登陆失败,param={},pageContent={}", param, response.getPateContent());
                     if (StringUtils.contains(errorMsg, "密码")) {
                         return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
                     }
@@ -350,7 +360,7 @@ public class China10086ForShop implements OperatorPluginService {
                     return result.failure(ErrorCode.LOGIN_FAIL);
             }
         } catch (Exception e) {
-            logger.error("登陆失败,param={},pageContent={}", param, pageContent, e);
+            logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
     }

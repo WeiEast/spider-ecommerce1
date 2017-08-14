@@ -5,7 +5,8 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.share.ProxyService;
+import com.datatrees.rawdatacentral.api.ProxyService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,6 @@ import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
-import com.datatrees.rawdatacentral.share.RedisService;
 
 /**
  * Created by zhouxinghai on 2017/6/30.

@@ -1,9 +1,9 @@
 package com.datatrees.rawdatacentral.service;
 
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.share.RedisService;
 import org.junit.Test;
 
 import javax.annotation.Resource;

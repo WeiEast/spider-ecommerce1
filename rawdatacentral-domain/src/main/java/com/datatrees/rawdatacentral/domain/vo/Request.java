@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.domain.vo;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
+import com.datatrees.rawdatacentral.domain.enums.RequestType;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import java.util.Map;
 public class Request implements Serializable {
 
     private Long                taskId;
+
+    private String              websiteName;
 
     private String              remarkId;
 
@@ -29,33 +32,16 @@ public class Request implements Serializable {
 
     private String              sendCookies;
 
-    private String              charsetName = "UTF-8";
-
     private String              protocol;
-
-    private String              remark;
 
     private String              contentType = "application/x-www-form-urlencoded";
 
-    private String              type        = "get";
+    private RequestType         requestType = RequestType.GET;
 
-    private String              receiveCookies;
-
-    private int                 statusCode;
-
-    private String              pageContent;
-
-    @JSONField(serialize = false)
-    private byte[]              response;
 
     public Request() {
     }
 
-    public Request(Long taskId, String remarkId, String fullUrl) {
-        this.taskId = taskId;
-        this.remarkId = remarkId;
-        this.fullUrl = fullUrl;
-    }
 
     public Long getTaskId() {
         return taskId;
@@ -63,6 +49,14 @@ public class Request implements Serializable {
 
     public void setTaskId(Long taskId) {
         this.taskId = taskId;
+    }
+
+    public String getWebsiteName() {
+        return websiteName;
+    }
+
+    public void setWebsiteName(String websiteName) {
+        this.websiteName = websiteName;
     }
 
     public String getRemarkId() {
@@ -121,28 +115,12 @@ public class Request implements Serializable {
         this.sendCookies = sendCookies;
     }
 
-    public String getCharsetName() {
-        return charsetName;
-    }
-
-    public void setCharsetName(String charsetName) {
-        this.charsetName = charsetName;
-    }
-
     public String getProtocol() {
         return protocol;
     }
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
     }
 
     public String getContentType() {
@@ -153,43 +131,11 @@ public class Request implements Serializable {
         this.contentType = contentType;
     }
 
-    public String getType() {
-        return type;
+    public RequestType getRequestType() {
+        return requestType;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getReceiveCookies() {
-        return receiveCookies;
-    }
-
-    public void setReceiveCookies(String receiveCookies) {
-        this.receiveCookies = receiveCookies;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public String getPageContent() {
-        return pageContent;
-    }
-
-    public void setPageContent(String pageContent) {
-        this.pageContent = pageContent;
-    }
-
-    public byte[] getResponse() {
-        return response;
-    }
-
-    public void setResponse(byte[] response) {
-        this.response = response;
+    public void setRequestType(RequestType requestType) {
+        this.requestType = requestType;
     }
 }

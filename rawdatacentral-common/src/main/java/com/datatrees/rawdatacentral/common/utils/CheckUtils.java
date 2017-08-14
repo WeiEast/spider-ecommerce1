@@ -34,4 +34,10 @@ public class CheckUtils {
         }
     }
 
+    public static void checkNotPositiveNumber(Number number, String errorMsg) {
+        if (null == number || number.longValue() <= 0) {
+            throw new RuntimeException(errorMsg);
+        }
+    }
+
 }

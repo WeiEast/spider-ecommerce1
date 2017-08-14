@@ -1,14 +1,11 @@
 package com.datatrees.rawdatacentral.web.controller;
 
-import com.datatrees.crawler.plugin.util.PluginHttpUtils;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
-import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.common.utils.TaskHttpClient;
+import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
@@ -87,10 +84,8 @@ public class OperatorController {
 
     @RequestMapping("/openPage")
     public Object openPage(Long taskId, String url, String type) throws IOException {
-        if (StringUtils.equals("post", type)) {
-            return PluginHttpUtils.postString(taskId, null, url);
-        }
-        return PluginHttpUtils.getString(taskId, null, url);
+        return TaskHttpClient.create(taskId, "openpage", RequestType.valueOf(type.trim()), "remark01").setFullUrl(url)
+            .invoke().getPateContent();
     }
 
 }

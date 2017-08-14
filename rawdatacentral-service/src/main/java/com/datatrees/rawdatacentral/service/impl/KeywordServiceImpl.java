@@ -1,11 +1,11 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.dao.KeywordDAO;
 import com.datatrees.rawdatacentral.domain.model.Keyword;
 import com.datatrees.rawdatacentral.domain.model.example.KeywordExample;
 import com.datatrees.rawdatacentral.service.KeywordService;
-import com.datatrees.rawdatacentral.share.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,8 @@ public class KeywordServiceImpl implements KeywordService {
             return null;
         }
         String key = "rawdatacentral_keyword_websitetype_" + websiteType;
-        List<Keyword> list = redisService.getCache(key, new TypeReference<List<Keyword>>(){});
+        List<Keyword> list = redisService.getCache(key, new TypeReference<List<Keyword>>() {
+        });
         if (null == list || list.isEmpty()) {
             KeywordExample example = new KeywordExample();
             example.createCriteria().andWebsiteTypeEqualTo(websiteType).andIsenabledEqualTo(true);

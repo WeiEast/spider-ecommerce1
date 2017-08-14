@@ -1,5 +1,6 @@
 dependencies {
     compile project(":rawdatacentral-domain")
+    compile project(":rawdatacentral-api")
     testCompile "junit:junit:${junitVersion}"
     testCompile 'org.codehaus.groovy:groovy-all:2.4.6'
 
@@ -9,7 +10,5 @@ dependencies {
     compile "commons-codec:commons-codec:${commonsCodecVersion}"
     compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
     compile 'org.apache.httpcomponents:httpclient:4.5'
-
-
 
 }

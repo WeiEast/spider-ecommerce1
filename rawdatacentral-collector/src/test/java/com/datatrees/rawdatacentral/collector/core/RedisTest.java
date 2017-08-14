@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.collector.core;
 
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import com.datatrees.rawdatacentral.share.RedisService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;

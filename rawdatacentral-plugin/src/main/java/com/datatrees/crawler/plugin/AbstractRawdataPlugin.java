@@ -9,8 +9,8 @@ package com.datatrees.crawler.plugin;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.share.MessageService;
-import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

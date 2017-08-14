@@ -1,7 +1,6 @@
 dependencies {
     compile project(":rawdatacentral-common")
     compile project(":rawdatacentral-dao")
-    compile project(":rawdatacentral-share")
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
     compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"

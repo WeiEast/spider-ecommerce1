@@ -1,11 +1,11 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.PluginService;
-import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

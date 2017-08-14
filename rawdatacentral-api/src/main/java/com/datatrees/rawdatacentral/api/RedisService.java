@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.share;
+package com.datatrees.rawdatacentral.api;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;

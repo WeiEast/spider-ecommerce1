@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.service.proxy;
 
+import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.share.ProxyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

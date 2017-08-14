@@ -1,6 +1,5 @@
 rootProject.name = 'rawdatacentral'
 include ':rawdatacentral-domain'
-include ':rawdatacentral-share'
 include ':rawdatacentral-api'
 include ':rawdatacentral-core'
 include ':rawdatacentral-collector'

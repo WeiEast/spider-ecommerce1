@@ -1,13 +1,13 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.api.ProxyService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.service.constants.Constants;
-import com.datatrees.rawdatacentral.share.ProxyService;
-import com.datatrees.rawdatacentral.share.RedisService;
 import com.treefinance.proxy.api.ProxyProvider;
 import com.treefinance.proxy.domain.Proxy;
 import org.apache.commons.lang3.StringUtils;

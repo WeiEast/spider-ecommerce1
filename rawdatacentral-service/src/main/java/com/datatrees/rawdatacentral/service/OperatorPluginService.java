@@ -29,7 +29,7 @@ public interface OperatorPluginService {
      * @param param
      * @return
      */
-    HttpResult<Map<String, Object>> refeshPicCode(OperatorParam param);
+    HttpResult<String> refeshPicCode(OperatorParam param);
 
     /**
      * 刷新短信验证码

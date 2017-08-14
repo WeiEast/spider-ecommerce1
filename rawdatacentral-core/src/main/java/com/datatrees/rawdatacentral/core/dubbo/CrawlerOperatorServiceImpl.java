@@ -15,17 +15,19 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.share.MessageService;
-import com.datatrees.rawdatacentral.share.RedisService;
+import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.swing.text.TabableView;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static com.datatrees.rawdatacentral.service.OperatorPluginService.RETURN_FIELD_PIC_CODE;
 
 /**
  * Created by zhouxinghai on 2017/7/17.
@@ -75,9 +77,17 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", result);
             return result;
         }
-        result = getLoginService(param).refeshPicCode(param);
-        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->图片验证码-->刷新{}!",
-            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        HttpResult<String> picResult = getLoginService(param).refeshPicCode(param);
+        String log = null;
+        if (!picResult.getStatus()) {
+            log = TemplateUtils.format("{}-->图片验证码-->刷新失败!", FormType.getName(param.getFormType()));
+            result.failure(picResult.getResponseCode(), picResult.getMessage());
+        } else {
+            log = TemplateUtils.format("{}-->图片验证码-->刷新成功!", FormType.getName(param.getFormType()));
+            Map<String, Object> map = new HashMap<>();
+            map.put(RETURN_FIELD_PIC_CODE, picResult.getData());
+        }
+        messageService.sendTaskLog(param.getTaskId(), log);
         return result;
     }
 

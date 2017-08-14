@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.api.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,6 @@ import com.datatrees.rawdatacentral.dao.OperatorDAO;
 import com.datatrees.rawdatacentral.domain.model.Operator;
 import com.datatrees.rawdatacentral.domain.model.example.OperatorExample;
 import com.datatrees.rawdatacentral.service.OperatorService;
-import com.datatrees.rawdatacentral.share.RedisService;
 
 /**
  * Created by zhouxinghai on 2017/6/27.
@@ -25,7 +25,7 @@ public class OperatorServiceImpl implements OperatorService {
     private static final Logger logger = LoggerFactory.getLogger(OperatorServiceImpl.class);
 
     @Resource
-    private RedisService        redisService;
+    private RedisService redisService;
 
     @Resource
     private OperatorDAO         operatorDAO;

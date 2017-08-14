@@ -1,16 +1,10 @@
 package com.datatrees.rawdatacentral.service;
 
-import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
 import org.junit.Test;
-
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.share.RedisService;
 
 /**
  * Created by zhouxinghai on 2017/6/27.
