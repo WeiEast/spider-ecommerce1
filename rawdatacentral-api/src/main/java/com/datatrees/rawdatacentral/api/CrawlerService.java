@@ -28,7 +28,7 @@ public interface CrawlerService {
     public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
 
     // 修改配置
-    public boolean updateWebsiteConfig(String websiteName, String searchConfigSource, String extractConfigSource);
+    public boolean updateWebsiteConfig(String websiteName, String searchConfig, String extractConfig);
 
     /**
      * 运营商登陆,获取验证码

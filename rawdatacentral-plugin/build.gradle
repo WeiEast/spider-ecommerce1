@@ -27,4 +27,13 @@ dependencies {
     compile "com.datatrees.loan:loan-provider-api:${loanProviderApi}"
     compile "com.treefinance:risk-service-api:${riskServiceApi}"
     compile "net.sourceforge.jexcelapi:jxl:${jxl}"
+    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
+    compile ("com.sun.mail:javax.mail:${javaxMailVersion}")
+    compile ("com.datatrees.crawler.plugin:plugin-utils:${pluginUtilsVersion}")
+
+    compile ("net.sourceforge.htmlunit:htmlunit:${htmlunitVersion}")
+    compile ("ant:ant:${antVersion}")
+
 }
+
+apply from: rootProject.file('upload.gradle')

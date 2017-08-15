@@ -8,23 +8,21 @@
  */
 package com.datatrees.rawdatacentral.collector.worker.normalizer;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import com.datatrees.crawler.core.processor.Constants;
+import com.datatrees.rawdatacentral.core.common.DataNormalizer;
+import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.rawdatacentral.core.model.data.OperatorData;
+import com.datatrees.rawdatacentral.domain.model.Operator;
+import com.datatrees.rawdatacentral.service.OperatorService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.rawdatacentral.core.common.DataNormalizer;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.domain.model.Operator;
-import com.datatrees.rawdatacentral.core.model.ResultType;
-import com.datatrees.rawdatacentral.core.model.data.OperatorData;
-import com.datatrees.rawdatacentral.core.service.OperatorService;
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -37,7 +35,7 @@ public class OperatorMessageNormalizer implements DataNormalizer {
     private static final Logger LOGGER = LoggerFactory.getLogger(OperatorMessageNormalizer.class);
 
     @Resource
-    private OperatorService operatorService;
+    private OperatorService     operatorService;
 
     /*
      * (non-Javadoc)
@@ -56,8 +54,8 @@ public class OperatorMessageNormalizer implements DataNormalizer {
             ((OperatorData) object).setOperatorId(message.getTypeId());
             ((OperatorData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap
-                && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), OperatorData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && StringUtils.equals(
+            (String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), OperatorData.class.getSimpleName())) {
             OperatorData operatorData = new OperatorData();
             operatorData.putAll((Map) object);
             operatorData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
@@ -74,12 +72,11 @@ public class OperatorMessageNormalizer implements DataNormalizer {
     }
 
     private int getOperatorId(ExtractMessage message) {
-        Operator operator = operatorService.getOperatorByWebsiteId(message.getWebsiteId());
+        Operator operator = operatorService.getByWebsiteId(message.getWebsiteId());
         if (operator == null) {
-            LOGGER.warn("get null operator with website id " + message.getWebsiteId() + ", set default OperatorId 0");
+            LOGGER.warn("operator not found websiteId={}", message.getWebsiteId());
             return 0;
-        } else {
-            return operator.getId();
         }
+        return operator.getId();
     }
 }

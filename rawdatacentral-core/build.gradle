@@ -3,13 +3,13 @@ dependencies {
     compile project(':rawdatacentral-share')
     compile project(':rawdatacentral-domain')
     compile project(':rawdatacentral-common')
+    compile project(':rawdatacentral-service')
     compile project(':rawdatacentral-plugin')
     compile "org.apache.ibatis:ibatis-sqlmap:${ibatisSqlmapVersion}"
     compile "org.springframework:spring-ibatis:${springIbatisVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
     compile "commons-dbcp:commons-dbcp:${commonsDbcpVersion}"
     compile "com.alibaba.rocketmq:rocketmq-client:${rocketmqClientVersion}"
-    compile "org.springframework.data:spring-data-redis:${springDataRedisVersion}"
     compile "redis.clients:jedis:${jedisVersion}"
     compile "org.apache.poi:poi:${poiVersion}"
     compile "com.google.guava:guava:${guavaVersion}"
@@ -22,12 +22,5 @@ dependencies {
     compile "net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}"
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true)
     compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
-    compile(group: "com.datatrees.data", name: "databoss-api-client-sdk", version: "${databossApiClientSdkVersion}", changing: true)
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true)
-
-    compile 'org.codehaus.groovy:groovy-all:2.4.6'
-    compile "ch.qos.logback:logback-classic:${logbackVersion}"
-    compile "org.slf4j:slf4j-api:${slf4jVersion}"
-    compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
-    compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
 }

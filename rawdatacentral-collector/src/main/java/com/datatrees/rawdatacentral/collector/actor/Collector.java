@@ -6,6 +6,21 @@
  */
 package com.datatrees.rawdatacentral.collector.actor;
 
+import java.io.ByteArrayOutputStream;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javax.annotation.Resource;
+
+import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
@@ -28,7 +43,6 @@ import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.utils.IpUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.common.ProxySharedManager;
-import com.datatrees.rawdatacentral.core.common.SimpleProxyManager;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
@@ -37,13 +51,13 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
-import com.datatrees.rawdatacentral.core.service.TaskService;
-import com.datatrees.rawdatacentral.core.service.WebsiteService;
-import com.datatrees.rawdatacentral.domain.common.Task;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.TaskService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
@@ -51,16 +65,6 @@ import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
-import java.util.*;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -73,7 +77,7 @@ public class Collector {
     private static final Logger    logger                     = LoggerFactory.getLogger(Collector.class);
 
     @Resource
-    private WebsiteService         websiteService;
+    private WebsiteConfigService   websiteConfigService;
 
     @Resource
     private TaskService            taskService;
@@ -111,7 +115,15 @@ public class Collector {
         task.setWebsiteName(message.getWebsiteName());
         task.setNodeName(IpUtils.getLocalHostName());
 
-        SearchProcessorContext context = websiteService.getSearchProcessorContext(message.getWebsiteName());
+        task.setOpenUrlCount(new AtomicInteger(0));
+        task.setOpenPageCount(new AtomicInteger(0));
+        task.setRequestFailedCount(new AtomicInteger(0));
+        task.setRetryCount(new AtomicInteger(0));
+        task.setFilteredCount(new AtomicInteger(0));
+        task.setNetworkTraffic(new AtomicLong(0));
+        task.setStatus(0);
+
+        SearchProcessorContext context = websiteConfigService.getSearchProcessorContext(message.getWebsiteName());
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
@@ -125,7 +137,7 @@ public class Collector {
         context.set(AttributeKey.END_URL, message.getEndURL());
         // 历史状态清理
         this.clearStatus(message.getTaskId());
-        task.setId(taskService.insertTask(task));
+        taskService.insertTask(task);
         // set task unique sign
         ProcessorContextUtil.setTaskUnique(context, task.getId());
 
@@ -287,7 +299,7 @@ public class Collector {
             }
         } finally {
             if (!task.isSubTask()) {
-                String redisKey = "run_count:" + task.getTaskId();
+                String redisKey = "run_count_" + task.getTaskId();
                 long totalRun = 0;
                 if (redisDao.getRedisTemplate().hasKey(redisKey)) {
                     totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(redisKey));

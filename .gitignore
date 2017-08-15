@@ -1,4 +1,3 @@
-bin/*
 .gradle
 .idea
 *.iml
@@ -9,6 +8,8 @@ log.txt
 .project
 .settings
 .classpath
+out
+.DS_Store
 
 
 

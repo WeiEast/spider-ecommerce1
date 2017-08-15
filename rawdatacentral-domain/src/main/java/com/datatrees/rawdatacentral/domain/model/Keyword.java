@@ -1,72 +1,75 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or any
- * incorporation of the same into any other material in any media or format of any kind is strictly prohibited.
- * All rights are reserved.
- *
- * Copyright (c) datatrees.com Inc. 2015
- */
 package com.datatrees.rawdatacentral.domain.model;
 
-/**
- *
- * @author  <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since   2015年7月27日 下午7:17:49 
- */
-public class Keyword {
-    
-    private int id;
+import java.io.Serializable;
+import java.util.Date;
+
+ /** create by system from table t_keyword(keyword)  */
+public class Keyword implements Serializable {
+    /**  */
+    private Integer id;
+
+    /** keyword */
     private String keyword;
-    private boolean isEnabled;
-    private String keywordType;
-    /**
-     * @return the id
-     */
-    public int getId() {
+
+    /** 0:false,1:true */
+    private Boolean isenabled;
+
+    /** 1:mail,2:operator,3:ecommerce，4:bank,5:internal */
+    private Integer websiteType;
+
+    /**  */
+    private Date createdAt;
+
+    /**  */
+    private Date updatedAt;
+
+    private static final long serialVersionUID = 1L;
+
+    public Integer getId() {
         return id;
     }
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
+
+    public void setId(Integer id) {
         this.id = id;
     }
-    /**
-     * @return the keyword
-     */
+
     public String getKeyword() {
         return keyword;
     }
-    /**
-     * @param keyword the keyword to set
-     */
+
     public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-    /**
-     * @return the isEnabled
-     */
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-    /**
-     * @param isEnabled the isEnabled to set
-     */
-    public void setEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
-    }
-    /**
-     * @return the keywordType
-     */
-    public String getKeywordType() {
-        return keywordType;
-    }
-    /**
-     * @param keywordType the keywordType to set
-     */
-    public void setKeywordType(String keywordType) {
-        this.keywordType = keywordType;
+        this.keyword = keyword == null ? null : keyword.trim();
     }
 
+    public Boolean getIsenabled() {
+        return isenabled;
+    }
+
+    public void setIsenabled(Boolean isenabled) {
+        this.isenabled = isenabled;
+    }
+
+    public Integer getWebsiteType() {
+        return websiteType;
+    }
+
+    public void setWebsiteType(Integer websiteType) {
+        this.websiteType = websiteType;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

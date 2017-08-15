@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.core.common;
 
 import java.util.Date;
 
-import com.datatrees.rawdatacentral.core.service.TaskService;
+import com.datatrees.rawdatacentral.service.TaskService;
 
 
 /**

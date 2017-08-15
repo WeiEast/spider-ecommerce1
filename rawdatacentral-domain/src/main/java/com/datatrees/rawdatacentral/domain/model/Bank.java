@@ -1,98 +1,108 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- *
- * Copyright (c) datatrees.com Inc. 2015
- */
 package com.datatrees.rawdatacentral.domain.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
-/**
- *
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月26日 下午1:41:29
- */
-public class Bank implements Serializable{
-    private int id;
-    private int websiteId;
+ /** create by system from table t_bank(Bank basic info)  */
+public class Bank implements Serializable {
+    /** bank Id */
+    private Integer bankId;
+
+    /** not null if bank support search */
+    private Integer websiteId;
+
+    /**  */
+    private String bankMark;
+
+    /** bank name */
     private String bankName;
-    private String bankEmailAddr;
-    private boolean isEnabled;
-    private int orderIndex;
+
+    /**  */
+    private Short orderIndex;
+
+    /**  */
     private String matchText;
 
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
+    /** 0:false,1:true */
+    private Boolean isenabled;
+
+    /**  */
+    private Date createdAt;
+
+    /**  */
+    private Date updatedAt;
+
+    private static final long serialVersionUID = 1L;
+
+    public Integer getBankId() {
+        return bankId;
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
+    public void setBankId(Integer bankId) {
+        this.bankId = bankId;
     }
 
-    /**
-     * @return the websiteId
-     */
-    public int getWebsiteId() {
+    public Integer getWebsiteId() {
         return websiteId;
     }
 
-    /**
-     * @param websiteId the websiteId to set
-     */
-    public void setWebsiteId(int websiteId) {
+    public void setWebsiteId(Integer websiteId) {
         this.websiteId = websiteId;
     }
 
-    /**
-     * @return the bankName
-     */
+    public String getBankMark() {
+        return bankMark;
+    }
+
+    public void setBankMark(String bankMark) {
+        this.bankMark = bankMark == null ? null : bankMark.trim();
+    }
+
     public String getBankName() {
         return bankName;
     }
 
-    /**
-     * @param bankName the bankName to set
-     */
     public void setBankName(String bankName) {
-        this.bankName = bankName;
+        this.bankName = bankName == null ? null : bankName.trim();
     }
 
-    /**
-     * @return the bankEmailAddr
-     */
-    public String getBankEmailAddr() {
-        return bankEmailAddr;
+    public Short getOrderIndex() {
+        return orderIndex;
     }
 
-    /**
-     * @param bankEmailAddr the bankEmailAddr to set
-     */
-    public void setBankEmailAddr(String bankEmailAddr) {
-        this.bankEmailAddr = bankEmailAddr;
+    public void setOrderIndex(Short orderIndex) {
+        this.orderIndex = orderIndex;
     }
 
-    /**
-     * @return the isEnabled
-     */
-    public boolean isEnabled() {
-        return isEnabled;
+    public String getMatchText() {
+        return matchText;
     }
 
-    /**
-     * @param isEnabled the isEnabled to set
-     */
-    public void setEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
+    public void setMatchText(String matchText) {
+        this.matchText = matchText == null ? null : matchText.trim();
     }
 
+    public Boolean getIsenabled() {
+        return isenabled;
+    }
+
+    public void setIsenabled(Boolean isenabled) {
+        this.isenabled = isenabled;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
