@@ -46,7 +46,7 @@ public class TaskHttpClient {
     private static final String        DEFAULT_CHARSET = "UTF-8";
 
     static {
-        CONFIG = RequestConfig.custom().setConnectTimeout(30000).setSocketTimeout(30000).build();
+        CONFIG = RequestConfig.custom().setConnectTimeout(10000).setSocketTimeout(10000).build();
     }
 
     private TaskHttpClient(Request request) {
