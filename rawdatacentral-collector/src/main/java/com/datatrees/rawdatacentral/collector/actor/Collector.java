@@ -395,6 +395,7 @@ public class Collector {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void sendResult(TaskMessage taskMessage, Map submitkeyResult, Set<String> resultTagSet) {
+        logger.info("Starting send result. submit-key: {}, result-tag: {}", submitkeyResult, resultTagSet);
         Task task = taskMessage.getTask();
         ResultMessage resultMessage = new ResultMessage();
         resultMessage.setRemark(GsonUtils.toJson(task));
