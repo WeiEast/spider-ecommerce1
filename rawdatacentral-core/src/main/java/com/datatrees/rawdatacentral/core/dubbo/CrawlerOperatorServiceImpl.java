@@ -213,10 +213,13 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             if (StringUtils.isBlank(param.getRealName()) && map.containsKey(AttributeKey.REAL_NAME)) {
                 param.setRealName(map.get(AttributeKey.REAL_NAME));
             }
-
             if (StringUtils.equals(FormType.LOGIN, param.getFormType()) && StringUtils.isBlank(param.getPicCode())
                 && map.containsKey(AttributeKey.LOGIN_PIC_CODE)) {
                 param.setPicCode(map.get(AttributeKey.LOGIN_PIC_CODE));
+            }
+            if (StringUtils.equals(FormType.VALIDATE_BILL_DETAIL, param.getFormType()) && StringUtils.isBlank(param.getPicCode())
+                    && map.containsKey(AttributeKey.BILL_DETAIL_PIC_CODE)) {
+                param.setPicCode(map.get(AttributeKey.BILL_DETAIL_PIC_CODE));
             }
         }
     }

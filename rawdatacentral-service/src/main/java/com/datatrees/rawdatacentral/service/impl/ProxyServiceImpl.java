@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,10 +33,16 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
     @Resource
     private ProxyProvider             proxyProvider;
 
+    @Value("${env}")
+    private String env;
+
     @Override
     public Proxy getProxy(Long taskId, String websiteName) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         Proxy proxy = null;
+        if(StringUtils.equalsIgnoreCase("local",env)){
+            return null;
+        }
         try {
             RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
             proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId),
