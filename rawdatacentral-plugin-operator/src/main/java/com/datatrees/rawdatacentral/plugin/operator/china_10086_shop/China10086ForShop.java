@@ -16,6 +16,7 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import org.apache.commons.lang3.StringUtils;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,13 +35,19 @@ import java.util.Map;
  */
 public class China10086ForShop implements OperatorPluginService {
 
-    private static final Logger logger = LoggerFactory.getLogger(China10086ForShop.class);
+    private static final Logger logger       = LoggerFactory.getLogger(China10086ForShop.class);
+
+    private Integer             minChannelID = 12002;                                           //这个是最小的通道
+    private Integer             maxChannelID = 12010;                                           //这个之后没试过
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
+            //短信有效通道:12002-1208
             //登陆页没有获取任何cookie,不用登陆
+            BeanFactoryUtils.getBean(RedisService.class).addTaskShare(param.getTaskId(), "channelID",
+                minChannelID.toString());
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={}", param, e);
@@ -194,9 +201,11 @@ public class China10086ForShop implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID=12003&userName={}";
+            RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+            Integer channelID = Integer.valueOf(redisService.getTaskShare(param.getTaskId(), "channelID"));
+            String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID={}&userName={}";
             response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_003")
-                .setFullUrl(templateUrl, param.getMobile()).invoke();
+                .setFullUrl(templateUrl, channelID, param.getMobile()).invoke();
             switch (response.getPateContent()) {
                 case "0":
                     logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -206,6 +215,11 @@ public class China10086ForShop implements OperatorPluginService {
                     return result.failure(ErrorCode.REFESH_SMS_FAIL, "对不起,短信随机码暂时不能发送，请一分钟以后再试");
                 case "2":
                     logger.warn("登录-->短信验证码-->刷新失败,短信下发数已达上限，您可以使用服务密码方式登录,param={}", param);
+                    if (channelID <= maxChannelID) {
+                        channelID++;
+                        redisService.addTaskShare(param.getTaskId(), "channelID", channelID.toString());
+                        return refeshSmsCodeForLogin(param);
+                    }
                     return result.failure(ErrorCode.REFESH_SMS_FAIL, "短信下发数已达上限");
                 case "3":
                     logger.warn("登录-->短信验证码-->刷新失败,对不起，短信发送次数过于频繁,param={}", param);
@@ -308,11 +322,13 @@ public class China10086ForShop implements OperatorPluginService {
         }
         Response response = null;
         try {
-            String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID=12003&protocol=https:&timestamp={}";
+            String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID={}&protocol=https:&timestamp={}";
             String referer = "https://login.10086.cn/html/login/login.html";
+            String channelID = BeanFactoryUtils.getBean(RedisService.class).getTaskShare(param.getTaskId(),
+                "channelID");
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004").setReferer(referer)
-                .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode(),
-                    System.currentTimeMillis())
+                .setFullUrl(templateUrl, channelID, param.getMobile(), param.getPassword(), param.getSmsCode(),
+                    param.getPicCode(), System.currentTimeMillis())
                 .invoke();
             /**
              * 结果枚举:
