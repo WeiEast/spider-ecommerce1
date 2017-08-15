@@ -15,6 +15,10 @@ dependencies {
     }
     compile 'com.datatrees.common:common-protocol:2.1.0'
 
+    compile("com.alibaba:dubbo:${dubboVersion}") {
+        exclude(module: 'spring')
+    }
+    compile "com.101tec:zkclient:${zkclientVersion}"
 
 //    compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 
