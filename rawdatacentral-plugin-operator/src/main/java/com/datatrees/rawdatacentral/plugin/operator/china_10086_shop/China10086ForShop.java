@@ -37,8 +37,10 @@ public class China10086ForShop implements OperatorPluginService {
 
     private static final Logger logger       = LoggerFactory.getLogger(China10086ForShop.class);
 
-    private Integer             minChannelID = 12002;                                           //这个是最小的通道
-    private Integer             maxChannelID = 12010;                                           //这个之后没试过
+    //这个是最小的通道
+    private Integer             minChannelID = 12002;
+    //这个之后没试过
+    private Integer             maxChannelID = 12011;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
