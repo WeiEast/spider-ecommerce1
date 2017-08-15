@@ -3,7 +3,8 @@ package com.datatrees.rawdatacentral.core.common;
 import java.util.Date;
 
 import com.datatrees.rawdatacentral.service.TaskService;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -13,11 +14,13 @@ import com.datatrees.rawdatacentral.service.TaskService;
  */
 public enum UnifiedSysTime {
     INSTANCE;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnifiedSysTime.class);
     private static TaskService service = (TaskService) BeansFactory.getService("taskServiceImpl", TaskService.class);
 
     private static final long JET_LAG;
 
     static {
+        LOGGER.info("System date: {} - {}", new Date(),  System.currentTimeMillis());
         JET_LAG = service.selectNow().getTime() - System.currentTimeMillis();
     }
 
