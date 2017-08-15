@@ -86,6 +86,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             log = TemplateUtils.format("{}-->图片验证码-->刷新成功!", FormType.getName(param.getFormType()));
             Map<String, Object> map = new HashMap<>();
             map.put(RETURN_FIELD_PIC_CODE, picResult.getData());
+            result.success(map);
         }
         messageService.sendTaskLog(param.getTaskId(), log);
         return result;
