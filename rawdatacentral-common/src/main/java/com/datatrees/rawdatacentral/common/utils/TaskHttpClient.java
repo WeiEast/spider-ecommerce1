@@ -45,6 +45,8 @@ public class TaskHttpClient {
 
     private static final String        DEFAULT_CHARSET = "UTF-8";
 
+    private static RedisService        redisService    = BeanFactoryUtils.getBean(RedisService.class);
+
     static {
         CONFIG = RequestConfig.custom().setConnectTimeout(10000).setSocketTimeout(10000).build();
     }
@@ -167,7 +169,6 @@ public class TaskHttpClient {
         } finally {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
-            RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
             redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()),
                 JSON.toJSONString(response), 1, TimeUnit.DAYS);
         }

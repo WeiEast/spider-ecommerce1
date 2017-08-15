@@ -11,13 +11,15 @@ import org.slf4j.LoggerFactory;
  */
 public class ProxyUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProxyUtils.class);
+    private static final Logger logger       = LoggerFactory.getLogger(ProxyUtils.class);
+
+    private static ProxyService proxyService = BeanFactoryUtils.getBean(ProxyService.class);
 
     public static Proxy getProxy(Long taskId, String websiteName) {
         CheckUtils.checkNotPositiveNumber(taskId, ErrorCode.EMPTY_TASK_ID);
         Proxy proxy = null;
         try {
-            proxy = BeanFactoryUtils.getBean(ProxyService.class).getProxy(taskId, websiteName);
+            proxy = proxyService.getProxy(taskId, websiteName);
         } catch (Exception e) {
             logger.error("getProxy error taskId={},websiteName={}", taskId, websiteName, e);
         }

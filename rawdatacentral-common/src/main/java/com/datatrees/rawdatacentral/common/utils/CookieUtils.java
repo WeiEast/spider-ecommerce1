@@ -20,8 +20,9 @@ import java.util.Map;
  */
 public class CookieUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(CookieUtils.class);
-    
+    private static final Logger logger       = LoggerFactory.getLogger(CookieUtils.class);
+
+    private static RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
 
     public static List<Cookie> getCookies(BasicCookieStore cookieStore) {
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
@@ -112,15 +113,11 @@ public class CookieUtils {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = CookieUtils.getCookies(cookieStore);
-        BeanFactoryUtils.getBean(RedisService.class).cache(RedisKeyPrefixEnum.TASK_COOKIE, String.valueOf(taskId),
-                list);
+        redisService.cache(RedisKeyPrefixEnum.TASK_COOKIE, String.valueOf(taskId), list);
     }
-
-
 
     public static BasicCookieStore getCookie(Long taskId) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
-        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
         BasicCookieStore cookieStore = new BasicCookieStore();
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies = null;
         String cacheKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId + "");

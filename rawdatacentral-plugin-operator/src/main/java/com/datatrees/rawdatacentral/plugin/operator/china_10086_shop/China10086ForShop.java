@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.omg.PortableInterceptor.INACTIVE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.session.SessionProperties;
 
 import java.util.Base64;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class China10086ForShop implements OperatorPluginService {
 
     private static final Logger logger       = LoggerFactory.getLogger(China10086ForShop.class);
 
+    private static RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+
     //这个是最小的通道
     private Integer             minChannelID = 12002;
     //这个之后没试过
@@ -48,8 +51,7 @@ public class China10086ForShop implements OperatorPluginService {
         try {
             //短信有效通道:12002-1208
             //登陆页没有获取任何cookie,不用登陆
-            BeanFactoryUtils.getBean(RedisService.class).addTaskShare(param.getTaskId(), "channelID",
-                minChannelID.toString());
+            redisService.addTaskShare(param.getTaskId(), "channelID", minChannelID.toString());
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={}", param, e);
@@ -203,7 +205,6 @@ public class China10086ForShop implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
             Integer channelID = Integer.valueOf(redisService.getTaskShare(param.getTaskId(), "channelID"));
             String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID={}&userName={}";
             response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_003")
@@ -326,8 +327,7 @@ public class China10086ForShop implements OperatorPluginService {
         try {
             String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID={}&protocol=https:&timestamp={}";
             String referer = "https://login.10086.cn/html/login/login.html";
-            String channelID = BeanFactoryUtils.getBean(RedisService.class).getTaskShare(param.getTaskId(),
-                "channelID");
+            String channelID = redisService.getTaskShare(param.getTaskId(), "channelID");
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004").setReferer(referer)
                 .setFullUrl(templateUrl, channelID, param.getMobile(), param.getPassword(), param.getSmsCode(),
                     param.getPicCode(), System.currentTimeMillis())
@@ -364,8 +364,7 @@ public class China10086ForShop implements OperatorPluginService {
                     .invoke();
                 String provinceCode = CookieUtils.getCookieValue(param.getTaskId(), "ssologinprovince");
                 String provinceName = getProvinceName(provinceCode);
-                BeanFactoryUtils.getBean(RedisService.class).addTaskShare(param.getTaskId(), AttributeKey.PROVINCE_NAME,
-                    provinceName);
+                redisService.addTaskShare(param.getTaskId(), AttributeKey.PROVINCE_NAME, provinceName);
 
                 return result.success();
             }

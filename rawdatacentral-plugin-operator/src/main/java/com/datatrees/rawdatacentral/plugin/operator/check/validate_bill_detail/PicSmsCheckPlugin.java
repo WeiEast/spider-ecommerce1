@@ -34,24 +34,18 @@ import java.util.concurrent.TimeUnit;
  */
 public class PicSmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger    logger   = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
+    private static final Logger    logger         = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
 
-    private CrawlerOperatorService pluginService;
+    private CrawlerOperatorService pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
 
-    private MessageService         messageService;
+    private MessageService         messageService = BeanFactoryUtils.getBean(MessageService.class);
 
-    private RedisService           redisService;
+    private RedisService           redisService   = BeanFactoryUtils.getBean(RedisService.class);
 
-    private static final String    formType = FormType.VALIDATE_BILL_DETAIL;
+    private static final String    formType       = FormType.VALIDATE_BILL_DETAIL;
 
     //超时时间120秒
-    private long                   timeOut  = 120;
-
-    {
-        pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
-        messageService = BeanFactoryUtils.getBean(MessageService.class);
-        redisService = BeanFactoryUtils.getBean(RedisService.class);
-    }
+    private long                   timeOut        = 120;
 
     @Override
     public String process(String... args) throws Exception {
