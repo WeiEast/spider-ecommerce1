@@ -32,7 +32,6 @@ import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -88,8 +87,6 @@ public class CollectorWorker {
 
     private final long          maxLiveTime               = TimeUnit.SECONDS
         .toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
-
-    private MessageService      messageService;
 
     /**
      * 登录
@@ -451,8 +448,4 @@ public class CollectorWorker {
         return this;
     }
 
-    public CollectorWorker setMessageService(MessageService messageService) {
-        this.messageService = messageService;
-        return this;
-    }
 }
