@@ -40,7 +40,7 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
     public Proxy getProxy(Long taskId, String websiteName) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         Proxy proxy = null;
-        if(StringUtils.equalsIgnoreCase("local",env)){
+        if(StringUtils.equalsIgnoreCase("local",env) || StringUtils.equalsIgnoreCase("dev",env)){
             return null;
         }
         try {
