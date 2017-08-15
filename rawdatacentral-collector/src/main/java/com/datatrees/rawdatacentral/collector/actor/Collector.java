@@ -135,6 +135,7 @@ public class Collector {
 
         task.setWebsiteId(context.getWebsite().getId());
         task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());
+        task.setCreatedAt(UnifiedSysTime.INSTANCE.getSystemTime());
         // init cookie
         if (StringUtils.isNotBlank(message.getCookie())) {
             ProcessorContextUtil.setCookieString(context, message.getCookie());
