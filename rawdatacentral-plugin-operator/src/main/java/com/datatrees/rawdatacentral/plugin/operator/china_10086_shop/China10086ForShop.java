@@ -329,8 +329,8 @@ public class China10086ForShop implements OperatorPluginService {
             String referer = "https://login.10086.cn/html/login/login.html";
             String channelID = redisService.getTaskShare(param.getTaskId(), "channelID");
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004").setReferer(referer)
-                .setFullUrl(templateUrl, channelID, param.getMobile(), param.getPassword(), param.getSmsCode(),
-                    param.getPicCode(), System.currentTimeMillis())
+                .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode(),
+                    channelID, System.currentTimeMillis())
                 .invoke();
             /**
              * 结果枚举:
@@ -377,6 +377,9 @@ public class China10086ForShop implements OperatorPluginService {
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 case "6002":
                     logger.warn("登录失败-->短信随机码不正确或已过期,param={}", param);
+                    return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
+                case "3013":
+                    logger.warn("登录失败-->接口参数不对(可能性比较大)/系统繁忙,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
                     logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
