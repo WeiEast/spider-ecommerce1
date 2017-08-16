@@ -234,6 +234,26 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
+    public boolean saveToList(String key, List<String> list, long timeout, TimeUnit unit) {
+        try {
+            if (StringUtils.isBlank(key) || null == list) {
+                throw new RuntimeException("saveToList invalid param key or value");
+            }
+            if(list.isEmpty()){
+                logger.info("saveToList success key={},list is empty", key);
+                return true;
+            }
+            stringRedisTemplate.opsForList().rightPushAll(key, list);
+            stringRedisTemplate.expire(key, timeout, unit);
+            logger.info("saveToList success key={}", key);
+            return true;
+        } catch (Exception e) {
+            logger.error("saveToList error key={}", key, e);
+            return false;
+        }
+    }
+
+    @Override
     public String saveDirectiveResult(DirectiveResult result) {
         if (null == result) {
             throw new RuntimeException("saveDirectiveResult error param is null");

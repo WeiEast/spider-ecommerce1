@@ -91,7 +91,6 @@ public interface RedisService {
      */
     public String rightPop(String key, long timeout, TimeUnit unit);
 
-
     /**
      * 保存
      * @param key
@@ -112,6 +111,15 @@ public interface RedisService {
      */
     public boolean saveToList(String key, String value, long timeout, TimeUnit unit);
 
+    /**
+     * 保存到list
+     * @param key
+     * @param list
+     * @param timeout 过期时间
+     * @param unit 过期时间单位
+     * @return
+     */
+    public boolean saveToList(String key, List<String> list, long timeout, TimeUnit unit);
 
     /**
      * 保存交互指令
@@ -129,7 +137,6 @@ public interface RedisService {
      * @return
      */
     public String saveDirectiveResult(String directiveId, DirectiveResult result);
-
 
     /**
      * 获取还未执行的最后一条指令

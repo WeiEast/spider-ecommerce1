@@ -19,7 +19,9 @@ dependencies {
     compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: 'spring')
     }
-    compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true)
+    compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true){
+        exclude(module: 'rawdatacentral-api')
+    }
     compile "org.javassist:javassist:${javassist}"
     compile "com.github.sgroschupf:zkclient:0.1"
     compile "com.datatrees.usercenter:user-center-api:${userCenterApi}"

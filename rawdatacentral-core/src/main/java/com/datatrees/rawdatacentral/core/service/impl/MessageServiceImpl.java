@@ -101,8 +101,8 @@ public class MessageServiceImpl implements MessageService {
                 }
                 SendResult sendResult = producer.send(mqMessage);
                 if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                    logger.info("send message success topic={},content={},retry={},charsetName={}", topic, content,
-                        retry, charsetName);
+                    logger.info("send message success topic={},content={},retry={},charsetName={}", topic,
+                        content.length() > 100 ? content.substring(0, 100) : content, retry, charsetName);
                     return true;
                 }
             } catch (Exception e) {
