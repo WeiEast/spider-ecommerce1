@@ -15,6 +15,7 @@ public enum ErrorCode {
     EMPTY_PIC_CODE(-220,"图片验证码不能为空"),
     EMPTY_SMS_CODE(-230,"短信验证码不能为空"),
 
+    VALIDATE_PHONE_FAIL(-241,"手机号码与运营商归属地不符，请重新输入"),
     VALIDATE_PASSWORD_FAIL(-240, "您的账户名与密码不匹配，请重新输入"),
 
     REFESH_PIC_CODE_ERROR(-250,"图片验证码刷新失败,请重试"),
