@@ -90,7 +90,7 @@ public class China10010ForWeb implements OperatorPluginService {
             /**
              * 获取json字符串
              */
-            String jsonResult = PatternUtils.group( response.getPateContent(), "jQuery\\(([^\\)]+)\\)", 1);
+            String jsonResult = PatternUtils.group( response.getPageContent(), "jQuery\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(jsonResult);
             String code = json.getString("resultCode");
             String errorMsg = StringUtils.EMPTY;
@@ -109,13 +109,7 @@ public class China10010ForWeb implements OperatorPluginService {
                     logger.warn("登录失败-->手机号码与运营商归属地不符,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_PHONE_FAIL);
                 default:
-                    logger.error("登陆失败,param={},pageContent={}", param, response.getPateContent());
-                    if (StringUtils.contains(errorMsg, "密码")) {
-                        return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
-                    }
-                    if (StringUtils.contains(errorMsg, "图片")) {
-                        return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
-                    }
+                    logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.LOGIN_FAIL);
             }
         } catch (Exception e) {
@@ -138,7 +132,7 @@ public class China10010ForWeb implements OperatorPluginService {
                     .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001")
                     .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
-            return result.success(response.getPateContentForBase64());
+            return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
             logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
