@@ -5,6 +5,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.util.List;
 
 public interface RedisDao {
+
+
     public boolean saveListString(final String key, final List<String> valueList);
 
     public boolean saveString2List(final String key, final String value);

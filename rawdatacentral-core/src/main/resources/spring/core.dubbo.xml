@@ -3,14 +3,6 @@
        xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:application name="rawdatacentral"/>
-
-    <dubbo:monitor protocol="registry"/>
-
-    <!-- 使用multicast广播注册中心暴露发现服务地址 -->
-    <dubbo:registry address="${dubbo.zookeeper.address}"/>
-    <dubbo:protocol name="dubbo" port="20192"/>
-
     <dubbo:provider timeout="30000" retries="3"/>
 
     <!--注册到dubbo -->
@@ -21,9 +13,6 @@
     <!--运营商-->
     <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerOperatorService"
                    ref="crawlerOperatorServiceImpl"/>
-
-    <!--代理-->
-    <dubbo:reference interface="com.treefinance.proxy.api.ProxyProvider" id="proxyProvider" check="false"/>
 
 </beans>
 

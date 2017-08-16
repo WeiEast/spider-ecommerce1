@@ -9,12 +9,9 @@ dependencies {
     compile "redis.clients:jedis:${jedisVersion}"
     compile "org.apache.poi:poi:${poiVersion}"
     compile "com.google.guava:guava:${guavaVersion}"
-    compile("com.alibaba:dubbo:${dubboVersion}") {
-        exclude(module: 'spring')
-
+    compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true){
+        exclude(module: 'rawdatacentral-api')
     }
-    compile "com.101tec:zkclient:${zkclientVersion}"
-    compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true)
     compile "net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}"
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true)
     compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -33,13 +34,13 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultSubmitProcessor.class);
     @Resource
-    RedisService redisService;
+    RedisService                redisService;
     @Resource
-    FileStoreService fileStoreService;
+    FileStoreService            fileStoreService;
     @Resource
-    NormalizerFactory submitNormalizerFactory;
+    NormalizerFactory           submitNormalizerFactory;
     @Resource
-    SubTaskManager subTaskManager;
+    SubTaskManager              subTaskManager;
 
     @Override
     public boolean process(Object message) {
@@ -89,8 +90,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         }
     }
 
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void submitSubTask(SubmitMessage submitMessage) {
         Map<String, Object> extractResultMap = submitMessage.getExtractResultMap();
         ExtractMessage extractMessage = submitMessage.getExtractMessage();
@@ -111,8 +111,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         }
     }
 
-
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     private boolean saveToRedis(SubmitMessage submitMessage) {
         Map<String, Object> extractResultMap = submitMessage.getExtractResultMap();
         ExtractMessage extractMessage = submitMessage.getExtractMessage();
@@ -126,7 +125,8 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         }
         submitNormalizerFactory.normalize(submitMessage);
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
-            if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
+            if ("subSeed".equals(entry.getKey()))
+                continue;// no need to save subSeed to redis
             String redisKey = RedisKeyUtils.genRedisKey(taskId, entry.getKey());
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {
@@ -134,9 +134,9 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
                 for (Object obj : (Collection) entry.getValue()) {
                     jsonStringList.add(GsonUtils.toJson(obj));
                 }
-                flag = redisService.saveListString(redisKey, jsonStringList);
+                flag = redisService.saveToList(redisKey, jsonStringList, 1, TimeUnit.HOURS);
             } else {
-                flag = redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()));
+                flag = redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 1, TimeUnit.HOURS);
             }
             if (!flag) {
                 logger.error("save to redis error! key: " + entry.getKey() + " value: " + entry.getValue());

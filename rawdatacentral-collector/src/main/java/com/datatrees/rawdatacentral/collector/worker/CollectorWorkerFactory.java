@@ -36,28 +36,15 @@ public class CollectorWorkerFactory {
     @Resource
     private CrawlExcutorHandler crawlExcutorHandler;
     @Resource
-    private DuplicateCheckerFactory duplicateCheckerFactory;
-    @Resource
     private SubTaskManager subTaskManager;
     @Resource
     private RedisDao redisDao;
-    @Resource
-    private MessageService messageService;
 
 
 
     public CollectorWorker getCollectorWorker(TaskMessage taskMessage) {
-        CollectorMessage message = taskMessage.getCollectorMessage();
-        // DuplicateChecker duplicateChecker = null;
-        // if (message.isNeedDuplicate()) {
-        // // init duplicateChecker
-        // duplicateChecker =
-        // duplicateCheckerFactory.duplicateCheckerBuild(taskMessage.getContext().getWebsite(),
-        // message.getTaskId());
-        // }
-        // init collectorWorker
         CollectorWorker collectorWorker = new CollectorWorker().setCrawlExcutorHandler(crawlExcutorHandler).setResultDataHandler(resultDataHandler)
-                .setExtractorActorRef(extractorWorkerRef).setSubTaskManager(subTaskManager).setRedisDao(redisDao).setMessageService(messageService);
+                .setExtractorActorRef(extractorWorkerRef).setSubTaskManager(subTaskManager).setRedisDao(redisDao);
 
         return collectorWorker;
     }
