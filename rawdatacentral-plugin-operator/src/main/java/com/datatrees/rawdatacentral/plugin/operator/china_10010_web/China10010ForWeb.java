@@ -1,6 +1,5 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10010_web;
 
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
@@ -74,12 +73,14 @@ public class China10010ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = null;
         Response response = null;
         try {
-            String templateUrl = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}" +
-                    "&redirectURL=http%3A%2F%2Fwww.10010.com&userName={}&password={}&verifyCode={}&pwdType=01&productType=01" +
-                    "&redirectType=01&rememberMe=1&_={}";
+            String templateUrl = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}"
+                                 + "&redirectURL=http%3A%2F%2Fwww.10010.com&userName={}&password={}&verifyCode={}&pwdType=01&productType=01"
+                                 + "&redirectType=01&rememberMe=1&_={}";
             String referer = "https://uac.10010.com/portal/mallLogin.jsp";
             response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_002").setReferer(referer)
-                    .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(), param.getPicCode(), System.currentTimeMillis()).invoke();
+                .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(),
+                    param.getPicCode(), System.currentTimeMillis())
+                .invoke();
             /**
              * 结果枚举:
              * 登陆成功:jQuery({resultCode:"0000",redirectURL:"http://www.10010.com"})
@@ -90,18 +91,14 @@ public class China10010ForWeb implements OperatorPluginService {
             /**
              * 获取json字符串
              */
-            String jsonResult = PatternUtils.group( response.getPageContent(), "jQuery\\(([^\\)]+)\\)", 1);
+            String jsonResult = PatternUtils.group(response.getPageContent(), "jQuery\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(jsonResult);
-            String code = json.getString("resultCode");
-            String errorMsg = StringUtils.EMPTY;
-            if (jsonResult.contains(",msg:")) {
-                errorMsg = json.getString("msg");
-            }
-            if (StringUtils.equals("0000", code)) {
+            String resultCode = json.getString("resultCode");
+            if (StringUtils.equals("0000", resultCode)) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             }
-            switch (code) {
+            switch (resultCode) {
                 case "7007":
                     logger.warn("登录失败-->账户名与密码不匹配,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
@@ -110,11 +107,11 @@ public class China10010ForWeb implements OperatorPluginService {
                     return result.failure(ErrorCode.VALIDATE_PHONE_FAIL);
                 default:
                     logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
-                    return result.failure(ErrorCode.LOGIN_FAIL);
+                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
-            return result.failure(ErrorCode.LOGIN_FAIL);
+            return result.failure(ErrorCode.LOGIN_ERROR);
         }
     }
 
@@ -129,8 +126,8 @@ public class China10010ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/CreateImage?t={}";
             response = TaskHttpClient
-                    .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001")
-                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001")
+                .setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {

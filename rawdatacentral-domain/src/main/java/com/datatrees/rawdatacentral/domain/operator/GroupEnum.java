@@ -14,7 +14,8 @@ package com.datatrees.rawdatacentral.domain.operator;
  */
 public enum GroupEnum {
 
-    CHINA_10010("CHINA_10010","中国联通","china_10010_app"),
+//    CHINA_10010("CHINA_10010","中国联通","china_10010_app"),
+    CHINA_10010("CHINA_10010","中国联通","china_10010_web"),
 //    ZHE_JIANG_10086("ZHE_JAING_10086","浙江移动","zhe_jiang_10086_web"),
     //测试
     ZHE_JIANG_10086("ZHE_JAING_10086","浙江移动","china_10086_shop"),
