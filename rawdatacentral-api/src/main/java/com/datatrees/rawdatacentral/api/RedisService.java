@@ -91,13 +91,6 @@ public interface RedisService {
      */
     public String rightPop(String key, long timeout, TimeUnit unit);
 
-    /**
-     * 保存
-     * @param key
-     * @param value
-     * @return
-     */
-    public boolean saveString(String key, Object value);
 
     /**
      * 保存
@@ -119,20 +112,6 @@ public interface RedisService {
      */
     public boolean saveToList(String key, String value, long timeout, TimeUnit unit);
 
-    /**
-     * 保存
-     * @param key
-     * @param value
-     * @return
-     */
-    public boolean saveListString(String key, List<String> value);
-
-    /**
-     * 从redis取app端交互的信息
-     * @param taskId 任务ID
-     * @return
-     */
-    public String getResultFromApp(Object taskId);
 
     /**
      * 保存交互指令
@@ -151,12 +130,6 @@ public interface RedisService {
      */
     public String saveDirectiveResult(String directiveId, DirectiveResult result);
 
-    /**
-     * 获取还未执行的最后一条指令
-     * @param groupKey 指令池key
-     * @return
-     */
-    public <T> DirectiveResult<T> getNextDirectiveResult(String groupKey);
 
     /**
      * 获取还未执行的最后一条指令
@@ -189,6 +162,7 @@ public interface RedisService {
 
     /**
      * 缓存
+     * value:转化成json
      * @param key
      * @param value
      * @param timeout
@@ -198,6 +172,7 @@ public interface RedisService {
 
     /**
      * 缓存
+     * value:转化成json
      * @param redisKeyPrefixEnum  前缀
      * @param postfix 后缀
      * @param value 值

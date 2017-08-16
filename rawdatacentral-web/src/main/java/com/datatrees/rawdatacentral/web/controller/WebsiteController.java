@@ -34,9 +34,6 @@ public class WebsiteController {
     @Resource
     private PluginService        pluginService;
 
-    @Resource
-    private RedisTemplate        redisTemplate;
-
     @RequestMapping("/deleteCacheByWebsiteName")
     public HttpResult<Boolean> deleteCacheByWebsiteName(String websiteName) {
         HttpResult<Boolean> result = new HttpResult<>();

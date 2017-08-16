@@ -1,28 +1,29 @@
 package com.datatrees.rawdatacentral.domain.enums;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by zhouxinghai on 2017/7/5.
  */
 public enum RedisKeyPrefixEnum {
 
-    WEBSITENAME_TRANSFORM_MAP("websitename_transform_map", 60, "websitename中文转英文名称"),
-    LOCK("lock", 1, "共享锁"),
+    WEBSITENAME_TRANSFORM_MAP("websitename.transform.map", 60, TimeUnit.MINUTES, "websitename中文转英文名称"),
+    LOCK("lock", 1,TimeUnit.MINUTES, "共享锁"),
 
-    TASK_COOKIE("task_cookie", 60, " 根据taskId共享cookie"),
-    TASK_SHARE("task_share", 60, " 根据taskId共享中间属性"),
-    TASK_PROXY("task_proxy", 60, " 根据taskId共享代理"),
-    TASK_REQUEST("task_request", 180, "根据taskId共享代理"),
+    TASK_COOKIE("task.cookie", 30,TimeUnit.MINUTES, " 根据taskId共享cookie"),
+    TASK_SHARE("task.share", 30,TimeUnit.MINUTES, " 根据taskId共享中间属性"),
+    TASK_PROXY("task.proxy", 30,TimeUnit.MINUTES, " 根据taskId共享代理"),
+    TASK_REQUEST("task.request", 30,TimeUnit.MINUTES, "根据taskId共享代理"),
 
-    WEBSITE_CONF_WEBSITENAME("website_conf_websitename", 60,"根据websitename查找website_conf"),
-    ALL_OPERATOR_CONFIG("all_operator_config", 60, "运营商配置"),
+    WEBSITE_CONF_WEBSITENAME("website.conf.websitename", 60,TimeUnit.MINUTES,"根据websitename查找website.conf"),
+    ALL_OPERATOR_CONFIG("all.operator.config", 60,TimeUnit.MINUTES, "运营商配置"),
 
-    PLUGIN_CLASS("plugin_class", 60 * 24, "根据taskId共享cookie"),
-    PLUGIN_FILE("plugin_file", 60 * 24 * 365,"插件jar存储"),
-    PLUGIN_FILE_MD5("plugin_file_md5", 60 * 24 * 365, "插件md5"),
+    PLUGIN_CLASS("plugin.class", 24,TimeUnit.HOURS, "根据taskId共享cookie"),
+    PLUGIN_FILE("plugin.file", 365,TimeUnit.DAYS,"插件jar存储"),
+    PLUGIN_FILE_MD5("plugin.file.md5", 365,TimeUnit.DAYS, "插件md5"),
 
-    SEND_LOGIN_MSG_STAGE("send_login_msg_stage",0,"发送登录成功消息阶段"),
-    //单位:秒
-    SEND_SMS_INTERVAL("SEND_SMS_INTERVAL",0,"发送短信间隔时间")
+    SEND_LOGIN_MSG_STAGE("send.login.msg.stage",24,TimeUnit.HOURS,"发送登录成功消息阶段"),
+    SEND_SMS_INTERVAL("send.sms.interval",60,TimeUnit.SECONDS,"发送短信间隔时间")
     ;
 
     /**
@@ -36,23 +37,25 @@ public enum RedisKeyPrefixEnum {
     private final String remark;
 
     /**
-     * 超时时间(单位:分),默认10分钟
+     * 超时时间
      */
-    private int          timeout   = 10;
+    private int          timeout ;
+
+    /**
+     * 时间单位
+     */
+    private TimeUnit    timeUnit;
 
     /**
      * 分隔符
      */
-    private final String separator = "_";
+    private final String separator = ".";
 
-    RedisKeyPrefixEnum(String prefix, int timeout, String remark) {
+    RedisKeyPrefixEnum(String prefix, int timeout, TimeUnit timeUnit, String remark) {
         this.prefix = prefix;
         this.remark = remark;
         this.timeout = timeout;
-    }
-
-    RedisKeyPrefixEnum(String remark) {
-        this.remark = remark;
+        this.timeUnit = timeUnit;
     }
 
     public int getTimeout() {
@@ -65,5 +68,17 @@ public enum RedisKeyPrefixEnum {
 
     public String getRedisKey(Object postfix) {
         return prefix + separator + postfix.toString();
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
     }
 }

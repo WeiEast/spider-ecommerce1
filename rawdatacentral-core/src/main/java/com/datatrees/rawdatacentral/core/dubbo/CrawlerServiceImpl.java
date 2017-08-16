@@ -236,16 +236,6 @@ public class CrawlerServiceImpl implements CrawlerService {
         }
     }
 
-    private boolean isTimeOut(long startTime, String websiteName) throws Exception {
-        long now = System.currentTimeMillis();
-        int maxInterval = PropertiesConfiguration.getInstance().getInt(websiteName + ".default.max.waittime",
-            25 * 1000);
-        if (now <= startTime + maxInterval) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public HttpResult<Boolean> cancel(long taskId, Map<String, String> extra) {
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
