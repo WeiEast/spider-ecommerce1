@@ -167,7 +167,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 logger.warn("fetchLoginCode error pluginResult={}", pluginResult);
                 return result.failure(pluginResult.getResponseCode(), pluginResult.getMessage());
             }
-            logger.info("fetchLoginCode success,pluginResult={}", pluginResult);
+            logger.info("fetchLoginCode for smsCode success,taskId={}", taskId);
             return result.success();
         }
         if (1 == type) {
@@ -176,7 +176,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                 logger.warn("fetchLoginCode error pluginResult={}", pluginResult);
                 return result.failure(pluginResult.getResponseCode(), pluginResult.getMessage());
             }
-            logger.info("fetchLoginCode success,pluginResult={}", pluginResult);
+            logger.info("fetchLoginCode for picCode success,taskId={}", taskId);
             return result.success(pluginResult.getData().get(AttributeKey.PIC_CODE).toString());
         }
         logger.info("fetchLoginCode fail,invalid taskId={},type={}", taskId, type);
