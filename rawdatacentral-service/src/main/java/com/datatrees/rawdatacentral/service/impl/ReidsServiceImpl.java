@@ -223,7 +223,7 @@ public class ReidsServiceImpl implements RedisService {
             if (StringUtils.isAnyBlank(key, value)) {
                 throw new RuntimeException("saveToList invalid param key or value");
             }
-            stringRedisTemplate.opsForList().rightPushAll(key, value);
+            stringRedisTemplate.opsForList().rightPush(key, value);
             stringRedisTemplate.expire(key, timeout, unit);
             logger.info("saveToList success key={}", key);
             return true;
