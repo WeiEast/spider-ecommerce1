@@ -66,9 +66,9 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
     @Override
     public OperatorPluginService getOperatorPluginService(String websiteName) {
         try {
-            String propertyName = "operator.plugin." + websiteName;
+            String propertyName = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(websiteName);
             String mainLoginClass = PropertiesConfiguration.getInstance().get(propertyName);
-            CheckUtils.checkNotBlank(mainLoginClass, "get operator plugin class error websiteName=" + websiteName);
+            CheckUtils.checkNotBlank(mainLoginClass, "property not found  propertyName=" + propertyName);
             Class loginClass = loadPlugin(operatorLoginPlugin, mainLoginClass);
             if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
                 throw new RuntimeException(

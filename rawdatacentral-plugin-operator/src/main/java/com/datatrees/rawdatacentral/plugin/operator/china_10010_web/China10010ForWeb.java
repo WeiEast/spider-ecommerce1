@@ -99,6 +99,9 @@ public class China10010ForWeb implements OperatorPluginService {
                 return result.success();
             }
             switch (resultCode) {
+                case "7001":
+
+
                 case "7007":
                     logger.warn("登录失败-->账户名与密码不匹配,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
@@ -110,7 +113,7 @@ public class China10010ForWeb implements OperatorPluginService {
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
-            logger.error("登陆失败,param={},response={}", param, response, e);
+            logger.error("登陆失败,response={}", response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
         }
     }
