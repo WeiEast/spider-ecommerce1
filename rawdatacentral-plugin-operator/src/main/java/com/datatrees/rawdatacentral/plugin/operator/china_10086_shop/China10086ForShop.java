@@ -117,9 +117,9 @@ public class China10086ForShop implements OperatorPluginService {
             String templateUrl = "https://login.10086.cn/captchazh.htm?type=05&timestamp={}";
             response = TaskHttpClient
                 .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_001")
-                .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+                .setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
-            return result.success(response.getPateContentForBase64());
+            return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
             logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
@@ -136,7 +136,7 @@ public class China10086ForShop implements OperatorPluginService {
                 .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_002")
                 .setFullUrl(templateUrl, param.getPicCode()).invoke();
             //结果枚举:正确{"resultCode":"0"},错误{"resultCode":"1"}
-            JSONObject json = response.getPateContentForJSON();
+            JSONObject json = response.getPageContentForJSON();
             Integer resultCode = json.getInteger("resultCode");
             switch (resultCode) {
                 case 0:
@@ -146,7 +146,7 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.error("登录-->图片验证码-->校验失败,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
                 default:
-                    logger.error("登录-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPateContent());
+                    logger.error("登录-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.VALIDATE_PIC_CODE_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
@@ -162,9 +162,9 @@ public class China10086ForShop implements OperatorPluginService {
             String templateUrl = "http://shop.10086.cn/i/authImg?t={}";
             response = TaskHttpClient
                 .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_006")
-                .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+                .setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("详单-->图片验证码-->刷新成功,param={}", param);
-            return result.success(response.getPateContentForBase64());
+            return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
             logger.error("详单-->图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
@@ -182,7 +182,7 @@ public class China10086ForShop implements OperatorPluginService {
             //错误{"data":null,"retCode":"999999","retMsg":"输入错误，校验失败","sOperTime":null}
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007")
                 .setFullUrl(templateUrl, param.getMobile(), param.getPicCode(), System.currentTimeMillis()).invoke();
-            JSONObject json = response.getPateContentForJSON();
+            JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
                 case "000000":
@@ -192,7 +192,7 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.error("详单-->图片验证码-->校验失败,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
                 default:
-                    logger.error("详单-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPateContent());
+                    logger.error("详单-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.VALIDATE_PIC_CODE_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
@@ -209,7 +209,7 @@ public class China10086ForShop implements OperatorPluginService {
             String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID={}&userName={}";
             response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_003")
                 .setFullUrl(templateUrl, channelID, param.getMobile()).invoke();
-            switch (response.getPateContent()) {
+            switch (response.getPageContent()) {
                 case "0":
                     logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                     return result.success();
@@ -237,7 +237,7 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.warn("登录-->短信验证码-->刷新失败,手机号码有误，请重新输入,param={}", param);
                     return result.failure(ErrorCode.REFESH_SMS_FAIL, "手机号码有误，请重新输入");
                 default:
-                    logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPateContent());
+                    logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
@@ -255,7 +255,7 @@ public class China10086ForShop implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_008")
                 .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis()).invoke();
             //String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", mobile);
-            String jsonString = JsonpUtil.getJsonString(response.getPateContent());
+            String jsonString = JsonpUtil.getJsonString(response.getPageContent());
             JSONObject json = JSON.parseObject(jsonString);
             String retCode = json.getString("retCode");
             switch (retCode) {
@@ -263,7 +263,7 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                     return result.success();
                 default:
-                    logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPateContent());
+                    logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
@@ -295,7 +295,7 @@ public class China10086ForShop implements OperatorPluginService {
                 .create(param, RequestType.GET, "china_10086_shop_009").setReferer(referer).setFullUrl(templateUrl,
                     loginName, pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
                 .invoke();
-            String jsonString = JsonpUtil.getJsonString(response.getPateContent());
+            String jsonString = JsonpUtil.getJsonString(response.getPageContent());
             JSONObject json = JSON.parseObject(jsonString);
             String code = json.getString("retCode");
             switch (code) {
@@ -306,7 +306,7 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.warn("详单-->短信验证码错误,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
-                    logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPateContent());
+                    logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
@@ -344,7 +344,7 @@ public class China10086ForShop implements OperatorPluginService {
              重复登陆:{"islocal":false,"result":"9"}
              */
             //没有设置referer会出现connect reset
-            JSONObject json = response.getPateContentForJSON();
+            JSONObject json = response.getPageContentForJSON();
             //重复登陆:{"islocal":false,"result":"9"}
             if (StringUtils.equals("9", json.getString("result"))) {
                 logger.info("重复登陆,param={}", param);
@@ -379,7 +379,7 @@ public class China10086ForShop implements OperatorPluginService {
                     logger.warn("登录失败-->短信随机码不正确或已过期,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
-                    logger.error("登陆失败,param={},pageContent={}", param, response.getPateContent());
+                    logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {

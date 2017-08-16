@@ -89,8 +89,11 @@ public class Response implements Serializable {
     }
 
     @JSONField(ordinal = 10)
-    public String getPateContent() {
+    public String getPageContent() {
         try {
+            if(charsetName.toUpperCase().equals("BASE64")){
+                return getPageContentForBase64();
+            }
             return new String(response, charsetName);
         } catch (Exception e) {
             throw new RuntimeException("getPateContent error,charsetName=UTF-8,request=" + request, e);
@@ -98,7 +101,7 @@ public class Response implements Serializable {
 
     }
 
-    public String getPateContent(String charsetName) {
+    public String getPageContent(String charsetName) {
         try {
             return new String(response, charsetName);
         } catch (Exception e) {
@@ -107,13 +110,13 @@ public class Response implements Serializable {
     }
 
     @JSONField(serialize = false)
-    public String getPateContentForBase64() {
+    public String getPageContentForBase64() {
         return Base64.getEncoder().encodeToString(response);
     }
 
     @JSONField(serialize = false)
-    public JSONObject getPateContentForJSON() {
-        return JSON.parseObject(getPateContent());
+    public JSONObject getPageContentForJSON() {
+        return JSON.parseObject(getPageContent());
     }
 
     @Override

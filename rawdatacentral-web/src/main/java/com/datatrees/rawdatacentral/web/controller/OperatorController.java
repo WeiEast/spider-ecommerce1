@@ -1,7 +1,9 @@
 package com.datatrees.rawdatacentral.web.controller;
 
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.TaskHttpClient;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -33,6 +35,9 @@ public class OperatorController {
 
     @Resource
     private CrawlerOperatorService crawlerOperatorService;
+
+    @Resource
+    private RedisService           redisService;
 
     @RequestMapping("/queryAllOperatorConfig")
     public Object queryAllOperatorConfig() {
@@ -85,7 +90,15 @@ public class OperatorController {
     @RequestMapping("/openPage")
     public Object openPage(Long taskId, String url, String type) throws IOException {
         return TaskHttpClient.create(taskId, "openpage", RequestType.valueOf(type.trim()), "remark01").setFullUrl(url)
-            .invoke().getPateContent();
+            .invoke().getPageContent();
+    }
+
+    @RequestMapping("/deleteRedisResult")
+    public Object deleteRedisResult(Long taskId) throws IOException {
+        redisService.deleteKey(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
+        redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
+        redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
+        return new HttpResult<>().success();
     }
 
 }

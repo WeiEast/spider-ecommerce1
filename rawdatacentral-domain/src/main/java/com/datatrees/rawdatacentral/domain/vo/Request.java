@@ -36,7 +36,6 @@ public class Request implements Serializable {
     @JSONField(ordinal = 7)
     private String              remarkId;
 
-
     @JSONField(ordinal = 8)
     private Map<String, String> header      = new HashMap<>();
 

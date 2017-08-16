@@ -110,6 +110,11 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setResponseCharset(String charsetName){
+        response.setCharsetName(charsetName);
+        return this;
+    }
+
     public Response invoke() {
         checkRequest(request);
         CloseableHttpResponse httpResponse = null;

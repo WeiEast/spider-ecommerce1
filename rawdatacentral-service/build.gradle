@@ -13,17 +13,12 @@ dependencies {
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
         exclude(module: 'guava')
     }
-    compile 'com.datatrees.common:common-protocol:2.1.0'
+//    compile 'com.datatrees.common:common-protocol:2.1.0'
 
     compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: 'spring')
     }
     compile "com.101tec:zkclient:${zkclientVersion}"
 
-//    compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
-
-
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
-    testCompile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
-
 }
