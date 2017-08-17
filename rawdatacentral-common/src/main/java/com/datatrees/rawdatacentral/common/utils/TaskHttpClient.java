@@ -167,6 +167,8 @@ public class TaskHttpClient {
             response.setReceiveCookies(CookieUtils.getReceiveCookieString(request.getSendCookies(), cookieStore));
             if (statusCode != 200) {
                 client.abort();
+                redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()),
+                    JSON.toJSONString(response), 1, TimeUnit.DAYS);
                 throw new RuntimeException("HttpClient doPost error, statusCode: " + statusCode);
             }
             CookieUtils.saveCookie(request.getTaskId(), cookieStore);
