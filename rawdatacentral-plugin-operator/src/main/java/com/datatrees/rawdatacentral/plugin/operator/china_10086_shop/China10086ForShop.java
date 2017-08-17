@@ -294,11 +294,11 @@ public class China10086ForShop implements OperatorPluginService {
              //jQuery183042723042018780055_1500975082967({"data":null,"retCode":"000000","retMsg":"认证成功!","sOperTime":null})
              */
             //没有设置referer会出现connect reset
-            String referer = "https://login.10086.cn/html/login/login.html";
+            String referer = "http://shop.10086.cn/i/?f=home&welcome={}";
             response = TaskHttpClient
-                .create(param, RequestType.GET, "china_10086_shop_009").setReferer(referer).setFullUrl(templateUrl,
-                    loginName, pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
-                .invoke();
+                .create(param, RequestType.GET, "china_10086_shop_009").setFullUrl(templateUrl, loginName,
+                    pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
+                .setReferer(referer, System.currentTimeMillis()).invoke();
             String jsonString = JsonpUtil.getJsonString(response.getPageContent());
             JSONObject json = JSON.parseObject(jsonString);
             String code = json.getString("retCode");
@@ -330,12 +330,13 @@ public class China10086ForShop implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID={}&protocol=https:&timestamp={}";
+            //没有referer提示:Connection reset
             String referer = "https://login.10086.cn/html/login/login.html";
             String channelID = redisService.getTaskShare(param.getTaskId(), "channelID");
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004").setReferer(referer)
-                .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode(),
-                    channelID, System.currentTimeMillis())
-                .invoke();
+            response = TaskHttpClient
+                .create(param, RequestType.GET, "china_10086_shop_004").setFullUrl(templateUrl, param.getMobile(),
+                    param.getPassword(), param.getSmsCode(), param.getPicCode(), channelID, System.currentTimeMillis())
+                .setReferer(referer).invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"artifact":"3490872f8d114992b44dc4e60f595fa0","assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact"

@@ -110,7 +110,12 @@ public class TaskHttpClient {
         return this;
     }
 
-    public TaskHttpClient setResponseCharset(String charsetName){
+    public TaskHttpClient setReferer(String referer, Object... params) {
+        request.getHeader().put(HttpHeadKey.REFERER, TemplateUtils.format(referer, params));
+        return this;
+    }
+
+    public TaskHttpClient setResponseCharset(String charsetName) {
         response.setCharsetName(charsetName);
         return this;
     }
