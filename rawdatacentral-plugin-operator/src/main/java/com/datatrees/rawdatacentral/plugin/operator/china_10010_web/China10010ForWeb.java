@@ -102,7 +102,7 @@ public class China10010ForWeb implements OperatorPluginService {
                  * 顺便验证登录是否成功
                  */
                 templateUrl = "http://iservice.10010.com/e3/static/check/checklogin/";
-                TaskHttpClient.create(param, RequestType.POST, "china_10010_web_004").setFullUrl(templateUrl).invoke();
+                TaskHttpClient.create(param, RequestType.POST, "china_10010_web_004").setFullUrl(templateUrl).setSocketTimeout(30000).setMaxRetry(2).invoke();
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             }
@@ -165,7 +165,7 @@ public class China10010ForWeb implements OperatorPluginService {
                 logger.info("登录-->图片验证码-->校验成功,param={}", param);
                 return result.success();
             }
-            logger.error("登录-->图片验证码-->校验失败,param={}", param);
+            logger.warn("登录-->图片验证码-->校验失败,param={}", param);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         } catch (Exception e) {
             logger.error("登录-->图片验证码-->校验失败,param={},response={}", param, response, e);

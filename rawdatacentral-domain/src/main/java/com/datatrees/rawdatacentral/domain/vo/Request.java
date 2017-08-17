@@ -9,6 +9,7 @@ import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 请求
@@ -31,13 +32,13 @@ public class Request implements Serializable {
     private String              url;
 
     @JSONField(ordinal = 6)
-    private Map<String, String> params      = new HashMap<>();
+    private Map<String, String> params         = new HashMap<>();
 
     @JSONField(ordinal = 7)
     private String              remarkId;
 
     @JSONField(ordinal = 8)
-    private Map<String, String> header      = new HashMap<>();
+    private Map<String, String> header         = new HashMap<>();
 
     @JSONField(ordinal = 9)
     private long                requestTimestamp;
@@ -49,12 +50,56 @@ public class Request implements Serializable {
     private String              protocol;
 
     @JSONField(ordinal = 12)
-    private String              contentType = "application/x-www-form-urlencoded";
+    private String              contentType    = "application/x-www-form-urlencoded";
 
     @JSONField(ordinal = 13)
-    private RequestType         requestType = RequestType.GET;
+    private RequestType         requestType    = RequestType.GET;
+
+    @JSONField(ordinal = 9)
+    private int                 maxRetry       = 1;
+
+    @JSONField(ordinal = 10)
+    private AtomicInteger       retry          = new AtomicInteger(0);
+
+    @JSONField(ordinal = 11)
+    private int                 connectTimeout = 10000;
+
+    @JSONField(ordinal = 12)
+    private int                 socketTimeout = 20000;
 
     public Request() {
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    public void setSocketTimeout(int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+
+    public AtomicInteger getRetry() {
+        return retry;
+    }
+
+    public void setRetry(AtomicInteger retry) {
+        this.retry = retry;
+    }
+
+    public int getMaxRetry() {
+        return maxRetry;
+    }
+
+    public void setMaxRetry(int maxRetry) {
+        this.maxRetry = maxRetry;
     }
 
     public Long getTaskId() {

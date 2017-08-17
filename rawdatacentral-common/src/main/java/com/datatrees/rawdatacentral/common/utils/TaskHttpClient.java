@@ -28,6 +28,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,21 +36,15 @@ import java.util.concurrent.TimeUnit;
 
 public class TaskHttpClient {
 
-    private static final Logger        logger          = LoggerFactory.getLogger(TaskHttpClient.class);
+    private static final Logger logger          = LoggerFactory.getLogger(TaskHttpClient.class);
 
-    private Request                    request;
+    private Request             request;
 
-    private Response                   response;
+    private Response            response;
 
-    private static final RequestConfig CONFIG;
+    private static final String DEFAULT_CHARSET = "UTF-8";
 
-    private static final String        DEFAULT_CHARSET = "UTF-8";
-
-    private static RedisService        redisService    = BeanFactoryUtils.getBean(RedisService.class);
-
-    static {
-        CONFIG = RequestConfig.custom().setConnectTimeout(10000).setSocketTimeout(10000).build();
-    }
+    private static RedisService redisService    = BeanFactoryUtils.getBean(RedisService.class);
 
     private TaskHttpClient(Request request) {
         this.request = request;
@@ -120,6 +115,21 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setConnectTimeout(int connectTimeout) {
+        request.setConnectTimeout(connectTimeout);
+        return this;
+    }
+
+    public TaskHttpClient setSocketTimeout(int socketTimeout) {
+        request.setSocketTimeout(socketTimeout);
+        return this;
+    }
+
+    public TaskHttpClient setMaxRetry(int maxRetry) {
+        request.setMaxRetry(maxRetry);
+        return this;
+    }
+
     public Response invoke() {
         checkRequest(request);
         CloseableHttpResponse httpResponse = null;
@@ -132,7 +142,9 @@ public class TaskHttpClient {
                 request.getProtocol());
             request.setProxy(proxyConfig.getId() + ":" + proxyConfig.getPort());
         }
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(CONFIG).setProxy(proxy)
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout())
+            .setSocketTimeout(request.getSocketTimeout()).build();
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy)
             .setDefaultCookieStore(cookieStore).build();
 
         try {
@@ -167,17 +179,25 @@ public class TaskHttpClient {
             response.setReceiveCookies(CookieUtils.getReceiveCookieString(request.getSendCookies(), cookieStore));
             if (statusCode != 200) {
                 client.abort();
-                redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()),
-                    JSON.toJSONString(response), 1, TimeUnit.DAYS);
-                throw new RuntimeException("HttpClient doPost error, statusCode: " + statusCode);
+                logger.error("HttpClient status error, statusCode={}", statusCode);
+                return response;
+            } else {
+                CookieUtils.saveCookie(request.getTaskId(), cookieStore);
+                //httpResponse.getAllHeaders()
+                byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
+                response.setResponse(data);
             }
-            CookieUtils.saveCookie(request.getTaskId(), cookieStore);
-            //            httpResponse.getAllHeaders()
-            byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
-            response.setResponse(data);
+        } catch (SocketTimeoutException e) {
+            if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
+                logger.error("http timeout ,will retry request={}", request);
+                return invoke();
+            }
+            logger.error("http timout,retry={},maxRetry={}, request={}", request.getRetry(), request.getMaxRetry(),
+                request, e);
+            throw new RuntimeException("http timeout,request=" + request, e);
         } catch (Exception e) {
-            logger.error("http error request={}", JSON.toJSONString(request), e);
-            throw new RuntimeException("http error request=" + JSON.toJSONString(request), e);
+            logger.error("http error request={}", request, e);
+            throw new RuntimeException("http error request=" + request, e);
         } finally {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
