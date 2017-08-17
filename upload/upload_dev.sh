@@ -6,7 +6,6 @@ list=`find . -name '*.jar' | grep -v 'sources'`
 for file in $list
 do
     curl  -F "jar=@$file" $url
-    echo  \n
 done
 
 

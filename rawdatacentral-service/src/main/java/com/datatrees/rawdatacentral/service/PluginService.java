@@ -11,6 +11,7 @@ public interface PluginService {
 
     /**
      * 保存插件
+     * 返回md5
      * @param fileName
      * @param bytes
      */

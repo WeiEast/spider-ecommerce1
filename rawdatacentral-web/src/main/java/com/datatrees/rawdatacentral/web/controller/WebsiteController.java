@@ -5,6 +5,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -71,9 +72,11 @@ public class WebsiteController {
             String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1,
                 uploadFilePath.length());
             String fileName = uploadFileName + "." + uploadFileSuffix;
+            String beforeMd5 = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
             String md5 = pluginService.savePlugin(fileName, jar.getBytes());
-            logger.info("uploadPluginJar success fileName={},token={}", fileName, token);
-            return result.append("成功上传插件:").append(fileName).append("md5:").append(md5).toString();
+            boolean change = !StringUtils.equals(md5,beforeMd5);
+            logger.info("uploadPluginJar success fileName={},md5={},change={},token={}", fileName,md5,change, token);
+            return result.append("upload plugin success:").append(fileName).append(", md5:").append(md5).append(change?" ,插件已经更新\n":"\n").toString();
         } catch (Exception e) {
             logger.error("uploadPluginJar error token={}", token);
             return "上传失败";
