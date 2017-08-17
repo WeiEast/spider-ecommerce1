@@ -62,7 +62,7 @@ public class WebsiteController {
     }
 
     @RequestMapping(value = "/uploadPluginJar", method = RequestMethod.POST)
-    public Object uploadPluginJar(MultipartHttpServletRequest multiReq, String token) {
+    public Object uploadPluginJar(MultipartHttpServletRequest multiReq, String fileName, String token) {
         StringBuilder result = new StringBuilder();
         try {
             MultipartFile jar = multiReq.getFile("jar");
@@ -71,12 +71,15 @@ public class WebsiteController {
                 uploadFilePath.indexOf('.'));
             String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1,
                 uploadFilePath.length());
-            String fileName = uploadFileName + "." + uploadFileSuffix;
+            if (StringUtils.isBlank(fileName)) {
+                fileName = uploadFileName + "." + uploadFileSuffix;
+            }
             String beforeMd5 = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
             String md5 = pluginService.savePlugin(fileName, jar.getBytes());
-            boolean change = !StringUtils.equals(md5,beforeMd5);
-            logger.info("uploadPluginJar success fileName={},md5={},change={},token={}", fileName,md5,change, token);
-            return result.append("upload plugin success:").append(fileName).append(", md5:").append(md5).append(change?" ,插件已经更新\n":"\n").toString();
+            boolean change = !StringUtils.equals(md5, beforeMd5);
+            logger.info("uploadPluginJar success fileName={},md5={},change={},token={}", fileName, md5, change, token);
+            return result.append("upload plugin success:").append(fileName).append(", md5:").append(md5)
+                .append(change ? " ,插件已经更新\n" : "\n").toString();
         } catch (Exception e) {
             logger.error("uploadPluginJar error token={}", token);
             return "上传失败";
@@ -90,9 +93,9 @@ public class WebsiteController {
             MultipartFile jar = multiReq.getFile("jar");
             String uploadFilePath = jar.getOriginalFilename();
             String uploadFileName = uploadFilePath.substring(uploadFilePath.lastIndexOf('\\') + 1,
-                    uploadFilePath.indexOf('.'));
+                uploadFilePath.indexOf('.'));
             String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1,
-                    uploadFilePath.length());
+                uploadFilePath.length());
             String fileName = uploadFileName + "." + uploadFileSuffix;
             redisService.deleteKey(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
             redisService.deleteKey(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
@@ -103,6 +106,5 @@ public class WebsiteController {
             return "删除失败";
         }
     }
-
 
 }

@@ -6,6 +6,7 @@ list=`find . -name '*.jar' | grep -v 'sources'`
 for file in $list
 do
     curl  -F "jar=@$file" $url
+    curl  -F "jar=@$file;fileName=rawdatacentral-plugin-operator-$HOSTNAME.jar" $url
 done
 
 
