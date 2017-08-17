@@ -50,7 +50,6 @@ public class Response implements Serializable {
         this.charsetName = charsetName;
     }
 
-
     public Request getRequest() {
         return request;
     }
@@ -91,7 +90,10 @@ public class Response implements Serializable {
     @JSONField(ordinal = 10)
     public String getPageContent() {
         try {
-            if(charsetName.toUpperCase().equals("BASE64")){
+            if(null == response){
+                return "";
+            }
+            if (charsetName.toUpperCase().equals("BASE64")) {
                 return getPageContentForBase64();
             }
             return new String(response, charsetName);
@@ -116,7 +118,16 @@ public class Response implements Serializable {
 
     @JSONField(serialize = false)
     public JSONObject getPageContentForJSON() {
-        return JSON.parseObject(getPageContent());
+        String json = getPageContent().trim();
+        if ((json.startsWith("{") && json.endsWith("}")) || (json.startsWith("[") && json.endsWith("]"))) {
+            return JSON.parseObject(json);
+        }
+        //有的结尾带";"
+        if (null != json && json.contains("(") && json.trim().contains(")")) {
+            json = json.substring(json.indexOf("(") + 1, json.lastIndexOf(")"));
+            return JSON.parseObject(json);
+        }
+        return JSON.parseObject(json);
     }
 
     @Override

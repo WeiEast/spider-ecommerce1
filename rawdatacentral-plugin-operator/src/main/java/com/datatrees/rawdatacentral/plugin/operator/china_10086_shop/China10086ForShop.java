@@ -259,8 +259,7 @@ public class China10086ForShop implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
                 .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis())
                 .setReferer(referer).invoke();
-            String jsonString = JsonpUtil.getJsonString(response.getPageContent());
-            JSONObject json = JSON.parseObject(jsonString);
+            JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
                 case "000000":
@@ -299,8 +298,7 @@ public class China10086ForShop implements OperatorPluginService {
                 .create(param, RequestType.GET, "china_10086_shop_009").setFullUrl(templateUrl, loginName,
                     pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
                 .setReferer(referer, System.currentTimeMillis()).invoke();
-            String jsonString = JsonpUtil.getJsonString(response.getPageContent());
-            JSONObject json = JSON.parseObject(jsonString);
+            JSONObject json = response.getPageContentForJSON();
             String code = json.getString("retCode");
             switch (code) {
                 case "000000":

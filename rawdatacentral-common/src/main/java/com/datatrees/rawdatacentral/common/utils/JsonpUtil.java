@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import com.alibaba.fastjson.JSON;
+
 /**
  * Created by zhouxinghai on 2017/7/21.
  */
@@ -11,10 +13,16 @@ public class JsonpUtil {
      * @return
      */
     public static String getJsonString(String jsonp) {
-        if (jsonp.trim().startsWith("{") || jsonp.trim().startsWith("[")) {
-            return jsonp;
+        String json = jsonp.trim();
+        if ((json.startsWith("{") && json.endsWith("}")) || (json.startsWith("[") && json.endsWith("]"))) {
+            return json;
         }
-        return jsonp.substring(jsonp.indexOf("(") + 1, jsonp.lastIndexOf(")"));
+        //有的结尾带";"
+        if (null != json && json.contains("(") && json.trim().contains(")")) {
+            json = json.substring(json.indexOf("(") + 1, json.lastIndexOf(")"));
+            return json;
+        }
+        return json;
     }
 
 }

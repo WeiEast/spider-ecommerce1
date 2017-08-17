@@ -93,8 +93,7 @@ public class China10010ForWeb implements OperatorPluginService {
              * 手机号或密码不正确:jQuery({resultCode:"7007",redirectURL:"http://www.10010.com",errDesc:"null",msg:'用户名或密码不正确。<a href="https://uac.10010.com/cust/resetpwd/inputName"
              *                  target="_blank" style="color: #36c;cursor: pointer;text-decoration:underline;">忘记密码？</a>',needvode:"1",errorFrom:"bss"})
              */
-            String jsonResult = JsonpUtil.getJsonString(response.getPageContent());
-            JSONObject json = JSON.parseObject(jsonResult);
+            JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");
             if (StringUtils.equals("0000", resultCode)) {
 
@@ -160,8 +159,7 @@ public class China10010ForWeb implements OperatorPluginService {
                 .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_002")
                 .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).invoke();
             //结果枚举:正确{"resultCode":"true"},错误{"resultCode":"false"}
-            String jsonResult = JsonpUtil.getJsonString(response.getPageContent());
-            JSONObject json = JSON.parseObject(jsonResult);
+            JSONObject json = response.getPageContentForJSON();
             Boolean resultCode = json.getBoolean("resultCode");
             if (resultCode) {
                 logger.info("登录-->图片验证码-->校验成功,param={}", param);
