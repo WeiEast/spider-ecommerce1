@@ -9,7 +9,7 @@ jar {
             libs += " lib/" + it.name
         }
     }
-    println  libs
+//    println  libs
     manifest {
         attributes 'Main-Class': mainClass
         attributes 'Class-Path': libs
