@@ -11,6 +11,7 @@ import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.PluginService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,9 +44,10 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
         CheckUtils.checkNotBlank(jarName, "jarName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
         try {
-            //            if (StringUtils.equals("local", env)) {
-            //                return Thread.currentThread().getContextClassLoader().loadClass(className);
-            //            }
+            //本地调试不走redis
+            if (StringUtils.equals("local", env)) {
+                return Thread.currentThread().getContextClassLoader().loadClass(className);
+            }
             String postfix = jarName + "_" + className;
             String cacheKey = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(postfix);
             Class mainClass = redisService.getCache(cacheKey, new TypeReference<Class>() {
