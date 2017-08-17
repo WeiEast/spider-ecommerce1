@@ -73,11 +73,6 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
 
             HttpResult<Map<String, Object>> result = pluginService.refeshPicCode(param);
             if (!result.getStatus()) {
-                //获取图片验证码失败超过3次,任务失败
-                if (errorCount >= 3) {
-                    throw new CommonException(ErrorCode.REFESH_PIC_CODE_ERROR);
-                }
-                errorCount++;
                 try {
                     TimeUnit.SECONDS.sleep(10);
                 } catch (InterruptedException e) {
