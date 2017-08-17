@@ -6,11 +6,14 @@ import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.PluginService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,19 +28,22 @@ import javax.annotation.Resource;
 @Service
 public class ClassLoaderServiceImpl implements ClassLoaderService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
+    private static final Logger  logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
 
     @Value("${env:local}")
-    private String              env;
+    private String               env;
 
     @Resource
-    private PluginService       pluginService;
+    private PluginService        pluginService;
 
     @Resource
-    private RedisService        redisService;
+    private RedisService         redisService;
 
     @Value("${operator.plugin.filename}")
-    private String              operatorLoginPlugin;
+    private String               operatorPluginFilename;
+
+    @Resource
+    private WebsiteConfigService websiteConfigService;
 
     @Override
     public Class loadPlugin(String jarName, String className) {
@@ -70,8 +76,9 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
         try {
             String propertyName = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(websiteName);
             String mainLoginClass = PropertiesConfiguration.getInstance().get(propertyName);
+            String pluginFileName = getPluginFileName(websiteName);
             CheckUtils.checkNotBlank(mainLoginClass, "property not found  propertyName=" + propertyName);
-            Class loginClass = loadPlugin(operatorLoginPlugin, mainLoginClass);
+            Class loginClass = loadPlugin(pluginFileName, mainLoginClass);
             if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
                 throw new RuntimeException(
                     "mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorPluginService");
@@ -82,6 +89,21 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
             logger.error("getOperatorService error websiteName={}", websiteName, e);
             throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName);
         }
+    }
+
+    private String getPluginFileName(String websiteName) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        String pluginFileName = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getRedisKey(websiteName));
+        if (StringUtils.isNoneBlank(pluginFileName)) {
+            logger.info("websiteName={},独立映射到了插件pluginFileName={}", websiteName, pluginFileName);
+            return pluginFileName;
+        }
+        WebsiteConf websiteConf = websiteConfigService.getWebsiteConfFromCache(websiteName);
+        if (StringUtils.equals(websiteConf.getWebsiteType(), "2")) {
+            logger.info("load plugin={} for websiteName={}", operatorPluginFilename, websiteName);
+            return operatorPluginFilename;
+        }
+        throw new RuntimeException("not found plugin file for " + websiteName);
     }
 
 }

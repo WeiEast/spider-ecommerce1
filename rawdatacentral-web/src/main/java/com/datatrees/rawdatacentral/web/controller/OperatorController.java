@@ -2,7 +2,9 @@ package com.datatrees.rawdatacentral.web.controller;
 
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TaskHttpClient;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -98,6 +100,14 @@ public class OperatorController {
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
+        return new HttpResult<>().success();
+    }
+
+    @RequestMapping("/mappingPluginFile")
+    public Object mappingPluginFile(String websiteName,String fileName) throws IOException {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        CheckUtils.checkNotBlank(fileName, "fileName is empty");
+        redisService.saveString(RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getRedisKey(websiteName),fileName,RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeout(),RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeUnit());
         return new HttpResult<>().success();
     }
 

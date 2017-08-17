@@ -22,8 +22,11 @@ public enum RedisKeyPrefixEnum {
     PLUGIN_FILE("plugin.file", 365,TimeUnit.DAYS,"插件jar存储"),
     PLUGIN_FILE_MD5("plugin.file.md5", 365,TimeUnit.DAYS, "插件md5"),
 
+    PLUGIN_FILE_WEBSITE("plugin.file.website",60,TimeUnit.MINUTES,"开发环境,将website的plugin jar临时映射到固定的jar"),
+
     SEND_LOGIN_MSG_STAGE("send.login.msg.stage",24,TimeUnit.HOURS,"发送登录成功消息阶段"),
     SEND_SMS_INTERVAL("send.sms.interval",60,TimeUnit.SECONDS,"发送短信间隔时间")
+
     ;
 
     /**
