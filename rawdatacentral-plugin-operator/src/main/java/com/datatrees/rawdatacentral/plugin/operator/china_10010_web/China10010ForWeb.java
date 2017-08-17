@@ -73,7 +73,10 @@ public class China10010ForWeb implements OperatorPluginService {
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
-        HttpResult<Map<String, Object>> result = null;
+        HttpResult<Map<String, Object>> result = validatePicCodeForLogin(param);
+        if (!result.getStatus()) {
+            return result;
+        }
         Response response = null;
         try {
             /**
@@ -83,7 +86,7 @@ public class China10010ForWeb implements OperatorPluginService {
             String templateUrl = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=" + URLEncoder.encode("http://www.10010.com", "UTF-8")
                     + "&userName={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&_={}";
             String referer = "https://uac.10010.com/portal/mallLogin.jsp";
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_002").setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003").setReferer(referer)
                     .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(),
                             param.getPicCode(), uvc, System.currentTimeMillis())
                     .invoke();
@@ -101,6 +104,18 @@ public class China10010ForWeb implements OperatorPluginService {
             JSONObject json = JSON.parseObject(jsonResult);
             String resultCode = json.getString("resultCode");
             if (StringUtils.equals("0000", resultCode)) {
+
+                /**
+                 * 获取关键性cookie，没有的话，会访问不了查询请求
+                 * 顺便验证登录是否成功
+                 */
+                templateUrl = "http://iservice.10010.com/e3/static/check/checklogin/";
+                response = TaskHttpClient.create(param, RequestType.POST, "china_10010_web_004")
+                        .setFullUrl(templateUrl).invoke();
+                if (!StringUtils.contains(response.getPageContent(), "\"isLogin\":true")) {
+                    logger.warn("登录失败-->登录验证失败,response={}", response);
+                    return result.failure(ErrorCode.LOGIN_ERROR);
+                }
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             }
