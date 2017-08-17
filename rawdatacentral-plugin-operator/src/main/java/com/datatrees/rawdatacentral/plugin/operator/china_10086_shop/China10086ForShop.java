@@ -251,10 +251,14 @@ public class China10086ForShop implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/{}?callback=jQuery183002065868962851658_1500889079942_={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_008")
-                .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis()).invoke();
-            //String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", mobile);
+            //&_不可少
+            String templateUrl = "https://shop.10086.cn/i/v1/fee/detbillrandomcodejsonp/{}?callback=fun&_={}";
+            //没有referer提示403
+            String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", param.getMobile());
+            //用post或者参数错误提示{\"retCode\":\"400000\",\"retMsg\":\"parameter illegal!\"}
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
+                .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis())
+                .setReferer(referer).invoke();
             String jsonString = JsonpUtil.getJsonString(response.getPageContent());
             JSONObject json = JSON.parseObject(jsonString);
             String retCode = json.getString("retCode");
