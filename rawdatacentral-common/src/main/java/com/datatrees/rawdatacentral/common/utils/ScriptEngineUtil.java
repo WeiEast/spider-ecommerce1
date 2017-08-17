@@ -27,4 +27,13 @@ public class ScriptEngineUtil {
         return (Invocable) scriptEngine;
     }
 
+    /**
+     * 创建js引擎
+     * @param inputStream 文件流,默认编码UTF-8
+     * @return
+     * @throws Exception
+     */
+    public static Invocable createInvocable(InputStream inputStream) throws Exception {
+       return createInvocable(inputStream,"UTF-8");
+    }
 }
