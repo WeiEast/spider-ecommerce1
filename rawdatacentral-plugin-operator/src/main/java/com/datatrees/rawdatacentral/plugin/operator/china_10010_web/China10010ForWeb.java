@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CookieUtils;
+import com.datatrees.rawdatacentral.common.utils.JsonpUtil;
 import com.datatrees.rawdatacentral.common.utils.TaskHttpClient;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -79,16 +80,12 @@ public class China10010ForWeb implements OperatorPluginService {
         }
         Response response = null;
         try {
-            /**
-             * 获取登录需要的uvc参数
-             */
-            String uvc = CookieUtils.getCookieValue(param.getTaskId(), "uacverifykey");
-            String templateUrl = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=" + URLEncoder.encode("http://www.10010.com", "UTF-8")
-                    + "&userName={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&_={}";
+            String templateUrl = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=http://www.10010.com&userName={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&_={}";
+            String uacverifykey = CookieUtils.getCookieValue(param.getTaskId(), "uacverifykey");
             response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003")
-                    .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(),
-                            param.getPicCode(), uvc, System.currentTimeMillis())
-                    .invoke();
+                .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(),
+                    param.getPicCode(), uacverifykey, System.currentTimeMillis())
+                .invoke();
             /**
              * 结果枚举:
              * 登陆成功:jQuery({resultCode:"0000",redirectURL:"http://www.10010.com"})
@@ -96,10 +93,7 @@ public class China10010ForWeb implements OperatorPluginService {
              * 手机号或密码不正确:jQuery({resultCode:"7007",redirectURL:"http://www.10010.com",errDesc:"null",msg:'用户名或密码不正确。<a href="https://uac.10010.com/cust/resetpwd/inputName"
              *                  target="_blank" style="color: #36c;cursor: pointer;text-decoration:underline;">忘记密码？</a>',needvode:"1",errorFrom:"bss"})
              */
-            /**
-             * 获取json字符串
-             */
-            String jsonResult = PatternUtils.group(response.getPageContent(), "jQuery\\(([^\\)]+)\\)", 1);
+            String jsonResult = JsonpUtil.getJsonString(response.getPageContent());
             JSONObject json = JSON.parseObject(jsonResult);
             String resultCode = json.getString("resultCode");
             if (StringUtils.equals("0000", resultCode)) {
@@ -109,12 +103,7 @@ public class China10010ForWeb implements OperatorPluginService {
                  * 顺便验证登录是否成功
                  */
                 templateUrl = "http://iservice.10010.com/e3/static/check/checklogin/";
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10010_web_004")
-                        .setFullUrl(templateUrl).invoke();
-                if (!StringUtils.contains(response.getPageContent(), "\"isLogin\":true")) {
-                    logger.warn("登录失败-->登录验证失败,response={}", response);
-                    return result.failure(ErrorCode.LOGIN_ERROR);
-                }
+                TaskHttpClient.create(param, RequestType.POST, "china_10010_web_004").setFullUrl(templateUrl).invoke();
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             }
@@ -151,8 +140,8 @@ public class China10010ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/CreateImage?t={}";
             response = TaskHttpClient
-                    .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001")
-                    .setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001")
+                .setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -168,26 +157,18 @@ public class China10010ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/CtaIdyChk?callback=jQuery&verifyCode={}&verifyType=1&_={}";
             response = TaskHttpClient
-                    .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_002")
-                    .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).invoke();
+                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_002")
+                .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).invoke();
             //结果枚举:正确{"resultCode":"true"},错误{"resultCode":"false"}
-            /**
-             * 获取json字符串
-             */
-            String jsonResult = PatternUtils.group(response.getPageContent(), "jQuery\\(([^\\)]+)\\)", 1);
+            String jsonResult = JsonpUtil.getJsonString(response.getPageContent());
             JSONObject json = JSON.parseObject(jsonResult);
-            String resultCode = json.getString("resultCode");
-            switch (resultCode) {
-                case "true":
-                    logger.info("登录-->图片验证码-->校验成功,param={}", param);
-                    return result.success();
-                case "false":
-                    logger.error("登录-->图片验证码-->校验失败,param={}", param);
-                    return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
-                default:
-                    logger.error("登录-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPageContent());
-                    return result.failure(ErrorCode.VALIDATE_PIC_CODE_UNEXPECTED_RESULT);
+            Boolean resultCode = json.getBoolean("resultCode");
+            if (resultCode) {
+                logger.info("登录-->图片验证码-->校验成功,param={}", param);
+                return result.success();
             }
+            logger.error("登录-->图片验证码-->校验失败,param={}", param);
+            return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         } catch (Exception e) {
             logger.error("登录-->图片验证码-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
