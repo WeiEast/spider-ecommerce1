@@ -117,17 +117,13 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 }
             }
         }
-        //失败重试1次
-        AtomicBoolean retry = new AtomicBoolean(false);
-        do {
-            result = getLoginService(param).refeshSmsCode(param);
-            if (result.getStatus()) {
-                redisService.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME,
-                    System.currentTimeMillis() + "");
-            }
-            messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->短信验证码-->刷新{}!",
-                FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
-        } while (retry.compareAndSet(false, true) && !result.getStatus());
+        result = getLoginService(param).refeshSmsCode(param);
+        if (result.getStatus()) {
+            redisService.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME,
+                System.currentTimeMillis() + "");
+        }
+        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->短信验证码-->刷新{}!",
+            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         return result;
     }
 
