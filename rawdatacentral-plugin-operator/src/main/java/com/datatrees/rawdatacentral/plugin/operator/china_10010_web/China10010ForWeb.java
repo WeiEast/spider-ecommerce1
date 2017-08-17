@@ -85,8 +85,7 @@ public class China10010ForWeb implements OperatorPluginService {
             String uvc = CookieUtils.getCookieValue(param.getTaskId(), "uacverifykey");
             String templateUrl = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=" + URLEncoder.encode("http://www.10010.com", "UTF-8")
                     + "&userName={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&_={}";
-            String referer = "https://uac.10010.com/portal/mallLogin.jsp";
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003").setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003")
                     .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(),
                             param.getPicCode(), uvc, System.currentTimeMillis())
                     .invoke();
