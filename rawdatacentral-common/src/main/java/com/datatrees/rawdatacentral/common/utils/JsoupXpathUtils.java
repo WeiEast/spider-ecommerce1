@@ -25,7 +25,7 @@ public class JsoupXpathUtils {
                 result.length() > 200 ? result.substring(0, 200) : result);
         } catch (Exception e) {
             logger.error("selectFirstString error, xpath={},content={}", xpath,
-                result.length() > 200 ? result.substring(0, 200) : result, e);
+                result.length() > 200 ? result.substring(0, 200)+"....." : result, e);
         }
         return result;
     }

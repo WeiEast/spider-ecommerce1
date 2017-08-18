@@ -107,7 +107,7 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String templateUrl = "http://wapyn.189.cn/loginValidate.do?enAccNbr={}&enPassword={}&loginPwdType=A&mode=&nodeId=72&valid={}";
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocable(inputStream, "UTF-8");
-            String encodeMobile = invocable.invokeFunction("strEnc", param.getMobile(), "wap_accnbr_2016", "", "")
+            String encodeMobile = invocable.invokeFunction("strEnc", param.getMobile().toString(), "wap_accnbr_2016", "", "")
                 .toString();
             Object encodePassword = invocable.invokeFunction("strEnc", param.getPassword(), "wap_password_2016", "",
                 "");
@@ -121,11 +121,11 @@ public class YunNan10000ForWap implements OperatorPluginService {
                 return result.success();
             }
             if (StringUtils.contains(errorMsg, "验证码")) {
-                logger.warn("登录失败-->图片验证码校验失败,param={},errorMsg", param, errorMsg);
+                logger.warn("登录失败-->图片验证码校验失败,param={},errorMsg={}", param, errorMsg);
                 return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
             }
             if (StringUtils.contains(errorMsg, "密码")) {
-                logger.warn("登录失败-->密码错误,param={},errorMsg", param, errorMsg);
+                logger.warn("登录失败-->密码错误,param={},errorMsg={}", param, errorMsg);
                 return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
             }
             logger.error("登陆失败,param={},errorMsg={}", param, errorMsg);

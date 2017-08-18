@@ -1,12 +1,10 @@
 package com.datatrees.rawdatacentral.common.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.io.IOUtils;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * js引擎
@@ -22,8 +20,11 @@ public class ScriptEngineUtil {
      */
     public static Invocable createInvocable(InputStream inputStream, String charsetName) throws Exception {
         CheckUtils.checkNotBlank(charsetName, "empty charsetName");
+        String javaScrit = IOUtils.toString(inputStream, charsetName);
+        IOUtils.closeQuietly(inputStream);
+        CheckUtils.checkNotBlank(javaScrit,"empty javaScrit");
         ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
-        scriptEngine.eval(new InputStreamReader(inputStream, charsetName));
+        scriptEngine.eval(javaScrit);
         return (Invocable) scriptEngine;
     }
 
