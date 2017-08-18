@@ -55,7 +55,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         PluginUpgradeResult result = new PluginUpgradeResult();
         String md5 = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
         CheckUtils.checkNotBlank(md5, "没有从redis读取到插件:" + fileName);
-        boolean forceReload = !pluginMd5.containsKey(md5) || !StringUtils.equals(md5, pluginMd5.get(fileName));
+        boolean forceReload = !pluginMd5.containsKey(fileName) || !StringUtils.equals(md5, pluginMd5.get(fileName));
         if (forceReload) {
             byte[] bytes = redisService.getBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
             try {
