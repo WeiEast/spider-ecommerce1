@@ -191,7 +191,7 @@ public class China10000ForApp implements OperatorPluginService {
 
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_001").setFullUrl(templateUrl)
                 .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
-            String responseText = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
+            String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
 
             /**
              * 结果枚举:
@@ -202,14 +202,14 @@ public class China10000ForApp implements OperatorPluginService {
              * <ResultDesc>账号或密码错误哦~</ResultDesc><Data><LoginFailTime>1</LoginFailTime></Data></ResponseData></Response>
              *
              */
-            String code = XPathUtil.getXpath("//ResultCode/text()", responseText).get(0);
+            String code = XPathUtil.getXpath("//ResultCode/text()", pageContent).get(0);
             if (StringUtils.equals("0000", code)) {
                 /**
                  * 取出token供之后的请求使用
                  * 取出运营商省份，作为个人信息的归属省份
                  */
-                String token = XPathUtil.getXpath("//Response/ResponseData/Data/Token/text()", responseText).get(0);
-                String provinceName = XPathUtil.getXpath("//ProvinceName/text()", responseText).get(0);
+                String token = XPathUtil.getXpath("//Response/ResponseData/Data/Token/text()", pageContent).get(0);
+                String provinceName = XPathUtil.getXpath("//ProvinceName/text()", pageContent).get(0);
 
                 redisService.addTaskShare(param.getTaskId(), AttributeKey.TOKEN, token);
                 if (StringUtils.isBlank(provinceName)) {
@@ -231,8 +231,8 @@ public class China10000ForApp implements OperatorPluginService {
                 /**
                  * 取出姓名
                  */
-                responseText = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
-                String realName = XPathUtil.getXpath("//Cust_Name/text()", responseText).get(0);
+                pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
+                String realName = XPathUtil.getXpath("//Cust_Name/text()", pageContent).get(0);
                 if (StringUtils.isBlank(realName)) {
                     /**
                      * 如果姓名为空，则该请求无法查询姓名
@@ -259,8 +259,8 @@ public class China10000ForApp implements OperatorPluginService {
                         response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_003")
                             .setFullUrl(templateUrl)
                             .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
-                        responseText = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
-                        realName = XPathUtil.getXpath("//AcctName/text()", responseText).get(0);
+                        pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
+                        realName = XPathUtil.getXpath("//AcctName/text()", pageContent).get(0);
                         if (StringUtils.isNotBlank(realName)) {
                             break;
                         }
