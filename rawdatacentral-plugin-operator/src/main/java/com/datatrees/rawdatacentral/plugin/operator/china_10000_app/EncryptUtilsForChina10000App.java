@@ -73,7 +73,7 @@ public class EncryptUtilsForChina10000App {
         byte[] iv = getIVParameter(cipher.getBlockSize());
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
         cipher.init(2, key, ivParameterSpec);
-        return new String(cipher.doFinal(data));
+        return new String(cipher.doFinal(data), "UTF-8");
     }
 
     private static byte[] hexStrToBytes(String hex) {
