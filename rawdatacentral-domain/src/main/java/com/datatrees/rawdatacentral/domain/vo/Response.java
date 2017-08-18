@@ -6,7 +6,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import java.io.Serializable;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Response implements Serializable {
@@ -21,7 +20,7 @@ public class Response implements Serializable {
     private Map<String, String> header;
 
     @JSONField(ordinal = 4)
-    private String              receiveCookies;
+    private String              responseCookies;
 
     @JSONField(serialize = false)
     private byte[]              response;
@@ -62,12 +61,12 @@ public class Response implements Serializable {
         this.header = header;
     }
 
-    public String getReceiveCookies() {
-        return receiveCookies;
+    public String getResponseCookies() {
+        return responseCookies;
     }
 
-    public void setReceiveCookies(String receiveCookies) {
-        this.receiveCookies = receiveCookies;
+    public void setResponseCookies(String responseCookies) {
+        this.responseCookies = responseCookies;
     }
 
     public int getStatusCode() {
@@ -90,7 +89,7 @@ public class Response implements Serializable {
     @JSONField(ordinal = 10)
     public String getPageContent() {
         try {
-            if(null == response){
+            if (null == response) {
                 return "";
             }
             if (charsetName.toUpperCase().equals("BASE64")) {

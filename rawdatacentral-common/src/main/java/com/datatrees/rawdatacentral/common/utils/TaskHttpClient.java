@@ -20,6 +20,9 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -29,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,15 +40,15 @@ import java.util.concurrent.TimeUnit;
 
 public class TaskHttpClient {
 
-    private static final Logger logger          = LoggerFactory.getLogger(TaskHttpClient.class);
+    private static final Logger logger       = LoggerFactory.getLogger(TaskHttpClient.class);
 
     private Request             request;
 
     private Response            response;
 
-    private static final String DEFAULT_CHARSET = "UTF-8";
+    private ContentType         requestContentType;
 
-    private static RedisService redisService    = BeanFactoryUtils.getBean(RedisService.class);
+    private static RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
 
     private TaskHttpClient(Request request) {
         this.request = request;
@@ -130,11 +134,42 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setRequestBody(String requestBody, ContentType contentType) {
+        this.requestContentType = contentType;
+        request.setRequestType(RequestType.POST);
+        request.setRequestBodyContent(requestBody);
+        if (null != contentType) {
+            request.setRequestCharset(contentType.getCharset());
+            request.setRequestContentType(contentType.toString());
+        }
+        return this;
+    }
+
+    public TaskHttpClient setRequestBody(String requestBody) {
+        request.setRequestType(RequestType.POST);
+        request.setRequestBodyContent(requestBody);
+        return this;
+    }
+
+    public TaskHttpClient setRequestContentType(ContentType contentType) {
+        this.requestContentType = contentType;
+        if (null != contentType) {
+            request.setRequestCharset(contentType.getCharset());
+            request.setRequestContentType(contentType.toString());
+        }
+        return this;
+    }
+
+    public TaskHttpClient setRequestCharset(Charset charset) {
+        request.setRequestCharset(charset);
+        return this;
+    }
+
     public Response invoke() {
         checkRequest(request);
         CloseableHttpResponse httpResponse = null;
         BasicCookieStore cookieStore = CookieUtils.getCookie(request.getTaskId());
-        request.setSendCookies(CookieUtils.getCookieString(cookieStore));
+        request.setRequestCookies(CookieUtils.getCookieString(cookieStore));
         HttpHost proxy = null;
         Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), null);
         if (null != proxyConfig) {
@@ -161,22 +196,32 @@ public class TaskHttpClient {
                         pairs.add(new BasicNameValuePair(entry.getKey(), value));
                     }
                 }
-                url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, DEFAULT_CHARSET));
+                url = request.getUrl() + "?"
+                      + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getRequestCharset()));
             }
-
-            HttpRequestBase client = RequestType.POST == request.getRequestType() ? new HttpPost(url)
-                : new HttpGet(url);
+            HttpRequestBase client = null;
+            if (RequestType.GET == request.getRequestType()) {
+                client = new HttpGet(url);
+            } else {
+                HttpPost httpPost = new HttpPost(url);
+                if (StringUtils.isNoneBlank(request.getRequestBodyContent())) {
+                    httpPost.setEntity(new StringEntity(request.getRequestBodyContent(), requestContentType));
+                }
+                client = httpPost;
+            }
             if (CollectionUtils.isNotEmpty(request.getHeader())) {
                 for (Map.Entry<String, String> entry : request.getHeader().entrySet()) {
                     client.setHeader(entry.getKey(), entry.getValue());
                 }
             }
-            client.setHeader(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+            if (StringUtils.isNoneBlank(request.getRequestContentType())) {
+                client.setHeader(HttpHeadKey.CONTENT_TYPE, request.getRequestContentType());
+            }
             request.setRequestTimestamp(System.currentTimeMillis());
             httpResponse = httpclient.execute(client);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
-            response.setReceiveCookies(CookieUtils.getReceiveCookieString(request.getSendCookies(), cookieStore));
+            response.setResponseCookies(CookieUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
             if (statusCode != 200) {
                 client.abort();
                 logger.error("HttpClient status error, statusCode={}", statusCode);

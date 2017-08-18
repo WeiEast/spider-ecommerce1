@@ -2,11 +2,10 @@ package com.datatrees.rawdatacentral.domain.vo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,74 +31,48 @@ public class Request implements Serializable {
     private String              url;
 
     @JSONField(ordinal = 6)
-    private Map<String, String> params         = new HashMap<>();
+    private Map<String, String> params             = new HashMap<>();
 
     @JSONField(ordinal = 7)
     private String              remarkId;
 
     @JSONField(ordinal = 8)
-    private Map<String, String> header         = new HashMap<>();
+    private Map<String, String> header             = new HashMap<>();
 
     @JSONField(ordinal = 9)
     private long                requestTimestamp;
 
     @JSONField(ordinal = 10)
-    private String              sendCookies;
+    private String              requestCookies;
 
     @JSONField(ordinal = 11)
     private String              protocol;
 
     @JSONField(ordinal = 12)
-    private String              contentType    = "application/x-www-form-urlencoded";
-
-    @JSONField(ordinal = 13)
-    private RequestType         requestType    = RequestType.GET;
-
-    @JSONField(ordinal = 9)
-    private int                 maxRetry       = 1;
-
-    @JSONField(ordinal = 10)
-    private AtomicInteger       retry          = new AtomicInteger(0);
-
-    @JSONField(ordinal = 11)
-    private int                 connectTimeout = 10000;
+    private String              requestContentType = "";
 
     @JSONField(ordinal = 12)
-    private int                 socketTimeout = 20000;
+    private Charset             requestCharset     = Charset.forName("ISO-8859-1");
+
+    @JSONField(ordinal = 13)
+    private RequestType         requestType        = RequestType.GET;
+
+    @JSONField(ordinal = 9)
+    private int                 maxRetry           = 1;
+
+    @JSONField(ordinal = 10)
+    private AtomicInteger       retry              = new AtomicInteger(0);
+
+    @JSONField(ordinal = 11)
+    private int                 connectTimeout     = 10000;
+
+    @JSONField(ordinal = 12)
+    private int                 socketTimeout      = 20000;
+
+    @JSONField(ordinal = 13)
+    private String              requestBodyContent;
 
     public Request() {
-    }
-
-    public int getConnectTimeout() {
-        return connectTimeout;
-    }
-
-    public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
-    }
-
-    public int getSocketTimeout() {
-        return socketTimeout;
-    }
-
-    public void setSocketTimeout(int socketTimeout) {
-        this.socketTimeout = socketTimeout;
-    }
-
-    public AtomicInteger getRetry() {
-        return retry;
-    }
-
-    public void setRetry(AtomicInteger retry) {
-        this.retry = retry;
-    }
-
-    public int getMaxRetry() {
-        return maxRetry;
-    }
-
-    public void setMaxRetry(int maxRetry) {
-        this.maxRetry = maxRetry;
     }
 
     public Long getTaskId() {
@@ -118,12 +91,20 @@ public class Request implements Serializable {
         this.websiteName = websiteName;
     }
 
-    public String getRemarkId() {
-        return remarkId;
+    public String getProxy() {
+        return proxy;
     }
 
-    public void setRemarkId(String remarkId) {
-        this.remarkId = remarkId;
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
+    }
+
+    public String getFullUrl() {
+        return fullUrl;
+    }
+
+    public void setFullUrl(String fullUrl) {
+        this.fullUrl = fullUrl;
     }
 
     public String getUrl() {
@@ -142,6 +123,14 @@ public class Request implements Serializable {
         this.params = params;
     }
 
+    public String getRemarkId() {
+        return remarkId;
+    }
+
+    public void setRemarkId(String remarkId) {
+        this.remarkId = remarkId;
+    }
+
     public Map<String, String> getHeader() {
         return header;
     }
@@ -158,20 +147,12 @@ public class Request implements Serializable {
         this.requestTimestamp = requestTimestamp;
     }
 
-    public String getFullUrl() {
-        return fullUrl;
+    public String getRequestCookies() {
+        return requestCookies;
     }
 
-    public void setFullUrl(String fullUrl) {
-        this.fullUrl = fullUrl;
-    }
-
-    public String getSendCookies() {
-        return sendCookies;
-    }
-
-    public void setSendCookies(String sendCookies) {
-        this.sendCookies = sendCookies;
+    public void setRequestCookies(String requestCookies) {
+        this.requestCookies = requestCookies;
     }
 
     public String getProtocol() {
@@ -182,12 +163,20 @@ public class Request implements Serializable {
         this.protocol = protocol;
     }
 
-    public String getContentType() {
-        return contentType;
+    public String getRequestContentType() {
+        return requestContentType;
     }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public void setRequestContentType(String requestContentType) {
+        this.requestContentType = requestContentType;
+    }
+
+    public Charset getRequestCharset() {
+        return requestCharset;
+    }
+
+    public void setRequestCharset(Charset requestCharset) {
+        this.requestCharset = requestCharset;
     }
 
     public RequestType getRequestType() {
@@ -198,12 +187,44 @@ public class Request implements Serializable {
         this.requestType = requestType;
     }
 
-    public String getProxy() {
-        return proxy;
+    public int getMaxRetry() {
+        return maxRetry;
     }
 
-    public void setProxy(String proxy) {
-        this.proxy = proxy;
+    public void setMaxRetry(int maxRetry) {
+        this.maxRetry = maxRetry;
+    }
+
+    public AtomicInteger getRetry() {
+        return retry;
+    }
+
+    public void setRetry(AtomicInteger retry) {
+        this.retry = retry;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    public void setSocketTimeout(int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+
+    public String getRequestBodyContent() {
+        return requestBodyContent;
+    }
+
+    public void setRequestBodyContent(String requestBodyContent) {
+        this.requestBodyContent = requestBodyContent;
     }
 
     @Override
