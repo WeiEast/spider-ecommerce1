@@ -229,6 +229,8 @@ public class China10000ForApp implements OperatorPluginService {
                 data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), param.getMobile());
                 response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_002")
                         .setFullUrl(templateUrl).setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+                responseText = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
+
                 /**
                  * 取出姓名
                  */
@@ -257,6 +259,7 @@ public class China10000ForApp implements OperatorPluginService {
                         data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), format2.format(calendar.getTime()), param.getMobile());
                         response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_003")
                                 .setFullUrl(templateUrl).setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+                        responseText = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
                         realName = XPathUtil.getXpath("//AcctName/text()", responseText).get(0);
                         if (StringUtils.isNotBlank(realName)) {
                             break;
