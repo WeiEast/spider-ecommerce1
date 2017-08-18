@@ -59,7 +59,7 @@ public class China10000ForApp implements OperatorPluginService {
     /**
      * 公用请求url模板
      */
-    private String templateUrl = "http://cservice.client.189.cn:8004/map/clientXML?encrypted=true\"{}";
+    private String templateUrl = "http://cservice.client.189.cn:8004/map/clientXML?encrypted=true";
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -179,9 +179,6 @@ public class China10000ForApp implements OperatorPluginService {
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        if (!result.getStatus()) {
-            return result;
-        }
         Response response = null;
         try {
             //数据模板
