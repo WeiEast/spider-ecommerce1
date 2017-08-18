@@ -3,15 +3,20 @@ package com.datatrees.rawdatacentral.collector;
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.common.utils.CookieUtils;
+import com.datatrees.rawdatacentral.common.utils.TaskHttpClient;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.domain.vo.Response;
+import org.apache.http.entity.ContentType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -46,6 +51,17 @@ public class ApiTest extends BaseTest {
         message.setWebsiteName("china_10086_shop");
         message.setEndURL("");
         collector.processMessage(message);
+    }
+
+    @Test
+    public void testHttp() throws Exception {
+        Long taskId = 83160836553601024L;
+        String artifact = "";
+        String templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?artifact={}&backUrl=http://shop.10086.cn/i/?f=home";
+
+        Response response = TaskHttpClient.create(taskId, "china_10086_shop", RequestType.GET, "china_10086_shop_005").setFullUrl(templateUrl, artifact)
+                .setRequestCharset(Charset.forName("UTF-8")).setRequestContentType(ContentType.APPLICATION_FORM_URLENCODED).invoke();
+        System.out.println(response);
     }
 
 }

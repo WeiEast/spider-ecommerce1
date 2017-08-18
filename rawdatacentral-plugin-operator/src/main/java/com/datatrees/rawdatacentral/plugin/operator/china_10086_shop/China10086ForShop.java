@@ -16,11 +16,13 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.omg.PortableInterceptor.INACTIVE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
 
+import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Map;
 
@@ -31,6 +33,8 @@ import java.util.Map;
  * 图片验证码:支持
  * 验证图片验证码:支持
  * 短信验证码:支持
+ *
+ * 这个网站如果出现:{"retCode":"400000","retMsg":"parameter illegal!"},请将get/post请求互换
  *
  * Created by zhouxinghai on 2017/7/17.
  */
@@ -354,16 +358,13 @@ public class China10086ForShop implements OperatorPluginService {
                 return result.success();
             }
             String code = json.getString("code");
-            String errorMsg = json.getString("desc");
             if (StringUtils.equals("0000", code)) {
                 logger.info("登陆成功,param={}", param);
 
                 //获取权限信息,必须访问下主页,否则详单有些cookie没用
                 String artifact = json.getString("artifact");
-                TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_005")
-                    .setFullUrl(
-                        "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/?f=home&artifact={}",
-                        artifact)
+                templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?artifact={}";
+                TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_005").setFullUrl(templateUrl, artifact)
                     .invoke();
                 String provinceCode = CookieUtils.getCookieValue(param.getTaskId(), "ssologinprovince");
                 String provinceName = getProvinceName(provinceCode);
