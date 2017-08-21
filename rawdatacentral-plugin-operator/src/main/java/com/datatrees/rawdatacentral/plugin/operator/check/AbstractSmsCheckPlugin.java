@@ -35,25 +35,26 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
  */
 public abstract class AbstractSmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger    logger         = LoggerFactory.getLogger(AbstractSmsCheckPlugin.class);
+    private static final Logger      logger         = LoggerFactory.getLogger(AbstractSmsCheckPlugin.class);
 
-    private CrawlerOperatorService pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+    private CrawlerOperatorService   pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
 
-    private MessageService         messageService = BeanFactoryUtils.getBean(MessageService.class);
+    private MessageService           messageService = BeanFactoryUtils.getBean(MessageService.class);
 
-    private RedisService           redisService   = BeanFactoryUtils.getBean(RedisService.class);
+    private RedisService             redisService   = BeanFactoryUtils.getBean(RedisService.class);
 
     //超时时间60秒
-    private long                   timeOut        = 60;
+    private long                     timeOut        = 60;
+
+    private AbstractProcessorContext context        = PluginFactory.getProcessorContext();
 
     @Override
     public String process(String... args) throws Exception {
-        AbstractProcessorContext context = PluginFactory.getProcessorContext();
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         logger.info("详单-->短信校验插件启动,taskId={},websiteName={}", taskId, websiteName);
         //验证失败直接抛出异常
-        validateSmsCode(taskId, websiteName, context);
+        validateSmsCode(taskId, websiteName);
         String cookieString = CookieUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
         return null;
@@ -65,7 +66,7 @@ public abstract class AbstractSmsCheckPlugin extends AbstractClientPlugin {
      * @param taskId
      * @param websiteName
      */
-    public void validateSmsCode(Long taskId, String websiteName, AbstractProcessorContext context) throws Exception {
+    public void validateSmsCode(Long taskId, String websiteName) throws Exception {
         int retry = 0, maxRetry = 5;
         do {
             OperatorParam param = new OperatorParam(getFormType(), taskId, websiteName);
