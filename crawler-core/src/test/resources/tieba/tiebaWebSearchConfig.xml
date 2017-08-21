@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 百度贴吧网查searchConfig -->
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<result-tag-list>
+		<result-tag><![CDATA[webDetect]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">.baidu.com</url-filter>
+	</url-filters>
+
+	<properties>
+		<encoding>GBK</encoding>
+		<unicode-mode><![CDATA[hex]]></unicode-mode>
+	</properties>
+
+	<page-definition>
+		<page id="keyword-search-page" path="/f/search/" page-num-regex="pn=(\d+)">
+			<object-segment name="linkNode" result-class="LinkNode"
+				type="xpath" value="div.s_post_list div.s_post:not(:contains(吧 百度贴吧))"
+				max-cycles="3">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="extract"></operation>
+				</field-extractor>
+				<field-extractor id="searchPage" field="pageContent"
+					result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="keyword" field="keyword"
+					result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+				</field-extractor>
+				<field-extractor id="containKey" field="containKey"
+					result-type="string">
+					<operation type="template">${containKey}</operation>
+				</field-extractor>
+				<field-extractor id="title" field="title"
+					result-type="string">
+					<operation type="xpath"><![CDATA[//span[@class='p_title']/a[@class='bluelink']/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="title" field="title"
+					result-type="string" stand-by="true">
+					<operation type="xpath"><![CDATA[//div[@class='user_detail']/text()]]></operation>
+					<operation type="regex" input="1"><![CDATA[(.*)\s*关注\s*\d*]]></operation>
+				</field-extractor>
+				<field-extractor id="overview" field="overview"
+					result-type="string">
+					<operation type="xpath"><![CDATA[//div[@class='p_content']/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="overview" field="overview"
+					result-type="string" stand-by="true">
+					<operation type="xpath"><![CDATA[//div[@class='user_detail']/text()]]></operation>
+					<operation type="trim"><![CDATA[]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="author" field="author"
+					result-type="string">
+					<operation type="xpath"><![CDATA[//a[@target='_blank']/font[@class='p_violet']/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="time" field="time" result-type="date"
+					format="yyyy-MM-dd HH:mm">
+					<operation type="xpath"><![CDATA[font.p_green/text()]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<page id="show-page" path="/p">
+			<object-segment name="basicSearch" result-class="DefaultData">
+
+				<field-extractor id="searchPage" field="pageContent"
+					result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="keyword" field="keyword"
+					result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+				</field-extractor>
+				<field-extractor id="containKey" field="containKey"
+					result-type="string">
+					<operation type="template">${containKey}</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="overview" field="overview"
+					result-type="string">
+					<operation type="template">${overview}</operation>
+				</field-extractor>
+				<field-extractor id="title" field="title"
+					result-type="string">
+					<operation type="template">${title}</operation>
+				</field-extractor>
+				<field-extractor id="author" field="author"
+					result-type="string">
+					<operation type="template">${author}</operation>
+				</field-extractor>
+				<field-extractor id="time" field="time" result-type="date"
+					format="yyyy-MM-dd HH:mm">
+					<operation type="template">${time}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="keyword-search-template"
+			max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://tieba.baidu.com/f/search/res?ie=utf-8&kw=戒赌&qw=${keyword}]]></url-template>
+				</url-templates>
+				<max-page>1000</max-page>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<result-tag-list>
+				<result-tag><![CDATA[webDetect]]></result-tag>
+			</result-tag-list>
+			<page-sequence>
+				<page depth="0" ref="keyword-search-page" />
+				<page depth="1" ref="show-page" />
+			</page-sequence>
+		</search-template>
+
+	</search>
+
+</config>

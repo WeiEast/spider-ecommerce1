@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="config" type="configType" />
+	<xs:complexType name="configType">
+		<xs:sequence maxOccurs="1" minOccurs="1">
+			<xs:element name="extrator-selectors" type="extrator-selectorsType" />
+			<xs:element name="page-extractor-definition" type="page-extractor-definitionType" />
+			<xs:element name="plugin-definition" type="plugin-definitionType" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="extrator-selectorsType">
+		<xs:sequence maxOccurs="unbounded" minOccurs="1">
+			<xs:element name="selector">
+				<xs:complexType mixed="true">
+					<xs:attribute name="field" type="xs:string"></xs:attribute>
+					<xs:attribute name="contain" type="xs:string"></xs:attribute>
+					<xs:attribute name="dis-contain" type="xs:string"></xs:attribute>
+					<xs:attribute name="ref" type="xs:string"></xs:attribute>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="page-extractor-definitionType">
+		<xs:sequence>
+			<xs:element type="page-extractorType" name="page-extractor" maxOccurs="unbounded"
+				minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="page-extractorType">
+		<xs:sequence>
+			<xs:element name="page-sources" maxOccurs="unbounded" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="source" maxOccurs="unbounded" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="regex" maxOccurs="1" minOccurs="0">
+										<xs:complexType mixed="true">
+											<xs:attribute name="index" type="xs:byte" />
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="replaces" minOccurs="0" maxOccurs="1">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="replace" maxOccurs="unbounded" minOccurs="0">
+													<xs:complexType mixed="true">
+														<xs:attribute name="from" use="required" type="xs:string" />
+														<xs:attribute name="to" use="required" type="xs:string" />
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="field" type="xs:string" />
+								<xs:attribute name="plugin-ref" type="xs:string" />
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element type="object-segmentType" name="object-segment" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="object-segmentType">
+		<xs:choice maxOccurs="unbounded" minOccurs="0">
+			<xs:element type="field-extractorType" name="field-extractor" />
+			<xs:element type="object-segmentType" name="object-segment" />
+		</xs:choice>
+		<xs:attribute type="xs:string" name="name" use="required" />
+		<xs:attribute name="type" use="optional" default="base">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="xpath" />
+					<xs:enumeration value="regex" />
+					<xs:enumeration value="split" />
+					<xs:enumeration value="base" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute type="xs:string" name="value" use="optional" />
+		<xs:attribute type="xs:boolean" name="pop-return" use="optional">
+			<xs:annotation>
+				<xs:documentation>if true,return object else return list</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute type="xs:string" name="result-class" use="optional">
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="field-extractorType">
+		<xs:sequence>
+			<xs:element type="operationType" name="operation" maxOccurs="unbounded" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute type="xs:string" name="id" use="required" />
+		<xs:attribute type="xs:string" name="field" use="required" />
+		<xs:attribute type="xs:string" name="source" use="optional" />
+		<xs:attribute type="xs:string" name="encoding" use="optional" />
+		<xs:attribute name="result-type" use="optional" default="string">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="string" />
+					<xs:enumeration value="number" />
+					<xs:enumeration value="date" />
+					<xs:enumeration value="payment" />
+					<xs:enumeration value="file" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute type="xs:string" name="format" use="optional" />
+		<xs:attribute type="xs:string" name="plugin-ref" use="optional" />
+	</xs:complexType>
+	<xs:complexType name="operationType" mixed="true">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" use="optional">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="replace" />
+							<xs:enumeration value="codec" />
+							<xs:enumeration value="extract" />
+							<xs:enumeration value="parser" />
+							<xs:enumeration value="regex" />
+							<xs:enumeration value="return" />
+							<xs:enumeration value="set" />
+							<xs:enumeration value="template" />
+							<xs:enumeration value="trim" />
+							<xs:enumeration value="xpath" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute type="xs:byte" name="index" use="optional" />
+				<xs:attribute name="codec-type" use="optional">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="md5" />
+							<xs:enumeration value="base64" />
+							<xs:enumeration value="uri" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="handling-type" use="optional">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="encode" />
+							<xs:enumeration value="decode" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute type="xs:string" name="ref" use="optional" />
+				<xs:attribute type="xs:string" name="from" use="optional" />
+				<xs:attribute type="xs:string" name="to" use="optional" />
+				<xs:attribute type="xs:boolean" name="json-to-xml" use="optional" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="plugin-definitionType">
+		<xs:sequence>
+			<xs:element type="pluginType" name="plugin" maxOccurs="unbounded" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="pluginType" mixed="true">
+		<xs:all>
+			<xs:element type="xs:string" name="main-class" maxOccurs="1" minOccurs="0" />
+			<xs:element type="xs:string" name="extra-config" maxOccurs="1" minOccurs="0" />
+		</xs:all>
+		<xs:attribute name="file-type">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="jar" />
+					<xs:enumeration value="sh" />
+					<xs:enumeration value="py" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="phase">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="segment" />
+					<xs:enumeration value="login" />
+					<xs:enumeration value="search" />
+					<xs:enumeration value="page" />
+					<xs:enumeration value="field" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute type="xs:string" name="id" />
+	</xs:complexType>
+</xs:schema>

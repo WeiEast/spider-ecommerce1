@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<result-tag-list>
+		<result-tag><![CDATA[bankbill]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">.mail.sina</url-filter>
+	</url-filters>
+
+	<properties>
+		<cookie scope="user_session"></cookie>
+	</properties>
+
+	<!-- http://m0.mail.sina.cn/mobile/index.php?html5&ver=4.5.10 endurl -->
+	<login login-type="app">
+		<login-check success-pattern="\{username:&quot;([^&quot;]+)&quot;">
+			<check-url><![CDATA[${endurl}]]></check-url>
+			<object-segment name="sid">
+				<field-extractor id="emailAccount" field="emailAccount" field-visible-type="processor_result" not-empty="true">
+					<operation type="regex" index="1">\{username:"([^"]+)"</operation>
+				</field-extractor>
+				<field-extractor id="prefix" field="prefix" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="template">${endurl}</operation>
+					<operation type="regex" index="1">http://([^/]+)/</operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<parser-definition>
+		<parser id="search-page-parser">
+			<url-template><![CDATA[http://${prefix}/wa.php?a=findmail"keyword=${keyword}&order=htime&sorttype=desc&start=#{page,0,${totalCount},50+}&length=50]]></url-template>
+		</parser>
+	</parser-definition>
+
+	<page-definition>
+		<page id="keyword-search-page" path="wa.php\?a=findmail" page-num-regex="start=(\d+)">
+			<object-segment name="linkNode" type="jsonpath" value="$.data.maillist[*]" result-class="LinkNode">
+				<field-extractor id="mailid" field="mailid" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.[0]]]></operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${emailAccount}_${mailid}</operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" result-type="date">
+					<operation type="jsonpath"><![CDATA[$.[4]]]></operation>
+					<operation type="append" index="-1">000</operation>
+				</field-extractor>
+				<field-extractor id="subject" field="subject" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.[3]]]></operation>
+				</field-extractor>
+				<field-extractor id="folder" field="folder" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.[15]]]></operation>
+					<operation type="replace" from="^out$" to="已发送"></operation>
+				</field-extractor>
+				<field-extractor id="sender" field="sender" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.[1]]]></operation>
+					<operation type="regex" index="1"><![CDATA[<([^>]+)>]]></operation>
+				</field-extractor>
+				<field-extractor id="sender" field="sender" stand-by="true" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.[1]]]></operation>
+				</field-extractor>
+				<field-extractor id="receiver" field="receiver" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.[2]]]></operation>
+					<operation type="regex" index="1"><![CDATA[<([^>]+)>]]></operation>
+				</field-extractor>
+				<field-extractor id="receiver" field="receiver" stand-by="true" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.[2]]]></operation>
+				</field-extractor>
+				<field-extractor id="mailfid" field="mailfid" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.[15]]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[http://${prefix}/wa.php?a=readmail"mid=${mailid}&fid=${mailfid}]]></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="totalCount" field="totalCount" result-type="string">
+					<operation type="jsonpath">$.data.pagenum</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="parser" ref="search-page-parser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="show-page" path="wa.php\?a=readmail">
+			<object-segment name="mail" result-class="MailBillData">
+				<field-extractor id="receiver" field="receiver" result-type="string">
+					<operation type="template">${receiver}</operation>
+				</field-extractor>
+				<field-extractor id="sender" field="sender" result-type="string">
+					<operation type="template">${sender}</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${uniqueSign}</operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="jsonpath">$.data[25]</operation>
+				</field-extractor>
+				<field-extractor id="pageContentFile" field="pageContentFile">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="subject" field="subject" result-type="string">
+					<operation type="template">${subject}</operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" result-type="date" format="yyyy-MM-dd hh:mm:ss">
+					<operation type="template">${receiveAt}</operation>
+				</field-extractor>
+				<object-segment name="attachment" type="jsonpath" value="$.data[22][*]" result-class="file">
+					<field-extractor id="mailid" field="temp">
+						<operation type="jsonpath">$.[7]</operation>
+					</field-extractor>
+					<field-extractor id="fid" field="temp">
+						<operation type="jsonpath">$.[6]</operation>
+					</field-extractor>
+					<field-extractor id="token" field="temp">
+						<operation type="jsonpath">$.[5]</operation>
+					</field-extractor>
+					<field-extractor id="size" field="temp">
+						<operation type="jsonpath">$.[4]</operation>
+					</field-extractor>
+					<field-extractor id="attinfo" field="temp">
+						<operation type="jsonpath">$.[3]</operation>
+					</field-extractor>
+					<field-extractor id="type" field="temp">
+						<operation type="jsonpath">$.[2]</operation>
+					</field-extractor>
+					<field-extractor id="fileName" field="temp">
+						<operation type="jsonpath">$.[1]</operation>
+					</field-extractor>
+					<field-extractor id="id" field="temp">
+						<operation type="jsonpath">$.[0]</operation>
+					</field-extractor>
+					<field-extractor id="attachment" field="attachment" result-type="file">
+						<operation type="template"><![CDATA[http://${prefix}/classic/base_download_att.php?mid=${mailid}&fid=${fid}&preview_token=${token}&file_size=${size}&attinfo=${attinfo}&content_type=${type}&file_name=${fileName}&id=${id}]]></operation>
+					</field-extractor>
+				</object-segment>
+				<field-extractor id="mailfid" field="temp" field-visible-type="request">
+					<operation type="template">${mailfid}</operation>
+				</field-extractor>
+				<field-extractor id="mid" field="temp" field-visible-type="request">
+					<operation type="template">${mailid}</operation>
+				</field-extractor>
+				<object-segment name="extraInfo" pop-return="true">
+					<field-extractor id="sysFlag" field="sysFlag" result-type="int" default-value="1">
+						<operation type="template">${mailfid}_${mid}</operation>
+						<!-- 1表示收件箱 -->
+						<!-- 1:可信 ,2: 不可信，3:欺诈 (只正对于firsthand=1) new_049271B6710B67A2A922E4DD346EDF6FED00000000000007 -->
+						<operation from="^new_\w+7$" to="3" type="replace"></operation>
+						<operation from="^.*_\w+7$" to="2" type="replace"></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+
+		<page id="server-detect-init-page" path="www.sina.cn">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="mailBillPageContent" field="temp" field-visible-type="request">
+					<operation type="template">${mailBills}</operation>
+				</field-extractor>
+				<object-segment name="linkNode" source="mailBillPageContent" type="jsonpath" value="$" result-class="LinkNode">
+					<field-extractor id="billIds" field="billIds" result-type="string" not-empty="true">
+						<operation type="jsonpath">$.billIds</operation>
+					</field-extractor>
+					<field-extractor id="mailId" field="mailId" result-type="string">
+						<operation type="jsonpath">$.mailId</operation>
+					</field-extractor>
+					<!-- http://m0.mail.sina.cn/wa.php?a=readmail"mid=042F18AFAD58F04CC540CD73429431924400000000000001&fid=new 转换成 http://m0.mail.sina.cn/classic/read_mid.php?fid=new&mid=042F18AFAD58F04CC540CD73429431924400000000000001 -->
+					<field-extractor id="url" field="url" result-type="string">
+						<operation type="jsonpath">$.url</operation>
+						<operation from="/wa.php\?a=readmail&quot;" to="/classic/read_mid.php?" type="replace"></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+
+		<page id="server-detect-page" path="read_mid.php">
+			<object-segment name="mime" result-class="DefaultData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="billIds" field="billIds" result-type="string" not-empty="true">
+					<operation type="template">${billIds}</operation>
+				</field-extractor>
+				<field-extractor id="mailId" field="mailId" result-type="string">
+					<operation type="template">${mailId}</operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="keyword-search-template" type="keyword_search" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://${prefix}/wa.php?a=findmail"keyword=${keyword}&order=htime&sorttype=desc&start=0&length=50]]></url-template>
+				</url-templates>
+				<ref-template></ref-template>
+				<max-page>100</max-page>
+				<no-search-results-pattern></no-search-results-pattern>
+				<block-pattern></block-pattern>
+				<last-page-pattern></last-page-pattern>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="keyword-search-page" />
+				<page depth="1" ref="show-page" />
+			</page-sequence>
+		</search-template>
+		<search-template id="mailServer-detect-template" type="category_search" max-depth="1" auto-start="false">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://mail.sina.cn/]]></url-template>
+				</url-templates>
+				<max-page>200</max-page>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<result-tag-list>
+				<result-tag><![CDATA[detectResults]]></result-tag>
+			</result-tag-list>
+			<page-sequence>
+				<page depth="0" ref="server-detect-init-page" />
+				<page depth="1" ref="server-detect-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+</config>

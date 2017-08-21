@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config extends="qq.com">
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<url-filters>
+		<url-filter type="+">.taobao.com</url-filter>
+		<url-filter type="+">.alipay.com</url-filter>
+		<url-filter type="+">.tmall.com</url-filter>
+	</url-filters>
+
+	<properties>
+		<encoding>utf-8</encoding>
+		<unicode-mode><![CDATA[hex]]></unicode-mode>
+		<cookie scope="user_session"></cookie>
+		<proxy scope="session" pattern="trade_item_detail.htm|orderDetail.htm|alipay.com/record/|alipay.com/user/i.htm|waimai.taobao|wuliu.taobao|queryTradeDetail.htm|/trade/itemlist/"><![CDATA[http://wiseproxy.dashu.ds:8080/wiseproxy/service/getProxy?site=alipay.com&partition=adsl&mode=session]]></proxy>
+	</properties>
+
+	<result-tag-list>
+		<result-tag><![CDATA[ecommerce]]></result-tag>
+	</result-tag-list>
+
+	<login login-type="app">
+		<login-check success-pattern="isLogin(\s+)?:(\s+)?true|切换到个人版支付宝">
+			<check-url><![CDATA[https://personalweb.alipay.com/portal/newhome.htm]]></check-url>
+			<object-segment name="cookieSet">
+				<field-extractor id="parserURLParserCookie" field="temp">
+					<operation type="parser" ref="parserURLParser" />
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<page-definition>
+		<page id="alipay-index-search-page" path="/portal/">
+			<object-segment name="index" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="pageContent" result-type="resource_string">
+					<operation type="template"><![CDATA[https://my.alipay.com/account/index.htm]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" field="pageContent" result-type="resource_string">
+					<operation type="template"><![CDATA[https://f.alipay.com/moonlight/index.htm]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_4" field="pageContent" result-type="resource_string">
+					<operation type="template"><![CDATA[https://rate.taobao.com/myRate.htm]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="field-extractor_1" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://zht.alipay.com/asset/bindQuery.json?_input_charset=utf-8&providerType=BANK&t=1436788080719&ctoken=]]></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="field-extractor_1" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://jiaofei.alipay.com/market/chargeRemindInfoEntering.htm]]></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="field-extractor_1" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://member1.taobao.com/member/fresh/deliver_address.htm]]></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="field-extractor_1" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://xy.alipay.com/personal/sysmsg/list.json?limit=10&rad=]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-zmxy-page" path="personal/sysmsg/list.json">
+			<object-segment type="jsonpath" value="$.data.userSysMsgViews[*]" result-class="LinkNode" max-cycles="3">
+				<field-extractor id="msgId" field="msgId" result-type="string">
+					<operation type="jsonpath">$.msgId</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://xy.alipay.com/personal/sysmsg/detail.json?msg_id=${msgId}&rad=]]></operation>
+				</field-extractor>
+			</object-segment>
+			<object-segment name="mail" result-class="DefaultData">
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-zmxy-detailpage" path="personal/sysmsg/detail.json">
+			<object-segment result-class="EcommerceData">
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-record-index-page" path="record/index.htm" response-check="true">
+			<object-segment name="mail" result-class="DefaultData">
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string">
+					<operation type="regex" index="1">pageAbsUrl\s*:\s*"([^"]+alipay.com/record/(advanced|standard)[^"]+)"</operation>
+				</field-extractor>
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string" stand-by="true">
+					<operation type="regex" index="1">pageAbsUrl\s*:\s*'([^"]+alipay.com/record/(advanced|standard)[^"]+)'</operation>
+				</field-extractor>
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string" stand-by="true">
+					<operation type="proxyset" option="on"></operation>
+				</field-extractor>
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string" stand-by="true" plugin-ref="aliLoginFromTao">
+				</field-extractor>
+
+				<field-extractor id="tao-six-month-ago-timestamp" field="temp" result-type="string" field-visible-type="processor_result">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-6" format="timestamp" calibrate="true" />
+				</field-extractor>
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist/BoughtQueryAction&event_submit_do_query=1&_input_charset=utf8"pageNum=1&pageSize=100&dateBegin=${tao-six-month-ago-timestamp}&auctionTitle=&itemTitle=&sellerNick=&prePageNo=2]]></operation>
+				</field-extractor>
+				<field-extractor id="recordURL" field="temp" result-type="string">
+					<operation type="template"><![CDATA[${recode_pageAbsUrl}]]></operation>
+					<operation type="regex" index="1">(.+taobao.com/trade/.+)</operation>
+					<operation type="replace" from="http://" to="https://"></operation>
+				</field-extractor>
+				<field-extractor id="now-date-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" format="yyyy.MM.dd" />
+				</field-extractor>
+				<field-extractor id="six-month-ago-date-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-6" format="yyyy.MM.dd" calibrate="true" />
+				</field-extractor>
+				<field-extractor id="recordURL" field="temp" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[${recode_pageAbsUrl}"beginDate=${six-month-ago-date-literal-id}&endDate=${now-date-literal-id}&dateRange=customDate&pageNum=1&ua=046n%2BqZ9mgNqgJnCG0WtMC3zbvMsMaxxr7be9s%3D%7CnOiH84T8gPSN9Ij%2Fif%2BH8FA%3D%7CneiHGXz6UeRW5k4rRCFWKk8gRdVx17ISsg%3D%3D%7Cmu6b9JEZlT2QAZkLpzdN1qLaavdPwlXPV%2F5W%2F2bcq9hjymQflfBQ%7Cm%2B%2BT%2FGIRfgl%2BCWYSZAtuHZ0ddgW%2ByGAbcwB1BmPDYw%3D%3D%7CmOOM6Yws%7CmeWK74oq%7CluKW%2BWcCqR6pGqzRo9F3xXTCespi0WTWcQCkC6cUsAx922nZqx62EKIXsMJ0w2fWcdVgx7Ydqhp%2FEHUQsBA%3D%7Cl%2BGOEGMMfxBkEWoZdg10AW4abxRnCHMAcxxoHWYVegB3DKwM%7ClOCT%2FJkHcwh0CHQbhOGV4prim%2BeQ45vhmOGSLV4vUytcJlEiUSddKl0rXytSJLvescVlAKA%3D%7Cle2CHHkcc%2B2Y5JD%2Fif2B7pvinu%2BV7YL2ge6Z7oH0gyNMP1A1niuDKqoHoxq%2BCK4btwSz260pQTey17jAvM%2B8x2fH%7CkuiHGXwZdgJtFWkabhi4GA%3D%3D%7Ck%2BSX5Iv4l%2BKN%2BY76leOb4Y72iuWf54j8iP%2BQ5Iv3g%2ByY4I%2F5giI%3D&dateType=createDate&beginTime=00%3A00&endTime=24%3A00&status=all&fundFlow=all&keyword=&keyValue=&minAmount=&maxAmount=&rdsToken=EIejNUOiM7X15mZuJTWUfefVw40xfk8G&rdsUa=046n%2BqZ9mgNqgJnCG0WtMC3zbvMsMaxxr7be9s%3D%7CnOiH84T8gPSN9Ij%2Fif%2BH8FA%3D%7CneiHGXz6UeRW5k4rRCFWKk8gRdVx17ISsg%3D%3D%7Cmu6b9JEZlT2QAZkLpzdN1qLaavdPwlXPV%2F5W%2F2bcq9hjymQflfBQ%7Cm%2B%2BT%2FGIRfgl%2BCWYSZAtuHZ0ddgW%2ByGAbcwB1BmPDYw%3D%3D%7CmOOM6Yws%7CmeWK74oq%7CluKW%2BWcCqR6pGqzRo9F3xXTCespi0WTWcQCkC6cUsAx922nZqx62EKIXsMJ0w2fWcdVgx7Ydqhp%2FEHUQsBA%3D%7Cl%2BGOEGMMfxBkEWoZdg10AW4abxRnCHMAcxxoHWYVegB3DKwM%7ClOCT%2FJkHcwh0CHQbhOGV4prim%2BeQ45vhmOGSLV4vUytcJlEiUSddKl0rXytSJLvescVlAKA%3D%7Cle2CHHkcc%2B2Y5JD%2Fif2B7pvinu%2BV7YL2ge6Z7oH0gyNMP1A1niuDKqoHoxq%2BCK4btwSz260pQTey17jAvM%2B8x2fH%7CkuiHGXwZdgJtFWkabhi4GA%3D%3D%7Ck%2BSX5Iv4l%2BKN%2BY76leOb4Y72iuWf54j8iP%2BQ5Iv3g%2ByY4I%2F5giI%3D&]]></operation>
+					<operation type="replace" from="http://" to="https://"></operation>
+				</field-extractor>
+				<!--taobao record记录 -->
+				<field-extractor id="url" field="url" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[${recordURL}]]></operation>
+					<operation type="regex" index="1">(.+taobao.com/trade/.+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeTypeTemp" field="temp" result-type="string">
+					<operation type="template"><![CDATA[SHOPPING,FINANCE,TRANSFER,CCR,PUC_CHARGE,DEPOSIT,WITHDRAW,PERLOAN,MOBILE_RECHARGE,ALL,]]></operation>
+				</field-extractor>
+				<!--alipayTrade record记录 -->
+				<field-extractor id="url" field="url" source="tradeTypeTemp" result-type="string" stand-by="true">
+					<operation type="parser" ref="alipayTradeParser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-record-index-address-page" path="record/index.htm">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string">
+					<operation type="regex" index="1">pageAbsUrl\s*:\s*"([^"]+)"</operation>
+				</field-extractor>
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string" stand-by="true">
+					<operation type="regex" index="1">pageAbsUrl\s*:\s*'([^']+)'</operation>
+				</field-extractor>
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string" stand-by="true">
+					<operation type="proxyset" option="on"></operation>
+				</field-extractor>
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string" stand-by="true" plugin-ref="aliLoginFromTao">
+				</field-extractor>
+
+				<field-extractor id="recode_pageAbsUrl" field="temp" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[https://msg.taobao.com/json/message_list.htm?page=1&_input_charset=utf-8&callback=jsonp58&userType=1]]></operation>
+				</field-extractor>
+				<field-extractor id="recordURL" field="temp" result-type="string">
+					<operation type="template"><![CDATA[${recode_pageAbsUrl}]]></operation>
+					<operation type="regex" index="1">(.+taobao.com.+)</operation>
+				</field-extractor>
+				<field-extractor id="now-date-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" format="yyyy.MM.dd" />
+				</field-extractor>
+				<field-extractor id="six-month-ago-date-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-6" format="yyyy.MM.dd" calibrate="true" />
+				</field-extractor>
+				<field-extractor id="recordURL" field="temp" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[${recode_pageAbsUrl}"beginDate=${six-month-ago-date-literal-id}&endDate=${now-date-literal-id}&dateRange=customDate&tradeType=SHOPPING&ua=046n%2BqZ9mgNqgJnCG0WtMC3zbvMsMaxxr7be9s%3D%7CnOiH84T8gPSN9Ij%2Fif%2BH8FA%3D%7CneiHGXz6UeRW5k4rRCFWKk8gRdVx17ISsg%3D%3D%7Cmu6b9JEZlT2QAZkLpzdN1qLaavdPwlXPV%2F5W%2F2bcq9hjymQflfBQ%7Cm%2B%2BT%2FGIRfgl%2BCWYSZAtuHZ0ddgW%2ByGAbcwB1BmPDYw%3D%3D%7CmOOM6Yws%7CmeWK74oq%7CluKW%2BWcCqR6pGqzRo9F3xXTCespi0WTWcQCkC6cUsAx922nZqx62EKIXsMJ0w2fWcdVgx7Ydqhp%2FEHUQsBA%3D%7Cl%2BGOEGMMfxBkEWoZdg10AW4abxRnCHMAcxxoHWYVegB3DKwM%7ClOCT%2FJkHcwh0CHQbhOGV4prim%2BeQ45vhmOGSLV4vUytcJlEiUSddKl0rXytSJLvescVlAKA%3D%7Cle2CHHkcc%2B2Y5JD%2Fif2B7pvinu%2BV7YL2ge6Z7oH0gyNMP1A1niuDKqoHoxq%2BCK4btwSz260pQTey17jAvM%2B8x2fH%7CkuiHGXwZdgJtFWkabhi4GA%3D%3D%7Ck%2BSX5Iv4l%2BKN%2BY76leOb4Y72iuWf54j8iP%2BQ5Iv3g%2ByY4I%2F5giI%3D&dateType=createDate&beginTime=00%3A00&endTime=24%3A00&status=all&fundFlow=all&keyword=&keyValue=&minAmount=&maxAmount=&rdsToken=EIejNUOiM7X15mZuJTWUfefVw40xfk8G&rdsUa=046n%2BqZ9mgNqgJnCG0WtMC3zbvMsMaxxr7be9s%3D%7CnOiH84T8gPSN9Ij%2Fif%2BH8FA%3D%7CneiHGXz6UeRW5k4rRCFWKk8gRdVx17ISsg%3D%3D%7Cmu6b9JEZlT2QAZkLpzdN1qLaavdPwlXPV%2F5W%2F2bcq9hjymQflfBQ%7Cm%2B%2BT%2FGIRfgl%2BCWYSZAtuHZ0ddgW%2ByGAbcwB1BmPDYw%3D%3D%7CmOOM6Yws%7CmeWK74oq%7CluKW%2BWcCqR6pGqzRo9F3xXTCespi0WTWcQCkC6cUsAx922nZqx62EKIXsMJ0w2fWcdVgx7Ydqhp%2FEHUQsBA%3D%7Cl%2BGOEGMMfxBkEWoZdg10AW4abxRnCHMAcxxoHWYVegB3DKwM%7ClOCT%2FJkHcwh0CHQbhOGV4prim%2BeQ45vhmOGSLV4vUytcJlEiUSddKl0rXytSJLvescVlAKA%3D%7Cle2CHHkcc%2B2Y5JD%2Fif2B7pvinu%2BV7YL2ge6Z7oH0gyNMP1A1niuDKqoHoxq%2BCK4btwSz260pQTey17jAvM%2B8x2fH%7CkuiHGXwZdgJtFWkabhi4GA%3D%3D%7Ck%2BSX5Iv4l%2BKN%2BY76leOb4Y72iuWf54j8iP%2BQ5Iv3g%2ByY4I%2F5giI%3D&]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[${recordURL}]]></operation>
+					<operation type="replace" from="http://" to="https://"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="taobao-record-page" path="/trade/itemlist/asyncBought" max-page-count="100">
+			<object-segment name="record" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="nextPage" result-class="LinkNode">
+				<field-extractor id="pageNum" field="temp">
+					<operation type="template">${current_url}</operation>
+					<operation type="regex" index="1">pageNum=(\d+)</operation>
+				</field-extractor>
+				<field-extractor id="currentPageNum" field="temp">
+					<operation type="jsonpath">$.page.prefetchCount</operation>
+					<operation type="replace" from="-\d+" to="0"></operation>
+					<operation type="triple" triple-type="gt">${this}>0?${pageNum}+1:1</operation>
+					<operation type="regex" index="1">(\d+)</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation from="pageNum=\d+" to="pageNum=${currentPageNum}" type="replace"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-record-search-page" path="/record/standard.htm" max-page-count="200">
+			<!-- support filter don't contain address page -->
+			<object-segment name="record" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="replace" from="ua=.*tradeType=" to="tradeType="></operation>
+				</field-extractor>
+
+				<field-extractor id="currentPageNum" field="temp" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="regex" index="1">pageNum=(\d+)</operation>
+				</field-extractor>
+				<field-extractor id="nextPageNum" field="temp" result-type="int" field-visible-type="request">
+					<operation type="calculate">${currentPageNum}+1</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="nextPage" result-class="LinkNode" contains="record/switchVersion.htm|下一页">
+				<field-extractor id="field-extractor_1" field="url" result-type="string" default-value="${current_url}">
+					<operation type="xpath">div.page-link a.page-next/text()</operation>
+					<operation type="replace" from="下一页.*" to="${current_url}"></operation>
+					<operation type="replace" from="pageNum=\d+" to="pageNum=${nextPageNum}"></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="advancedPage" result-class="LinkNode" contains="我的账单" dis-contains="record/switchVersion.htm|下一页">
+				<field-extractor id="field-extractor_1" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="replace" from="standard.htm" to="advanced.htm"></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="taoPage" result-class="LinkNode" contains="安全校验">
+				<field-extractor id="url" field="url" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist/BoughtQueryAction&event_submit_do_query=1&_input_charset=utf8"pageNum=1&pageSize=100&dateBegin=${tao-six-month-ago-timestamp}&auctionTitle=&itemTitle=&sellerNick=&prePageNo=2]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-record-search-linknode-page" path="/record/standard.htm" max-page-count="200">
+			<object-segment name="record" type="xpath" value="tbody>tr.J-item" result-class="LinkNode" contains="5rPXrBOKZh|5rPZ3T2xUb" dis-contains="\*{3}">
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string">
+					<operation type="xpath">//td[@class='action']//option[1]/@data-link</operation>
+					<operation type="regex" index="1">(.+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string" stand-by="true">
+					<operation type="xpath">//li[@class='btn-group-item'][1]/@data-link</operation>
+					<operation type="replace" from="\s" to=""></operation>
+				</field-extractor>
+				<field-extractor id="tradeNoTemp" field="temp">
+					<operation type="xpath">//a[@class='J-tradeNo-copy J-tradeNo']/@title</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string" default-value="${tradeNoTemp}">
+					<operation type="template"><![CDATA[${tradeDetailUrl}]]></operation>
+					<operation type="regex" index="1">No=\s*(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string">
+					<operation type="xpath">td.tradeNo/text()</operation>
+					<operation type="regex" index="1">:(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${tradeDetailUrl}]]></operation>
+					<operation type="regex" index="1">.+=(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${tradeNumber}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime">
+					<operation type="regex" index="1">record=\s+([\d\-: ]+)</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" stand-by="true">
+					<operation type="xpath">//td[@class='time']/text()</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+					<operation type="regex" index="1">([\d\-:\.]+)</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[${tradeDetailUrl}]]></operation>
+					<operation type="regex" index="1"><![CDATA[(tradeNo=[^&]+)]]></operation>
+					<operation type="append" index="0"><![CDATA[https://lab.alipay.com/consume/queryTradeDetail.htm?]]></operation>
+				</field-extractor>
+
+				<field-extractor id="currentPageNum" field="temp" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="regex" index="1">pageNum=(\d+)</operation>
+				</field-extractor>
+				<field-extractor id="nextPageNum" field="temp" result-type="int" field-visible-type="request">
+					<operation type="calculate">${currentPageNum}+1</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="nextPage" result-class="LinkNode" contains="record/switchVersion.htm|下一页">
+				<field-extractor id="field-extractor_1" field="url" result-type="string" default-value="${current_url}">
+					<operation type="xpath">div.page-link a.page-next/text()</operation>
+					<operation type="replace" from="下一页.*" to="${current_url}"></operation>
+					<operation type="replace" from="pageNum=\d+" to="pageNum=${nextPageNum}"></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="advancedPage" result-class="LinkNode" contains="我的账单" dis-contains="record/switchVersion.htm|下一页">
+				<field-extractor id="field-extractor_1" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="replace" from="standard.htm" to="advanced.htm"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-record-advanced-page" path="/record/advanced.htm" max-page-count="200">
+			<!-- support filter don't contain address page -->
+			<object-segment name="record" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="replace" from="ua=.*tradeType=" to="tradeType="></operation>
+				</field-extractor>
+
+				<field-extractor id="currentPageNum" field="temp" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="regex" index="1">pageNum=(\d+)</operation>
+				</field-extractor>
+				<field-extractor id="nextPageNum" field="temp" result-type="int" field-visible-type="request">
+					<operation type="calculate">${currentPageNum}+1</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="nextPage" result-class="LinkNode" contains="record/switchVersion.htm|下一页">
+				<field-extractor id="field-extractor_1" field="url" result-type="string" default-value="${current_url}">
+					<operation type="xpath">div.page-link a.page-next/text()</operation>
+					<operation type="replace" from="下一页.*" to="${current_url}"></operation>
+					<operation type="replace" from="pageNum=\d+" to="pageNum=${nextPageNum}"></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="taoPage" result-class="LinkNode" contains="安全校验">
+				<field-extractor id="url" field="url" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist/BoughtQueryAction&event_submit_do_query=1&_input_charset=utf8"pageNum=1&pageSize=100&dateBegin=${tao-six-month-ago-timestamp}&auctionTitle=&itemTitle=&sellerNick=&prePageNo=2]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-record-advanced-linknode-page" path="/record/advanced.htm" max-page-count="200">
+			<object-segment name="record" type="xpath" value="tbody>tr.J-item" result-class="LinkNode" contains="T200P|T1600P" dis-contains="\*{3}">
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string">
+					<operation type="xpath">//td[@class='action']//option[1]/@data-link</operation>
+					<operation type="regex" index="1">(.+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string" stand-by="true">
+					<operation type="xpath">//li[@class='btn-group-item'][1]/@data-link</operation>
+					<operation type="replace" from="\s" to=""></operation>
+				</field-extractor>
+				<field-extractor id="tradeNoTemp" field="temp">
+					<operation type="xpath">//a[@class='J-tradeNo-copy J-tradeNo']/@title</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string" default-value="${tradeNoTemp}">
+					<operation type="template"><![CDATA[${tradeDetailUrl}]]></operation>
+					<operation type="regex" index="1">No=\s*(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string">
+					<operation type="xpath">td.tradeNo/text()</operation>
+					<operation type="regex" index="1">:(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${tradeDetailUrl}]]></operation>
+					<operation type="regex" index="1">.+=(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${tradeNumber}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime">
+					<operation type="regex" index="1">record=\s+([\d\-: ]+)</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" stand-by="true">
+					<operation type="xpath">//td[@class='time']/text()</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+					<operation type="regex" index="1">([\d\-:\.]+)</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[${tradeDetailUrl}]]></operation>
+					<operation type="regex" index="1"><![CDATA[(tradeNo=[^&]+)]]></operation>
+					<operation type="append" index="0"><![CDATA[https://lab.alipay.com/consume/queryTradeDetail.htm?]]></operation>
+				</field-extractor>
+
+				<field-extractor id="currentPageNum" field="temp" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="regex" index="1">pageNum=(\d+)</operation>
+				</field-extractor>
+				<field-extractor id="nextPageNum" field="temp" result-type="int" field-visible-type="request">
+					<operation type="calculate">${currentPageNum}+1</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="nextPage" result-class="LinkNode" contains="record/switchVersion.htm|下一页">
+				<field-extractor id="field-extractor_1" field="url" result-type="string" default-value="${current_url}">
+					<operation type="xpath">div.page-link a.page-next/text()</operation>
+					<operation type="replace" from="下一页.*" to="${current_url}"></operation>
+					<operation type="replace" from="pageNum=\d+" to="pageNum=${nextPageNum}"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-cardInfo-page" path="/asset/bindQuery.json" service-ref="" page-num-regex="" page-title-regex="">
+			<replaces>
+			</replaces>
+			<regex></regex>
+			<object-segment name="cardInfo" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-jiaoFeiInfo-page" path="/market/chargeRemindInfoEntering.htm" service-ref="" page-num-regex="" page-title-regex=""><!-- plugn 输出 List<Map> recheck -->
+			<replaces>
+			</replaces>
+			<regex></regex>
+			<object-segment name="jiaoFeiInfo" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="tao-deliverAddress-page" path="fresh/deliver_address.htm">
+			<object-segment name="deliverAddress" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode" contains="密码登录在这里">
+				<field-extractor id="field-extractor_1" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://publicexprod.alipay.com/deliveraddress/index.htm?type=1]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-deliverAddress-page" path="deliveraddress/index.htm">
+			<object-segment name="deliverAddress" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="alipay-detailInfo-page" path="queryTradeDetail.htm" max-page-count="20">
+			<object-segment name="detailInfo" result-class="EcommerceData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string">
+					<operation type="template">${tradeNumber}</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${tradeNumber}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" not-empty="true">
+					<operation type="template">${tradeDatetime}</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="taobaoPage" result-class="LinkNode" contains="aq.taobao.com/durex/|查询交易详情失败|请提交验证码后继续">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://msg.taobao.com/json/message_list.htm?page=1&_input_charset=utf-8&callback=jsonp58&userType=1]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="taobao-trade-search-page" path="/trade/itemlist/asyncBought">
+			<object-segment name="taoTrade" result-class="DefaultData">
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}_taoignore_address</operation>
+				</field-extractor>
+			</object-segment>
+			<object-segment name="trades" type="jsonpath" value="$.mainOrders[*]" result-class="LinkNode" contains="//waimai.taobao|含运费">
+				<object-segment name="trades" result-class="LinkNode" contains="订单详情" dis-contains="trip.taobao.com">
+					<field-extractor id="url" field="url" result-type="string">
+						<operation type="regex" index="1">"((//waimai.taobao)[^"]+)"</operation>
+						<operation type="append" index="0"><![CDATA[https:]]></operation>
+					</field-extractor>
+					<field-extractor id="url" field="url" result-type="string" stand-by="true">
+						<operation type="jsonpath">$.statusInfo.url</operation>
+						<operation type="append" index="0"><![CDATA[https:]]></operation>
+					</field-extractor>
+					<field-extractor id="url" field="url" result-type="string" not-empty="true" stand-by="true">
+						<operation type="jsonpath">$.statusInfo.operations[0].url</operation>
+						<operation type="append" index="0"><![CDATA[https:]]></operation>
+					</field-extractor>
+					<field-extractor id="wuliu_url" field="wuliu_url" result-type="string">
+						<operation type="regex" index="1">"((//wuliu.taobao)[^"]+)"</operation>
+						<operation type="append" index="0"><![CDATA[https:]]></operation>
+					</field-extractor>
+					<field-extractor id="itemInfotitle" field="itemInfotitle" result-type="string" not-empty="true">
+						<operation type="jsonpath">$.subOrders[0].itemInfo.title</operation>
+					</field-extractor>
+					<field-extractor id="tradeNumberInput" field="tradeNumberInput" result-type="string" not-empty="true">
+						<operation type="jsonpath">$.orderInfo.id</operation>
+					</field-extractor>
+					<field-extractor id="tradeDatetime" field="tradeDatetime" not-empty="true">
+						<operation type="jsonpath">$.orderInfo.createTime</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+			<object-segment name="nextPage" result-class="LinkNode">
+				<field-extractor id="pageNum" field="temp">
+					<operation type="template">${current_url}</operation>
+					<operation type="regex" index="1">pageNum=(\d+)</operation>
+				</field-extractor>
+				<field-extractor id="currentPageNum" field="temp">
+					<operation type="jsonpath">$.page.prefetchCount</operation>
+					<operation type="replace" from="-\d+" to="0"></operation>
+					<operation type="triple" triple-type="gt">${this}>0?${pageNum}+1:1</operation>
+					<operation type="regex" index="1">(\d+)</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation from="pageNum=\d+" to="pageNum=${currentPageNum}" type="replace"></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="aliTrade" result-class="LinkNode" contains="sec.taobao.com">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">https://consumeprod.alipay.com/record/index.htm</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+
+		<page id="taobao-trade-search-page-2" path="message_list.htm">
+			<object-segment name="nextPage" result-class="LinkNode">
+				<field-extractor id="pageContent1" field="temp">
+					<operation type="regex" index="1">jsonp58\(([\w\W]*)\)</operation>
+				</field-extractor>
+				<field-extractor id="totalCount" source="pageContent1" field="temp">
+					<operation type="jsonpath">$.totalNum</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="parser" ref="search-page-parser"></operation>
+				</field-extractor>
+			</object-segment>
+			<object-segment name="wuliuPage" result-class="DefaultData">
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="trades" result-class="LinkNode">
+				<field-extractor id="pageContent1" field="temp">
+					<operation type="regex" index="1">jsonp58\(([\w\W]*)\)</operation>
+				</field-extractor>
+				<object-segment name="trades" source="pageContent1" type="jsonpath" value="$.msgList[*]" result-class="LinkNode" contains="wuliu.taobao">
+					<field-extractor id="url" field="url" result-type="string" not-empty="true">
+						<operation type="jsonpath">$.actionUrl</operation>
+						<operation type="append" index="0"><![CDATA[https:]]></operation>
+						<operation type="replace" from="scm=[\d\.]*" to=""></operation>
+					</field-extractor>
+					<field-extractor id="tradeNumberInput" source="url" field="tradeNumberInput" result-type="string" not-empty="true">
+						<operation type="regex" index="1">trade_id=(\d+)</operation>
+					</field-extractor>
+					<field-extractor id="tradeDatetime" field="tradeDatetime" not-empty="true">
+						<operation type="jsonpath">$.actionUrl</operation>
+						<operation type="regex" index="1">scm=.*\.(\d+)</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+
+		<page id="taobao-index-page" path="taobao.com/index.html">
+			<object-segment name="openProxy" result-class="LinkNode">
+				<field-extractor id="proxysetON" field="temp">
+					<operation type="proxyset" option="on"></operation>
+				</field-extractor>
+				<field-extractor id="alipayAccount" field="alipayAccount" field-visible-type="processor_result">
+					<operation type="template"><![CDATA[${alipayAccount}]]></operation>
+				</field-extractor>
+				<field-extractor id="taoBaoAccount" field="taoBaoAccount" field-visible-type="processor_result">
+					<operation type="template"><![CDATA[${taoBaoAccount}]]></operation>
+				</field-extractor>
+
+				<field-extractor id="tao-six-month-ago-timestamp" field="temp" result-type="string" field-visible-type="processor_result">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-6" format="timestamp" calibrate="true" />
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist/BoughtQueryAction&event_submit_do_query=1&_input_charset=utf8"pageNum=1&pageSize=100&dateBegin=${tao-six-month-ago-timestamp}&auctionTitle=&itemTitle=&sellerNick=&prePageNo=2]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="taobao-tradeAddress-page" path="//waimai.taobao|//wuliu.taobao|trade_item_detail.htm|orderDetail.htm" max-page-count="20">
+			<object-segment name="trades" result-class="EcommerceData">
+				<!-- 用物流解决阿里钱盾 -->
+				<field-extractor id="urlTemp" field="urlTemp" result-type="string">
+					<operation type="triple" triple-type="regex">${this} matches:aq.taobao.com/durex/validate?${wuliu_url}:${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="urlTemp" field="urlTemp" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[${current_url}]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" source="urlTemp" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="triple" triple-type="regex">${this} matches:aq.taobao.com/durex/validate?:${this}</operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent" stand-by="true" result-type="resource_string">
+					<operation type="template"><![CDATA[${wuliu_url}]]></operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent" stand-by="true">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="title" field="title" result-type="string">
+					<operation type="template">${itemInfotitle}</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumberInput" field="tradeNumberInput" result-type="string">
+					<operation type="template">${tradeNumberInput}</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${tradeNumberInput}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" not-empty="true">
+					<operation type="template">${tradeDatetime}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="alipay-index-search-template" type="category_search" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[https://my.alipay.com/portal/i.htm]]></url-template>
+				</url-templates>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page><![CDATA[200]]></max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="alipay-index-search-page" />
+				<page depth="1" ref="alipay-cardInfo-page" />
+				<page depth="1" ref="alipay-jiaoFeiInfo-page" />
+				<page depth="1" ref="alipay-deliverAddress-page" />
+				<page depth="1" ref="tao-deliverAddress-page" />
+				<page depth="1" ref="alipay-zmxy-page" />
+				<page depth="1" ref="alipay-zmxy-detailpage" />
+			</page-sequence>
+		</search-template>
+		<search-template id="record-search-template" type="category_search" max-depth="1" thread-count="2">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[https://consumeprod.alipay.com/record/index.htm]]></url-template>
+				</url-templates>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page><![CDATA[200]]></max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="alipay-record-index-page" />
+				<page depth="1" ref="taobao-record-page" />
+				<page depth="1" ref="alipay-record-search-page" />
+				<page depth="1" ref="alipay-record-advanced-page" />
+			</page-sequence>
+		</search-template>
+
+		<search-template id="tradeAddress-template" type="category_search" max-depth="1" wait-interval="500" auto-start="false">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[https://www.taobao.com/index.html]]></url-template>
+				</url-templates>
+				<default-header><![CDATA[{"Referer":"https://msg.taobao.com/message/list.htm?page=2&appId="}]]></default-header>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page><![CDATA[200]]></max-page>
+			</request>
+			<result-tag-list>
+				<result-tag><![CDATA[tradeAddress]]></result-tag>
+			</result-tag-list>
+			<page-sequence>
+				<page depth="0" ref="taobao-index-page" />
+				<page depth="0" ref="taobao-trade-search-page" />
+				<page depth="0" ref="alipay-record-index-address-page" />
+				<page depth="1" ref="taobao-trade-search-page-2" />
+				<page depth="1" ref="alipay-record-search-linknode-page" />
+				<page depth="1" ref="alipay-record-advanced-linknode-page" />
+				<page depth="1" ref="alipay-detailInfo-page" />
+				<page depth="1" ref="taobao-tradeAddress-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+	<parser-definition>
+		<parser id="parserURLParser">
+			<url-template><![CDATA[https://shanghu.alipay.com/home/switchPersonal.htm]]></url-template>
+		</parser>
+
+		<parser id="search-page-parser">
+			<url-template><![CDATA[https://msg.taobao.com/json/message_list.htm?page=#{page,1,${totalCount}/10+1,1+}&_input_charset=utf-8&callback=jsonp58&userType=1]]></url-template>
+		</parser>
+
+		<parser id="alipayTradeParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([^,]+),]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="tradeType"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[${recordURL}&tradeType=${tradeType}]]></url-template>
+		</parser>
+	</parser-definition>
+
+	<plugin-definition>
+		<plugin id="aliLoginFromTao" file-type="jar" phase="field">
+			<main-class>com.datatrees.crawler.plugin.TaobaoCacertJump</main-class>
+		</plugin>
+	</plugin-definition>
+</config>

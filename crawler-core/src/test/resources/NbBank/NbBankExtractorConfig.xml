@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 宁波银行-->
+<config>
+	<extrator-selectors>
+		<selector field="subject" contain="电子账单" dis-contain=""
+			ref="page-extractor_1"></selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<page-extractor id="page-extractor_1">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="bankBills">
+				<field-extractor id="NameMonthTemp" field="temp">
+					<operation type="xpath"><![CDATA[td:contains(打24小时客服):not(:has(td))/text()]]></operation>
+					<operation from="&amp;nbsp;" to="" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="NameOnCard" field="NameOnCard"
+					not-empty="true" source="NameMonthTemp" result-type="string">
+					<operation type="regex" index="1"><![CDATA[尊敬的\s*([^尊]+)\s*(?:先生|女士)]]></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="BillMonth" field="BillMonth"
+					result-type="date" format="yyyy年MM月" not-empty="true" source="NameMonthTemp">
+					<operation type="regex" index="1"><![CDATA[以下为\s*([\d年月]+)]]></operation>
+				</field-extractor>
+
+				<field-extractor id="basicMatcher" field="temp">
+					<operation type="xpath"><![CDATA[table:contains(账单日):not(:has(table))]]></operation>
+					<operation from="&amp;nbsp;" to="" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="CardNums" field="CardNums"
+					result-type="string" source="basicMatcher">
+					<operation type="xpath"><![CDATA[td:contains(卡号) +td/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[\*\*\*\*\s*(\d{4})]]></operation>
+				</field-extractor>
+				<field-extractor id="BillDate" field="BillDate"
+					result-type="date" format="yyyy年MM月dd日" not-empty="true" source="basicMatcher">
+					<operation type="xpath"><![CDATA[td:contains(账单日) +td/text() ]]></operation>
+				</field-extractor>
+				<field-extractor id="PaymentDueDate" field="PaymentDueDate"
+					result-type="date" format="yyyy年MM月dd日" source="basicMatcher">
+					<operation type="xpath"><![CDATA[td:contains(到期还款日)+td/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="CreditLimit" field="CreditLimit"
+					result-type="payment" not-empty="true" source="basicMatcher">
+					<operation type="xpath"><![CDATA[td:contains(信用额度) +td/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="NewBalance" field="NewBalance"
+					result-type="currency_payment" not-empty="true" source="basicMatcher">
+					<operation type="xpath"><![CDATA[td:contains(本期应还款额) + td/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="MinPayment" field="MinPayment"
+					source="basicMatcher" result-type="currency_payment" not-empty="true">
+					<operation type="xpath"><![CDATA[td:contains(本期最低还款额) + td/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="IntegralAdd" field="IntegralAdd"
+					result-type="number" source="basicMatcher">
+					<operation type="xpath"><![CDATA[td:contains(本期新增积分) + td/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="Integral" field="Integral"
+					result-type="number" source="basicMatcher">
+					<operation type="xpath"><![CDATA[td:contains(期末剩余积分) + td/text()]]></operation>
+				</field-extractor>
+
+				<field-extractor id="LastBalance" field="LastBalance"
+					result-type="payment" not-empty="true">
+					<operation type="xpath"><![CDATA[tr:contains(上期账单金额):not(:has(tr)) +tr/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[([\-\.\d\,]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="LastPayment" field="LastPayment"
+					result-type="payment" not-empty="true">
+					<operation type="xpath"><![CDATA[tr:contains(本期已还金额):not(:has(tr)) +tr/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[([\-\.\d\,]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="NewCharges" field="NewCharges"
+					result-type="payment" not-empty="true">
+					<operation type="xpath"><![CDATA[tr:contains(本期账单金额):not(:has(tr)) +tr/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[([\-\.\d\,]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="Adjustment" field="Adjustment"
+					result-type="payment" not-empty="true">
+					<operation type="xpath"><![CDATA[tr:contains(本期调整金额):not(:has(tr)) +tr/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[([\-\.\d\,]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="Interest" field="Interest"
+					result-type="payment">
+					<operation type="xpath"><![CDATA[tr:contains(循环利息):not(:has(tr)) +tr/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[([\-\.\d\,]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="yearTemp" field="temp"
+					result-type="string" not-empty="true" source="NameMonthTemp"
+					field-visible-type="request">
+					<operation type="regex" index="1"><![CDATA[以下为\s*([\d]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="currentMonth" field="temp"
+					result-type="string" not-empty="true" source="NameMonthTemp"
+					field-visible-type="request">
+					<operation type="regex" index="1"><![CDATA[以下为\s*\d+年(\d+)月]]></operation>
+				</field-extractor>
+				<object-segment name="ShoppingSheet" type="xpath"
+					value="tr:contains(交易描述):not(:has(tr)) ~tr:not(:contains(***END***))">
+
+					<field-extractor id="TransDateYearTemp" field="temp"
+						result-type="string">
+						<operation type="xpath"><![CDATA[//td[1]/text()]]></operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+						<operation type="triple" triple-type="gt">${this}>${currentMonth}?${yearTemp}-1:${yearTemp}
+						</operation>
+					</field-extractor>
+					<field-extractor id="PostDateYearTemp" field="temp"
+						result-type="string">
+						<operation type="xpath"><![CDATA[//td[2]/text()]]></operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+						<operation type="triple" triple-type="gt">${this}>${currentMonth}?${yearTemp}-1:${yearTemp}
+						</operation>
+					</field-extractor>
+					<field-extractor id="TransDate" field="TransDate"
+						result-type="date" format="yyyyMM/dd">
+						<operation type="xpath" index="1"><![CDATA[//td[1]/text()]]></operation>
+						<operation type="append" index="0">${TransDateYearTemp}
+						</operation>
+					</field-extractor>
+					<field-extractor id="PostDate" field="PostDate"
+						result-type="date" format="yyyyMM/dd">
+						<operation type="xpath" index="1"><![CDATA[//td[2]/text()]]></operation>
+						<operation type="append" index="0">${PostDateYearTemp}
+						</operation>
+					</field-extractor>
+					<field-extractor id="Description" field="Description"
+						result-type="string">
+						<operation type="xpath"><![CDATA[//td[3]/text()]]></operation>
+					</field-extractor>
+					<field-extractor id="AmountMoney" field="AmountMoney"
+						result-type="payment">
+						<operation type="xpath"><![CDATA[//td[4]/text()]]></operation>
+					</field-extractor>
+					<field-extractor id="CardNo" field="CardNo"
+						result-type="string">
+						<operation type="xpath"><![CDATA[//td[5]/text()]]></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page-extractor>
+
+	</page-extractor-definition>
+	<plugin-definition>
+
+	</plugin-definition>
+</config>

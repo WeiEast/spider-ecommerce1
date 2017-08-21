@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<url-filters>
+		<url-filter type="+">.189.cn</url-filter>
+	</url-filters>
+
+	<result-tag-list>
+		<result-tag><![CDATA[operator]]></result-tag>
+	</result-tag-list>
+
+	<properties>
+		<cookie scope="user_session"></cookie>
+	</properties>
+
+	<login login-type="plugin" plugin-ref="tj189LoginPlugin">
+		<login-check success-pattern="要查询的号码">
+			<check-url><![CDATA[http://tj.189.cn/tj/service/bill/feeQueryIndex.action"tab=tab3&time=]]></check-url>
+			<headers><![CDATA[{"Referer":"http://tj.189.cn/tj/service/bill/feeQueryIndex.action?tab=3&amp;fastcode=02251357"}]]></headers>
+			<object-segment name="name">
+				<field-extractor id="phonenum" field="phonenum"
+					result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="xpath"><![CDATA[span:contains(您要查询的号码):not(:has(span))+div span/text()]]></operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<parser-definition>
+		<parser id="balanceParser">
+			<url-template><![CDATA[http://tj.189.cn/tj/service/bill/balanceQuery.action"requestFlag=asynchronism&shijian=]]></url-template>
+			<link-url-template><![CDATA[http://waptj.189.cn/intensive/indexQueryUI.action]]></link-url-template>
+			<headers><![CDATA[{"X-Requested-With":"XMLHttpRequest","Content-Type":"application/x-www-form-urlencoded; charset=UTF-8"}]]></headers>
+		</parser>
+
+		<parser id="basicInfoParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[window\.location\s*=\s*'[^']+fastcode=(\d+)']]></regex>
+					<mappings>
+						<map group-index="1" placeholder="fastCode"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://tj.189.cn/tj/service/manage/modifyUserInfo.action?fastcode=${fastCode}]]></url-template>
+		</parser>
+
+		<parser id="billParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([\d年月]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://tj.189.cn/tj/service/bill/queryBillInfo.action"billingCycle1=${queryMonth}]]></url-template>
+			<link-url-template><![CDATA[http://tj.189.cn/tj/service/bill/feeQueryIndex.action?tab=5&amp;fastcode=02251360]]></link-url-template>
+			<headers><![CDATA[{"X-Requested-With":"XMLHttpRequest","Content-Type":"application/x-www-form-urlencoded; charset=UTF-8"}]]></headers>
+		</parser>
+
+		<parser id="callsDetailParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([-\d]+):([-\d]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="startDay"></map>
+						<map group-index="2" placeholder="endDay"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<headers><![CDATA[{"X-Requested-With":"XMLHttpRequest"}]]></headers>
+			<url-template><![CDATA[http://tj.189.cn/tj/service/bill/billDetailQuery.action"billDetailValidate=true&flag_is1k2x=false&billDetailType=1&sRandomCode=${smsCode}&startTime=${startDay}&endTime=${endDay}]]></url-template>
+			<link-url-template><![CDATA[http://tj.189.cn/tj/service/bill/billDetailQuery.action]]></link-url-template>
+		</parser>
+
+		<parser id="smsDetailParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([-\d]+):([-\d]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="startDay"></map>
+						<map group-index="2" placeholder="endDay"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<headers><![CDATA[{"X-Requested-With":"XMLHttpRequest"}]]></headers>
+			<url-template><![CDATA[http://tj.189.cn/tj/service/bill/billDetailQuery.action"billDetailValidate=true&flag_is1k2x=false&billDetailType=2&sRandomCode=${smsCode}&startTime=${startDay}&endTime=${endDay}]]></url-template>
+			<link-url-template><![CDATA[http://tj.189.cn/tj/service/bill/billDetailQuery.action]]></link-url-template>
+		</parser>
+
+		<parser id="nextPageParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[billDetailType=(\d)&[^&]+&startTime=([-\d]+)&endTime=([-\d]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="detailType"></map>
+						<map group-index="2" placeholder="startDay"></map>
+						<map group-index="3" placeholder="endDay"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<headers><![CDATA[{"X-Requested-With":"XMLHttpRequest"}]]></headers>
+			<url-template><![CDATA[http://tj.189.cn/tj/service/bill/billDetailAjaxQuery.action"pageNo=#{page,2,${totleNum}-1,1+}&startTime=${startDay}&endTime=${endDay}&billDetailType=${detailType}&is1k2x_ret=undefined]]></url-template>
+			<link-url-template><![CDATA[http://tj.189.cn/tj/service/bill/billDetailQuery.action]]></link-url-template>
+		</parser>
+	</parser-definition>
+
+	<page-definition>
+		<!-- 基本信息 -->
+		<page id="basicInfo-page" path="/dqmh/ssoLink.do">
+			<object-segment name="basicInfo" result-class="OperatorData">
+				<field-extractor id="accountBalance" field="accountBalance"
+					result-type="string" not-empty="true">
+					<operation type="parser" ref="balanceParser" />
+					<operation type="jsonpath"><![CDATA[$.basicAccountBalance.accountBalance]]></operation>
+					<operation type="regex" index="1"><![CDATA[([-\d\.,]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="telNum" field="telNum"
+					result-type="string" not-empty="true">
+					<operation type="template">${phonenum}</operation>
+					<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+				</field-extractor>
+				<field-extractor id="basicInfoPage-extractor" field="pageContent"
+					result-type="string">
+					<operation type="parser" ref="basicInfoParser" />
+				</field-extractor>
+			</object-segment>
+		</page>
+		<page id="balance-page" path="/dqmh/ssoLink.do">
+			<object-segment name="basicInfo" result-class="OperatorData">
+				<field-extractor id="accountBalance" field="accountBalance"
+					result-type="string" not-empty="true">
+					<operation type="parser" ref="balanceParser" />
+					<operation type="jsonpath"><![CDATA[$.basicAccountBalance.accountBalance]]></operation>
+					<operation type="regex" index="1"><![CDATA[([-\d\.,]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="telNum" field="telNum"
+					result-type="string" not-empty="true">
+					<operation type="template">${phonenum}</operation>
+					<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+				</field-extractor>
+				<field-extractor id="basicInfoPage-extractor" field="pageContent"
+					result-type="string">
+					<operation type="parser" ref="basicInfoParser" />
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="basicInfo-search-template" type="category_search"
+			plugin-ref="" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10002&toStUrl=http://tj.189.cn/tj/service/manage/modifyUserInfo.action&fastcode=02241349]]></url-template>
+				</url-templates>
+				<default-header><![CDATA[{"Referer":"http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=02251357"}]]></default-header>
+				<max-page>15</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="basicInfo-page" />
+				<page depth="1" ref="billInfo-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+	<search>
+		<search-template id="validate-template" type="category_search"
+			plugin-ref="" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10002&toStUrl=http://tj.189.cn/tj/service/manage/modifyUserInfo.action&fastcode=02241349]]></url-template>
+				</url-templates>
+				<default-header><![CDATA[{"Referer":"http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=02251357"}]]></default-header>
+				<max-page>15</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="balance-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+	<plugin-definition>
+		<plugin id="tj189LoginPlugin" file-type="jar" phase="login">
+			<main-class>com.datatrees.crawler.plugin.main.LoginMain</main-class>
+		</plugin>
+	</plugin-definition>
+</config>

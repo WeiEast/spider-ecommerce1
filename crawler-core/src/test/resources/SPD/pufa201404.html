@@ -1,0 +1,939 @@
+﻿
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>邮件账单列表</title>
+		<meta charset="utf-8" />
+		<link href="css/base.css" rel="stylesheet" type="text/css">
+		<link href="css/mail.css" rel="stylesheet" type="text/css">
+		<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/userbill.js"></script>
+	</head>
+	<body>
+  		 <a href="download.do?mailId=37_12344778_331377353">附件下载</a>
+		<div class="showTable">
+			<table>
+			  <thead>
+			    <tr>
+        			<th>银行</th>
+                    <th>持卡人</th>
+                    <th>账单周期</th>
+                    <th>卡号后四位</th>
+                    <th>最后还款日</th>
+                    <th>本期应还款</th>
+                    <th>最低还款额</th>
+                    <th>信用额度/取现额度</th>
+                    <th>上期应还额</th>
+                    <th>本期积分</th>
+                    <th>新增积分</th>
+                    <th>BillID</th>
+                    <th>UBID</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			   	<tr class="even">
+			   	  <td>8</td>
+			   	  <td>We32A14QmZBCTZMnjO763Q==</td>
+			   	  <td><a title="消费纪录" style="colore:blue" href="app/shoppingSheet.do?emailId=37_12344778&billId=37_12344778_307753636">1900-01-01 - 2014-04-01</a></td>
+			   	  <td>8119</td>
+			   	  <td>2014-4-21</td>
+			   	  <td>38565.86/$ </td>
+				  <td>2524.54/$ </td>
+			   	  <td>41000/12300</td>
+			   	  <td>40879.23/$ </td>
+			   	  <td>117672</td>
+			   	  <td>88</td>
+			   	  <td>37_12344778_307753636</td>
+			   	  <td></td>
+			   	</tr>
+			  </tbody>
+			</table>
+		<div style="float:right"> <a href="javascript:void(0)" onclick="UserBill.ChangeAnalyzeState()">解析错误</a> </div>
+		</div>
+		<style>
+
+html{word-wrap:break-word;}
+body{font-size:14px;font-family:arial,verdana,sans-serif;line-height:1.666;padding:8px 10px;margin:0;}
+pre {
+	white-space: pre-wrap; 
+	white-space: -moz-pre-wrap; 
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+}
+</style>
+
+
+
+
+<style type="text/css">
+
+<!--
+
+body {
+
+	margin: 5px 0 0 0;
+
+	padding: 0;
+
+	font-family: verdana, arial, helvetica, sans-serif, "宋体";
+
+	background-color: #fff;
+
+	}
+
+td {
+
+font-size:12px;
+
+    line-height: 18px;
+
+
+
+}
+
+a {
+
+	text-decoration: none;
+
+	color:  #333;
+
+	outline: none;
+
+	}
+
+a:visited {
+
+	color:  #333;
+
+	}
+
+a:active {
+
+	color:  #333;
+
+	}
+
+a:hover {
+
+	color:#9e090c;
+
+	text-decoration: underline;
+
+	}
+
+.td3 {
+
+font-size:10px;
+
+line-height: 12px;
+
+}
+
+.name {
+
+font-size:14px;
+
+font-weight:bolder;
+
+border-bottom:dashed 1px #ccc;
+
+}
+
+.td1 {
+
+font-size:14px;
+
+font-weight:bolder;
+
+}
+
+.td2 {
+
+font-size:16px;
+
+font-weight:bolder;
+
+}
+
+.line1 {
+
+border-bottom: solid 2px #ccc;
+
+padding:5px 0 5px 0;
+
+}
+
+.line2 {
+
+border-left: solid 2px #ccc;
+
+padding:5px 0 5px 0;
+
+}
+
+.line3 {
+
+border-right: solid 2px #ccc;
+
+padding:5px 0 5px 0;
+
+}
+
+.tb {
+
+border: solid 1px #ccc;
+
+padding:5px 0 5px 0;
+
+}
+
+.tc {
+
+border: solid 2px #ccc;
+
+padding:5px 0 5px 0;
+
+}
+
+-->
+
+
+--></style>
+
+<table width="720" border="0" align="center" cellpadding="0" cellspacing="0" height="121">
+
+	<tr>
+		<td align="left" height="70" colspan="2">
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/newspdblogo.jpg" width="720" height="54"></td>
+	</tr>
+	<tr>
+		<td align="right" width="446">
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/headertitle.jpg">
+		</td>
+		<td width="283"><b><font color="#073E77" size="2">(2014年04月)</font></b></td>
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="0" cellspacing="0">
+
+	<tr>
+
+		<td height="50" align="left" style="padding-top:8px" colspan="2">
+
+		<p style="line-height: 200%"><b><font size="3">尊敬的胡生新 先生：<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 您好!感谢您使用本行信用卡，现呈上您浦发信用卡尾号为8119电子对账单。<br>
+
+		</font></b></p>
+
+		</td>
+
+	</tr>
+
+	<tr>
+
+		<td width="90%" style="padding-left:10px; padding-right:10px " height="104" class="tc">
+
+		<font size="2" color="#FF0000">★</font><font size="2" color="#003399">我中心日常会通过客服热线4008208788与您及时电话沟通重要信息。</font><p>
+
+		<font size="2" color="#FF0000">★</font><font size="2" color="#003399">如该号码致电给您，可放心接听。如错过接听，您可回拨及时了解情况。</font></p>
+
+		<p><font size="2" color="#FF0000">★</font><font size="2" color="#003399">信用卡网站右上方红色菜单可快速办理激活、临时额度申请、申请进度查询等业务。</font></p>
+
+		</td>
+
+	</tr>
+
+	<tr>
+
+		<td height="67" style="padding-top:8px" colspan="2">
+
+		
+
+		<table width="101%" border="0" cellpadding="0" cellspacing="0">
+
+			<tr>
+
+				<td height="30" colspan="2" align="left">
+
+				<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/accountheader.jpg"></td>
+
+			</tr>
+
+			<tr>
+
+				<td height="48" align="left" width="320">
+
+				<table width="312" border="0" cellspacing="0" cellpadding="0" class="tb" height="436">
+
+					<tr class="tb">
+
+						<td width="170" align="center" class="tb">
+
+						<font size="2"><b>账单日<br>
+
+						</b></font><font style="font-size: 9pt">Statement Date</font></td>
+
+						<td width="126" align="center" style="padding-left:10px" class="tb">
+
+						01</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>到期还款日<br>
+
+						</b></font><font style="font-size: 9pt">Payment Due Date</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						2014/04/21</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>信用额度<br>
+
+						</b></font><font style="font-size: 9pt">Credit Limit</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						41,000</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>取现额度<br>
+
+						</b></font><font style="font-size: 9pt">Cash Advance Limit</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						12,300</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>本期应还款总额<br>
+
+						</b></font><font style="font-size: 9pt">Total Statement 
+
+						Balance</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						RMB:38,565.86</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>本期最低还款额<br>
+
+						</b></font><font style="font-size: 9pt">Min Due Amount</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						RMB:2,524.54</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><b>
+
+						<font color="#003399" size="2">逾期还款额<br>
+
+						</font><font color="#003399" style="font-size: 9pt">Past 
+
+						Due Amount</font></b></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						RMB:0.00</td>
+
+					</tr>
+
+				</table>
+
+				</td>
+
+				<td align="left" width="56%">
+
+				<table width="396" border="0" cellspacing="0" cellpadding="0" class="tb">
+
+					<tr>
+
+						<td width="270" align="left" class="tb">
+
+						<p align="center"><b><font size="2">本期应还款总额计算明细(Details)</font></b></p>
+
+						</td>
+
+						<td width="110" align="center" style="padding-left:10px" class="tb">
+
+						<b><font size="2" color="#003399">金额(Amount)</font></b></td>
+
+					</tr>
+
+					<tr>
+
+						<td align="left" class="tb"><font color="#003399">&nbsp;&nbsp; 
+
+						上期应还款余额</font> <font size="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+
+						Last Statement Balance</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						40,879.23</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="left" class="tb">-&nbsp; 已还款金额/其他入账<font size="1">Payment/Credit</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						&nbsp;3,000.00</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="left" class="tb">+ 新签金额/其他费用 <font size="1">&nbsp;New 
+
+						Charges</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						686.63</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="left" class="tb" height="30"><b>= 本期应还款总额&nbsp;&nbsp; 
+
+						<font size="1">&nbsp; Total Statement 
+
+						Balance</font></b></td>
+
+						<td align="center" style="padding-left:10px" class="tb" height="30">
+
+						38,565.86</td>
+
+					</tr>
+
+				</table>
+
+				<br>
+
+				<table width="383" border="0" cellspacing="0" cellpadding="0">
+
+					<tr>
+
+						<td align="left" colspan="2"><b>
+
+						<font size="3" color="#003399">积分信息 </font>
+
+						<font size="2" color="#666666">Rewards Information</font></b></td>
+
+					</tr>
+
+				</table>
+
+				<table width="396" border="0" cellspacing="0" cellpadding="0" height="248" class="tb">
+
+					<tr>
+
+						<td class="tb">
+
+						<p align="center"><b><font size="2">本期积分余额计算明细</font></b></p>
+
+						</td>
+
+						<td align="left" style="padding-left:10px" class="tb" width="91">
+
+						<p align="center"><b><font size="2" color="#003399">浦发银行<br>
+
+						信用卡积分</font></b></p>
+
+						</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">&nbsp;&nbsp; 上期积分余额 <font size="1">&nbsp;Points 
+
+						Beginning Balance</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						117,584</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">+ 本期新增积分<font size="1">&nbsp; Points Earned 
+
+						This Month</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						88</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">+ 本期奖励积分 <font size="1">&nbsp;Bonus Points 
+
+						Earned This Month</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						0</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">+ 本期调整积分 <font size="1">&nbsp;Points Adjusted 
+
+						This Month</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						0</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">-&nbsp; 本期兑换积分 <font size="1">&nbsp;Points 
+
+						Redeemed This Month</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						0</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb"><b>= 本期积分余额<font size="1"> Total Points Available</font></b></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						117,672</td>
+
+					</tr>
+
+				</table>
+
+				</td>
+
+			</tr>
+			
+			
+
+			<tr>
+
+				<td colspan="2"><font face="宋体" size="1">
+
+				<span style="font-size: 9pt; font-family: 宋体">
+
+				您目前新一期的有效积分为0分，到期日为年月日。<br>
+
+				截至本帐单日您的到期积分为0分，请您在年月日前完成积分兑换，过期该部分积分将自动清零。<br>
+
+				积分礼品兑换请登录浦发银行信用卡中心网站</span></font><b><font face="Arial" color="red" size="1"><span lang="EN-US" style="FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: red; FONT-FAMILY: Arial"><font title="http://www.spdbccc.com.cn/" color="red"><a title="http://www.spdbccc.com.cn/" style="color: blue; text-decoration: underline" href="http://www.spdbccc.com.cn/"><span title="http://www.spdbccc.com.cn">www.spdbccc.com.cn</span></a></font></span></font><font face="Arial" size="1"><span lang="EN-US" style="font-weight: bold; font-size: 9pt; font-family: Arial">
+
+				</span></font></b><font face="Arial" size="1">
+
+				<span lang="EN-US" style="font-size: 9pt; font-family: Arial">&nbsp;</span></font><font face="宋体" size="1"><span style="font-size: 9pt; font-family: 宋体">，若有疑问可拔打</span></font><font face="Arial" size="1"><span lang="EN-US" style="font-size: 9pt; font-family: Arial">021-38784982</span></font><font face="宋体" size="1"><span style="font-size: 9pt; font-family: 宋体">积分专线咨询。</span></font></td>
+
+			</tr>
+
+			<tr>
+
+				<td colspan="2"><hr color="#999999"></td>
+
+			</tr>
+
+		</table>
+
+		<table width="100%" border="0" cellpadding="5" cellspacing="0" class="tc">
+
+			<tr>
+
+				<td width="5%" align="center" valign="top" bgcolor="#CCCCCC">
+
+				<b class="td2"><font color="#FFFFFF">说 </font></b>
+
+				<p><b class="td2"><font color="#FFFFFF">明 </font></b></p>
+
+				</td>
+
+				<td width="90%" style="padding-left:10px; padding-right:10px ">*如果“逾期还款额”为正数，表示您有逾期账款尚未支付，本期请立即还款。<br>
+
+				*如果“本期应还款总额”为正数，表示您本期有欠款需还款；若为负数，表示您有存款结余，本期无需还款。<br>
+
+				*本期账单争议总金额RMB:0.00，本期账单应还款已包括争议金额，争议金额部分暂无需还款。 　</td>
+
+			</tr>
+
+		</table>
+
+		</td>
+
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0">
+
+<tr>
+
+				<td width="16%" align="left" colspan="5">
+
+				<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/transactionheader.jpg"></td>
+
+			</tr>
+
+			<tr>
+
+				<td width="14%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				交易日期<span class="td3"><br>
+
+				Transaction Date</span></td>
+
+				<td width="15%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				记账日期<span class="td3"><br>
+
+				Posting Date</span></td>
+
+				<td width="34%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				交易摘要<span class="td3"><br>
+
+				Description</span></td>
+
+				<td width="18%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				卡号末四位<span class="td3"><br>
+
+				Card NO.</span></td>
+
+				<td width="19%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				交易金额<span class="td3"><br>
+
+				Amount</span></td>
+
+			</tr>
+
+			
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/03/23</td>
+
+				<td align="center">2014/03/23</td>
+
+				<td align="center">收到还款，谢谢！</td>
+
+				<td align="center">8119</td>
+
+				<td align="center" class="line3">-3,000.00</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/03/29</td>
+
+				<td align="center">2014/03/29</td>
+
+				<td align="center">通用磨坊贸易（上海）有限公司北京崇文门冰</td>
+
+				<td align="center">8119</td>
+
+				<td align="center" class="line3">59.00</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/04/01</td>
+
+				<td align="center">2014/04/01</td>
+
+				<td align="center">利息</td>
+
+				<td align="center">8119</td>
+
+				<td align="center" class="line3">627.63</td>
+
+			</tr>
+
+			
+
+			
+
+</table>
+
+
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0">
+
+	<tr>
+
+		<td colspan="2"><hr color="#999999"></td>
+
+	</tr>
+
+	<tr>
+
+		<td align="left">
+
+		<a href="http://www.spdbccc.com.cn/zh/news/1/540/index.html" target="_blank">
+
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/20130402.jpg" width="344" height="254" border="0"></a></td>
+
+		<td align="right" width="363">
+
+		<a href="http://www.spdbccc.com.cn/zh/news/1/657/index.html" target="_blank">
+
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/20140301.jpg" width="344" height="254" border="0"></a></td>
+
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0" class="tc">
+
+	<tr>
+
+		<td width="7%" align="center" valign="top" bgcolor="#CCCCCC" style="font-size: 12px; line-height: 18px">
+
+		<b class="td2"><font color="#FFFFFF"><br>
+
+		　</font></b><p>　</p>
+
+		<p>　</p>
+
+		<p><b class="td2"><font color="#FFFFFF">用<br>
+
+		卡<br>
+
+		活<br>
+
+		动<br>
+
+		</font></b></p>
+
+		</td>
+
+	  <td width="90%" style="padding:0px 10px 0px 10px;">
+		<br><b>携程“房型免费升级”</b><br>
+		2014年8月31日前，浦发信用卡持卡人通过携程旅行网预订指定四、五星级酒店并在线全额支付酒店房费即可享受房型免费升级（如：标准房免费升级高级房、标准房免费升级豪华房、标准房免费升级景观房等）（每月限量1000间夜，先订先得，订完即止）<br>
+		具体活动细则及活动酒店信息详见信用卡中心网站<br>
+		<br>
+		<font color="#FF0000"><b>上海</b></font><br>
+		<b>满记甜品10元专享优惠</b><br>
+		即日起至2014年6月30日，每周一于满记甜品上海地区指定门店刷浦发银行信用卡消费即可10元专享指定甜品，限芒果白雪黑糯米甜甜/杨枝甘露/白雪黑珍珠（三选一），总限量6080份。每天每卡限量1份，每天每个门店限量10份。<br>
+		详情请登录信用卡中心网站。<br>
+		<br>
+		<b>中移动浦发手机支付“上海地铁应用”闪亮登场</b><br>
+		即日起至12月31日，1、在浦发银行网点开通中移动浦发手机支付“地铁应用”的客户，赠送价值20元礼品。2、若同时开通中移动浦发NFC联名卡和地铁应用的客户，赠送价值30元礼品。3、7月底前“挥”中移动浦发手机支付进出上海地铁站的客户，每月浦发银行将抽出100位客户，赠送价值50元的格瓦拉电子券一张。（数量有限，先到先得）<br>
+		<br>
+		<b>上海明捷万丽酒店</b><br>
+		2014年4月30日前凡于上海明捷万丽酒店咖啡厅刷浦发信用卡可享晚餐自助餐买一送一的优惠（服务费除外）；在酒店大堂酒吧可享免收15%服务费的优惠。<br>
+		地址及电话：上海市铜川路50号\021-22195888<br>
+		<br>
+		<b>上海斯格威铂尔曼大酒店</b><br>
+		2014年12月31日前凡于上海斯格威铂尔曼大酒店刷浦发信用卡可享“自助晚餐三人同行一人免单”（服务费不免）；华府中餐厅消费全单8.5折优惠（酒水、饮料及12月24日除外）。<br>
+		地址及电话：上海市打浦路15号\021-33189988<br>
+		<br>
+		<b>新恒星影城</b><br>
+		2014年8月31日前凡于新恒星影城刷浦发银行卡购买正价电影票可享买一送一优惠（每人每场限享受一次，首映式、见面会、情人节2月14日、平安夜12月24日、圣诞节12月25日、VIP等特殊场次不参与活动）。<br>
+		地址及电话：上海市西藏北路166号大悦城10楼-11楼\021-36527206<br>
+		<br>
+		<b>左岸影城金汇店</b><br>
+		2014年5月31日前凡于左岸影城金汇店刷浦发银行卡购买正价电影票可享买一赠一优惠。<br>
+		地址及电话：上海市金汇路528号虹桥古玩城5楼\021-54860799<br>
+		<br>
+		<b>上海丽君酒店</b><br>
+		2014年9月30日前凡于上海丽君酒店刷浦发信用卡入住酒店可享客房门市价5折优惠（以上优惠不与酒店其他优惠共享）。<br>
+		地址及电话：上海市北艾路801号\021-51960888<br>
+		<br>
+		<b>华检体检中心</b><br>
+		2015年2月28日前凡于华检体检中心刷浦发银行信用卡可享受体检9折优惠，并可获赠免费口腔护理套餐1份（含口腔常规检查、洁牙与抛光）。且可获赠10%体检消费券，可供下次抵扣消费原价体检套餐。（此优惠不与店内的其它优惠共享）更多详情请登录www.tijian18.com 
+		地址及电话：<br>
+		上海市嘉善路118号明园商务中心B座3楼<br>
+		上海市浦东大道545号裕景坊2楼-3楼<br>
+		上海市金海路1000号金领之都15号楼\400-6700-128<br>
+		<br>
+		<font color="#FF0000"><b>广州</b></font><br>
+		<b>晴美国际女子美容沙龙</b><br>
+		2014年12月31日前凡于晴美国际女子美容沙龙刷浦发银行卡购买任意原价项目可享9折优惠，首次体验8.8元可享特定项三部通经护理。<br>
+		地址及电话：广州市洛溪新城洛溪南区商业街31-32号\020-22382726<br>
+		<br>
+		<b>k_party</b><br>
+		2014年12月31日前凡于k_party刷浦发银行卡可享店内自助餐原价的8折优惠，黄金时段消费按店面推出会员价优惠。<br>
+		地址及电话：广州市石榴岗路10号生物工程大厦二楼\020-39995588、39995599<br>
+		<br>
+		<b>广州市嘉逸国际酒店</b><br>
+		2015年2月28日前凡于广州市嘉逸国际酒店刷浦发信用卡可享受门市价房费6.5折优惠（广交会期间除外）。<br>
+		地址及电话：广州市天河北路468号嘉逸国际酒店首层\020-38803333<br>
+		<br>
+		<b>克丽缇娜</b><br>
+		2014年9月30日前凡于克丽缇娜刷浦发信用卡可享所有项目5折优惠。<br>
+		地址及电话：广州市员村四横路美林花园棕林街59号\020-85558605<br>
+		<br>
+		<b>金桥酒店</b><br>
+		2014年8月31日前凡于金桥酒店刷浦发信用卡可享客房门市价5折优惠。<br>
+		地址及电话：广州市寺右新马路93号\020-83918868<br>
+		<br>
+		<b>广州荷芙蔓芳疗SPA养生殿</b><br>
+		2014年8月31日前凡于广州荷芙蔓芳疗SPA养生殿刷浦发信用卡购买项目可享6.3折优惠；购买产品可享8.5折优惠。<br>
+		地址及电话：广州市德政中路243号1-4楼\020-83301361<br>
+		<br>
+		<font color="#FF0000"><b>南京</b></font><br>
+		<b>翠香阁潮州菜馆</b><br>
+		2014年4月30日前凡于翠香阁潮州菜馆刷浦发信用卡可享8.8折优惠（海鲜、烟酒、饮品及特价菜、早茶已送券等除外，且不可重复享受折扣）。<br>
+		地址及电话：南京市中山路200号\025-83603038<br>
+		<br>
+		<b>振道跆拳道</b><br>
+		2014年5月31日前凡于振道跆拳道刷浦发信用卡购买年卡可享立减200元优惠，购买其他卡可享9.5折优惠。<br>
+		地址及电话：南京市太平南路2号日月大厦2楼\025-68997101<br>
+		<br>
+		<font color="#FF0000"><b>大连</b></font><br>
+		<b>金铭烤肉</b><br>
+		2014年8月31日前凡于金铭烤肉刷浦发信用卡可享9折优惠。<br>
+		地址及电话：大连市鲁迅路7号\0411-82590784<br>
+		<br>
+		<b>川人百味</b><br>
+		2014年11月30日前凡于川人百味刷浦发银行卡可享9.4折优惠（主食与酒水除外）。<br>
+		地址及电话：大连市高尔基路和平广场4楼\0411-84308331<br>
+		<br>
+		<b>安地驾校</b><br>
+		2014年12月31日前凡于安地驾校刷浦发银行卡可享9.5折优惠。<br>
+		地址及电话：大连市迎客路2号\0411-82608666<br>
+		<br>
+		<b>大连金钱柜量贩式KTV星海湾店</b><br>
+		2015年1月31日前凡于大连金钱柜量贩式KTV星海湾店刷浦发银行卡可享计时房费5折优惠（圣诞节、12月27日、12月28日、12月31日及VIP套房不可使用）。<br>
+		地址及电话：大连市会展路18号\0411-39795881<br>
+		<br>
+		<b>大连华美影城</b><br>
+		2014年12月31日前凡于大连华美影城刷浦发银行卡可享购正价影票5折优惠。<br>
+		地址及电话：大连市黄河路1105号3层1号（逸彩城3F）\0411-84208209<br>
+		<br>
+		<b>永嘉口腔</b><br>
+		2014年9月30日前凡于永嘉口腔刷浦发银行卡可享每年免费口腔检查、免费洁牙一次，治疗、修复8折；正畸9折优惠。<br>
+		地址及电话：大连市胜利路139号\0411-84301828<br>
+		<br>
+		<font color="#FF0000"><b>北京</b></font><br>
+		<b>长虹影城</b><br>
+		2014年6月30日前凡于长虹影城刷浦发银行卡购买正价影票可享半价优惠（每人每天限参与本活动一次且限购两张电影票）。<br>
+		地址及电话：北京市隆福寺街75号\010-64050442<br>
+		<br>
+		<b>嘉美国际影城</b><br>
+		2014年6月30日前凡于嘉美国际影城刷浦发银行卡购买正价影票可享2人同行1人免单优惠（周一至周五18点-21点、周六日及节假日13点后开场影片除外；每人每天限参与本活动一次且限购两张电影票）。<br>
+		地址及电话：北京市旧宫小红门路39号\010-58310528、58310538<br>
+		<br>
+		<b>紫光影城</b><br>
+		2014年6月30日前凡于紫光影城刷62开头浦发银联标准卡购买正价影票可享半价优惠。<br>
+		地址及电话：北京市朝外大街蓝岛大厦西区5楼\010-65992229<br>
+		<br>
+		<b>新华国际影城</b><br>
+		2014年6月30日前凡于新华国际影城宝盛店刷62开头浦发银联标准卡购买正价影票可享半价优惠。房山店、大兴店、大钟寺店于周一至周四购买正价影票可享半价优惠，周五至周日正价影票可享7折优惠。<br>
+		地址及电话：<br>
+		宝盛店：北京市宝盛北里西区28楼兴美生活广场5楼\010-62905220-8011<br>
+		房山店：北京市良乡北关西路14号华冠购物中心5楼\010-69351155<br>
+		大兴店：北京市黄村东大街火神庙商业中心E座5楼\010-81297050<br>
+		大钟寺店：北京市大钟寺中坤广场C座3层\010-82511616<br>
+		<br>
+		<b>卢米埃芳草地影城</b><br>
+		2014年6月30日前凡于卢米埃芳草地影城刷浦发银行卡购买正价影票可享半价优惠（每人每天限参与本活动一次且限购两张电影票）。<br>
+		地址及电话：北京市东大桥路9号侨福芳草地购物中心LG2-26\4006-010-618<br>
+		<br>
+		<b>音乐之声KTV</b><br>
+		2014年8月14日前凡于音乐之声KTV刷62开头浦发银联标准卡欢唱2小时（含）以上，即可免费获赠2小时欢唱费（优惠仅限贵宾区参加；不适用于酒水、小吃、周五、周六19：00后、法定节假日、平安夜、圣诞节当天及前一天）。<br>
+		地址及电话：北京市日坛北路17号\010-85655777<br>
+		<br>
+		<b>橙天嘉禾吉彩影城</b><br>
+		2014年4月30日前凡于橙天嘉禾吉彩影城刷浦发银行卡购买正价影票可享半价优惠；北京地区影院优惠不适用于电影节、首映式、见面会、点映场、通宵场、贵宾厅、情人节（2月14日）、平安夜（12月24日）、圣诞节（12月25日）、特殊场次、法定节假日及特殊推广活动，需按影城公示的相应规定执行；对于国家或片方规定特殊影片，需补齐差价方可享受优惠。优惠活动不与商户其他优惠共享。<br>
+		地址及电话：北京市阜石路玉海园五里22号\010-88268200<p><br>
+	    *更多信用卡精彩信息请登录浦发信用卡网站<a href="http://www.spdbccc.com.cn"><u><font color="#3366CC">www.spdbccc.com.cn</font></u></a><font color="#3366CC">。</font></p></td>
+
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0">
+
+	<tr>
+
+		<td colspan="2">
+
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/new-foot.jpg" width="720" height="122"></td>
+
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0">
+
+	<tr>
+
+		<td colspan="2" align="right">本邮件为系统自动发出，请勿直接回复</td>
+
+	</tr>
+
+</table>
+
+<br>
+
+<br>
+
+ 
+
+<script language="javascript">try{parent.JS.modules[window.name].content.setHeight();}catch(e){}</script>
+
+		<br/>
+		<br/>
+		<br/>
+		<div>邮件头</div>
+		Received:from MAIL_B.com (unknown [211.144.218.228])
+	by edm5 (Coremail) with SMTP id isCowEC50U9gwDtTfG7sAA--.47286S2;
+	Wed, 02 Apr 2014 15:46:40 +0800 (CST)
+Received:from MAIL_A (unknown [::ffff:20.16.18.5])
+	by MAIL_B (Coremail) with SMTP id AAAAAJAbCgfXvztTlnMCAA--.2002S2;
+	Wed, 02 Apr 2014 15:44:23 +0800 (CST)
+From:=?gbk?B?xta3otL40NDQxdPDv6jW0NDE?= <estmtservice@eb.spdbccc.com.cn>
+To:<xiahui114@163.com>
+Date:Wed, 02 Apr 2014 15:44:23 +0800
+
+		</body>
+</html>
