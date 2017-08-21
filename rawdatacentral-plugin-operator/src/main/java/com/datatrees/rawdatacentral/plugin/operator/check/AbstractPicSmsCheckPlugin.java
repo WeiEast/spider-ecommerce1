@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.operator.check.validate_bill_detail;
+package com.datatrees.rawdatacentral.plugin.operator.check;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.ThreadInterruptedUtil;
@@ -11,7 +11,6 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CookieUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
@@ -28,21 +27,19 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 详单校验-->图片和短信表单
+ * 爬取过程中校验-->图片和短信表单
  * 步骤:图片验证码-->短信验证码-->提交校验
  * Created by zhouxinghai on 2017/7/31
  */
-public class PicSmsCheckPlugin extends AbstractClientPlugin {
+public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger    logger         = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
+    private static final Logger    logger         = LoggerFactory.getLogger(AbstractPicSmsCheckPlugin.class);
 
     private CrawlerOperatorService pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
 
     private MessageService         messageService = BeanFactoryUtils.getBean(MessageService.class);
 
     private RedisService           redisService   = BeanFactoryUtils.getBean(RedisService.class);
-
-    private static final String    formType       = FormType.VALIDATE_BILL_DETAIL;
 
     //超时时间120秒
     private long                   timeOut        = 120;
@@ -69,7 +66,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
     public void validatePicCode(Long taskId, String websiteName) {
         int retry = 0, maxRetry = 5, errorCount = 0;
         do {
-            OperatorParam param = new OperatorParam(formType, taskId, websiteName);
+            OperatorParam param = new OperatorParam(getFormType(), taskId, websiteName);
 
             HttpResult<Map<String, Object>> result = pluginService.refeshPicCode(param);
             if (!result.getStatus()) {
@@ -130,7 +127,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
                 Thread.currentThread().getId(), taskId, websiteName);
             throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
         }
-        OperatorParam param = new OperatorParam(formType, taskId, websiteName);
+        OperatorParam param = new OperatorParam(getFormType(), taskId, websiteName);
         HttpResult<Map<String, Object>> result = pluginService.refeshSmsCode(param);
         if (!result.getStatus()) {
             throw new CommonException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT);
@@ -162,4 +159,5 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         }
     }
 
+    public abstract String getFormType();
 }

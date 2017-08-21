@@ -14,8 +14,10 @@ buildscript {
 }
 
 ext {
-    springBootVersion = "1.5.4.RELEASE"
-    mybatisSpringBootStarterVersion = "1.3.0"
+    springBootStarterTestVersion = "1.2.3.RELEASE"
+
+    springBootVersion = "1.5.6.RELEASE"
+    mybatisSpringBootStarterVersion = "1.3.1"
     springBootStarterRedisVersion = "1.4.7.RELEASE"
 
     commonsLang3Version = "3.4"
@@ -33,7 +35,7 @@ ext {
     superDiamondClientVersion = "1.1.3-SNAPSHOT"
     webrobotClientVersion = "1.0.0-SNAPSHOT"
     commonZookeeperVersion = "2.0.1-SNAPSHOT"
-    springBootStarterTestVersion = "1.2.3.RELEASE"
+
     ibatisSqlmapVersion = "2.3.4.726"
     springIbatisVersion = "2.0.8"
     mysqlConnectorJavaVersion = "6.0.6"
