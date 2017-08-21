@@ -1,7 +1,6 @@
 package com.datatrees.rawdatacentral.service.plugin;
 
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.processor.common.exception.PluginExeception;
 import com.datatrees.crawler.core.processor.common.resource.PluginManager;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
@@ -25,7 +24,7 @@ public class RedisPluginManager extends PluginManager {
     private static final Logger logger = LoggerFactory.getLogger(RedisPluginManager.class);
 
     @Override
-    public PluginWrapper getPlugin(String websiteName, AbstractPlugin pluginDesc) throws PluginExeception {
+    public PluginWrapper getPlugin(String websiteName, AbstractPlugin pluginDesc) {
         PluginUpgradeResult plugin = null;
         String fileName = pluginDesc.getFileName();
         if (StringUtils.isNoneBlank(fileName)) {

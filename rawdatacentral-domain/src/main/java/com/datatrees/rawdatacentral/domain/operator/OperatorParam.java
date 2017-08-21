@@ -2,7 +2,6 @@ package com.datatrees.rawdatacentral.domain.operator;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.datatrees.crawler.core.util.json.JsonPathUtil;
 
 import java.io.Serializable;
 import java.util.HashMap;
