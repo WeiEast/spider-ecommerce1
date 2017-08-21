@@ -7,7 +7,7 @@ import com.datatrees.rawdatacentral.domain.constant.FormType;
  * 步骤:图片验证码-->短信验证码-->提交校验
  * Created by zhouxinghai on 2017/7/31
  */
-public abstract class PicSmsCheckPluginForValidateBillDetail extends AbstractPicSmsCheckPlugin {
+public class PicSmsCheckPluginForValidateBillDetail extends AbstractPicSmsCheckPlugin {
 
     @Override
     public String getFormType() {

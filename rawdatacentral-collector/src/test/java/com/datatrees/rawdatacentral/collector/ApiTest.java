@@ -42,7 +42,7 @@ public class ApiTest extends BaseTest {
 
     @Test
     public void startTask() throws Exception {
-        Long taskId = 123789L;
+        Long taskId = 84316322183278592L;
         String cookieString = CookieUtils.getCookieString(taskId);
         CollectorMessage message = new CollectorMessage();
         message.setAccountNo(taskId.toString());
@@ -55,7 +55,7 @@ public class ApiTest extends BaseTest {
 
     @Test
     public void testHttp() throws Exception {
-        Long taskId = 83160836553601024L;
+        Long taskId = 84316322183278592L;
         String artifact = "";
         String templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?artifact={}&backUrl=http://shop.10086.cn/i/?f=home";
 
