@@ -4,7 +4,11 @@ dependencies {
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
     compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
-    compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
+//    compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
+
+    compile "org.springframework.data:spring-data-redis:${springDataRedisVersion}"
+    compile "redis.clients:jedis:${jedisVersion}"
+
     compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
     compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
 
