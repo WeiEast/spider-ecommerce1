@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
@@ -33,20 +34,21 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger    logger         = LoggerFactory.getLogger(AbstractPicSmsCheckPlugin.class);
+    private static final Logger      logger         = LoggerFactory.getLogger(AbstractPicSmsCheckPlugin.class);
 
-    private CrawlerOperatorService pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+    private CrawlerOperatorService   pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
 
-    private MessageService         messageService = BeanFactoryUtils.getBean(MessageService.class);
+    private MessageService           messageService = BeanFactoryUtils.getBean(MessageService.class);
 
-    private RedisService           redisService   = BeanFactoryUtils.getBean(RedisService.class);
+    private RedisService             redisService   = BeanFactoryUtils.getBean(RedisService.class);
 
     //超时时间120秒
-    private long                   timeOut        = 120;
+    private long                     timeOut        = 120;
+
+    private AbstractProcessorContext context        = PluginFactory.getProcessorContext();
 
     @Override
     public String process(String... args) throws Exception {
-        AbstractProcessorContext context = PluginFactory.getProcessorContext();
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         logger.info("详单-->插件启动,taskId={},websiteName={}", taskId, websiteName);
@@ -63,8 +65,8 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
      * @param taskId
      * @param websiteName
      */
-    public void validatePicCode(Long taskId, String websiteName) {
-        int retry = 0, maxRetry = 5, errorCount = 0;
+    public void validatePicCode(Long taskId, String websiteName) throws ResultEmptyException {
+        int retry = 0, maxRetry = 5;
         do {
             OperatorParam param = new OperatorParam(getFormType(), taskId, websiteName);
 
@@ -93,7 +95,7 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
                     websiteName, directiveId);
                 messageService.sendTaskLog(taskId, websiteName,
                     TemplateUtils.format("详单-->等待用户输入图片验证码超时({}秒)", timeOut));
-                throw new CommonException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT);
+                throw new ResultEmptyException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT.getErrorMsg());
             }
 
             picCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
@@ -112,7 +114,7 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
             }
         } while (retry++ < maxRetry);
         messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("详单-->图片验证码校验失败,最大重试次数{}", maxRetry));
-        throw new CommonException(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+        throw new ResultEmptyException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT.getErrorMsg());
     }
 
     /**
@@ -121,7 +123,7 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
      * @param taskId
      * @param websiteName
      */
-    public void submit(Long taskId, String websiteName) {
+    public void submit(Long taskId, String websiteName) throws ResultEmptyException {
         if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
             logger.error("详单-->验证短信验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}",
                 Thread.currentThread().getId(), taskId, websiteName);
@@ -146,7 +148,7 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
             logger.error("详单-->等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId,
                 websiteName, directiveId);
             messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("详单-->等待用户输入短信验证码超时({}秒)", timeOut));
-            throw new CommonException(ErrorCode.VALIDATE_SMS_TIMEOUT);
+            throw new ResultEmptyException(ErrorCode.VALIDATE_SMS_TIMEOUT.getErrorMsg());
         }
         String smsCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
         String picCode = redisService.getTaskShare(taskId, AttributeKey.PIC_CODE);
