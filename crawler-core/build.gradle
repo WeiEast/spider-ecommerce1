@@ -1,7 +1,6 @@
 ext {
     commonProtocol = "2.1.0"
     commonPipeline = "2.1.0"
-    commonZookeeper = "2.1.0"
     dsiutils = "2.0.14"
     htmlcleaner = "2.13"
     jdom2 = "2.0.4"
@@ -11,23 +10,15 @@ ext {
     commonsExec = "1.1"
     jodaTime = "2.7"
     apacheMime4j = "0.6.1"
-    webrobotClient = "1.0.0-SNAPSHOT"
-    dubbo = "2.5.3"
     javassist = "3.20.0-GA"
-    zkclient = "0.10"
-    zookeeper = "3.4.10"
-    junit = "4.10"
-    mail = "1.4.7"
 }
 
 dependencies {
     compile project(':rawdatacentral-api')
     compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocol}", changing: true)
     compile(group: "com.datatrees.common", name: "common-pipeline", version: "${commonPipeline}", changing: true)
-    compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeper}", changing: true)
-    compile("it.unimi.dsi:dsiutils:${dsiutils}") {
-        exclude(module: "logback-classic")
-    }
+    compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true)
+    compile("it.unimi.dsi:dsiutils:${dsiutils}")
     compile "org.slf4j:log4j-over-slf4j:1.7.25"
     compile "org.slf4j:jcl-over-slf4j:1.7.25"
     compile "net.sourceforge.htmlcleaner:htmlcleaner:${htmlcleaner}"
@@ -38,13 +29,13 @@ dependencies {
     compile "org.apache.commons:commons-exec:${commonsExec}"
     compile "joda-time:joda-time:${jodaTime}"
     compile "org.apache.james:apache-mime4j:${apacheMime4j}"
-    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClient}", changing: true)
-    compile("com.alibaba:dubbo:${dubbo}") {
+    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
+    compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: "spring")
         exclude(module: "netty")
     }
     compile "org.javassist:javassist:${javassist}"
-    compile "com.101tec:zkclient:${zkclient}"
-    testCompile "junit:junit:${junit}"
-    testCompile "javax.mail:mail:${mail}"
+    compile "com.101tec:zkclient:${zkclientVersion}"
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "javax.mail:mail:${mailVersion}"
 }
