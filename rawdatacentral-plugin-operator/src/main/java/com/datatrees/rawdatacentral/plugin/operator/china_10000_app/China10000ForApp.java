@@ -135,7 +135,7 @@ public class China10000ForApp implements OperatorPluginService {
             String templateData = "<Request><HeaderInfos><Code>getRandomV2</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>"
                     + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>"
                     + "<Content><Attach>test</Attach><FieldData><PhoneNbr>{}</PhoneNbr></FieldData></Content></Request>";
-            String data = String.format(templateData, format.format(new Date()), token, param.getMobile(), param.getMobile());
+            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), param.getMobile());
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_005")
                     .setFullUrl(templateUrl)
                     .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
@@ -163,7 +163,7 @@ public class China10000ForApp implements OperatorPluginService {
             String templateData = "<Request><HeaderInfos><Code>jfyBillDetail</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>" +
                     "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>" +
                     "<Attach>test</Attach><FieldData><StartTime>{}</StartTime><Type>1</Type><Random>{}</Random><PhoneNum>{}</PhoneNum><EndTime>{}</EndTime></FieldData></Content></Request>";
-            String data = String.format(templateData, format.format(new Date()), token, param.getMobile(),
+            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
                     format2.format(new Date()), param.getSmsCode(), param.getMobile(), format2.format(new Date()));
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_006")
                     .setFullUrl(templateUrl)
