@@ -58,14 +58,14 @@ import java.util.Map;
  * Created by guimeichao on 17/8/17.
  */
 public class China10000ForApp implements OperatorPluginService {
-    private static final Logger logger = LoggerFactory.getLogger(China10000ForApp.class);
-    private static final SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-    private static RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger           logger       = LoggerFactory.getLogger(China10000ForApp.class);
+    private static final SimpleDateFormat format       = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static RedisService           redisService = BeanFactoryUtils.getBean(RedisService.class);
 
     /**
      * 公用请求url模板
      */
-    private String templateUrl = "http://cservice.client.189.cn:8004/map/clientXML?encrypted=true";
+    private String                        templateUrl  = "http://cservice.client.189.cn:8004/map/clientXML?encrypted=true";
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -129,16 +129,16 @@ public class China10000ForApp implements OperatorPluginService {
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        String token = redisService.getString(AttributeKey.TOKEN);
+        String token = redisService.getTaskShare(param.getTaskId(), AttributeKey.TOKEN);
         Response response = null;
         try {
             String templateData = "<Request><HeaderInfos><Code>getRandomV2</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>"
-                    + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>"
-                    + "<Content><Attach>test</Attach><FieldData><PhoneNbr>{}</PhoneNbr></FieldData></Content></Request>";
-            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_005")
-                    .setFullUrl(templateUrl)
-                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+                                  + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>"
+                                  + "<Content><Attach>test</Attach><FieldData><PhoneNbr>{}</PhoneNbr></FieldData></Content></Request>";
+            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
+                param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_005").setFullUrl(templateUrl)
+                .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
             String resultCode = XPathUtil.getXpath("//ResultCode/text()", pageContent).get(0);
             if (StringUtils.equals("0000", resultCode)) {
@@ -157,17 +157,16 @@ public class China10000ForApp implements OperatorPluginService {
     private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         SimpleDateFormat format2 = new SimpleDateFormat("yyyyMMdd");
-        String token = redisService.getString(AttributeKey.TOKEN);
+        String token = redisService.getTaskShare(param.getTaskId(), AttributeKey.TOKEN);
         Response response = null;
         try {
-            String templateData = "<Request><HeaderInfos><Code>jfyBillDetail</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>" +
-                    "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>" +
-                    "<Attach>test</Attach><FieldData><StartTime>{}</StartTime><Type>1</Type><Random>{}</Random><PhoneNum>{}</PhoneNum><EndTime>{}</EndTime></FieldData></Content></Request>";
+            String templateData = "<Request><HeaderInfos><Code>jfyBillDetail</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>"
+                                  + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>"
+                                  + "<Attach>test</Attach><FieldData><StartTime>{}</StartTime><Type>1</Type><Random>{}</Random><PhoneNum>{}</PhoneNum><EndTime>{}</EndTime></FieldData></Content></Request>";
             String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
-                    format2.format(new Date()), param.getSmsCode(), param.getMobile(), format2.format(new Date()));
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_006")
-                    .setFullUrl(templateUrl)
-                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+                format2.format(new Date()), param.getSmsCode(), param.getMobile(), format2.format(new Date()));
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_006").setFullUrl(templateUrl)
+                .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
             String resultCode = XPathUtil.getXpath("//ResultCode/text()", pageContent).get(0);
             switch (resultCode) {
@@ -194,13 +193,13 @@ public class China10000ForApp implements OperatorPluginService {
         try {
             //数据模板
             String templateData = "<Request><HeaderInfos><Code>loginInfo</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>"
-                    + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>null</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>"
-                    + "<Attach>test</Attach><FieldData><PswType>01</PswType><PhonePsw>{}</PhonePsw><PhoneNbr>{}</PhoneNbr><AccountType>c2000004</AccountType><Token></Token></FieldData></Content></Request>";
+                                  + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>null</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>"
+                                  + "<Attach>test</Attach><FieldData><PswType>01</PswType><PhonePsw>{}</PhonePsw><PhoneNbr>{}</PhoneNbr><AccountType>c2000004</AccountType><Token></Token></FieldData></Content></Request>";
             String data = TemplateUtils.format(templateData, format.format(new Date()), param.getMobile(),
-                    param.getPassword(), param.getMobile());
+                param.getPassword(), param.getMobile());
 
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_001").setFullUrl(templateUrl)
-                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+                .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
 
             /**
@@ -232,12 +231,12 @@ public class China10000ForApp implements OperatorPluginService {
                 logger.info("--开始查询个人信息--");
 
                 templateData = "<Request><HeaderInfos><Code>custInfo</Code><Timestamp>{}</Timestamp><ClientType>#6.0.3#channel38#Xiaomi Mi Note 2#</ClientType>"
-                        + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>"
-                        + "<Content><Attach>test</Attach><FieldData><PhoneNbr>{}</PhoneNbr></FieldData></Content></Request>";
+                               + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>"
+                               + "<Content><Attach>test</Attach><FieldData><PhoneNbr>{}</PhoneNbr></FieldData></Content></Request>";
                 data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
-                        param.getMobile());
+                    param.getMobile());
                 response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_002").setFullUrl(templateUrl)
-                        .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
                 /**
                  * 取出姓名
                  */
@@ -262,13 +261,13 @@ public class China10000ForApp implements OperatorPluginService {
                     for (int i = 0; i < 4; i++) {
                         calendar.add(Calendar.MONTH, -1);
                         templateData = "<Request><HeaderInfos><Code>jfyHisBill</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>"
-                                + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>"
-                                + "<Attach>test</Attach><FieldData><Random>123456</Random><Month>{}</Month><PhoneNum>{}</PhoneNum><Type>1</Type></FieldData></Content></Request>";
+                                       + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>"
+                                       + "<Attach>test</Attach><FieldData><Random>123456</Random><Month>{}</Month><PhoneNum>{}</PhoneNum><Type>1</Type></FieldData></Content></Request>";
                         data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
-                                format2.format(calendar.getTime()), param.getMobile());
+                            format2.format(calendar.getTime()), param.getMobile());
                         response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_003")
-                                .setFullUrl(templateUrl)
-                                .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+                            .setFullUrl(templateUrl)
+                            .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
                         pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
                         realName = XPathUtil.getXpath("//AcctName/text()", pageContent).get(0);
                         if (StringUtils.isNotBlank(realName)) {
@@ -286,13 +285,13 @@ public class China10000ForApp implements OperatorPluginService {
                 /**
                  * 获取余额
                  */
-                templateData = "<Request><HeaderInfos><Code>hgoBillInfo</Code><Timestamp>{}</Timestamp><ClientType>#6.0.3#channel38#Xiaomi Mi Note 2#</ClientType>" +
-                        "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>" +
-                        "<Content><Attach>test</Attach><FieldData><PhoneNum>{}</PhoneNum><IsDirectCon>1</IsDirectCon><PhoneType>6</PhoneType></FieldData></Content></Request>";
-                data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), param.getMobile());
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_004")
-                        .setFullUrl(templateUrl)
-                        .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+                templateData = "<Request><HeaderInfos><Code>hgoBillInfo</Code><Timestamp>{}</Timestamp><ClientType>#6.0.3#channel38#Xiaomi Mi Note 2#</ClientType>"
+                               + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>"
+                               + "<Content><Attach>test</Attach><FieldData><PhoneNum>{}</PhoneNum><IsDirectCon>1</IsDirectCon><PhoneType>6</PhoneType></FieldData></Content></Request>";
+                data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
+                    param.getMobile());
+                response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_004").setFullUrl(templateUrl)
+                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
                 pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
                 String balance = XPathUtil.getXpath("//TotalBalance/text()", pageContent).get(0);
                 if (StringUtils.isBlank(balance)) {
@@ -320,9 +319,9 @@ public class China10000ForApp implements OperatorPluginService {
         HttpResult<Object> result = new HttpResult<>();
 
         Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(param.getArgs()[0],
-                new TypeToken<LinkedHashMap<String, String>>() {
-                }.getType());
-        String token = redisService.getString(AttributeKey.TOKEN);
+            new TypeToken<LinkedHashMap<String, String>>() {
+            }.getType());
+        String token = redisService.getTaskShare(param.getTaskId(), AttributeKey.TOKEN);
         String billMonth = paramMap.get("page_content");
 
         Response response = null;
@@ -330,13 +329,13 @@ public class China10000ForApp implements OperatorPluginService {
             /**
              * 获取月账单
              */
-            String templateData = "<Request><HeaderInfos><Code>jfyHisBill</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>" +
-                    "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>" +
-                    "<Attach>test</Attach><FieldData><Random>123456</Random><Month>{}</Month><PhoneNum>{}</PhoneNum><Type>1</Type></FieldData></Content></Request>";
-            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), billMonth, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_007")
-                    .setFullUrl(templateUrl)
-                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+            String templateData = "<Request><HeaderInfos><Code>jfyHisBill</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>"
+                                  + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>"
+                                  + "<Attach>test</Attach><FieldData><Random>123456</Random><Month>{}</Month><PhoneNum>{}</PhoneNum><Type>1</Type></FieldData></Content></Request>";
+            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
+                billMonth, param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_007").setFullUrl(templateUrl)
+                .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
             result.setData(pageContent);
             return result;
@@ -350,9 +349,9 @@ public class China10000ForApp implements OperatorPluginService {
         HttpResult<Object> result = new HttpResult<>();
 
         Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(param.getArgs()[0],
-                new TypeToken<LinkedHashMap<String, String>>() {
-                }.getType());
-        String token = redisService.getString(AttributeKey.TOKEN);
+            new TypeToken<LinkedHashMap<String, String>>() {
+            }.getType());
+        String token = redisService.getTaskShare(param.getTaskId(), AttributeKey.TOKEN);
         String[] times = paramMap.get("page_content").split("#");
 
         Response response = null;
@@ -360,13 +359,13 @@ public class China10000ForApp implements OperatorPluginService {
             /**
              * 获取通话记录
              */
-            String templateData = "<Request><HeaderInfos><Code>jfyBillDetail</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>" +
-                    "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>" +
-                    "<Content><Attach>test</Attach><FieldData><StartTime>{}</StartTime><Type>{}</Type><Random>{}</Random><PhoneNum>{}</PhoneNum><EndTime>{}</EndTime></FieldData></Content></Request>";
-            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), times[0], queryType, param.getSmsCode(), param.getMobile(), times[1]);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_008")
-                    .setFullUrl(templateUrl)
-                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+            String templateData = "<Request><HeaderInfos><Code>jfyBillDetail</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>"
+                                  + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>"
+                                  + "<Content><Attach>test</Attach><FieldData><StartTime>{}</StartTime><Type>{}</Type><Random>{}</Random><PhoneNum>{}</PhoneNum><EndTime>{}</EndTime></FieldData></Content></Request>";
+            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
+                times[0], queryType, param.getSmsCode(), param.getMobile(), times[1]);
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_008").setFullUrl(templateUrl)
+                .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
             result.setData(pageContent);
             return result;
