@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10000_app;
 
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
@@ -14,6 +15,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -29,9 +32,9 @@ import java.util.Map;
  * 目前已知（2017.8.18）
  * 支持：
  * 甘肃、黑龙江、北京、江苏、山东、湖南、天津、四川、重庆、安徽、浙江、江西、福建、山西
- *
+ * <p>
  * 注：天津电信的账单中无法获取姓名
- *
+ * <p>
  * 不支持以及原因：
  * 广东详单暂不支持此项功能查询
  * 上海账单服务器异常
@@ -110,8 +113,18 @@ public class China10000ForApp implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        logger.warn("defineProcess fail,params={}", param);
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case "BILL_DETAILS":
+                return processForBill(param);
+            case "CALL_DETAILS":
+                return processForDetails(param, "1");
+            case "SMS_DETAILS":
+                return processForDetails(param, "2");
+            case "NET_DETAILS":
+                return processForDetails(param, "3");
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
@@ -300,6 +313,66 @@ public class China10000ForApp implements OperatorPluginService {
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
+        }
+    }
+
+    private HttpResult<Object> processForBill(OperatorParam param) {
+        HttpResult<Object> result = new HttpResult<>();
+
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(param.getArgs()[0],
+                new TypeToken<LinkedHashMap<String, String>>() {
+                }.getType());
+        String token = redisService.getString(AttributeKey.TOKEN);
+        String billMonth = paramMap.get("page_content");
+
+        Response response = null;
+        try {
+            /**
+             * 获取月账单
+             */
+            String templateData = "<Request><HeaderInfos><Code>jfyHisBill</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>" +
+                    "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>" +
+                    "<Attach>test</Attach><FieldData><Random>123456</Random><Month>{}</Month><PhoneNum>{}</PhoneNum><Type>1</Type></FieldData></Content></Request>";
+            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), billMonth, param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_007")
+                    .setFullUrl(templateUrl)
+                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+            String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
+            result.setData(pageContent);
+            return result;
+        } catch (Exception e) {
+            logger.error("账单页访问失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
+        }
+    }
+
+    private HttpResult<Object> processForDetails(OperatorParam param, String queryType) {
+        HttpResult<Object> result = new HttpResult<>();
+
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(param.getArgs()[0],
+                new TypeToken<LinkedHashMap<String, String>>() {
+                }.getType());
+        String token = redisService.getString(AttributeKey.TOKEN);
+        String[] times = paramMap.get("page_content").split("#");
+
+        Response response = null;
+        try {
+            /**
+             * 获取通话记录
+             */
+            String templateData = "<Request><HeaderInfos><Code>jfyBillDetail</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>" +
+                    "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>" +
+                    "<Content><Attach>test</Attach><FieldData><StartTime>{}</StartTime><Type>{}</Type><Random>{}</Random><PhoneNum>{}</PhoneNum><EndTime>{}</EndTime></FieldData></Content></Request>";
+            String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), times[0], queryType, param.getSmsCode(), param.getMobile(), times[1]);
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_008")
+                    .setFullUrl(templateUrl)
+                    .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
+            String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
+            result.setData(pageContent);
+            return result;
+        } catch (Exception e) {
+            logger.error("通话记录页访问失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
         }
     }
 
