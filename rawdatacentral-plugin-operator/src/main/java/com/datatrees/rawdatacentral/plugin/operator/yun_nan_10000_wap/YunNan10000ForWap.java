@@ -78,6 +78,12 @@ public class YunNan10000ForWap implements OperatorPluginService {
         return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
+    @Override
+    public HttpResult<Object> defineProcess(OperatorParam param) {
+        logger.warn("defineProcess fail,params={}", param);
+        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+    }
+
     private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
         /**
          * 这里不一定有图片验证码,随机出现

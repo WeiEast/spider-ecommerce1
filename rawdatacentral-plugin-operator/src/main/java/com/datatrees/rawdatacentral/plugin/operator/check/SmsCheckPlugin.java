@@ -58,14 +58,21 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
     public String process(String... args) throws Exception {
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
-        Map<String, String> params = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {
+        Map<String, String> map = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {
         });
-        fromType = params.get(AttributeKey.FORM_TYPE);
+        fromType = map.get(AttributeKey.FORM_TYPE);
         logger.info("短信校验插件启动,taskId={},websiteName={},fromType={}", taskId, websiteName, fromType);
         //验证失败直接抛出异常
         validateSmsCode(taskId, websiteName);
+
         String cookieString = CookieUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
+
+        Map<String, String> shares = redisService.getTaskShares(taskId);
+        for (Map.Entry<String, String> entry : shares.entrySet()) {
+            context.setString(entry.getKey(), entry.getValue());
+        }
+
         return JSON.toJSONString(pluginResult);
     }
 

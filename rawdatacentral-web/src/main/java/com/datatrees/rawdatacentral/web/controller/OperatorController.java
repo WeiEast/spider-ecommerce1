@@ -4,6 +4,7 @@ import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TaskHttpClient;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -60,7 +61,7 @@ public class OperatorController {
     public ResponseEntity<InputStreamResource> refeshPicCodeAndDisplay(OperatorParam param) {
         HttpResult<Map<String, Object>> result = crawlerOperatorService.refeshPicCode(param);
         if (result.getStatus()) {
-            String picCode = result.getData().get(OperatorPluginService.RETURN_FIELD_PIC_CODE).toString();
+            String picCode = result.getData().get(AttributeKey.PIC_CODE).toString();
             byte[] bytes = Base64.decodeBase64(picCode);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate");

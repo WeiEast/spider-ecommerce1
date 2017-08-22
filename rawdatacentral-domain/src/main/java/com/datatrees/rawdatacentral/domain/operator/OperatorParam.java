@@ -64,6 +64,11 @@ public class OperatorParam implements Serializable {
      */
     private Map<String, Object> extral = new HashMap<>();
 
+    /**
+     * 给自定义plugin方法用
+     */
+    private String[]            args;
+
     public OperatorParam() {
     }
 
@@ -71,6 +76,14 @@ public class OperatorParam implements Serializable {
         this.formType = formType;
         this.taskId = taskId;
         this.websiteName = websiteName;
+    }
+
+    public String[] getArgs() {
+        return args;
+    }
+
+    public void setArgs(String[] args) {
+        this.args = args;
     }
 
     public String getFormType() {

@@ -12,8 +12,6 @@ import java.util.Map;
  */
 public interface OperatorPluginService {
 
-    String RETURN_FIELD_PIC_CODE = AttributeKey.PIC_CODE;//返回图片验证码
-
     /**
      * 登陆初始化,获取基本信息
      * 这个很重要,开始或者重新开始task都要调用这个接口,否则用户更换手机号有风险
@@ -55,5 +53,12 @@ public interface OperatorPluginService {
      * @return
      */
     HttpResult<Map<String, Object>> validatePicCode(OperatorParam param);
+
+    /**
+     * 自定义方法入口
+     * 必填参数:taskId,formType,args
+     * @return
+     */
+    HttpResult<Object> defineProcess(OperatorParam param);
 
 }

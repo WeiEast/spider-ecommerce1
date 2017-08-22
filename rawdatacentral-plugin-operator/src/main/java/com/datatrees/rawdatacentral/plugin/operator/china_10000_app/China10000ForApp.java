@@ -105,6 +105,12 @@ public class China10000ForApp implements OperatorPluginService {
         return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
+    @Override
+    public HttpResult<Object> defineProcess(OperatorParam param) {
+        logger.warn("defineProcess fail,params={}", param);
+        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+    }
+
     private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
