@@ -17,6 +17,8 @@ import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -26,7 +28,9 @@ import org.apache.commons.collections.MapUtils;
  */
 public abstract class Plugin extends Processor {
 
-    protected PluginWrapper plugin = null;
+    private static final Logger logger = LoggerFactory.getLogger(Plugin.class);
+
+    protected PluginWrapper     plugin = null;
 
     public void setPluginDesc(PluginWrapper plugin) {
         this.plugin = plugin;
@@ -52,10 +56,10 @@ public abstract class Plugin extends Processor {
 
             response.setOutPut(result);
         } catch (PluginInvokeException e) {
-            logger.error("Error invoking java plugin : " + plugin, e);
+            logger.error("Error invoking java plugin={}", plugin, e);
             throw e;
         } catch (Throwable e) {
-            logger.error("Error invoking java plugin : " + plugin, e);
+            logger.error("Error invoking java plugin={} ", plugin, e);
             throw new PluginInvokeException("Error invoking plugin : " + plugin, e);
         }
     }

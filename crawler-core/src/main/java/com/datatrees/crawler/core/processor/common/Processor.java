@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
  * @since Feb 19, 2014 1:27:06 PM
  */
 public abstract class Processor extends ValveBase implements Configurable {
-    protected final Logger  logger = LoggerFactory.getLogger(getClass());
     protected Configuration conf;
 
     @Override
