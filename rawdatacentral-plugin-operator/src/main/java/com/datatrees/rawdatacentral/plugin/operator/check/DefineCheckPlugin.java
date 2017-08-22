@@ -65,7 +65,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
 
         HttpResult<Object> result = pluginService.defineProcess(param);
         if (result.getStatus()) {
-            pluginResult.put(PluginConstants.FIELD, JSON.toJSONString(result));
+            pluginResult.put(PluginConstants.FIELD, JSON.toJSONString(result.getData()));
         }
         String cookieString = CookieUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
