@@ -187,6 +187,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = checkParams(param);
+        if (!result.getStatus()) {
+            logger.warn("check param error,result={}", result);
+            return new HttpResult<Object>().failure(result.getResponseCode(), result.getMessage());
+        }
         return getLoginService(param).defineProcess(param);
     }
 
