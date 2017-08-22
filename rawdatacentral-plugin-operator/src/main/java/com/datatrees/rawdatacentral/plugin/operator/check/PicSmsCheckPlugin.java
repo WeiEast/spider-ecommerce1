@@ -58,11 +58,11 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
     public String process(String... args) throws Exception {
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
-        Map<String, String> params = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {
+        Map<String, String> params = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {
         });
         fromType = params.get(AttributeKey.FORM_TYPE);
         CheckUtils.checkNotBlank(fromType, "fromType is empty");
-        logger.info("详单-->插件启动,taskId={},websiteName={}", taskId, websiteName);
+        logger.info("图片和短信校验插件启动,taskId={},websiteName={},fromType={}", taskId, websiteName, fromType);
         //验证失败直接抛出异常
         validatePicCode(taskId, websiteName);
         String cookieString = CookieUtils.getCookieString(taskId);
@@ -102,10 +102,9 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId,
                 timeOut, TimeUnit.SECONDS);
             if (null == receiveDirective) {
-                logger.error("详单-->等待用户输入图片验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId,
-                    websiteName, directiveId);
-                messageService.sendTaskLog(taskId, websiteName,
-                    TemplateUtils.format("详单-->等待用户输入图片验证码超时({}秒)", timeOut));
+                logger.error("等待用户输入图片验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName,
+                    directiveId);
+                messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入图片验证码超时({}秒)", timeOut));
                 throw new ResultEmptyException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT.getErrorMsg());
             }
 
@@ -119,12 +118,12 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
                 return;
             }
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                logger.error("详单-->验证图片验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}",
+                logger.error("验证图片验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}",
                     Thread.currentThread().getId(), taskId, websiteName);
                 throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
             }
         } while (retry++ < maxRetry);
-        messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("详单-->图片验证码校验失败,最大重试次数{}", maxRetry));
+        messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("图片验证码校验失败,最大重试次数{}", maxRetry));
         throw new ResultEmptyException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT.getErrorMsg());
     }
 
@@ -136,8 +135,8 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
      */
     public void submit(Long taskId, String websiteName) throws ResultEmptyException {
         if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-            logger.error("详单-->验证短信验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}",
-                Thread.currentThread().getId(), taskId, websiteName);
+            logger.error("验证短信验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(),
+                taskId, websiteName);
             throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
         }
         OperatorParam param = new OperatorParam(fromType, taskId, websiteName);
@@ -156,9 +155,9 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut,
             TimeUnit.SECONDS);
         if (null == receiveDirective) {
-            logger.error("详单-->等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId,
-                websiteName, directiveId);
-            messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("详单-->等待用户输入短信验证码超时({}秒)", timeOut));
+            logger.error("等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName,
+                directiveId);
+            messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入短信验证码超时({}秒)", timeOut));
             throw new ResultEmptyException(ErrorCode.VALIDATE_SMS_TIMEOUT.getErrorMsg());
         }
         String smsCode = receiveDirective.getData().get(AttributeKey.CODE).toString();

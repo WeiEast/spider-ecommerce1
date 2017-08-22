@@ -61,7 +61,7 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
         Map<String, String> params = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {
         });
         fromType = params.get(AttributeKey.FORM_TYPE);
-        logger.info("详单-->短信校验插件启动,taskId={},websiteName={}", taskId, websiteName);
+        logger.info("短信校验插件启动,taskId={},websiteName={},fromType={}", taskId, websiteName, fromType);
         //验证失败直接抛出异常
         validateSmsCode(taskId, websiteName);
         String cookieString = CookieUtils.getCookieString(taskId);
@@ -100,10 +100,9 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId,
                 timeOut, TimeUnit.SECONDS);
             if (null == receiveDirective) {
-                logger.error("详单-->等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId,
-                    websiteName, directiveId);
-                messageService.sendTaskLog(taskId, websiteName,
-                    TemplateUtils.format("详单-->等待用户输入短信验证码超时({}秒)", timeOut));
+                logger.error("等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName,
+                    directiveId);
+                messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入短信验证码超时({}秒)", timeOut));
                 throw new CommonException(ErrorCode.VALIDATE_SMS_TIMEOUT);
             }
 
@@ -116,12 +115,12 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
                 return;
             }
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                logger.error("详单-->验证短信验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}",
+                logger.error("验证短信验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}",
                     Thread.currentThread().getId(), taskId, websiteName);
                 throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
             }
         } while (retry++ < maxRetry);
-        messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("详单-->短信验证码校验失败,最大重试次数{}", maxRetry));
+        messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("短信验证码校验失败,最大重试次数{}", maxRetry));
         throw new ResultEmptyException(ErrorCode.VALIDATE_SMS_TIMEOUT.getErrorMsg());
     }
 
