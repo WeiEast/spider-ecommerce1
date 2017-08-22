@@ -42,5 +42,6 @@ public class AttributeKey implements Serializable {
     public static final String LATEST_FULL_URL          = "latestFullUrl";         // 最后一次请求url包含参数
     public static final String LATEST_REQUEST_TIMESTAMP = "latestRequestimestamp"; // 最后一次请求时间
     public static final String LATEST_REQUEST_COOKIE    = "latestRequestCookie";   // 最后一次请求时间
+    public static final String FORM_TYPE                = "formType";              // 表单类型
 
 }

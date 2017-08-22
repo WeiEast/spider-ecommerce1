@@ -55,4 +55,5 @@ public interface OperatorPluginService {
      * @return
      */
     HttpResult<Map<String, Object>> validatePicCode(OperatorParam param);
+
 }

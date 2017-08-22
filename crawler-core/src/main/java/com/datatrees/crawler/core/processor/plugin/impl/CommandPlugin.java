@@ -17,6 +17,9 @@ import com.datatrees.crawler.core.processor.plugin.Plugin;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.crawler.core.util.CommandLineExecutor;
 import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 
 /**
@@ -26,6 +29,8 @@ import java.io.File;
  * @since Feb 19, 2014 1:21:47 PM
  */
 public class CommandPlugin extends Plugin {
+    
+    private static final Logger logger = LoggerFactory.getLogger(CommandPlugin.class);
 
     @Override
     protected void preProcess(Request request, Response response) throws Exception {

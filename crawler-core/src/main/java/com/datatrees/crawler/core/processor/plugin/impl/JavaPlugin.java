@@ -38,7 +38,8 @@ public class JavaPlugin extends Plugin {
         }
         // add http client
         clientPlugin.setWebClient(WebClientUtil.getWebClient());
-
-        return clientPlugin.process(args);
+        String params = ((com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) plugin.getPlugin())
+            .getParams();
+        return clientPlugin.process(args, params);
     }
 }

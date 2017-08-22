@@ -1,14 +1,17 @@
 package com.datatrees.rawdatacentral.plugin.operator.check;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
+import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CookieUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
@@ -32,9 +35,9 @@ import java.util.concurrent.TimeUnit;
  * 步骤:图片验证码-->短信验证码-->提交校验
  * Created by zhouxinghai on 2017/7/31
  */
-public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
+public class PicSmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger      logger         = LoggerFactory.getLogger(AbstractPicSmsCheckPlugin.class);
+    private static final Logger      logger         = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
 
     private CrawlerOperatorService   pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
 
@@ -47,16 +50,24 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
 
     private AbstractProcessorContext context        = PluginFactory.getProcessorContext();
 
+    private String                   fromType;
+
+    private Map<String, String>      pluginResult   = new HashMap<>();
+
     @Override
     public String process(String... args) throws Exception {
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
+        Map<String, String> params = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {
+        });
+        fromType = params.get(AttributeKey.FORM_TYPE);
+        CheckUtils.checkNotBlank(fromType, "fromType is empty");
         logger.info("详单-->插件启动,taskId={},websiteName={}", taskId, websiteName);
         //验证失败直接抛出异常
         validatePicCode(taskId, websiteName);
         String cookieString = CookieUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
-        return null;
+        return JSON.toJSONString(pluginResult);
     }
 
     /**
@@ -68,7 +79,7 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
     public void validatePicCode(Long taskId, String websiteName) throws ResultEmptyException {
         int retry = 0, maxRetry = 5;
         do {
-            OperatorParam param = new OperatorParam(getFormType(), taskId, websiteName);
+            OperatorParam param = new OperatorParam(fromType, taskId, websiteName);
 
             HttpResult<Map<String, Object>> result = pluginService.refeshPicCode(param);
             if (!result.getStatus()) {
@@ -129,7 +140,7 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
                 Thread.currentThread().getId(), taskId, websiteName);
             throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
         }
-        OperatorParam param = new OperatorParam(getFormType(), taskId, websiteName);
+        OperatorParam param = new OperatorParam(fromType, taskId, websiteName);
         HttpResult<Map<String, Object>> result = pluginService.refeshSmsCode(param);
         if (!result.getStatus()) {
             throw new CommonException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT);
@@ -159,7 +170,6 @@ public abstract class AbstractPicSmsCheckPlugin extends AbstractClientPlugin {
             //短信验证码验证失败重新验证图片验证码
             validatePicCode(taskId, websiteName);
         }
+        pluginResult.put(PluginConstants.FIELD, smsCode);
     }
-
-    public abstract String getFormType();
 }

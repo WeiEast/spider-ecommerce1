@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
+import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +35,9 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
  * 步骤:短信验证码-->提交校验
  * Created by zhouxinghai on 2017/7/31
  */
-public abstract class AbstractSmsCheckPlugin extends AbstractClientPlugin {
+public class SmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger      logger         = LoggerFactory.getLogger(AbstractSmsCheckPlugin.class);
+    private static final Logger      logger         = LoggerFactory.getLogger(SmsCheckPlugin.class);
 
     private CrawlerOperatorService   pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
 
@@ -48,16 +50,23 @@ public abstract class AbstractSmsCheckPlugin extends AbstractClientPlugin {
 
     private AbstractProcessorContext context        = PluginFactory.getProcessorContext();
 
+    private String                   fromType;
+
+    private Map<String, String>      pluginResult   = new HashMap<>();
+
     @Override
     public String process(String... args) throws Exception {
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
+        Map<String, String> params = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {
+        });
+        fromType = params.get(AttributeKey.FORM_TYPE);
         logger.info("详单-->短信校验插件启动,taskId={},websiteName={}", taskId, websiteName);
         //验证失败直接抛出异常
         validateSmsCode(taskId, websiteName);
         String cookieString = CookieUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
-        return null;
+        return JSON.toJSONString(pluginResult);
     }
 
     /**
@@ -69,7 +78,7 @@ public abstract class AbstractSmsCheckPlugin extends AbstractClientPlugin {
     public void validateSmsCode(Long taskId, String websiteName) throws Exception {
         int retry = 0, maxRetry = 5;
         do {
-            OperatorParam param = new OperatorParam(getFormType(), taskId, websiteName);
+            OperatorParam param = new OperatorParam(fromType, taskId, websiteName);
 
             HttpResult<Map<String, Object>> result = pluginService.refeshSmsCode(param);
             if (!result.getStatus()) {
@@ -103,6 +112,7 @@ public abstract class AbstractSmsCheckPlugin extends AbstractClientPlugin {
             result = pluginService.submit(param);
             if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
                 context.setString(AttributeKey.SMS_CODE, smsCode);
+                pluginResult.put(PluginConstants.FIELD, smsCode);
                 return;
             }
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
@@ -115,5 +125,4 @@ public abstract class AbstractSmsCheckPlugin extends AbstractClientPlugin {
         throw new ResultEmptyException(ErrorCode.VALIDATE_SMS_TIMEOUT.getErrorMsg());
     }
 
-    public abstract String getFormType();
 }
