@@ -10,7 +10,7 @@ public class TemplateUtils {
     public static String format(String template, Object... args) {
         if (StringUtils.isNoneBlank(template) && args.length > 0) {
             for (Object arg : args) {
-                template = template.replaceFirst("\\{}", arg.toString());
+                template = template.replaceFirst("\\{}", String.valueOf(arg));
             }
             template = template.replaceAll("\\{}", "");
 
