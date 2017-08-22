@@ -34,6 +34,9 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 public class ProcessorContextUtil {
 
     public static void setCookieString(AbstractProcessorContext context, String cookieString) {
+        if(StringUtils.isBlank(cookieString)){
+            return;
+        }
         context.getContext().put(Constants.COOKIE_STRING, cookieString);
         boolean retainQuote = context instanceof SearchProcessorContext && ((SearchProcessorContext) context).getCookieConf() != null
                 ? ((SearchProcessorContext) context).getCookieConf().getRetainQuote()

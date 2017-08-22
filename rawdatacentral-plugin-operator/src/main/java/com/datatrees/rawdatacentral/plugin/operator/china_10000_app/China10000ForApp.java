@@ -362,8 +362,10 @@ public class China10000ForApp implements OperatorPluginService {
             String templateData = "<Request><HeaderInfos><Code>jfyBillDetail</Code><Timestamp>{}</Timestamp><ClientType>#6.0.0#channel38#Xiaomi Mi Note 2#</ClientType>"
                                   + "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>"
                                   + "<Content><Attach>test</Attach><FieldData><StartTime>{}</StartTime><Type>{}</Type><Random>{}</Random><PhoneNum>{}</PhoneNum><EndTime>{}</EndTime></FieldData></Content></Request>";
+
+            Object smsCode = param.getExtral().get(AttributeKey.SMS_CODE);
             String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(),
-                times[0], queryType, param.getSmsCode(), param.getMobile(), times[1]);
+                times[0], queryType, smsCode, param.getMobile(), times[1]);
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_008").setFullUrl(templateUrl)
                 .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());

@@ -62,6 +62,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
 
         OperatorParam param = new OperatorParam(fromType, taskId, websiteName);
         param.setArgs(Arrays.copyOf(args, args.length - 1));
+        param.getExtral().putAll(context.getContext());
 
         HttpResult<Object> result = pluginService.defineProcess(param);
         if (result.getStatus()) {
