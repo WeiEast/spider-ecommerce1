@@ -61,6 +61,12 @@ public interface CrawlerOperatorService {
      * 每个运营商这里指定了,不可以缓存
      * @return
      */
-    public HttpResult<List<OperatorCatalogue>> queryAllConfig();
+    HttpResult<List<OperatorCatalogue>> queryAllConfig();
 
+    /**
+     * 自定义处理
+     * 必填参数:taskId,formType,args
+     * @return
+     */
+    HttpResult<Object> defineProcess(OperatorParam param);
 }

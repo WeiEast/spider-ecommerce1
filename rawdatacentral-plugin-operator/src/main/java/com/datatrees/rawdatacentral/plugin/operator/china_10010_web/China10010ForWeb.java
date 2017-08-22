@@ -133,6 +133,12 @@ public class China10010ForWeb implements OperatorPluginService {
         }
     }
 
+    @Override
+    public HttpResult<Object> defineProcess(OperatorParam param) {
+        logger.warn("defineProcess fail,params={}", param);
+        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+    }
+
     private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;

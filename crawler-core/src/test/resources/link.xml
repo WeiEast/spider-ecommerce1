@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <properties>
+    <encoding><![CDATA[utf-8]]></encoding>
+    <cookie scope="request"></cookie>
+    <proxy scope="request"></proxy>
+    <duplicate-removal><![CDATA[true]]></duplicate-removal>
+    <wait-interval><![CDATA[100]]></wait-interval>
+    <save-next-page-num><![CDATA[false]]></save-next-page-num>
+    <max-retry-count><![CDATA[3]]></max-retry-count>
+    <rate-limit><![CDATA[10]]></rate-limit>
+  </properties>
+  <login login-type="server">
+    <check-interval><![CDATA[5]]></check-interval>
+    <url-template><![CDATA[http://www.crackhackforum.com/member.php"action=do_login&url=%2Fsearch.php&username=xbkaishui&password=123456]]></url-template>
+    <success-pattern><![CDATA[User CP]]></success-pattern>
+    <fail-pattern><![CDATA[Already have an account]]></fail-pattern>
+    <check-url><![CDATA[http://www.crackhackforum.com/index.php]]></check-url>
+  </login>
+  <plugin-definition></plugin-definition>
+  <service-definition></service-definition>
+  <site-type-list>
+    <site-type><![CDATA[Cyberlocker]]></site-type>
+  </site-type-list>
+  <url-filters>
+    <url-filter type="+"><![CDATA[.*crackhackforum\.com.*.html.*highlight=.*]]></url-filter>
+  </url-filters>
+  <server-list></server-list>
+  <parser-definition></parser-definition>
+  <page-definition>
+    <page path="search.php.*sid.*" id="page0">
+      <replaces></replaces>
+      <segment value="//td[@class='trow2']&quot;//td[@class='trow1']//div[@class='pagination']" type="xpath"></segment>
+    </page>
+    <page id="page1">
+      <replaces></replaces>
+    </page>
+  </page-definition>
+  <search>
+    <search-template type="keyword_search" max-depth="1" id="search0">
+      <request>
+        <max-page><![CDATA[5000]]></max-page>
+        <url-templates>
+          <url-template><![CDATA[http://www.crackhackforum.com/search.php"action=do_search&postthread=1&forums=all&showresults=threads&keywords=${keyword}]]></url-template>
+        </url-templates>
+        <full-search-sign><![CDATA[true]]></full-search-sign>
+      </request>
+      <page-sequence>
+        <page ref="page0" depth="0"></page>
+        <page ref="page1" depth="1"></page>
+      </page-sequence>
+      <server-list mutex="true"></server-list>
+    </search-template>
+    <search-template type="deep" max-depth="3" id="search1">
+      <request>
+        <max-page><![CDATA[20000]]></max-page>
+        <url-templates>
+          <url-template><![CDATA[http://www.crackhackforum.com]]></url-template>
+        </url-templates>
+        <full-search-sign><![CDATA[true]]></full-search-sign>
+      </request>
+      <page-sequence></page-sequence>
+    </search-template>
+  </search>
+  <status-checkers></status-checkers>
+  <match>
+    <threshold></threshold>
+    <weight></weight>
+  </match>
+</config>

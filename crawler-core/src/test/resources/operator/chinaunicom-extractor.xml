@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<extrator-selectors>
+		<selector field="url" contain="query/accountBalance" dis-contain="" ref="personalinformation-page-extractor"></selector>
+		<selector field="pageContent" contain="callTotaltime" dis-contain="" ref="calldetails-page-extractor"></selector>
+		<selector field="pageContent" contain="smsdate" dis-contain="" ref="smsdetails-page-extractor"></selector>
+		<selector field="pageContent" contain="historyResultList" dis-contain="未结清金额" ref="billdetail-page-extractor"></selector>
+		<selector field="pageContent" contain="historyResultList" dis-contain="payTotal" ref="billdetail-page-extractor-2"></selector>
+		<selector field="pageContent" contain="paySum" dis-contain="(historyResultList)|(未结清金额)|(payTotal)" ref="billdetail-page-extractor-3"></selector>
+		<selector field="url" contain="queryHistoryBill" dis-contain="" ref="billdetail-page-extractor-4"></selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<page-extractor id="personalinformation-page-extractor">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="personalInformation" pop-return="true">
+				<field-extractor id="field-extractor_1" field="accountBalance" result-type="number" default-value="0.00">
+					<operation type="regex" index="1"><![CDATA["acctbalance":"([-\d\.]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="userInfoTemp" field="temp" result-type="string">
+					<operation type="regex" index="1"><![CDATA["userInfo":(\{.*\})]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" source="userInfoTemp" field="telPackage" result-type="string">
+					<operation type="regex" index="1"><![CDATA["packageName":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" source="userInfoTemp" field="telNumStatus" result-type="string">
+					<operation type="regex" index="1"><![CDATA["status":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_4" source="userInfoTemp" field="identityCard" result-type="string">
+					<operation type="regex" index="1"><![CDATA["certnum":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_5" source="userInfoTemp" field="netJoinDate" result-type="date" format="yyyyMMddHHmmss">
+					<operation type="regex" index="1"><![CDATA["opendate":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_6" source="userInfoTemp" field="name" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["custName":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_7" source="userInfoTemp" field="telCustomerLevel" result-type="string">
+					<operation type="regex" index="1"><![CDATA["custlvl":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_8" source="userInfoTemp" field="telNumProvince" result-type="string">
+					<operation type="regex" index="1"><![CDATA["provincecode":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_9" source="userInfoTemp" field="telNum" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["usernumber":"([0-9]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_10" field="telNumAttribution" result-type="string">
+					<operation type="set"><![CDATA[中国联通]]>
+					</operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="calldetails-page-extractor">
+			<page-sources>
+				<source field="pageContent">
+					<regex index="1"><![CDATA["result":\[([^\]]*)\]]]>
+					</regex>
+				</source>
+			</page-sources>
+			<object-segment name="callDetails" type="regex" value="(\{[^\{\}]*\})" group-index="1">
+				<field-extractor id="field-extractor_1" field="callDuration" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["calllonghour":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="totalFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["totalfee":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" field="callType" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["calltype":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_4" field="otherTelNum" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["othernum":"([^"]*)"]]></operation>
+					<operation type="triple"><![CDATA[${this}=?-1:${this}]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_5" field="callLocation" result-type="string">
+					<operation type="regex" index="1"><![CDATA["homeareaName":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="callstart-date-literal-id" field="temp" result-type="string">
+					<operation type="regex" index="1"><![CDATA["calldate":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="callstart-time-literal-id" field="temp" result-type="string">
+					<operation type="regex" index="1"><![CDATA["calltime":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_6" field="callStartDateTime" result-type="date" format="yyyy-MM-dd HH:mm:ss" not-empty="true">
+					<operation type="template"><![CDATA[${callstart-date-literal-id} ${callstart-time-literal-id}]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_7" field="callTypeDetail" result-type="string">
+					<operation type="regex" index="1"><![CDATA["landtype":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_8" field="baseFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["nativefee":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_9" field="landFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["landfee":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_10" field="roamingFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["roamfee":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_11" field="otherFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["otherfee":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_12" field="businessType" result-type="string">
+					<operation type="regex" index="1"><![CDATA["thtypeName":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="smsdetails-page-extractor">
+			<page-sources>
+				<source field="pageContent">
+					<regex index="1"><![CDATA["result":\[([^\]]*)\]]]>
+					</regex>
+				</source>
+			</page-sources>
+			<object-segment name="shortMessageDetails" type="regex" value="(\{[^\{\}]*\})" group-index="1">
+				<field-extractor id="field-extractor_1" field="businessType" result-type="string">
+					<operation type="regex" index="1"><![CDATA["businesstype":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="fee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["fee":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" field="smsType" result-type="string">
+					<operation type="regex" index="1"><![CDATA["smstype":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_4" field="otherNum" result-type="string">
+					<operation type="regex" index="1"><![CDATA["othernum":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="smsstart-date-literal-id" field="smsstart-date-literal" result-type="string">
+					<operation type="regex" index="1"><![CDATA["smsdate":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="smsstart-time-literal-id" field="smsstart-time-literal" result-type="string">
+					<operation type="regex" index="1"><![CDATA["smstime":"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_6" field="smsDateTime" result-type="date" format="yyyy-MM-dd HH:mm:ss">
+					<operation type="template"><![CDATA[${smsstart-date-literal-id} ${smsstart-time-literal-id}]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_7" field="temp" result-type="string">
+					<operation type="template"><![CDATA[${businesstype-map}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="billdetail-page-extractor">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="billDetails">
+				<field-extractor id="field-extractor_1" field="baseFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["name":"[ ]*月基本费","value":"([-\d\.]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="voiceCallFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["name":"[ ]*语音通话费","value":"([-\d\.]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" field="networkFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["name":"[ ]*上网费","value":"([-\d\.]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_4" field="totalFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["nowFee":[ ]*"([-\d\.]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_5" field="deductionFee" result-type="number">
+					<operation type="regex" index="1"><![CDATA["discount":[ ]*"([-\d\.]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_6" field="payFee" result-type="number" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["payTotal":[ ]*"([-\d\.]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_7" field="billMonth" result-type="date" format="yyyy-M-d" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["billcycle":[ ]*"([0-9\-]+)]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_8" field="name" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["custName":[ ]*"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="telNum" field="telNum" result-type="string">
+					<operation type="regex" index="1"><![CDATA["usernumber":"([0-9]+)"]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="billdetail-page-extractor-2">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="billDetails">
+				<field-extractor id="field-extractor_1" field="payFee" result-type="number" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["name":"[ ]*已缴金额","value":"([-\d\.]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="billMonth" result-type="date" format="yyyy-M-d" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["billcycle":[ ]*"([0-9\-]+)]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" field="name" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["custName":[ ]*"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="telNum" field="telNum" result-type="string">
+					<operation type="regex" index="1"><![CDATA["usernumber":"([0-9]+)"]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="billdetail-page-extractor-3">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="billDetails">
+				<field-extractor id="field-extractor_1" field="payFee" result-type="number" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["paySum":[ ]*"([-\d\.]+)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="billMonth" result-type="date" format="yyyy-M-d" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["billcycle":[ ]*"([0-9\-]+)]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" field="name" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["custName":[ ]*"([^"]*)"]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="telNum" field="telNum" result-type="string">
+					<operation type="regex" index="1"><![CDATA["usernumber":"(\d+)"]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="billdetail-page-extractor-4">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="billDetails">
+				<field-extractor id="baseFee" field="baseFee" result-type="number">
+					<operation type="jsonpath">$.result.billinfo</operation>
+					<operation type="regex" index="1"><![CDATA["fee":"([-\d\.]+)"[^}]*基本套餐费]]></operation>
+				</field-extractor>
+				<field-extractor id="networkFee" field="networkFee" result-type="number">
+					<operation type="jsonpath">$.result.billinfo</operation>
+					<operation type="regex" index="1"><![CDATA["fee":"([-\d\.]+)"[^}]*上网费]]></operation>
+				</field-extractor>
+				<field-extractor id="voiceCallFee" field="voiceCallFee" result-type="number">
+					<operation type="jsonpath">$.result.billinfo</operation>
+					<operation type="regex" index="1"><![CDATA["fee":"([-\d\.]+)"[^}]*语音通话费]]></operation>
+				</field-extractor>
+				<field-extractor id="totalFee" field="totalFee" result-type="number">
+					<operation type="jsonpath">$.result.allfee</operation>
+				</field-extractor>
+				<field-extractor id="deductionFee" field="deductionFee" result-type="number">
+					<operation type="jsonpath">$.result.deratefee</operation>
+				</field-extractor>
+				<field-extractor id="payFee" field="payFee" result-type="number">
+					<operation type="jsonpath">$.result.writeofffee</operation>
+				</field-extractor>
+				<field-extractor id="payFee" field="payFee" result-type="number" stand-by="true" not-empty="true">
+					<operation type="jsonpath">$.result.allfee</operation>
+				</field-extractor>
+				<field-extractor id="billMonth" field="billMonth" result-type="date" format="yyyyMM" not-empty="true">
+					<operation type="jsonpath">$.result.cycleid</operation>
+				</field-extractor>
+				<field-extractor id="name" field="name" result-type="string">
+					<operation type="jsonpath">$.userinfo.custname</operation>
+				</field-extractor>
+				<field-extractor id="telNum" field="telNum" result-type="string" not-empty="true">
+					<operation type="jsonpath">$.userinfo.usernumber</operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+	</page-extractor-definition>
+
+	<plugin-definition>
+	</plugin-definition>
+</config>

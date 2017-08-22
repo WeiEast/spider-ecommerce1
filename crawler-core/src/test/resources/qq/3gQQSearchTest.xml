@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--QQ空间网查 -->
+<config>
+	<result-tag-list>
+		<result-tag><![CDATA[webDetect]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">.*</url-filter>
+	</url-filters>
+
+	<properties>
+		<encoding>GBK</encoding>
+		<unicode-mode><![CDATA[hex]]></unicode-mode>
+		<cookie scope="user_session"></cookie>
+                <proxy scope="session" pattern="list_type=shuoshuo"><![CDATA[http://wiseproxy.dashu.ds:8080/wiseproxy/service/getProxy?site=qq.qzone.com&mode=session&partition=adsl]]></proxy>
+	</properties>
+
+	<login login-type="app">
+		<login-check success-pattern="cgi-bin/frame_html\?">
+			<check-url><![CDATA[${endurl}]]></check-url>
+			<object-segment name="sid">
+				<field-extractor id="sid" field="sid" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA[/logout\?sid=([^"']+)]]></operation>
+				</field-extractor>
+				<field-extractor id="3gurl" field="3gurl" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="template"><![CDATA[http://info.3g.qq.com/g/s?&aid=index&g_ut=3&g_f=23789&sid=${sid}]]></operation>
+				</field-extractor>
+				<field-extractor id="emailAccount" field="emailAccount" field-visible-type="processor_result" not-empty="true">
+					<operation type="xpath">//p[@class='qm_footer_userInfo']/text()
+					</operation>
+					<operation type="regex" index="1"><![CDATA[(.*) \-]]></operation>
+				</field-extractor>
+				<field-extractor id="qqAccount" field="qqAccount" field-visible-type="processor_result">
+					<operation type="xpath">//input[@id='uin']/@value</operation>
+				</field-extractor>
+				<field-extractor id="qqAccount" field="qqAccount" field-visible-type="processor_result" stand-by="true">
+					<operation type="template">${cookie.qm_username}</operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<page-definition>
+		<!-- 打开手机腾讯网 -->
+		<page id="search-page-0" path="aid=index">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="url" field="url">
+					<operation type="xpath">a:contains(空间)</operation>
+					<operation type="xpath">//a/@href</operation>
+					<operation type="replace" from="amp;" to=""></operation>
+				</field-extractor>
+				<field-extractor id="qqAccount" field="qqAccount" field-visible-type="processor_result">
+					<operation type="template"><![CDATA[${qqAccount}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<!-- 打开QQ空间 -->
+		<page id="search-page-1" path="icfa=home_touch">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="page1Content" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="skey" field="temp" field-visible-type="context" stand-by="true">
+					<operation type="template">${cookie.p_skey}
+					</operation>
+				</field-extractor>
+				<field-extractor id="skey" field="temp" field-visible-type="context" stand-by="true">
+					<operation type="template">${cookie.skey}
+					</operation>
+				</field-extractor>
+				<field-extractor id="token" field="token" result-type="string" plugin-ref="qqWebDetectPlugin" source="skey" field-visible-type="context" not-empty="true">
+				</field-extractor>
+				<field-extractor id="url" field="url">
+					<operation type="template"><![CDATA[https://mobile.qzone.qq.com/list?g_tk=${token}&format=json&list_type=shuoshuo&action=0&res_uin=${qqAccount}&count=40]]></operation>
+				</field-extractor>
+				<!-- <field-extractor id="totalCountTemp" field="temp" result-type="resource_string" > <operation type="template"><![CDATA[https://mobile.qzone.qq.com/list?g_tk=${token}&format=json&list_type=shuoshuo&action=0&res_uin=${qqAccount}&count=10]]></operation> 
+					</field-extractor> -->
+			</object-segment>
+		</page>
+		<!-- 打开说说列表 -->
+		<page id="search-page-2" path="list_type=shuoshuo">
+			<object-segment name="linkNode" result-class="DefaultData">
+				<field-extractor id="page3Content" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="qqAccount" field="qqAccount" result-type="string">
+					<operation type="template">${qqAccount}</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[${current_url}]]></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode">
+				<!-- 控制最多要拿说说的数量 -->
+				<field-extractor id="totalCount" field="totalCount" result-type="string" field-visible-type="context">
+					<operation type="jsonpath">$.data.remain_count</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="parser" ref="search-page-parser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<parser-definition>
+		<parser id="search-page-parser">
+			<url-template><![CDATA[https://mobile.qzone.qq.com/list?g_tk=${token}&res_attach=att%3D#{page,40,${totalCount}/40-1,40+}&format=json&list_type=shuoshuo&action=0&res_uin=${qqAccount}&count=10]]></url-template>
+		</parser>
+	</parser-definition>
+
+	<search>
+		<search-template id="qq-home-template" type="category_search" max-depth="2">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[${3gurl}]]></url-template>
+				</url-templates>
+				<default-header><![CDATA[{"User-Agent":"user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4"}]]></default-header>
+				<max-page>1000</max-page>
+				<block-pattern><![CDATA["message":"请先登录"]]></block-pattern>
+				<no-search-results-pattern></no-search-results-pattern>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="search-page-0" />
+				<page depth="1" ref="search-page-1" />
+				<page depth="2" ref="search-page-2" />
+			</page-sequence>
+		</search-template>
+	</search>
+	<plugin-definition>
+		<plugin id="qqWebDetectPlugin" file-type="jar" phase="field">
+			<main-class>com.datatrees.crawler.plugin.HomeToken</main-class>
+		</plugin>
+	</plugin-definition>
+</config>

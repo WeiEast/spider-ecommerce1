@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 百度贴吧searchConfig -->
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<result-tag-list>
+		<result-tag><![CDATA[consensus]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">.baidu.com</url-filter>
+	</url-filters>
+
+	<properties>
+		<encoding>GBK</encoding>
+		<unicode-mode><![CDATA[hex]]></unicode-mode>
+	</properties>
+
+	<page-definition>
+		<page id="keyword-search-page" path="/f/search/" page-num-regex="pn=(\d+)">
+			<object-segment name="basicSearch" result-class="DefaultData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="searchPage" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="keyword" field="keyword" result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+				</field-extractor>
+				<field-extractor id="entryName" field="entryName" result-type="string">
+					<operation type="template"><![CDATA[${entryName}]]></operation>
+				</field-extractor>
+				<field-extractor id="containKey" field="containKey" result-type="string">
+					<operation type="template">${containKey}</operation>
+				</field-extractor>
+				<field-extractor id="disContainKey" field="disContainKey" result-type="string">
+					<operation type="template">${disContainKey}</operation>
+				</field-extractor>
+				<field-extractor id="businessType" field="businessType" result-type="string">
+					<operation type="template">${businessType}</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="nextSearch" type="xpath" value="//a[@class='next']" result-class="LinkNode">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="extract"></operation>
+				</field-extractor>
+			</object-segment>
+			<object-segment name="new-gongfudai" result-class="LinkNode">
+				<field-extractor id="url" field="url" result-type="string" encoding="utf-8">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+					<operation to="http://tieba.baidu.com/f?kw=功夫贷&amp;ie=utf-8&amp;pn=0" from="功夫贷" type="replace"></operation>
+				</field-extractor>
+			</object-segment>
+
+		</page>
+
+		<page id="keyword-new-search-page" path="/f\?kw=">
+			<object-segment name="basicSearch" result-class="DefaultData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="searchPage" field="pageContent" result-type="string" encoding="utf-8">
+					<operation type="return" />
+					<operation type="xpath"><![CDATA[//code[@id='pagelet_html_frs-list/pagelet/thread_list']]]></operation>
+					<operation type="replace" from="&lt;!--" to=""></operation>
+					<operation type="replace" from="-->" to=""></operation>
+				</field-extractor>
+				<field-extractor id="keyword" field="keyword" result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+				</field-extractor>
+				<field-extractor id="entryName" field="entryName" result-type="string">
+					<operation type="template"><![CDATA[${entryName}]]></operation>
+				</field-extractor>
+				<field-extractor id="containKey" field="containKey" result-type="string">
+					<operation type="template"><![CDATA[${containKey}]]></operation>
+				</field-extractor>
+				<field-extractor id="disContainKey" field="disContainKey" result-type="string">
+					<operation type="template"><![CDATA[${disContainKey}]]></operation>
+				</field-extractor>
+				<field-extractor id="businessType" field="businessType" result-type="string">
+					<operation type="template"><![CDATA[${businessType}]]></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="nextSearch" result-class="LinkNode">
+				<field-extractor id="url" field="url" result-type="string" encoding="utf-8">
+					<operation type="template"><![CDATA[http://tieba.baidu.com/f?kw=${entryName}&ie=utf-8&pn=#{page,0,2,50+}]]></operation>
+				</field-extractor>
+			</object-segment>
+
+
+
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="keyword-search-template" max-depth="1" thread-count="3">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://tieba.baidu.com/f/search/res?ie=utf-8&kw=${entryName}&qw=${keyword}]]></url-template>
+				</url-templates>
+				<max-page>1000</max-page>
+				<no-search-results-pattern></no-search-results-pattern>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<result-tag-list>
+				<result-tag><![CDATA[opinionDetect]]></result-tag>
+			</result-tag-list>
+			<page-sequence>
+				<page depth="0" ref="keyword-search-page" />
+				<page depth="0" ref="keyword-new-search-page" />
+			</page-sequence>
+		</search-template>
+
+	</search>
+
+</config>

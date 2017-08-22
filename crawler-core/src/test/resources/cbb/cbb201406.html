@@ -1,0 +1,731 @@
+
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>邮件账单列表</title>
+		<meta charset="utf-8" />
+		<link href="css/base.css" rel="stylesheet" type="text/css">
+		<link href="css/mail.css" rel="stylesheet" type="text/css">
+		<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/userbill.js"></script>
+	</head>
+	<body>
+  		 <a href="download.do?mailId=52_12316472_330404083">附件下载</a>
+		<div class="showTable">
+			<table>
+			  <thead>
+			    <tr>
+        			<th>银行</th>
+                    <th>持卡人</th>
+                    <th>账单周期</th>
+                    <th>卡号后四位</th>
+                    <th>最后还款日</th>
+                    <th>本期应还款</th>
+                    <th>最低还款额</th>
+                    <th>信用额度/取现额度</th>
+                    <th>上期应还额</th>
+                    <th>本期积分</th>
+                    <th>新增积分</th>
+                    <th>BillID</th>
+                    <th>UBID</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  </tbody>
+			</table>
+		<div style="float:right"> <a href="javascript:void(0)" onclick="UserBill.ChangeAnalyzeState()">解析错误</a> </div>
+		</div>
+		<style>
+
+html{word-wrap:break-word;}
+body{font-size:14px;font-family:arial,verdana,sans-serif;line-height:1.666;padding:8px 10px;margin:0;}
+pre {
+	white-space: pre-wrap; 
+	white-space: -moz-pre-wrap; 
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+}
+</style>
+
+
+
+
+<html>
+<head>
+
+<title>中国银行电子帐单</title>
+
+<style>
+body{margin:0;background-color:#fff;scrollbar-face-color: #dee3e7;scrollbar-highlight-color: #ffffff;scrollbar-shadow-color: #dee3e7;scrollbar-3dlight-color: #d1d7dc; 
+scrollbar-arrow-color: #006699;scrollbar-track-color: #efefef; scrollbar-darkshadow-color: #98aab1;}
+a, td, textarea, input, span, select {color: #0D0D0D;font-family:宋体;font-size: 14px;}
+form{margin:0px;}
+select {color: #333333;}
+input, textarea {border: #818F9D 1px solid;background: #ffffff;}
+img{border:0px;}
+.button{height: 19px;background-color: #E7F1FB;margin:none;padding: 1px;color: #000000;border-top: 1px solid #FFFFFF;border-right: 1px solid #000000;border-bottom: 1px solid #000000;border-left: 1px solid #FFFFFF;background-image: url(../images/input_bg1.gif);}
+.background{background-color:#EAF8F7}
+.noBorder{border: none;background:none;}
+a:link {text-decoration: none;}
+a:visited {text-decoration: none;}
+a:hover {text-decoration: underline;}
+a:active {text-decoration: none;}
+
+
+ 
+.gray2 {background-color: #BCB8B7;}
+.topic{font-weight: 700;color: #004269;font-size:25px;font-family:宋体;}
+.top{font-weight: 700;color: #004269;font-size:14px;}
+.title{font-weight: 700;color: #0D0D0D;font-size:22px;}
+.a_t_green_selected{padding:6px 2px 6px 4px; background:  #96B6C8;color: #336787;font-weight: 700;font-size: 18px;color: #fff}
+.a_t_blove_selected{padding:6px 2px 6px 4px; background-image: url(../images/bj.gif);color: #fff;font-weight: 700;font-size: 14px;}
+.a_b_blove_selected{padding:6px 2px 6px 4px; background:  #CCD9E1;font-weight: 700;font-size: 14px;}
+.a_c_blove_selected{padding:6px 2px 6px 4px; font-weight: 700;font-size: 16px;background:  #F5F5F5;}
+
+.whiteBG{ background:#FFFFFF;padding:4px 2px 4px 4px;font-size: 14px;}
+.greenBG{ background:#D7D7D7;}
+.redBG{ background:#B10731;}
+.a_t_red_selected{padding:6px 2px 6px 4px; background:  #FFD3D2;font-weight: 700;}
+.a_t_yellow_selected{padding:6px 2px 6px 4px; background:  #F9FFB1;font-weight: 700;}
+
+
+.red {color: #990000;}
+
+
+.green{ color: #007700;background-color:#BBE88C;height:30px ;font-size:14px;font-family:宋体;}
+.topic_h{ background:#E6F1FA;padding:2px 2px 2px 4px;}
+.footer{ background: #68C5BB; }
+.blove {background: #DFCBB2;font-weight: 700;}
+.blove2 {background: #CAE1F3;}
+.blove3 {background: #EDF5FB;}
+.green{background: #91CA84;}
+.yellow_bj{background: #FFFDED;}
+.yellow_bj2{background: #FAF3CA;}
+
+
+
+a.blove_link12:link {color: #30658E;font-weight: 700;text-decoration: none;}
+a.blove_link12:visited {color: #30658E;font-weight: 700;text-decoration: none;}
+a.blove_link12:hover {color: #30658E;font-weight: 700;text-decoration: underline;}
+a.blove_link12:active{color: #30658E;font-weight: 700;text-decoration: none;}
+
+.a_t_black_selected{padding:3px 2px 4px 21px; background:  no-repeat #5DA9DE ;}
+.a_t_black_selected a{color:#fff;font-weight: 700;}
+
+a.underline:link {COLOR: #1C4352;TEXT-DECORATION: underline;}
+a.underline:visited {COLOR: #1C4352;TEXT-DECORATION: underline;}
+a.underline:hover {COLOR: #990000;TEXT-DECORATION: none;}
+a.underline:active {COLOR: #1C4352;TEXT-DECORATION: underline;}
+.font12 {
+    font-family: "宋体";
+    font-size: 14px;
+    line-height: 19px;
+    color: #0D0D0D;
+}
+.font11 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 19px;
+    color: #0D0D0D;
+}
+</style>
+</head>
+
+<body>
+<br>
+
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr><td><p><img height="83" width="778" alt="" src="http://twebmail.mail.163.com/js4/s?func=mbox:getMessageData&amp;sid=aCflxRlHPMguSTlTJZHHdwFbqWKtBOPZ&amp;mid=485:xtbB5REAABvrxvAcl1MPcl&amp;part=7"></p>
+</td></tr>
+    <tr><td><p><img alt="" width="778" src="http://twebmail.mail.163.com/js4/s?func=mbox:getMessageData&amp;sid=aCflxRlHPMguSTlTJZHHdwFbqWKtBOPZ&amp;mid=485:xtbB5REAABvrxvAcl1MPcl&amp;part=5"></p>
+</td></tr>
+  </tbody>
+</table>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+  
+  <tr>
+    <td width="375" valign="bottom"><table border="0" cellpadding="0" width="83%">
+      <tr>
+        <td height="28"><p align="left">272100 </p></td>
+      </tr>
+      <tr>
+        <td height="28"> <p align="left">中国山东省济宁市 </p></td>
+      </tr>
+      <tr>
+        <td height="28"><p align="left">高新区崇文大道 2199 号 </p></td>
+      </tr>
+          <tr>
+        <td height="28"> <p align="left">小松山东工程机械有限公司 </p></td>
+      </tr>
+            <tr>
+        <td height="28"><p align="left">宋国帅 先生 </p></td>
+      </tr>
+
+    </table>      <p><br>
+    </p>    </td>
+    <td width="403" valign="bottom"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td height="25"><p align="left"><span class="red"><strong>还款存根</strong></span><strong class="red11"> Payment Coupon</strong> </p></td>
+      </tr>
+      <tr>
+        <td><table width="100%" border="0" cellpadding="0" cellspacing="1" class="gray2">
+            <tr>
+              <td width="52%" class="whiteBG"><p align="left">信用卡号 </p></td>
+              <td width="48%" class="whiteBG"><p align="left">62276029****5003 </p></td>
+            </tr>
+            <tr>
+              <td class="whiteBG"><p align="left">账单日期 </p></td>
+              <td class="whiteBG"><p align="left">2014-06-21 </p></td>
+            </tr>
+            <tr>
+              <td class="whiteBG"><p align="left">到期还款日 </p></td>
+              <td class="whiteBG"><p align="left">2014-07-11 </p></td>
+            </tr>
+								<tr>
+								  <td class="whiteBG"><p align="left"> RMB本期余额\最低还款额&nbsp; </p></td> 
+								  <td class="whiteBG"><p align="left"> RMB633.26\64.00&nbsp; </p></td>    
+					            </tr>
+        </table></td>
+      </tr>
+      <tr>
+        <td height="40"><p align="left" class="font12"><span class="red">*</span> 本期余额为负，表明账户有结余，否则为欠款，请在到期还款日前3天到银行办理还款手续。 </p></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+
+<br>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td height="25" valign="middle"><p><span class="red"><strong>您的信用卡账项记录</strong></span><strong> <span class="red11">Your Card Activities</span></strong></p></td>
+  </tr>
+</table>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="1" class="gray2">
+  <tr>
+    <td width="10%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">账户类型 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Category </p></td>
+      </tr>
+    </table></td>
+    <td width="15%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">信用额度 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Combined Limit </p></td>
+      </tr>
+    </table></td>
+    <td width="15%" class="blove"><div align="center">
+      <table border="0" cellpadding="0" width="100%">
+        <tr>
+          <td><p align="center">可用余额 </p></td>
+        </tr>
+        <tr>
+          <td><p align="center" class="font11">Available Balance </p></td>
+        </tr>
+      </table>
+    </div></td>
+    <td width="30%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">分期可用余额 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Installment Available        Balance </p></td>
+      </tr>
+    </table></td>
+    <td width="15%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">账单日期 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Statement Date </p></td>
+      </tr>
+    </table></td>
+    <td width="15%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">到期还款日 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Due Date </p></td>
+      </tr>
+    </table></td>
+  </tr>
+       <tr>
+           <td class="whiteBG"><p align="center"> RMB</p></td>
+           <td class="whiteBG"><p align="center"> 10,000.00</p></td>
+           <td class="whiteBG"><p align="center"> 9,366.74</p></td>
+           <td class="whiteBG"><p align="center"> 9,366.74</p></td>
+           <td class="whiteBG"><p align="center"> 2014-06-21</p></td>
+           <td class="whiteBG"><p align="center"> 2014-07-11</p></td>
+       </tr>
+</table>
+<br>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="1" class="gray2">
+  <tr>
+    <td width="10%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">账户类型 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Category </p></td>
+      </tr>
+    </table></td>
+    <td colspan="4" class="blove"><div align="center">
+      <table border="0" cellpadding="0" width="100%">
+        <tr>
+          <td width="19%"><p align="center">上期账单金额 </p></td>
+          <td width="2%" rowspan="2"><p align="left">+ </p></td>
+          <td width="19%"><p align="center">支出总计 </p></td>
+          <td width="5%" rowspan="2"><p align="center">- </p></td>
+          <td width="30%"><p align="center">存入总计 </p></td>
+          <td width="5%" rowspan="2"><p align="center">= </p></td>
+          <td width="20%"><p align="center">本期余额 </p></td>
+        </tr>
+        <tr>
+          <td><p align="center" class="font11">Balance B/F </p></td>
+          <td><p align="center" class="font11">New Charges </p></td>
+          <td><p align="center" class="font11">Payments </p></td>
+          <td><p align="center" class="font11">Current Balance </p></td>
+        </tr>
+      </table>
+    </div></td>
+    <td width="15%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">最低还款额 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Min Payment </p></td>
+      </tr>
+    </table></td>
+  </tr>
+     <tr>
+           <td width="10%" class="whiteBG"><p align="center"> RMB</p></td>
+           <td width="15%" class="whiteBG"><p align="center"> -9,416.64</p></td>
+           <td width="15%" class="whiteBG"><p align="center"> -633.62</p></td>
+           <td width="30%" class="whiteBG"><p align="center"> 9,417.00</p></td>
+           <td width="15%" class="whiteBG"><p align="center"> -633.26</p></td>
+           <td width="15%" class="whiteBG"><p align="center"> -64.00</p></td>   
+     </tr>
+</table>
+
+
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0" class="greenBG">
+ 
+</table>
+
+<br>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td height="25" valign="middle"><p><span class="red"><strong>交易明细表</strong></span><strong> <span class="red11">Transaction Detail</span></strong></p></td>
+  </tr>
+</table>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="1" class="gray2">
+  <tr>
+    <td width="10%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">账户类型 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Category </p></td>
+      </tr>
+    </table></td>
+    <td width="12%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">交易日期 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Tran Date </p></td>
+      </tr>
+    </table></td>
+    <td width="12%" class="blove"><div align="center">
+      <table border="0" cellpadding="0" width="100%">
+        <tr>
+          <td><p align="center">记账日期 </p></td>
+        </tr>
+        <tr>
+          <td><p align="center" class="font11">Post Date </p></td>
+        </tr>
+      </table>
+    </div></td>
+    <td class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td width="15%"><p align="left">卡号 </p></td>
+        <td width="82%"><p align="center">交易描述 </p></td>
+        <td width="3%"><p align="left">&nbsp;</p></td>
+      </tr>
+      <tr>
+        <td><p align="left" class="font12">Card </p></td>
+        <td><p align="center" class="font11">Description </p></td>
+        <td><p align="left">&nbsp;</p></td>
+      </tr>
+    </table></td>
+    <td width="12%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">存入金额 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Cred </p></td>
+      </tr>
+    </table></td>
+    <td width="12%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">支出金额 </p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Debt </p></td>
+      </tr>
+    </table></td>
+  </tr>
+		           <tr>
+									   <td rowspan="10" class="whiteBG"><p align="center">RMB</p></td>
+									   
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-05-23</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-05-24</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝快捷              /             /CHN[CNY129.69]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+		                  <td class="whiteBG"><p align="right"> 129.69</p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-01</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-02</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝快捷              /             /CHN[CNY49.70]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+		                  <td class="whiteBG"><p align="right"> 49.70</p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-04</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-05</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝快捷              /             /CHN[CNY49.75]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+		                  <td class="whiteBG"><p align="right"> 49.75</p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-05</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-06</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝（ MOTO ）        /             /CHN[CNY49.98]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+		                  <td class="whiteBG"><p align="right"> 49.98</p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-08</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-09</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝快捷              /             /CHN[CNY19.10]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+		                  <td class="whiteBG"><p align="right"> 19.10</p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-09</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-09</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :40586218 邹城市太平东路 51 号           CHN[CNY9,200.00]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right"> 9,200.00</p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-11</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-12</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝（ MOTO ）        /             /CHN[CNY106.00]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+		                  <td class="whiteBG"><p align="right"> 106.00</p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-11</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-11</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝入账                            CCHN[CNY217.00]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right"> 217.00</p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-12</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-13</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝（ MOTO ）        /             /CHN[CNY85.40]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+		                  <td class="whiteBG"><p align="right"> 85.40</p></td>
+	               </tr>
+		           <tr>
+							 
+		            
+	              
+		                 <td class="whiteBG"><p align="center"> 2014-06-15</p></td>
+		                 <td class="whiteBG"><p align="center">  2014-06-16</p></td>
+			                 <td class="whiteBG"><p align="left">
+	                     		5003 :支付宝快捷              /             /CHN[CNY144.00]
+			                 </p></td>
+		                  <td class="whiteBG"><p align="right">  </p></td>
+		                  <td class="whiteBG"><p align="right"> 144.00</p></td>
+	               </tr>
+</table>
+<br>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td height="25" valign="middle"><p><span class="red"><strong>积分奖励计划</strong></span><strong> <span class="red11">Loyalty Plan</span></strong></p></td>
+  </tr>
+</table>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="1" class="gray2">
+  <tr>
+    <td width="10%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">序号</p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">ID</p></td>
+      </tr>
+    </table></td>
+    <td width="16%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">上月积分余额</p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Beginning Balance</p></td>
+      </tr>
+    </table></td>
+    <td width="16%" class="blove"><div align="center">
+      <table border="0" cellpadding="0" width="100%">
+        <tr>
+          <td><p align="center">本期累计积分</p></td>
+        </tr>
+        <tr>
+          <td><p align="center" class="font11">New Points Earned</p></td>
+        </tr>
+      </table>
+    </div></td>
+    <td width="18%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">本期赢取积分</p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">New Points Rewarded</p></td>
+      </tr>
+    </table></td>
+    <td width="13%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">本期兑换积分</p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Points Used</p></td>
+      </tr>
+    </table></td>
+    <td width="14%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">本期积分余额</p></td>
+      </tr>
+      <tr>
+        <td><p align="center" class="font11">Ending Balance</p></td>
+      </tr>
+    </table></td>
+    <td width="13%" class="blove"><table border="0" cellpadding="0" width="100%">
+      <tr>
+        <td><p align="center">到期日</p></td>
+      </tr>
+      <tr>
+        <td class="font11"><p align="center">Expiration Date</p></td>
+      </tr>
+    </table></td>
+  </tr>
+			<tr>
+		 		<td height="20" class="whiteBG" align="center">1</td>
+		 		<td height="20" class="whiteBG" align="center">17177</td>
+		 		<td height="20" class="whiteBG" align="center">0</td>
+		 		<td height="20" class="whiteBG" align="center">0</td>
+		 		<td height="20" class="whiteBG" align="center">7500</td>  
+		 		<td height="20" class="whiteBG" align="center">9677</td>
+		 		<td height="20" class="whiteBG" align="center">
+		  			2014-06-30
+		 		</td>
+			</tr>
+			<tr>
+		 		<td height="20" class="whiteBG" align="center">2</td>
+		 		<td height="20" class="whiteBG" align="center">10083</td>
+		 		<td height="20" class="whiteBG" align="center">0</td>
+		 		<td height="20" class="whiteBG" align="center">0</td>
+		 		<td height="20" class="whiteBG" align="center">0</td>  
+		 		<td height="20" class="whiteBG" align="center">10083</td>
+		 		<td height="20" class="whiteBG" align="center">
+		  			2015-06-30
+		 		</td>
+			</tr>
+			<tr>
+		 		<td height="20" class="whiteBG" align="center">3</td>
+		 		<td height="20" class="whiteBG" align="center">14249</td>
+		 		<td height="20" class="whiteBG" align="center">0</td>
+		 		<td height="20" class="whiteBG" align="center">0</td>
+		 		<td height="20" class="whiteBG" align="center">0</td>  
+		 		<td height="20" class="whiteBG" align="center">14249</td>
+		 		<td height="20" class="whiteBG" align="center">
+		  			2016-06-30
+		 		</td>
+			</tr>
+			<tr>
+		 		<td height="20" class="whiteBG" align="center">总计</td>
+		 		<td height="20" class="whiteBG" align="center"></td>
+		 		<td height="20" class="whiteBG" align="center"></td>
+		 		<td height="20" class="whiteBG" align="center"></td>
+		 		<td height="20" class="whiteBG" align="center"></td>  
+		 		<td height="20" class="whiteBG" align="center">34009</td>
+		 		<td height="20" class="whiteBG" align="center">
+		  			&nbsp;
+		 		</td>
+			</tr>
+	<tr>
+		<td colspan="7" class="whiteBG">注：本期积分赢取为营销活动积分及客服手工加分</td>
+	</tr>
+</table>
+<br>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td height="25" valign="middle"><p><span class="red"><strong>账单信息</strong></span><strong> <span class="red11">Statement Message</span></strong></p></td>
+  </tr>
+</table>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+<tr>
+    <td valign="middle">
+<DIV style="OVERFLOW-Y:auto;width:778px;HEIGHT:200px;ALIGN:center;margin-right: auto; margin-left: auto; border:1px solid pink">
+</DIV>
+</td>
+  </tr>
+</table>
+<br>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+<tr>
+    <td valign="middle">
+<div style="width:778px;heigth:200px;align:center;margin-right: auto; margin-left: auto; border:1px solid pink">
+<table width="778" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="2">
+			<br>&nbsp;“掌握缤纷生活，享受随心服务”，想要知道中行小信家热荐卡片有哪些？想要了解卡片增值服务？满脑子信用卡问号？使<br><br> 
+				用缤纷生活，尽在指尖！对于爱生活的卡粉而言，除了关心信用卡优惠活动外，对于爱卡的积分情况也很在意，缤纷生活，将<br><br>
+				更加便捷地为卡粉们服务，轻松点触，信用卡信息随时、随地、随心享受！想了解更多信息就快来体验吧！<br><br>	
+		</td>
+  </tr>
+  <tr>
+		<td>&nbsp;</td>
+  </tr>
+  <tr>
+		<td><a href="http://itunes.apple.com/cn/app/zhong-guo-yin-xing-xin-yong/id525635672?mt=8"><img style="margin-left:30px;" src="http://twebmail.mail.163.com/js4/s?func=mbox:getMessageData&amp;sid=aCflxRlHPMguSTlTJZHHdwFbqWKtBOPZ&amp;mid=485:xtbB5REAABvrxvAcl1MPcl&amp;part=2"></a></td>
+		<td><a href="https://jf365.boc.cn/AppPrj/down.do?a=2"><img src="http://twebmail.mail.163.com/js4/s?func=mbox:getMessageData&amp;sid=aCflxRlHPMguSTlTJZHHdwFbqWKtBOPZ&amp;mid=485:xtbB5REAABvrxvAcl1MPcl&amp;part=8"></a></td>
+  </tr>
+  <tr>
+		<td>&nbsp;</td>
+  </tr>
+  <tr>
+		<td width="303px;">
+			<a href="http://itunes.apple.com/cn/app/zhong-guo-yin-xing-xin-yong/id525635672?mt=8">
+					<span class="15" style="margin-left: 30px; font-size: 10pt; visibility: visible; color: rgb(72,109,174); font-family: '宋体'; mso-spacerun: 'yes'">
+					http://itunes.apple.com/cn/app/zhong-gu</span><br>
+					<span class="15" style="margin-left: 30px; font-size: 10pt; visibility: visible; color: rgb(72,109,174); font-family: '宋体'; mso-spacerun: 'yes'">
+					o-yin-xing-xin-yong/id525635672?mt=8</span></a>
+		</td>
+		<td>
+			<a href="https://jf365.boc.cn/AppPrj/down.do?a=2"><span class="15" style="font-size: 10pt; visibility: visible; color: rgb(72,109,174); font-family: '宋体'; mso-spacerun: 'yes'">
+					https://jf365.boc.cn/AppPrj/down.do?a=2</span></a>
+		</td>
+  </tr>
+  <tr>
+		<td>&nbsp;</td>
+  </tr>
+  <tr>
+		<td>
+			<img style="margin-left:30px;" height="80" alt="" width="81" src="http://twebmail.mail.163.com/js4/s?func=mbox:getMessageData&amp;sid=aCflxRlHPMguSTlTJZHHdwFbqWKtBOPZ&amp;mid=485:xtbB5REAABvrxvAcl1MPcl&amp;part=6"> 
+			<span style="position:absolute; width:160px; margin-top:32px">使用二维码下载到手机<br></span>
+		</td>
+		<td>
+			<img height="80" alt="" width="81" src="http://twebmail.mail.163.com/js4/s?func=mbox:getMessageData&amp;sid=aCflxRlHPMguSTlTJZHHdwFbqWKtBOPZ&amp;mid=485:xtbB5REAABvrxvAcl1MPcl&amp;part=9"> 
+			<span style="position:absolute; width:160px; margin-top:32px">使用二维码下载到手机<br></span>
+		</td>
+  </tr>
+  <tr>
+		<td>&nbsp;</td>
+  </tr>
+  <tr>
+  	<td colspan="2">
+  		注册流程:<br><br>  
+  		&nbsp;&nbsp;&nbsp;&nbsp;1.请输入您已激活信用卡（非借记卡）卡号后6位；<br><br> 
+  		&nbsp;&nbsp;&nbsp;&nbsp;2.请输入手机号码(注意此手机号码必须为银行预留的手机号码)；<br><br> 
+  		&nbsp;&nbsp;&nbsp;&nbsp;3.根据提示输入用户名（默认为预留手机号码），密码（8-16位，数字和字母组合，并区分大小写），确认后提交；<br><br> 
+  		&nbsp;&nbsp;&nbsp;&nbsp;4.请点击接收验证码，效验成功后，注册成功！<br><br>
+  	</td>
+	</tr>
+</table>
+</div>
+</td>
+  </tr>
+</table>
+<br>
+<table width="778" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr><td><p><img alt="" width="778" src="http://twebmail.mail.163.com/js4/s?func=mbox:getMessageData&amp;sid=aCflxRlHPMguSTlTJZHHdwFbqWKtBOPZ&amp;mid=485:xtbB5REAABvrxvAcl1MPcl&amp;part=4"></p>
+</td></tr>
+    <tr><td><p><img width="778" height="45" alt="" src="http://twebmail.mail.163.com/js4/s?func=mbox:getMessageData&amp;sid=aCflxRlHPMguSTlTJZHHdwFbqWKtBOPZ&amp;mid=485:xtbB5REAABvrxvAcl1MPcl&amp;part=3"></p>
+</td></tr>
+  </tbody>
+</table>
+<br>
+<body>
+</body></body></html> 
+
+<script language="javascript">try{parent.JS.modules[window.name].content.setHeight();}catch(e){}</script>
+
+		<br/>
+		<br/>
+		<br/>
+		<div>邮件头</div>
+		Received:from mailgate3.bankofchina.com (unknown [219.141.191.6])
+	by mx35 (Coremail) with SMTP id VcCowEAZOkj456dT6rLiAQ--.409S11;
+	Mon, 23 Jun 2014 16:40:29 +0800 (CST)
+Received:from unknown (HELO P570_persis_BCSP) ([21.7.1.150])
+  by mailgate3.bankofchina.com with ESMTP; 23 Jun 2014 16:32:36 +0800
+From:PersonalService@bank-of-china.com
+To:sgs5618@163.com
+Date:Mon, 23 Jun 2014 16:34:34 +0800 (GMT+08:00)
+
+		</body>
+</html>

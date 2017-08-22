@@ -1,0 +1,1387 @@
+
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>邮件账单列表</title>
+		<meta charset="utf-8" />
+		<link href="css/base.css" rel="stylesheet" type="text/css">
+		<link href="css/mail.css" rel="stylesheet" type="text/css">
+		<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/userbill.js"></script>
+	</head>
+	<body>
+  		 <a href="download.do?mailId=84_3311851_330367976">附件下载</a>
+		<div class="showTable">
+			<table>
+			  <thead>
+			    <tr>
+        			<th>银行</th>
+                    <th>持卡人</th>
+                    <th>账单周期</th>
+                    <th>卡号后四位</th>
+                    <th>最后还款日</th>
+                    <th>本期应还款</th>
+                    <th>最低还款额</th>
+                    <th>信用额度/取现额度</th>
+                    <th>上期应还额</th>
+                    <th>本期积分</th>
+                    <th>新增积分</th>
+                    <th>BillID</th>
+                    <th>UBID</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  </tbody>
+			</table>
+		<div style="float:right"> <a href="javascript:void(0)" onclick="UserBill.ChangeAnalyzeState()">解析错误</a> </div>
+		</div>
+		<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=gb18030" /><meta http-equiv="X-UA-Compatible" content="IE=Edge" /><title>兴业银行信用卡07月电子账单 - QQ邮箱</title><script>
+document.domain="mail.qq.com";
+function getTop()
+{
+var f=arguments.callee,w;
+    !(f.execption) && (f.execption = "");
+if(!f.t)
+{try{w=window;f.t=w!=parent?(parent.getTop?parent.getTop():parent.parent.getTop()):w;}catch(e){f.t=reTryGetTop();f.execption=e.message;}}
+return f.t;
+}
+function reTryGetTop()
+{
+var _oWin = window,
+_oWinParent = parent;
+try
+{
+while(_oWin != _oWinParent)
+{
+_oWin = _oWinParent;
+_oWinParent = _oWinParent.parent;
+}
+}
+catch(e)
+{
+ossLogForSetFrame.getTopException = true;
+}
+return _oWin;
+};
+try{window.top=getTop();}catch(e){eval("var top=getTop();");}
+var gsUsed="90";
+var gbSupportNW=true;
+var g_uin="769445501";
+window == getTop() && document.write('<script src="https://res.mail.qq.com/zh_CN/htmledition/js/all272f7b.js"></'+'script>');
+(getTop().initPageEvent || function(){})(window);
+</script><script>parent.beginStatTime && parent.beginStatTime(window);</script><script>
+(function(){
+getTop().rdVer.check(window,"ZC4610-UC0LCsRTZLgnOBVANjniI57",15722);
+})();
+</script><link rel="stylesheet" type="text/css" href="https://res.mail.qq.com/zh_CN/htmledition/style/comm201026ba63.css" /><link rel="stylesheet" type="text/css" href="https://rl.mail.qq.com/cgi-bin/getcss?sid=VSggqGZMbbEePRBF&ft=skin" /><link rel="stylesheet" type="text/css" href="https://res.mail.qq.com/zh_CN/htmledition/style/readmail2012264d3e.css" /><script>
+getTop().loadJsFileToTop([
+"https://res.mail.qq.com/zh_CN/htmledition/js/readmail22675d7.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/qmqzoneimg24e6b9.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/com/kits/qmeditor/qqmail/release/editor270dc9.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/com/kits/qmpreviewer/js/qmpreviewer270e4e.js", "https://res.mail.qq.com/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js"
+]);
+//getTop().loadJsFileToTop("https://res.mail.qq.com/zh_CN/htmledition/js/", ["qmqzoneimg24e6b9.js"]);
+
+getTop().loadJsFileToTop(["https://res.mail.qq.com/zh_CN/htmledition/js/qmnetdisk25faf1.js"]);
+</script><script> function SendStatusOpt(isIng, isFail)
+{
+getTop().show(getTop().S("sendstatusloading", document), isIng);
+getTop().show(getTop().S("sendstatusloadfail", document), isFail);
+}
+
+function GetSendStatusIng()
+{
+SendStatusOpt(true, false);
+}
+
+function GetSendStatusOK()
+{
+SendStatusOpt(false, false);
+}
+
+function GetSendStatusFail()
+{
+var frame = getTop().S("mailSendStatus", document);
+if (getTop().isShow("sendstatusloading") && frame.src != "")
+{
+SendStatusOpt(false, true);
+frame.src = "";
+}
+}
+
+function checkSenderImg( _aImgObj, _aReportEmail ) 
+{
+var _isLoadGravaterOK = parseInt( _aImgObj.width ) == 40 || parseInt(_aImgObj.width) == 96;
+if ( _isLoadGravaterOK )
+{
+_aImgObj.parentNode.style.visibility='visible';
+}
+}
+
+</script><style>body {background:#fff;color:#000;font-weight:normal;font-family:"lucida Grande",Verdana,"Microsoft YaHei";padding:0 7px 6px 4px;margin:0;}.MacOS body {font-family:"lucida Grande",Verdana;}.qmbox{padding:0;}.qm_con_body_content{height:auto;min-height:100px;_height:100px;word-wrap:break-word;font-size:14px;font-family: "lucida Grande",Verdana,"Microsoft YaHei";}.MacOS .qm_con_body_content{font-family: "lucida Grande",Verdana;}body.thumb_list_readmail {padding:0;}.thumb_list_readmail #nextnewDiv,.thumb_list_readmail #nextmail_top,.thumb_list_readmail #nextmail_bt{display:none;}</style></head><body  context="ZC4610-UC0LCsRTZLgnOBVANjniI57" module="qmReadMail" md="md" mu="mu"><div class="mailcontainer" id="qqmail_mailcontainer"><div module="qmSenderInfo" id="senderInfo" class="attbg mysidebar" style="_margin-top:2px;height:auto;*height:100%;display:none;z-index:20"><div class="bd" style="font-size:14px;font-weight:bold;border-width:0 0 2px 0;height:auto;padding:7px 2px 3px;margin:6px;clear:both;"><div  style="float:right;"><a ck="toggle" href="javascript:;" style="font-size:12px;font-weight:normal;">关闭</a></div>发件人信息</div><div style="margin:8px 6px 0 6px;"><div style="height:40px;"><div class="tcolor qm_left txtflow" style="margin:2px 0 0 2px;width:168px;"><b class="grn" style="font-size:14px;font-weight:bold;">兴业银行信用卡中心</b>&nbsp;</div><div class="clear" style="margin:2px 0 0 2px;width:164px;"><div class="qm_left txtflow graytext" style="width:128px"><span title="creditcard@message.cib.com.cn">creditcard@message.cib.com.cn</span></div><div style="float:right;"><a href="/cgi-bin/addr_detail?sid=VSggqGZMbbEePRBF&AddrID=-1&t=addr_detail_edit&s=edit&rmqqgroup=1">编辑</a></div></div></div><div class="toolbg clear" style="padding:5px 0 4px 6px;margin-top:4px;height:auto;"><span class="txtcolor">往来邮件</span>&nbsp;</div><div id="divMails_sidebar" class="clear" style="margin:6px 0 0 0"><div style="margin:6px" class="tcolor">正在加载...</div></div><br/><br/></div></div><form id="remind_frm" name="remind_frm" method="post" target="actionFrame" action="/cgi-bin/reminder_mgr?sid=VSggqGZMbbEePRBF"><input type="hidden" name="sid" value="VSggqGZMbbEePRBF"/><input type="hidden" name="action" value="cancle"/><input type="hidden" name="ruleid"/><input type="hidden" name="from"/></form><div id="mainmail" style="position:relative;z-index:1;margin-bottom:12px;"><div class="toolbg toolbgline toolheight" id="toolbgline_top" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_top"><a style="color:#a0a0a0" disabled&nbsp; id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="ZC4210-l~rzt3lzeKTcUn8qTxQ1U56" type="normal"title="下一封：兴业银行信用卡06月电子&lt;span&gt;&lt;span&gt;账单&lt;/span&gt;&lt;/span&gt;" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all1" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="creditcard@message.cib.com.cn" name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="creditcard@message.cib.com.cn"name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div><div class="readmailinfo" style="position:relative;z-index:2;zoom:1;"><span id="subjectTip"></span><table style="height:24px" border="0" cellspacing="0" cellpadding="0"><tr><td height="24" valign="middle" style="word-break:break-all;padding:9px 8px 2px 14px;" class="txt_left settingtable readmail_subject"><div class="qm_left"  style="padding-bottom:3px;"><span id="subject" class="sub_title " >兴业银行信用卡07月电子账单</span><input type="button" id="img_star" ck="starMail" class="qm_ico_flagoff" title="标为星标"  hidefocus/></div><div id="tagContainer" ck="tag" class="TagDiv TagReadmail" style="overflow:visible;margin-top:0;"></div><div class="clr"></div></td><td module="qmSenderInfo" id="senderInfo2" width="1%" nowrap  class="f_size settingtable" style="padding:5px 12px 0 0;text-align:right;"><div style="width:45px;text-align:left;visibility:hidden;"> <img id="qqiconimg" src="/cgi-bin/getqqicon?sid=VSggqGZMbbEePRBF&uin=&mode=newaddr&mailaddr=creditcard%40message.cib.com.cn" style="position:absolute;margin:-14px 0 0 0;" class="qqshowbd"  onload="checkSenderImg(this)"/></td></tr></table><table border="0" cellspacing="0" cellpadding="0"><tr><td style="padding-left:14px;" class="settingtable txt_left"><span class="addrtitle">发件人：</span><span rejecthtml="rejectionhtml"  t="1" e="creditcard@message.cib.com.cn" u="" n="兴业银行信用卡中心" addrvip="" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC4610-UC0LCsRTZLgnOBVANjniI57" xqs="0" fid="131" cfid="131" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="0" isad="0"mop="1"sa="0"   addrid="-1"  se="1" ><b t="u" class="grn">兴业银行信用卡中心</b>&nbsp;<b class="tcolor" t="u" id="tipFromAddr_readmail" fromaddr="creditcard@message.cib.com.cn">&lt;creditcard@message.cib.com.cn&gt;</b>&nbsp;&nbsp;<input t="u" type="button" class="ico_profileTips" align="top" />&nbsp;</span>&nbsp;<script type="text/javascript">
+(function(_aoWin){
+_aoWin["_oOperPanel"] = {};
+                            131
+_aoWin["_oOperPanel"].rejectionhtml = '<a id="antispamid2" href="javascript:;" mimefrom="creditcard@message.cib.com.cn" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a>';
+_aoWin["_oOperPanel"].operhidepanel = '<span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span>';
+if(_aoWin["_oOperPanel"].rejectionhtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="rejectionhtml">' +  _aoWin["_oOperPanel"].rejectionhtml + '</span>';
+}
+if(_aoWin["_oOperPanel"].filinghtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="filinghtml">' +  _aoWin["_oOperPanel"].filinghtml + '</span>';
+}
+})(window)
+</script><span id="operhidepanel" style="display:none"><span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span><span id="rejectionhtml"><a id="antispamid2" href="javascript:;" mimefrom="creditcard@message.cib.com.cn" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a></span></span><span id="latestqzone"></span>      </td><td width="1%" nowrap style="padding-right:12px;" class="settingtable"></td></tr></table><table  border="0" cellspacing="0" cellpadding="0"><tr><td style="word-break:break-all;padding:2px 12px 0 14px;line-height:19px;" width="99%" class="settingtable txt_left"><span class="addrtitle">时&nbsp;&nbsp;&nbsp;间：</span><b class="tcolor">2015年7月10日(星期五) 下午5:57</b></td><td nowrap valign="bottom" style="padding:4px 10px 2px 0;*padding:4px 10px 2px 0;text-align:right" width="1%" rowspan="2"  class="txt_right settingtable noUnderLineList"><span style="display:none;vertical-align:6px;vertical-align:4px\9;"><a  href="javascript:location.href='/cgi-bin/readmail?disptype=text&sid=VSggqGZMbbEePRBF&mailid=ZC4610-UC0LCsRTZLgnOBVANjniI57&s='+(getTop().bnewwin?'&newwin=true':'')">纯文本</a> | </span><a href="javascript:;" ck="newWinRead"><span type="button" class="qm_ico_reopen" title="新窗口读信" ></span></a><a href="javascript:;"><span id="rmd" module="qmRemark" ck="toggle" class="qm_ico_remarkoff" title="添加邮件备注" ></span></a><a href="javascript:;"><span ck="createRule" fromaddr="creditcard@message.cib.com.cn"                     class="qm_ico_addFilter" title="归档至..."></span></a><a href="javascript:;"><span class="qm_ico_print" id="mail_print" title="打印" onClick="window.open('/cgi-bin/readmail?sid=VSggqGZMbbEePRBF&t=readmail_print&s=print&filterflag=true&mailid=ZC4610-UC0LCsRTZLgnOBVANjniI57');" ></span></a><a id="aSwitchOption" onClick="getTop().switchOption(window)" style="text-decoration:none;" hidefocus><span class="qm_ico_quickdown" alt="显示更多操作" id="display_more_operator" ></span></a><span id="tipRemindEdit"></span></td></tr><tr><td style="padding:0 0 0 14px;line-height:19px;"  class="settingtable txt_left"><div><div class="addrtitle nowrap" style="position:absolute;">收件人：</div><div style="padding-left:48px;font-size:12px;overflow:hidden; zoom:1;"><span style="white-space:nowrap;height:18px;line-height:18px; " class="left" t="1" e="769445501@qq.com" u="-1187665080" n="一切为了生活" mop="1" addrvip="" rejecthtml="rejectionhtml" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC4610-UC0LCsRTZLgnOBVANjniI57" xqs="0" fid="131" cfid="131" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="0" sd="0"se="0" >一切为了生活&nbsp;<b t="u" class="tcolor">&lt;769445501@qq.com&gt;</b></span></div></div></td></tr><tr><td style="padding:0 14px;line-height:20px;"  class="settingtable txt_left"><span id="trOption" style="display:none"><span class="addrtitle">大&nbsp;&nbsp;&nbsp;小：</span>20K<br/><a  href="javascript:;" ck="optMail2" opt="print">打印</a>&nbsp;|&nbsp;<a  href="javascript:;" ck="optMail2" opt="mime" title="显示邮件的源代码">显示邮件原文</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="dleml" title="导出为邮件客户端可用的文件">导出为eml文件</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="code" title="改变页面编码以解决邮件乱码问题">邮件有乱码？</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fwgroup">转发到群邮件</a><span >&nbsp;|&nbsp;<a id="savetonotepad" href="javascript:;" ck="optMail2" opt="note">保存到记事本</a><span id="remind_add_mailid:ZC4610-UC0LCsRTZLgnOBVANjniI57">&nbsp;<span id="addtoremind">|&nbsp;<a href="javascript:;" ck="optMail2" opt="remind">添加到日历</a></span><span id="remind_edit_ZC4610-UC0LCsRTZLgnOBVANjniI57" class="pointer"></span></span>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fweml">作为附件转发</a></span></td></tr></table><div module="qmRemark" id="remarkcontainer" style="display:none; margin:5px 0 0;; padding:2px 0 0;"><div  class="qqshowbd" style="border-width:1px 0 0;padding:7px 14px 2px;"><div class="addrtitle qm_left" style="*margin-top:3px;">备　注：</div><div id="remarkread" style="display:none; margin-left:48px;*margin-left:45px;width:463px;*width:475px;"><div class="remarksContent" id="remarkContent" ck="modify" style="font-size:12px;min-height:42px;padding:10px;background:#fff6cf; border:1px solid #dec694;color:#733900;line-height:18px;" title="点击编辑"></div><div class="attbg" style="padding:4px 0 4px 8px;"><a href="javascript:;" ck="modify" style="margin-right:5px;"><input style="background:url(https://res.mail.qq.com/zh_CN/htmledition/images/newicon/mail24aa78.png) scroll -64px -142px; width:12px; height:14px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()" />编辑</a><a href="javascript:;" ck="del"><input style="background:url(https://res.mail.qq.com/zh_CN/htmledition/images/newicon/mail24aa78.png) scroll -80px -142px; width:13px; height:13px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()">删除</a></div></div><div class="remarkModify" style="display:none;margin-left:45px;" id="remarkwrite"><textarea id="remarktext" style="width:475px;*height:74px;min-height:72px;font-size:14px; overflow:hidden; margin:0 0 3px; padding:3px; color:#A0A0A0;" class="qm_txt" >请在此输入备注...</textarea><div style="margin-left:3px;*margin-left:6px;"><input type="button" class="qm_btn wd2" value="保存" ck="save" id="remarksave"/><a ck="cancel" id="remarkdel" style="*vertical-align:5px;display:inline-block;padding-left:6px;">取消</a></div></div></div></div><table border="0" cellspacing="0" cellpadding="0">        <tr><td class="onesize settingtable" style="height:5px;"></td></tr></table>    <div class="txt_left"><div class="attbg" id="starStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件。&nbsp;<a id="starStatuslink" ck="starMail" href="javascript:;">取消星标</a></div><div class="attbg" id="mailtopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件在列表中置顶。&nbsp;<a id="mailtopStatuslink" ck="topMail" href="javascript:;">取消置顶</a></div><div class="attbg" id="starTopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件，并在列表中置顶。&nbsp;<a ck="starMail" href="javascript:;">取消星标</a>&nbsp;<a ck="topMail" href="javascript:;">取消置顶</a></div><script>
+
+</script><div class="attbg" id="reminderContainer_mailid:ZC4610-UC0LCsRTZLgnOBVANjniI57" style="padding:5px 14px;display:none;"></div><div id="spam" module="qmAntiSpam" name="spam" style="zoom:1;">  </div>        <div class="alert_tips_yellow">    <span>开通我的账单，轻松管理信用卡。&nbsp;&nbsp;<a href="/bill/?sid=VSggqGZMbbEePRBF&from=readmail_open">我要开通</a></span><script>
+(new Image()).src = '/cgi-bin/do?sid=VSggqGZMbbEePRBF&action=oss_report&group=ReadmailGuideTip';
+</script></div></div></div><!-- page end--><div id="pageEnd" style="display:none;clear:both;position:relative;z-index:2;"><div id="bgmusic" style="padding:6px 0;display:none;margin-left:12px">您的朋友 兴业银行信用卡中心 为这封邮件插入了背景音乐 - <a  target="_blank">下载</a>&nbsp;&nbsp;<a href="javascript:;">播放</a><a name="player"></a></div><div id="mp3player_info" style="padding:0 0 10px 0;margin-left:12px;display:none;">&nbsp;</div><div id="mp3player_container" style="padding:0 0 20px 0;margin-left:12px; margin-top:10px; display:none;">播放器加载中...</div><div module="qmQReply" id="quickreply" class="quickreply" style="margin:0;"><div class="qm_msg infobar" id="afterSendingDiv" style="margin-top:-25px;position:absolute;border:0;padding:4px 12px 4px;display:none;">正在发送...</div><div class="bd" style="border-width:0 0 1px 0;"></div><div style="padding:10px 0 0 8px;border-bottom:1px solid #fff;height:24px;display:none;" class="settingtable" id="afterSendDiv"> 此邮件已成功发送。<a ck="readyToWrite" href="javascript:;" >再回一封</a></div><div class="settingtable" id="QuickReplyPart" style="height:auto;min-height:10px;border-bottom:1px solid #fff;padding-top:10px;padding-botom:8px;overflow:hidden;z-index:1000;clear:both;"><div style="width:100%;"><div id="Senderdiv" style="margin:-10px 0 0 0;*margin:-3px 0 0 0;padding:6px 0 10px 0;*padding:0 0 7px 0;display:none;"></div><div class="qm_left" style="width:99.5%;" id="qmQuickReplyTextContainer" ><div style="width:99.5%;"><textarea id="source" md="checkBcc" class="graytext qm_txt" accesskey="q" style="height:16px;width:100%;overflow:hidden;">快捷回复给：兴业银行信用卡中心</textarea></div></div><div class="" style="width:99.5%;display:none;z-index:1;float:left;" id="rteContainer"><div md="stopFold" ck="jump" style="float:right;margin:3px 0 0 6px;*margin:0;" ><input type="button" class="ico_input icon_switch_compose"  style="margin-right:4px;margin-bottom:3px;*margin-bottom:0;vertical-align:middle;"/><a href="javascript:;" id="jumpToNewWin">切换到完整写信模式</a></div><div style="margin:2px 0 3px 1px;white-space:nowrap;*margin-top:0;" class="addrtitle"><span id="QMEditorToolBarPlusArea"  ></span><span id="tooBarContain"></span></div><div id="QMEditorArea" style="" tIndex="1"><script>try{document.write( outputDataLoading( true ) );}catch(e){}</script></div><div class="clr"></div></div><div style="display:none;clear:both;float:left;width:99.5%;margin-top:5px;height:40px;" id="qmQuickReplyButtonContainer"><a md="stopFold" ck="send" href="javascript:void(0);" tabIndex="2" id="sendbtn" name="sendbtn" class="left bold b_size button_green_s">&nbsp;发送&nbsp;</a><div class="clr"></div></div><div class="clr"></div></div></div></div><div id="nextnewDiv" onMouseOver="this.className='attbg mail_readmode'" onMouseOut="this.className='toolbg mail_readmode'" class="toolbg mail_readmode" style="clear:both;position:relative;z-index:2;cursor:pointer;padding:0 8px 0 7px;zoom:1;display:none;" ck="prevandnext" mailid="" ><div class="bd" style="padding:2px 0 6px 0;*padding:6px 0 0 0;border-width:0 0 1px 0;"><div class="qm_left" style="margin:6px 0 0 1px;">下一封未读：</div><div class="qm_left" style="margin:0x 0 0 1px;*margin:-2px 0 0 1px"><input type="button"  style="display:block;padding:0;float:left;width:18px;height:16px;margin:5px 0 0;cursor:default;border:0;" class="Ru" /></div><div style="margin:6px 0 0 0;*margin:4px 0 0 0"><span id="nextnewmail" style="color:#000;" class="bold" target="actionFrame" name="_QQMail_ReferenceGroupMail_"></span></div><div class="clr"></div></div></div><div class="toolbg toolbgline toolheight" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_bt"><a style="color:#a0a0a0" disabled&nbsp; id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="ZC4210-l~rzt3lzeKTcUn8qTxQ1U56" type="normal"title="下一封：兴业银行信用卡06月电子&lt;span&gt;&lt;span&gt;账单&lt;/span&gt;&lt;/span&gt;" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all2" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="creditcard@message.cib.com.cn" name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="creditcard@message.cib.com.cn"name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div></div><div style="position:absolute;right:0px;width:1px;height:1px;"><div id="tip74container"></div></div><div id="contentDiv" onmouseover="getTop().stopPropagation(event);" onClick="getTop().preSwapLink(event, 'html', 'ZC4610-UC0LCsRTZLgnOBVANjniI57');" style="position:relative;font-size:14px;height:auto;padding:15px 15px 10px 15px;z-index:1;zoom:1;line-height:1.7;overflow:hidden;" class="body">    <div class="" id="qm_con_body"><div id="mailContentContainer" class="qmbox qm_con_body_content">
+
+
+
+
+
+
+
+
+
+
+<table width="800" style="border:solid #023F98 1pt;margin:0;border-collapse:collapse;font-size:0;" cellpadding="0" cellspacing="0">
+
+<tr>
+
+<td>
+
+
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_top_logo.jpg" width="802" border="0" hspace="0" vspace="0"  />
+
+<table width="125%" background="http://creditcard.cib.com.cn/card/customer/images/V1_nav_bg.jpg" style="text-align:center;font-size:9pt;margin:0;" cellpadding="0" cellspacing="0">
+
+ <tr>
+
+  <td height="40">
+
+	<a href="http://creditcard.cib.com.cn" style="text-decoration:none;color:#012C6B;" target="_blank">信用卡首页</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/apply/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">信用卡申请</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/guide/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">用卡指南</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/promotion/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">缤纷优惠</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/integral/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">积分计划</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/feature/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">特色专区</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/travel/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">商旅中心</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/stage/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">分期业务</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/credit/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">信贷理财</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/news/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">最新资讯</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td width="200">
+
+	 	
+
+  </td>
+
+ </tr>
+
+</table>
+
+<table width="100%">
+
+ <tr>
+
+  <td width="400" height="80"></td>	
+
+  
+
+  <td valign="center">
+
+   <a href="http://creditcard.cib.com.cn/news/notice/2015/20150116.html" target="_blank"><img src="http://creditcard.cib.com.cn/card/customer/images/0000/SE000006006.jpg" border="0"  /></a>
+
+  </td>
+
+  
+
+ </tr>
+
+ <tr>
+
+  <td colspan="2" style="font-size:9pt;line-height:23px;">
+
+  	<table width="95%" align="center" style="font-size:9pt;line-height:23px;">
+
+  	<tr>
+
+  		<td>尊敬的 张维雷 先生 您好!<br  />
+
+  	  </td>
+
+    </tr>
+
+    <tr> 
+
+  		<td>　　感谢您选择兴业银行信用卡，以下是您<b>银联标准人民币信用卡金卡（卡号末四位 3108）</b>的<b>2015年07月</b>账单，请勿错过您的还款期限。
+
+  	  </td>
+
+    </tr>
+
+    <tr> 
+
+  		<td>
+
+      <font color="#0269F4"><b>　　您可对已出账单申请分期付款，3、6、12、18、24期自由选择！办理请登录信用卡网上银行、手机银行（wap.cib.com.cn）或致电客服热线95561。</b></font>
+
+  	  </td>
+
+    </tr>
+
+    
+
+    
+
+    
+
+    
+
+  </table>
+
+
+
+  </td>
+
+ </tr>
+
+</table>
+
+<p></p>
+
+
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_acct_bar.jpg" border="0" usemap="#ins_repay"  />
+
+<map name="ins_repay">
+
+	<area shape="rect" coords="577,0, 796,32" href="https://ccbank.cib.com.cn/transaction/index.jsp?funcID=BillStageExecute" target="_blank"  />
+
+</map>
+
+<table width="800" style="background:#E3EEFD;border:solid #023F98 1pt;font-size:9.0pt;line-height:23px;margin:3 0 0 1;" cellpadding="6">
+
+ <tr>
+
+  <td width="2%"></td>
+
+  <td width="42%">
+
+	账单周期 <font face="Times New Roman">Statement Cycle</font> 2015/06/10-2015/07/09
+
+	<br  />
+
+	信用额度(人民币) <font face="Times New Roman">Credit Limit(RMB)</font> 10,000
+
+	<br  />
+
+	预借现金额度(人民币) <font face="Times New Roman">Cash Advance Limit(RMB)</font> 5,000
+
+
+
+
+
+
+
+
+
+  </td>
+
+  <td width="5%"></td>
+
+  <td>
+
+	<font color="#339900">到期还款日 <font face="Times New Roman">Payment Due Date</font><b> 2015年07月29日</b></font>
+
+	<br  />
+
+	<font color="#339900">本期应还款总额 <font face="Times New Roman">New Balance</font><b> RMB 9,568.28</b></font>
+
+	<br  />
+
+	本期最低还款额  <font face="Times New Roman">Minimum Payment</font> RMB 478.41<font></font>
+
+  </td>
+
+ <tr>
+
+</table>
+
+<table width="100%" style="margin:0" cellpadding="0" cellspacing="0">
+
+ <tr>
+
+  <td align="right">
+
+	<img src="http://creditcard.cib.com.cn/card/customer/images/V2_repay.jpg" border="0" usemap="#repay_link"  />
+
+	<map name="repay_link">
+
+		<area shape="poly" coords="5,1,134,1,134,21,19,21" href="http://creditcard.cib.com.cn/card/repay/pdebit/phone.html" target="_blank"  />
+
+		<area shape="poly" coords="141,1,261,1,261,21,153,21" href="https://personalbank.cib.com.cn/" target="_blank"  />
+
+		<area shape="poly" coords="267,1,397,1,397,21,281,21" href="https://www.99bill.com/ebpp/common/ebill/creditcardpay.htm?creditCardBank=109" target="_blank"  />
+
+		<area shape="poly" coords="402,1,525,1,525,21,415,21" href="https://www.tenpay.com/v2.0/main/credit/portal_creditcard.shtml" target="_blank"  />
+
+		<area shape="poly" coords="532,1,659,1,659,21,544,21" href="http://www.chinapay.com/" target="_blank"  />
+
+		<area shape="poly" coords="663,1,791,1,791,21,677,21" href="https://ccrprod.alipay.com/ccr/repayPub.htm?cardBank=CIB" target="_blank"  />
+
+	</map>
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<table width="100%">
+
+ <tr>
+
+  <td width="400">
+
+	<table style="text-align:center;font-size:0;">
+
+	 <tr>
+
+	  <td>
+
+	  
+
+		<a href="http://creditcard.cib.com.cn/promotion/national/20150623.html" target="_blank"><img width="390" height="180" src="http://creditcard.cib.com.cn/card/customer/images/1507/SE150707211.jpg" border="0"  /></a>
+
+	  
+
+		<a href="http://creditcard.cib.com.cn/promotion/national/20150529.html" target="_blank"><img width="390" height="180" src="http://creditcard.cib.com.cn/card/customer/images/1507/SE150707212.jpg" border="0"  /></a>
+
+	  
+
+	  </td>
+
+	 </tr> 
+
+	</table>
+
+  </td>
+
+  <td>
+
+
+
+	<table>
+
+	 <tr>
+
+	  <td colspan="2" valign="top" align="center">
+
+	   	<img src="http://creditcard.cib.com.cn/card/customer/images/V1_bp_change.gif" border="0"  />
+
+	  </td>
+
+	 </tr>
+
+	 <tr>
+
+	  <td colspan="2" style="font-size:9.0pt;padding:5pt 5pt 0pt 5pt">
+
+	     <br  />
+
+	   	 您本月新增积分为9,568分，当前积分余额为126,799分。
+
+	   	 积分不够您还可以选择预借积分的方式兑换您心仪的积分商品，赶快登录积分商城或致电客服热线兑换吧！
+
+	     <p></p>
+
+	  </td>
+
+	 </tr>
+
+	 <tr>
+
+	  
+
+	  <td>
+
+	   <a href="http://ccjf.cib.com.cn/integral/web/productDetail/detailProduct.action?iProduct=20456" target="_blank"><img width="183" height="121" src="http://creditcard.cib.com.cn/card/customer/images/1507/SE150700010.jpg" border="0"  /></a>
+
+	  </td>
+
+	  
+
+	  <td>
+
+	   <a href="http://ccjf.cib.com.cn/integral/web/productDetail/detailProduct.action?iProduct=18991" target="_blank"><img width="183" height="121" src="http://creditcard.cib.com.cn/card/customer/images/1507/SE150700020.jpg" border="0"  /></a>
+
+	  </td>
+
+	  
+
+	 </tr>
+
+	 <tr>
+
+	  
+
+	  <td>
+
+	   <a href="http://ccjf.cib.com.cn/integral/web/productDetail/detailProduct.action?iProduct=19934" target="_blank"><img width="183" height="121" src="http://creditcard.cib.com.cn/card/customer/images/1507/SE150701010.jpg" border="0"  /></a>
+
+	  </td>
+
+	  
+
+	  <td>
+
+	   <a href="http://ccjf.cib.com.cn/integral/web/productDetail/detailProduct.action?iProduct=20372" target="_blank"><img width="183" height="121" src="http://creditcard.cib.com.cn/card/customer/images/1507/SE150701020.jpg" border="0"  /></a>
+
+	  </td>
+
+	  
+
+	 </tr>
+
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_dtl_bar.jpg" border="0"  />
+
+<table width="800" style="text-align:center;border-collapse:collapse;margin:3 1 0 1;" cellpadding="5">
+
+ <tr style="background:#B4CBEB;font-size:9.0pt;font-weight:bold;">
+
+  <td width="33%">
+
+  	人民币账户<br  />
+
+  	RMB A/C
+
+  </td>
+
+  <td width="33%">
+
+	本期应缴余额:9,568.28元<br  />
+
+	New Balance
+
+  </td>
+
+  <td width="33%">
+
+	本期最低还款额:478.41元<br  />
+
+	Minimum Payment
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<table width="800" style="text-align:center;border:solid #023F98 1pt;margin:0 0 0 1;">
+
+ <tr style="font-size:9.0pt;">
+
+  <td width="15%">
+
+  	本期应缴余额<br  />
+
+  	<font size="2" face="Times New Roman">New Balance</font><br  />
+
+  	9,568.28
+
+  </td>
+
+  <td width="2%">=</td>
+
+  <td width="15%">
+
+	上期账单余额<br  />
+
+	<font size="2" face="Times New Roman">Previous Balance</font><br  />
+
+	-0.32
+
+  </td>
+
+  <td width="2%">-</td>
+
+  <td width="15%">
+
+	已还金额<br  />
+
+	<font size="2" face="Times New Roman">Payment & Credit</font><br  />
+
+	0.00
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="15%">
+
+	本期账单金额<br  />
+
+	<font size="2" face="Times New Roman">New Activity</font><br  />
+
+	9,568.60
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="15%">
+
+	本期调整金额<br  />
+
+	<font size="2" face="Times New Roman">Adjustment</font><br  />
+
+	0.00
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="15%">
+
+	循环利息<br  />
+
+	<font size="2" face="Times New Roman">Finance Charge</font><br  />
+
+	0.00
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<table width="800" style="text-align:center;border-collapse:collapse;font-size:9.0pt;margin:3 1 0 1;" cellpadding="5">
+
+ <tr style="text-align:left;background:#B4CBEB;font-weight:bold;">
+
+  <td colspan="10">
+
+	积分账户<br  />
+
+	<font size="2" face="Times New Roman">Bonus Point Account</font>
+
+  </td>
+
+ </tr>
+
+</table>
+
+<table width="800" style="text-align:center;font-size:9.0pt;border:solid #023F98 1pt;margin:0 0 0 1;">
+
+ <tr style="font-size:9.0pt;">
+
+  <td width="17.5%">
+
+  	本期积分余额<br  />
+
+  	<font size="2" face="Times New Roman">Bonus Point Balance</font><br  />
+
+  	126,799
+
+  </td>
+
+  <td width="2%">=</td>
+
+  <td width="17.5%">
+
+	上期积分余额<br  />
+
+	<font size="2" face="Times New Roman">Previous Bonus Point</font><br  />
+
+	117,231
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="17.5%">
+
+	本期新增积分<br  />
+
+	<font size="2" face="Times New Roman">New Bonus Point</font><br  />
+
+	9,568
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="22%">
+
+	本期调整积分(含到期失效积分)<br  />
+
+	<font size="2" face="Times New Roman">Adjusted Bonus Point</font><br  />
+
+	0
+
+  </td>
+
+  <td width="2%">-</td>
+
+  <td width="22%">
+
+	本期兑换积分(含消费积分)<br  />
+
+	<font size="2" face="Times New Roman">Used Bonus Point</font><br  />
+
+	0
+
+  </td>
+
+ </tr>
+
+</table>
+
+<br  />
+
+
+
+<table width="800" style="border-collapse:collapse;font-size:9pt;margin:0 0 0 1;">
+
+ <tr style="text-align:left;background:#B4CBEB;font-weight:bold;font-size:9.0pt;">
+
+  <td width="18%" style="padding:5;">
+
+	交易日期<br  />
+
+	Trans Date
+
+  </td>
+
+  <td width="12%" style="padding:5;">
+
+	记账日期<br  />
+
+	Post Date
+
+  </td>
+
+  <td width="40%" style="padding:5;">
+
+	交易摘要<br  />
+
+	Trans Description
+
+  </td>
+  
+  <td width="15%" align="right" style="padding:5;">
+
+  	交易地金额<br  />
+
+	Trans Amount
+
+  </td>
+
+  <td width="15%" align="right" style="padding: 5 10 5 5;">
+
+  	人民币金额<br  />
+
+	Amount(RMB)
+
+  </td>
+
+ </tr>
+
+<tr><td width="100%" colspan="20" style='text-align:center;font-size:10pt;'>**** 主卡交易(卡号末四位 3108) ****</td><tr>
+
+
+ <tr>
+
+  <td>
+
+	 2015-06-13 16:42
+
+  </td>
+
+  <td>
+
+	2015-06-13
+
+  </td>
+
+  <td>
+
+	苍南县龙港文声家用电器店
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	9,063.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	 2015-06-13 16:45
+
+  </td>
+
+  <td>
+
+	2015-06-13
+
+  </td>
+
+  <td>
+
+	浙江温州市康康宠物美容中心
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	505.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	 2015-07-01 18:43
+
+  </td>
+
+  <td>
+
+	2015-07-01
+
+  </td>
+
+  <td>
+
+	支付宝—支付宝快捷支付
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	0.60
+
+  </td>
+
+ </tr>
+
+
+
+</table>
+
+<p></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table width="800" style="border-collapse:collapse;font-size:9pt;">
+
+ <tr>
+
+  <td style="padding: 0 5 0 5;">
+
+
+
+账单说明：“本期应缴余额”栏目显示为“-***”(***为金额)，是指您在还款时多缴的或您预先存放在信用卡账户内的资金，该资金可抵扣您
+
+的刷卡消费金额。如您本账单周期内的交易在本账单周期内发生退货，我行会为您直接抵扣对应的交易款项，不显示在“本期调整金额”中。<br  />
+
+Statement description: If the column “New Balance” displays “-*** (where ***represents account balance), it indicates that there is a credit balance
+
+maintained in your account. No payment is required. Should any transactions be refunded within the statement cycle,the same amount shall be set against the original transaction.It will not appear in your adjust balance.
+
+  </td>
+
+ </tr>
+
+
+
+<tr>
+
+  <td style="padding: 0 5 0 5;font-weight : bold">
+
+     ★ 兴业银行提醒您:请注意按时还款（至少还足最低还款额），避免影响个人信用记录。如您未能按时还款，相关逾期情况会上报至金融信用信息基础数据库以及其他依法设立的征信机构。	
+
+  </td>
+
+</tr>
+
+</table>
+
+<p></p>
+
+
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_news_bar.jpg" border="0"  />
+
+<table width="800" style="border-collapse:collapse;">
+
+ <tr>
+
+  <td>
+
+  <table style="width:550px;border-collapse:collapse;font-size:9pt;padding:10 0 0 0;">
+
+    <tr>
+
+      <td colspan="2">&nbsp;</td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/apply/products/ZTseries/xdl.html" style="text-decoration:none;" target="_blank"><font color="#000000">兴动力卡 活力上市</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/minisite/yhqqxhjc2013/hongkong.html" style="text-decoration:none;" target="_blank"><font color="#000000">约惠香港，延续精彩-刷享免费环岛跨境车票</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/promotion/overseas/HKMacau/20150611.html" style="text-decoration:none;" target="_blank"><font color="#000000">乐享活力人生，畅游香港海洋公园</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/minisite/haitao/index.html" style="text-decoration:none;" target="_blank"><font color="#000000">约惠海淘 带您进入境外网上购物“兴”世界</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20150417.html" style="text-decoration:none;" target="_blank"><font color="#000000">悦享“兴”商旅，出行好选择</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20150429.html" style="text-decoration:none;" target="_blank"><font color="#000000">机票随“兴”订，积分活力赠</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+	<tr>
+
+	  <td height="53" colspan="2" align="right">
+
+		<a href="http://creditcard.cib.com.cn/card/promotion/index.html" target="_blank"><img src="http://creditcard.cib.com.cn/card/customer/images/V1_news_more.jpg" border="0"  /></a>
+
+	  </td>
+
+	</tr>
+
+  </table>
+
+  </td>
+
+  <td>
+
+  <table style="width:195px;border-collapse:collapse;">
+
+  
+
+    <tr>
+
+      <td>
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20150528.html" target="_blank"><img width="190" height="75" src="http://creditcard.cib.com.cn/card/customer/images/9999/SE999903221.jpg" border="0"  /></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td>
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20150605_1.html" target="_blank"><img width="190" height="75" src="http://creditcard.cib.com.cn/card/customer/images/9999/SE999903220.jpg" border="0"  /></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td>
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20150605.html" target="_blank"><img width="190" height="75" src="http://creditcard.cib.com.cn/card/customer/images/9999/SE999903219.jpg" border="0"  /></a>
+
+      </td>
+
+    </tr>
+
+  
+
+  </table>
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<table width="800" style="border-collapse:collapse;text-align:center;">
+
+ <tr>
+
+  
+
+  <td>
+
+      <a href="http://creditcard.cib.com.cn/minisite/yhqqxhjc2013/kingpower.html" target="_blank"><img width="390" height="180" src="http://creditcard.cib.com.cn/card/customer/images/1507/SE150704021.jpg" border="0"  /></a>
+
+  </td>
+
+  
+
+  <td>
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20150514_1.html" target="_blank"><img width="390" height="180" src="http://creditcard.cib.com.cn/card/customer/images/1507/SE150704025.jpg" border="0"  /></a>
+
+  </td>
+
+  
+
+ </tr> 
+
+</table>
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_bottom.jpg" width="802" border="0"  />
+
+
+
+</td>
+
+</tr>
+
+</table>
+
+
+
+<html></html>
+
+
+
+</div></div><!-- --><style>#mailContentContainer .txt {height:auto;}</style>  </div><script>
+(function()
+{
+var _oImgs = getTop().GelTags("img", getTop().S("mailContentContainer",window));
+getTop().E(_oImgs, function(_aoItem){ 
+_aoItem.onerror = function()
+{
+                if(this.src && /.*mail\.qq\.com\/cgi-bin\/viewfile.*/i.test(this.src)){
+                    getTop().LogKV({sValue:'getinvestigate|readmail|readmail|imgerror'});
+                }
+if (this.src && !/.*mail.qq.com\/cgi-bin.*/.test(this.src) && /http:\/\//.test(this.src) && this.clientHeight * this.clientWidth > 0) 
+{
+this.onerror = null;
+this.src = "/cgi-bin/get_netres?url=" + encodeURIComponent(this.src) + "&sid=" + getTop().getSid(); 
+}
+}
+});
+})();
+</script></div><img id="qqmailcontent_load_finsih" width=0 height=0 style="height:0;display:none;"/></div></body></html><script>
+var _oTop = getTop();
+
+function showNetDisk(_aoContainer)
+{
+getTop().waitFor(
+function()
+{
+return getTop().QMNetDisk && getTop().QMNetDisk.getInfo()
+},
+function(_abIsOk)
+{
+if(_abIsOk)
+{
+var _oDiskInfo = getTop().QMNetDisk.getInfo(),
+_oDomAttCon = getTop().finds("div[ui-type='attCon']", _aoContainer)[0],
+_oDomList = getTop().finds("a.netdisk_hide", _oDomAttCon||_aoContainer) || [],
+_oDomAtt = _oDomList[0];
+
+for(var i = 0; i < _oDomList.length;i++)
+{
+getTop().QMNetDisk.uploadEntry(_oDomList[i]);
+}
+
+_oDomAttCon && _oDomAtt
+&& setTimeout(function()
+{
+getTop().QMNetDisk.route("tips", "readmail", _oDomAttCon, {
+offsetLeft: _oDomAtt.offsetLeft + _oDomAtt.clientWidth/2, 
+offsetTop: 80
+});
+},3000);
+}
+}
+);
+}
+showNetDisk(document);
+_oTop.waitFor(
+function()
+{
+return !!(_oTop.QMReadMail);
+},
+function(_abIsOk)
+{
+if (_abIsOk)
+{
+try{
+window.QMReadMail = new (_oTop.QMReadMail.qmReadMail)(
+{
+                    
+ bNeedIdentifyLocation: true,
+sLocationIdentifyUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify_worker24e6ae.js',
+sLocationWorkerImportUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js',
+   
+logintype: '1',
+reandfw: "",
+mailtype        : 'comm',
+xqqstyle: '0',
+noIncludeArtcle: false,
+bOpenTag : "1",
+
+loc: "readmail,readmail,",
+subtmpl: "",
+folderid: "131",
+folderkey: "",
+saveFrom: "769445501@qq.com",
+titlePrefix: "0",
+sendmailname: "769445501@qq.com",
+disptype: "html",
+
+bNewMail        : 1,
+
+bNeedReceipt : 0,
+
+bStar : false,
+bAddrvip : false,
+bSys : false,
+                    bAd: false,
+bDft : false,
+oMatchTag : [],
+oMoveItems: [ 
+{ sId: 'fid_1', sItemValue: "收件箱" },
+{ sId: 'fid_3', sItemValue: "已发送" },
+{ sId: "fid_130", sItemValue: "QQ邮件订阅" },
+{ sId: "fid_131", sItemValue: "邮件归档" },
+{ nHeight: 10, sItemValue: '<div style="background:#CCC; height:1px; margin-top:5px; overflow:hidden;"></div>' }, //'<hr style="color:#CCC;height:1px;"/>' },
+{ sId: "new", sItemValue : '新建文件夹...' }
+],
+oMoreOpt : ["addremark", "addstar", "addremind", "print"]
+},
+{
+from: { 
+                        name : "兴业银行信用卡中心", 
+                        addr : "creditcard@message.cib.com.cn",
+                        qq : ""
+                    }, 
+date: "2015年7月10日(星期五) 下午5:57",
+dateeng: "",
+
+to: [
+{
+name : "一切为了生活",
+addr : "769445501@qq.com",
+qq  : "-1187665080"
+},
+],
+
+cc: [
+],
+
+subject: "兴业银行信用卡07月电子账单",
+
+replyTo: [
+{
+name : "兴业银行信用卡中心",
+addr : "creditcard@message.cib.com.cn"
+}
+],
+
+replyCc: [
+],
+
+reSubject: "兴业银行信用卡07月电子账单"
+},
+{
+oWin : window,
+sContext : "ZC4610-UC0LCsRTZLgnOBVANjniI57",
+sModuleName : "qmReadMail"
+}
+);
+}catch(e){alert(e.message)}
+
+var tag = [{}];
+tag.length = tag.length - 1;
+getTop().QMTag && getTop().QMTag.set(tag, "1437542923829038");
+
+}
+else
+{
+debug("读信readmail2.js加载失败");
+}
+}, 10);
+
+getTop().switchFolder('folder_131');
+</script> <script>parent.endStatTime && parent.endStatTime(window, 
+{mailid:"ZC4610-UC0LCsRTZLgnOBVANjniI57",folderid:"131",type:"readmail",rcgi:"readmail",rt:"readmail",rs:"",wm_flowid:"1844348"});</script>
+		<br/>
+		<br/>
+		<br/>
+		<div>邮件头</div>
+		Received:from mail1.message.cib.com.cn (unknown [112.65.159.178])
+	by newmx.qq.com (NewMx) with SMTP id 
+	for <769445501@qq.com>; Fri, 10 Jul 2015 17:57:56 +0800
+Received:from mail1.message.cib.com.cn (localhost.localdomain [127.0.0.1])
+	by mail1.message.cib.com.cn (tmailer) with ESMTP id C2DC15A45ED
+	for <769445501@qq.com>; Fri, 10 Jul 2015 17:57:56 +0800 (CST)
+From:=?gbk?B?0MvStdL40NDQxdPDv6jW0NDE?= <creditcard@message.cib.com.cn>
+To:<769445501@qq.com>
+Date:Fri, 10 Jul 2015 17:57:56 +0800 (CST)
+
+		</body>
+</html>

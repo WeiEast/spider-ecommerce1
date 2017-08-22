@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 我爱卡opinion-->
+	<extrator-selectors>
+		<selector field="url" contain="search?q" dis-contain="" ref="mime-extractor"></selector>
+	</extrator-selectors>
+	<page-extractor-definition>
+		<page-extractor id="mime-extractor">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="opinionDetails" type="xpath" value="div.result.f.s3:matches(${containKey}):not(:matches(${disContainKey}))" >
+				<field-extractor id="websiteName" field="websiteName" result-type="string">
+					<operation type="template"><![CDATA[http://so.51credit.com]]></operation>
+				</field-extractor>
+				<field-extractor id="entryName" field="entryName" result-type="string">
+					<operation type="template"><![CDATA[${entryName}]]></operation>
+				</field-extractor>
+				<field-extractor id="keyword" field="keyword" result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+				</field-extractor>
+				<field-extractor id="link" field="link" result-type="string">
+					<operation type="xpath"><![CDATA[//h3/a/@href]]></operation>
+				</field-extractor>
+				<field-extractor id="title" field="title" result-type="string">
+					<operation type="xpath"><![CDATA[//h3/a/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="overview" field="overview" result-type="string">
+					<operation type="xpath"><![CDATA[//div[@class='c-abstract']/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="author" field="author" result-type="string">
+					<operation type="xpath"><![CDATA[//div[@class='c-summary-1']/span[2]/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[作者：(.+)]]></operation>
+				</field-extractor>
+				<field-extractor id="time" field="time" result-type="date" format="yyyy-MM-dd">
+					<operation type="xpath"><![CDATA[//div[@class='c-summary-1']/span[3]/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[发布：(.+)]]></operation>
+				</field-extractor> 
+				
+				
+			</object-segment>
+		</page-extractor>
+	</page-extractor-definition>
+	<plugin-definition>
+
+	</plugin-definition>
+</config>

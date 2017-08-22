@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<url-filters>
+		<url-filter type="+">.alipay.com</url-filter>
+	</url-filters>
+
+	<properties>
+		<encoding>utf-8</encoding>
+		<unicode-mode><![CDATA[hex]]></unicode-mode>
+		<cookie scope="user_session"></cookie>
+	</properties>
+
+	<result-tag-list>
+		<result-tag><![CDATA[enterprise_alipay]]></result-tag>
+	</result-tag-list>
+
+	<login login-type="app">
+		<login-check success-pattern="账户管理">
+			<check-url><![CDATA[https://uemprod.alipay.com/user/ihome.htm]]></check-url>
+			<object-segment name="sid">
+				<field-extractor id="ctoken" field="ctoken" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="template">${cookie.ctoken}</operation>
+				</field-extractor>
+				<field-extractor id="billUserId" field="billUserId" field-visible-type="context" not-empty="true">
+					<operation type="template">${cookie.CLUB_ALIPAY_COM}</operation>
+				</field-extractor>
+				<field-extractor id="endDateInput" field="temp" result-type="string" field-visible-type="context">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="date" offset="1" format="yyyy-MM-dd" calibrate="true" />
+				</field-extractor>
+				<field-extractor id="startDateInput" field="temp" result-type="string" field-visible-type="context">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="date" offset="-3" format="yyyy-MM-dd" calibrate="true" />
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<page-definition>
+		<page id="alipay-index-search-page" path="ihome.htm">
+			<object-segment name="index" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="url" field="url" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[https://mbillexprod.alipay.com/enterprise/accountDetailQuery.json"startDateInput=${startDateInput}+00%3A00&endDateInput=${endDateInput}+00%3A00&startAmount=&endAmount=&targetMainAccount=&activeTargetSearchItem=&orderNo=&tradeNo=&sortType=0&sortTarget=tradeTime&showType=0&searchType=0&pageSize=100&pageNum=1&billUserId=${billUserId}&forceAync=0&fromTime=00%3A00&toTime=00%3A00&type=&_input_charset=utf-8&ctoken=${ctoken}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<page id="alipay-accountDetailQuery-page" path="accountDetailQuery">
+			<object-segment name="index" result-class="EcommerceData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="totalItems" field="temp">
+					<operation type="jsonpath">$.result.paging.totalItems</operation>
+				</field-extractor>
+				<field-extractor id="totalPageNum" field="temp" result-type="int" field-visible-type="request" not-empty="true">
+					<operation type="calculate">${totalItems}/100 + 1</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" type="calculate" value="1,totalPageNum,1,+" result-class="LinkNode">
+				<field-extractor id="PageNo" field="temp">
+					<operation type="return"></operation>
+					<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[https://mbillexprod.alipay.com/enterprise/accountDetailQuery.json"startDateInput=${startDateInput}+00%3A00&endDateInput=${endDateInput}+00%3A00&startAmount=&endAmount=&targetMainAccount=&activeTargetSearchItem=&orderNo=&tradeNo=&sortType=0&sortTarget=tradeTime&showType=0&searchType=0&pageSize=100&pageNum=${PageNo}&billUserId=${billUserId}&forceAync=0&fromTime=00%3A00&toTime=00%3A00&type=&_input_charset=utf-8&ctoken=${ctoken}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="alipay-index-search-template" type="category_search" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[https://uemprod.alipay.com/user/ihome.htm]]></url-template>
+				</url-templates>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page><![CDATA[200]]></max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="alipay-index-search-page" />
+				<page depth="1" ref="alipay-accountDetailQuery-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+</config>

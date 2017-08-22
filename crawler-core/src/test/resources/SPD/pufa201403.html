@@ -1,0 +1,1123 @@
+﻿
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>邮件账单列表</title>
+		<meta charset="utf-8" />
+		<link href="css/base.css" rel="stylesheet" type="text/css">
+		<link href="css/mail.css" rel="stylesheet" type="text/css">
+		<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/userbill.js"></script>
+	</head>
+	<body>
+  		 <a href="download.do?mailId=36_12344922_331384329">附件下载</a>
+		<div class="showTable">
+			<table>
+			  <thead>
+			    <tr>
+        			<th>银行</th>
+                    <th>持卡人</th>
+                    <th>账单周期</th>
+                    <th>卡号后四位</th>
+                    <th>最后还款日</th>
+                    <th>本期应还款</th>
+                    <th>最低还款额</th>
+                    <th>信用额度/取现额度</th>
+                    <th>上期应还额</th>
+                    <th>本期积分</th>
+                    <th>新增积分</th>
+                    <th>BillID</th>
+                    <th>UBID</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  </tbody>
+			</table>
+		<div style="float:right"> <a href="javascript:void(0)" onclick="UserBill.ChangeAnalyzeState()">解析错误</a> </div>
+		</div>
+		<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=gb18030" /><meta http-equiv="X-UA-Compatible" content="IE=Edge" /><title>浦发银行-信用卡电子账单 - QQ邮箱</title><script>
+document.domain="mail.qq.com";
+function getTop()
+{
+var f=arguments.callee,w;
+    !(f.execption) && (f.execption = "");
+if(!f.t)
+{try{w=window;f.t=w!=parent?(parent.getTop?parent.getTop():parent.parent.getTop()):w;}catch(e){f.t=reTryGetTop();f.execption=e.message;}}
+return f.t;
+}
+function reTryGetTop()
+{
+var _oWin = window,
+_oWinParent = parent;
+try
+{
+while(_oWin != _oWinParent)
+{
+_oWin = _oWinParent;
+_oWinParent = _oWinParent.parent;
+}
+}
+catch(e)
+{
+ossLogForSetFrame.getTopException = true;
+}
+return _oWin;
+};
+try{window.top=getTop();}catch(e){eval("var top=getTop();");}
+var gsUsed="354";
+var gbSupportNW=true;
+var g_uin="53094558";
+window == getTop() && document.write('<script src="https://res.mail.qq.com/zh_CN/htmledition/js/all272f7b.js"></'+'script>');
+(getTop().initPageEvent || function(){})(window);
+</script><script>parent.beginStatTime && parent.beginStatTime(window);</script><script>
+(function(){
+getTop().rdVer.check(window,"ZC3802-Y_2tmrKycVtIEhFCFiUKS43",15722);
+})();
+</script><link rel="stylesheet" type="text/css" href="https://res.mail.qq.com/zh_CN/htmledition/style/comm201026ba63.css" /><link rel="stylesheet" type="text/css" href="https://rl.mail.qq.com/cgi-bin/getcss?sid=Qd-3sJgHnrQFExBF&ft=skin" /><link rel="stylesheet" type="text/css" href="https://res.mail.qq.com/zh_CN/htmledition/style/readmail2012264d3e.css" /><script>
+getTop().loadJsFileToTop([
+"https://res.mail.qq.com/zh_CN/htmledition/js/readmail22675d7.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/qmqzoneimg24e6b9.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/com/kits/qmeditor/qqmail/release/editor270dc9.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/com/kits/qmpreviewer/js/qmpreviewer270e4e.js", "https://res.mail.qq.com/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js"
+]);
+//getTop().loadJsFileToTop("https://res.mail.qq.com/zh_CN/htmledition/js/", ["qmqzoneimg24e6b9.js"]);
+
+getTop().loadJsFileToTop(["https://res.mail.qq.com/zh_CN/htmledition/js/qmnetdisk25faf1.js"]);
+</script><script> function SendStatusOpt(isIng, isFail)
+{
+getTop().show(getTop().S("sendstatusloading", document), isIng);
+getTop().show(getTop().S("sendstatusloadfail", document), isFail);
+}
+
+function GetSendStatusIng()
+{
+SendStatusOpt(true, false);
+}
+
+function GetSendStatusOK()
+{
+SendStatusOpt(false, false);
+}
+
+function GetSendStatusFail()
+{
+var frame = getTop().S("mailSendStatus", document);
+if (getTop().isShow("sendstatusloading") && frame.src != "")
+{
+SendStatusOpt(false, true);
+frame.src = "";
+}
+}
+
+function checkSenderImg( _aImgObj, _aReportEmail ) 
+{
+var _isLoadGravaterOK = parseInt( _aImgObj.width ) == 40 || parseInt(_aImgObj.width) == 96;
+if ( _isLoadGravaterOK )
+{
+_aImgObj.parentNode.style.visibility='visible';
+}
+}
+
+</script><style>body {background:#fff;color:#000;font-weight:normal;font-family:"lucida Grande",Verdana,"Microsoft YaHei";padding:0 7px 6px 4px;margin:0;}.MacOS body {font-family:"lucida Grande",Verdana;}.qmbox{padding:0;}.qm_con_body_content{height:auto;min-height:100px;_height:100px;word-wrap:break-word;font-size:14px;font-family: "lucida Grande",Verdana,"Microsoft YaHei";}.MacOS .qm_con_body_content{font-family: "lucida Grande",Verdana;}body.thumb_list_readmail {padding:0;}.thumb_list_readmail #nextnewDiv,.thumb_list_readmail #nextmail_top,.thumb_list_readmail #nextmail_bt{display:none;}</style></head><body  context="ZC3802-Y_2tmrKycVtIEhFCFiUKS43" module="qmReadMail" md="md" mu="mu"><div class="mailcontainer" id="qqmail_mailcontainer"><div module="qmSenderInfo" id="senderInfo" class="attbg mysidebar" style="_margin-top:2px;height:auto;*height:100%;display:none;z-index:20"><div class="bd" style="font-size:14px;font-weight:bold;border-width:0 0 2px 0;height:auto;padding:7px 2px 3px;margin:6px;clear:both;"><div  style="float:right;"><a ck="toggle" href="javascript:;" style="font-size:12px;font-weight:normal;">关闭</a></div>发件人信息</div><div style="margin:8px 6px 0 6px;"><div style="height:40px;"><div class="tcolor qm_left txtflow" style="margin:2px 0 0 2px;width:168px;"><b class="grn" style="font-size:14px;font-weight:bold;">浦发银行信用卡中心</b>&nbsp;</div><div class="clear" style="margin:2px 0 0 2px;width:164px;"><div class="qm_left txtflow graytext" style="width:128px"><span title="estmtservice@eb.spdbccc.com.cn">estmtservice@eb.spdbccc.com.cn</span></div><div style="float:right;"><a href="/cgi-bin/addr_detail?sid=Qd-3sJgHnrQFExBF&AddrID=-1&t=addr_detail_edit&s=edit&rmqqgroup=1">编辑</a></div></div></div><div class="toolbg clear" style="padding:5px 0 4px 6px;margin-top:4px;height:auto;"><span class="txtcolor">往来邮件</span>&nbsp;</div><div id="divMails_sidebar" class="clear" style="margin:6px 0 0 0"><div style="margin:6px" class="tcolor">正在加载...</div></div><br/><br/></div></div><form id="remind_frm" name="remind_frm" method="post" target="actionFrame" action="/cgi-bin/reminder_mgr?sid=Qd-3sJgHnrQFExBF"><input type="hidden" name="sid" value="Qd-3sJgHnrQFExBF"/><input type="hidden" name="action" value="cancle"/><input type="hidden" name="ruleid"/><input type="hidden" name="from"/></form><div id="mainmail" style="position:relative;z-index:1;margin-bottom:12px;"><div class="toolbg toolbgline toolheight" id="toolbgline_top" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_top"><a href="javascript:;" ck="prevandnext"mailid="ZC3002-WcdNHjZKnrSxNTZiyHjiH49" type="normal" title="上一封(未读邮件)：浦发银行-信用卡电子账单" class="bold" id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="ZC3519-ngDe4MiEIgi6NjVnv8jqH3c" type="normal"title="下一封(未读邮件)：对&lt;span&gt;账单&lt;/span&gt;单独一沓交我" class="bold" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all1" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="estmtservice@eb.spdbccc.com.cn" name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="estmtservice@eb.spdbccc.com.cn"name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div><div class="readmailinfo" style="position:relative;z-index:2;zoom:1;"><span id="subjectTip"></span><table style="height:24px" border="0" cellspacing="0" cellpadding="0"><tr><td height="24" valign="middle" style="word-break:break-all;padding:9px 8px 2px 14px;" class="txt_left settingtable readmail_subject"><div class="qm_left"  style="padding-bottom:3px;"><span id="subject" class="sub_title " >浦发银行-信用卡电子账单</span><input type="button" id="img_star" ck="starMail" class="qm_ico_flagoff" title="标为星标"  hidefocus/></div><div id="tagContainer" ck="tag" class="TagDiv TagReadmail" style="overflow:visible;margin-top:0;"></div><div class="clr"></div></td><td module="qmSenderInfo" id="senderInfo2" width="1%" nowrap  class="f_size settingtable" style="padding:5px 12px 0 0;text-align:right;"><div style="width:45px;text-align:left;visibility:hidden;"> <img id="qqiconimg" src="/cgi-bin/getqqicon?sid=Qd-3sJgHnrQFExBF&uin=&mode=newaddr&mailaddr=estmtservice%40eb.spdbccc.com.cn" style="position:absolute;margin:-14px 0 0 0;" class="qqshowbd"  onload="checkSenderImg(this)"/></td></tr></table><table border="0" cellspacing="0" cellpadding="0"><tr><td style="padding-left:14px;" class="settingtable txt_left"><span class="addrtitle">发件人：</span><span rejecthtml="rejectionhtml"  t="1" e="estmtservice@eb.spdbccc.com.cn" u="" n="浦发银行信用卡中心" addrvip="" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC3802-Y_2tmrKycVtIEhFCFiUKS43" xqs="0" fid="1" cfid="1" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="-100" isad="0"mop="1"sa="0"   addrid="-1"  se="1" ><b t="u" class="grn">浦发银行信用卡中心</b>&nbsp;<b class="tcolor" t="u" id="tipFromAddr_readmail" fromaddr="estmtservice@eb.spdbccc.com.cn">&lt;estmtservice@eb.spdbccc.com.cn&gt;</b>&nbsp;&nbsp;<input t="u" type="button" class="ico_profileTips" align="top" />&nbsp;</span>&nbsp;<script type="text/javascript">
+(function(_aoWin){
+_aoWin["_oOperPanel"] = {};
+                            1
+_aoWin["_oOperPanel"].rejectionhtml = '<a id="antispamid2" href="javascript:;" mimefrom="estmtservice@eb.spdbccc.com.cn" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a>';
+_aoWin["_oOperPanel"].filinghtml = '<a id="exbookid1" href="javascript:;" ck="exbookEmlMgr" book="2" module="qmAntiSpam" name="spam" title="将此发件人的邮件归档到个人文件夹" class="pointer">自动归档</a></span>';
+_aoWin["_oOperPanel"].operhidepanel = '<span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span>';
+if(_aoWin["_oOperPanel"].rejectionhtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="rejectionhtml">' +  _aoWin["_oOperPanel"].rejectionhtml + '</span>';
+}
+if(_aoWin["_oOperPanel"].filinghtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="filinghtml">' +  _aoWin["_oOperPanel"].filinghtml + '</span>';
+}
+})(window)
+</script><span id="operhidepanel" style="display:none"><span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span><span id="rejectionhtml"><a id="antispamid2" href="javascript:;" mimefrom="estmtservice@eb.spdbccc.com.cn" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a></span><span id="filinghtml"><a id="exbookid1" href="javascript:;" ck="exbookEmlMgr" book="2" module="qmAntiSpam" name="spam" title="将此发件人的邮件归档到个人文件夹" class="pointer">自动归档</a></span></span><span id="latestqzone"></span>      </td><td width="1%" nowrap style="padding-right:12px;" class="settingtable"></td></tr></table><table  border="0" cellspacing="0" cellpadding="0"><tr><td style="word-break:break-all;padding:2px 12px 0 14px;line-height:19px;" width="99%" class="settingtable txt_left"><span class="addrtitle">时&nbsp;&nbsp;&nbsp;间：</span><b class="tcolor">2014年3月2日(星期天) 下午5:08</b></td><td nowrap valign="bottom" style="padding:4px 10px 2px 0;*padding:4px 10px 2px 0;text-align:right" width="1%" rowspan="2"  class="txt_right settingtable noUnderLineList"><span style="display:none;vertical-align:6px;vertical-align:4px\9;"><a  href="javascript:location.href='/cgi-bin/readmail?disptype=text&sid=Qd-3sJgHnrQFExBF&mailid=ZC3802-Y_2tmrKycVtIEhFCFiUKS43&s='+(getTop().bnewwin?'&newwin=true':'')">纯文本</a> | </span><a href="javascript:;" ck="newWinRead"><span type="button" class="qm_ico_reopen" title="新窗口读信" ></span></a><a href="javascript:;"><span id="rmd" module="qmRemark" ck="toggle" class="qm_ico_remarkoff" title="添加邮件备注" ></span></a><a href="javascript:;"><span ck="createRule" fromaddr="estmtservice@eb.spdbccc.com.cn"                     class="qm_ico_addFilter" title="归档至..."></span></a><a href="javascript:;"><span class="qm_ico_print" id="mail_print" title="打印" onClick="window.open('/cgi-bin/readmail?sid=Qd-3sJgHnrQFExBF&t=readmail_print&s=print&filterflag=true&mailid=ZC3802-Y_2tmrKycVtIEhFCFiUKS43');" ></span></a><a id="aSwitchOption" onClick="getTop().switchOption(window)" style="text-decoration:none;" hidefocus><span class="qm_ico_quickdown" alt="显示更多操作" id="display_more_operator" ></span></a><span id="tipRemindEdit"></span></td></tr><tr><td style="padding:0 0 0 14px;line-height:19px;"  class="settingtable txt_left"><div><div class="addrtitle nowrap" style="position:absolute;">收件人：</div><div style="padding-left:48px;font-size:12px;overflow:hidden; zoom:1;"><span style="white-space:nowrap;height:18px;line-height:18px; " class="left" t="1" e="53094558@qq.com" u="-1948596950" n="Ж海神圣子Ⅹ" mop="1" addrvip="" rejecthtml="rejectionhtml" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC3802-Y_2tmrKycVtIEhFCFiUKS43" xqs="0" fid="1" cfid="1" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="-100" sd="0"se="0" >Ж海神圣子Ⅹ&nbsp;<b t="u" class="tcolor">&lt;53094558@qq.com&gt;</b></span></div></div></td></tr><tr><td style="padding:0 14px;line-height:20px;"  class="settingtable txt_left"><span id="trOption" style="display:none"><span class="addrtitle">大&nbsp;&nbsp;&nbsp;小：</span>40K<br/><a  href="javascript:;" ck="optMail2" opt="print">打印</a>&nbsp;|&nbsp;<a  href="javascript:;" ck="optMail2" opt="mime" title="显示邮件的源代码">显示邮件原文</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="dleml" title="导出为邮件客户端可用的文件">导出为eml文件</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="code" title="改变页面编码以解决邮件乱码问题">邮件有乱码？</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fwgroup">转发到群邮件</a><span >&nbsp;|&nbsp;<a id="savetonotepad" href="javascript:;" ck="optMail2" opt="note">保存到记事本</a><span id="remind_add_mailid:ZC3802-Y_2tmrKycVtIEhFCFiUKS43">&nbsp;<span id="addtoremind">|&nbsp;<a href="javascript:;" ck="optMail2" opt="remind">添加到日历</a></span><span id="remind_edit_ZC3802-Y_2tmrKycVtIEhFCFiUKS43" class="pointer"></span></span>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fweml">作为附件转发</a></span></td></tr></table><div module="qmRemark" id="remarkcontainer" style="display:none; margin:5px 0 0;; padding:2px 0 0;"><div  class="qqshowbd" style="border-width:1px 0 0;padding:7px 14px 2px;"><div class="addrtitle qm_left" style="*margin-top:3px;">备　注：</div><div id="remarkread" style="display:none; margin-left:48px;*margin-left:45px;width:463px;*width:475px;"><div class="remarksContent" id="remarkContent" ck="modify" style="font-size:12px;min-height:42px;padding:10px;background:#fff6cf; border:1px solid #dec694;color:#733900;line-height:18px;" title="点击编辑"></div><div class="attbg" style="padding:4px 0 4px 8px;"><a href="javascript:;" ck="modify" style="margin-right:5px;"><input style="background:url(https://res.mail.qq.com/zh_CN/htmledition/images/newicon/mail24aa78.png) scroll -64px -142px; width:12px; height:14px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()" />编辑</a><a href="javascript:;" ck="del"><input style="background:url(https://res.mail.qq.com/zh_CN/htmledition/images/newicon/mail24aa78.png) scroll -80px -142px; width:13px; height:13px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()">删除</a></div></div><div class="remarkModify" style="display:none;margin-left:45px;" id="remarkwrite"><textarea id="remarktext" style="width:475px;*height:74px;min-height:72px;font-size:14px; overflow:hidden; margin:0 0 3px; padding:3px; color:#A0A0A0;" class="qm_txt" >请在此输入备注...</textarea><div style="margin-left:3px;*margin-left:6px;"><input type="button" class="qm_btn wd2" value="保存" ck="save" id="remarksave"/><a ck="cancel" id="remarkdel" style="*vertical-align:5px;display:inline-block;padding-left:6px;">取消</a></div></div></div></div><table border="0" cellspacing="0" cellpadding="0">        <tr><td class="onesize settingtable" style="height:5px;"></td></tr></table>    <div class="txt_left"><div class="attbg" id="starStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件。&nbsp;<a id="starStatuslink" ck="starMail" href="javascript:;">取消星标</a></div><div class="attbg" id="mailtopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件在列表中置顶。&nbsp;<a id="mailtopStatuslink" ck="topMail" href="javascript:;">取消置顶</a></div><div class="attbg" id="starTopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件，并在列表中置顶。&nbsp;<a ck="starMail" href="javascript:;">取消星标</a>&nbsp;<a ck="topMail" href="javascript:;">取消置顶</a></div><script>
+
+</script><div class="attbg" id="reminderContainer_mailid:ZC3802-Y_2tmrKycVtIEhFCFiUKS43" style="padding:5px 14px;display:none;"></div><div id="spam" module="qmAntiSpam" name="spam" style="zoom:1;">  </div>        </div></div><!-- page end--><div id="pageEnd" style="display:none;clear:both;position:relative;z-index:2;"><div id="bgmusic" style="padding:6px 0;display:none;margin-left:12px">您的朋友 浦发银行信用卡中心 为这封邮件插入了背景音乐 - <a  target="_blank">下载</a>&nbsp;&nbsp;<a href="javascript:;">播放</a><a name="player"></a></div><div id="mp3player_info" style="padding:0 0 10px 0;margin-left:12px;display:none;">&nbsp;</div><div id="mp3player_container" style="padding:0 0 20px 0;margin-left:12px; margin-top:10px; display:none;">播放器加载中...</div><div module="qmQReply" id="quickreply" class="quickreply" style="margin:0;"><div class="qm_msg infobar" id="afterSendingDiv" style="margin-top:-25px;position:absolute;border:0;padding:4px 12px 4px;display:none;">正在发送...</div><div class="bd" style="border-width:0 0 1px 0;"></div><div style="padding:10px 0 0 8px;border-bottom:1px solid #fff;height:24px;display:none;" class="settingtable" id="afterSendDiv"> 此邮件已成功发送。<a ck="readyToWrite" href="javascript:;" >再回一封</a></div><div class="settingtable" id="QuickReplyPart" style="height:auto;min-height:10px;border-bottom:1px solid #fff;padding-top:10px;padding-botom:8px;overflow:hidden;z-index:1000;clear:both;"><div style="width:100%;"><div id="Senderdiv" style="margin:-10px 0 0 0;*margin:-3px 0 0 0;padding:6px 0 10px 0;*padding:0 0 7px 0;display:none;"></div><div class="qm_left" style="width:99.5%;" id="qmQuickReplyTextContainer" ><div style="width:99.5%;"><textarea id="source" md="checkBcc" class="graytext qm_txt" accesskey="q" style="height:16px;width:100%;overflow:hidden;">快捷回复给：浦发银行信用卡中心</textarea></div></div><div class="" style="width:99.5%;display:none;z-index:1;float:left;" id="rteContainer"><div md="stopFold" ck="jump" style="float:right;margin:3px 0 0 6px;*margin:0;" ><input type="button" class="ico_input icon_switch_compose"  style="margin-right:4px;margin-bottom:3px;*margin-bottom:0;vertical-align:middle;"/><a href="javascript:;" id="jumpToNewWin">切换到完整写信模式</a></div><div style="margin:2px 0 3px 1px;white-space:nowrap;*margin-top:0;" class="addrtitle"><span id="QMEditorToolBarPlusArea"  ></span><span id="tooBarContain"></span></div><div id="QMEditorArea" style="" tIndex="1"><script>try{document.write( outputDataLoading( true ) );}catch(e){}</script></div><div class="clr"></div></div><div style="display:none;clear:both;float:left;width:99.5%;margin-top:5px;height:40px;" id="qmQuickReplyButtonContainer"><a md="stopFold" ck="send" href="javascript:void(0);" tabIndex="2" id="sendbtn" name="sendbtn" class="left bold b_size button_green_s">&nbsp;发送&nbsp;</a><div class="clr"></div></div><div class="clr"></div></div></div></div><div id="nextnewDiv" onMouseOver="this.className='attbg mail_readmode'" onMouseOut="this.className='toolbg mail_readmode'" class="toolbg mail_readmode" style="clear:both;position:relative;z-index:2;cursor:pointer;padding:0 8px 0 7px;zoom:1;" ck="prevandnext" mailid="ZC3519-ngDe4MiEIgi6NjVnv8jqH3c" ><div class="bd" style="padding:2px 0 6px 0;*padding:6px 0 0 0;border-width:0 0 1px 0;"><div class="qm_left" style="margin:6px 0 0 1px;">下一封未读：</div><div class="qm_left" style="margin:0x 0 0 1px;*margin:-2px 0 0 1px"><input type="button"  style="display:block;padding:0;float:left;width:18px;height:16px;margin:5px 0 0;cursor:default;border:0;" class="Ru" /></div><div style="margin:6px 0 0 0;*margin:4px 0 0 0"><span id="nextnewmail" style="color:#000;" class="bold" target="actionFrame" name="_QQMail_ReferenceGroupMail_">Leon&nbsp;Wan &nbsp;&nbsp; 对&lt;span&gt;账单&lt;/span&gt;单独一沓交我</span></div><div class="clr"></div></div></div><div class="toolbg toolbgline toolheight" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_bt"><a href="javascript:;" ck="prevandnext"mailid="ZC3002-WcdNHjZKnrSxNTZiyHjiH49" type="normal" title="上一封(未读邮件)：浦发银行-信用卡电子账单" class="bold" id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="ZC3519-ngDe4MiEIgi6NjVnv8jqH3c" type="normal"title="下一封(未读邮件)：对&lt;span&gt;账单&lt;/span&gt;单独一沓交我" class="bold" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all2" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="estmtservice@eb.spdbccc.com.cn" name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="estmtservice@eb.spdbccc.com.cn"name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div></div><div style="position:absolute;right:0px;width:1px;height:1px;"><div id="tip74container"></div></div><div id="contentDiv" onmouseover="getTop().stopPropagation(event);" onClick="getTop().preSwapLink(event, 'html', 'ZC3802-Y_2tmrKycVtIEhFCFiUKS43');" style="position:relative;font-size:14px;height:auto;padding:15px 15px 10px 15px;z-index:1;zoom:1;line-height:1.7;overflow:hidden;" class="body">    <div class="" id="qm_con_body"><div id="mailContentContainer" class="qmbox qm_con_body_content"><style type="text/css"></style>
+
+<table width="720" border="0" align="center" cellpadding="0" cellspacing="0" height="121">
+
+	<tr>
+		<td align="left" height="70" colspan="2">
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/newspdblogo.jpg" width="720" height="54"  /></td>
+	</tr>
+	<tr>
+		<td align="right" width="446">
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/headertitle.jpg"  />
+		</td>
+		<td width="283"><b><font color="#073E77" size="2">(2014年03月)</font></b></td>
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="0" cellspacing="0">
+
+	<tr>
+
+		<td height="50" align="left" style="padding-top:8px" colspan="2">
+
+		<p style="line-height: 200%"><b><font size="3">尊敬的黄东旭 先生：<br  />
+
+&nbsp;&nbsp;&nbsp; &nbsp; 您好!感谢您使用本行信用卡，现呈上您浦发信用卡尾号为2512电子对账单。<br  />
+
+		</font></b></p>
+
+		</td>
+
+	</tr>
+
+	<tr>
+
+		<td width="90%" style="padding-left:10px; padding-right:10px " height="104" class="tc">
+
+		<font size="2" color="#FF0000">★</font><font size="2" color="#003399">我中心日常会通过客服热线4008208788与您及时电话沟通重要信息。</font><p>
+
+		<font size="2" color="#FF0000">★</font><font size="2" color="#003399">如该号码致电给您，可放心接听。如错过接听，您可回拨及时了解情况。</font></p>
+
+		<p><font size="2" color="#FF0000">★</font><font size="2" color="#003399">信用卡网站右上方红色菜单可快速办理激活、临时额度申请、申请进度查询等业务。</font></p>
+
+		</td>
+
+	</tr>
+
+	<tr>
+
+		<td height="67" style="padding-top:8px" colspan="2">
+
+		
+
+		<table width="101%" border="0" cellpadding="0" cellspacing="0">
+
+			<tr>
+
+				<td height="30" colspan="2" align="left">
+
+				<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/accountheader.jpg"  /></td>
+
+			</tr>
+
+			<tr>
+
+				<td height="48" align="left" width="320">
+
+				<table width="312" border="0" cellspacing="0" cellpadding="0" class="tb" height="436">
+
+					<tr class="tb">
+
+						<td width="170" align="center" class="tb">
+
+						<font size="2"><b>账单日<br  />
+
+						</b></font><font style="font-size: 9pt">Statement Date</font></td>
+
+						<td width="126" align="center" style="padding-left:10px" class="tb">
+
+						01</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>到期还款日<br  />
+
+						</b></font><font style="font-size: 9pt">Payment Due Date</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						2014/03/21</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>信用额度<br  />
+
+						</b></font><font style="font-size: 9pt">Credit Limit</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						25,000</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>取现额度<br  />
+
+						</b></font><font style="font-size: 9pt">Cash Advance Limit</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						7,500</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>本期应还款总额<br  />
+
+						</b></font><font style="font-size: 9pt">Total Statement 
+
+						Balance</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						RMB:6,699.05</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><font size="2"><b>本期最低还款额<br  />
+
+						</b></font><font style="font-size: 9pt">Min Due Amount</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						RMB:400.49</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="center" class="tb"><b>
+
+						<font color="#003399" size="2">逾期还款额<br  />
+
+						</font><font color="#003399" style="font-size: 9pt">Past 
+
+						Due Amount</font></b></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						RMB:0.00</td>
+
+					</tr>
+
+				</table>
+
+				</td>
+
+				<td align="left" width="56%">
+
+				<table width="396" border="0" cellspacing="0" cellpadding="0" class="tb">
+
+					<tr>
+
+						<td width="270" align="left" class="tb">
+
+						<p align="center"><b><font size="2">本期应还款总额计算明细(Details)</font></b></p>
+
+						</td>
+
+						<td width="110" align="center" style="padding-left:10px" class="tb">
+
+						<b><font size="2" color="#003399">金额(Amount)</font></b></td>
+
+					</tr>
+
+					<tr>
+
+						<td align="left" class="tb"><font color="#003399">&nbsp;&nbsp; 
+
+						上期应还款余额</font> <font size="1">&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 
+
+						Last Statement Balance</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						4,575.31</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="left" class="tb">-&nbsp; 已还款金额/其他入账<font size="1">Payment/Credit</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						 500.00</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="left" class="tb">+ 新签金额/其他费用 <font size="1">&nbsp;New 
+
+						Charges</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb">
+
+						2,623.74</td>
+
+					</tr>
+
+					<tr>
+
+						<td align="left" class="tb" height="30"><b>= 本期应还款总额 &nbsp; 
+
+						<font size="1">&nbsp; Total Statement 
+
+						Balance</font></b></td>
+
+						<td align="center" style="padding-left:10px" class="tb" height="30">
+
+						6,699.05</td>
+
+					</tr>
+
+				</table>
+
+				<br  />
+
+				<table width="383" border="0" cellspacing="0" cellpadding="0">
+
+					<tr>
+
+						<td align="left" colspan="2"><b>
+
+						<font size="3" color="#003399">积分信息 </font>
+
+						<font size="2" color="#666666">Rewards Information</font></b></td>
+
+					</tr>
+
+				</table>
+
+				<table width="396" border="0" cellspacing="0" cellpadding="0" height="248" class="tb">
+
+					<tr>
+
+						<td class="tb">
+
+						<p align="center"><b><font size="2">本期积分余额计算明细</font></b></p>
+
+						</td>
+
+						<td align="left" style="padding-left:10px" class="tb" width="91">
+
+						<p align="center"><b><font size="2" color="#003399">浦发银行<br  />
+
+						信用卡积分</font></b></p>
+
+						</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">&nbsp;&nbsp; 上期积分余额 <font size="1">&nbsp;Points 
+
+						Beginning Balance</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						23,731</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">+ 本期新增积分<font size="1">&nbsp; Points Earned 
+
+						This Month</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						4,739</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">+ 本期奖励积分 <font size="1">&nbsp;Bonus Points 
+
+						Earned This Month</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						0</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">+ 本期调整积分 <font size="1">&nbsp;Points Adjusted 
+
+						This Month</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						0</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb">-&nbsp; 本期兑换积分 <font size="1">&nbsp;Points 
+
+						Redeemed This Month</font></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						0</td>
+
+					</tr>
+
+					<tr>
+
+						<td class="tb"><b>= 本期积分余额<font size="1"> Total Points Available</font></b></td>
+
+						<td align="center" style="padding-left:10px" class="tb" width="91">
+
+						28,470</td>
+
+					</tr>
+
+				</table>
+
+				</td>
+
+			</tr>
+			
+			
+
+			<tr>
+
+				<td colspan="2"><font face="宋体" size="1">
+
+				<span style="font-size: 9pt; font-family: 宋体">
+
+				您目前新一期的有效积分为0分，到期日为年月日。<br  />
+
+				截至本帐单日您的到期积分为0分，请您在年月日前完成积分兑换，过期该部分积分将自动清零。<br  />
+
+				积分礼品兑换请登录浦发银行信用卡中心网站</span></font><b><font face="Arial" color="red" size="1"><span lang="EN-US" style="FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: red; FONT-FAMILY: Arial"><font title="http://www.spdbccc.com.cn/" color="red"><a title="http://www.spdbccc.com.cn/" style="color: blue; text-decoration: underline" href="http://www.spdbccc.com.cn/"><span title="http://www.spdbccc.com.cn">www.spdbccc.com.cn</span></a></font></span></font><font face="Arial" size="1"><span lang="EN-US" style="font-weight: bold; font-size: 9pt; font-family: Arial">
+
+				</span></font></b><font face="Arial" size="1">
+
+				<span lang="EN-US" style="font-size: 9pt; font-family: Arial">&nbsp;</span></font><font face="宋体" size="1"><span style="font-size: 9pt; font-family: 宋体">，若有疑问可拔打</span></font><font face="Arial" size="1"><span lang="EN-US" style="font-size: 9pt; font-family: Arial">021-38784982</span></font><font face="宋体" size="1"><span style="font-size: 9pt; font-family: 宋体">积分专线咨询。</span></font></td>
+
+			</tr>
+
+			<tr>
+
+				<td colspan="2"><hr color="#999999"  /></td>
+
+			</tr>
+
+		</table>
+
+		<table width="100%" border="0" cellpadding="5" cellspacing="0" class="tc">
+
+			<tr>
+
+				<td width="5%" align="center" valign="top" bgcolor="#CCCCCC">
+
+				<b class="td2"><font color="#FFFFFF">说 </font></b>
+
+				<p><b class="td2"><font color="#FFFFFF">明 </font></b></p>
+
+				</td>
+
+				<td width="90%" style="padding-left:10px; padding-right:10px ">*如果“逾期还款额”为正数，表示您有逾期账款尚未支付，本期请立即还款。<br  />
+
+				*如果“本期应还款总额”为正数，表示您本期有欠款需还款；若为负数，表示您有存款结余，本期无需还款。<br  />
+
+				*本期账单争议总金额RMB:0.00，本期账单应还款已包括争议金额，争议金额部分暂无需还款。 　</td>
+
+			</tr>
+
+		</table>
+
+		</td>
+
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0">
+
+<tr>
+
+				<td width="16%" align="left" colspan="5">
+
+				<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/transactionheader.jpg"  /></td>
+
+			</tr>
+
+			<tr>
+
+				<td width="14%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				交易日期<span class="td3"><br  />
+
+				Transaction Date</span></td>
+
+				<td width="15%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				记账日期<span class="td3"><br  />
+
+				Posting Date</span></td>
+
+				<td width="34%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				交易摘要<span class="td3"><br  />
+
+				Description</span></td>
+
+				<td width="18%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				卡号末四位<span class="td3"><br  />
+
+				Card NO.</span></td>
+
+				<td width="19%" align="center" valign="top" bgcolor="#CCCCCC" class="line1">
+
+				交易金额<span class="td3"><br  />
+
+				Amount</span></td>
+
+			</tr>
+
+			
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/06</td>
+
+				<td align="center">2014/02/06</td>
+
+				<td align="center">支付宝(中国)网络技术有限公司</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">0.60</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/09</td>
+
+				<td align="center">2014/02/09</td>
+
+				<td align="center">华润苏果超市（襄阳）有限公司</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">60.40</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/10</td>
+
+				<td align="center">2014/02/10</td>
+
+				<td align="center">中石油南漳金鹿加油站(南漳工行)</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">200.00</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/11</td>
+
+				<td align="center">2014/02/11</td>
+
+				<td align="center">绫致时装（天津）有限公司襄阳长虹路销售部</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">1,628.50</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/12</td>
+
+				<td align="center">2014/02/12</td>
+
+				<td align="center">ATM现金还款</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">-500.00</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/15</td>
+
+				<td align="center">2014/02/15</td>
+
+				<td align="center">湖北华坤投资集团有限公司（中南路）</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">149.00</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/16</td>
+
+				<td align="center">2014/02/16</td>
+
+				<td align="center">锦江之星旅馆有限公司武汉新华路分公司CP</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">229.00</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/20</td>
+
+				<td align="center">2014/02/20</td>
+
+				<td align="center">支付宝(中国)网络技术有限公司</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">99.00</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/20</td>
+
+				<td align="center">2014/02/20</td>
+
+				<td align="center">支付宝(中国)网络技术有限公司</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">139.00</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/02/28</td>
+
+				<td align="center">2014/02/28</td>
+
+				<td align="center">支付宝(中国)网络技术有限公司</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">49.25</td>
+
+			</tr>
+
+			
+
+			<tr>
+
+				<td height="28" align="center" class="line2">2014/03/01</td>
+
+				<td align="center">2014/03/01</td>
+
+				<td align="center">利息</td>
+
+				<td align="center">2512</td>
+
+				<td align="center" class="line3">68.99</td>
+
+			</tr>
+
+			
+
+			
+
+</table>
+
+
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0">
+
+	<tr>
+
+		<td colspan="2"><hr color="#999999"  /></td>
+
+	</tr>
+
+	<tr>
+
+		<td align="left">
+
+		<a href="http://www.spdbccc.com.cn/zh/news/1/540/index.html" target="_blank">
+
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/20130402.jpg" width="344" height="254" border="0"  /></a></td>
+
+		<td align="right" width="363">
+
+		<a href="http://www.spdbccc.com.cn/zh/news/1/657/index.html" target="_blank">
+
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/20140301.jpg" width="344" height="254" border="0"  /></a></td>
+
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0" class="tc">
+
+	<tr>
+
+		<td width="7%" align="center" valign="top" bgcolor="#CCCCCC" style="font-size: 12px; line-height: 18px">
+
+		<b class="td2"><font color="#FFFFFF"><br  />
+
+		　</font></b><p>　</p>
+
+		<p>　</p>
+
+		<p><b class="td2"><font color="#FFFFFF">用<br  />
+
+		卡<br  />
+
+		活<br  />
+
+		动<br  />
+
+		</font></b></p>
+
+		</td>
+
+	  <td width="90%" style="padding:0px 10px 0px 10px;">
+		<img border="0" src="http://trip.cupdata.com/resource/bank/uploadFiles/fck/image/20140227163448.jpg" width="640" height="193"  /><br  /><br  />
+		<p><b>携程“房型免费升级”</b><br  />
+		2014年8月31日前，浦发信用卡持卡人通过携程旅行网预订指定四、五星级酒店并在线全额支付酒店房费即可享受房型免费升级（如：标准房免费升级高级房、标准房免费升级豪华房、标准房免费升级景观房等）优惠待遇。（每月限量1000间夜，先订先得，订完即止）具体活动细则及活动酒店信息详见信用卡中心网站<br  />
+		<br  />
+		<font color="#FF0000"><b>上海</b></font><br  />
+		<b>上海明捷万丽酒店</b><br  />
+		2014年4月30日前凡于上海明捷万丽酒店咖啡厅刷浦发信用卡可享晚餐自助餐买一送一的优惠（服务费除外）；在酒店大堂酒吧可享免收15%服务费的优惠。地址及电话：上海市铜川路50号\021-22195888<br  />
+		<br  />
+		<b>上海斯格威铂尔曼大酒店</b><br  />
+		2014年12月31日前凡于上海斯格威铂尔曼大酒店刷浦发信用卡可享“自助晚餐三人同行一人免单”（服务费不免）；华府中餐厅消费全单8.5折优惠（酒水、饮料及12月24日除外）。地址及电话：上海市打浦路15号\021-33189988<br  />
+		<br  />
+		<b>新恒星影城</b><br  />
+		2014年8月31日前凡于新恒星影城刷浦发银行卡购买正价电影票可享买一赠一优惠（每人每场限享受一次，首映式、见面会、情人节2月14日、平安夜12月24日、圣诞节12月25日、VIP等特殊场次不参与活动）。地址及电话：上海市西藏北路166号大悦城10楼-11楼\021-36527206<br  />
+		<br  />
+		<b>左岸影城金汇店</b><br  />
+		2014年5月31日前凡于左岸影城金汇店刷浦发银行卡购买正价电影票可享买一赠一优惠。<br  />
+		地址及电话：上海市金汇路528号虹桥古玩城5楼\021-54860799<br  />
+		<br  />
+		<b>香港修身堂纤体连锁机构</b><br  />
+		2014年11月30日前凡于香港修身堂纤体连锁机构指定门店刷浦发银行卡可享纤体瘦身项目半价优惠；面部补水项目38元/次（原价160元/次）；店内其他项目可享6.8折优惠。<br  />
+		地址及电话：上海市金桥路939号等门店\021-61009328等<br  />
+		<br  />
+		<b>上海丽君酒店</b><br  />
+		2014年9月30日前凡于上海丽君酒店刷浦发信用卡入住酒店可享客房门市价5折优惠（以上优惠不与酒店其他优惠共享）。地址及电话：上海市北艾路801号\021-51960888<br  />
+		<br  />
+		<font color="#FF0000"><b>广州</b></font><br  />
+		<b>晴美国际女子美容沙龙</b><br  />
+		2014年12月31日前凡于晴美国际女子美容沙龙刷浦发银行卡购买任意原价项目可享9折优惠，首次体验8.8元可享特定项三部通经护理。地址及电话：广州市洛溪新城洛溪南区商业街31-32号\020-22382726<br  />
+		<br  />
+		<b>k_party</b><br  />
+		2014年12月31日前凡于k_party刷浦发银行卡可享店内自助餐原价的8折优惠，黄金时段消费按店面推出会员价优惠。地址及电话：广州市石榴岗路10号生物工程大厦二楼\020-39995588/39995599<br  />
+		<br  />
+		<b>广州市嘉逸国际酒店</b><br  />
+		2015年2月28日前凡于广州市嘉逸国际酒店刷浦发信用卡可享受门市价房费6.5折优惠（广交会期间除外）。地址及电话：广州市天河北路468号嘉逸国际酒店首层\020-38803333<br  />
+		<br  />
+		<b>克丽缇娜</b><br  />
+		2014年9月30日前凡于克丽缇娜刷浦发信用卡可享所有项目5折优惠。地址及电话：广州市员村四横路美林花园棕林街59号\020-85558605<br  />
+		<br  />
+		<b>金桥酒店</b><br  />
+		2014年8月31日前凡于金桥酒店刷浦发信用卡可享客房门市价5折优惠。地址及电话：广州市寺右新马路93号\020-83918868<br  />
+		<br  />
+		<b>广州荷芙蔓芳疗SPA养生殿</b><br  />
+		2014年8月31日前凡于广州荷芙蔓芳疗SPA养生殿刷浦发信用卡购买项目可享6.3折优惠；购买产品可享8.5折优惠。地址及电话：广州市德政中路243号1-4楼\020-83301361<br  />
+		<br  />
+		<font color="#FF0000"><b>南京</b></font><br  />
+		<b>烟波渔港</b><br  />
+		2014年4月30日前凡于烟波渔港刷浦发信用卡可享8.8折优惠（酒水、河海鲜除外）。<br  />
+		地址及电话：南京市江东北路86号\025-86209577<br  />
+		<br  />
+		<b>振道跆拳道</b><br  />
+		2014年5月31日前凡于振道跆拳道刷浦发信用卡购买年卡可享立减200元优惠，购买其他卡可享9.5折优惠。地址及电话：南京市太平南路2号日月大厦2楼\025-68997101<br  />
+		<br  />
+		<font color="#FF0000"><b>大连</b></font><br  />
+		<b>聚亿美容院</b><br  />
+		2015年1月31日前凡于聚亿美容院刷浦发银行卡可享护理项目5.5折优惠。地址及电话：大连市华南广场118-29号公建\0411-39506903<br  />
+		<br  />
+		<b>视觉风尚</b><br  />
+		2014年12月31日前凡于视觉风尚刷浦发信用卡可享洗剪吹、烫染8.5折优惠（外卖发品除外）。地址及电话：大连市友好路89-1号\0411-39611131<br  />
+		<br  />
+		<font color="#FF0000"><b>北京</b></font><br  />
+		<b>长虹影城</b><br  />
+		2014年6月30日前凡于长虹影城刷浦发银行卡购买正价影票可享半价优惠（每人每天限参与本活动一次且限购两张电影票）。地址及电话：北京市隆福寺街75号\010-64050442<br  />
+		<br  />
+		<b>嘉美国际影城</b><br  />
+		2014年6月30日前凡于嘉美国际影城刷浦发银行卡购买正价影票可享2人同行1人免单优惠（周一至周五18点-21点、周六日及节假日13点后开场影片除外；每人每天限参与本活动一次且限购两张电影票）。地址及电话：北京市旧宫小红门路39号\010-58310528、58310538<br  />
+		<br  />
+		<b>紫光影城</b><br  />
+		2014年6月30日前凡于紫光影城刷62开头浦发银联标准卡购买正价影票可享半价优惠。<br  />
+		地址及电话：北京市朝外大街蓝岛大厦西区5楼\010-65992229<br  />
+		<br  />
+		<b>新华国际影城</b><br  />
+		2014年6月30日前凡于新华国际影城宝盛店刷62开头浦发银联标准卡购买正价影票可享半价优惠。房山店、大兴店、大钟寺店于周一至周四购买正价影票可享半价优惠，周五至周日正价影票可享7折优惠。地址及电话：<br  />
+		宝盛店：北京市宝盛北里西区28楼兴美生活广场5楼\010-62905220-8011<br  />
+		房山店：北京市良乡北关西路14号华冠购物中心5楼\010-69351155<br  />
+		大兴店：北京市黄村东大街火神庙商业中心E座5楼\010-81297050<br  />
+		大钟寺店：北京市大钟寺中坤广场C座3层\010-82511616<br  />
+		<br  />
+		<b>卢米埃芳草地影城</b><br  />
+		2014年6月30日前凡于卢米埃芳草地影城刷浦发银行卡购买正价影票可享半价优惠（每人每天限参与本活动一次且限购两张电影票）。地址及电话：北京市东大桥路9号侨福芳草地购物中心LG2-26\4006-010-618<br  />
+		<br  />
+		<b>音乐之声KTV</b><br  />
+		2014年8月14日前凡于音乐之声KTV刷62开头浦发银联标准卡欢唱2小时（含）以上，即可免费获赠2小时欢唱费（优惠仅限贵宾区参加；不适用于酒水、小吃、周五、周六19：00后、法定节假日、平安夜、圣诞节当天及前一天）。地址及电话：北京市日坛北路17号\010-85655777<br  />
+		<br  />
+		<b>橙天嘉禾吉彩影城</b><br  />
+		2014年4月30日前凡于橙天嘉禾吉彩影城刷浦发银行卡购买正价影票可享半价优惠。地址及电话：北京市阜石路玉海园五里22号\010-88268200<br  />
+		<br  />
+		北京地区影院优惠不适用于电影节、首映式、见面会、点映场、通宵场、贵宾厅、情人节（2月14日）、平安夜（12月24日）、圣诞节（12月25日）、特殊场次、法定节假日及特殊推广活动，需按影城公示的相应规定执行；对于国家或片方规定特殊影片，需补齐差价方可享受优惠。优惠活动不与商户其他优惠共享。</p>
+		<p><br  />
+	    *更多信用卡精彩信息请登录浦发信用卡网站<a href="http://www.spdbccc.com.cn"><u><font color="#3366CC">www.spdbccc.com.cn</font></u></a><font color="#3366CC">。</font></p></td>
+
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0">
+
+	<tr>
+
+		<td colspan="2">
+
+		<img src="http://www.spdbccc.com.cn/zh/e_stmt/images/new-foot.jpg" width="720" height="122"  /></td>
+
+	</tr>
+
+</table>
+
+<table width="720" border="0" align="center" cellpadding="3" cellspacing="0">
+
+	<tr>
+
+		<td colspan="2" align="right">本邮件为系统自动发出，请勿直接回复</td>
+
+	</tr>
+
+</table>
+
+<br  />
+
+<br  />
+
+
+</div></div><!-- --><style>#mailContentContainer .txt {height:auto;}</style>  </div><script>
+(function()
+{
+var _oImgs = getTop().GelTags("img", getTop().S("mailContentContainer",window));
+getTop().E(_oImgs, function(_aoItem){ 
+_aoItem.onerror = function()
+{
+                if(this.src && /.*mail\.qq\.com\/cgi-bin\/viewfile.*/i.test(this.src)){
+                    getTop().LogKV({sValue:'getinvestigate|readmail|readmail|imgerror'});
+                }
+if (this.src && !/.*mail.qq.com\/cgi-bin.*/.test(this.src) && /http:\/\//.test(this.src) && this.clientHeight * this.clientWidth > 0) 
+{
+this.onerror = null;
+this.src = "/cgi-bin/get_netres?url=" + encodeURIComponent(this.src) + "&sid=" + getTop().getSid(); 
+}
+}
+});
+})();
+</script></div><img id="qqmailcontent_load_finsih" width=0 height=0 style="height:0;display:none;"/></div></body></html><script>
+var _oTop = getTop();
+
+function showNetDisk(_aoContainer)
+{
+getTop().waitFor(
+function()
+{
+return getTop().QMNetDisk && getTop().QMNetDisk.getInfo()
+},
+function(_abIsOk)
+{
+if(_abIsOk)
+{
+var _oDiskInfo = getTop().QMNetDisk.getInfo(),
+_oDomAttCon = getTop().finds("div[ui-type='attCon']", _aoContainer)[0],
+_oDomList = getTop().finds("a.netdisk_hide", _oDomAttCon||_aoContainer) || [],
+_oDomAtt = _oDomList[0];
+
+for(var i = 0; i < _oDomList.length;i++)
+{
+getTop().QMNetDisk.uploadEntry(_oDomList[i]);
+}
+
+_oDomAttCon && _oDomAtt
+&& setTimeout(function()
+{
+getTop().QMNetDisk.route("tips", "readmail", _oDomAttCon, {
+offsetLeft: _oDomAtt.offsetLeft + _oDomAtt.clientWidth/2, 
+offsetTop: 80
+});
+},3000);
+}
+}
+);
+}
+showNetDisk(document);
+_oTop.waitFor(
+function()
+{
+return !!(_oTop.QMReadMail);
+},
+function(_abIsOk)
+{
+if (_abIsOk)
+{
+try{
+window.QMReadMail = new (_oTop.QMReadMail.qmReadMail)(
+{
+                    
+ bNeedIdentifyLocation: true,
+sLocationIdentifyUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify_worker24e6ae.js',
+sLocationWorkerImportUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js',
+   
+logintype: '1',
+reandfw: "",
+mailtype        : 'comm',
+xqqstyle: '0',
+noIncludeArtcle: false,
+bOpenTag : "1",
+
+loc: "readmail,readmail,",
+subtmpl: "",
+folderid: "1",
+folderkey: "",
+saveFrom: "53094558@qq.com",
+titlePrefix: "0",
+sendmailname: "53094558@qq.com",
+disptype: "html",
+
+bNewMail        : 0,
+
+bNeedReceipt : 0,
+
+bStar : false,
+bAddrvip : false,
+bSys : false,
+                    bAd: false,
+oSysTag : "system:1|friend:0|important:0|",
+bDft : false,
+oMatchTag : [],
+oMoveItems: [ 
+{ sId: 'fid_1', sItemValue: "收件箱" },
+{ sId: 'fid_3', sItemValue: "已发送" },
+{ sId: "fid_129", sItemValue: "QQ邮件订阅" },
+{ nHeight: 10, sItemValue: '<div style="background:#CCC; height:1px; margin-top:5px; overflow:hidden;"></div>' }, //'<hr style="color:#CCC;height:1px;"/>' },
+{ sId: "new", sItemValue : '新建文件夹...' }
+],
+oMoreOpt : ["addremark", "addstar", "addremind", "print"]
+},
+{
+from: { 
+                        name : "浦发银行信用卡中心", 
+                        addr : "estmtservice@eb.spdbccc.com.cn",
+                        qq : ""
+                    }, 
+date: "2014年3月2日(星期天) 下午5:08",
+dateeng: "",
+
+to: [
+{
+name : "Ж海神圣子Ⅹ",
+addr : "53094558@qq.com",
+qq  : "-1948596950"
+},
+],
+
+cc: [
+],
+
+subject: "浦发银行-信用卡电子账单",
+
+replyTo: [
+{
+name : "浦发银行信用卡中心",
+addr : "estmtservice@eb.spdbccc.com.cn"
+}
+],
+
+replyCc: [
+],
+
+reSubject: "浦发银行-信用卡电子账单"
+},
+{
+oWin : window,
+sContext : "ZC3802-Y_2tmrKycVtIEhFCFiUKS43",
+sModuleName : "qmReadMail"
+}
+);
+}catch(e){alert(e.message)}
+
+var tag = [{}];
+tag.length = tag.length - 1;
+getTop().QMTag && getTop().QMTag.set(tag, "1437704056038004");
+
+}
+else
+{
+debug("读信readmail2.js加载失败");
+}
+}, 10);
+
+getTop().switchFolder('folder_1');
+</script> <script>parent.endStatTime && parent.endStatTime(window, 
+{mailid:"ZC3802-Y_2tmrKycVtIEhFCFiUKS43",folderid:"1",type:"readmail",rcgi:"readmail",rt:"readmail",rs:"",wm_flowid:"3852865"});</script>
+		<br/>
+		<br/>
+		<br/>
+		<div>邮件头</div>
+		Received:from MAIL_B.com (unknown [211.144.218.228])
+	by newmx16.qq.com (NewMx) with SMTP id 
+	for <53094558@qq.com>; Sun, 02 Mar 2014 17:56:30 +0800
+Received:from MAIL_A (unknown [::ffff:20.16.18.5])
+	by MAIL_B (Coremail) with SMTP id AAAAAJBrMAAk9RJTKKMCAA--.7098S2;
+	Sun, 02 Mar 2014 17:08:52 +0800 (CST)
+From:=?gbk?B?xta3otL40NDQxdPDv6jW0NDE?= <estmtservice@eb.spdbccc.com.cn>
+To:<53094558@qq.com>
+Date:Sun, 02 Mar 2014 17:08:52 +0800
+
+		</body>
+</html>

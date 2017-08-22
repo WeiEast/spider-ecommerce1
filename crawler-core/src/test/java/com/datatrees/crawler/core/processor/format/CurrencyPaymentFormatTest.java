@@ -1,0 +1,42 @@
+/**
+ * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
+ * The copying and reproduction of this document and/or its content (whether wholly or partly) or
+ * any incorporation of the same into any other material in any media or format of any kind is
+ * strictly prohibited. All rights are reserved.
+ * 
+ * Copyright (c) datatrees.com Inc. 2015
+ */
+package com.datatrees.crawler.core.processor.format;
+
+import org.junit.Test;
+
+import com.datatrees.common.conf.DefaultConfiguration;
+import com.datatrees.common.pipeline.Request;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.format.impl.CurrencyFormatImpl;
+
+/**
+ * 
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @version 1.0
+ * @since Mar 31, 2014 2:51:31 PM
+ */
+public class CurrencyPaymentFormatTest {
+
+    @Test
+    public void testDateFormat() {
+        CurrencyFormatImpl currencyFormatImpl = new CurrencyFormatImpl();
+        Request request = new Request();
+        currencyFormatImpl.setConf(new DefaultConfiguration());
+        RequestUtil.setConf(request, new DefaultConfiguration());
+        System.out.println(currencyFormatImpl.format(request, null, "34 美元", null));
+        System.out.println(currencyFormatImpl.format(request, null, "34 人民币", null));
+        System.out.println(currencyFormatImpl.format(request, null, "34欧元", null));
+        System.out.println(currencyFormatImpl.format(request, null, "34 日元", null));
+        System.out.println(currencyFormatImpl.format(request, null, "元", null));
+
+    }
+
+
+
+}

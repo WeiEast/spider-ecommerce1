@@ -1,0 +1,45 @@
+﻿
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>邮件账单列表</title>
+		<meta charset="utf-8" />
+		<link href="css/base.css" rel="stylesheet" type="text/css">
+		<link href="css/mail.css" rel="stylesheet" type="text/css">
+		<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/userbill.js"></script>
+	</head>
+	<body>
+  		 <a href="download.do?mailId=">附件下载</a>
+		<div class="showTable">
+			<table>
+			  <thead>
+			    <tr>
+        			<th>银行</th>
+                    <th>持卡人</th>
+                    <th>账单周期</th>
+                    <th>卡号后四位</th>
+                    <th>最后还款日</th>
+                    <th>本期应还款</th>
+                    <th>最低还款额</th>
+                    <th>信用额度/取现额度</th>
+                    <th>上期应还额</th>
+                    <th>本期积分</th>
+                    <th>新增积分</th>
+                    <th>BillID</th>
+                    <th>UBID</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  </tbody>
+			</table>
+		<div style="float:right"> <a href="javascript:void(0)" onclick="UserBill.ChangeAnalyzeState()">解析错误</a> </div>
+		</div>
+		
+		<br/>
+		<br/>
+		<br/>
+		<div>邮件头</div>
+		
+		</body>
+</html>

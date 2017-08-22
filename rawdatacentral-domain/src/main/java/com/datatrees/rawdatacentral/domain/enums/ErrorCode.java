@@ -28,7 +28,7 @@ public enum ErrorCode {
     VALIDATE_PIC_CODE_FAIL(-260,"请输入正确的图片验证码"),
     VALIDATE_PIC_CODE_UNEXPECTED_RESULT(-261,"请输入正确的图片验证码"),
     VALIDATE_PIC_CODE_ERROR(-262,"请输入正确的图片验证码"),
-    VALIDATE_PIC_CODE_TIMEOUT(-263,"图片验证码,验证超时"),
+    VALIDATE_PIC_CODE_TIMEOUT(-263,"等待用户输入图片验证码超时"),
 
     REFESH_SMS_FAIL(-270,"短信验证码发送失败,请重试"),
     REFESH_SMS_UNEXPECTED_RESULT(-271,"短信验证码发送失败,请重试"),
@@ -37,7 +37,7 @@ public enum ErrorCode {
     VALIDATE_SMS_FAIL(-280,"短信验证码不正确或已过期,请重新获取"),
     VALIDATE_SMS_UNEXPECTED_RESULT(-281,"短信验证码不正确或已过期,请重新获取"),
     VALIDATE_SMS_ERROR(-282,"短信验证码不正确或已过期,请重新获取"),
-    VALIDATE_SMS_TIMEOUT(-283,"图片验证码,验证超时"),
+    VALIDATE_SMS_TIMEOUT(-283,"等待用户输入短信验证码超时"),
 
 
     VALIDATE_FAIL(-290,"校验失败,请重试"),

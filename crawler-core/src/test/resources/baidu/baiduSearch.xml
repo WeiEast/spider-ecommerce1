@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 网查百度Search -->
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<result-tag-list>
+		<result-tag><![CDATA[webDetect]]></result-tag>
+	</result-tag-list>
+	<url-filters>
+		<url-filter type="+">.*</url-filter>
+	</url-filters>
+	<properties>
+		<encoding>UTF-8</encoding>
+	</properties>
+	<page-definition>
+		<page id="keyword-search-page" path="/s">
+			<object-segment name="linkNode" type="xpath"
+				value="div.c-container:has(h3)" result-class="LinkNode" max-cycles="3">
+				<field-extractor id="returnNode" field="temp">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="nodeTemp" field="temp">
+					<operation type="xpath">div/text()</operation>
+					<operation type="trim"></operation>
+					<operation type="triple" triple-type="contains">${this} contains:${keyword}?${returnNode}:noMatches
+					</operation>
+				</field-extractor>
+				<object-segment name="linkNode" type="xpath" source="nodeTemp"
+					value="body:not(:contains(noMatches))" result-class="LinkNode">
+					<field-extractor id="url" field="url" result-type="string"
+						not-empty="true">
+						<operation type="extract"></operation>
+					</field-extractor>
+					<field-extractor id="overview" field="overview">
+						<operation type="xpath"><![CDATA[div.c-abstract/text()]]></operation>
+						<operation type="replace" from="&amp;nbsp;" to=""><![CDATA[div.c-abstract/text()]]></operation>
+						<operation type="replace" from="&gt;" to=""><![CDATA[div.c-abstract/text()]]></operation>
+						<operation type="trim"></operation>
+					</field-extractor>
+					<field-extractor id="title" field="title">
+						<operation type="xpath"><![CDATA[//h3/text()]]></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+		<page id="show-page" path="/link">
+			<object-segment name="basicSearch" result-class="DefaultData">
+				<field-extractor id="keyword" field="keyword"
+					result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+				</field-extractor>
+				<field-extractor id="containKey" field="containKey"
+					result-type="string">
+					<operation type="template">${containKey}</operation>
+				</field-extractor>
+				<field-extractor id="businessType" field="businessType"
+					result-type="string">
+					<operation type="template">${businessType}</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${redirect_url}</operation>
+				</field-extractor>
+				<field-extractor id="overview" field="overview"
+					result-type="string">
+					<operation type="template">${overview}</operation>
+				</field-extractor>
+				<field-extractor id="title" field="title"
+					result-type="string">
+					<operation type="template">${title}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<!--下一页 <object-segment name="linkNode" type="xpath" value="a.n:contains(下一页)" 
+			result-class="LinkNode"> <field-extractor id="url" field="url" result-type="string"> 
+			<operation type="extract"></operation> </field-extractor> </object-segment> -->
+
+	</page-definition>
+	<search>
+		<search-template id="keyword-search-template"
+			max-depth="1">
+			<request>
+				<max-page>100</max-page>
+				<url-templates>
+					<url-template><![CDATA[https://www.baidu.com/s?wd=${keyword}]]></url-template>
+				</url-templates>
+				<default-header><![CDATA[{"Referer":"https://www.baidu.com"}]]></default-header>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="keyword-search-page" />
+				<page depth="1" ref="show-page" />
+			</page-sequence>
+			<result-tag-list>
+				<result-tag><![CDATA[webDetect]]></result-tag>
+			</result-tag-list>
+		</search-template>
+	</search>
+
+</config>

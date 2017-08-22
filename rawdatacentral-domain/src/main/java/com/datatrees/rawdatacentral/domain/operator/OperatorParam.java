@@ -2,7 +2,6 @@ package com.datatrees.rawdatacentral.domain.operator;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.datatrees.crawler.core.util.json.JsonPathUtil;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -65,6 +64,11 @@ public class OperatorParam implements Serializable {
      */
     private Map<String, Object> extral = new HashMap<>();
 
+    /**
+     * 给自定义plugin方法用
+     */
+    private String[]            args;
+
     public OperatorParam() {
     }
 
@@ -72,6 +76,14 @@ public class OperatorParam implements Serializable {
         this.formType = formType;
         this.taskId = taskId;
         this.websiteName = websiteName;
+    }
+
+    public String[] getArgs() {
+        return args;
+    }
+
+    public void setArgs(String[] args) {
+        this.args = args;
     }
 
     public String getFormType() {

@@ -26,9 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.datatrees.rawdatacentral.service.OperatorPluginService.RETURN_FIELD_PIC_CODE;
 
 /**
  * Created by zhouxinghai on 2017/7/17.
@@ -86,7 +83,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         } else {
             log = TemplateUtils.format("{}-->图片验证码-->刷新成功!", FormType.getName(param.getFormType()));
             Map<String, Object> map = new HashMap<>();
-            map.put(RETURN_FIELD_PIC_CODE, picResult.getData());
+            map.put(AttributeKey.PIC_CODE, picResult.getData());
             result.success(map);
         }
         messageService.sendTaskLog(param.getTaskId(), log);
@@ -186,6 +183,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     @Override
     public HttpResult<List<OperatorCatalogue>> queryAllConfig() {
         return crawlerService.queryAllOperatorConfig();
+    }
+
+    @Override
+    public HttpResult<Object> defineProcess(OperatorParam param) {
+        return getLoginService(param).defineProcess(param);
     }
 
     private OperatorPluginService getLoginService(OperatorParam param) {
