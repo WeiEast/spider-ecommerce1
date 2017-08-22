@@ -337,8 +337,7 @@ public class China10000ForApp implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_007").setFullUrl(templateUrl)
                 .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
-            result.setData(pageContent);
-            return result;
+            return result.success(pageContent);
         } catch (Exception e) {
             logger.error("账单页访问失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
@@ -369,8 +368,7 @@ public class China10000ForApp implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_app_008").setFullUrl(templateUrl)
                 .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
-            result.setData(pageContent);
-            return result;
+            return result.success(pageContent);
         } catch (Exception e) {
             logger.error("通话记录页访问失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
