@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.common;
 
 import java.util.List;
@@ -21,18 +21,20 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 6, 2014 4:45:30 PM
  */
 public class ResponseUtil {
 
-    private ResponseUtil() {};
+    private ResponseUtil() {}
+
+    ;
 
     /**
      * parser result list
-     * 
+     *
      * @param response
      * @return
      */
@@ -40,11 +42,9 @@ public class ResponseUtil {
         return (List<Object>) response.getAttribute(Constants.PAGE_EXTRACT_OBJECT_LIST);
     }
 
-
     public static void setResponseObjectList(Response response, List<Object> objects) {
         response.setAttribute(Constants.PAGE_EXTRACT_OBJECT_LIST, objects);
     }
-
 
     public static void setResponsePageExtractResultMap(Response response, Map results) {
         response.setAttribute(Constants.PAGE_EXTRACT_RESULT_MAP, results);
@@ -67,11 +67,9 @@ public class ResponseUtil {
     // }
     //
 
-
     public static String getResponseContent(Response response) {
         return (String) response.getAttribute(Constants.RESPONSE_CONTENT);
     }
-
 
     // public static void setResponseList(Response response, List<String> contentList) {
     // response.setAttribute(Constants.RESPONSE_LIST, contentList);
@@ -81,7 +79,6 @@ public class ResponseUtil {
         response.setAttribute(Constants.RESPONSE_CONTENT, content);
     }
 
-
     public static void setResponseFieldResult(Response response, Map<String, FieldExtractorWarpper> resultMap) {
         response.setAttribute(Constants.FIELDS_RESULT_MAP, resultMap);
     }
@@ -90,7 +87,6 @@ public class ResponseUtil {
     public static Map<String, FieldExtractorWarpper> getResponseFieldResult(Response response) {
         return (Map<String, FieldExtractorWarpper>) response.getAttribute(Constants.FIELDS_RESULT_MAP);
     }
-
 
     public static String getResponseErrorMsg(Response response) {
         return (String) response.getAttribute(Constants.RESPONSE_ERROR_MSG);
@@ -115,7 +111,6 @@ public class ResponseUtil {
     public static void setResponseLinkNodes(Response response, List<LinkNode> nodes) {
         response.setAttribute(Constants.RESPONSE_LINKNODES, nodes);
     }
-
 
     public static void setProtocolResponse(Response response, ProtocolOutput out) {
         response.setAttribute(Constants.RESPONSE_Protocol_OUTPUT, out);
@@ -156,7 +151,7 @@ public class ResponseUtil {
     public static Set<String> getBlackPageExtractorIdSet(Response response) {
         return (Set<String>) response.getAttribute(Constants.BLACK_PAGE_EXTRACTOR_IDS);
     }
-    
+
     public static void setMatchedPageExtractorList(Response response, List<PageExtractor> list) {
         response.setAttribute(Constants.MATCHED_PAGE_EXTRACTORS, list);
     }

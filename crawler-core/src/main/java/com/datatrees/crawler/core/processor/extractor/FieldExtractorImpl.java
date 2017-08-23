@@ -3,10 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.extractor;
+
+import java.nio.charset.Charset;
+import java.util.*;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.pipeline.Request;
@@ -20,30 +23,16 @@ import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.Processor;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.ProcessorRunner;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
+import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ExtractorException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
+import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.google.common.base.Preconditions;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -52,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * field exetractor should be parallel
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 1:45:17 PM
@@ -60,7 +49,6 @@ import org.slf4j.LoggerFactory;
 public class FieldExtractorImpl extends Processor {
 
     private static final Logger log = LoggerFactory.getLogger(FieldExtractorImpl.class);
-
     protected FieldExtractor fieldExtractor;
 
     public FieldExtractor getFieldExtractor() {
@@ -70,7 +58,6 @@ public class FieldExtractorImpl extends Processor {
     public void setFieldExtractor(FieldExtractor fieldExtractor) {
         this.fieldExtractor = fieldExtractor;
     }
-
 
     private Object extractWithPlugin(Request request, String content, AbstractPlugin pluginDesc) throws Exception {
         AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
@@ -90,7 +77,6 @@ public class FieldExtractorImpl extends Processor {
 
         return pluginResultMap.get(PluginConstants.FIELD);
     }
-
 
     private Object extractWithOperation(Request request, String content, Map<String, FieldExtractorWarpper> resultMap) throws Exception {
         Object fieldResult = null;
@@ -128,7 +114,6 @@ public class FieldExtractorImpl extends Processor {
         return fieldResult;
     }
 
-
     private boolean isValid(Object obj) {
         // Check whether the data is valid
         if (obj instanceof FieldExtractorWarpper) {
@@ -147,13 +132,11 @@ public class FieldExtractorImpl extends Processor {
         return true;
     }
 
-
-
     /**
      * process field extractor field extractor can have multi operation the order of operation is
      * serial field extractor it's self is parallel need PLUGIN_RESULT_MAP for plugin implement and
      * FIELDS_RESULT_MAP for field result map
-     * 
+     *
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -164,8 +147,7 @@ public class FieldExtractorImpl extends Processor {
         try {
             // precheck
             Preconditions.checkNotNull(fieldExtractor, "field extractor should not be null");
-            if (BooleanUtils.isTrue(fieldExtractor.getStandBy()) && resultMap.get(fieldExtractor.getId()) != null
-                    && isValid(resultMap.get(fieldExtractor.getId()))) {
+            if (BooleanUtils.isTrue(fieldExtractor.getStandBy()) && resultMap.get(fieldExtractor.getId()) != null && isValid(resultMap.get(fieldExtractor.getId()))) {
                 log.debug("no need use stand by fieldExtractor:" + fieldExtractor);
                 return;
             }
@@ -270,11 +252,8 @@ public class FieldExtractorImpl extends Processor {
         return fieldResult;
     }
 
-
-    private Object fieldDefaultValue(Request request, Response response, Map<String, FieldExtractorWarpper> resultMap, Object fieldResult,
-            ResultType type) {
-        if (fieldExtractor.getDefaultValue() != null
-                && (fieldResult == null || (fieldResult instanceof String && StringUtils.isEmpty((String) fieldResult)))) {
+    private Object fieldDefaultValue(Request request, Response response, Map<String, FieldExtractorWarpper> resultMap, Object fieldResult, ResultType type) {
+        if (fieldExtractor.getDefaultValue() != null && (fieldResult == null || (fieldResult instanceof String && StringUtils.isEmpty((String) fieldResult)))) {
             fieldResult = this.fieldDefaultValue(request, resultMap, fieldResult);
             try {
                 return this.format(request, response, fieldResult, type);
@@ -287,20 +266,17 @@ public class FieldExtractorImpl extends Processor {
         }
     }
 
-
     private Object fieldDefaultValue(Request request, Map<String, FieldExtractorWarpper> resultMap, Object fieldResult) {
         Set<String> replaceList = ReplaceUtils.getReplaceList(fieldExtractor.getDefaultValue());
         if (CollectionUtils.isEmpty(replaceList)) {
             return fieldExtractor.getDefaultValue();
         } else {
-            return ReplaceUtils.getReplaceObject(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(resultMap),
-                    RequestUtil.getSourceMap(request), fieldExtractor.getDefaultValue());
+            return ReplaceUtils.getReplaceObject(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(resultMap), RequestUtil.getSourceMap(request), fieldExtractor.getDefaultValue());
         }
     }
 
-
     /**
-     * 
+     *
      * @param url
      * @param request
      * @return
@@ -318,7 +294,7 @@ public class FieldExtractorImpl extends Processor {
     }
 
     /**
-     * 
+     *
      * @return
      */
     private boolean needResolveUrl() {
@@ -326,7 +302,7 @@ public class FieldExtractorImpl extends Processor {
     }
 
     /**
-     * 
+     *
      * @param content
      * @param encoding
      * @return
@@ -356,14 +332,13 @@ public class FieldExtractorImpl extends Processor {
     }
 
     /**
-     * 
+     *
      * @param response
      * @return
      */
     protected Map<String, FieldExtractorWarpper> initMap(Response response) {
 
-        @SuppressWarnings("unchecked")
-        Map<String, FieldExtractorWarpper> resultMap = ResponseUtil.getResponseFieldResult(response);
+        @SuppressWarnings("unchecked") Map<String, FieldExtractorWarpper> resultMap = ResponseUtil.getResponseFieldResult(response);
         if (resultMap == null) {
             resultMap = new HashMap<>();
             ResponseUtil.setResponseFieldResult(response, resultMap);

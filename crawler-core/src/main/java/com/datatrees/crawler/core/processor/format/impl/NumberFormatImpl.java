@@ -3,19 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.format.impl;
 
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -24,9 +19,13 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.format.container.NumberMapContainer;
 import com.datatrees.crawler.core.processor.format.unit.NumberUnit;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 13, 2014 9:57:05 AM
@@ -61,7 +60,7 @@ public class NumberFormatImpl extends AbstractFormat {
     }
 
     /**
-     * 
+     *
      * @param result
      * @param unit
      * @return
@@ -77,7 +76,7 @@ public class NumberFormatImpl extends AbstractFormat {
     }
 
     /**
-     * 
+     *
      * @param orginal
      * @return
      */
@@ -91,9 +90,8 @@ public class NumberFormatImpl extends AbstractFormat {
         return result;
     }
 
-
     /**
-     * 
+     *
      * @param periodMap
      * @param orginal
      * @return
@@ -120,7 +118,7 @@ public class NumberFormatImpl extends AbstractFormat {
     }
 
     /**
-     * 
+     *
      */
     protected NumberMapContainer initNumberContainer(Request req) {
         NumberMapContainer container = null;
@@ -146,6 +144,5 @@ public class NumberFormatImpl extends AbstractFormat {
             return false;
         }
     }
-
 
 }

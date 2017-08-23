@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.bean;
 
 import java.util.HashMap;
@@ -14,44 +14,45 @@ import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 9:11:19 PM
  */
 public class LinkNode {
 
-    private int depth;
+    private int    depth;
     private String url;
     private String referer;
-
     private String baseUrl;
-
     private String pageTitle;
-
     private String redirectUrl;
-
     /** page id */
-    private String pId = "";
-
-    private int retryCount = 0;
-    private Map<String, Object> property = new HashMap<String, Object>();
-
-    private Map<String, String> headers = new HashMap<String, String>();
+    private String              pId        = "";
+    private int                 retryCount = 0;
+    private Map<String, Object> property   = new HashMap<String, Object>();
+    private Map<String, String> headers    = new HashMap<String, String>();
     /** page number */
-    private int pNum = -1;
-
-    private boolean isRemoved = false;
-
-    private boolean isHosting = false;
-
-    private String anchorText;
-
+    private int                 pNum       = -1;
+    private boolean             isRemoved  = false;
+    private boolean             isHosting  = false;
+    private String  anchorText;
     /* get from parser */
     private boolean isFromParser;
-
     private boolean needRequeue;
 
+    public LinkNode(String url) {
+        this(0, url, null);
+    }
+
+    public LinkNode(int depth, String url, String referer) {
+        super();
+        setDepth(depth).setUrl(url).setReferer(referer);
+    }
+
+    public LinkNode(String url, int depth) {
+        this(depth, url, null);
+    }
 
     /**
      * @return the needRequeue
@@ -81,7 +82,6 @@ public class LinkNode {
         this.isFromParser = isFromParser;
     }
 
-
     /**
      * @return the isRemoved
      */
@@ -89,26 +89,11 @@ public class LinkNode {
         return isRemoved;
     }
 
-
     /**
      * @param isRemoved the isRemoved to set
      */
     public void setRemoved(boolean isRemoved) {
         this.isRemoved = isRemoved;
-    }
-
-
-    public LinkNode(String url) {
-        this(0, url, null);
-    }
-
-    public LinkNode(int depth, String url, String referer) {
-        super();
-        setDepth(depth).setUrl(url).setReferer(referer);
-    }
-
-    public LinkNode(String url, int depth) {
-        this(depth, url, null);
     }
 
     public int getRetryCount() {
@@ -255,7 +240,6 @@ public class LinkNode {
     public String getAnchorText() {
         return anchorText;
     }
-
 
     /**
      * @param anchorText the anchorText to set

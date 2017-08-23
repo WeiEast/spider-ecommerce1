@@ -1,8 +1,9 @@
 package com.datatrees.crawler.core.processor.format;
 
-import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -12,8 +13,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 public class DecodeUtilsTest {
 
     public static void main(String[] args) throws Exception {
-        String data =
-                "&#29238;&#20146;&#30340;&#21517;&#23383;&#27597;&#20146;&#30340;&#21517;&#23383;&#25105;&#30340;&#21517;&#23383;&#22969;&#22969;&#30340;&#21517;&#23383;";
+        String data = "&#29238;&#20146;&#30340;&#21517;&#23383;&#27597;&#20146;&#30340;&#21517;&#23383;&#25105;&#30340;&#21517;&#23383;&#22969;&#22969;&#30340;&#21517;&#23383;";
 
         data = "\u041A\u0430\u0441\u0442\u0438\u043B\u0438\u044F - \u041B\u0430 \u041C\u0430\u043D\u0447\u0430";
 
@@ -43,8 +43,7 @@ public class DecodeUtilsTest {
         // i = Integer.valueOf("E9", 16);
         // System.out.println(Integer.valueOf("E9", 16).toString());
 
-        String source =
-                "xx\\xE9\\xBB\\x84\\xE8\\x8A\\xB1\\xE6\\xA2\\xA8\\xE5\\xAE\\xB6\\xE5\\x85\\xB7\\xE8\\xBD\\xAC\\xE8\\xAE\\xA9xxxx\\xE9\\xBB\\x84";
+        String source = "xx\\xE9\\xBB\\x84\\xE8\\x8A\\xB1\\xE6\\xA2\\xA8\\xE5\\xAE\\xB6\\xE5\\x85\\xB7\\xE8\\xBD\\xAC\\xE8\\xAE\\xA9xxxx\\xE9\\xBB\\x84";
         String sourceArr[] = source.split("\\\\"); // 分割拿到形如 xE9 的16进制数据
         System.out.println("length.." + sourceArr.length);
         // byte[] byteArr = new byte[sourceArr.length - 1];
@@ -54,7 +53,6 @@ public class DecodeUtilsTest {
         // }
         //
         // System.out.println(new String(byteArr));
-
 
         String regex = "\\\\x([\\w]{2})\\\\";
         Pattern pattern = Pattern.compile(regex);

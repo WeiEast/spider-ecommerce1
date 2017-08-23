@@ -1,11 +1,11 @@
 package com.datatrees.crawler.core.util.json;
 
-import com.jayway.jsonpath.JsonPath;
-import net.minidev.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONArray;
 
 /**
  * @author Jerry
@@ -13,12 +13,12 @@ import java.util.List;
  */
 public class JsonPathUtil {
 
-//    private static String filter(String json){
-//        return json.replaceAll("\\s+", "");
-//    }
+    //    private static String filter(String json){
+    //        return json.replaceAll("\\s+", "");
+    //    }
 
     private static Object read(String json, String jsonPath) {
-        if (json == null)return null;
+        if (json == null) return null;
 
         return JsonPath.read(json, jsonPath);
     }
@@ -34,11 +34,11 @@ public class JsonPathUtil {
             result = "";
         } else if (jsonObj instanceof String) {
             result = String.valueOf(jsonObj);
-        } else if (jsonObj instanceof Number){
-        	result = String.valueOf(jsonObj);
-        } else if (jsonObj instanceof Boolean){
-        	result = String.valueOf(jsonObj);
-        } else if(jsonObj instanceof JSONArray) {
+        } else if (jsonObj instanceof Number) {
+            result = String.valueOf(jsonObj);
+        } else if (jsonObj instanceof Boolean) {
+            result = String.valueOf(jsonObj);
+        } else if (jsonObj instanceof JSONArray) {
             JSONArray array = (JSONArray) jsonObj;
             if (array.size() == 1) {
                 result = array.get(0).toString();
@@ -84,29 +84,29 @@ public class JsonPathUtil {
     /**
      * 对JSON进行jsonpath解析，返回结果json字符串
      * <p>
-     *     例如：
-     *     { "store": {
-     *          "book": [
-     *              { "category": "reference",
-     *                "author": "Nigel Rees",
-     *                "title": "Sayings of the Century",
-     *                "price": 8.95
-     *              },
-     *              { "category": "fiction",
-     *                "author": "Evelyn Waugh",
-     *                "title": "Sword of Honour",
-     *                "price": 12.99,
-     *                "isbn": "0-553-21311-3"
-     *              }
-     *              ],
-     *          "bicycle": {
-     *              "color": "red",
-     *              "price": 19.95
-     *          }
-     *      }
-     *   }
-     *   jsonpath:$.store.book.category
-     *   result:"[\"reference\", \"fiction\"]"
+     * 例如：
+     * { "store": {
+     * "book": [
+     * { "category": "reference",
+     * "author": "Nigel Rees",
+     * "title": "Sayings of the Century",
+     * "price": 8.95
+     * },
+     * { "category": "fiction",
+     * "author": "Evelyn Waugh",
+     * "title": "Sword of Honour",
+     * "price": 12.99,
+     * "isbn": "0-553-21311-3"
+     * }
+     * ],
+     * "bicycle": {
+     * "color": "red",
+     * "price": 19.95
+     * }
+     * }
+     * }
+     * jsonpath:$.store.book.category
+     * result:"[\"reference\", \"fiction\"]"
      * </p>
      * @param json
      * @param jsonPath
@@ -117,31 +117,31 @@ public class JsonPathUtil {
     }
 
     /**
-     *      * 对JSON进行jsonpath解析，返回结果json字符串列表
+     * * 对JSON进行jsonpath解析，返回结果json字符串列表
      * <p>
-     *     例如：
-     *     { "store": {
-     *          "book": [
-     *              { "category": "reference",
-     *                "author": "Nigel Rees",
-     *                "title": "Sayings of the Century",
-     *                "price": 8.95
-     *              },
-     *              { "category": "fiction",
-     *                "author": "Evelyn Waugh",
-     *                "title": "Sword of Honour",
-     *                "price": 12.99,
-     *                "isbn": "0-553-21311-3"
-     *              }
-     *              ],
-     *          "bicycle": {
-     *              "color": "red",
-     *              "price": 19.95
-     *          }
-     *      }
-     *   }
-     *   jsonpath:$.store.book.category
-     *   result: List["reference", "fiction"]
+     * 例如：
+     * { "store": {
+     * "book": [
+     * { "category": "reference",
+     * "author": "Nigel Rees",
+     * "title": "Sayings of the Century",
+     * "price": 8.95
+     * },
+     * { "category": "fiction",
+     * "author": "Evelyn Waugh",
+     * "title": "Sword of Honour",
+     * "price": 12.99,
+     * "isbn": "0-553-21311-3"
+     * }
+     * ],
+     * "bicycle": {
+     * "color": "red",
+     * "price": 19.95
+     * }
+     * }
+     * }
+     * jsonpath:$.store.book.category
+     * result: List["reference", "fiction"]
      * </p>
      * @param json
      * @param jsonPath

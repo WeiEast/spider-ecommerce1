@@ -3,11 +3,10 @@ package com.datatrees.crawler.core.processor.common;
 import com.datatrees.crawler.core.processor.common.resource.BeanResource;
 
 public class BeanResourceFactory implements BeanResource {
-    private BeanResourceFactory() {}
 
     private static BeanResourceFactory factory = null;
-
     private BeanResource beanResource;
+    private BeanResourceFactory() {}
 
     public static BeanResourceFactory getInstance() {
         if (factory == null) {
@@ -70,6 +69,5 @@ public class BeanResourceFactory implements BeanResource {
     public void setBeanResource(BeanResource beanResource) {
         this.beanResource = beanResource;
     }
-
 
 }

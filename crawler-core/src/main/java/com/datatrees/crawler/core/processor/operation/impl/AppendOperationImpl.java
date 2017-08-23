@@ -2,10 +2,6 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.AppendOperation;
@@ -14,9 +10,13 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AppendOperationImpl extends Operation {
-    private static final Logger log  = LoggerFactory.getLogger(AppendOperationImpl.class);
+
+    private static final Logger log = LoggerFactory.getLogger(AppendOperationImpl.class);
 
     @Override
     public void process(Request request, Response response) throws Exception {

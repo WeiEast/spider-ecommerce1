@@ -9,34 +9,34 @@ import java.util.Map;
  */
 public abstract class SimpleExtractorTest extends ExtractorTest {
 
-  @Override
-  protected String getConfigFile() {
-    return getRoot() + "/ExtractorConfig.xml";
-  }
+    @Override
+    protected String getConfigFile() {
+        return getRoot() + "/ExtractorConfig.xml";
+    }
 
-  private String getRoot() {
-    return "email/" + getAlias();
-  }
+    private String getRoot() {
+        return "email/" + getAlias();
+    }
 
-  protected abstract String getAlias();
+    protected abstract String getAlias();
 
-  @Override
-  protected void addSimpleExtractParameters(Map<String, Object> map) throws Exception {
-    map.put("subject", getSubject());
-    map.put("pageContent", this.getPageContent());
+    @Override
+    protected void addSimpleExtractParameters(Map<String, Object> map) throws Exception {
+        map.put("subject", getSubject());
+        map.put("pageContent", this.getPageContent());
 
-    appendExtractParameters(map);
-  }
+        appendExtractParameters(map);
+    }
 
-  protected void appendExtractParameters(Map<String, Object> map) {
-  }
+    protected void appendExtractParameters(Map<String, Object> map) {
+    }
 
-  protected abstract String getSubject();
+    protected abstract String getSubject();
 
-  protected Object getPageContent() throws Exception {
-    File file = getResource(getRoot() + "/source/" + getPageSource());
-    return this.getPageContent(file);
-  }
+    protected Object getPageContent() throws Exception {
+        File file = getResource(getRoot() + "/source/" + getPageSource());
+        return this.getPageContent(file);
+    }
 
-  protected abstract String getPageSource();
+    protected abstract String getPageSource();
 }

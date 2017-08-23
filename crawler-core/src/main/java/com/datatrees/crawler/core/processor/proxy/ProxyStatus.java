@@ -3,14 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.proxy;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  *
@@ -19,17 +18,9 @@ import java.util.Map;
  * @since Feb 7, 2014 10:34:34 AM
  */
 public enum ProxyStatus {
-    SUCCESS("success"), FAIL("fail"), RELEASE("release");
-    private final String value;
-
-    ProxyStatus(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
+    SUCCESS("success"),
+    FAIL("fail"),
+    RELEASE("release");
     private static Map<String, ProxyStatus> proxyStatusMap = new HashMap<String, ProxyStatus>();
 
     static {
@@ -38,8 +29,18 @@ public enum ProxyStatus {
         }
     }
 
+    private final String value;
+
+    ProxyStatus(String value) {
+        this.value = value;
+    }
+
     public static ProxyStatus getProxyStatus(String value) {
         return proxyStatusMap.get(value);
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

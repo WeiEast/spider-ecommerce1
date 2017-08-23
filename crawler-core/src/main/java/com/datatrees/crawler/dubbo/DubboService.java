@@ -3,11 +3,10 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
-package com.datatrees.crawler.dubbo;
 
+package com.datatrees.crawler.dubbo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +24,10 @@ import com.datatrees.common.conf.PropertiesConfiguration;
  */
 public enum DubboService {
     INSTANCE;
-    private String dubboAddress = PropertiesConfiguration.getInstance().get("dubbo.zookeeper.address", "zookeeper://192.168.5.243:2181");
-    private ApplicationConfig application = null;
-    private RegistryConfig registry = null;
-    private Map<Class<?>, ReferenceConfig<?>> map = new HashMap<Class<?>, ReferenceConfig<?>>();
-
+    private String                            dubboAddress = PropertiesConfiguration.getInstance().get("dubbo.zookeeper.address", "zookeeper://192.168.5.243:2181");
+    private ApplicationConfig                 application  = null;
+    private RegistryConfig                    registry     = null;
+    private Map<Class<?>, ReferenceConfig<?>> map          = new HashMap<Class<?>, ReferenceConfig<?>>();
 
     {
         application = new ApplicationConfig();
@@ -59,7 +57,6 @@ public enum DubboService {
         }
         return reference;
     }
-
 
     public <T> T getService(Class<T> classOfT, String url) {
         ReferenceConfig<T> reference = getReference(classOfT, url);

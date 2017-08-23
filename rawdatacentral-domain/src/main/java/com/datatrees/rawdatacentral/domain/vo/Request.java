@@ -1,14 +1,14 @@
 package com.datatrees.rawdatacentral.domain.vo;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.annotation.JSONField;
-import com.datatrees.rawdatacentral.domain.enums.RequestType;
-
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.datatrees.rawdatacentral.domain.enums.RequestType;
 
 /**
  * 请求
@@ -16,61 +16,43 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Request implements Serializable {
 
     @JSONField(ordinal = 1)
-    private Long                taskId;
-
+    private Long   taskId;
     @JSONField(ordinal = 2)
-    private String              websiteName;
-
+    private String websiteName;
     @JSONField(ordinal = 3)
-    private String              proxy;
-
+    private String proxy;
     @JSONField(ordinal = 4)
-    private String              fullUrl;
-
+    private String fullUrl;
     @JSONField(ordinal = 5)
-    private String              url;
-
+    private String url;
     @JSONField(ordinal = 6)
-    private Map<String, String> params             = new HashMap<>();
-
+    private Map<String, String> params = new HashMap<>();
     @JSONField(ordinal = 7)
-    private String              remarkId;
-
+    private String remarkId;
     @JSONField(ordinal = 8)
-    private Map<String, String> header             = new HashMap<>();
-
+    private Map<String, String> header = new HashMap<>();
     @JSONField(ordinal = 9)
-    private long                requestTimestamp;
-
+    private long   requestTimestamp;
     @JSONField(ordinal = 10)
-    private String              requestCookies;
-
+    private String requestCookies;
     @JSONField(ordinal = 11)
-    private String              protocol;
-
+    private String protocol;
     @JSONField(ordinal = 12)
-    private String              requestContentType = "";
-
+    private String        requestContentType = "";
     @JSONField(ordinal = 12)
-    private Charset             requestCharset     = Charset.forName("ISO-8859-1");
-
+    private Charset       requestCharset     = Charset.forName("ISO-8859-1");
     @JSONField(ordinal = 13)
-    private RequestType         requestType        = RequestType.GET;
-
+    private RequestType   requestType        = RequestType.GET;
     @JSONField(ordinal = 9)
-    private int                 maxRetry           = 1;
-
+    private int           maxRetry           = 1;
     @JSONField(ordinal = 10)
-    private AtomicInteger       retry              = new AtomicInteger(0);
-
+    private AtomicInteger retry              = new AtomicInteger(0);
     @JSONField(ordinal = 11)
-    private int                 connectTimeout     = 10000;
-
+    private int           connectTimeout     = 10000;
     @JSONField(ordinal = 12)
-    private int                 socketTimeout      = 20000;
-
+    private int           socketTimeout      = 20000;
     @JSONField(ordinal = 13)
-    private String              requestBodyContent;
+    private String requestBodyContent;
 
     public Request() {
     }

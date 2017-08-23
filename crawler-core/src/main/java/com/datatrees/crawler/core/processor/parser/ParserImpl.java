@@ -3,24 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.parser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -32,34 +21,30 @@ import com.datatrees.crawler.core.domain.config.parser.Parser;
 import com.datatrees.crawler.core.domain.config.parser.ParserPattern;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * parser segment content and send request or extract urls
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 8:57:12 PM
  */
 public class ParserImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(ParserImpl.class);
-
-    private boolean needRequest = false;
-
-    private boolean needReturnUrlList = false;
-
+    private static final Logger  log               = LoggerFactory.getLogger(ParserImpl.class);
+    private              boolean needRequest       = false;
+    private              boolean needReturnUrlList = false;
     private Parser parser;
-
 
     public ParserImpl(boolean needRequest, Parser parser) {
         super();
@@ -141,7 +126,7 @@ public class ParserImpl extends Operation {
     /**
      * first replace from field context second replace by regex third replace by user defined
      * context;
-     * 
+     *
      * @param fieldResultMap
      * @param parser2
      * @return
@@ -221,7 +206,7 @@ public class ParserImpl extends Operation {
     }
 
     /**
-     * 
+     *
      * @param fieldResultMap
      * @return
      */
@@ -234,10 +219,8 @@ public class ParserImpl extends Operation {
         return result;
     }
 
-
-
     /**
-     * 
+     *
      * @param result
      * @param refererTemplate
      * @param headers
@@ -276,8 +259,6 @@ public class ParserImpl extends Operation {
         return StringUtils.defaultString(RequestUtil.getContent(newResquest));
     }
 
-
-
     public boolean isNeedRequest() {
         return needRequest;
     }
@@ -293,7 +274,6 @@ public class ParserImpl extends Operation {
     public void setParser(Parser parser) {
         this.parser = parser;
     }
-
 
     public boolean isNeedReturnUrlList() {
         return needReturnUrlList;
@@ -319,7 +299,6 @@ public class ParserImpl extends Operation {
         public void addAllFieldListResultMap(List<Map<String, String>> patternResults) {
             this.fieldListResultMap.addAll(patternResults);
         }
-
 
         public int size() {
             return fieldListResultMap.size();

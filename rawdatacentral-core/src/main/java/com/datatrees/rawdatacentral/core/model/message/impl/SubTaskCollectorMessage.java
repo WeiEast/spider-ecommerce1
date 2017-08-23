@@ -3,15 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.core.model.message.impl;
 
 import com.datatrees.rawdatacentral.core.model.message.SubTaskAble;
 import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
 import org.apache.commons.lang.BooleanUtils;
-
 
 /**
  *
@@ -20,11 +19,11 @@ import org.apache.commons.lang.BooleanUtils;
  * @since 2015年7月28日 下午4:14:22
  */
 public class SubTaskCollectorMessage extends CollectorMessage implements SubTaskAble {
-    private String templateId;
-    private int parentTaskID;
+
+    private String  templateId;
+    private int     parentTaskID;
     private boolean synced;
     private SubSeed subSeed;
-
 
     /**
      * @return the subSeed
@@ -53,7 +52,6 @@ public class SubTaskCollectorMessage extends CollectorMessage implements SubTask
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
     }
-
 
     /**
      * @return the parentTaskID

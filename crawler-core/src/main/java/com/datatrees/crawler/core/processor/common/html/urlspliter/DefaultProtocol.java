@@ -6,7 +6,6 @@ import java.util.List;
 import com.datatrees.common.conf.PropertiesConfiguration;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2014-12-18 下午7:31:52
@@ -14,12 +13,9 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 public enum DefaultProtocol implements Protocol {
 
     INSTANCE;
-
-    private String protocols = PropertiesConfiguration.getInstance().get("url.split.protocols", "http,https,rtmp,qvod,pa,mms,rtsp,thunder,bdhb");
-
-    public static final String protocolSeparator = "://";
-
-    private List<String> supportProtocolList = null;
+    public static final String       protocolSeparator   = "://";
+    private             String       protocols           = PropertiesConfiguration.getInstance().get("url.split.protocols", "http,https,rtmp,qvod,pa,mms,rtsp,thunder,bdhb");
+    private             List<String> supportProtocolList = null;
 
     private DefaultProtocol() {
         createProtocol();

@@ -3,18 +3,15 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.lang.StringUtils;
 
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.util.CookieFormater;
@@ -24,9 +21,11 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 8:14:36 PM
@@ -34,13 +33,11 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 public class ProcessorContextUtil {
 
     public static void setCookieString(AbstractProcessorContext context, String cookieString) {
-        if(StringUtils.isBlank(cookieString)){
+        if (StringUtils.isBlank(cookieString)) {
             return;
         }
         context.getContext().put(Constants.COOKIE_STRING, cookieString);
-        boolean retainQuote = context instanceof SearchProcessorContext && ((SearchProcessorContext) context).getCookieConf() != null
-                ? ((SearchProcessorContext) context).getCookieConf().getRetainQuote()
-                : false;
+        boolean retainQuote = context instanceof SearchProcessorContext && ((SearchProcessorContext) context).getCookieConf() != null ? ((SearchProcessorContext) context).getCookieConf().getRetainQuote() : false;
         Map<String, String> cookieMap = CookieFormater.INSTANCE.parserCookieToMap(cookieString, retainQuote);
         context.getContext().put(Constants.COOKIE, cookieMap);
     }
@@ -97,7 +94,6 @@ public class ProcessorContextUtil {
         return context.getContext().get(Constants.TASK_UNIQUE_SIGN);
     }
 
-
     @SuppressWarnings("unchecked")
     private static Map<String, Object> getThreadLocalContext(AbstractProcessorContext context) {
         Map<String, Object> threadLocalContext = (Map<String, Object>) context.getThreadContext().get(Thread.currentThread());
@@ -143,7 +139,6 @@ public class ProcessorContextUtil {
     public static List<LinkNode> getThreadLocalLinkNode(AbstractProcessorContext context) {
         return (List<LinkNode>) getThreadLocalContext(context).get(Constants.THREAD_LOCAL_LINKNODE);
     }
-
 
     public static void setHttpState(AbstractProcessorContext context, HttpState state) {
         context.getContext().put(Constants.HTTP_STATE, state);

@@ -3,20 +3,16 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
+
 package com.datatrees.crawler.core.mail;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  *
@@ -25,11 +21,21 @@ import java.util.ResourceBundle;
  * @since 2016年4月22日 下午4:34:39
  */
 public class IMAPStubclass {
+
     // Holds the configuration details.
     private static Map<String, String> gtConfigMap = new HashMap<String, String>();
 
     public IMAPStubclass() {
         initializeExternalConfigFile();
+    }
+
+    /**
+     * This method demonstrate UPLOADING of mail to specified mail folder using IMAP.
+     */
+    public static void main(String[] args) {
+        IMAPStubclass stubclass = new IMAPStubclass();
+        stubclass.uploadMail();
+
     }
 
     /**
@@ -58,15 +64,6 @@ public class IMAPStubclass {
             System.err.println("External Config properties have not been read");
             e.printStackTrace();
         }
-
-    }
-
-    /**
-     * This method demonstrate UPLOADING of mail to specified mail folder using IMAP.
-     */
-    public static void main(String[] args) {
-        IMAPStubclass stubclass = new IMAPStubclass();
-        stubclass.uploadMail();
 
     }
 

@@ -14,7 +14,6 @@ public interface ClassLoaderService {
     Class loadPlugin(String jarName, String className);
 
     /**
-     * 
      * @param websiteName
      * @return
      */

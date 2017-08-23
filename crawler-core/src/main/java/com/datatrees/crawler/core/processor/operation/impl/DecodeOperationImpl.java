@@ -3,14 +3,10 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.crawler.core.processor.operation.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.datatrees.crawler.core.processor.operation.impl;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -21,7 +17,9 @@ import com.datatrees.crawler.core.processor.decode.impl.BasicDecode;
 import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import com.datatrees.crawler.core.processor.decode.impl.StandardDecode;
 import com.datatrees.crawler.core.processor.operation.Operation;
-
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -33,28 +31,8 @@ public class DecodeOperationImpl extends Operation {
 
     private static final Logger log = LoggerFactory.getLogger(DecodeOperationImpl.class);
 
-    @Override
-    public void process(Request request, Response response) throws Exception {
-        // get input
-        String orginal = getInput(request, response);
-
-        DecodeOperation operation = (DecodeOperation) getOperation();
-
-        String charSet =
-                StringUtils.isEmpty(operation.getCharset()) ? (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil
-                        .getContentCharset(request)) : operation.getCharset();
-
-        DecodeType decodeType = operation.getDecodeType();
-
-        if (log.isDebugEnabled()) {
-            log.debug("EscapeOperation input: " + String.format("decodeType: %s", decodeType));
-        }
-        String result = decode(orginal, decodeType, charSet);
-        response.setOutPut(result);
-    }
-
     /**
-     * 
+     *
      * @param original
      * @param decodeType
      * @param charset
@@ -82,6 +60,24 @@ public class DecodeOperationImpl extends Operation {
             log.error("handlerDecode error!", e);
         }
         return result;
+    }
+
+    @Override
+    public void process(Request request, Response response) throws Exception {
+        // get input
+        String orginal = getInput(request, response);
+
+        DecodeOperation operation = (DecodeOperation) getOperation();
+
+        String charSet = StringUtils.isEmpty(operation.getCharset()) ? (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil.getContentCharset(request)) : operation.getCharset();
+
+        DecodeType decodeType = operation.getDecodeType();
+
+        if (log.isDebugEnabled()) {
+            log.debug("EscapeOperation input: " + String.format("decodeType: %s", decodeType));
+        }
+        String result = decode(orginal, decodeType, charSet);
+        response.setOutPut(result);
     }
 
 }

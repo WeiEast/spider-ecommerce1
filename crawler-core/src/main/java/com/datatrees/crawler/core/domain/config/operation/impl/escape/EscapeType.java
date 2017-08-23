@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.operation.impl.escape;
 
 import java.util.HashMap;
@@ -18,17 +18,10 @@ import java.util.Map;
  * @since Feb 7, 2014 2:24:48 PM
  */
 public enum EscapeType {
-    HTML("html"), JAVA("java"), JS("js"), XML("xml");
-    private final String value;
-
-    EscapeType(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
+    HTML("html"),
+    JAVA("java"),
+    JS("js"),
+    XML("xml");
     private static Map<String, EscapeType> escapeTypeMap = new HashMap<String, EscapeType>();
 
     static {
@@ -37,8 +30,18 @@ public enum EscapeType {
         }
     }
 
+    private final String value;
+
+    EscapeType(String value) {
+        this.value = value;
+    }
+
     public static EscapeType getEscapeType(String value) {
         return escapeTypeMap.get(value);
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

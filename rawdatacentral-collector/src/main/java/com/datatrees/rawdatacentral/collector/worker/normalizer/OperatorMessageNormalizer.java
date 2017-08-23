@@ -3,10 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.worker.normalizer;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
@@ -20,10 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -32,10 +32,10 @@ import java.util.Map;
  */
 @Service
 public class OperatorMessageNormalizer implements DataNormalizer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OperatorMessageNormalizer.class);
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OperatorMessageNormalizer.class);
     @Resource
-    private OperatorService     operatorService;
+    private OperatorService operatorService;
 
     /*
      * (non-Javadoc)
@@ -54,8 +54,7 @@ public class OperatorMessageNormalizer implements DataNormalizer {
             ((OperatorData) object).setOperatorId(message.getTypeId());
             ((OperatorData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap && StringUtils.equals(
-            (String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), OperatorData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), OperatorData.class.getSimpleName())) {
             OperatorData operatorData = new OperatorData();
             operatorData.putAll((Map) object);
             operatorData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

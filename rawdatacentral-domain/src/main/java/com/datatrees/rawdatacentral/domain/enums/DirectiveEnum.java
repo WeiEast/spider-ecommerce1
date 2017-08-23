@@ -12,12 +12,10 @@ public enum DirectiveEnum {
     GRAB_URL("grab_url", "给APP端分配抓取URL任务"),
     TASK_SUCCESS("task_success", "成功"),
     TASK_FAIL("task_fail", "失败"),;
-
     /**
      * 指令
      */
     private String code;
-
     /**
      * 描述
      */
@@ -38,9 +36,6 @@ public enum DirectiveEnum {
 
     @Override
     public String toString() {
-        return "DirectiveEnum{" +
-                "code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+        return "DirectiveEnum{" + "code='" + code + '\'' + ", name='" + name + '\'' + '}';
     }
 }

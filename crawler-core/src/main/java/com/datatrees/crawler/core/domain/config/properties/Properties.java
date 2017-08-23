@@ -2,17 +2,14 @@ package com.datatrees.crawler.core.domain.config.properties;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.datatrees.crawler.core.domain.config.properties.cookie.AbstractCookie;
 import com.datatrees.crawler.core.domain.config.properties.cookie.BaseCookie;
 import com.datatrees.crawler.core.domain.config.properties.cookie.CustomCookie;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
-
+import org.apache.commons.lang.StringUtils;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 10, 2014 7:29:16 PM
@@ -23,19 +20,18 @@ public class Properties implements Serializable {
      *
      */
     private static final long serialVersionUID = -1340916732791297838L;
-    private Integer waitIntervalMillis;
+    private Integer        waitIntervalMillis;
     private AbstractCookie cookie;
-    private Proxy proxy;
-    private String encoding;
-    private UnicodeMode unicodeMode;
-    private String taskRegion;
-    private Integer maxRetryCount;
-    private Boolean duplicateRemoval;
-    private String httpClientType;
-    private Boolean redirectUriEscaped;
-    private Boolean allowCircularRedirects;
-    private Integer captchaCode;
-
+    private Proxy          proxy;
+    private String         encoding;
+    private UnicodeMode    unicodeMode;
+    private String         taskRegion;
+    private Integer        maxRetryCount;
+    private Boolean        duplicateRemoval;
+    private String         httpClientType;
+    private Boolean        redirectUriEscaped;
+    private Boolean        allowCircularRedirects;
+    private Integer        captchaCode;
 
     @Tag("captcha-code")
     public Integer getCaptchaCode() {
@@ -56,7 +52,7 @@ public class Properties implements Serializable {
     public void setRedirectUriEscaped(Boolean redirectUriEscaped) {
         this.redirectUriEscaped = redirectUriEscaped;
     }
-    
+
     @Tag("allow-circular-redirects")
     public Boolean getAllowCircularRedirects() {
         return allowCircularRedirects;
@@ -184,7 +180,6 @@ public class Properties implements Serializable {
     public void setMaxRetryCount(Integer maxRetryCount) {
         this.maxRetryCount = maxRetryCount;
     }
-
 
     // @Tag("rate-limit")
     // public Integer getRateLimit() {

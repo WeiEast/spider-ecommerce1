@@ -3,6 +3,8 @@ package com.datatrees.rawdatacentral.collector.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.FilterExecutor;
 import com.datatrees.rawdatacentral.collector.chain.FilterListFactory;
@@ -11,29 +13,21 @@ import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecke
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.page.handler.URLHandler;
-
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月28日 下午3:53:23
  */
 public class URLHandlerImpl implements URLHandler {
-    private static final Logger log = LoggerFactory.getLogger(URLHandlerImpl.class);
 
-    private List<LinkNode> tempLinkNodes = new ArrayList<LinkNode>();
-
+    private static final Logger         log           = LoggerFactory.getLogger(URLHandlerImpl.class);
+    private              List<LinkNode> tempLinkNodes = new ArrayList<LinkNode>();
     private DuplicateChecker duplicateChecker;
-    
-    private SearchProcessor searchProcessor;
+    private SearchProcessor  searchProcessor;
 
     public URLHandlerImpl() {
         super();
     }
-
 
     /*
      * (non-Javadoc)
@@ -60,14 +54,12 @@ public class URLHandlerImpl implements URLHandler {
         return fetched.isRemoved();
     }
 
-
     /**
      * @return the tempLinkNodes
      */
     public List<LinkNode> getTempLinkNodes() {
         return tempLinkNodes;
     }
-
 
     /**
      * @param tempLinkNodes the tempLinkNodes to set
@@ -76,14 +68,12 @@ public class URLHandlerImpl implements URLHandler {
         this.tempLinkNodes = tempLinkNodes;
     }
 
-
     /**
      * @return the duplicateChecker
      */
     public DuplicateChecker getDuplicateChecker() {
         return duplicateChecker;
     }
-
 
     /**
      * @param duplicateChecker the duplicateChecker to set
@@ -92,14 +82,12 @@ public class URLHandlerImpl implements URLHandler {
         this.duplicateChecker = duplicateChecker;
     }
 
-
     /**
      * @return the searchProcessor
      */
     public SearchProcessor getSearchProcessor() {
         return searchProcessor;
     }
-
 
     /**
      * @param searchProcessor the searchProcessor to set

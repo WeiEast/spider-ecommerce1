@@ -3,10 +3,15 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.subtask;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.concurrent.*;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.collector.subtask.container.Container;
@@ -24,11 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import java.util.*;
-import java.util.concurrent.*;
-
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -37,19 +37,16 @@ import java.util.concurrent.*;
  */
 @Service
 public class MutexSupportSubTaskManager implements SubTaskManager {
-    private static final Logger logger = LoggerFactory.getLogger(MutexSupportSubTaskManager.class);
+
+    private static final Logger                             logger                  = LoggerFactory.getLogger(MutexSupportSubTaskManager.class);
     // asyncSubTask has no mutex
-    private LinkedBlockingQueue<SubTask> asyncSubTaskManagerList = new LinkedBlockingQueue<SubTask>();
-    private Map<Integer, Queue<SubTaskFuture>> syncSubTaskFutureMap = new ConcurrentHashMap<Integer, Queue<SubTaskFuture>>();
-    private Map<String, SubTaskFuture> mutexSubTaskFutureMap = new ConcurrentHashMap<String, SubTaskFuture>();
-    private int maxSubTaskWaitSecond = PropertiesConfiguration.getInstance().getInt("max.subTask.wait.second", 60 * 2);
-
-    private Map<String, SubTask> syncMutexSubTaskMap = new ConcurrentHashMap<String, SubTask>();
-
-
+    private              LinkedBlockingQueue<SubTask>       asyncSubTaskManagerList = new LinkedBlockingQueue<SubTask>();
+    private              Map<Integer, Queue<SubTaskFuture>> syncSubTaskFutureMap    = new ConcurrentHashMap<Integer, Queue<SubTaskFuture>>();
+    private              Map<String, SubTaskFuture>         mutexSubTaskFutureMap   = new ConcurrentHashMap<String, SubTaskFuture>();
+    private              int                                maxSubTaskWaitSecond    = PropertiesConfiguration.getInstance().getInt("max.subTask.wait.second", 60 * 2);
+    private              Map<String, SubTask>               syncMutexSubTaskMap     = new ConcurrentHashMap<String, SubTask>();
     @Resource
     private SubTaskExecutor taskExecutor;
-
 
     public MutexSupportSubTaskManager() {
         super();
@@ -60,30 +57,9 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
         new AsyncSubTaskScheduleThread(taskExecutor).start();
     }
 
-
-    class SubTaskFuture {
-        String mutexKey;
-        Container container;
-        Future<Map> future;
-
-
-        /**
-         * @param mutexKey
-         * @param container
-         * @param future
-         */
-        public SubTaskFuture(String mutexKey, Container container, Future<Map> future) {
-            super();
-            this.mutexKey = mutexKey;
-            this.container = container;
-            this.future = future;
-        }
-    }
-
-
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see SubTaskManager#getSyncedSubTaskResults(int)
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -136,7 +112,6 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
         }
         return subTaskFutureList;
     }
-
 
     private void submitMutexSubTask(SubTask task, Queue<SubTaskFuture> queue) {
         SubSeed seed = task.getSeed();
@@ -192,18 +167,33 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
         }
     }
 
-    private class AsyncSubTaskScheduleThread extends Thread {
-        private boolean shutdown = false;
-        private final String waitingOnParentTask = "parentTask";
-        private long scheduleInterval = PropertiesConfiguration.getInstance().getLong("subtask.async.schedule.interval", 3000);
-        private int subTaskCorePoolSize = PropertiesConfiguration.getInstance().getInt("subtask.core.pool.size", 50);
-        private long maxSubtaskWaitingMillis = PropertiesConfiguration.getInstance().getInt("max.subtask.waiting.minutes", 5) * 60 * 1000;
-        private SubTaskExecutor subTaskExecutor;
+    class SubTaskFuture {
 
-        public void shutdown() {
-            this.shutdown = true;
+        String      mutexKey;
+        Container   container;
+        Future<Map> future;
+
+        /**
+         * @param mutexKey
+         * @param container
+         * @param future
+         */
+        public SubTaskFuture(String mutexKey, Container container, Future<Map> future) {
+            super();
+            this.mutexKey = mutexKey;
+            this.container = container;
+            this.future = future;
         }
+    }
 
+    private class AsyncSubTaskScheduleThread extends Thread {
+
+        private final String  waitingOnParentTask     = "parentTask";
+        private       boolean shutdown                = false;
+        private       long    scheduleInterval        = PropertiesConfiguration.getInstance().getLong("subtask.async.schedule.interval", 3000);
+        private       int     subTaskCorePoolSize     = PropertiesConfiguration.getInstance().getInt("subtask.core.pool.size", 50);
+        private       long    maxSubtaskWaitingMillis = PropertiesConfiguration.getInstance().getInt("max.subtask.waiting.minutes", 5) * 60 * 1000;
+        private SubTaskExecutor subTaskExecutor;
 
         /**
          * @param subTaskExecutor
@@ -211,6 +201,10 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
         public AsyncSubTaskScheduleThread(SubTaskExecutor subTaskExecutor) {
             super(AsyncSubTaskScheduleThread.class.getSimpleName());
             this.subTaskExecutor = subTaskExecutor;
+        }
+
+        public void shutdown() {
+            this.shutdown = true;
         }
 
         private boolean subTaskWaitingOnCondition(SubTask subTask) {

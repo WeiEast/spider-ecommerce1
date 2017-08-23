@@ -3,16 +3,15 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.worker.deduplicate.impl;
 
 import java.util.Set;
 
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import com.datatrees.rawdatacentral.core.common.UniqueKeyGenUtil;
-
 
 /**
  *
@@ -31,7 +30,6 @@ public class DuplicateCheckerImpl implements DuplicateChecker {
         super();
         this.existedKeySet = existedKeySet;
     }
-
 
     @Override
     public boolean isDuplicate(String websiteType, String seed) {

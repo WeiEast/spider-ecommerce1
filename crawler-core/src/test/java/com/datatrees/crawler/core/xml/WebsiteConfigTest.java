@@ -1,31 +1,22 @@
 package com.datatrees.crawler.core.xml;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.junit.Test;
+import java.io.*;
 
 import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigBuilder;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
-
-
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.junit.Test;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 8, 2014 10:10:54 AM
  */
 public class WebsiteConfigTest {
+
     @Test
     public void searchConfigTest() {
         try {
@@ -34,12 +25,10 @@ public class WebsiteConfigTest {
             System.out.println(XmlConfigBuilder.getInstance().buildConfig(websiteConfig));
             System.out.println(websiteConfig.toString());
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     @Test
     public void extratorConfigTest() {
@@ -48,7 +37,6 @@ public class WebsiteConfigTest {
             ExtractorConfig websiteConfig = XmlConfigParser.getInstance().parse(config, ExtractorConfig.class);
             System.out.println(XmlConfigBuilder.getInstance().buildConfig(websiteConfig));
             System.out.println(websiteConfig.toString());
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,8 +49,7 @@ public class WebsiteConfigTest {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             String data;
-            while ((data = reader.readLine()) != null)
-                content = content + data;
+            while ((data = reader.readLine()) != null) content = content + data;
 
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -117,9 +104,7 @@ public class WebsiteConfigTest {
         // 22 zj.10086.cn 移动
         // 23 gd.10086.cn
 
-        String[] websiteName =
-                {"126", "136", "cgb", "ceb", "hxb", "ccb", "cmbc", "abchina", "spdb", "cib", "boc", "ecitic", "icbc", "bankcomm", "pingan", "alipay",
-                        "chinaunicom", "zj189", "gd189", "zj10086", "gd10086"};
+        String[] websiteName = {"126", "136", "cgb", "ceb", "hxb", "ccb", "cmbc", "abchina", "spdb", "cib", "boc", "ecitic", "icbc", "bankcomm", "pingan", "alipay", "chinaunicom", "zj189", "gd189", "zj10086", "gd10086"};
         // 1 only search 2 only extractor 3 both
         int[] haveSearchConfig = {1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3};
         int[] websiteId = {2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
@@ -133,20 +118,13 @@ public class WebsiteConfigTest {
                 if (haveSearchConfig[i] == 3) {
                     extractorConfig = this.readConfigFile(extractorFilePath);
                     searchConfig = this.readConfigFile(searchFilePath);
-                    System.out
-                            .println(String
-                                    .format("insert into t_website_conf (WebsiteId,SearchConfig,ExtractorConfig,CreatedAt,UpdatedAt) values(%d, '%s', '%s', now(), now())",
-                                            websiteId[i], searchConfig, extractorConfig));
+                    System.out.println(String.format("insert into t_website_conf (WebsiteId,SearchConfig,ExtractorConfig,CreatedAt,UpdatedAt) values(%d, '%s', '%s', now(), now())", websiteId[i], searchConfig, extractorConfig));
                 } else if (haveSearchConfig[i] == 2) {
                     extractorConfig = this.readConfigFile(extractorFilePath);
-                    System.out.println(String.format(
-                            "insert into t_website_conf (WebsiteId,ExtractorConfig,CreatedAt,UpdatedAt) values(%d,'%s', now(), now())", websiteId[i],
-                            extractorConfig));
+                    System.out.println(String.format("insert into t_website_conf (WebsiteId,ExtractorConfig,CreatedAt,UpdatedAt) values(%d,'%s', now(), now())", websiteId[i], extractorConfig));
                 } else if (haveSearchConfig[i] == 1) {
                     searchConfig = this.readConfigFile(searchFilePath);
-                    System.out.println(String.format(
-                            "insert into t_website_conf (WebsiteId,SearchConfig,CreatedAt,UpdatedAt) values(%d,'%s', now(), now())", websiteId[i],
-                            searchConfig));
+                    System.out.println(String.format("insert into t_website_conf (WebsiteId,SearchConfig,CreatedAt,UpdatedAt) values(%d,'%s', now(), now())", websiteId[i], searchConfig));
                 } else {
                     System.out.println("Error!");
                 }

@@ -3,18 +3,17 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.crawler.core.processor.conf;
 
-import org.apache.commons.lang.StringUtils;
+package com.datatrees.crawler.core.processor.conf;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.DefaultConfiguration;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 13, 2014 10:10:55 AM
@@ -22,7 +21,6 @@ import com.datatrees.common.conf.DefaultConfiguration;
 public class CrawlerConfiguration extends DefaultConfiguration {
 
     private Configuration defaultConf = null;
-
 
     public CrawlerConfiguration(Configuration conf) {
         super();
@@ -37,20 +35,18 @@ public class CrawlerConfiguration extends DefaultConfiguration {
         this.defaultConf = defaultConf;
     }
 
-   /**
-    * get property from conf 
-    * get from default conf if current conf does not exists
-    */
+    /**
+     * get property from conf
+     * get from default conf if current conf does not exists
+     */
     @Override
     public String get(String name) {
         String val = super.get(name);
-        if(StringUtils.isEmpty(val) && defaultConf != null){
+        if (StringUtils.isEmpty(val) && defaultConf != null) {
             val = defaultConf.get(name);
         }
         return null;
     }
-
-    
 
     /**
      * set property

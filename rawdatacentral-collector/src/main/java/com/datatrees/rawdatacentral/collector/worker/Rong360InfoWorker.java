@@ -3,27 +3,24 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
+
 package com.datatrees.rawdatacentral.collector.worker;
 
-
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
+import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
+import com.datatrees.rawdatacentral.core.common.UniqueKeyGenUtil;
+import com.datatrees.rawdatacentral.core.model.message.impl.Rong360InfoMessage;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import com.datatrees.crawler.core.util.json.JsonPathUtil;
-import com.datatrees.rawdatacentral.core.common.UniqueKeyGenUtil;
-import com.datatrees.rawdatacentral.core.model.message.impl.Rong360InfoMessage;
 
 /**
  *
@@ -33,8 +30,8 @@ import com.datatrees.rawdatacentral.core.model.message.impl.Rong360InfoMessage;
  */
 @Service
 public class Rong360InfoWorker {
-    private static final Logger log = LoggerFactory.getLogger(Rong360InfoWorker.class);
 
+    private static final Logger log = LoggerFactory.getLogger(Rong360InfoWorker.class);
     @Resource
     private Collector collector;
 

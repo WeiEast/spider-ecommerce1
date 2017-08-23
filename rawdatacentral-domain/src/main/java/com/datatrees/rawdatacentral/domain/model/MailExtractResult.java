@@ -3,14 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.domain.model;
 
-import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
-
 import java.util.Date;
+
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 
 /**
  *
@@ -20,14 +20,13 @@ import java.util.Date;
  */
 public class MailExtractResult extends AbstractExtractResult {
 
-    private int bankId;
-    private String sender;
-    private String subject;
-    private Date receiveAt;
-    private String receiver;
+    private int     bankId;
+    private String  sender;
+    private String  subject;
+    private Date    receiveAt;
+    private String  receiver;
     private Boolean firstHand;
-    private String mailHeader;//邮件头
-
+    private String  mailHeader;//邮件头
 
     /**
      * @return the firstHand

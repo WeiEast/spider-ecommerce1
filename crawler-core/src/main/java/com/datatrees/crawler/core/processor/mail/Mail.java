@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.mail;
 
 import java.io.IOException;
@@ -13,12 +13,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.datatrees.crawler.core.processor.bean.FileWapper;
 import org.apache.james.mime4j.MimeIOException;
 import org.apache.james.mime4j.message.Message;
 import org.apache.james.mime4j.parser.MimeEntityConfig;
 import org.apache.james.mime4j.storage.StorageProvider;
-
-import com.datatrees.crawler.core.processor.bean.FileWapper;
 
 /**
  *
@@ -27,13 +26,14 @@ import com.datatrees.crawler.core.processor.bean.FileWapper;
  * @since 2015年10月8日 上午11:39:58
  */
 public class Mail extends Message {
-    private StringBuffer txtBody = new StringBuffer();
-    private StringBuffer htmlBody = new StringBuffer();
+
+    private StringBuffer     txtBody     = new StringBuffer();
+    private StringBuffer     htmlBody    = new StringBuffer();
     private List<FileWapper> attachments = new ArrayList<FileWapper>();
     private String websiteName;
 
     /**
-     * 
+     *
      */
     public Mail() {
         super();
@@ -131,7 +131,5 @@ public class Mail extends Message {
     public void setWebsiteName(String websiteName) {
         this.websiteName = websiteName;
     }
-    
-    
 
 }

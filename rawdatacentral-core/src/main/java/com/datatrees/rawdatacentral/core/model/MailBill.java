@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
+
 package com.datatrees.rawdatacentral.core.model;
 
 /**
@@ -15,11 +15,12 @@ package com.datatrees.rawdatacentral.core.model;
  * @since 2016年1月18日 下午6:06:52
  */
 public class MailBill {
+
     private String mailId;
-    private int billId;
+    private int    billId;
 
     /**
-     * 
+     *
      */
     public MailBill() {
         super();

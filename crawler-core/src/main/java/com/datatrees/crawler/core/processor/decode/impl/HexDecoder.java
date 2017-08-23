@@ -3,30 +3,29 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.decode.impl;
 
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 14, 2014 11:30:55 AM
  */
 public class HexDecoder extends AbstractDecoder {
 
-    private static final Logger log = LoggerFactory.getLogger(HexDecoder.class);
-
     protected static final String pattern = "((\\\\x([\\w\\d]{2}))+)";
+    private static final   Logger log     = LoggerFactory.getLogger(HexDecoder.class);
 
     @Override
     public String decode(String content, Charset charset) {
@@ -53,7 +52,7 @@ public class HexDecoder extends AbstractDecoder {
     }
 
     /**
-     * 
+     *
      * @param content
      * @param charset
      * @param regex
@@ -72,8 +71,6 @@ public class HexDecoder extends AbstractDecoder {
         matcher.appendTail(sb);
         return sb.toString();
     }
-
-
 
     private String hexToString(String content, Charset charSet) {
         String result = "";

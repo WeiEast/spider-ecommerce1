@@ -1,6 +1,7 @@
 package com.datatrees.crawler.core.processor.search;
 
 import java.util.HashMap;
+
 import org.junit.Test;
 
 /**
@@ -8,6 +9,7 @@ import org.junit.Test;
  * @since 22:27 21/05/2017
  */
 public class SearchTemplateCombineTest {
+
     @Test
     public void constructSearchURL() throws Exception {
         String tmp = "http://www.soku.com/search_page_${page,0,40,3+}video/q_${keyword}_orderby_2_page_${page,0,40,3+}";

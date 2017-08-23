@@ -3,14 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.actor;
 
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.rawdatacentral.domain.model.Task;
 
 /**
  *
@@ -19,17 +19,15 @@ import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
  * @since 2015年7月28日 下午5:47:32
  */
 public class TaskMessage {
-    private Task task;
+
+    private Task                   task;
     private SearchProcessorContext context;
-    private Boolean messageSend;
-    private int parentTaskID;
-    private CollectorMessage collectorMessage;
-
-    private String templateId;
-    private String uniqueSuffix;
-
-    private Boolean statusSend;
-
+    private Boolean                messageSend;
+    private int                    parentTaskID;
+    private CollectorMessage       collectorMessage;
+    private String                 templateId;
+    private String                 uniqueSuffix;
+    private Boolean                statusSend;
 
     /**
      * @param task
@@ -78,7 +76,6 @@ public class TaskMessage {
         return collectorMessage.getWebsiteName();
     }
 
-
     /**
      * @return the templateId
      */
@@ -107,8 +104,6 @@ public class TaskMessage {
         this.messageSend = messageSend;
     }
 
-
-
     /**
      * @return the parentTaskID
      */
@@ -122,7 +117,6 @@ public class TaskMessage {
     public void setParentTaskID(int parentTaskID) {
         this.parentTaskID = parentTaskID;
     }
-
 
     /**
      * @return the collectorMessage
@@ -138,7 +132,6 @@ public class TaskMessage {
         this.collectorMessage = collectorMessage;
     }
 
-
     /**
      * @return the uniqueSuffix
      */
@@ -152,7 +145,6 @@ public class TaskMessage {
     public void setUniqueSuffix(String uniqueSuffix) {
         this.uniqueSuffix = uniqueSuffix;
     }
-
 
     /**
      * @return the statusSend
@@ -175,8 +167,7 @@ public class TaskMessage {
      */
     @Override
     public String toString() {
-        return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID="
-                + parentTaskID + "]";
+        return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" + parentTaskID + "]";
     }
 
 }

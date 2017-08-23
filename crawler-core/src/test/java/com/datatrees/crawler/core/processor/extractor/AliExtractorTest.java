@@ -1,24 +1,24 @@
 package com.datatrees.crawler.core.processor.extractor;
 
-import com.datatrees.crawler.core.processor.BaseConfigTest;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.processor.BaseConfigTest;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.plugin.SimplePluginManager;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class AliExtractorTest extends BaseConfigTest {
+
     private FileWapper fileInit(String path) {
         FileWapper file = new FileWapper();
         file.setMimeType("text/html");

@@ -3,11 +3,10 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model.subtask;
 
+package com.datatrees.rawdatacentral.core.model.subtask;
 
 /**
  *
@@ -16,19 +15,25 @@ package com.datatrees.rawdatacentral.core.model.subtask;
  * @since 2015年12月19日 下午3:57:07
  */
 public class SubTask {
-    private long taskId;
-    private ParentTask parentTask;
-    private SubSeed seed;
 
-    private long submitAt;
+    private long       taskId;
+    private ParentTask parentTask;
+    private SubSeed    seed;
+    private long       submitAt;
 
     /**
-     * 
+     *
      */
     public SubTask() {
         super();
     }
 
+    public SubTask(long taskId, ParentTask parentTask, SubSeed seed) {
+        super();
+        this.taskId = taskId;
+        this.parentTask = parentTask;
+        this.seed = seed;
+    }
 
     /**
      * @return the submitAt
@@ -44,13 +49,6 @@ public class SubTask {
         this.submitAt = submitAt;
     }
 
-    public SubTask(long taskId, ParentTask parentTask, SubSeed seed) {
-        super();
-        this.taskId = taskId;
-        this.parentTask = parentTask;
-        this.seed = seed;
-    }
-
     public long getTaskId() {
         return taskId;
     }
@@ -58,7 +56,6 @@ public class SubTask {
     public void setTaskId(long taskId) {
         this.taskId = taskId;
     }
-
 
     /**
      * @return the parentTask

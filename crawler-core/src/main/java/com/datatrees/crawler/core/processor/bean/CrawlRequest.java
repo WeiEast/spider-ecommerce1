@@ -3,15 +3,13 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.bean;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.pipeline.Request;
@@ -20,9 +18,10 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 1:48:24 PM
@@ -31,6 +30,10 @@ public class CrawlRequest extends Request {
 
     private CrawlRequest() {
         super();
+    }
+
+    public static CrawlRequest build() {
+        return new CrawlRequest();
     }
 
     public String getSearchTemplateId() {
@@ -84,11 +87,6 @@ public class CrawlRequest extends Request {
         return this;
     }
 
-    public CrawlRequest setContext(Map<String, Object> context) {
-        RequestUtil.setContext(this, context);
-        return this;
-    }
-
     public Map<String, Object> getContext() {
         Map<String, Object> context = RequestUtil.getContext(this);
         if (context == null) {
@@ -96,6 +94,11 @@ public class CrawlRequest extends Request {
             RequestUtil.setContext(this, context);
         }
         return context;
+    }
+
+    public CrawlRequest setContext(Map<String, Object> context) {
+        RequestUtil.setContext(this, context);
+        return this;
     }
 
     public String getSearchTemplate() {
@@ -107,18 +110,12 @@ public class CrawlRequest extends Request {
         return this;
     }
 
-
-    public CrawlRequest setConf(Configuration conf) {
-        RequestUtil.setConf(this, conf);
-        return this;
-    }
-
     public Configuration getConf() {
         return RequestUtil.getConf(this);
     }
 
-    public CrawlRequest setUrlHandler(URLHandler handler) {
-        RequestUtil.setURLHandler(this, handler);
+    public CrawlRequest setConf(Configuration conf) {
+        RequestUtil.setConf(this, conf);
         return this;
     }
 
@@ -126,8 +123,9 @@ public class CrawlRequest extends Request {
         return RequestUtil.getURLHandler(this);
     }
 
-    public static CrawlRequest build() {
-        return new CrawlRequest();
+    public CrawlRequest setUrlHandler(URLHandler handler) {
+        RequestUtil.setURLHandler(this, handler);
+        return this;
     }
 
     @Override

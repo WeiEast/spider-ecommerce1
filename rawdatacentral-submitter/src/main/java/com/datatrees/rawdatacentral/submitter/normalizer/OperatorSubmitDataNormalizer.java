@@ -3,16 +3,15 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.submitter.normalizer;
 
-import org.springframework.stereotype.Service;
+package com.datatrees.rawdatacentral.submitter.normalizer;
 
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import org.springframework.stereotype.Service;
 
 /**
  *

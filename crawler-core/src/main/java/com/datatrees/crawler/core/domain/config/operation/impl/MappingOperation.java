@@ -1,6 +1,7 @@
 /**
  * www.gf-dai.com.cn Copyright (c) 2015 All Rights Reserved.
  */
+
 package com.datatrees.crawler.core.domain.config.operation.impl;
 
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
@@ -10,13 +11,13 @@ import com.datatrees.crawler.core.util.xml.annotation.Path;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
 /**
- * 
  * @author likun
  * @version $Id: DateTimeOperation.java, v 0.1 Jul 22, 2015 11:58:37 AM likun Exp $
  */
 @Tag("operation")
 @Path(".[@type='mapping']")
 public class MappingOperation extends AbstractOperation {
+
     /**
      *
      */

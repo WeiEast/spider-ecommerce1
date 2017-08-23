@@ -10,7 +10,6 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 9:28:58 PM
@@ -18,22 +17,16 @@ import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
 @Tag("parser")
 public class Parser extends AbstractBeanDefinition implements Serializable {
 
-
     /**
      *
      */
     private static final long serialVersionUID = -1249743371163334883L;
-
     private List<ParserPattern> patterns;
+    private String              urlTemplate;
+    private String              linkUrlTemplate;
+    private String              headers;
+    private Integer             sleepSecond;
 
-    private String urlTemplate;
-
-    private String linkUrlTemplate;
-
-    private String headers;
-
-    private Integer sleepSecond;
-    
     public Parser() {
         super();
         patterns = new ArrayList<ParserPattern>();
@@ -83,7 +76,7 @@ public class Parser extends AbstractBeanDefinition implements Serializable {
     public Integer getSleepSecond() {
         return sleepSecond;
     }
-    
+
     @Node("sleep-second/text()")
     public void setSleepSecond(Integer sleepSecond) {
         this.sleepSecond = sleepSecond;

@@ -3,24 +3,19 @@ package com.datatrees.crawler.core.processor.operation.impl;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
-import com.datatrees.crawler.core.processor.common.CalculateUtil;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.operation.Operation;
-
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TripleOperationImpl extends Operation {
+
     private static final Logger log = LoggerFactory.getLogger(TripleOperationImpl.class);
 
     @Override
@@ -59,8 +54,6 @@ public class TripleOperationImpl extends Operation {
 
         response.setOutPut(result);
     }
-
-
 
     private String doTriple(TripleType type, String firstParams, String secondParams, String firstResult, String secondResult) {
         String result = secondResult;

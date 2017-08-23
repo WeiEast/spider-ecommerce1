@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.extractor;
 
 import java.util.ArrayList;
@@ -27,14 +27,12 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
  */
 @Tag("source")
 public class PageSource {
-    private String field;
-    private AbstractPlugin plugin;
 
-    private List<ReplaceMent> replaceMentList;
-
+    private String               field;
+    private AbstractPlugin       plugin;
+    private List<ReplaceMent>    replaceMentList;
     private PageContentExtractor pageContentExtractor;
-
-    private String split;
+    private String               split;
 
     public PageSource() {
         super();

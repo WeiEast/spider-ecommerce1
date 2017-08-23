@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.common;
 
 import com.datatrees.crawler.core.util.SynchronizedMap;
@@ -16,6 +16,4 @@ import com.datatrees.crawler.core.util.SynchronizedMap;
  * @version 1.0
  * @since 2015年8月3日 下午1:52:39
  */
-public class ProcessorResult<K,V> extends SynchronizedMap<K,V> {
-
-}
+public class ProcessorResult<K, V> extends SynchronizedMap<K, V> {}

@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.operation;
 
 import java.util.HashMap;
@@ -18,20 +18,29 @@ import java.util.Map;
  * @since Feb 7, 2014 2:24:48 PM
  */
 public enum OperationType {
-    REPLACE("replace"), XPATH("xpath"), JSONPATH("jsonpath"), REGEX("regex"), PARSER("parser"), TEMPLATE("template"), CODEC("codec"), TRIM("trim"), RETURN(
-            "return"), SET("set"), EXTRACT("extract"), APPEND("append"), MATCHGROUP("matchgroup"), DATETIME("datetime"), TRIPLE("triple"), MAILPARSER(
-            "mailparser"), CALCULATE("calculate"), ESCAPE("escape"), DECODE("decode"), PROXYSET("proxyset"), MAPPING("mapping"), SLEEP("sleep"),RETURNMATCH("returnmatch");
-
-    private final String value;
-
-    OperationType(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
+    REPLACE("replace"),
+    XPATH("xpath"),
+    JSONPATH("jsonpath"),
+    REGEX("regex"),
+    PARSER("parser"),
+    TEMPLATE("template"),
+    CODEC("codec"),
+    TRIM("trim"),
+    RETURN("return"),
+    SET("set"),
+    EXTRACT("extract"),
+    APPEND("append"),
+    MATCHGROUP("matchgroup"),
+    DATETIME("datetime"),
+    TRIPLE("triple"),
+    MAILPARSER("mailparser"),
+    CALCULATE("calculate"),
+    ESCAPE("escape"),
+    DECODE("decode"),
+    PROXYSET("proxyset"),
+    MAPPING("mapping"),
+    SLEEP("sleep"),
+    RETURNMATCH("returnmatch");
     private static Map<String, OperationType> OperationTypeMap = new HashMap<String, OperationType>();
 
     static {
@@ -40,8 +49,18 @@ public enum OperationType {
         }
     }
 
+    private final String value;
+
+    OperationType(String value) {
+        this.value = value;
+    }
+
     public static OperationType getOperationType(String value) {
         return OperationTypeMap.get(value);
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

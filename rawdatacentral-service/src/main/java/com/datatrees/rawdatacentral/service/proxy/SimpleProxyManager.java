@@ -1,13 +1,12 @@
 package com.datatrees.rawdatacentral.service.proxy;
 
+import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
+import com.datatrees.crawler.core.processor.proxy.Proxy;
+import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
-import com.datatrees.crawler.core.processor.proxy.Proxy;
-import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
 
 /**
  * 代理,重新定义,以taskId为唯一标识
@@ -15,23 +14,19 @@ import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
 public class SimpleProxyManager extends ProxyManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleProxyManager.class);
-
     /**
      * proxy dubbo service
      */
-    private ProxyService        proxyService;
-
+    private ProxyService proxyService;
     /**
      * 当前代理
      */
-    private Proxy               last;
-
+    private Proxy        last;
     /**
      * 根据taskId获取,全部session模式,
      */
-    private Long                taskId;
-
-    private String              websiteName;
+    private Long         taskId;
+    private String       websiteName;
 
     public SimpleProxyManager(Long taskId, String websiteName, ProxyService proxyService) {
         CheckUtils.checkNotNull(taskId, "taskId is null");

@@ -3,41 +3,35 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.crawler.core.processor.operation.impl;
 
-import static org.junit.Assert.assertEquals;
+package com.datatrees.crawler.core.processor.operation.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.OperationType;
-import com.datatrees.crawler.core.domain.config.operation.impl.AppendOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.RegexOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.ReplaceOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.TemplateOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
+import com.datatrees.crawler.core.domain.config.operation.impl.*;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.operation.BaseOperationTest;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 4:04:22 PM
  */
 public class OperationTest extends BaseOperationTest {
-
 
     @Test
     public void testTemplateOperation() throws Exception {
@@ -65,13 +59,10 @@ public class OperationTest extends BaseOperationTest {
         }
     }
 
-
-
     @Ignore
     @Test
     public void testRegexOperation() throws Exception {
-        String content =
-                "<a class=\"fl\" href=\"/search?q=guava+collection+empty&newwindow=1&safe=strict&biw=1375&bih=386&ei=Ex8DU5DFIefNiAeqroDADg&start=40&sa=N\">";
+        String content = "<a class=\"fl\" href=\"/search?q=guava+collection+empty&newwindow=1&safe=strict&biw=1375&bih=386&ei=Ex8DU5DFIefNiAeqroDADg&start=40&sa=N\">";
         String regex = "start=(\\d+)";
         RegexOperation regexOp = new RegexOperation();
         regexOp.setType(OperationType.REGEX.getValue());
@@ -115,10 +106,10 @@ public class OperationTest extends BaseOperationTest {
         }
 
     }
-    
+
     @Test
     public void testAppendOperation() throws Exception {
-    	AppendOperation op = new AppendOperation();
+        AppendOperation op = new AppendOperation();
         op.setType(OperationType.APPEND.getValue());
         op.setIndex(1);
         op.setValue("yj");
@@ -139,7 +130,7 @@ public class OperationTest extends BaseOperationTest {
 
     @Test
     public void testTripleOperation() throws Exception {
-    	TripleOperation op = new TripleOperation();
+        TripleOperation op = new TripleOperation();
         op.setType(OperationType.TRIPLE.getValue());
         op.setValue(" =?b:c");
         Operation operation = ProcessorFactory.getOperation(op);

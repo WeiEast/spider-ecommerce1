@@ -3,21 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.common;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 import com.datatrees.common.protocol.util.HeaderParser;
 import com.datatrees.common.protocol.util.UrlUtils;
@@ -25,6 +17,9 @@ import com.datatrees.common.util.ReflectionUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.parser.ParserURLCombiner;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -33,8 +28,8 @@ import com.datatrees.crawler.core.processor.parser.ParserURLCombiner;
  * @since 2015年8月3日 上午12:57:30
  */
 public class ResultMapConverter {
-    private static final Logger log = LoggerFactory.getLogger(ResultMapConverter.class);
 
+    private static final Logger log = LoggerFactory.getLogger(ResultMapConverter.class);
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void convert(Object input, String baseURL, LinkNode current, List results) {
@@ -42,8 +37,7 @@ public class ResultMapConverter {
             Map<String, Object> resultMap = (Map<String, Object>) input;
             String className = null;
             try {
-                if (resultMap == null || resultMap.isEmpty()
-                        || StringUtils.isBlank((className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
+                if (resultMap == null || resultMap.isEmpty() || StringUtils.isBlank((className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
                     results.add(resultMap);
                     return;
                 }

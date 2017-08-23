@@ -25,7 +25,6 @@ public class ContentUtil {
 
     /**
      * Encodes the specified string into an immutable sequence of bytes using the US-ASCII charset.
-     * 
      * @param string string to encode.
      * @return encoded string as an immutable sequence of bytes.
      */
@@ -35,9 +34,8 @@ public class ContentUtil {
 
     /**
      * Encodes the specified string into an immutable sequence of bytes using the specified charset.
-     * 
      * @param charset Java charset to be used for the conversion.
-     * @param string string to encode.
+     * @param string  string to encode.
      * @return encoded string as an immutable sequence of bytes.
      */
     public static ByteSequence encode(Charset charset, String string) {
@@ -49,7 +47,6 @@ public class ContentUtil {
 
     /**
      * Decodes the specified sequence of bytes into a string using the US-ASCII charset.
-     * 
      * @param byteSequence sequence of bytes to decode.
      * @return decoded string.
      */
@@ -59,8 +56,7 @@ public class ContentUtil {
 
     /**
      * Decodes the specified sequence of bytes into a string using the specified charset.
-     * 
-     * @param charset Java charset to be used for the conversion.
+     * @param charset      Java charset to be used for the conversion.
      * @param byteSequence sequence of bytes to decode.
      * @return decoded string.
      */
@@ -71,10 +67,9 @@ public class ContentUtil {
     /**
      * Decodes a sub-sequence of the specified sequence of bytes into a string using the US-ASCII
      * charset.
-     * 
      * @param byteSequence sequence of bytes to decode.
-     * @param offset offset into the byte sequence.
-     * @param length number of bytes.
+     * @param offset       offset into the byte sequence.
+     * @param length       number of bytes.
      * @return decoded string.
      */
     public static String decode(ByteSequence byteSequence, int offset, int length) {
@@ -84,11 +79,10 @@ public class ContentUtil {
     /**
      * Decodes a sub-sequence of the specified sequence of bytes into a string using the specified
      * charset.
-     * 
-     * @param charset Java charset to be used for the conversion.
+     * @param charset      Java charset to be used for the conversion.
      * @param byteSequence sequence of bytes to decode.
-     * @param offset offset into the byte sequence.
-     * @param length number of bytes.
+     * @param offset       offset into the byte sequence.
+     * @param length       number of bytes.
      * @return decoded string.
      */
     public static String decode(Charset charset, ByteSequence byteSequence, int offset, int length) {

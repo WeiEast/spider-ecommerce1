@@ -3,31 +3,26 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.extractor;
 
-import com.datatrees.crawler.core.processor.BaseConfigTest;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.processor.BaseConfigTest;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.plugin.SimplePluginManager;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
@@ -37,6 +32,9 @@ import com.datatrees.crawler.core.util.xml.exception.ParseException;
  */
 public class CMBExtractorTest extends BaseConfigTest {
 
+    String[] billkey          = {"NameOnCard", "BillMonth", "BillStartDate", "CardNums", "BillDate", "PaymentDueDate", "CreditLimit", "FCCreditLimit", "NewBalance", "FCNewBalance", "MinPayment", "FCMinPayment", "LastBalance", "FCLastBalance", "LastPayment", "FCLastPayment", "NewCharges", "FCNewCharges", "Adjustment", "FCAdjustment", "Interest", "FCInterest", "Integral", "IntegralAdd", "IntegralUsed", "ShoppingSheet", "Installment"};
+    String[] ShoppingSheetKey = {"CardNo", "TransDate", "PostDate", "Description", "Currencytype", "AmountMoney"};
+    String[] InstallmentKey   = {"InstallmentInfo", "ImTotalTerm", "RecordedTerm", "ImTotalBalance", "ImTotalFees", "UnRecordedBalance", "ImNewBalance", "InstallmentDate", "ImNewFees", "InstallmentType"};
 
     private FileWapper fileInit(String path) {
         FileWapper file = new FileWapper();
@@ -45,7 +43,6 @@ public class CMBExtractorTest extends BaseConfigTest {
         file.setFile(new File(path));
         return file;
     }
-
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     List<Map> cmbJianbanResourceInit() {
@@ -79,13 +76,13 @@ public class CMBExtractorTest extends BaseConfigTest {
     List<Map> cmbXiangbanResourceInit() {
         List list = new ArrayList();
         Map<String, Object> mailMap = new HashMap<String, Object>();
-//        mailMap.put("subject", "招商银行信用卡电子账单");
-//        mailMap.put("pageContent", this.getPageContent("src/test/resources/cmb/xiangban201505.html"));
-//        list.add(mailMap);
-         mailMap = new HashMap<String, Object>();
-         mailMap.put("subject", "招商银行信用卡电子账单");
-         mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/xiangban201402.html"));
-         list.add(mailMap);
+        //        mailMap.put("subject", "招商银行信用卡电子账单");
+        //        mailMap.put("pageContent", this.getPageContent("src/test/resources/cmb/xiangban201505.html"));
+        //        list.add(mailMap);
+        mailMap = new HashMap<String, Object>();
+        mailMap.put("subject", "招商银行信用卡电子账单");
+        mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/xiangban201402.html"));
+        list.add(mailMap);
         // mailMap = new HashMap<String, Object>();
         // mailMap.put("subject", "招商银行信用卡电子账单");
         // mailMap.put("pageContent", this.getPageContent("src/test/resources/cmb/xiangban201401.html"));
@@ -110,17 +107,6 @@ public class CMBExtractorTest extends BaseConfigTest {
         list.add(mailMap);
         return list;
     }
-
-    String[] billkey = {"NameOnCard", "BillMonth", "BillStartDate", "CardNums", "BillDate", "PaymentDueDate", "CreditLimit", "FCCreditLimit",
-            "NewBalance", "FCNewBalance", "MinPayment", "FCMinPayment", "LastBalance", "FCLastBalance", "LastPayment", "FCLastPayment", "NewCharges",
-            "FCNewCharges", "Adjustment", "FCAdjustment", "Interest", "FCInterest", "Integral", "IntegralAdd", "IntegralUsed", "ShoppingSheet",
-            "Installment"};
-
-    String[] ShoppingSheetKey = {"CardNo", "TransDate", "PostDate", "Description", "Currencytype", "AmountMoney"};
-
-    String[] InstallmentKey = {"InstallmentInfo", "ImTotalTerm", "RecordedTerm", "ImTotalBalance", "ImTotalFees", "UnRecordedBalance",
-            "ImNewBalance", "InstallmentDate", "ImNewFees", "InstallmentType"};
-
 
     private void nullCheck(Map map, String[] billkey) {
         for (String key : billkey) {
@@ -170,7 +156,6 @@ public class CMBExtractorTest extends BaseConfigTest {
         }
     }
 
-
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void testCITICExtractor() {
@@ -202,37 +187,31 @@ public class CMBExtractorTest extends BaseConfigTest {
 
             Map<String, Object> mailMap = new HashMap<String, Object>();
 
-
             mailMap.put("subject", "招商银行白金信用卡电子账单");
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/白金201507.html"));
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/白金201401.html"));
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/白金201501.html"));
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/白金201502.html"));
 
-
             mailMap.put("subject", "招商银行运通百夫长黑金卡电子账单");
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/黑金201507.html"));
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/黑金20150702.html"));
-
 
             ExtractorRepuest request = ExtractorRepuest.build().setProcessorContext(context);
 
             request.setInput(mailMap);
             Response response = Extractor.extract(request);
 
-
             mailMap.put("subject", "招商银行美国运通卡电子账单");
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/美国运通卡201401.html"));
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/美国运通卡201406.html"));
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/美国运通卡201507.html"));
-
 
             mailMap.put("subject", "招商银行零售贷款电子对账单");
             mailMap.put("pageContent", this.fileInit("src/test/resources/cmb/零售贷款201505.html"));
             ExtractorRepuest request3 = ExtractorRepuest.build().setProcessorContext(context);
             request3.setInput(mailMap);
             Response response3 = Extractor.extract(request3);
-
 
             List<Object> objs = ResponseUtil.getResponseObjectList(response);
             List<Object> objs3 = ResponseUtil.getResponseObjectList(response3);

@@ -8,13 +8,11 @@ public class TaskRuntimeException extends RuntimeException {
     /**
      * 任务ID
      */
-    private long   taskId    = 0;
-
+    private long taskId    = 0;
     /**
      * 错误代码
      */
-    private int    errorCode = -1;
-
+    private int  errorCode = -1;
     /**
      * 错误信息
      */

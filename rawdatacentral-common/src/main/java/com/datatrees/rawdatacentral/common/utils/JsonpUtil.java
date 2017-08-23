@@ -1,7 +1,5 @@
 package com.datatrees.rawdatacentral.common.utils;
 
-import com.alibaba.fastjson.JSON;
-
 /**
  * Created by zhouxinghai on 2017/7/21.
  */

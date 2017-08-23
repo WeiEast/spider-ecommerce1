@@ -3,9 +3,9 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.plugin;
 
 import java.io.Serializable;
@@ -20,23 +20,22 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 11:13:43 AM
  */
-@Description(value = "type", keys = {"JAVA", "SHELL", "PYTHON"}, types = {JavaPlugin.class,
-        ShellPlugin.class, PythonPlugin.class})
+@Description(value = "type", keys = {"JAVA", "SHELL", "PYTHON"}, types = {JavaPlugin.class, ShellPlugin.class, PythonPlugin.class})
 public abstract class AbstractPlugin extends AbstractBeanDefinition implements Serializable {
 
     /**
      *
      */
     private static final long serialVersionUID = -721450264346621071L;
-    private PluginType type;
+    private PluginType  type;
     private PluginPhase phase;
-    private String extraConfig;
-    private String fileName;
+    private String      extraConfig;
+    private String      fileName;
 
     @Attr("file-type")
     public PluginType getType() {

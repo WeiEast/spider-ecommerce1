@@ -12,27 +12,22 @@ public class LoginMessage implements Serializable {
      * 站点名
      */
     private String websiteName;
-
     /**
      * 任务ID
      */
     private long   taskId;
-
     /**
      * 结束url
      */
     private String endUrl;
-
     /**
      * head配置:cookie
      */
     private String cookie;
-
     /**
      * head配置项:Set-Cookie
      */
     private String setCookie;
-
     /**
      * 用户账户
      */
@@ -94,7 +89,6 @@ public class LoginMessage implements Serializable {
 
     @Override
     public String toString() {
-        return "LoginMessage [websiteName=" + websiteName + ", taskId=" + taskId + ", endUrl=" + endUrl + ", accountNo="
-               + accountNo + "]";
+        return "LoginMessage [websiteName=" + websiteName + ", taskId=" + taskId + ", endUrl=" + endUrl + ", accountNo=" + accountNo + "]";
     }
 }

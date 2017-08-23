@@ -4,29 +4,27 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.bdb.operator.BDBOperator;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.EnvironmentLockedException;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午12:36:17
  */
 public class LinkQueue {
-    private static final Logger  log       = LoggerFactory.getLogger(LinkQueue.class);
 
+    private static final Logger log = LoggerFactory.getLogger(LinkQueue.class);
     private BDBOperator          bdbOperator;
     private SearchTemplateConfig searchTemplateConfig;
-    private int                  queueSize = 0;
-    private boolean              isFull    = false;
+    private int     queueSize = 0;
+    private boolean isFull    = false;
 
     public LinkQueue(SearchTemplateConfig searchTemplateConfig) {
         this.searchTemplateConfig = searchTemplateConfig;
@@ -69,7 +67,6 @@ public class LinkQueue {
 
     /**
      * add batch of links into BDB queue
-     * 
      * @param links
      * @param worker
      * @return new link num
@@ -79,8 +76,7 @@ public class LinkQueue {
             int newLinkNum = 0;
             long preId = bdbOperator.getCurrentId();
             for (LinkNode linkNode : links) {
-                if (linkNode == null)
-                    continue;
+                if (linkNode == null) continue;
                 try {
                     newLinkNum += addLink(linkNode);
                 } catch (Exception ex) {
@@ -89,9 +85,7 @@ public class LinkQueue {
                 }
             }
 
-            log.info("Added [" + (bdbOperator.getCurrentId() - preId) + "] links to link queue , total ["
-                     + (bdbOperator.getCurrentId() - 1) + "] in queue current position is "
-                     + bdbOperator.getLastFetchId());
+            log.info("Added [" + (bdbOperator.getCurrentId() - preId) + "] links to link queue , total [" + (bdbOperator.getCurrentId() - 1) + "] in queue current position is " + bdbOperator.getLastFetchId());
             log.info("New link added into BDB, new link num:" + newLinkNum);
             return newLinkNum;
         }
@@ -110,7 +104,6 @@ public class LinkQueue {
     }
 
     /**
-     * 
      * @param newLinkNum
      * @param linkNode
      * @param deep
@@ -121,8 +114,7 @@ public class LinkQueue {
         int maxDepth = searchTemplateConfig.getMaxDepth();
 
         if (deep > maxDepth) {
-            log.debug("drop link [" + linkNode.getUrl() + "] for max depth reached, link depth = [" + deep
-                      + "] max depth = [" + maxDepth + "]");
+            log.debug("drop link [" + linkNode.getUrl() + "] for max depth reached, link depth = [" + deep + "] max depth = [" + maxDepth + "]");
 
             return true;
         } else if (queueSize > maxPage) {

@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.search;
 
 import java.net.URLEncoder;
@@ -13,17 +13,16 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+import com.datatrees.common.util.PatternUtils;
+import com.datatrees.crawler.core.processor.common.CalculateUtil;
+import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.common.CalculateUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 15, 2014 2:57:41 PM
@@ -34,7 +33,7 @@ public class SearchTemplateCombine {
 
     /**
      * encode keyword in URL format
-     * 
+     *
      * @param keyword
      * @param urlCharset
      * @return the encoded keyword
@@ -60,16 +59,14 @@ public class SearchTemplateCombine {
         return encodedKeyword;
     }
 
-    public static String constructSearchEngineURL(String searchURLTemplate, String keyword, String urlCharset, int pageNum, boolean notOverloadMax,
-            String domain, Map<String, Object> fieldMap) {
+    public static String constructSearchEngineURL(String searchURLTemplate, String keyword, String urlCharset, int pageNum, boolean notOverloadMax, String domain, Map<String, Object> fieldMap) {
         String encodedDomain = null;
         if (StringUtils.isNotEmpty(keyword)) {
             encodedDomain = encodeKeyword(domain, urlCharset);
             log.debug("original domain: " + domain + ", encoded domain: " + domain);
         }
         try {
-            String searchURL = SearchTemplateCombine
-                    .constructSearchURL(searchURLTemplate, keyword, urlCharset, pageNum, notOverloadMax, fieldMap);
+            String searchURL = SearchTemplateCombine.constructSearchURL(searchURLTemplate, keyword, urlCharset, pageNum, notOverloadMax, fieldMap);
             if (StringUtils.isNotEmpty(encodedDomain)) {
                 searchURL = searchURL.replace("${domain}", encodedDomain);
             }
@@ -81,18 +78,16 @@ public class SearchTemplateCombine {
         return null;
     }
 
-
     /**
      * construct search url from template with keyword, charset and page num.
-     * 
+     *
      * @param searchURLTemplate
      * @param keyword
      * @param urlCharset
      * @param pageNum
      * @return the search url
      */
-    public static String constructSearchURL(String searchURLTemplate, String keyword, String urlCharset, int pageNum, boolean notOverloadMax,
-            Map<String, Object> fieldMap) {
+    public static String constructSearchURL(String searchURLTemplate, String keyword, String urlCharset, int pageNum, boolean notOverloadMax, Map<String, Object> fieldMap) {
         try {
             String encodedKeyword = null;
             if (StringUtils.isNotEmpty(keyword)) {
@@ -128,8 +123,7 @@ public class SearchTemplateCombine {
                     if (convertedPageNum > maxOffset && notOverloadMax) {
                         convertedPageNum = maxOffset;
                     }
-                    log.info("begin: " + beginOffset + ",end: " + maxOffset + ",offset: " + offset + ",final page num: "
-                            + Integer.toString(convertedPageNum));
+                    log.info("begin: " + beginOffset + ",end: " + maxOffset + ",offset: " + offset + ",final page num: " + Integer.toString(convertedPageNum));
                     searchURL = searchURL.replace(pstr, Integer.toString(convertedPageNum));
                 }
             }
@@ -165,7 +159,7 @@ public class SearchTemplateCombine {
 
     /**
      * custom Template search url from template with page num.
-     * 
+     *
      * @param customURLTemplate
      * @param pageNum
      */
@@ -209,8 +203,7 @@ public class SearchTemplateCombine {
                     } else {
                         convertedPageNum = beginValue + offset * (pageNum - 1);
                     }
-                    log.debug("convertedPageNum : " + convertedPageNum + " pageNum : " + pageNum + "\nbeginOffset : " + beginValue + "\noffset : "
-                            + offset * (pageNum - 1) + "\nmaxPageNum : " + maxPageNum + "\noffsetSign:" + offsetSign);
+                    log.debug("convertedPageNum : " + convertedPageNum + " pageNum : " + pageNum + "\nbeginOffset : " + beginValue + "\noffset : " + offset * (pageNum - 1) + "\nmaxPageNum : " + maxPageNum + "\noffsetSign:" + offsetSign);
                     customURLTemplate = customURLTemplate.replace(map.get(0), Integer.toString(convertedPageNum));
                 }
             }

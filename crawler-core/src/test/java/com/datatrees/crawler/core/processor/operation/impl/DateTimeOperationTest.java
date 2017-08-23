@@ -2,12 +2,8 @@
  * www.gf-dai.com.cn
  * Copyright (c) 2015 All Rights Reserved.
  */
-package com.datatrees.crawler.core.processor.operation.impl;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.datatrees.crawler.core.processor.operation.impl;
 
 import com.datatrees.common.protocol.ProtocolStatusCodes;
 import com.datatrees.crawler.core.processor.BaseConfigTest;
@@ -21,13 +17,17 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.plugin.SimplePluginManager;
 import com.datatrees.crawler.core.processor.search.Crawler;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author likun
  * @version $Id: DateTimeOperationTest.java, v 0.1 Jul 23, 2015 10:25:17 AM likun Exp $
  */
 public class DateTimeOperationTest extends BaseConfigTest {
+
     private final static Logger logger = LoggerFactory.getLogger(DateTimeOperationTest.class);
 
     @Test
@@ -40,8 +40,8 @@ public class DateTimeOperationTest extends BaseConfigTest {
             context.init();
 
             /*            *//**
-                              * 本用例没有使用登陆产生cookie，而是直接写入以下cookie，失效后请更换
-                              */
+             * 本用例没有使用登陆产生cookie，而是直接写入以下cookie，失效后请更换
+             */
             /*
             ProcessorContextUtil
              .setCookieString(
@@ -52,20 +52,15 @@ public class DateTimeOperationTest extends BaseConfigTest {
              * personal information search
              */
             long start = System.currentTimeMillis();
-            CrawlRequest request = CrawlRequest.build().setProcessorContext(context)
-                .setUrl(new LinkNode("https://www.baidu.com/more"))
-                .setSearchTemplateId("datetimeoperation-sample-search-template").contextInit();
+            CrawlRequest request = CrawlRequest.build().setProcessorContext(context).setUrl(new LinkNode("https://www.baidu.com/more")).setSearchTemplateId("datetimeoperation-sample-search-template").contextInit();
             CrawlResponse resp = Crawler.crawl(request);
             logger.info("datetime operation sample search response status - " + ResponseUtil.getResponseStatus(resp));
-            Assert.assertTrue((ResponseUtil.getResponseStatus(resp) == ProtocolStatusCodes.SUCCESS || ResponseUtil
-                .getResponseStatus(resp) == Status.NO_SEARCH_RESULT));
-            logger.info("datetime operation sample search ResponseObjectList - "
-                        + ResponseUtil.getResponseObjectList(resp));
+            Assert.assertTrue((ResponseUtil.getResponseStatus(resp) == ProtocolStatusCodes.SUCCESS || ResponseUtil.getResponseStatus(resp) == Status.NO_SEARCH_RESULT));
+            logger.info("datetime operation sample search ResponseObjectList - " + ResponseUtil.getResponseObjectList(resp));
             if (ResponseUtil.getResponseStatus(resp) == ProtocolStatusCodes.SUCCESS) {
                 Assert.assertNotNull(ResponseUtil.getResponseObjectList(resp));
             }
-            logger
-                .info("datetime operation sample search search took - " + (System.currentTimeMillis() - start) + "ms");
+            logger.info("datetime operation sample search search took - " + (System.currentTimeMillis() - start) + "ms");
 
         } catch (ParseException e) {
             Assert.fail("not well format config!");

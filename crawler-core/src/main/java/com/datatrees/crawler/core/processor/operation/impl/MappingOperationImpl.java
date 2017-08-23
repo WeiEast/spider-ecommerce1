@@ -3,10 +3,6 @@ package com.datatrees.crawler.core.processor.operation.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -14,6 +10,9 @@ import com.datatrees.common.util.CacheUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.operation.impl.MappingOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jerry
@@ -21,8 +20,8 @@ import com.datatrees.crawler.core.processor.operation.Operation;
  */
 public class MappingOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(MappingOperationImpl.class);
-    private static String MAPPING_CACHE_KEY = "MAPPING_CACHE_KEY";
+    private static final Logger log               = LoggerFactory.getLogger(MappingOperationImpl.class);
+    private static       String MAPPING_CACHE_KEY = "MAPPING_CACHE_KEY";
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private Map<String, Map> getCachedMapping() {
@@ -56,7 +55,6 @@ public class MappingOperationImpl extends Operation {
         return mapping;
     }
 
-
     @Override
     public void process(Request request, Response response) throws Exception {
         String result = null;
@@ -65,8 +63,7 @@ public class MappingOperationImpl extends Operation {
             String original = getInput(request, response);
             Map<String, Map> cachedMapping = getCachedMapping();
             String groupName = operation.getGroupName();
-            if (original != null && groupName != null && cachedMapping != null && cachedMapping.get(groupName) != null
-                    && cachedMapping.get(groupName).get(original) != null) {
+            if (original != null && groupName != null && cachedMapping != null && cachedMapping.get(groupName) != null && cachedMapping.get(groupName).get(original) != null) {
                 result = cachedMapping.get(groupName).get(original) + "";
             }
         } catch (Exception e) {

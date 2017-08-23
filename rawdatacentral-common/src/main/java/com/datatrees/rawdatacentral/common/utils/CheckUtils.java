@@ -1,8 +1,7 @@
 package com.datatrees.rawdatacentral.common.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 检查

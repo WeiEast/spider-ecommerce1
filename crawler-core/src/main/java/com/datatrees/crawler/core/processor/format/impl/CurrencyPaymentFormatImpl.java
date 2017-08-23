@@ -1,19 +1,17 @@
 package com.datatrees.crawler.core.processor.format.impl;
 
+import com.datatrees.common.pipeline.Request;
+import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.processor.format.AbstractFormat;
-
 public class CurrencyPaymentFormatImpl extends AbstractFormat {
 
     private static final Logger log = LoggerFactory.getLogger(CurrencyPaymentFormatImpl.class);
-
     CurrencyFormatImpl currencyFormat = new CurrencyFormatImpl();
-    PaymentFormatImpl paymentFormat = new PaymentFormatImpl();
+    PaymentFormatImpl  paymentFormat  = new PaymentFormatImpl();
 
     @Override
     public Object format(Request req, Response response, String orginal, String pattern) {

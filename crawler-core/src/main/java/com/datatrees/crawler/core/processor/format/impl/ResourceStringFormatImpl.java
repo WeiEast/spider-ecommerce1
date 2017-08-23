@@ -3,14 +3,10 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.crawler.core.processor.format.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.datatrees.crawler.core.processor.format.impl;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
@@ -21,6 +17,9 @@ import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -29,9 +28,8 @@ import com.datatrees.crawler.core.processor.service.ServiceBase;
  * @since 2015年7月9日 下午1:11:32
  */
 public class ResourceStringFormatImpl extends AbstractFormat {
+
     private static final Logger logger = LoggerFactory.getLogger(ResourceStringFormatImpl.class);
-
-
 
     /*
      * (non-Javadoc)

@@ -7,9 +7,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月14日 上午10:41:44
@@ -21,13 +19,9 @@ public class ExtratorSelector implements Serializable {
      *
      */
     private static final long serialVersionUID = 8089954857564467379L;
-
-    private String field;
-
-    private String containRegex;
-
-    private String disContainRegex;
-
+    private String        field;
+    private String        containRegex;
+    private String        disContainRegex;
     private PageExtractor pageExtractor;
 
     @Attr("field")
@@ -44,7 +38,6 @@ public class ExtratorSelector implements Serializable {
     public String getContainRegex() {
         return containRegex;
     }
-
 
     @Node("@contain")
     public void setContainRegex(String containRegex) {

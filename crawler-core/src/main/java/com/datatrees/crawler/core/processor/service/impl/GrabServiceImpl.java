@@ -3,10 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.service.impl;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -27,9 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
 /**
  *
  * Created by zhouxinghai on 2017/5/26
@@ -38,7 +38,8 @@ public class GrabServiceImpl extends ServiceBase {
 
     private static final Logger logger = LoggerFactory.getLogger(GrabServiceImpl.class);
 
-    @Override public void process(Request request, Response response) throws Exception {
+    @Override
+    public void process(Request request, Response response) throws Exception {
         GrabService service = (GrabService) getService();
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
         LinkNode linkNode = RequestUtil.getCurrentUrl(request);
@@ -68,11 +69,9 @@ public class GrabServiceImpl extends ServiceBase {
         //等待APP处理完成,并通过dubbo将数据写入redis
         //        String resultKey = sendDirective.getDirectiveKey(DirectiveRedisCode.WAIT_SERVER_PROCESS);
 
-        DirectiveResult<Map<String, String>> receiveDirective = getRedisService()
-                .getDirectiveResult(resultKey, 120, TimeUnit.SECONDS);
+        DirectiveResult<Map<String, String>> receiveDirective = getRedisService().getDirectiveResult(resultKey, 120, TimeUnit.SECONDS);
         if (null == receiveDirective) {
-            logger.error("get grab url result timeout,taskId={},websiteName={},resultKey={},url={}", taskId,
-                    websiteName, resultKey, url);
+            logger.error("get grab url result timeout,taskId={},websiteName={},resultKey={},url={}", taskId, websiteName, resultKey, url);
             return;
         }
         String cookes = receiveDirective.getData().get(AttributeKey.COOKIES);
@@ -84,13 +83,11 @@ public class GrabServiceImpl extends ServiceBase {
             logger.error("empty html return,taskId={},websiteName={},url={}", taskId, websiteName, url);
         }
         if (StringUtils.isNoneBlank(cookes)) {
-            logger.info("get cookes success,taskId={},websiteName={},resultKey={},url={},cookes={}", taskId,
-                    websiteName, resultKey, url, cookes);
+            logger.info("get cookes success,taskId={},websiteName={},resultKey={},url={},cookes={}", taskId, websiteName, resultKey, url, cookes);
             //ProcessorContextUtil.setCookieString(context, cookes);
         }
 
-        logger.info("get result success,taskId={},websiteName={},resultKey={},url={}", taskId, websiteName, resultKey,
-                url);
+        logger.info("get result success,taskId={},websiteName={},resultKey={},url={}", taskId, websiteName, resultKey, url);
         ResponseUtil.setResponseContent(response, content);
         RequestUtil.setContent(request, content);
 
@@ -113,7 +110,7 @@ public class GrabServiceImpl extends ServiceBase {
         String domain = getDomain(url);
         List<Cookie> cookies = CookieParser.getCookies(domain, ";", "=", cookieString);
 
-//        logger.info("cookiesS={}", GsonUtils.toJson(cookies));
+        //        logger.info("cookiesS={}", GsonUtils.toJson(cookies));
 
         Map<String, Object> httpConfig = new HashMap<>();
         httpConfig.put("cookies", cookies);

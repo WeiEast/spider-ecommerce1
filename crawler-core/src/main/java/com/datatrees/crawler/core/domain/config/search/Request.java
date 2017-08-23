@@ -3,9 +3,9 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.search;
 
 import java.io.Serializable;
@@ -18,39 +18,34 @@ import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 8, 2014 5:09:54 PM
  */
-
 public class Request implements Serializable {
+
     /**
      *
      */
     private static final long serialVersionUID = 228030808365581545L;
-    private Integer maxPages;
-    private String noResultPattern;
-    private String blockPattern;
-    private String lastPagePattern;
+    private Integer      maxPages;
+    private String       noResultPattern;
+    private String       blockPattern;
+    private String       lastPagePattern;
     private List<String> searchTemplateList;
     // add in vtboss1.0.1
-    private String reVisitPattern;
-
+    private String       reVisitPattern;
     private Boolean fullSearchSign = true;
-
     private Integer maxExecuteMinutes;
-    
     private Integer visitTimeOut;
-    
-    private String defaultHeader;
+    private String  defaultHeader;
 
     public Request() {
         super();
         searchTemplateList = new ArrayList<String>();
     }
 
-    
     @Tag("visit-time-out")
     public Integer getVisitTimeOut() {
         return visitTimeOut;
@@ -131,18 +126,16 @@ public class Request implements Serializable {
         this.fullSearchSign = fullSearchSign;
     }
 
-    
     @Tag("max-execute-minutes")
     public Integer getMaxExecuteMinutes() {
         return maxExecuteMinutes;
     }
 
-    
     @Node("max-execute-minutes/text()")
     public void setMaxExecuteMinutes(Integer maxExecuteMinutes) {
         this.maxExecuteMinutes = maxExecuteMinutes;
     }
-    
+
     @Tag("default-header")
     public String getDefaultHeader() {
         return defaultHeader;

@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.collector.chain.search;
 
+import java.util.List;
+
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
@@ -15,16 +17,13 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午3:19:47
  */
 public class ResponseStatusFilter implements Filter {
+
     private static final Logger log = LoggerFactory.getLogger(ResponseStatusFilter.class);
 
     @Override
@@ -70,7 +69,5 @@ public class ResponseStatusFilter implements Filter {
         log.debug("Execute ResponseStatusFilter end...");
         filterChain.doFilter(context, filterChain);
     }
-
-
 
 }

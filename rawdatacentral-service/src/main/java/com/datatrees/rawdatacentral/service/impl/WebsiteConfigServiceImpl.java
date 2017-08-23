@@ -1,19 +1,11 @@
 package com.datatrees.rawdatacentral.service.impl;
 
-import java.util.*;
-
 import javax.annotation.Resource;
-
-import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.api.ProxyService;
-import com.datatrees.rawdatacentral.api.RedisService;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
 import com.datatrees.crawler.core.domain.config.ExtractorConfig;
@@ -21,8 +13,10 @@ import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.resource.PluginManager;
-import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
+import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
+import com.datatrees.rawdatacentral.api.ProxyService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -33,6 +27,10 @@ import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by zhouxinghai on 2017/6/30.
@@ -41,33 +39,25 @@ import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     private static final Logger logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
-
     @Resource
     private WebsiteConfigDAO    websiteConfigDAO;
-
     @Resource
     private PluginManager       pluginManager;
-
     @Resource
     private BankService         bankService;
-
     @Resource
     private RedisService        redisService;
-
     @Resource
     private ProxyService        proxyService;
-
     private ParentConfigHandler parentConfigHandler;
 
     public WebsiteConfigServiceImpl() {
         parentConfigHandler = new ParentConfigHandler() {
             @Override
             public <T> T parse(T type) throws Exception {
-                if (type != null && type instanceof AbstractWebsiteConfig
-                    && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
+                if (type != null && type instanceof AbstractWebsiteConfig && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
                     String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
-                    logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName
-                                + " for class " + type.getClass());
+                    logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class " + type.getClass());
                     Website website = getWebsiteByWebsiteName(parentWebsiteName);
                     if (website != null) {
                         if (type instanceof SearchConfig) {
@@ -158,9 +148,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public WebsiteConf getWebsiteConfFromCache(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
-        WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName,
-            new TypeReference<WebsiteConf>() {
-            });
+        WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName, new TypeReference<WebsiteConf>() {});
         if (null != conf) {
             logger.info("find WebsiteConf from cache websiteName={}", websiteName);
             return conf;
@@ -226,8 +214,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             if (!json.containsKey("fields")) {
                 throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
             }
-            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"),
-                FieldInitSetting.class);
+            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
             if (null == fieldInitSettings) {
                 throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
             }
@@ -251,12 +238,10 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
                         field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
                     }
                 }
-                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.PIC_CODE.getCode(),
-                    fieldInitSetting.getType())) {
+                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
                     config.setHasPicCode(true);
                 }
-                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.SMS_CODE.getCode(),
-                    fieldInitSetting.getType())) {
+                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
                     config.setHasSmsCode(true);
                 }
                 config.getFields().add(field);
@@ -317,24 +302,20 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         if (websiteConfig != null) {
             if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
                 try {
-                    SearchConfig searchConfig = XmlConfigParser.getInstance().parse(websiteConfig.getSearchConfig(),
-                        SearchConfig.class, parentConfigHandler);
+                    SearchConfig searchConfig = XmlConfigParser.getInstance().parse(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
                     website.setSearchConfig(searchConfig);
                     website.setSearchConfigSource(null);
                 } catch (Exception e) {
-                    logger.error("parse searchConfig  error websiteId={},websiteName={}", websiteConfig.getWebsiteId(),
-                        websiteConfig.getWebsiteName(), e);
+                    logger.error("parse searchConfig  error websiteId={},websiteName={}", websiteConfig.getWebsiteId(), websiteConfig.getWebsiteName(), e);
                 }
             }
             if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
                 try {
-                    ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
-                        .parse(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
+                    ExtractorConfig extractorConfig = XmlConfigParser.getInstance().parse(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
                     website.setExtractorConfig(extractorConfig);
                     website.setExtractorConfigSource(null);
                 } catch (Exception e) {
-                    logger.error("parse extractorConfig  error websiteId={},websiteName={}",
-                        websiteConfig.getWebsiteId(), websiteConfig.getWebsiteName(), e);
+                    logger.error("parse extractorConfig  error websiteId={},websiteName={}", websiteConfig.getWebsiteId(), websiteConfig.getWebsiteName(), e);
                 }
             }
         }

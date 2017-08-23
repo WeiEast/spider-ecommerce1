@@ -1,6 +1,7 @@
 /**
- * 
+ *
  */
+
 package com.datatrees.crawler.core.domain.config.service.impl;
 
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
@@ -9,7 +10,6 @@ import com.datatrees.crawler.core.util.xml.annotation.Path;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 7:25:55 PM
@@ -17,8 +17,9 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Path(".[@type='webrobot']")
 @Tag("service")
 public class WebRobotService extends AbstractService {
-    private String browserType;
-    private String pageLoadPattern;
+
+    private String  browserType;
+    private String  pageLoadPattern;
     private Integer pageLoadTimeOut;
 
     @Tag("browser-type")

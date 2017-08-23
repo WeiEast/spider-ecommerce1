@@ -3,10 +3,15 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.extractor.source;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -21,13 +26,9 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
 import com.datatrees.crawler.core.processor.page.PageImpl;
 import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
+import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.google.common.base.Preconditions;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -40,9 +41,8 @@ import org.slf4j.LoggerFactory;
  * @since 2015年7月14日 下午10:23:47
  */
 public class PageSourceImpl extends Processor {
+
     private static final Logger log = LoggerFactory.getLogger(PageSourceImpl.class);
-
-
     private List<PageSource> pageSourceList;
 
     /**
@@ -53,11 +53,10 @@ public class PageSourceImpl extends Processor {
         this.pageSourceList = pageSourceList;
     }
 
-
     private String getSourceWithPlugin(Request request, AbstractPlugin pluginDesc, Object value) throws Exception {
         AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
 
-        Object respOutput =  PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> {
+        Object respOutput = PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> {
             Map<String, String> params = new LinkedHashMap<>();
             if (value instanceof FileWapper) {
                 FileWapper file = (FileWapper) value;
@@ -131,6 +130,5 @@ public class PageSourceImpl extends Processor {
         }
         RequestUtil.setContent(request, builder.toString());
     }
-
 
 }

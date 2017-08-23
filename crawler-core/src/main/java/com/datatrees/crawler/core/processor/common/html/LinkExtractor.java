@@ -1,77 +1,66 @@
 /**
  * LinkExtractor.java 1.0 Jul 19, 2011 Copyright @ 2011 Vobile, Inc. All right reserved.
  */
+
 package com.datatrees.crawler.core.processor.common.html;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.datatrees.common.protocol.util.UrlUtils;
 import it.unimi.dsi.lang.MutableString;
 import it.unimi.dsi.parser.Attribute;
 import it.unimi.dsi.parser.BulletParser;
 import it.unimi.dsi.parser.Element;
 import it.unimi.dsi.parser.callback.DefaultCallback;
 import it.unimi.dsi.util.TextPattern;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.datatrees.common.protocol.util.UrlUtils;
 
 /**
  * LinkExtractor.java 1.0 Jul 19, 2011
- * 
  * A callback extracting links.
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 1.0
  */
-
 public class LinkExtractor extends DefaultCallback {
-    private static Logger log = LoggerFactory.getLogger(LinkExtractor.class);
+
     /**
      * The pattern prefixing the URL in a <samp>META </samp> <samp>HTTP-EQUIV </samp> element of
      * refresh type.
      */
-    private static final TextPattern URLEQUAL_PATTERN = new TextPattern("URL=",
-            TextPattern.CASE_INSENSITIVE);
-
+    private static final TextPattern             URLEQUAL_PATTERN = new TextPattern("URL=", TextPattern.CASE_INSENSITIVE);
+    private static       Logger                  log              = LoggerFactory.getLogger(LinkExtractor.class);
     /** The URLs resulting from the parsing process. */
     // public final Set<String> urls = new ObjectLinkedOpenHashSet<String>();
-    public final HashMap<String, String> urls = new LinkedHashMap<String, String>(); // URL,
-                                                                                     // anchorText
-    private String nextURL = null;
-    private MutableString nextAnchorText = null;
-
+    public final         HashMap<String, String> urls             = new LinkedHashMap<String, String>(); // URL,
+    /** The title resulting from the parsing process. */
+    public final         MutableString           title            = new MutableString();
+    // anchorText
+    private              String                  nextURL          = null;
+    private              MutableString           nextAnchorText   = null;
     /**
      * The URL contained in the first <samp>META </samp> <samp>HTTP-EQUIV </samp> element of refresh
      * type (if any).
      */
-    private String metaRefresh = null;
-
+    private              String                  metaRefresh      = null;
     /**
      * The URL contained in the first <samp>META </samp> <samp>HTTP-EQUIV </samp> element of
      * location type (if any).
      */
-    private String metaLocation = null;
-
+    private              String                  metaLocation     = null;
     /** The URL contained in the first <samp>BASE </samp> element (if any). */
-    private String base = null;
-    private String contexURL = null;
-
-    /** The title resulting from the parsing process. */
-    public final MutableString title = new MutableString();
+    private              String                  base             = null;
+    private              String                  contexURL        = null;
     /** True if we are in the middle of the title. */
     private boolean inTitle;
-
     private boolean firstTitle = true;
 
     /**
      * Configure the parser to parse elements and certain attributes.
-     * 
      * @param parser the bullet parser
      */
     public void configure(final BulletParser parser) {
@@ -100,15 +89,13 @@ public class LinkExtractor extends DefaultCallback {
 
     /**
      * callback when text characters started.
-     * 
      * @param characters text
-     * @param offset offset
-     * @param length length
+     * @param offset     offset
+     * @param length     length
      * @param flowBroken broken flow
      * @return true or false
      */
-    public boolean characters(final char[] characters, final int offset, final int length,
-            final boolean flowBroken) {
+    public boolean characters(final char[] characters, final int offset, final int length, final boolean flowBroken) {
         if (inTitle) {
             title.append(characters, offset, length);
         }
@@ -123,7 +110,6 @@ public class LinkExtractor extends DefaultCallback {
 
     /**
      * callback when an element ended
-     * 
      * @param element element
      * @return true or false
      */
@@ -143,7 +129,6 @@ public class LinkExtractor extends DefaultCallback {
 
     /**
      * callback for an element started.
-     * 
      * @param element the element
      * @param attrMap attributes
      * @return true or false
@@ -215,7 +200,7 @@ public class LinkExtractor extends DefaultCallback {
                 }
             }
         }
-        if (StringUtils.isNotBlank(nextURL)){
+        if (StringUtils.isNotBlank(nextURL)) {
             addURL(nextURL, null);
         }
         return true;
@@ -226,9 +211,8 @@ public class LinkExtractor extends DefaultCallback {
      * type. More precisely, this method returns a non- <code>null</code> result iff there is at
      * least one <samp>META HTTP-EQUIV </samp> element specifying a location URL (if there is more
      * than one, we keep the first one).
-     * 
      * @return the first URL specified by a <samp>META </samp> <samp>HTTP-EQUIV </samp> elements of
-     *         location type, or <code>null</code>.
+     * location type, or <code>null</code>.
      */
     public String metaLocation() {
         return metaLocation;
@@ -238,7 +222,6 @@ public class LinkExtractor extends DefaultCallback {
      * Returns the URL specified by the <samp>BASE </samp> element. More precisely, this method
      * returns a non- <code>null</code> result iff there is at least one <samp>BASE </samp> element
      * specifying a derelativisation URL (if there is more than one, we keep the first one).
-     * 
      * @return the first URL specified by a <samp>BASE </samp> element, or <code>null</code>.
      */
     public String base() {
@@ -250,9 +233,8 @@ public class LinkExtractor extends DefaultCallback {
      * type. More precisely, this method returns a non- <code>null</code> result iff there is at
      * least one <samp>META HTTP-EQUIV </samp> element specifying a refresh URL (if there is more
      * than one, we keep the first one).
-     * 
      * @return the first URL specified by a <samp>META </samp> <samp>HTTP-EQUIV </samp> elements of
-     *         refresh type, or <code>null</code>.
+     * refresh type, or <code>null</code>.
      */
     public String metaRefresh() {
         return metaRefresh;
@@ -260,7 +242,6 @@ public class LinkExtractor extends DefaultCallback {
 
     /**
      * set context url for this object
-     * 
      * @param contextURL
      */
     public void setContextURL(String contextURL) {
@@ -269,7 +250,6 @@ public class LinkExtractor extends DefaultCallback {
 
     /**
      * get absolute url and add urls into url map
-     * 
      * @param url
      * @param anchorText
      */

@@ -3,10 +3,15 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.subtask.pool;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.*;
 
 import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
@@ -20,11 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
-
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -33,11 +33,11 @@ import java.util.concurrent.*;
  */
 @Service
 public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
-    private static final Logger logger = LoggerFactory.getLogger(MutexSupportSubTaskExecutor.class);
-    private ExecutorService     pool   = Executors.newCachedThreadPool(new ThreadFactoryImpl("SubTaskExecutor_"));
 
+    private static final Logger          logger = LoggerFactory.getLogger(MutexSupportSubTaskExecutor.class);
+    private              ExecutorService pool   = Executors.newCachedThreadPool(new ThreadFactoryImpl("SubTaskExecutor_"));
     @Resource
-    private Collector           collector;
+    private Collector collector;
 
     /*
      * (non-Javadoc)
@@ -74,7 +74,7 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
         });
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private SubTaskCollectorMessage initSubTaskCollectorMessage(SubTask task) {
         SubTaskCollectorMessage message = new SubTaskCollectorMessage();
         // set from parent tassk

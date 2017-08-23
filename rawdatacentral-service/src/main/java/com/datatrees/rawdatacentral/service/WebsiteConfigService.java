@@ -1,13 +1,13 @@
 package com.datatrees.rawdatacentral.service;
 
+import java.util.List;
+
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
-import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-
-import java.util.List;
 
 /**
  * 站点配置

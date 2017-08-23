@@ -6,5 +6,5 @@ package com.datatrees.crawler.core.processor.plugin;
  */
 public interface PluginCallable<R> {
 
-  R call(Plugin plugin) throws Exception;
+    R call(Plugin plugin) throws Exception;
 }

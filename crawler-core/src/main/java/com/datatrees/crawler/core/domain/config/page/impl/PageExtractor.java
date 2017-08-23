@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.page.impl;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 2:16:10 PM
@@ -28,8 +28,12 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 public class PageExtractor extends AbstractPage {
 
     private List<PageSource> pageSourceList;
+    private Boolean          disAlternative;
 
-    private Boolean disAlternative;
+    public PageExtractor() {
+        super();
+        pageSourceList = new ArrayList<PageSource>();
+    }
 
     @Attr("dis-alternative")
     public Boolean getDisAlternative() {
@@ -39,11 +43,6 @@ public class PageExtractor extends AbstractPage {
     @Node("@dis-alternative")
     public void setDisAlternative(Boolean disAlternative) {
         this.disAlternative = disAlternative;
-    }
-
-    public PageExtractor() {
-        super();
-        pageSourceList = new ArrayList<PageSource>();
     }
 
     @Tag("page-sources")

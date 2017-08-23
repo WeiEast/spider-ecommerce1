@@ -3,26 +3,20 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.core.message;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,17 +25,15 @@ import com.datatrees.common.util.GsonUtils;
  * @since 2015年8月11日 下午3:06:07
  */
 public class MessageFactory {
+
     private static final Logger logger = LoggerFactory.getLogger(MessageFactory.class);
-
     private String defaultTopic;
-    private int flag = 0;
-    private String defaultTags = "";
-    private String defaultKeys = "";
-    private boolean waitStoreMsgOK = true;
-
-    private String messageTags = PropertiesConfiguration.getInstance().get("core.mq.message.tags", "bankbill,taobao,operator");
-
-    private Map<String, Set<String>> keyTagMap = null;
+    private int                      flag           = 0;
+    private String                   defaultTags    = "";
+    private String                   defaultKeys    = "";
+    private boolean                  waitStoreMsgOK = true;
+    private String                   messageTags    = PropertiesConfiguration.getInstance().get("core.mq.message.tags", "bankbill,taobao,operator");
+    private Map<String, Set<String>> keyTagMap      = null;
 
     {
         keyTagMap = new HashMap<String, Set<String>>();
@@ -76,8 +68,6 @@ public class MessageFactory {
         return message;
     }
 
-
-
     public List<Message> getMessage(String topic, Map<String, Object> map, String keyPrefix) {
         Map<String, Map<String, Object>> resultsMap = new HashMap<String, Map<String, Object>>();
         Map<String, Object> commonFields = new HashMap<String, Object>();
@@ -104,7 +94,6 @@ public class MessageFactory {
             Message message = new Message(topic, entry.getKey(), keyPrefix + "_" + entry.getKey(), flag, body.getBytes(), waitStoreMsgOK);
             messages.add(message);
         }
-
 
         return messages;
     }
@@ -178,6 +167,5 @@ public class MessageFactory {
     public void setWaitStoreMsgOK(boolean waitStoreMsgOK) {
         this.waitStoreMsgOK = waitStoreMsgOK;
     }
-
 
 }

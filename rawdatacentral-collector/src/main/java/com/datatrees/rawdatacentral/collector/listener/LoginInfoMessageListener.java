@@ -5,7 +5,10 @@
  * strictly prohibited. All rights are reserved.
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.listener;
+
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.message.MessageExt;
@@ -19,8 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
@@ -29,13 +30,9 @@ import java.util.concurrent.TimeUnit;
 public class LoginInfoMessageListener extends AbstractRocketMessageListener<CollectorMessage> {
 
     private static final Logger  logger                = LoggerFactory.getLogger(LoginInfoMessageListener.class);
-
-    private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance()
-        .getBoolean("set.cookie.format.switch", false);
-
-    private Collector            collector;
-
-    private StringRedisTemplate  redisTemplate;
+    private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance().getBoolean("set.cookie.format.switch", false);
+    private Collector           collector;
+    private StringRedisTemplate redisTemplate;
 
     public Collector getCollector() {
         return collector;
@@ -80,9 +77,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                     if (StringUtils.isBlank(loginInfo.getCookie())) {
                         collectorMessage.setCookie(loginInfo.getSetCookie());
                     } else {
-                        String cookie = collectorMessage.getCookie().endsWith(";")
-                            ? collectorMessage.getCookie() + loginInfo.getSetCookie()
-                            : collectorMessage.getCookie() + ";" + loginInfo.getSetCookie();
+                        String cookie = collectorMessage.getCookie().endsWith(";") ? collectorMessage.getCookie() + loginInfo.getSetCookie() : collectorMessage.getCookie() + ";" + loginInfo.getSetCookie();
                         collectorMessage.setCookie(cookie);
                     }
                 }

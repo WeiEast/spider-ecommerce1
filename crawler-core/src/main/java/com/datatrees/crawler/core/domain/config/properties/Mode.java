@@ -3,14 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.properties;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  *
@@ -19,17 +18,9 @@ import java.util.Map;
  * @since Feb 7, 2014 10:34:34 AM
  */
 public enum Mode {
-    NORMAL("normal"), AUTO("auto"), MANUAL("manual");
-    private final String value;
-
-    Mode(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
+    NORMAL("normal"),
+    AUTO("auto"),
+    MANUAL("manual");
     private static Map<String, Mode> ModeMap = new HashMap<String, Mode>();
 
     static {
@@ -38,8 +29,18 @@ public enum Mode {
         }
     }
 
+    private final String value;
+
+    Mode(String value) {
+        this.value = value;
+    }
+
     public static Mode getMode(String value) {
         return ModeMap.get(value);
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

@@ -1,11 +1,11 @@
 package com.datatrees.rawdatacentral.api;
 
+import java.util.List;
+import java.util.Map;
+
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 运营商接口

@@ -6,64 +6,65 @@ import com.datatrees.common.util.ReflectionUtils;
 import com.datatrees.rawdatacentral.service.constants.Constants;
 
 public class GsonMessageConverter implements MessageConverter {
-	private String topic;
-	private int flag = 0;
-	private String tags = "";
-	private String keys = "";
-	private boolean waitStoreMsgOK = true;
-	
-	public String getTopic() {
-		return topic;
-	}
 
-	public void setTopic(String topic) {
-		this.topic = topic;
-	}
+    private String topic;
+    private int     flag           = 0;
+    private String  tags           = "";
+    private String  keys           = "";
+    private boolean waitStoreMsgOK = true;
 
-	public int getFlag() {
-		return flag;
-	}
+    public String getTopic() {
+        return topic;
+    }
 
-	public void setFlag(int flag) {
-		this.flag = flag;
-	}
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
 
-	public String getTags() {
-		return tags;
-	}
+    public int getFlag() {
+        return flag;
+    }
 
-	public void setTags(String tags) {
-		this.tags = tags;
-	}
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
 
-	public String getKeys() {
-		return keys;
-	}
+    public String getTags() {
+        return tags;
+    }
 
-	public void setKeys(String keys) {
-		this.keys = keys;
-	}
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
 
-	public boolean isWaitStoreMsgOK() {
-		return waitStoreMsgOK;
-	}
+    public String getKeys() {
+        return keys;
+    }
 
-	public void setWaitStoreMsgOK(boolean waitStoreMsgOK) {
-		this.waitStoreMsgOK = waitStoreMsgOK;
-	}
+    public void setKeys(String keys) {
+        this.keys = keys;
+    }
 
-	@Override
-	public Message toMessage(Object object) throws Exception {
-		String body = GsonUtils.toJson(object);
-		Message message = new Message(topic, tags, keys, flag, body.getBytes(), waitStoreMsgOK);
-		message.putUserProperty(Constants.GSON_TYPE, object.getClass().getName());
-		return message;
-	}
+    public boolean isWaitStoreMsgOK() {
+        return waitStoreMsgOK;
+    }
 
-	@Override
-	public Object fromMessage(Message message) throws Exception {
-		String gsonType = message.getUserProperty(Constants.GSON_TYPE);
-		Class<?> type = ReflectionUtils.classForName(gsonType);
-		return GsonUtils.fromJson(new String(message.getBody()), type);
-	}
+    public void setWaitStoreMsgOK(boolean waitStoreMsgOK) {
+        this.waitStoreMsgOK = waitStoreMsgOK;
+    }
+
+    @Override
+    public Message toMessage(Object object) throws Exception {
+        String body = GsonUtils.toJson(object);
+        Message message = new Message(topic, tags, keys, flag, body.getBytes(), waitStoreMsgOK);
+        message.putUserProperty(Constants.GSON_TYPE, object.getClass().getName());
+        return message;
+    }
+
+    @Override
+    public Object fromMessage(Message message) throws Exception {
+        String gsonType = message.getUserProperty(Constants.GSON_TYPE);
+        Class<?> type = ReflectionUtils.classForName(gsonType);
+        return GsonUtils.fromJson(new String(message.getBody()), type);
+    }
 }

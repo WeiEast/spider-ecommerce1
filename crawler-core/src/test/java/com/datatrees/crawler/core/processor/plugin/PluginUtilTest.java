@@ -1,13 +1,14 @@
 package com.datatrees.crawler.core.processor.plugin;
 
-import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.classfile.ClassLoaderManager;
-import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.classfile.ClassLoaderManager;
+import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import org.junit.Test;
 
 /**
@@ -15,6 +16,7 @@ import org.junit.Test;
  * @since 00:05 22/05/2017
  */
 public class PluginUtilTest {
+
     @Test
     public void mapPluginInput() throws Exception {
         List<Map<String, String>> data = new ArrayList<Map<String, String>>();
@@ -36,12 +38,10 @@ public class PluginUtilTest {
 
     @Test
     public void loadPlugin() throws Exception {
-        File parent = new File(
-                "/Users/Jerry/.m2/repository/com/datatrees/rawdatacentral/rawdatacentral-plugin/3.0.7-SNAPSHOT/rawdatacentral-plugin-3.0.7-SNAPSHOT.jar");
+        File parent = new File("/Users/Jerry/.m2/repository/com/datatrees/rawdatacentral/rawdatacentral-plugin/3.0.7-SNAPSHOT/rawdatacentral-plugin-3.0.7-SNAPSHOT.jar");
         ClassLoader classLoader = ClassLoaderManager.findClassLoader(parent, getClass().getClassLoader(), false);
 
-        File file = new File(
-                "/Users/Jerry/Studio/projects/work/crawler/saas/rawdata-plugin/target/plugin/operator-hi-10086.jar");
+        File file = new File("/Users/Jerry/Studio/projects/work/crawler/saas/rawdata-plugin/target/plugin/operator-hi-10086.jar");
 
         JavaPlugin javaPlugin = new JavaPlugin();
         javaPlugin.setMainClass("com.datatrees.crawler.plugin.main.LoginMainShop");
@@ -56,7 +56,6 @@ public class PluginUtilTest {
         pluginWrapper.setForceReload(false);
 
         AbstractClientPlugin plugin2 = PluginUtil.loadPlugin(pluginWrapper, classLoader);
-
 
     }
 }

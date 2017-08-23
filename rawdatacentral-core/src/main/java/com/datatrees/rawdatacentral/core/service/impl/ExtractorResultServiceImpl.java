@@ -1,12 +1,11 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
-import com.datatrees.rawdatacentral.dao.*;
-import com.datatrees.rawdatacentral.dao.EbankExtractResultDAO;
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
+import com.datatrees.rawdatacentral.dao.*;
 import com.datatrees.rawdatacentral.domain.model.*;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * Created by wuminlang on 15/7/28.
@@ -15,19 +14,15 @@ import javax.annotation.Resource;
 public class ExtractorResultServiceImpl implements ExtractorResultService {
 
     @Resource
-    private MailExtractResultDAO mailExtractResultDao;
-
+    private MailExtractResultDAO      mailExtractResultDao;
     @Resource
     private EcommerceExtractResultDAO ecommerceExtractResultDao;
-
     @Resource
-    private OperatorExtractResultDAO operatorExtractResultDao;
-
+    private OperatorExtractResultDAO  operatorExtractResultDao;
     @Resource
-    private EbankExtractResultDAO eBankExtractResultDao;
-
+    private EbankExtractResultDAO     eBankExtractResultDao;
     @Resource
-    private DefaultExtractResultDAO defaultExtractResultDAO;
+    private DefaultExtractResultDAO   defaultExtractResultDAO;
 
     @Override
     public int insertMailExtractResult(MailExtractResult mailExtractResult) {
@@ -44,7 +39,6 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
         return operatorExtractResultDao.insert(operatorExtractResult);
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -56,7 +50,6 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
     public int insertEBankExtractResult(EBankExtractResult result) {
         return eBankExtractResultDao.insert(result);
     }
-
 
     /*
      * (non-Javadoc)

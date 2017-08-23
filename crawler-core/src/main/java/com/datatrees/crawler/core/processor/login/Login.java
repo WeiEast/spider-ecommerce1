@@ -3,18 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.login;
 
-import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.crawler.core.domain.Cookie;
 import com.datatrees.crawler.core.domain.WebsiteAccount;
@@ -25,20 +20,21 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.exception.LoginException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
+import com.datatrees.crawler.core.processor.plugin.PluginCaller;
+import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 16, 2014 4:14:49 PM
  */
 public enum Login {
     INSTANCE;
-    public enum Status {
-        SUCCEED, FAILED
-    }
 
     private static final Logger logger = LoggerFactory.getLogger(Login.class);
 
@@ -67,7 +63,6 @@ public enum Login {
         }
     }
 
-
     public void doPluginLogin(SearchProcessorContext context) throws Exception {
         LoginConfig logconfig = context.getLoginConfig();
         String cookie = null;
@@ -77,8 +72,7 @@ public enum Login {
         if (pluginDesc != null) {// plugin
             logger.info("init cookie with plugin " + pluginDesc);
 
-            cookie = (String) PluginCaller.call(context, pluginDesc,
-                (PluginConfSupplier) pluginWrapper -> new LinkedHashMap<>());
+            cookie = (String) PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> new LinkedHashMap<>());
 
             logger.info("plugin fetch cookie result : " + cookie);
             Map<String, Object> resultMap = PluginUtil.checkPluginResult(cookie);
@@ -98,7 +92,6 @@ public enum Login {
         this.doCookieCheck(logconfig, context);
     }
 
-
     public void doAPPLogin(SearchProcessorContext context) throws Exception {
         // EMPTY,to do ,send url to app & app sent back cookie
         String cookie = ProcessorContextUtil.getCookieString(context);
@@ -115,14 +108,13 @@ public enum Login {
 
     /**
      * server login
-     * 
+     *
      * @param context
      * @throws Exception
      */
     public void doServerLogin(SearchProcessorContext context) throws Exception {
         Cookie cookie;
-        if (context.getLoginResource() == null
-                || (cookie = context.getLoginResource().getCookie(ProcessorContextUtil.getAccountKey(context))) == null) {
+        if (context.getLoginResource() == null || (cookie = context.getLoginResource().getCookie(ProcessorContextUtil.getAccountKey(context))) == null) {
             logger.warn("no active cookie while do server login,use empty cookie");
             cookie = new Cookie();
         }
@@ -142,7 +134,7 @@ public enum Login {
 
     /**
      * client login use Random account
-     * 
+     *
      * @param context
      * @throws Exception
      */
@@ -203,6 +195,11 @@ public enum Login {
             context.setLoginStatus(Status.FAILED);
             return false;
         }
+    }
+
+    public enum Status {
+        SUCCEED,
+        FAILED
     }
 
 }

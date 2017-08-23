@@ -1,5 +1,12 @@
 package com.datatrees.rawdatacentral.collector.search;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import akka.dispatch.Future;
 import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.common.actor.WrappedActorRef;
@@ -29,16 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午12:45:25
@@ -46,33 +44,55 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class SearchProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(SearchProcessor.class);
-
-    private String searchTemplate;
+    private String               searchTemplate;
     private SearchTemplateConfig searchTemplateConfig;
-    private String templateId;
-    private String encoding;
-    private long waitIntervalMillis;
-    private boolean duplicateRemoval;
-    private long maxExecuteMinutes;
-    private ResultDataHandler resultDataHandler;
-    private WrappedActorRef extractorActorRef;
+    private String               templateId;
+    private String               encoding;
+    private long                 waitIntervalMillis;
+    private boolean              duplicateRemoval;
+    private long                 maxExecuteMinutes;
+    private ResultDataHandler    resultDataHandler;
+    private WrappedActorRef      extractorActorRef;
     private List<Future<Object>> futureList = new ArrayList<Future<Object>>();
-    private Task task;
+    private Task                   task;
     private SearchProcessorContext processorContext;
-
-    private String keyword;
-    private boolean isLastLink;
-    private boolean needEarlyQuit;
-
-    private DuplicateChecker duplicateChecker;
-
-    private TaskMessage taskMessage;
-
+    private String                 keyword;
+    private boolean                isLastLink;
+    private boolean                needEarlyQuit;
+    private DuplicateChecker       duplicateChecker;
+    private TaskMessage            taskMessage;
     private ThreadPoolExecutor crawlExecutorPool = null;
     private List<LinkNode> initLinkNodeList;
 
     /**
-     * 
+     * @param input
+     * @param website
+     */
+    public SearchProcessor(TaskMessage taskMessage) {
+        try {
+            this.taskMessage = taskMessage;
+            this.task = taskMessage.getTask();
+            this.processorContext = taskMessage.getContext();
+            if (processorContext != null && null != processorContext.getSearchConfig()) {
+                SearchConfig config = processorContext.getSearchConfig();
+                if (null != config) {
+                    Properties properties = config.getProperties();
+                    if (null != properties) {
+                        setEncoding(StringUtils.isBlank(properties.getEncoding()) ? CollectorConstants.DEFUALT_ENCODING : properties.getEncoding());
+                        setWaitIntervalMillis(properties.getWaitIntervalMillis() == null ? 0 : properties.getWaitIntervalMillis());
+                        setDuplicateRemoval(properties.getDuplicateRemoval());
+                        log.info("DuplicateRemoval Config is  " + properties.getDuplicateRemoval() + " ,workingTaskEntity_id " + task.getId());
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("SearchProcessor init Resource  error.", e);
+        }
+    }
+
+    /**
+     *
      */
     public void init(String keyword) {
         this.keyword = keyword;
@@ -83,8 +103,6 @@ public class SearchProcessor {
         needEarlyQuit = false;
         isLastLink = false;
     }
-
-
 
     /**
      * @return the task
@@ -114,35 +132,6 @@ public class SearchProcessor {
         this.processorContext = processorContext;
     }
 
-    /**
-     * 
-     * @param input
-     * @param website
-     */
-    public SearchProcessor(TaskMessage taskMessage) {
-        try {
-            this.taskMessage = taskMessage;
-            this.task = taskMessage.getTask();
-            this.processorContext = taskMessage.getContext();
-            if (processorContext != null && null != processorContext.getSearchConfig()) {
-                SearchConfig config = processorContext.getSearchConfig();
-                if (null != config) {
-                    Properties properties = config.getProperties();
-                    if (null != properties) {
-                        setEncoding(StringUtils.isBlank(properties.getEncoding()) ? CollectorConstants.DEFUALT_ENCODING : properties.getEncoding());
-                        setWaitIntervalMillis(properties.getWaitIntervalMillis() == null ? 0 : properties.getWaitIntervalMillis());
-                        setDuplicateRemoval(properties.getDuplicateRemoval());
-                        log.info("DuplicateRemoval Config is  " + properties.getDuplicateRemoval() + " ,workingTaskEntity_id " + task.getId());
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            log.error("SearchProcessor init Resource  error.", e);
-        }
-    }
-
-
     private URLHandlerImpl initURLHandlerImpl() {
         URLHandlerImpl handler = new URLHandlerImpl();
         handler.setDuplicateChecker(duplicateChecker);
@@ -151,23 +140,19 @@ public class SearchProcessor {
     }
 
     /**
-     * 
-     * 
      * @param taskType
      * @param url
      * @return
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws ResultEmptyException
+     * @exception InvocationTargetException
+     * @exception IllegalAccessException
+     * @exception ResultEmptyException
      */
     public List<LinkNode> crawlOneURL(LinkNode url) throws IllegalAccessException, InvocationTargetException, ResultEmptyException {
         List<LinkNode> linkNodeList = null;
         CrawlRequest request = null;
         try {
             URLHandlerImpl handler = initURLHandlerImpl();
-            request =
-                    CrawlRequest.build().setProcessorContext(processorContext).setUrl(url).setSearchTemplateId(templateId)
-                            .setSearchTemplate(searchTemplate).setUrlHandler(handler).contextInit();
+            request = CrawlRequest.build().setProcessorContext(processorContext).setUrl(url).setSearchTemplateId(templateId).setSearchTemplate(searchTemplate).setUrlHandler(handler).contextInit();
 
             RequestUtil.setKeyWord(request, keyword);
             CrawlResponse response = Crawler.crawl(request);
@@ -208,8 +193,6 @@ public class SearchProcessor {
         return linkNodeList;
     }
 
-
-
     public long getMaxExecuteMinutes() {
         return maxExecuteMinutes;
     }
@@ -219,7 +202,6 @@ public class SearchProcessor {
         return this;
     }
 
-
     public boolean isDuplicateRemoval() {
         return duplicateRemoval;
     }
@@ -228,7 +210,6 @@ public class SearchProcessor {
         this.duplicateRemoval = duplicateRemoval;
     }
 
-
     public boolean isNeedEarlyQuit() {
         return needEarlyQuit;
     }
@@ -236,7 +217,6 @@ public class SearchProcessor {
     public void setNeedEarlyQuit(boolean needEarlyQuit) {
         this.needEarlyQuit = needEarlyQuit;
     }
-
 
     /**
      * @return the encoding
@@ -251,8 +231,6 @@ public class SearchProcessor {
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
-
-
 
     /**
      * @return the searchTemplateF
@@ -269,7 +247,6 @@ public class SearchProcessor {
         return this;
     }
 
-
     /**
      * @return the templateId
      */
@@ -284,7 +261,6 @@ public class SearchProcessor {
         this.templateId = templateId;
         return this;
     }
-
 
     public long getWaitIntervalMillis() {
         if (searchTemplateConfig == null || searchTemplateConfig.getWaitIntervalMillis() == null) {
@@ -322,14 +298,12 @@ public class SearchProcessor {
         return this;
     }
 
-
     /**
      * @return the keyword
      */
     public String getKeyword() {
         return keyword;
     }
-
 
     /**
      * @return the resultDataHandler
@@ -345,7 +319,6 @@ public class SearchProcessor {
         this.resultDataHandler = resultDataHandler;
         return this;
     }
-
 
     /**
      * @return the futureList
@@ -412,12 +385,9 @@ public class SearchProcessor {
     }
 
     private ThreadPoolExecutor initCrawlExecutorPool(int threadCount) {
-        ThreadPoolExecutor threadPoolExecutor =
-                new ThreadPoolExecutor(threadCount, threadCount, 20L, java.util.concurrent.TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
-                        new ThreadFactoryImpl(Thread.currentThread().getName() + "_"));
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(threadCount, threadCount, 20L, java.util.concurrent.TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadFactoryImpl(Thread.currentThread().getName() + "_"));
         return threadPoolExecutor;
     }
-
 
     public ExecutorService getCrawlExecutorPool() {
         return crawlExecutorPool;

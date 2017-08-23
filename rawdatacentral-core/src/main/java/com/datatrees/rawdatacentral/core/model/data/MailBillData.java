@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.core.model.data;
 
 import java.util.Date;
@@ -18,14 +18,15 @@ import java.util.Date;
  */
 @SuppressWarnings({"serial", "unchecked"})
 public class MailBillData extends AbstractData {
-    public static String SENDER = "sender";
-    public static String SUBJECT = "subject";
-    public static String RECEIVED = "receiveAt";
-    public static String RECEIVER = "receiver";
+
+    public static String SENDER     = "sender";
+    public static String SUBJECT    = "subject";
+    public static String RECEIVED   = "receiveAt";
+    public static String RECEIVER   = "receiver";
     public static String MAILHEADER = "mailHeader";
-    public static String FIRSTHAND = "firstHand";
-    public static String FOLDER = "folder";
-    public static String BANKID = "bankid";
+    public static String FIRSTHAND  = "firstHand";
+    public static String FOLDER     = "folder";
+    public static String BANKID     = "bankid";
 
     public Integer getBankId() {
         return (Integer) this.get(BANKID);

@@ -3,9 +3,9 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.common;
 
 import java.util.HashMap;
@@ -13,9 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.MapUtils;
-
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
+import org.apache.commons.collections.MapUtils;
 
 /**
  *

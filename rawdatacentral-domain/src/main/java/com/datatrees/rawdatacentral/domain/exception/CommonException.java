@@ -12,7 +12,6 @@ public class CommonException extends RuntimeException {
      * 错误代码
      */
     private int    errorCode;
-
     /**
      * 错误信息
      */

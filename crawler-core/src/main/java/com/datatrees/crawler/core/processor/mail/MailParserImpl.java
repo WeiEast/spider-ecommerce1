@@ -6,41 +6,32 @@
  * <p>
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.mail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.util.GsonUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.james.mime4j.field.FieldName;
-import org.apache.james.mime4j.message.BodyPart;
-import org.apache.james.mime4j.message.Entity;
-import org.apache.james.mime4j.message.Multipart;
-import org.apache.james.mime4j.message.SingleBody;
-import org.apache.james.mime4j.message.TextBody;
-import org.apache.james.mime4j.parser.Field;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.Content;
 import com.datatrees.common.protocol.metadata.Metadata;
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.IPAddressUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.james.mime4j.field.FieldName;
+import org.apache.james.mime4j.message.*;
+import org.apache.james.mime4j.parser.Field;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -49,10 +40,9 @@ import com.datatrees.crawler.core.processor.common.IPAddressUtil;
  */
 public enum MailParserImpl {
     INSTANCE;
-
-    private static final Logger logger = LoggerFactory.getLogger(MailParserImpl.class);
-    private String MAIL_SERVER_IP_REGEX = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
-    private String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
+    private static final Logger logger                = LoggerFactory.getLogger(MailParserImpl.class);
+    private              String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
+    private              String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
 
     public Map parseMessage(String websiteName, String contentString, boolean bodyParser) throws UnsupportedEncodingException {
         InputStream fis = null;
@@ -81,7 +71,6 @@ public enum MailParserImpl {
         }
         return null;
     }
-
 
     private Map mailTransform(Mail mimeMsg) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -117,7 +106,6 @@ public enum MailParserImpl {
         return map;
     }
 
-
     private void receivedFormat(Map<String, Object> result) {
         try {
             List<Field> receivedList = (List<Field>) result.get("received");
@@ -135,8 +123,7 @@ public enum MailParserImpl {
                             break;
                         }
                     } else {
-                        logger.warn("extract mail server ip error with receivedList" + receivedList + " ,MAIL_SERVER_IP_REGEX: "
-                                + MAIL_SERVER_IP_REGEX);
+                        logger.warn("extract mail server ip error with receivedList" + receivedList + " ,MAIL_SERVER_IP_REGEX: " + MAIL_SERVER_IP_REGEX);
                     }
                 }
             }
@@ -147,9 +134,8 @@ public enum MailParserImpl {
 
     /**
      * This method classifies bodyPart as text, html or attached file
-     *
      * @param multipart
-     * @throws IOException
+     * @exception IOException
      */
     private void parseBodyParts(Mail mimeMsg, Multipart multipart) throws IOException {
         for (BodyPart part : multipart.getBodyParts()) {
@@ -164,8 +150,7 @@ public enum MailParserImpl {
                 String html = getTxtPart(part);
                 mimeMsg.getHtmlBody().append(html);
             } else {
-                logger.warn("unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + ","
-                        + part.getHeader());
+                logger.warn("unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + "," + part.getHeader());
             }
 
             // If current part contains other, parse it again by recursion
@@ -180,9 +165,7 @@ public enum MailParserImpl {
         if (StringUtils.isBlank(fileName)) {
             Field field = part.getHeader().getField(FieldName.CONTENT_DISPOSITION);
             if (field != null && field.getBody() != null) {
-                fileName =
-                        PatternUtils.group(field.getBody().toLowerCase(),
-                                PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
+                fileName = PatternUtils.group(field.getBody().toLowerCase(), PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
             }
         }
         return fileName;
@@ -226,8 +209,7 @@ public enum MailParserImpl {
             baos = new ByteArrayOutputStream();
             tb.writeTo(baos);
             tb.dispose();
-            String contentType =
-                    part.getHeader().getField(FieldName.CONTENT_TYPE) != null ? part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
+            String contentType = part.getHeader().getField(FieldName.CONTENT_TYPE) != null ? part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
             Content content = new Content("", "", baos.toByteArray(), contentType, new Metadata());
             return content.detectContentAsString();
         } catch (Exception e) {

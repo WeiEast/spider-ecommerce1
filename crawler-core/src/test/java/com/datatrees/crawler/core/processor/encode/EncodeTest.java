@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.encode;
 
 import java.nio.charset.Charset;
@@ -13,17 +13,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.properties.UnicodeMode;
 import com.datatrees.crawler.core.processor.BaseConfigTest;
 import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import com.google.gson.reflect.TypeToken;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 14, 2014 11:22:30 AM
@@ -76,8 +75,7 @@ public class EncodeTest extends BaseConfigTest {
     @Test
     public void testTT() {
         String unicodeFormat = "{\"STsANDARD\":\"xxxxxx\",\"DECIMAL\":\"xeeeee\"}";
-        Map<UnicodeMode, String> decoders =
-                (Map<UnicodeMode, String>) GsonUtils.fromJson(unicodeFormat, new TypeToken<Map<UnicodeMode, String>>() {}.getType());
+        Map<UnicodeMode, String> decoders = (Map<UnicodeMode, String>) GsonUtils.fromJson(unicodeFormat, new TypeToken<Map<UnicodeMode, String>>() {}.getType());
         System.out.println(decoders.size());
         System.out.println(decoders);
     }
@@ -105,15 +103,11 @@ public class EncodeTest extends BaseConfigTest {
         System.out.println(convert(encoding));
     }
 
-
-
     @Test
     public void testHex() {
         String content = getContent("input");
         HexDecoder decoder = new HexDecoder();
         System.out.println(decoder.decode(content, "UTF-8"));
     }
-
-
 
 }

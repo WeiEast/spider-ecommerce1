@@ -7,6 +7,7 @@ import org.junit.Test;
  * @since 22:44 21/05/2017
  */
 public class JSoupQuerySyntaxTest {
+
     @Test
     public void isValid() throws Exception {
         // System.out.println(isValid("div.abc")); // valid

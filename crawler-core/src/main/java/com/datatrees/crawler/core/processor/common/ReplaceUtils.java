@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.common;
 
 import java.io.UnsupportedEncodingException;
@@ -17,31 +17,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.common.util.PatternUtils;
+import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.util.PatternUtils;
-import com.google.common.base.Preconditions;
-
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 21, 2014 4:08:38 PM
  */
 public class ReplaceUtils {
-    private static final Logger log = LoggerFactory.getLogger(ReplaceUtils.class);
-    private static Set<String> replacedEncodeKeySet = new HashSet<String>(Arrays.asList(PropertiesConfiguration.getInstance()
-            .get("replaced.encode.keys", "keyword").split(",")));
 
-    private static final String varPat = ("\\$\\{[^\\}\\$\u0020]+\\}");
-    private static final int MAX_SUBST = 20;
+    private static final Logger      log                  = LoggerFactory.getLogger(ReplaceUtils.class);
+    private static final String      varPat               = ("\\$\\{[^\\}\\$\u0020]+\\}");
+    private static final int         MAX_SUBST            = 20;
+    private static       Set<String> replacedEncodeKeySet = new HashSet<String>(Arrays.asList(PropertiesConfiguration.getInstance().get("replaced.encode.keys", "keyword").split(",")));
 
     /**
-     * 
+     *
      * @param template
      * @return
      */
@@ -59,11 +57,9 @@ public class ReplaceUtils {
         return result;
     }
 
-
     public static String replaceMap(Set<String> replaceList, Map<String, Object> fieldMap, String template) {
         return replaceMap(replaceList, fieldMap, null, template);
     }
-
 
     // public static String replaceObjectMap(Set<String> replaceList, Map<String, Object> fieldMap,
     // String template) {
@@ -98,11 +94,9 @@ public class ReplaceUtils {
         }
     }
 
-
     public static String replace(String from, String to, String src) {
         return StringUtils.replace(src, from, to);
     }
-
 
     private static String getReplacedValue(Map<String, Object> fieldResultMap, String replaceString) {
         String key = StringUtils.substringBefore(replaceString, ".");
@@ -125,7 +119,6 @@ public class ReplaceUtils {
         }
     }
 
-
     public static Object getReplaceObject(Set<String> needReplaced, Map<String, Object> fieldResultMap, Map<String, Object> defaultMap, String source) {
         Preconditions.checkNotNull(needReplaced);
         Preconditions.checkNotNull(source);
@@ -139,7 +132,6 @@ public class ReplaceUtils {
         }
         return null;
     }
-
 
     private static Object getReplacedObject(Map<String, Object> fieldResultMap, String replaceString) {
         String key = StringUtils.substringBefore(replaceString, ".");
@@ -162,8 +154,6 @@ public class ReplaceUtils {
         }
     }
 
-
-
     public static String replaceMap(Map<String, Object> fieldResultMap, Map<String, Object> defaultMap, String source) {
         Preconditions.checkNotNull(source);
         Preconditions.checkNotNull(fieldResultMap);
@@ -171,9 +161,8 @@ public class ReplaceUtils {
         return replaceMap(replaceList, fieldResultMap, defaultMap, source);
     }
 
-
     /**
-     * 
+     *
      * @param needReplaced
      * @param fieldResultMap
      * @param defaultMap
@@ -201,9 +190,7 @@ public class ReplaceUtils {
         return result;
     }
 
-
-    public static String replaceURLMap(Set<String> needReplaced, Map<String, Object> fieldResultMap, Map<String, Object> defaultMap, String source,
-            String urlCharset) {
+    public static String replaceURLMap(Set<String> needReplaced, Map<String, Object> fieldResultMap, Map<String, Object> defaultMap, String source, String urlCharset) {
         Preconditions.checkNotNull(needReplaced);
         Preconditions.checkNotNull(source);
         Preconditions.checkNotNull(fieldResultMap);

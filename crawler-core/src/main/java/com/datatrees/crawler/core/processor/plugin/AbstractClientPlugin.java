@@ -3,15 +3,10 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.crawler.core.processor.plugin;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.datatrees.crawler.core.processor.plugin;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
@@ -30,19 +25,22 @@ import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.webrobot.driver.ClientDriverManager;
 import com.datatrees.webrobot.driver.WebRobotClientDriver;
 import com.datatrees.webrobot.webdriver.browser.BrowserType;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * abstract client plugin custom plugin should implements this as super class
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 10:28:20 AM
  */
 public abstract class AbstractClientPlugin {
+
     private Logger logger = LoggerFactory.getLogger(AbstractClientPlugin.class);
-
-    private Protocol webClient;
-
+    private Protocol     webClient;
     private ProxyManager proxyManager;
 
     public Protocol getWebClient() {
@@ -98,13 +96,11 @@ public abstract class AbstractClientPlugin {
         return getWebRobotDriver(url, BrowserType.FIREFOX, null);
     }
 
-
     public WebRobotClientDriver getWebRobotDriver(String url, BrowserType browserType, String clientName) throws Exception {
         AbstractProcessorContext context = PluginContext.getProcessorContext();
 
         ClientDriverManager clientDriverManager = BeanResourceFactory.getInstance().getBean(ClientDriverManager.class);
-        WebRobotClientDriver driver = clientDriverManager.getWebDriver(browserType, getPorxy(url), clientName,
-                ProcessorContextUtil.getAccountKey(context));
+        WebRobotClientDriver driver = clientDriverManager.getWebDriver(browserType, getPorxy(url), clientName, ProcessorContextUtil.getAccountKey(context));
 
         if (context instanceof SearchProcessorContext) {
             ((SearchProcessorContext) context).setWebRobotClientDriver(driver);
@@ -112,7 +108,6 @@ public abstract class AbstractClientPlugin {
 
         return driver;
     }
-
 
     public void releaseDriver(WebRobotClientDriver driver) {
         if (driver != null && BooleanUtils.isNotTrue(driver.getReleased())) driver.release();

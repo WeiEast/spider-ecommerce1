@@ -14,11 +14,11 @@ import org.springframework.context.annotation.ImportResource;
  * Created by zhouxinghai on 2017/7/3
  */
 @SpringBootApplication
-@ImportResource(locations={ "spring.xml" })
+@ImportResource(locations = {"spring.xml"})
 public class Application {
 
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
-    
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

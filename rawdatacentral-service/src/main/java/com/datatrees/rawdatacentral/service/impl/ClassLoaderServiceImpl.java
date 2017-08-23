@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import javax.annotation.Resource;
+
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -20,28 +22,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 /**
  * Created by zhouxinghai on 2017/7/14.
  */
 @Service
 public class ClassLoaderServiceImpl implements ClassLoaderService {
 
-    private static final Logger  logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
     @Value("${env:local}")
     private String               env;
-
     @Resource
     private PluginService        pluginService;
-
     @Resource
     private RedisService         redisService;
-
     @Value("${operator.plugin.filename}")
     private String               operatorPluginFilename;
-
     @Resource
     private WebsiteConfigService websiteConfigService;
 
@@ -56,8 +51,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
             }
             String postfix = jarName + "_" + className;
             String cacheKey = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(postfix);
-            Class mainClass = redisService.getCache(cacheKey, new TypeReference<Class>() {
-            });
+            Class mainClass = redisService.getCache(cacheKey, new TypeReference<Class>() {});
             PluginUpgradeResult plugin = pluginService.getPluginFromRedis(jarName);
             if (null == mainClass || plugin.getForceReload()) {
                 mainClass = ClassLoaderUtils.loadClass(plugin.getFile(), className);
@@ -66,8 +60,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
             return mainClass;
         } catch (Exception e) {
             logger.error("loadPlugin error jarName={},className={}", jarName, className);
-            throw new RuntimeException(
-                TemplateUtils.format("loadPlugin error jarName={},className={}", jarName, className));
+            throw new RuntimeException(TemplateUtils.format("loadPlugin error jarName={},className={}", jarName, className));
         }
     }
 
@@ -80,8 +73,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
             CheckUtils.checkNotBlank(mainLoginClass, "property not found  propertyName=" + propertyName);
             Class loginClass = loadPlugin(pluginFileName, mainLoginClass);
             if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
-                throw new RuntimeException(
-                    "mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorPluginService");
+                throw new RuntimeException("mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorPluginService");
             }
             return (OperatorPluginService) loginClass.newInstance();
         } catch (Exception e) {

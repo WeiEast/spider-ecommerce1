@@ -1,6 +1,7 @@
 /**
  * www.gf-dai.com.cn Copyright (c) 2015 All Rights Reserved.
  */
+
 package com.datatrees.crawler.core.domain.config.operation.impl;
 
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
@@ -12,7 +13,6 @@ import com.datatrees.crawler.core.util.xml.annotation.Path;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
 /**
- * 
  * @author likun
  * @version $Id: DateTimeOperation.java, v 0.1 Jul 22, 2015 11:58:37 AM likun Exp $
  */
@@ -21,13 +21,12 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 public class DateTimeOperation extends AbstractOperation {
 
     private static final long serialVersionUID = 9065578536551734019L;
-
-    private BaseType baseType;
+    private BaseType          baseType;
     private DateTimeFieldType dateTimeFieldType;
-    private String offset;
-    private String format;
-    private Boolean calibrate;
-    private String sourceFormat;
+    private String            offset;
+    private String            format;
+    private Boolean           calibrate;
+    private String            sourceFormat;
 
     @Attr("source-format")
     public String getSourceFormat() {
@@ -95,9 +94,7 @@ public class DateTimeOperation extends AbstractOperation {
      */
     @Override
     public String toString() {
-        return "DateTimeOperation [baseType=" + baseType + ", dateTimeFieldType=" + dateTimeFieldType + ", offset=" + offset + ", format=" + format
-                + ", calibrate=" + calibrate + ", sourceFormat=" + sourceFormat + "]";
+        return "DateTimeOperation [baseType=" + baseType + ", dateTimeFieldType=" + dateTimeFieldType + ", offset=" + offset + ", format=" + format + ", calibrate=" + calibrate + ", sourceFormat=" + sourceFormat + "]";
     }
-    
 
 }

@@ -3,21 +3,17 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.decode;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.crawler.core.domain.config.properties.UnicodeMode;
-import com.datatrees.crawler.core.processor.decode.impl.BasicDecode;
-import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
-import com.datatrees.crawler.core.processor.decode.impl.RegexDecoder;
-import com.datatrees.crawler.core.processor.decode.impl.SpecialDecoder;
-import com.datatrees.crawler.core.processor.decode.impl.StandardDecode;
+import com.datatrees.crawler.core.processor.decode.impl.*;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 12, 2014 8:03:50 PM
@@ -26,7 +22,9 @@ public class DecodeFactory {
 
     private static final DecodeFactory instance = new DecodeFactory();
 
-    private DecodeFactory() {};
+    private DecodeFactory() {}
+
+    ;
 
     public static DecodeFactory instance() {
         return instance;

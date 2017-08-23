@@ -3,30 +3,19 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
+
 package com.datatrees.crawler.core.mail;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
 import java.security.Security;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.mail.Authenticator;
-import javax.mail.BodyPart;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Part;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 
 import org.junit.Test;
 
@@ -37,39 +26,28 @@ import org.junit.Test;
  * @since 2016年4月22日 下午4:33:47
  */
 public class IMAPMailClient {
+
     /*
      * More configurable parameter information can be obtain from
      * http://technology-related.com/products
      * /javamail/javadocs/com/sun/mail/imap/package-summary.html
      */
-    public static final String MAIL_CONTENT = "mail.body";
-    public static final String MAIL_SUBJECT = "mail.subject";
-    public static final String MAIL_CC = "mail.cc";
-    public static final String MAIL_TO = "mail.to";
-
-    public static final String MAIL_IMAP_AUTH_PLAIN_DISABLE = "mail.imap.auth.plain.disable";
-
+    public static final String MAIL_CONTENT                      = "mail.body";
+    public static final String MAIL_SUBJECT                      = "mail.subject";
+    public static final String MAIL_CC                           = "mail.cc";
+    public static final String MAIL_TO                           = "mail.to";
+    public static final String MAIL_IMAP_AUTH_PLAIN_DISABLE      = "mail.imap.auth.plain.disable";
     public static final String MAIL_IMAP_AUTHENTICATION_REQUIRED = "imap_authentication_required";
-
-    public static final String MAIL_IMAP_PORT = "mail.imap.port";
-
-    public static final String MAIL_FROM = "mail.from";
-
-    public static final String MAIL_STORE_PROTOCOL = "mail.store.protocol";
-
-    public static final String MAIL_IMAP_HOST = "mail.imap.host";
-
-    public static final String IMAP_UPLOAD_FOLDER_NAME = "imap.upload.mail.folder";
-
-    public static final String MAIL_IMAP_DEBUG = "mail.imap.debug";// "mail.imap.debug","true"
-
-    public static final String MAIL_IMAP_SSL_PROTOCOLS = "mail.imap.ssl.protocols";// SSL
-
-    public static final String MAIL_IMAP_SOCKETFACTORY_PORT = "mail.imap.socketFactory.port";// SSL
-
-
-    public static final String MAIL_IMAP_AUTH_USER = "mail.imap.user";
-    public static final String MAIL_IMAP_AUTH_PASSWORD = "mail.imap.password";
+    public static final String MAIL_IMAP_PORT                    = "mail.imap.port";
+    public static final String MAIL_FROM                         = "mail.from";
+    public static final String MAIL_STORE_PROTOCOL               = "mail.store.protocol";
+    public static final String MAIL_IMAP_HOST                    = "mail.imap.host";
+    public static final String IMAP_UPLOAD_FOLDER_NAME           = "imap.upload.mail.folder";
+    public static final String MAIL_IMAP_DEBUG                   = "mail.imap.debug";// "mail.imap.debug","true"
+    public static final String MAIL_IMAP_SSL_PROTOCOLS           = "mail.imap.ssl.protocols";// SSL
+    public static final String MAIL_IMAP_SOCKETFACTORY_PORT      = "mail.imap.socketFactory.port";// SSL
+    public static final String MAIL_IMAP_AUTH_USER               = "mail.imap.user";
+    public static final String MAIL_IMAP_AUTH_PASSWORD           = "mail.imap.password";
 
     /**
      * sendMailMessage uses javax.mail APIs for sending mails. Sends mail to e-mail address
@@ -105,11 +83,9 @@ public class IMAPMailClient {
             strAuthenticate = "true";
         }
 
-
         String strImapAuthUser = (String) mapMailInfo.get(MAIL_IMAP_AUTH_USER);
 
         String strImapAuthPassword = (String) mapMailInfo.get(MAIL_IMAP_AUTH_PASSWORD);
-
 
         String strMailFrom = (String) mapMailInfo.get(MAIL_FROM);
 
@@ -118,7 +94,6 @@ public class IMAPMailClient {
         String strMailTo = (String) mapMailInfo.get(MAIL_TO);
 
         String strCC = (String) mapMailInfo.get(MAIL_CC);
-
 
         String strMailSubject = (String) mapMailInfo.get(MAIL_SUBJECT);
 
@@ -204,7 +179,6 @@ public class IMAPMailClient {
             message.setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
             message.setHeader("Content-Transfer-Encoding", "quoted-printable");
 
-
             // create the message part
             BodyPart messageBodyPart = new MimeBodyPart();
 
@@ -218,7 +192,7 @@ public class IMAPMailClient {
 
             Folder inbox = store.getFolder(strImapUploadFolder);
             inbox.open(Folder.READ_WRITE);
-            inbox.appendMessages(new Message[] {message});
+            inbox.appendMessages(new Message[]{message});
             inbox.close(true);
 
         } catch (Exception e) {
@@ -231,21 +205,6 @@ public class IMAPMailClient {
 
     }
 
-    static class IMAPAuthenticator extends Authenticator {
-        String username = "";
-        String password = "";
-
-        public IMAPAuthenticator(String username, String password) {
-            this.username = username;
-            this.password = password;
-        }
-
-        public PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(username, password);
-        }
-    }
-
-
     @Test
     public void testMailUpload() throws Exception {
         Properties properties = new Properties();
@@ -257,7 +216,6 @@ public class IMAPMailClient {
         properties.setProperty(MAIL_IMAP_SSL_PROTOCOLS, "SSL");
         properties.setProperty(MAIL_IMAP_SOCKETFACTORY_PORT, "993");
         properties.setProperty("mail.imap.auth.login.disable", "true");
-
 
         IMAPAuthenticator auth = new IMAPAuthenticator("593237554", "nqglprfhmkpobcba");
         Session session = Session.getInstance(properties, auth);
@@ -275,11 +233,10 @@ public class IMAPMailClient {
 
         Folder inbox = store.getFolder("inbox");
         inbox.open(Folder.READ_WRITE);
-        inbox.appendMessages(new Message[] {message});
+        inbox.appendMessages(new Message[]{message});
         inbox.close(true);
 
     }
-
 
     @Test
     public void test() throws MessagingException {
@@ -291,7 +248,6 @@ public class IMAPMailClient {
         String username = "593237554"; // 用戶名
 
         String password = "hmjgtmrdnemtbebc"; // 密碼
-
 
         Properties props = System.getProperties();
         // props.put("proxySet", "true");
@@ -325,10 +281,7 @@ public class IMAPMailClient {
 
         folder.close(true);
     }
-    
-    
-    
-    
+
     @Test
     public void test2() throws MessagingException {
         Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
@@ -339,7 +292,6 @@ public class IMAPMailClient {
         String username = "15068820568"; // 用戶名
 
         String password = "abc2730834"; // 密碼
-
 
         Properties props = System.getProperties();
         // props.put("proxySet", "true");
@@ -372,6 +324,21 @@ public class IMAPMailClient {
         System.out.println("Messages's　length:　" + message.length + "  " + message[0].getSubject());
 
         folder.close(true);
+    }
+
+    static class IMAPAuthenticator extends Authenticator {
+
+        String username = "";
+        String password = "";
+
+        public IMAPAuthenticator(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        public PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(username, password);
+        }
     }
 
 }

@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.segment;
 
 import java.io.Serializable;
@@ -15,62 +15,43 @@ import java.util.List;
 
 import com.datatrees.common.util.json.annotation.Description;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.segment.impl.BaseSegment;
-import com.datatrees.crawler.core.domain.config.segment.impl.CalculateSegment;
-import com.datatrees.crawler.core.domain.config.segment.impl.JsonPathSegment;
-import com.datatrees.crawler.core.domain.config.segment.impl.RegexSegment;
-import com.datatrees.crawler.core.domain.config.segment.impl.SplitSegment;
-import com.datatrees.crawler.core.domain.config.segment.impl.XpathSegment;
+import com.datatrees.crawler.core.domain.config.segment.impl.*;
 import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 4:56:49 PM
  */
-@Description(value = "type", keys = {"XPATH", "JSONPATH", "REGEX", "SPLIT", "CALCULATE", "BASE"}, types = {XpathSegment.class, JsonPathSegment.class,
-        RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
+@Description(value = "type", keys = {"XPATH", "JSONPATH", "REGEX", "SPLIT", "CALCULATE", "BASE"}, types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
 public abstract class AbstractSegment implements Serializable {
 
     /**  */
     private static final long serialVersionUID = -5652099003079996052L;
-    private SegmentType type;
-    private String name;
-    private String resultClass;
+    private SegmentType           type;
+    private String                name;
+    private String                resultClass;
     // switch for whether return list or list.get(0)
-    private Boolean popReturn;
-
-    private List<FieldExtractor> fieldExtractorList;
-
+    private Boolean               popReturn;
+    private List<FieldExtractor>  fieldExtractorList;
     private List<AbstractSegment> segmentList;
+    private String                sourceId;
+    private Boolean               notEmpty;
+    private Integer               maxCycles;
+    private Boolean               isReverse;
+    private String                breakPattern;
+    private Boolean               standBy;
+    private String                contains;
+    private String                disContains;
+    private Boolean               merge;
+    private Integer               containsFlag;
+    private Integer               disContainsFlag;
+    private Integer               breakPatternFlag;
 
-    private String sourceId;
-
-    private Boolean notEmpty;
-
-    private Integer maxCycles;
-
-    private Boolean isReverse;
-
-    private String breakPattern;
-
-    private Boolean standBy;
-
-    private String contains;
-
-    private String disContains;
-
-    private Boolean merge;
-
-    private Integer containsFlag;
-    private Integer disContainsFlag;
-    private Integer breakPatternFlag;
-
-    
     public AbstractSegment() {
         super();
         type = SegmentType.BASE;
@@ -118,7 +99,6 @@ public abstract class AbstractSegment implements Serializable {
         this.popReturn = popReturn;
     }
 
-
     @Attr("name")
     public String getName() {
         return name;
@@ -134,20 +114,17 @@ public abstract class AbstractSegment implements Serializable {
         return resultClass;
     }
 
-
     @Node("@result-class")
     public void setResultClass(String resultClass) {
         this.resultClass = resultClass;
     }
-
 
     @ChildTag("object-segment")
     public List<AbstractSegment> getSegmentList() {
         return Collections.unmodifiableList(segmentList);
     }
 
-    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class,
-            CalculateSegment.class, BaseSegment.class})
+    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
     public void setSegmentList(AbstractSegment segment) {
         this.segmentList.add(segment);
     }
@@ -191,7 +168,6 @@ public abstract class AbstractSegment implements Serializable {
     public void setNotEmpty(Boolean notEmpty) {
         this.notEmpty = notEmpty;
     }
-
 
     @Attr("max-cycles")
     public Integer getMaxCycles() {

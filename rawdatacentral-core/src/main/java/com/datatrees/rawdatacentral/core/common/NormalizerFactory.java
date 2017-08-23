@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.core.common;
 
 import java.util.List;
@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
  * @since 2015年7月31日 上午11:53:47
  */
 public class NormalizerFactory implements DataNormalizer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NormalizerFactory.class);
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NormalizerFactory.class);
     List<DataNormalizer> normalizerList;
 
     /*
@@ -58,5 +58,5 @@ public class NormalizerFactory implements DataNormalizer {
     public void setNormalizerList(List<DataNormalizer> normalizerList) {
         this.normalizerList = normalizerList;
     }
-    
+
 }

@@ -1,9 +1,6 @@
 package com.datatrees.crawler.plugin.pdf.pdfdom;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -13,7 +10,10 @@ import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.state.PDGraphicsState;
 import org.slf4j.Logger;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class PathDrawer {
+
     private static final Logger log = getLogger(PathDrawer.class);
     private final PDGraphicsState state;
 

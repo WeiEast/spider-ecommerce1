@@ -7,8 +7,8 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 public class ZipCompressUtilTest {
+
     @BeforeClass
     public static void init() {
 

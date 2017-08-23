@@ -14,23 +14,20 @@ public class DateUtils {
     /**
      * 时间格式
      */
-    public static final String                                YMDHMS = "yyyy-MM-dd HH:mm:ss";
-    public static final String                                YMD    = "yyyy-MM-dd HH:mm:ss";
-
-    private static ThreadLocal<Map<String, SimpleDateFormat>> sfs    = new ThreadLocal<Map<String, SimpleDateFormat>>() {
-                                                                         @Override
-                                                                         protected Map<String, SimpleDateFormat> initialValue() {
-                                                                             Map<String, SimpleDateFormat> map = new HashMap<>();
-                                                                             map.put(YMDHMS,
-                                                                                 new SimpleDateFormat(YMDHMS));
-                                                                             map.put(YMD, new SimpleDateFormat(YMD));
-                                                                             return map;
-                                                                         }
-                                                                     };
+    public static final String                                     YMDHMS = "yyyy-MM-dd HH:mm:ss";
+    public static final String                                     YMD    = "yyyy-MM-dd HH:mm:ss";
+    private static      ThreadLocal<Map<String, SimpleDateFormat>> sfs    = new ThreadLocal<Map<String, SimpleDateFormat>>() {
+        @Override
+        protected Map<String, SimpleDateFormat> initialValue() {
+            Map<String, SimpleDateFormat> map = new HashMap<>();
+            map.put(YMDHMS, new SimpleDateFormat(YMDHMS));
+            map.put(YMD, new SimpleDateFormat(YMD));
+            return map;
+        }
+    };
 
     /**
-     * 返回一个SimpleDateFormat,每个线程只会new一次pattern对应的sdf 
-     *
+     * 返回一个SimpleDateFormat,每个线程只会new一次pattern对应的sdf
      * @param pattern
      * @return
      */
@@ -77,7 +74,7 @@ public class DateUtils {
      * @param start
      * @return
      */
-    public static String getUsedTime(long start,long end) {
+    public static String getUsedTime(long start, long end) {
         StringBuilder sb = new StringBuilder();
         long usedTime = end - start;
 

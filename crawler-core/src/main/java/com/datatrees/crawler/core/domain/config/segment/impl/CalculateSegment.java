@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.segment.impl;
 
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
@@ -21,6 +21,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Path;
  */
 @Path(".[@type='calculate']")
 public class CalculateSegment extends AbstractSegment {
+
     //${start},${max},${index}++
     private String expression;
 
@@ -33,6 +34,5 @@ public class CalculateSegment extends AbstractSegment {
     public void setExpression(String expression) {
         this.expression = expression;
     }
-
 
 }

@@ -22,11 +22,11 @@ package com.datatrees.crawler.core.processor.common;
  * www.sun.com if you need additional information or have any questions.
  */
 
-
 public class IPAddressUtil {
-    private final static int INADDR4SZ = 4;
+
+    private final static int INADDR4SZ  = 4;
     private final static int INADDR16SZ = 16;
-    private final static int INT16SZ = 2;
+    private final static int INT16SZ    = 2;
 
     /*
      * Converts IPv4 address in its textual presentation form into its numeric binary form.
@@ -261,28 +261,23 @@ public class IPAddressUtil {
 
     /**
      * Utility routine to check if the InetAddress is an IPv4 mapped IPv6 address.
-     *
      * @return a <code>boolean</code> indicating if the InetAddress is an IPv4 mapped IPv6 address;
-     *         or false if address is IPv4 address.
+     * or false if address is IPv4 address.
      */
     private static boolean isIPv4MappedAddress(byte[] addr) {
         if (addr.length < INADDR16SZ) {
             return false;
         }
-        if ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00)
-                && (addr[6] == 0x00) && (addr[7] == 0x00) && (addr[8] == 0x00) && (addr[9] == 0x00) && (addr[10] == (byte) 0xff)
-                && (addr[11] == (byte) 0xff)) {
+        if ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00) && (addr[6] == 0x00) && (addr[7] == 0x00) && (addr[8] == 0x00) && (addr[9] == 0x00) && (addr[10] == (byte) 0xff) && (addr[11] == (byte) 0xff)) {
             return true;
         }
         return false;
     }
 
-
     public static boolean internalIp(String ip) {
         byte[] addr = IPAddressUtil.textToNumericFormatV4(ip);
         return internalIp(addr);
     }
-
 
     public static boolean internalIp(byte[] addr) {
         final byte b0 = addr[0];

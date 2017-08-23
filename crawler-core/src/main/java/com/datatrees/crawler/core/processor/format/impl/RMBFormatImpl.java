@@ -4,22 +4,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.format.container.RMBMapContainer;
 import com.datatrees.crawler.core.processor.format.unit.RMBUnit;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RMBFormatImpl extends AbstractFormat {
 
-    private static final Logger log = LoggerFactory.getLogger(RMBFormatImpl.class);
-    private final String paymentNumRegex = "([\\.,\\d]+)";
+    private static final Logger log             = LoggerFactory.getLogger(RMBFormatImpl.class);
+    private final        String paymentNumRegex = "([\\.,\\d]+)";
 
     @Override
     public Object format(Request req, Response response, String orginal, String pattern) {

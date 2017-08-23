@@ -59,7 +59,7 @@ public class PluginUtils {
      * 获取代理
      * @param url
      * @return
-     * @throws Exception
+     * @exception Exception
      */
     public static String getPorxy(String url) throws Exception {
         String proxyURL = null;
@@ -74,7 +74,5 @@ public class PluginUtils {
         }
         return proxyURL;
     }
-
-
 
 }

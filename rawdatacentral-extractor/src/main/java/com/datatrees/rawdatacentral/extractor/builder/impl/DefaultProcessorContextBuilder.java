@@ -3,10 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.extractor.builder.impl;
+
+import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
@@ -17,10 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -29,13 +29,13 @@ import java.util.Set;
  */
 @Component
 public class DefaultProcessorContextBuilder {
-    private final static Logger  logger                           = LoggerFactory
-        .getLogger(DefaultProcessorContextBuilder.class);
-    private String               extractorUseDefaultWebsiteIds    = PropertiesConfiguration.getInstance()
-        .get("extractor.use.default.websiteIds", "162");
+
+    private final static Logger logger                        = LoggerFactory.getLogger(DefaultProcessorContextBuilder.class);
+    private              String extractorUseDefaultWebsiteIds = PropertiesConfiguration.getInstance().get("extractor.use.default.websiteIds", "162");
     @Resource
     private WebsiteConfigService websiteConfigService;
-    private Set<String>          extractorUseDefaultWebsiteIdsSet = new HashSet<String>();
+    private Set<String> extractorUseDefaultWebsiteIdsSet = new HashSet<String>();
+
     {
         for (String str : extractorUseDefaultWebsiteIds.split(",")) {
             extractorUseDefaultWebsiteIdsSet.add(str);
@@ -51,9 +51,7 @@ public class DefaultProcessorContextBuilder {
                     String websiteIdStr = Integer.valueOf(extractMessage.getWebsiteId()).toString();
                     if (extractorUseDefaultWebsiteIdsSet.contains(websiteIdStr))
                         context = websiteConfigService.getExtractorProcessorContext(extractMessage.getWebsiteId());
-                    else
-                        context = websiteConfigService
-                            .getExtractorProcessorContextWithBankId(extractMessage.getTypeId());
+                    else context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId());
                     break;
                 default:
                     // use the same website config to extract

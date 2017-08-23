@@ -1,16 +1,14 @@
-
 package com.datatrees.rawdatacentral.collector.common;
 
 import java.util.Comparator;
 
-
 /**
- *
- * @author  <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since   2015年7月20日 上午12:33:40 
+ * @since 2015年7月20日 上午12:33:40
  */
 public class LinkNodeComparator implements Comparator<byte[]> {
+
     public LinkNodeComparator() {}
 
     public static long byte2long(byte[] b) {

@@ -11,6 +11,7 @@ import org.junit.Test;
  * @since 23:00 21/05/2017
  */
 public class DateTimeOperationImplTest {
+
     @Test
     public void process() throws Exception {
         DateTimeOperationImpl impl = new DateTimeOperationImpl();

@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.submitter;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -7,40 +8,37 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
 import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
-import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.FileStoreService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultSubmitProcessor implements SubmitProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultSubmitProcessor.class);
     @Resource
-    RedisService                redisService;
+    RedisService      redisService;
     @Resource
-    FileStoreService            fileStoreService;
+    FileStoreService  fileStoreService;
     @Resource
-    NormalizerFactory           submitNormalizerFactory;
+    NormalizerFactory submitNormalizerFactory;
     @Resource
-    SubTaskManager              subTaskManager;
+    SubTaskManager    subTaskManager;
 
     @Override
     public boolean process(Object message) {
@@ -90,7 +88,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void submitSubTask(SubmitMessage submitMessage) {
         Map<String, Object> extractResultMap = submitMessage.getExtractResultMap();
         ExtractMessage extractMessage = submitMessage.getExtractMessage();
@@ -111,7 +109,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         }
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     private boolean saveToRedis(SubmitMessage submitMessage) {
         Map<String, Object> extractResultMap = submitMessage.getExtractResultMap();
         ExtractMessage extractMessage = submitMessage.getExtractMessage();
@@ -125,8 +123,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         }
         submitNormalizerFactory.normalize(submitMessage);
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
-            if ("subSeed".equals(entry.getKey()))
-                continue;// no need to save subSeed to redis
+            if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
             String redisKey = RedisKeyUtils.genRedisKey(taskId, entry.getKey());
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {

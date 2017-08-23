@@ -5,6 +5,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import com.datatrees.common.util.ReflectionUtils;
+import com.datatrees.crawler.core.util.xml.ConfigBuilder;
+import com.datatrees.crawler.core.util.xml.annotation.Attr;
+import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
+import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.CDATA;
 import org.jdom2.Document;
@@ -13,16 +19,7 @@ import org.jdom2.Parent;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import com.datatrees.common.util.ReflectionUtils;
-import com.datatrees.crawler.core.util.xml.ConfigBuilder;
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
-import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
-
 /**
- * 
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 5:49:13 PM
@@ -30,18 +27,11 @@ import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
 public enum XmlConfigBuilder implements ConfigBuilder {
     INSTANCE;
     static final String splitRegex = "/";
-
     @SuppressWarnings("unchecked")
-    List<Class> boxingTypes =
-            Arrays.asList(new Class[] {String.class, Long.class, Integer.class, Short.class, Double.class, Float.class, Boolean.class});
+    List<Class> boxingTypes = Arrays.asList(new Class[]{String.class, Long.class, Integer.class, Short.class, Double.class, Float.class, Boolean.class});
 
-    @Override
-    public String buildConfig(Object obj) {
-        Document document = new Document();
-        if (obj != null) {
-            this.processObjectWithTag(document, obj);
-        }
-        return outputDocument(document);
+    public static XmlConfigBuilder getInstance() {
+        return INSTANCE;
     }
     
   /*  
@@ -57,10 +47,19 @@ public enum XmlConfigBuilder implements ConfigBuilder {
         }
     }*/
 
+    @Override
+    public String buildConfig(Object obj) {
+        Document document = new Document();
+        if (obj != null) {
+            this.processObjectWithTag(document, obj);
+        }
+        return outputDocument(document);
+    }
+
     private String outputDocument(Document document) {
         XMLOutputter fmt = new XMLOutputter();
         Format f = Format.getPrettyFormat();
-      //  fmt.setXMLOutputProcessor(new MyXMLProcessor());
+        //  fmt.setXMLOutputProcessor(new MyXMLProcessor());
         f.setExpandEmptyElements(true);
         fmt.setFormat(f);
         return fmt.outputString(document);
@@ -85,8 +84,7 @@ public enum XmlConfigBuilder implements ConfigBuilder {
     }
 
     private void processObjectForTagMethods(Parent parent, Object obj) {
-        @SuppressWarnings("unchecked")
-        List<Method> tagMethods = ReflectionUtils.listGetMethodWithAnnotations(obj.getClass(), Tag.class, ChildTag.class);
+        @SuppressWarnings("unchecked") List<Method> tagMethods = ReflectionUtils.listGetMethodWithAnnotations(obj.getClass(), Tag.class, ChildTag.class);
         for (Method tagMethod : tagMethods) {
             if (tagMethod.isAnnotationPresent(Tag.class)) {
                 this.processTagMethod(parent, obj, tagMethod);
@@ -95,7 +93,6 @@ public enum XmlConfigBuilder implements ConfigBuilder {
             }
         }
     }
-
 
     private void processTagMethod(Parent parent, Object obj, Method tagMethod) {
         Object child = ReflectionUtils.invokeMethod(tagMethod, obj);
@@ -112,7 +109,7 @@ public enum XmlConfigBuilder implements ConfigBuilder {
             }
 
             if (ReflectionUtils.isColleciton(child)) {
-                for (Iterator<?> iterator = ReflectionUtils.iteratorColleciton(child); iterator.hasNext();) {
+                for (Iterator<?> iterator = ReflectionUtils.iteratorColleciton(child); iterator.hasNext(); ) {
                     Object item = iterator.next();
                     this.processObjectWithTag(element, item);
                 }
@@ -131,7 +128,7 @@ public enum XmlConfigBuilder implements ConfigBuilder {
             String lastPath = splitList.length > 0 ? splitList[splitList.length - 1] : "";
             Element lastParentElement = (Element) (splitList.length > 1 ? createElement(splitList[splitList.length - 2]) : parent);
             if (StringUtils.isNotBlank(lastPath)) {
-                for (Iterator<?> iterator = ReflectionUtils.iteratorColleciton(child); iterator.hasNext();) {
+                for (Iterator<?> iterator = ReflectionUtils.iteratorColleciton(child); iterator.hasNext(); ) {
                     Object item = iterator.next();
                     Element element = createElement(lastPath);
                     if (tag.referenced()) {// ref bean
@@ -147,8 +144,6 @@ public enum XmlConfigBuilder implements ConfigBuilder {
         }
     }
 
-
-
     private void emptyTagsCompletion(String[] tagNmaes, Element lastParentElement, Parent parent) {
         for (int i = tagNmaes.length - 3; i >= 0; i--) {
             Element element = createElement(tagNmaes[i]);
@@ -158,10 +153,8 @@ public enum XmlConfigBuilder implements ConfigBuilder {
         if (!lastParentElement.equals(parent)) parent.addContent(lastParentElement);
     }
 
-
     private void processObjectWithAttr(Element parent, Object obj) {
-        @SuppressWarnings("unchecked")
-        List<Method> attrMethods = ReflectionUtils.listGetMethodWithAnnotations(obj.getClass(), Attr.class);
+        @SuppressWarnings("unchecked") List<Method> attrMethods = ReflectionUtils.listGetMethodWithAnnotations(obj.getClass(), Attr.class);
         for (Method method : attrMethods) {
             Object attrObj = ReflectionUtils.invokeMethod(method, obj);
             if (attrObj != null) {
@@ -170,7 +163,6 @@ public enum XmlConfigBuilder implements ConfigBuilder {
             }
         }
     }
-
 
     private boolean isValueObj(Object obj) {
         if (obj.getClass().isPrimitive() || obj.getClass().isEnum() || boxingTypes.contains(obj.getClass())) {
@@ -198,9 +190,5 @@ public enum XmlConfigBuilder implements ConfigBuilder {
 
     private Element createElement(String name) {
         return new Element(name);
-    }
-
-    public static XmlConfigBuilder getInstance() {
-        return INSTANCE;
     }
 }
