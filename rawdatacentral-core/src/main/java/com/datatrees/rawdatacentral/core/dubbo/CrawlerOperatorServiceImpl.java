@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.core.dubbo;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BooleanUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
@@ -60,8 +61,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(param.getTaskId()));
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(param.getTaskId()));
             //保存mobile和websiteName
-            redisService.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
-            redisService.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
+            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
+            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
             logger.info("初始化运营商插件taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
         }
         messageService.sendTaskLog(param.getTaskId(), "准备登陆");
@@ -100,7 +101,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         //刷新短信间隔时间
         int sendSmsInterval = PropertiesConfiguration.getInstance()
             .getInt(RedisKeyPrefixEnum.SEND_SMS_INTERVAL.getRedisKey(param.getWebsiteName()), 0);
-        String latestSendSmsTime = redisService.getTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME);
+        String latestSendSmsTime = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME);
         if (StringUtils.isNoneBlank(latestSendSmsTime) && sendSmsInterval > 0) {
             long endTime = Long.valueOf(latestSendSmsTime) + TimeUnit.SECONDS.toMillis(sendSmsInterval);
             if (System.currentTimeMillis() < endTime) {
@@ -116,7 +117,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         }
         result = getLoginService(param).refeshSmsCode(param);
         if (result.getStatus()) {
-            redisService.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME,
+            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME,
                 System.currentTimeMillis() + "");
         }
         messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->短信验证码-->刷新{}!",
@@ -127,7 +128,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
         if (null != param && null != param.getTaskId()) {
-            redisService.removeTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE);
+            TaskUtils.removeTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE);
         }
         HttpResult<Map<String, Object>> result = checkParams(param);
         if (!result.getStatus()) {
@@ -141,7 +142,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (result.getStatus()) {
             switch (param.getFormType()) {
                 case FormType.LOGIN:
-                    redisService.addTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE, param.getPicCode());
+                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE, param.getPicCode());
                     break;
                 default:
                     break;
@@ -164,13 +165,13 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                 //登录成功
                 if (StringUtils.isNoneBlank(param.getPassword())) {
-                    redisService.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());
+                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());
                 }
                 if (StringUtils.isNoneBlank(param.getIdCard())) {
-                    redisService.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getPassword());
+                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getPassword());
                 }
                 if (StringUtils.isNoneBlank(param.getRealName())) {
-                    redisService.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getPassword());
+                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getPassword());
                 }
             }
         }
@@ -205,7 +206,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
      * @return
      */
     private void fillParamFromShares(OperatorParam param) {
-        Map<String, String> map = redisService.getTaskShares(param.getTaskId());
+        Map<String, String> map = TaskUtils.getTaskShares(param.getTaskId());
         if (null != map) {
             if (StringUtils.isBlank(param.getWebsiteName()) && map.containsKey(AttributeKey.WEBSITE_NAME)) {
                 param.setWebsiteName(map.get(AttributeKey.WEBSITE_NAME));

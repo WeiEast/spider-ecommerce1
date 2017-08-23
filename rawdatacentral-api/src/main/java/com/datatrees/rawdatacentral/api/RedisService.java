@@ -1,11 +1,11 @@
 package com.datatrees.rawdatacentral.api;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * redis操作
@@ -22,7 +22,6 @@ public interface RedisService {
     public boolean saveBytes(String key, byte[] value);
 
     /**
-     *
      * @param key
      * @return
      */
@@ -44,7 +43,7 @@ public interface RedisService {
 
     /**
      * redis加锁
-     * @param key 
+     * @param key
      * @param timeout
      * @param unit
      * @return
@@ -76,13 +75,13 @@ public interface RedisService {
 
     /**
      * 从list取最后一个值
-     * @param key 
+     * @param key
      * @return
      */
     public String rightPop(String key);
 
     /**
-     *  从list取最后一个值
+     * 从list取最后一个值
      * @param key
      * @param timeout
      * @param unit
@@ -95,7 +94,7 @@ public interface RedisService {
      * @param key
      * @param value
      * @param timeout 过期时间
-     * @param unit 过期时间单位
+     * @param unit    过期时间单位
      * @return
      */
     public boolean saveString(String key, String value, long timeout, TimeUnit unit);
@@ -105,7 +104,7 @@ public interface RedisService {
      * @param key
      * @param value
      * @param timeout 过期时间
-     * @param unit 过期时间单位
+     * @param unit    过期时间单位
      * @return
      */
     public boolean saveToList(String key, String value, long timeout, TimeUnit unit);
@@ -115,7 +114,7 @@ public interface RedisService {
      * @param key
      * @param list
      * @param timeout 过期时间
-     * @param unit 过期时间单位
+     * @param unit    过期时间单位
      * @return
      */
     public boolean saveToList(String key, List<String> list, long timeout, TimeUnit unit);
@@ -179,16 +178,16 @@ public interface RedisService {
     /**
      * 缓存
      * value:转化成json
-     * @param redisKeyPrefixEnum  前缀
-     * @param postfix 后缀
-     * @param value 值
+     * @param redisKeyPrefixEnum 前缀
+     * @param postfix            后缀
+     * @param value              值
      */
     public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Object value);
 
     /**
      * 缓存
-     * @param redisKeyPrefixEnum  前缀
-     * @param value 值
+     * @param redisKeyPrefixEnum 前缀
+     * @param value              值
      */
     public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object value);
 
@@ -217,34 +216,6 @@ public interface RedisService {
      * @return
      */
     public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, TypeReference<T> typeReference);
-
-    /**
-     * 添加共享属性
-     * @param taskId
-     * @param name
-     * @param value
-     */
-    void addTaskShare(Long taskId, String name, String value);
-
-    /**
-     * 获取共享属性
-     * @param taskId
-     * @param name
-     */
-    String getTaskShare(Long taskId, String name);
-
-    /**
-     * 删除共享属性
-     * @param taskId
-     * @param name
-     */
-    void removeTaskShare(Long taskId, String name);
-
-    /**
-     * 获取共享属性
-     * @param taskId
-     */
-    Map<String, String> getTaskShares(Long taskId);
 
     /**
      * 枷锁

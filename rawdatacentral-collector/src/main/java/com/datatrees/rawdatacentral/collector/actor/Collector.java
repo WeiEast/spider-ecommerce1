@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -145,7 +146,7 @@ public class Collector {
         this.clearStatus(message.getTaskId());
         taskService.insertTask(task);
 
-        Map<String, String> shares = redisService.getTaskShares(task.getTaskId());
+        Map<String, String> shares = TaskUtils.getTaskShares(task.getTaskId());
         if (null != shares && !shares.isEmpty()) {
             for (Map.Entry<String, String> entry : shares.entrySet()) {
                 context.set(entry.getKey(), entry.getValue());

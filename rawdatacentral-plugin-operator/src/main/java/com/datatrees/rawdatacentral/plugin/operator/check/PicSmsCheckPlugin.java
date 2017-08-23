@@ -12,7 +12,7 @@ import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.CookieUtils;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
@@ -66,10 +66,10 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         //验证失败直接抛出异常
         validatePicCode(taskId, websiteName);
 
-        String cookieString = CookieUtils.getCookieString(taskId);
+        String cookieString = TaskUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
 
-        Map<String, String> shares = redisService.getTaskShares(taskId);
+        Map<String, String> shares = TaskUtils.getTaskShares(taskId);
         for (Map.Entry<String, String> entry : shares.entrySet()) {
             context.setString(entry.getKey(), entry.getValue());
         }
@@ -119,7 +119,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             param.setPicCode(picCode);
             result = pluginService.validatePicCode(param);
             if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
-                redisService.addTaskShare(taskId, AttributeKey.PIC_CODE, picCode);
+                TaskUtils.addTaskShare(taskId, AttributeKey.PIC_CODE, picCode);
                 //图片验证码结束,进入短信验证
                 submit(taskId, websiteName);
                 return;
@@ -168,7 +168,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             throw new ResultEmptyException(ErrorCode.VALIDATE_SMS_TIMEOUT.getErrorMsg());
         }
         String smsCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
-        String picCode = redisService.getTaskShare(taskId, AttributeKey.PIC_CODE);
+        String picCode = TaskUtils.getTaskShare(taskId, AttributeKey.PIC_CODE);
         param.setSmsCode(smsCode);
         param.setPicCode(picCode);
         result = pluginService.submit(param);

@@ -373,65 +373,6 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public void addTaskShare(Long taskId, String name, String value) {
-        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
-        boolean lock = lock(taskId);
-        while (!lock && System.currentTimeMillis() < endTime) {
-            lock = lock(taskId.toString());
-        }
-        if (!lock) {
-            throw new RuntimeException("lock error taskId=" + taskId);
-        }
-        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
-        });
-        if (null == map) {
-            map = new HashMap<>();
-        }
-        map.put(name, value);
-        cache(cacheKey, map, RedisKeyPrefixEnum.TASK_SHARE.getTimeout(), RedisKeyPrefixEnum.TASK_SHARE.getTimeUnit());
-        unLock(taskId);
-    }
-
-    @Override
-    public String getTaskShare(Long taskId, String name) {
-        Map<String, String> map = getTaskShares(taskId);
-        if (null == map || map.isEmpty()) {
-            return null;
-        }
-        return map.get(name);
-    }
-
-    @Override
-    public void removeTaskShare(Long taskId, String name) {
-        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
-        boolean lock = lock(taskId);
-        while (!lock && System.currentTimeMillis() < endTime) {
-            lock = lock(taskId.toString());
-        }
-        if (!lock) {
-            throw new RuntimeException("lock error taskId=" + taskId);
-        }
-        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
-        });
-        if (null != map && map.containsKey(name)) {
-            map.remove(name);
-            cache(cacheKey, map, RedisKeyPrefixEnum.TASK_SHARE.getTimeout(),
-                RedisKeyPrefixEnum.TASK_SHARE.getTimeUnit());
-        }
-        unLock(taskId);
-    }
-
-    @Override
-    public Map<String, String> getTaskShares(Long taskId) {
-        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId.toString());
-        Map<String, String> map = getCache(cacheKey, new TypeReference<Map<String, String>>() {
-        });
-        return map;
-    }
-
-    @Override
     public Boolean lock(Object postfix) {
         String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(postfix.toString());
         if (stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "locked")) {

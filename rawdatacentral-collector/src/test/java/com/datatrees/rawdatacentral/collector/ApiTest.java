@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.collector;
 
 import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
-import com.datatrees.rawdatacentral.common.utils.CookieUtils;
-import com.datatrees.rawdatacentral.common.utils.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
@@ -43,7 +43,7 @@ public class ApiTest extends BaseTest {
     @Test
     public void startTask() throws Exception {
         Long taskId = 84316322183278592L;
-        String cookieString = CookieUtils.getCookieString(taskId);
+        String cookieString = TaskUtils.getCookieString(taskId);
         CollectorMessage message = new CollectorMessage();
         message.setAccountNo(taskId.toString());
         message.setTaskId(taskId);

@@ -1,8 +1,16 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.rawdatacentral.common.http;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import org.apache.commons.lang3.StringUtils;
@@ -11,18 +19,13 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by zhouxinghai on 2017/7/19.
  */
-public class CookieUtils {
+public class TaskUtils {
 
-    private static final Logger logger       = LoggerFactory.getLogger(CookieUtils.class);
-
-    private static RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger       logger       = LoggerFactory.getLogger(TaskUtils.class);
+    private static       RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
 
     public static List<Cookie> getCookies(BasicCookieStore cookieStore) {
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
@@ -112,7 +115,7 @@ public class CookieUtils {
     public static void saveCookie(Long taskId, BasicCookieStore cookieStore) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
-        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = CookieUtils.getCookies(cookieStore);
+        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
         redisService.cache(RedisKeyPrefixEnum.TASK_COOKIE, String.valueOf(taskId), list);
     }
 
@@ -123,19 +126,19 @@ public class CookieUtils {
         String cacheKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId + "");
         String json = redisService.getString(cacheKey);
         if (StringUtils.isNoneBlank(json)) {
-            cookies = JSON.parseObject(json, new TypeReference<List<Cookie>>() {
-            });
+            cookies = JSON.parseObject(json, new TypeReference<List<Cookie>>() {});
         }
         if (null == cookies || cookies.isEmpty()) {
             return cookieStore;
         }
         for (com.datatrees.rawdatacentral.domain.vo.Cookie myCookie : cookies) {
-            cookieStore.addCookie(CookieUtils.getBasicClientCookie(myCookie));
+            cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
         }
         return cookieStore;
     }
 
     public static String getCookieValue(Long taskId, String cookieName) {
+
         BasicCookieStore cookieStore = getCookie(taskId);
         if (null != cookieStore && null != cookieStore.getCookies()) {
             for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
@@ -147,4 +150,76 @@ public class CookieUtils {
         logger.warn("not found cookieName={}", cookieName);
         return null;
     }
+
+    /**
+     * 添加共享属性
+     * @param taskId
+     * @param name
+     * @param value
+     */
+    public static void addTaskShare(Long taskId, String name, String value) {
+        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
+        boolean lock = redisService.lock(taskId);
+        while (!lock && System.currentTimeMillis() < endTime) {
+            lock = redisService.lock(taskId);
+        }
+        if (!lock) {
+            throw new RuntimeException("lock error taskId=" + taskId);
+        }
+        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
+        Map<String, String> map = redisService.getCache(cacheKey, new TypeReference<Map<String, String>>() {});
+        if (null == map) {
+            map = new HashMap<>();
+        }
+        map.put(name, value);
+        redisService.cache(cacheKey, map, RedisKeyPrefixEnum.TASK_SHARE.getTimeout(), RedisKeyPrefixEnum.TASK_SHARE.getTimeUnit());
+        redisService.unLock(taskId);
+    }
+
+    /**
+     * 获取共享属性
+     * @param taskId
+     * @param name
+     */
+    public static String getTaskShare(Long taskId, String name) {
+        Map<String, String> map = getTaskShares(taskId);
+        if (null == map || map.isEmpty()) {
+            return null;
+        }
+        return map.get(name);
+    }
+
+    /**
+     * 删除共享属性
+     * @param taskId
+     * @param name
+     */
+    public static void removeTaskShare(Long taskId, String name) {
+        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
+        boolean lock = redisService.lock(taskId);
+        while (!lock && System.currentTimeMillis() < endTime) {
+            lock = redisService.lock(taskId);
+        }
+        if (!lock) {
+            throw new RuntimeException("lock error taskId=" + taskId);
+        }
+        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
+        Map<String, String> map = redisService.getCache(cacheKey, new TypeReference<Map<String, String>>() {});
+        if (null != map && map.containsKey(name)) {
+            map.remove(name);
+            redisService.cache(cacheKey, map, RedisKeyPrefixEnum.TASK_SHARE.getTimeout(), RedisKeyPrefixEnum.TASK_SHARE.getTimeUnit());
+        }
+        redisService.unLock(taskId);
+    }
+
+    /**
+     * 获取共享属性
+     * @param taskId
+     */
+    public static Map<String, String> getTaskShares(Long taskId) {
+        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
+        Map<String, String> map = redisService.getCache(cacheKey, new TypeReference<Map<String, String>>() {});
+        return map;
+    }
+
 }

@@ -1,30 +1,23 @@
 package com.datatrees.rawdatacentral.plugin.operator.yun_nan_10000_wap;
 
+import javax.script.Invocable;
 import java.io.InputStream;
-import java.util.Base64;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
-import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.utils.*;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
+import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
-import com.datatrees.rawdatacentral.domain.constant.PerpertyKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-
-import javax.script.Invocable;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 云南电信--wap版
@@ -92,9 +85,7 @@ public class YunNan10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String url = "http://wapyn.189.cn/vcImage.do";
-            response = TaskHttpClient
-                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "yun_nan_10000_wap_001")
-                .setResponseCharset("BASE64").setFullUrl(url).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "yun_nan_10000_wap_001").setResponseCharset("BASE64").setFullUrl(url).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -113,15 +104,11 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String templateUrl = "http://wapyn.189.cn/loginValidate.do?enAccNbr={}&enPassword={}&loginPwdType=A&mode=&nodeId=72&valid={}";
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocable(inputStream, "UTF-8");
-            String encodeMobile = invocable.invokeFunction("strEnc", param.getMobile().toString(), "wap_accnbr_2016", "", "")
-                .toString();
-            Object encodePassword = invocable.invokeFunction("strEnc", param.getPassword(), "wap_password_2016", "",
-                "");
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_002")
-                .setFullUrl(templateUrl, encodeMobile, encodePassword, param.getPicCode()).invoke();
+            String encodeMobile = invocable.invokeFunction("strEnc", param.getMobile().toString(), "wap_accnbr_2016", "", "").toString();
+            Object encodePassword = invocable.invokeFunction("strEnc", param.getPassword(), "wap_password_2016", "", "");
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_002").setFullUrl(templateUrl, encodeMobile, encodePassword, param.getPicCode()).invoke();
             String pageContent = response.getPageContent();
-            String errorMsg = JsoupXpathUtils.selectFirstString(pageContent,
-                "//div[@id='valcellphoneLoginFormMsgId']/text()");
+            String errorMsg = JsoupXpathUtils.selectFirstString(pageContent, "//div[@id='valcellphoneLoginFormMsgId']/text()");
             if (StringUtils.isBlank(errorMsg)) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();

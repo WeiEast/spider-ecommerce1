@@ -3,33 +3,24 @@ package com.datatrees.rawdatacentral.plugin.operator.check;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
-import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.CookieUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
-import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**
@@ -68,10 +59,10 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
         if (result.getStatus()) {
             pluginResult.put(PluginConstants.FIELD, JSON.toJSONString(result.getData()));
         }
-        String cookieString = CookieUtils.getCookieString(taskId);
+        String cookieString = TaskUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
 
-        Map<String, String> shares = redisService.getTaskShares(taskId);
+        Map<String, String> shares = TaskUtils.getTaskShares(taskId);
         for (Map.Entry<String, String> entry : shares.entrySet()) {
             context.setString(entry.getKey(), entry.getValue());
         }

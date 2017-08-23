@@ -20,7 +20,7 @@ import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
-import com.datatrees.rawdatacentral.common.utils.CookieUtils;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
@@ -65,10 +65,10 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
         //验证失败直接抛出异常
         validateSmsCode(taskId, websiteName);
 
-        String cookieString = CookieUtils.getCookieString(taskId);
+        String cookieString = TaskUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
 
-        Map<String, String> shares = redisService.getTaskShares(taskId);
+        Map<String, String> shares = TaskUtils.getTaskShares(taskId);
         for (Map.Entry<String, String> entry : shares.entrySet()) {
             context.setString(entry.getKey(), entry.getValue());
         }

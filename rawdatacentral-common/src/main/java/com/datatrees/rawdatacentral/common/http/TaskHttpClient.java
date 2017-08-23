@@ -1,7 +1,15 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.rawdatacentral.common.http;
+
+import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -20,7 +28,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -31,24 +38,13 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.SocketTimeoutException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 public class TaskHttpClient {
 
-    private static final Logger logger       = LoggerFactory.getLogger(TaskHttpClient.class);
-
-    private Request             request;
-
-    private Response            response;
-
-    private ContentType         requestContentType;
-
-    private static RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger       logger       = LoggerFactory.getLogger(TaskHttpClient.class);
+    private static       RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private Request     request;
+    private Response    response;
+    private ContentType requestContentType;
 
     private TaskHttpClient(Request request) {
         this.request = request;
@@ -168,19 +164,16 @@ public class TaskHttpClient {
     public Response invoke() {
         checkRequest(request);
         CloseableHttpResponse httpResponse = null;
-        BasicCookieStore cookieStore = CookieUtils.getCookie(request.getTaskId());
-        request.setRequestCookies(CookieUtils.getCookieString(cookieStore));
+        BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
+        request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
         HttpHost proxy = null;
         Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), null);
         if (null != proxyConfig) {
-            proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()),
-                request.getProtocol());
+            proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
             request.setProxy(proxyConfig.getId() + ":" + proxyConfig.getPort());
         }
-        RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout())
-            .setSocketTimeout(request.getSocketTimeout()).build();
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy)
-            .setDefaultCookieStore(cookieStore).build();
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout()).build();
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore).build();
 
         try {
             //参数处理
@@ -196,8 +189,7 @@ public class TaskHttpClient {
                         pairs.add(new BasicNameValuePair(entry.getKey(), value));
                     }
                 }
-                url = request.getUrl() + "?"
-                      + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getRequestCharset()));
+                url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getRequestCharset()));
             }
             HttpRequestBase client = null;
             if (RequestType.GET == request.getRequestType()) {
@@ -221,13 +213,13 @@ public class TaskHttpClient {
             httpResponse = httpclient.execute(client);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
-            response.setResponseCookies(CookieUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
+            response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
             if (statusCode != 200) {
                 client.abort();
                 logger.error("HttpClient status error, statusCode={}", statusCode);
                 return response;
             } else {
-                CookieUtils.saveCookie(request.getTaskId(), cookieStore);
+                TaskUtils.saveCookie(request.getTaskId(), cookieStore);
                 //httpResponse.getAllHeaders()
                 byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
                 response.setResponse(data);
@@ -237,8 +229,7 @@ public class TaskHttpClient {
                 logger.error("http timeout ,will retry request={}", request);
                 return invoke();
             }
-            logger.error("http timout,retry={},maxRetry={}, request={}", request.getRetry(), request.getMaxRetry(),
-                request, e);
+            logger.error("http timout,retry={},maxRetry={}, request={}", request.getRetry(), request.getMaxRetry(), request, e);
             throw new RuntimeException("http timeout,request=" + request, e);
         } catch (Exception e) {
             logger.error("http error request={}", request, e);
@@ -246,8 +237,7 @@ public class TaskHttpClient {
         } finally {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
-            redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()),
-                JSON.toJSONString(response), 1, TimeUnit.DAYS);
+            redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response), 1, TimeUnit.DAYS);
         }
         return response;
     }

@@ -1,6 +1,8 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.rawdatacentral.common.http;
 
 import com.datatrees.rawdatacentral.api.ProxyService;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.treefinance.proxy.domain.Proxy;
 import org.slf4j.Logger;

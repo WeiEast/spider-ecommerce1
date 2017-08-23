@@ -7,7 +7,7 @@ import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.CookieUtils;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.api.MessageService;
@@ -122,7 +122,7 @@ public class MessageServiceImpl implements MessageService {
         LoginMessage loginMessage = new LoginMessage();
         loginMessage.setTaskId(taskId);
         loginMessage.setWebsiteName(websiteName);
-        String cookieString = CookieUtils.getCookieString(taskId);
+        String cookieString = TaskUtils.getCookieString(taskId);
         loginMessage.setCookie(cookieString);
         sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), "login_info", loginMessage, DEFAULT_CHARSET_NAME, 3);
         return true;

@@ -1,12 +1,11 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10010_web;
 
-import com.alibaba.fastjson.JSON;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSONObject;
-import com.datatrees.common.util.PatternUtils;
+import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.CookieUtils;
-import com.datatrees.rawdatacentral.common.utils.JsonpUtil;
-import com.datatrees.rawdatacentral.common.utils.TaskHttpClient;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -17,9 +16,6 @@ import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URLEncoder;
-import java.util.Map;
 
 /**
  * 中国联通--全国通用
@@ -81,11 +77,8 @@ public class China10010ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=http://www.10010.com&userName={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&_={}";
-            String uacverifykey = CookieUtils.getCookieValue(param.getTaskId(), "uacverifykey");
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003")
-                .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(),
-                    param.getPicCode(), uacverifykey, System.currentTimeMillis())
-                .invoke();
+            String uacverifykey = TaskUtils.getCookieValue(param.getTaskId(), "uacverifykey");
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003").setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(), param.getPicCode(), uacverifykey, System.currentTimeMillis()).invoke();
             /**
              * 结果枚举:
              * 登陆成功:jQuery({resultCode:"0000",redirectURL:"http://www.10010.com"})
@@ -144,9 +137,7 @@ public class China10010ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/CreateImage?t={}";
-            response = TaskHttpClient
-                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001")
-                .setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001").setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -161,9 +152,7 @@ public class China10010ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/CtaIdyChk?callback=jQuery&verifyCode={}&verifyType=1&_={}";
-            response = TaskHttpClient
-                .create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_002")
-                .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_002").setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).invoke();
             //结果枚举:正确{"resultCode":"true"},错误{"resultCode":"false"}
             JSONObject json = response.getPageContentForJSON();
             Boolean resultCode = json.getBoolean("resultCode");
