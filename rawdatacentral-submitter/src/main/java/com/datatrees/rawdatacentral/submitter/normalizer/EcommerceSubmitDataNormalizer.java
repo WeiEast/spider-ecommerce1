@@ -14,7 +14,6 @@ import com.datatrees.rawdatacentral.core.model.SubmitMessage;
 import org.springframework.stereotype.Service;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年8月4日 下午5:33:54

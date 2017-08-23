@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 1:45:54 PM
@@ -34,7 +33,6 @@ public abstract class Operation extends Processor {
     protected            FieldExtractor    extractor = null;
 
     /**
-     *
      * @param request
      * @param response
      * @return
@@ -72,10 +70,9 @@ public abstract class Operation extends Processor {
     }
 
     /**
-     *
      * @param request
      * @param response
-     * @throws Exception
+     * @exception Exception
      */
     protected void postProcess(Request request, Response response) throws Exception {
         AbstractOperation nextOperation = null;
@@ -98,7 +95,6 @@ public abstract class Operation extends Processor {
     }
 
     /**
-     *
      * @param request
      * @param response
      */

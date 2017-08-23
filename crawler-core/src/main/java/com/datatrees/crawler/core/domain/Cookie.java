@@ -13,7 +13,6 @@ import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 16, 2014 5:34:03 PM

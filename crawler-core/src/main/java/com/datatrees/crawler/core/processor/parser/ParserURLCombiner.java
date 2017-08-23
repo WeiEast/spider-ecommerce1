@@ -14,7 +14,6 @@ import java.util.List;
 import com.datatrees.crawler.core.processor.Constants;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 7, 2014 11:03:02 AM

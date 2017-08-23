@@ -9,7 +9,6 @@
 package com.datatrees.rawdatacentral.collector.worker.deduplicate;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年8月7日 下午3:15:11

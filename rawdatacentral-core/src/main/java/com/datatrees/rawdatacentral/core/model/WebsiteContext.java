@@ -12,7 +12,6 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 下午8:04:43

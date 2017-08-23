@@ -18,7 +18,6 @@ import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 17, 2014 3:52:08 PM

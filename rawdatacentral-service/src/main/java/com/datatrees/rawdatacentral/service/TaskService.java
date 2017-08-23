@@ -13,7 +13,6 @@ import java.util.Date;
 import com.datatrees.rawdatacentral.domain.model.Task;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月28日 下午5:38:06

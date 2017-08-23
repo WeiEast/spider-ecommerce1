@@ -26,7 +26,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 4:04:22 PM

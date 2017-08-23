@@ -15,7 +15,6 @@ import org.apache.commons.codec.net.URLCodec;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 3:07:49 PM

@@ -13,7 +13,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 13, 2014 9:56:16 AM

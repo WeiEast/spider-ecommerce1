@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * abstract client plugin custom plugin should implements this as super class
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 10:28:20 AM

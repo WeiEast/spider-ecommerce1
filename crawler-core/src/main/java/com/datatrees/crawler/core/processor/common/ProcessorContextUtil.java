@@ -25,7 +25,6 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 8:14:36 PM

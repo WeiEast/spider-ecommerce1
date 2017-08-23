@@ -17,7 +17,6 @@ import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import org.apache.commons.collections.MapUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月8日 上午1:39:23

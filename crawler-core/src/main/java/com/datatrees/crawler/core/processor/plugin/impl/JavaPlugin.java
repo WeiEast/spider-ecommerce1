@@ -20,7 +20,6 @@ import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 
 /**
  * java plugin for
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 1:10:33 PM

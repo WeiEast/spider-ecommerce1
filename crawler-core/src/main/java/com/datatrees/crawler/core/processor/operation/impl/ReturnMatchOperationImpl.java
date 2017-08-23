@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
  * @version 1.0
  * @since 2016年5月30日 下午8:33:11

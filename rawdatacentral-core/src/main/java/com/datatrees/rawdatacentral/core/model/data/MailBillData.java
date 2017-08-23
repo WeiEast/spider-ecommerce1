@@ -11,7 +11,6 @@ package com.datatrees.rawdatacentral.core.model.data;
 import java.util.Date;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月26日 下午1:32:20

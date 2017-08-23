@@ -16,7 +16,6 @@ import com.datatrees.crawler.core.processor.format.impl.NumberFormatImpl;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 31, 2014 10:57:34 AM

@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 31, 2014 10:17:53 AM
@@ -52,7 +51,6 @@ public class NumberMapContainer {
     }
 
     /**
-     *
      * @param periodMapper2
      */
     private void initMap(String config, Map<String, NumberUnit> customNumberMapper) {

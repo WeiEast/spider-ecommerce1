@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月9日 下午4:10:25
@@ -85,8 +84,8 @@ public class FileWapper {
 
     /**
      * @return the file
-     * @throws FileNotFoundException
-     * @throws InterruptedException
+     * @exception FileNotFoundException
+     * @exception InterruptedException
      */
     public FileInputStream getFileInputStream() throws FileNotFoundException, InterruptedException {
         for (int i = 0; i < retryCount; i++) {

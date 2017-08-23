@@ -15,7 +15,6 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年12月20日 上午12:36:15

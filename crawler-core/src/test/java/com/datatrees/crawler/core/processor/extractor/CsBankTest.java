@@ -11,8 +11,7 @@ package com.datatrees.crawler.core.processor.extractor;
 import java.util.Map;
 
 /**
- *
- * @author  <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
+ * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
  * @version 1.0
  * @since 2016年7月21日 下午3:38:02
  */

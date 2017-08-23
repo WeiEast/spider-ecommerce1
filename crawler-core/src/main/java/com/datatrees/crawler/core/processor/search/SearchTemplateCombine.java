@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 15, 2014 2:57:41 PM
@@ -33,7 +32,6 @@ public class SearchTemplateCombine {
 
     /**
      * encode keyword in URL format
-     *
      * @param keyword
      * @param urlCharset
      * @return the encoded keyword
@@ -80,7 +78,6 @@ public class SearchTemplateCombine {
 
     /**
      * construct search url from template with keyword, charset and page num.
-     *
      * @param searchURLTemplate
      * @param keyword
      * @param urlCharset
@@ -159,7 +156,6 @@ public class SearchTemplateCombine {
 
     /**
      * custom Template search url from template with page num.
-     *
      * @param customURLTemplate
      * @param pageNum
      */

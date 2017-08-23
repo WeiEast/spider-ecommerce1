@@ -11,7 +11,6 @@ package com.datatrees.rawdatacentral.extractor.storage;
 import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月30日 下午8:23:19

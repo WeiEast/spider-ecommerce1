@@ -13,7 +13,6 @@ import javax.annotation.Resource;
 import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
 
 /**
- *
  * Created by zhouxinghai on 2017/6/29
  */
 @Resource

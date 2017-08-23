@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * Created by zhouxinghai on 2017/5/26
  */
 public class GrabServiceImpl extends ServiceBase {

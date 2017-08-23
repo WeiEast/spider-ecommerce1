@@ -11,7 +11,6 @@ public interface PluginConstants {
     String CONTEXT          = "context";
     String CURRENT_URL      = "current_url";
     String PROXY            = "proxy";
-
     // output constants
     String ERROR_INFO       = "error_info";
     String EXTRA_INFO       = "extra_info";

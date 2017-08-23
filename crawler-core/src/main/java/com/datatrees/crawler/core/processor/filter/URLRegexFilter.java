@@ -17,7 +17,6 @@ import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 6:56:23 PM

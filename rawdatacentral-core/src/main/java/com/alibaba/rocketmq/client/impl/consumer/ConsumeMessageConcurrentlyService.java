@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 
 /**
  * 并发消费消息服务
- *
  * @author shijia.wxr<vintage.wang@gmail.com>
  * @since 2013-7-24
  */

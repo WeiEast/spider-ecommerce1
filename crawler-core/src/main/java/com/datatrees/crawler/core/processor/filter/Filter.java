@@ -9,7 +9,6 @@
 package com.datatrees.crawler.core.processor.filter;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 6:55:05 PM
@@ -18,7 +17,6 @@ public interface Filter {
 
     /**
      * filter url return null if not accept ;
-     *
      * @param url
      * @return
      */

@@ -9,7 +9,6 @@
 package com.datatrees.crawler.core.processor.bean;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 12, 2014 3:29:12 PM

@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 public class CollectorWorker {
 
     private static final Logger  LOGGER                    = LoggerFactory.getLogger(CollectorWorker.class);
-    private final long maxLiveTime = TimeUnit.SECONDS.toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
+    private final        long    maxLiveTime               = TimeUnit.SECONDS.toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
     private              Integer maxExecuteMinutes         = PropertiesConfiguration.getInstance().getInt("default.collector.execute.minutes", 7);
     private              Integer interactiveTimeoutSeconds = PropertiesConfiguration.getInstance().getInt("interactive.timeout.seconds", 300);
     private CrawlExcutorHandler crawlExcutorHandler;

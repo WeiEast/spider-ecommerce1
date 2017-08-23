@@ -14,7 +14,6 @@ import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 9:11:19 PM

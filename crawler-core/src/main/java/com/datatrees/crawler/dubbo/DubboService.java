@@ -17,7 +17,6 @@ import com.alibaba.dubbo.config.RegistryConfig;
 import com.datatrees.common.conf.PropertiesConfiguration;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年6月3日 下午8:38:15

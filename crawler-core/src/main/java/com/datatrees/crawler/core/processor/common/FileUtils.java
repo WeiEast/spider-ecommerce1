@@ -17,7 +17,6 @@ import com.datatrees.common.util.DateUtils;
 import com.datatrees.crawler.core.processor.Constants;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月8日 下午3:44:34

@@ -8,6 +8,8 @@ package com.datatrees.crawler.core.mail;
  * Copyright (c) datatrees.com Inc. 2016
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @version 1.0
  * @since 2016年4月22日 下午5:56:22
  */
 

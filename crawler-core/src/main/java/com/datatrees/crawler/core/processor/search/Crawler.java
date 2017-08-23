@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 8:48:55 PM
@@ -45,10 +44,9 @@ public class Crawler {
 
     /**
      * crawler request main route step 1: request via httpclient step 2: parse page content
-     *
      * @param request
      * @return
-     * @throws ResultEmptyException
+     * @exception ResultEmptyException
      */
     public static CrawlResponse crawl(CrawlRequest request) throws ResultEmptyException {
         CrawlResponse response = CrawlResponse.build();
@@ -121,7 +119,6 @@ public class Crawler {
 
     /**
      * add default conf if not exists
-     *
      * @param request
      */
     private static void checkConf(CrawlRequest request) {

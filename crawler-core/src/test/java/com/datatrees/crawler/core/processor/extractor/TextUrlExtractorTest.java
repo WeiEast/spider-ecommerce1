@@ -16,7 +16,6 @@ import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 25, 2014 10:58:06 AM

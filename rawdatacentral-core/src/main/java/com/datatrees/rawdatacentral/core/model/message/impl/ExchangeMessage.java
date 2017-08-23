@@ -11,7 +11,6 @@ package com.datatrees.rawdatacentral.core.model.message.impl;
 import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年8月13日 下午4:16:59

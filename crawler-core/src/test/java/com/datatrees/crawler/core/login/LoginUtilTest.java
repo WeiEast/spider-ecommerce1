@@ -17,7 +17,6 @@ import com.datatrees.crawler.core.processor.login.LoginUtil;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Aug 29, 2014 7:09:16 PM

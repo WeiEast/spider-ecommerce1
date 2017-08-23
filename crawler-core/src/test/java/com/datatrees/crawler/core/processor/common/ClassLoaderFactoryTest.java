@@ -6,6 +6,8 @@
  * Copyright (c) datatrees.com Inc. 2015
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @version 1.0
  * @since Feb 19, 2014 6:00:36 PM
  */
 /**

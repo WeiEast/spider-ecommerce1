@@ -20,7 +20,6 @@ import org.apache.james.mime4j.parser.MimeEntityConfig;
 import org.apache.james.mime4j.storage.StorageProvider;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月8日 上午11:39:58
@@ -43,8 +42,8 @@ public class Mail extends Message {
      * @param is
      * @param config
      * @param storageProvider
-     * @throws IOException
-     * @throws MimeIOException
+     * @exception IOException
+     * @exception MimeIOException
      */
     public Mail(InputStream is, MimeEntityConfig config, StorageProvider storageProvider) throws IOException, MimeIOException {
         super(is, config, storageProvider);
@@ -53,8 +52,8 @@ public class Mail extends Message {
     /**
      * @param is
      * @param config
-     * @throws IOException
-     * @throws MimeIOException
+     * @exception IOException
+     * @exception MimeIOException
      */
     public Mail(InputStream is, MimeEntityConfig config) throws IOException, MimeIOException {
         super(is, config);
@@ -62,8 +61,8 @@ public class Mail extends Message {
 
     /**
      * @param is
-     * @throws IOException
-     * @throws MimeIOException
+     * @exception IOException
+     * @exception MimeIOException
      */
     public Mail(InputStream is) throws IOException, MimeIOException {
         super(is);

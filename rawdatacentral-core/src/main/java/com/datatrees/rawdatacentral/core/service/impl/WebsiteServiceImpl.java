@@ -11,7 +11,6 @@ package com.datatrees.rawdatacentral.core.service.impl;
 import com.datatrees.rawdatacentral.core.service.WebsiteService;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 下午5:15:50

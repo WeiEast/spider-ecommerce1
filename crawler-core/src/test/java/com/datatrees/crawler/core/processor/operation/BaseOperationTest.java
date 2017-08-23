@@ -12,7 +12,6 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 4:19:27 PM

@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 7, 2014 7:43:14 PM
@@ -67,7 +66,6 @@ public abstract class ServiceBase extends Processor {
     }
 
     /**
-     *
      * @param baseContent
      * @param current
      * @return

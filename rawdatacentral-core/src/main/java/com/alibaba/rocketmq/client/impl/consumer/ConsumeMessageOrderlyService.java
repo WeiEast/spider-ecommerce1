@@ -35,14 +35,13 @@ import org.slf4j.Logger;
 
 /**
  * 顺序消费消息服务
- *
  * @author shijia.wxr<vintage.wang@gmail.com>
  * @since 2013-6-27
  */
 public class ConsumeMessageOrderlyService implements ConsumeMessageService {
 
-    private static final Logger  log                        = ClientLogger.getLog();
-    private final static long    MaxTimeConsumeContinuously = Long.parseLong(System.getProperty("rocketmq.client.maxTimeConsumeContinuously", "60000"));
+    private static final Logger log                        = ClientLogger.getLog();
+    private final static long   MaxTimeConsumeContinuously = Long.parseLong(System.getProperty("rocketmq.client.maxTimeConsumeContinuously", "60000"));
     private final DefaultMQPushConsumerImpl defaultMQPushConsumerImpl;
     private final DefaultMQPushConsumer     defaultMQPushConsumer;
     private final MessageListenerOrderly    messageListener;
@@ -52,7 +51,7 @@ public class ConsumeMessageOrderlyService implements ConsumeMessageService {
     private final MessageQueueLock messageQueueLock = new MessageQueueLock();
     // 定时线程
     private final ScheduledExecutorService scheduledExecutorService;
-    private volatile     boolean stoped                     = false;
+    private volatile boolean stoped = false;
 
     public ConsumeMessageOrderlyService(DefaultMQPushConsumerImpl defaultMQPushConsumerImpl, MessageListenerOrderly messageListener) {
         this.defaultMQPushConsumerImpl = defaultMQPushConsumerImpl;

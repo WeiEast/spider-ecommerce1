@@ -6,6 +6,7 @@ public class BeanResourceFactory implements BeanResource {
 
     private static BeanResourceFactory factory = null;
     private BeanResource beanResource;
+
     private BeanResourceFactory() {}
 
     public static BeanResourceFactory getInstance() {

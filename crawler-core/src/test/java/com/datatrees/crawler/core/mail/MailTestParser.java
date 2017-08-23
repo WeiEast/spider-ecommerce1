@@ -9,7 +9,6 @@
 package com.datatrees.crawler.core.mail;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年9月19日 下午3:38:12

@@ -24,7 +24,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:yangzhiyong@datatrees.com.cn">Yang Zhiyong</A>
  * @version 1.0
  * @since Mar 10, 2014 3:51:07 PM

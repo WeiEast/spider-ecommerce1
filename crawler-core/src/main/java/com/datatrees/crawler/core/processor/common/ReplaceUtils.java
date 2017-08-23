@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 21, 2014 4:08:38 PM
@@ -39,7 +38,6 @@ public class ReplaceUtils {
     private static       Set<String> replacedEncodeKeySet = new HashSet<String>(Arrays.asList(PropertiesConfiguration.getInstance().get("replaced.encode.keys", "keyword").split(",")));
 
     /**
-     *
      * @param template
      * @return
      */
@@ -162,7 +160,6 @@ public class ReplaceUtils {
     }
 
     /**
-     *
      * @param needReplaced
      * @param fieldResultMap
      * @param defaultMap

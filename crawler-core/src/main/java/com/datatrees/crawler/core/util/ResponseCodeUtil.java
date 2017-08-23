@@ -11,7 +11,6 @@ package com.datatrees.crawler.core.util;
 import com.datatrees.common.protocol.ProtocolStatusCodes;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 4:11:30 PM

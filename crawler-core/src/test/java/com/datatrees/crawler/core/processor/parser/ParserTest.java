@@ -29,7 +29,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 10:00:24 AM
@@ -248,16 +247,13 @@ public class ParserTest extends BaseConfigTest {
     }
 
     /**
-     *
-     <parser id="viewcount-parser"> <patterns> <pattern> <regex><![CDATA[videoId =
+     * <parser id="viewcount-parser"> <patterns> <pattern> <regex><![CDATA[videoId =
      * '(\d+)']]></regex> <mappings> <map group-index="1" placeholder="id" /> </mappings> </pattern>
-     *
      * <pattern> <regex><![CDATA[showid="(\d+)"]]></regex> <mappings> <map group-index="1"
      * placeholder="sid" /> </mappings> </pattern> </patterns>
      * <url-template><![CDATA[http://v.youku.
      * com/QVideo/~ajax/getVideoPlayInfo?__rt=1&__ro=&id=${id}&
      * sid=${sid}&type=vv&catid=97]]></url-template>
-     *
      * </parser>
      */
     private Parser getViewParser() {
@@ -333,8 +329,6 @@ public class ParserTest extends BaseConfigTest {
      * 'http:]]></regex> <mappings> <map group-index="1" placeholder="1" /> <map group-index="2"
      * placeholder="2" /> </mappings> </pattern> </patterns>
      * <url-template><![CDATA[http://vk.com/video${1}_${2}]]></url-template> </parser>
-     *
-     *
      */
     private Parser getVkParser() {
         Parser parser = new Parser();

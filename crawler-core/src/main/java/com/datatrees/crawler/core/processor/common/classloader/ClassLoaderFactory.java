@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 5:47:48 PM
@@ -32,22 +31,16 @@ public final class ClassLoaderFactory {
     /**
      * Create and return a new class loader, based on the configuration defaults
      * and the specified directory paths:
-     *
-     * @param unpacked
-     *            Array of pathnames to unpacked directories that should be
-     *            added to the repositories of the class loader, or
-     *            <code>null</code> for no unpacked directories to be considered
-     * @param packed
-     *            Array of pathnames to directories containing JAR files that
-     *            should be added to the repositories of the class loader, or
-     *            <code>null</code> for no directories of JAR files to be
-     *            considered
-     * @param parent
-     *            Parent class loader for the new class loader, or
-     *            <code>null</code> for the system class loader.
-     *
-     * @exception Exception
-     *                if an error occurs constructing the class loader
+     * @param unpacked Array of pathnames to unpacked directories that should be
+     *                 added to the repositories of the class loader, or
+     *                 <code>null</code> for no unpacked directories to be considered
+     * @param packed   Array of pathnames to directories containing JAR files that
+     *                 should be added to the repositories of the class loader, or
+     *                 <code>null</code> for no directories of JAR files to be
+     *                 considered
+     * @param parent   Parent class loader for the new class loader, or
+     *                 <code>null</code> for the system class loader.
+     * @exception Exception if an error occurs constructing the class loader
      */
     public static ClassLoader createClassLoader(File unpacked[], File packed[], ClassLoader parent) throws Exception {
 

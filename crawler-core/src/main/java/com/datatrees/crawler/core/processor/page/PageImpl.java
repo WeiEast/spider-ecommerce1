@@ -55,7 +55,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 6:35:43 PM
@@ -176,7 +175,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     *
      * @param responseStatus
      * @return
      */
@@ -208,7 +206,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     *
      * @param request
      * @param response
      */
@@ -244,7 +241,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     *
      * @param content
      * @return
      */
@@ -258,7 +254,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     *
      * @param content
      * @return
      */
@@ -269,7 +264,6 @@ public class PageImpl extends AbstractPage {
 
     /**
      * using white and black list to filter web url adjust depth
-     *
      * @param config
      * @param urlLists
      */
@@ -364,7 +358,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     *
      * @param filters
      */
     private List<UrlFilter> addDefaultFilter(List<UrlFilter> filters, Request req) {
@@ -395,7 +388,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     *
      * @param content
      * @param request
      * @param response
@@ -435,12 +427,11 @@ public class PageImpl extends AbstractPage {
     /**
      * get url list need too steps first extract field urls second extract page by regex finally
      * resovle url by base url
-     *
      * @param segments
      * @param request
      * @param response
      * @return
-     * @throws ResultEmptyException
+     * @exception ResultEmptyException
      */
     private Map<String, LinkNode> extractObjectsWithSegments(List<AbstractSegment> segments, Request req, Response resp) throws ResultEmptyException {
         Map<String, LinkNode> linkNodes = new LinkedHashMap<String, LinkNode>();

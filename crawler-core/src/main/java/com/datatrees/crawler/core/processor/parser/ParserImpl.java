@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * parser segment content and send request or extract urls
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 8:57:12 PM
@@ -126,7 +125,6 @@ public class ParserImpl extends Operation {
     /**
      * first replace from field context second replace by regex third replace by user defined
      * context;
-     *
      * @param fieldResultMap
      * @param parser2
      * @return
@@ -206,7 +204,6 @@ public class ParserImpl extends Operation {
     }
 
     /**
-     *
      * @param fieldResultMap
      * @return
      */
@@ -220,7 +217,6 @@ public class ParserImpl extends Operation {
     }
 
     /**
-     *
      * @param result
      * @param refererTemplate
      * @param headers

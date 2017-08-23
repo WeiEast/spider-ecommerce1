@@ -14,7 +14,6 @@ import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import org.apache.commons.lang.BooleanUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 13, 2014 9:56:16 AM

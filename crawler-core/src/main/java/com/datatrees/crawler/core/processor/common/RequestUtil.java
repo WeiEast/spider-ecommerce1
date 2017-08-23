@@ -24,7 +24,6 @@ import com.datatrees.crawler.core.processor.format.container.NumberMapContainer;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 8:14:36 PM

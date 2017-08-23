@@ -11,7 +11,6 @@ package com.datatrees.crawler.core.processor.extractor;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 6:52:53 PM

@@ -11,7 +11,6 @@ package com.datatrees.crawler.core.processor.service.conf;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 7:11:20 PM

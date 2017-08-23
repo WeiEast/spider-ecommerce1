@@ -12,7 +12,6 @@ import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年12月23日 下午1:23:59

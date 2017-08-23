@@ -21,7 +21,6 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 6, 2014 4:45:30 PM
@@ -34,7 +33,6 @@ public class ResponseUtil {
 
     /**
      * parser result list
-     *
      * @param response
      * @return
      */

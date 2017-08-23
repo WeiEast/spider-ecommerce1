@@ -13,7 +13,6 @@ import com.datatrees.crawler.core.processor.common.CodecUtils;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年11月11日 上午11:20:27

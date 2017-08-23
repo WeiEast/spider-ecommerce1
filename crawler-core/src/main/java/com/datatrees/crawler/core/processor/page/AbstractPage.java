@@ -12,7 +12,6 @@ import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.processor.common.Processor;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 5:02:13 PM

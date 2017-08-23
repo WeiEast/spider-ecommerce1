@@ -14,7 +14,6 @@ import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 12, 2014 8:22:14 PM

@@ -25,7 +25,6 @@ import com.datatrees.crawler.core.util.xml.exception.ParseException;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 10:46:28 AM

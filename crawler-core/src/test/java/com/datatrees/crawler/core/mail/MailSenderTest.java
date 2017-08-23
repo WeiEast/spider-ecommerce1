@@ -14,7 +14,6 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年4月22日 下午4:05:23
@@ -22,8 +21,7 @@ import java.util.Properties;
 public class MailSenderTest {
 
     /**
-     * @throws MessagingException
-     *
+     * @exception MessagingException
      */
     public void send() throws MessagingException {
         Properties props = new Properties();

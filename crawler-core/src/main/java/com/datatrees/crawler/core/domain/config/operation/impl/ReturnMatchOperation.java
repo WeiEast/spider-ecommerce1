@@ -14,7 +14,6 @@ import com.datatrees.crawler.core.util.xml.annotation.Path;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
 /**
- *
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
  * @version 1.0
  * @since 2016年5月30日 下午2:01:49

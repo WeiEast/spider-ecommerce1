@@ -39,22 +39,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 7, 2014 2:14:19 PM
  */
 public class SearchProcessorContext extends AbstractProcessorContext {
 
-    private static final Logger log = LoggerFactory.getLogger(SearchProcessorContext.class);
-    private final Map<SearchTemplateConfig, Map<Integer, List<SearchSequenceUnit>>> depthPageMap                = new HashMap<>();
-    private final Map<SearchTemplateConfig, Map<String, SearchSequenceUnit>>        pathPageMap                 = new HashMap<>();
-    private final Map<String, SearchTemplateConfig>                                 searchTemplateConfigMap     = new HashMap<>();
-    private final Map<SearchType, List<SearchTemplateConfig>>                       searchTemplateConfigListMap = new HashMap<>();
+    private static final Logger                                                            log                         = LoggerFactory.getLogger(SearchProcessorContext.class);
+    private final        Map<SearchTemplateConfig, Map<Integer, List<SearchSequenceUnit>>> depthPageMap                = new HashMap<>();
+    private final        Map<SearchTemplateConfig, Map<String, SearchSequenceUnit>>        pathPageMap                 = new HashMap<>();
+    private final        Map<String, SearchTemplateConfig>                                 searchTemplateConfigMap     = new HashMap<>();
+    private final        Map<SearchType, List<SearchTemplateConfig>>                       searchTemplateConfigListMap = new HashMap<>();
     // page id ===> page
-    private final Map<String, Page>                                                 pageMap                     = new HashMap<String, Page>();
-    private ProxyManager  proxyManager;
-    private LoginResource loginResource;
+    private final        Map<String, Page>                                                 pageMap                     = new HashMap<String, Page>();
+    private ProxyManager   proxyManager;
+    private LoginResource  loginResource;
     private String         webServiceUrl;
     private Proxy          proxyConf;
     private AbstractCookie cookieConf;
@@ -186,7 +185,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
     /**
      * wrapper for proxy manager with scope states
-     *
      * @param proxyManager
      */
     public void setProxyManager(ProxyManager proxyManager) {
@@ -419,7 +417,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
     /**
      * 目前当LoginType为plugin时，一般都需要前后端交互
-     *
      * @return
      */
     public boolean needInteractive() {

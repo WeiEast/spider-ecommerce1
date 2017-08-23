@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PluginServiceImpl implements PluginService, InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(PluginServiceImpl.class);
+    private static final Logger              logger    = LoggerFactory.getLogger(PluginServiceImpl.class);
     private static final Map<String, String> pluginMd5 = new ConcurrentHashMap<>();
     @Resource
     private RedisService redisService;

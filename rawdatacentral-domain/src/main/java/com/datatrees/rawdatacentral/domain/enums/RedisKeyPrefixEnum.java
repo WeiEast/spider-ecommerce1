@@ -24,7 +24,7 @@ public enum RedisKeyPrefixEnum {
     /**
      * 备注
      */
-    private final String   remark;
+    private final String remark;
     /**
      * 分隔符
      */
@@ -32,15 +32,15 @@ public enum RedisKeyPrefixEnum {
     /**
      * 前缀
      */
-    private       String   prefix;
+    private String   prefix;
     /**
      * 超时时间
      */
-    private       int      timeout;
+    private int      timeout;
     /**
      * 时间单位
      */
-    private       TimeUnit timeUnit;
+    private TimeUnit timeUnit;
 
     RedisKeyPrefixEnum(String prefix, int timeout, TimeUnit timeUnit, String remark) {
         this.prefix = prefix;

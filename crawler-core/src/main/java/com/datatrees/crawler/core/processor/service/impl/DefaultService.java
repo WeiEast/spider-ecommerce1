@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * default httpclient service
- *
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 10:55:36 AM
@@ -292,7 +290,6 @@ public class DefaultService extends ServiceBase {
     }
 
     /**
-     *
      * @param output
      * @param current
      */

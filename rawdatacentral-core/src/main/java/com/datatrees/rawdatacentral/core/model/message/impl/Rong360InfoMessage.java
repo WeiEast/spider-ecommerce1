@@ -9,8 +9,7 @@
 package com.datatrees.rawdatacentral.core.model.message.impl;
 
 /**
- *
- * @author  <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
+ * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
  * @version 1.0
  * @since 2016年9月20日 下午5:13:29
  */

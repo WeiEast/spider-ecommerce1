@@ -28,6 +28,7 @@ public class XmlConfigParser implements ConfigParser {
     private static final Logger                logger           = LoggerFactory.getLogger(XmlConfigParser.class);
     final                Map<String, Object>   contentMap       = new HashMap<String, Object>();
     final                Map<Class<?>, Object> typeSetMethodMap = new HashMap<Class<?>, Object>();
+
     private XmlConfigParser() {}
 
     public static XmlConfigParser getInstance() {

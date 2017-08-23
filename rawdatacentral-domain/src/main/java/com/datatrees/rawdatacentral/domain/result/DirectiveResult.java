@@ -11,11 +11,11 @@ public class DirectiveResult<T> implements Serializable {
     /**
      * 应用名称
      */
-    private static final String  appName       = "rawdatacentral";
+    private static final String appName  = "rawdatacentral";
     /**
      * 当前线程ID
      */
-    private static String threadId = "t0";
+    private static       String threadId = "t0";
     /**
      * 指令ID
      */
@@ -23,7 +23,7 @@ public class DirectiveResult<T> implements Serializable {
     /**
      * 发送指令后,是否等待插件处理完成并返回数据
      */
-    private              boolean requireReturn = false;
+    private boolean requireReturn = false;
     /**
      * 交互类别
      */

@@ -15,7 +15,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.pipeline.ValveBase;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 1:27:06 PM

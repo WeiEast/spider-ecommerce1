@@ -17,9 +17,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * plugin wrapper which wrapper 
- * plugin description and plugin location 
- *
+ * plugin wrapper which wrapper
+ * plugin description and plugin location
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 5:39:30 PM

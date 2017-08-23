@@ -34,10 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * @param <V>
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @param <V>
  * @since Feb 24, 2014 5:19:42 PM
  */
 public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
@@ -284,7 +283,6 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
 
     /**
      * mapper field id --> field warpper to field name --> field val
-     *
      * @param fieldMap
      * @return
      */
@@ -316,7 +314,6 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
 
     /**
      * get segment splits by xpath / regex or split
-     *
      * @param request
      * @return
      */
@@ -332,7 +329,6 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
 
     /**
      * url map between segments key is url val is link node
-     *
      * @param response
      * @return
      */
@@ -348,7 +344,6 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
 
     /**
      * return List<Map<String, Object>> or List<ResultType>
-     *
      * @param response
      * @return
      */

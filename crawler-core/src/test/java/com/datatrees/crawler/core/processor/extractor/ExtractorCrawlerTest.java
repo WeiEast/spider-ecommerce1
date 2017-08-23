@@ -14,9 +14,8 @@ import com.datatrees.crawler.core.util.xml.exception.ParseException;
 import org.junit.Test;
 
 /**
- *
- * @version 1.0
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @version 1.0
  * @since Mar 16, 2014 7:47:32 PM
  */
 public class ExtractorCrawlerTest extends BaseConfigTest {

@@ -9,7 +9,6 @@
 package com.datatrees.crawler.core.processor;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:32:25 PM
@@ -84,28 +83,28 @@ public final class Constants {
     public static final String PAGE_REQUEST_CONTEXT_REDIRECT_URL     = "redirect_url";
     public static final String PAGE_REQUEST_CONTEXT_PAGE_TITLE       = "page_title";
     public static final String HBASE_URL_SEPARATOR                   = "\\r\\n\\r\\n";
-    public static final String PAYMENT_FROMAT_CONFIG    = "PAYMENT_FROMAT_CONFIG";
-    public static final String RMB_FROMAT_CONFIG        = "RMB_FROMAT_CONFIG";
-    public static final String REQUEST_PREFIX           = "REQUEST_PREFIX";
-    public static final String MATCHED_PAGE_EXTRACTORS  = "MATCHED_PAGE_EXTRACTORS";
-    public static final String BLACK_PAGE_EXTRACTOR_IDS = "BLACK_PAGE_EXTRACTOR_IDS";
+    public static final String PAYMENT_FROMAT_CONFIG                 = "PAYMENT_FROMAT_CONFIG";
+    public static final String RMB_FROMAT_CONFIG                     = "RMB_FROMAT_CONFIG";
+    public static final String REQUEST_PREFIX                        = "REQUEST_PREFIX";
+    public static final String MATCHED_PAGE_EXTRACTORS               = "MATCHED_PAGE_EXTRACTORS";
+    public static final String BLACK_PAGE_EXTRACTOR_IDS              = "BLACK_PAGE_EXTRACTOR_IDS";
     public static       String BODY_CHARSET_PATTERN                  = "<meta\\b[^>]*\\bcharset\\s*=\\s*['\"]?([-\\w.]+)";
     public static       String DEFAULT_DATE_PATTERN                  = "yyyy-MM-dd";
-    public static       String COOKIE                   = "cookie";
-    public static       String COOKIE_STRING            = "cookie_string";
-    public static       String ACCOUNT_KEY              = "account_key";
-    public static       String USERNAME                 = "username";
-    public static       String PASSWORD                 = "password";
-    public static       String TASK_UNIQUE_SIGN         = "TASK_UNIQUE_SIGN";
-    public static       String PAGE_CONTENT             = "pageContent";
-    public static       String PAGE_TEXT                = "pageText";
-    public static       String ATTACHMENT               = "attachment";
-    public static       String MAIL_DEFAULT_PREFIX      = "Mail_";
-    public static       String MAIL_SERVER_IP           = "mailServerIp";
-    public static       String THREAD_LOCAL_RESPONSE    = "THREAD_LOCAL_RESPONSE";
-    public static       String THREAD_LOCAL_LINKNODE    = "THREAD_LOCAL_LINKNODE";
-    public static       String WEBROBOT_CLIENT_DRIVER   = "WEBROBOT_CLIENT_DRIVER";
-    public static       String HTTP_STATE               = "HTTP_STATE";
+    public static       String COOKIE                                = "cookie";
+    public static       String COOKIE_STRING                         = "cookie_string";
+    public static       String ACCOUNT_KEY                           = "account_key";
+    public static       String USERNAME                              = "username";
+    public static       String PASSWORD                              = "password";
+    public static       String TASK_UNIQUE_SIGN                      = "TASK_UNIQUE_SIGN";
+    public static       String PAGE_CONTENT                          = "pageContent";
+    public static       String PAGE_TEXT                             = "pageText";
+    public static       String ATTACHMENT                            = "attachment";
+    public static       String MAIL_DEFAULT_PREFIX                   = "Mail_";
+    public static       String MAIL_SERVER_IP                        = "mailServerIp";
+    public static       String THREAD_LOCAL_RESPONSE                 = "THREAD_LOCAL_RESPONSE";
+    public static       String THREAD_LOCAL_LINKNODE                 = "THREAD_LOCAL_LINKNODE";
+    public static       String WEBROBOT_CLIENT_DRIVER                = "WEBROBOT_CLIENT_DRIVER";
+    public static       String HTTP_STATE                            = "HTTP_STATE";
     String HTTP_CLIENT_TYPE = "http_client_type";
 
     private Constants() {

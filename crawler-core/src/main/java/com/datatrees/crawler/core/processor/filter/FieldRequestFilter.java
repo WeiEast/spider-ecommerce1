@@ -10,7 +10,6 @@ package com.datatrees.crawler.core.processor.filter;
 
 /**
  * determinate current field need to request
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 4:45:53 PM

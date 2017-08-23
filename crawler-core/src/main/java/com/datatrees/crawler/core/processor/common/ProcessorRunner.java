@@ -17,7 +17,6 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 7:50:10 PM

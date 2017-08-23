@@ -15,7 +15,6 @@ import com.datatrees.crawler.core.processor.format.impl.CurrencyFormatImpl;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 31, 2014 2:51:31 PM

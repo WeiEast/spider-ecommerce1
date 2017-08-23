@@ -61,7 +61,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Push方式的Consumer实现
- *
  * @author shijia.wxr<vintage.wang@gmail.com>
  * @since 2013-6-15
  */
@@ -80,17 +79,17 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
     private final        Logger log                               = LoggerFactory.getLogger(DefaultMQPushConsumerImpl.class);
     private final DefaultMQPushConsumer defaultMQPushConsumer;
     // Rebalance实现
-    private final RebalanceImpl rebalanceImpl = new RebalancePushImpl(this);
+    private final RebalanceImpl                 rebalanceImpl          = new RebalancePushImpl(this);
     // 消息过滤 hook
-    private final ArrayList<FilterMessageHook> filterMessageHookList  = new ArrayList<FilterMessageHook>();
+    private final ArrayList<FilterMessageHook>  filterMessageHookList  = new ArrayList<FilterMessageHook>();
     // Consumer启动时间
-    private final long                         consumerStartTimestamp = System.currentTimeMillis();
+    private final long                          consumerStartTimestamp = System.currentTimeMillis();
     /**
      * 消费每条消息会回调
      */
     private final ArrayList<ConsumeMessageHook> consumeMessageHookList = new ArrayList<ConsumeMessageHook>();
     private final RPCHook rpcHook;
-    private       ServiceState  serviceState  = ServiceState.CREATE_JUST;
+    private ServiceState serviceState = ServiceState.CREATE_JUST;
     private MQClientInstance mQClientFactory;
     private PullAPIWrapper   pullAPIWrapper;
     // 是否暂停接收消息 suspend/resume
@@ -103,7 +102,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
     private OffsetStore           offsetStore;
     // 消费消息服务
     private ConsumeMessageService consumeMessageService;
-    private String consumeName;
+    private String                consumeName;
     private long flowControlTimes1 = 0;
     private long flowControlTimes2 = 0;
 

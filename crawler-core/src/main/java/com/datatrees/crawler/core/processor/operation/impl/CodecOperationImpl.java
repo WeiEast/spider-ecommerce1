@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * handle codec operation decode/encode etc..
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 27, 2014 12:30:43 PM
@@ -60,7 +59,6 @@ public class CodecOperationImpl extends Operation {
     }
 
     /**
-     *
      * @param orginal
      * @param cdType
      * @param handlType
@@ -94,13 +92,12 @@ public class CodecOperationImpl extends Operation {
     }
 
     /**
-     *
      * @param handlType
      * @param orginal
      * @param charset
      * @return
-     * @throws UnsupportedEncodingException
-     * @throws DecoderException
+     * @exception UnsupportedEncodingException
+     * @exception DecoderException
      */
     private String handlerURL(HandlingType handlType, String orginal, String charset) throws UnsupportedEncodingException, DecoderException {
         String result = orginal;
@@ -121,7 +118,6 @@ public class CodecOperationImpl extends Operation {
     }
 
     /**
-     *
      * @param handlType
      * @param orginal
      * @param charset
@@ -146,7 +142,6 @@ public class CodecOperationImpl extends Operation {
     }
 
     /**
-     *
      * @param handlType
      * @param orginal
      * @return

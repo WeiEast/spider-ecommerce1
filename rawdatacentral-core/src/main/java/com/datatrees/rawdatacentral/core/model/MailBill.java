@@ -9,7 +9,6 @@
 package com.datatrees.rawdatacentral.core.model;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年1月18日 下午6:06:52

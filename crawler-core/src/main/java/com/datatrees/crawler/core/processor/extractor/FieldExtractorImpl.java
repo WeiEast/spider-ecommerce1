@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * field exetractor should be parallel
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 1:45:17 PM
@@ -136,7 +135,6 @@ public class FieldExtractorImpl extends Processor {
      * process field extractor field extractor can have multi operation the order of operation is
      * serial field extractor it's self is parallel need PLUGIN_RESULT_MAP for plugin implement and
      * FIELDS_RESULT_MAP for field result map
-     *
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -276,7 +274,6 @@ public class FieldExtractorImpl extends Processor {
     }
 
     /**
-     *
      * @param url
      * @param request
      * @return
@@ -294,7 +291,6 @@ public class FieldExtractorImpl extends Processor {
     }
 
     /**
-     *
      * @return
      */
     private boolean needResolveUrl() {
@@ -302,7 +298,6 @@ public class FieldExtractorImpl extends Processor {
     }
 
     /**
-     *
      * @param content
      * @param encoding
      * @return
@@ -332,7 +327,6 @@ public class FieldExtractorImpl extends Processor {
     }
 
     /**
-     *
      * @param response
      * @return
      */

@@ -13,7 +13,6 @@ import com.datatrees.crawler.core.processor.common.exception.PluginException;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 2:14:42 PM

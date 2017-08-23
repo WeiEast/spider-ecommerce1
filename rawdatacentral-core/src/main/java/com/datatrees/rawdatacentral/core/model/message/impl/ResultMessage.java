@@ -11,7 +11,6 @@ package com.datatrees.rawdatacentral.core.model.message.impl;
 import java.util.HashMap;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年8月15日 上午2:43:21

@@ -9,7 +9,6 @@
 package com.datatrees.rawdatacentral.core.service;
 
 /**
- *
  * Created by zhouxinghai on 2017/6/30
  */
 public interface WebsiteService {

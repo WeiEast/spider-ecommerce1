@@ -16,7 +16,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 28, 2014 9:33:10 AM

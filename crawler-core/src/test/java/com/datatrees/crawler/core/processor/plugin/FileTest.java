@@ -16,7 +16,6 @@ import java.net.URL;
 import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.
  * @since Feb 19, 2014 5:30:29 PM

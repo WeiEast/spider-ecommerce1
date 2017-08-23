@@ -16,7 +16,6 @@ import java.security.Security;
 import java.util.Properties;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年4月22日 下午4:33:47

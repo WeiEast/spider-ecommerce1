@@ -12,7 +12,6 @@ import com.datatrees.crawler.core.domain.Cookie;
 import com.datatrees.crawler.core.domain.WebsiteAccount;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 2:14:42 PM

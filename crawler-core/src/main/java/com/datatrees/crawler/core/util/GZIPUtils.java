@@ -75,8 +75,7 @@ public class GZIPUtils {
 
     /**
      * Returns an gunzipped copy of the input array.
-     *
-     * @throws IOException if the input cannot be properly decompressed
+     * @exception IOException if the input cannot be properly decompressed
      */
     public static final byte[] unzip(byte[] in) throws IOException {
         // decompress using GZIPInputStream

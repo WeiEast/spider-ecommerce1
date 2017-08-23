@@ -11,13 +11,13 @@ import com.datatrees.common.util.PatternUtils;
  */
 public class Proxy {
 
-    public final static Proxy LOCALNET = new Proxy("localhost", 3128);// use local
-    private static final String        proxyPattern = ("^([\\d]+\\.){3}[\\d]+:[\\d]+$");
+    public final static  Proxy  LOCALNET     = new Proxy("localhost", 3128);// use local
+    private static final String proxyPattern = ("^([\\d]+\\.){3}[\\d]+:[\\d]+$");
     private final String host;
     private final int    port;
     private final long   timestamp;
     // 代理共享数(用于子任务),默认为1
-    private              AtomicInteger shareCount   = new AtomicInteger(1);
+    private AtomicInteger shareCount = new AtomicInteger(1);
 
     public Proxy(String host, int port) {
         this.host = host;

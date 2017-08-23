@@ -9,7 +9,6 @@
 package com.datatrees.crawler.core.processor.format.unit;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 13, 2014 10:00:08 PM
@@ -99,10 +98,9 @@ public enum TimeUnit {
 
     /**
      * Equivalent to <tt>SECONDS.convert(duration, this)</tt>.
-     *
      * @param duration the duration
      * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would negatively
-     *         overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
+     * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      * @see #convert
      */
     public abstract long toSeconds(long duration);

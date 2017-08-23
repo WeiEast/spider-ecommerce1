@@ -14,7 +14,6 @@ import java.util.Map;
 import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月27日 下午2:55:43

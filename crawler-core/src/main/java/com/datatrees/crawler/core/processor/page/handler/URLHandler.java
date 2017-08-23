@@ -12,7 +12,6 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 
 /**
  * link node handler usage: collect url , extract host url from current url
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 17, 2014 10:34:27 AM
@@ -21,9 +20,8 @@ public interface URLHandler {
 
     /**
      * handle url from current request
-     *
-     * @param current current request url , contains meta info like page title , imdb etc 
-     * @param fetched current fetched url 
+     * @param current current request url , contains meta info like page title , imdb etc
+     * @param fetched current fetched url
      */
     public boolean handle(LinkNode current, LinkNode fetched);
 

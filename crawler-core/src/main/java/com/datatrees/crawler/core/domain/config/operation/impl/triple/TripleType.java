@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月21日 上午11:07:36

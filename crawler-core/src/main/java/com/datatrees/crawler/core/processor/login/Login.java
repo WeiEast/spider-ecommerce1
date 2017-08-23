@@ -28,14 +28,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 16, 2014 4:14:49 PM
  */
 public enum Login {
     INSTANCE;
-
     private static final Logger logger = LoggerFactory.getLogger(Login.class);
 
     public void doLogin(SearchProcessorContext context) throws Exception {
@@ -108,9 +106,8 @@ public enum Login {
 
     /**
      * server login
-     *
      * @param context
-     * @throws Exception
+     * @exception Exception
      */
     public void doServerLogin(SearchProcessorContext context) throws Exception {
         Cookie cookie;
@@ -134,9 +131,8 @@ public enum Login {
 
     /**
      * client login use Random account
-     *
      * @param context
-     * @throws Exception
+     * @exception Exception
      */
     private void doClientLogin(SearchProcessorContext context) throws Exception {
         LoginConfig loginConfig = context.getLoginConfig();
