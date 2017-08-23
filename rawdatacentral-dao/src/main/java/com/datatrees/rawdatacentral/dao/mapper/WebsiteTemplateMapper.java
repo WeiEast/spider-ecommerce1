@@ -1,12 +1,14 @@
 package com.datatrees.rawdatacentral.dao.mapper;
 
+import java.util.List;
+
 import com.datatrees.rawdatacentral.domain.model2.WebsiteTemplate;
 import com.datatrees.rawdatacentral.domain.model2.example.WebsiteTemplateExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
- /** create by system from table t_website_template()  */
+/** create by system from table t_website_template() */
 public interface WebsiteTemplateMapper {
+
     long countByExample(WebsiteTemplateExample example);
 
     int deleteByPrimaryKey(Integer templateId);

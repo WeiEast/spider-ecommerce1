@@ -4,20 +4,18 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 /**
  * 电信营业厅
  * 安卓App
  * 请求数据和响应页面的加解密工具
- *
  * Created by guimeichao on 17/8/17.
  */
 public class EncryptUtilsForChina10000App {
 
-    private static final String paramKey = "1234567`90koiuyhgtfrdewsaqaqsqde";
+    private static final String paramKey       = "1234567`90koiuyhgtfrdewsaqaqsqde";
     private static final String cipherInstance = "DESede/CBC/PKCS5Padding";
-    private static final String algorithmName = "DESede";
+    private static final String algorithmName  = "DESede";
     private static final String encryptCharset = "UTF-8";
 
     public static String encrypt(String paramString) throws Exception {

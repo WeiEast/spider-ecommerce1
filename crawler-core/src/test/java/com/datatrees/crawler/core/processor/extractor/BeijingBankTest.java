@@ -9,17 +9,16 @@ import java.util.Map;
  */
 public class BeijingBankTest extends BaseExtractorTest {
 
-  @Override
-  protected String getConfigFile() {
-    return "beijingbank/BeijingBankExtractor.xml";
-  }
+    @Override
+    protected String getConfigFile() {
+        return "beijingbank/BeijingBankExtractor.xml";
+    }
 
-  @Override
-  protected void addSimpleExtractSource(Map<String, Object> map) throws Exception {
-    map.put("subject", "北京银行账单");
-    // map.put("pageContent", this.getPageContent("src/test/resources/ABC/page_201502.html"));
-    map.put("pageContent", this.getPageContent("/Users/luyuan/Downloads/2/pageContent"));
-  }
-
+    @Override
+    protected void addSimpleExtractSource(Map<String, Object> map) throws Exception {
+        map.put("subject", "北京银行账单");
+        // map.put("pageContent", this.getPageContent("src/test/resources/ABC/page_201502.html"));
+        map.put("pageContent", this.getPageContent("/Users/luyuan/Downloads/2/pageContent"));
+    }
 
 }

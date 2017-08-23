@@ -12,6 +12,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Tag("operation")
 @Path(".[@type='jsonpath']")
 public class JsonPathOperation extends AbstractOperation {
+
     /**
      *
      */
@@ -35,5 +36,5 @@ public class JsonPathOperation extends AbstractOperation {
     public String toString() {
         return "JsonPathOperation [jsonpath=" + jsonpath + "]";
     }
-    
+
 }

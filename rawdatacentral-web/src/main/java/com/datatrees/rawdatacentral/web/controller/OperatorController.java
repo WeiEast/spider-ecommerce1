@@ -1,9 +1,14 @@
 package com.datatrees.rawdatacentral.web.controller;
 
+import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Map;
+
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -20,11 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * Created by zhouxinghai on 2017/7/5.
  */
@@ -32,11 +32,9 @@ import java.util.Map;
 @RequestMapping("/operator")
 public class OperatorController {
 
-    private static final Logger    logger = LoggerFactory.getLogger(OperatorController.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(OperatorController.class);
     @Resource
     private CrawlerOperatorService crawlerOperatorService;
-
     @Resource
     private RedisService           redisService;
 
@@ -66,8 +64,7 @@ public class OperatorController {
             headers.add("Content-Disposition", "inline");
             headers.add("Pragma", "no-cache");
             headers.add("Expires", "0");
-            return ResponseEntity.ok().headers(headers).contentLength(bytes.length).contentType(MediaType.IMAGE_JPEG)
-                .body(new InputStreamResource(new ByteArrayInputStream(bytes)));
+            return ResponseEntity.ok().headers(headers).contentLength(bytes.length).contentType(MediaType.IMAGE_JPEG).body(new InputStreamResource(new ByteArrayInputStream(bytes)));
 
         }
         return null;
@@ -90,8 +87,7 @@ public class OperatorController {
 
     @RequestMapping("/openPage")
     public Object openPage(Long taskId, String url, String type) throws IOException {
-        return TaskHttpClient.create(taskId, "openpage", RequestType.valueOf(type.trim()), "remark01").setFullUrl(url)
-            .invoke().getPageContent();
+        return TaskHttpClient.create(taskId, "openpage", RequestType.valueOf(type.trim()), "remark01").setFullUrl(url).invoke().getPageContent();
     }
 
     @RequestMapping("/deleteRedisResult")
@@ -103,10 +99,10 @@ public class OperatorController {
     }
 
     @RequestMapping("/mappingPluginFile")
-    public Object mappingPluginFile(String websiteName,String fileName) throws IOException {
+    public Object mappingPluginFile(String websiteName, String fileName) throws IOException {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         CheckUtils.checkNotBlank(fileName, "fileName is empty");
-        redisService.saveString(RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getRedisKey(websiteName),fileName,RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeout(),RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeUnit());
+        redisService.saveString(RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getRedisKey(websiteName), fileName, RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeout(), RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeUnit());
         return new HttpResult<>().success();
     }
 

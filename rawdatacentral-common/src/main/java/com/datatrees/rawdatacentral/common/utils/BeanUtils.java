@@ -1,9 +1,9 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import java.lang.reflect.Field;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Field;
 
 /**
  * bean工具类
@@ -15,11 +15,10 @@ public class BeanUtils {
 
     /**
      * 将源数据复制到目标对象的父类上
-     *
      * @param source 源目标
-     * @param dist 目标对象
+     * @param dist   目标对象
      */
-    public static  <T> T copyToSuper(Object source, T dist) {
+    public static <T> T copyToSuper(Object source, T dist) {
         CheckUtils.checkNotNull(source, "source is null");
         CheckUtils.checkNotNull(dist, "dist is null");
         try {
@@ -53,9 +52,8 @@ public class BeanUtils {
 
     /**
      * 将源数据复制到目标对象的上
-     *
      * @param source 源目标
-     * @param dist 目标对象
+     * @param dist   目标对象
      */
     public static <T> T copy(Object source, T dist) {
         CheckUtils.checkNotNull(source, "source is null");

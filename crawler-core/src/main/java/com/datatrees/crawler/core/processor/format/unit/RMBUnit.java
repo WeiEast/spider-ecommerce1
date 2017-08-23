@@ -1,7 +1,7 @@
 package com.datatrees.crawler.core.processor.format.unit;
 
 public enum RMBUnit {
-	YUAN {
+    YUAN {
         @Override
         public double getConversion() {
             return 1;
@@ -19,7 +19,6 @@ public enum RMBUnit {
             return 0.01;
         }
     };
-   
 
     public abstract double getConversion();
 }

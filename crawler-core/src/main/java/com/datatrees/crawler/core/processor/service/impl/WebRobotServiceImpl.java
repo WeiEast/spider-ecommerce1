@@ -3,20 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.httpclient.Cookie;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
@@ -43,16 +37,21 @@ import com.datatrees.webrobot.driver.ClientDriverManager;
 import com.datatrees.webrobot.driver.WebRobotClientDriver;
 import com.datatrees.webrobot.webdriver.browser.BrowserType;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.httpclient.Cookie;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 7, 2014 7:32:15 PM
  */
 public class WebRobotServiceImpl extends ServiceBase {
-    private static final Logger log = LoggerFactory.getLogger(WebRobotServiceImpl.class);
-    private int retryCount = PropertiesConfiguration.getInstance().getInt("webRobot.retry.count", 3);
+
+    private static final Logger log        = LoggerFactory.getLogger(WebRobotServiceImpl.class);
+    private              int    retryCount = PropertiesConfiguration.getInstance().getInt("webRobot.retry.count", 3);
 
     @Override
     public void process(Request request, Response response) throws Exception {
@@ -96,8 +95,7 @@ public class WebRobotServiceImpl extends ServiceBase {
                 log.debug("perform output content : {} , url : {}", content, url);
                 ResponseUtil.setResponseContent(response, content);
                 RequestUtil.setContent(request, content);
-                if (context.getCookieConf() != null && context.getCookieConf().getScope() != null
-                        && context.getCookieConf().getScope() == CookieScope.USER_SESSION) {
+                if (context.getCookieConf() != null && context.getCookieConf().getScope() != null && context.getCookieConf().getScope() == CookieScope.USER_SESSION) {
                     actions = new ArrayList<AbstractAction>();
                     if (((BaseCookie) context.getCookieConf()).getCoexist()) {
                         actions.add(new GetCookieAction(true));

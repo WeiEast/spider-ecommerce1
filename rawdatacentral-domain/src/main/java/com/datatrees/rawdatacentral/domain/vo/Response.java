@@ -1,32 +1,27 @@
 package com.datatrees.rawdatacentral.domain.vo;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.io.Serializable;
 import java.util.Base64;
 import java.util.Map;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 
 public class Response implements Serializable {
 
     @JSONField(ordinal = 1)
     private Request             request;
-
     @JSONField(ordinal = 2)
     private int                 statusCode;
-
     @JSONField(ordinal = 3)
     private Map<String, String> header;
-
     @JSONField(ordinal = 4)
     private String              responseCookies;
-
     @JSONField(serialize = false)
     private byte[]              response;
-
     @JSONField(ordinal = 6)
-    private String              charsetName = "UTF-8";
+    private String charsetName = "UTF-8";
 
     public Response(Request request) {
         this.request = request;
@@ -35,10 +30,6 @@ public class Response implements Serializable {
     public Response(Request request, String charsetName) {
         this.request = request;
         this.charsetName = charsetName;
-    }
-
-    public void setRequest(Request request) {
-        this.request = request;
     }
 
     public String getCharsetName() {
@@ -51,6 +42,10 @@ public class Response implements Serializable {
 
     public Request getRequest() {
         return request;
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
     }
 
     public Map<String, String> getHeader() {

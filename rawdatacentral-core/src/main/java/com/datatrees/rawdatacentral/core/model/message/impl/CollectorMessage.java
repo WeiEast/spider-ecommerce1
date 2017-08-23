@@ -3,46 +3,40 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.core.model.message.impl;
 
-import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
+package com.datatrees.rawdatacentral.core.model.message.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
+
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月28日 下午4:14:22
  */
 public class CollectorMessage extends MessageInfo {
-    private transient String    cookie;
-    private String              websiteName;
-    private long                taskId;
-    private String              accountNo;
 
-    private String              serialNum;
-    private String              endURL;
-    private boolean             needDuplicate;
-
-    private boolean             level1Status;                            // 标识本网站是否需要发送一级状态
-
-    private boolean             loginCheckIgnore;
-
+    private transient String  cookie;
+    private           String  websiteName;
+    private           long    taskId;
+    private           String  accountNo;
+    private           String  serialNum;
+    private           String  endURL;
+    private           boolean needDuplicate;
+    private           boolean level1Status;                            // 标识本网站是否需要发送一级状态
+    private           boolean loginCheckIgnore;
     private Map<String, Object> property = new HashMap<String, Object>();
     private Map<String, Object> sendBack = new HashMap<String, Object>();
-
-    private boolean             finish;
-
+    private boolean finish;
     /**
      * 总共运行次数
      */
-    private long                totalRun = 0;
+    private long totalRun = 0;
 
     public long getTotalRun() {
         return totalRun;
@@ -189,6 +183,10 @@ public class CollectorMessage extends MessageInfo {
         return sendBack;
     }
 
+    public void setSendBack(Map<String, Object> sendBack) {
+        this.sendBack = sendBack;
+    }
+
     public long getTaskId() {
         return taskId;
     }
@@ -199,13 +197,12 @@ public class CollectorMessage extends MessageInfo {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "CollectorMessage [ websiteName=" + websiteName + ", taskId=" + taskId + ", serialNum=" + serialNum
-               + ", endURL=" + endURL + ", cookie=" + cookie + "]";
+        return "CollectorMessage [ websiteName=" + websiteName + ", taskId=" + taskId + ", serialNum=" + serialNum + ", endURL=" + endURL + ", cookie=" + cookie + "]";
     }
 
     /**
@@ -220,10 +217,6 @@ public class CollectorMessage extends MessageInfo {
      */
     public void setAccountNo(String accountNo) {
         this.accountNo = accountNo;
-    }
-
-    public void setSendBack(Map<String, Object> sendBack) {
-        this.sendBack = sendBack;
     }
 
 }

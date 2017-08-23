@@ -7,11 +7,11 @@ import java.util.List;
  * Created by zhouxinghai on 2017/6/23.
  */
 public class FieldInitSetting {
+
     /**
      * 字段业务属性FieldBizType
      */
     private String       type;
-
     /**
      * 依赖业务属性FieldBizType
      */

@@ -1,25 +1,25 @@
 package com.datatrees.rawdatacentral.core.service.impl;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
+import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by zhouxinghai on 2017/5/11.
@@ -28,17 +28,14 @@ import java.util.Map;
 public class MessageServiceImpl implements MessageService {
 
     private static final Logger logger               = LoggerFactory.getLogger(MessageServiceImpl.class);
-
     /**
      * 默认格式格式化成JSON后发送的字符编码
      */
     private static final String DEFAULT_CHARSET_NAME = "UTF-8";
-
     @Resource
-    private MQProducer          producer;
-
+    private MQProducer   producer;
     @Resource
-    private RedisService        redisService;
+    private RedisService redisService;
 
     @Override
     public boolean sendTaskLog(Long taskId, String msg, String errorDetail) {
@@ -101,17 +98,14 @@ public class MessageServiceImpl implements MessageService {
                 }
                 SendResult sendResult = producer.send(mqMessage);
                 if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                    logger.info("send message success topic={},content={},retry={},charsetName={}", topic,
-                        content.length() > 100 ? content.substring(0, 100) : content, retry, charsetName);
+                    logger.info("send message success topic={},content={},retry={},charsetName={}", topic, content.length() > 100 ? content.substring(0, 100) : content, retry, charsetName);
                     return true;
                 }
             } catch (Exception e) {
-                logger.info("send message error topic={},content={},retry={},charsetName={}", topic, content, retry,
-                    charsetName, e);
+                logger.info("send message error topic={},content={},retry={},charsetName={}", topic, content, retry, charsetName, e);
             }
         } while (retry++ <= maxRetry);
-        logger.error("send message fail topic={},content={},retry={},maxRetry={},charsetName={}", topic, content, retry,
-            maxRetry, charsetName);
+        logger.error("send message fail topic={},content={},retry={},maxRetry={},charsetName={}", topic, content, retry, maxRetry, charsetName);
         return false;
     }
 

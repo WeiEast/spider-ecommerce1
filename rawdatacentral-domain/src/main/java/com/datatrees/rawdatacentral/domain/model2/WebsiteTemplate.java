@@ -3,24 +3,20 @@ package com.datatrees.rawdatacentral.domain.model2;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table t_website_template()  */
+/** create by system from table t_website_template() */
 public class WebsiteTemplate implements Serializable {
-    /** bank Id */
-    private Integer templateId;
-
-    /**  */
-    private String name;
-
-    /**  */
-    private Date createdAt;
-
-    /**  */
-    private Date updatedAt;
-
-    /**  */
-    private String initSetting;
 
     private static final long serialVersionUID = 1L;
+    /** bank Id */
+    private Integer templateId;
+    /**  */
+    private String  name;
+    /**  */
+    private Date    createdAt;
+    /**  */
+    private Date    updatedAt;
+    /**  */
+    private String  initSetting;
 
     public Integer getTemplateId() {
         return templateId;

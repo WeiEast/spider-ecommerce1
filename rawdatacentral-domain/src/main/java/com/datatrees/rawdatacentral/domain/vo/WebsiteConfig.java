@@ -3,15 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
+
 package com.datatrees.rawdatacentral.domain.vo;
 
 import java.util.Date;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年11月7日 下午3:54:23
@@ -19,75 +18,52 @@ import java.util.Date;
 public class WebsiteConfig {
 
     private static final long serialVersionUID = 1L;
-
     /**  */
     private Integer websiteId;
-
     /** 1:mail,2:operator,3:ecommerce，4:bank,5:internal */
-    private String websiteType;
-
+    private String  websiteType;
     /** website name */
-    private String websiteName;
-
+    private String  websiteName;
     /** website domain */
-    private String websiteDomain;
-
+    private String  websiteDomain;
     /** 0:false,1:true */
     private Boolean isenabled;
-
     /** 登录过程中自定义提示 */
-    private String loginTip;
-
+    private String  loginTip;
     /** 验证码提示 */
-    private String verifyTip;
-
+    private String  verifyTip;
     /** 登录页初始化超时 */
     private Integer initTimeout;
-
     /** 验证码等待时间 */
     private Integer codeWaitTime;
-
     /** 登录超时 */
     private Integer loginTimeout;
-
     /** 重置类型：SMS|WEB */
-    private String resetType;
-
+    private String  resetType;
     /** 短信模板 */
-    private String smsTemplate;
-
+    private String  smsTemplate;
     /** 短信接收方 */
-    private String smsReceiver;
-
+    private String  smsReceiver;
     /** 网页方式重置的url */
-    private String resetURL;
-
+    private String  resetURL;
     /** 密码重置提示 */
-    private String resetTip;
-
+    private String  resetTip;
     /**  */
-    private Date createdAt;
-
+    private Date    createdAt;
     /**  */
-    private Date updatedAt;
-
+    private Date    updatedAt;
     /**  */
     private Boolean simulate;
-
     /**  */
     private Integer templateId;
-
     /**  */
     private Integer websiteConfId;
-
     /** extractor config */
-    private String extractorConfig;
-
+    private String  extractorConfig;
     /** search config */
-    private String searchConfig;
-
+    private String  searchConfig;
     /**  */
-    private String initSetting;
+    private String  initSetting;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

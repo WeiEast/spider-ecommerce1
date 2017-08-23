@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 @Deprecated
 public class Arithmetic {
+
     public static double arithmetic(String exp) {
         String result = parseExp(exp).replaceAll("[\\[\\]]", "");
         return Double.parseDouble(result);
@@ -13,7 +14,6 @@ public class Arithmetic {
 
     /**
      * Analytical calculation of four arithmetic expressions, eg：2+((3+4)*2-22)/2*3
-     * 
      * @param expression
      * @return
      */
@@ -62,7 +62,6 @@ public class Arithmetic {
 
     /**
      * To calculate the minimum unit of four arithmetic expressions (two numbers)
-     * 
      * @param exp
      * @return
      */

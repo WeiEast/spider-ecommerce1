@@ -10,13 +10,13 @@ import java.util.Map;
  */
 public class Cookie implements Serializable {
 
-    private String              domain;
-    private String              path;
-    private boolean             secure;
-    private int                 version;
-    private Date                expiryDate;
-    private String              name;
-    private String              value;
+    private String  domain;
+    private String  path;
+    private boolean secure;
+    private int     version;
+    private Date    expiryDate;
+    private String  name;
+    private String  value;
     private Map<String, String> attribs = new HashMap<>();
 
     public String getDomain() {

@@ -1,24 +1,24 @@
 package com.datatrees.crawler.core.processor.extractor;
 
-import com.datatrees.crawler.core.processor.BaseConfigTest;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.processor.BaseConfigTest;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.plugin.SimplePluginManager;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class OperatorExtractorTest extends BaseConfigTest {
+
     private FileWapper fileInit(String path) {
         FileWapper file = new FileWapper();
         file.setCharSet("utf-8");
@@ -35,8 +35,7 @@ public class OperatorExtractorTest extends BaseConfigTest {
             ExtractorProcessorContext context = getExtractorProcessorContext(conf, "ali");
             context.setPluginManager(new SimplePluginManager());
             Map<String, Object> mailMap = new HashMap<String, Object>();
-            mailMap.put("pageContent", this
-                    .fileInit("/Users/wangcheng/Downloads/pageContent 15.html"));
+            mailMap.put("pageContent", this.fileInit("/Users/wangcheng/Downloads/pageContent 15.html"));
             mailMap.put("url", "http://iservice.10010.com/e3/static/query/accountBalance/search\"type=onlyAccount");
             ExtractorRepuest request = ExtractorRepuest.build().setProcessorContext(context);
             request.setInput(mailMap);
@@ -55,8 +54,6 @@ public class OperatorExtractorTest extends BaseConfigTest {
             Assert.fail("not well format config!");
         }
     }
-
-
 
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})

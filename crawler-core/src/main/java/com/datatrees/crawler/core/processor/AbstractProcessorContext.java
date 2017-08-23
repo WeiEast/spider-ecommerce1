@@ -6,9 +6,9 @@
  * <p>
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor;
 
-import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +16,7 @@ import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.core.processor.common.resource.PluginManager;
+import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.crawler.core.util.SynchronizedMap;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
@@ -27,16 +28,14 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class AbstractProcessorContext {
 
-    protected final Website website;
-    protected final Map<String, Object> context;
+    protected final Website                     website;
+    protected final Map<String, Object>         context;
     protected final Map<String, AbstractPlugin> pluginMaps;
-    protected final Map<String, Object> statusContext;
-    protected final Map<Thread, Object> threadContext;
-
-    private final ProcessorResult processorResult;
-    private final ProcessorResult processorLog;
-
-    private PluginManager pluginManager;
+    protected final Map<String, Object>         statusContext;
+    protected final Map<Thread, Object>         threadContext;
+    private final   ProcessorResult             processorResult;
+    private final   ProcessorResult             processorLog;
+    private         PluginManager               pluginManager;
 
     public AbstractProcessorContext(Website website) {
         Preconditions.checkNotNull(website, "input for website should not be empty!");
@@ -50,7 +49,6 @@ public abstract class AbstractProcessorContext {
     }
 
     public abstract void init();
-
 
     /**
      * @return the website
@@ -102,10 +100,8 @@ public abstract class AbstractProcessorContext {
         return processorLog;
     }
 
-
     /**
      * 给context赋值
-     *
      * @param key
      * @param value
      * @return
@@ -116,7 +112,6 @@ public abstract class AbstractProcessorContext {
 
     /**
      * 给context赋值
-     *
      * @param key
      * @param value
      * @return
@@ -129,10 +124,8 @@ public abstract class AbstractProcessorContext {
         context.put(key, String.valueOf(value));
     }
 
-
     /**
      * 从context取值
-     *
      * @param key
      * @return
      */
@@ -149,7 +142,6 @@ public abstract class AbstractProcessorContext {
 
     /**
      * 从context取值
-     *
      * @param key
      * @return
      */
@@ -166,7 +158,6 @@ public abstract class AbstractProcessorContext {
 
     /**
      * 从context取值
-     *
      * @param key
      * @return
      */
@@ -189,7 +180,7 @@ public abstract class AbstractProcessorContext {
         this.pluginManager = pluginManager;
     }
 
-    public PluginWrapper createPluginWrapper(AbstractPlugin plugin){
+    public PluginWrapper createPluginWrapper(AbstractPlugin plugin) {
         return getPluginManager().getPlugin(getWebsiteName(), plugin);
     }
 

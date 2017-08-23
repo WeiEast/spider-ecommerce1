@@ -1,5 +1,9 @@
 package com.datatrees.rawdatacentral.core.message;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.alibaba.rocketmq.client.consumer.MQPushConsumer;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -13,22 +17,17 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 public abstract class AbstractRocketMessageListener<T> implements MessageListenerConcurrently {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractRocketMessageListener.class);
-    private MQPushConsumer      mqConsumer;
-    private String              topicJson;
+    private MQPushConsumer mqConsumer;
+    private String         topicJson;
 
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext arg1) {
         MessageExt message = msgs.get(0);
         long startTime = System.currentTimeMillis();
-        logger.info("receive message: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(),
-            message.getTags(), new String(message.getBody()));
+        logger.info("receive message: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()));
         try {
             T convertResult = null;
             try {
@@ -39,22 +38,16 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
                     ((MessageInfo) convertResult).setBornTimestamp(message.getBornTimestamp());
                 }
             } catch (Exception e) {
-                logger.error("messageConvert error: msgId={},topic={},tags={},body={}", message.getMsgId(),
-                    message.getTopic(), message.getTags(), new String(message.getBody()), e);
+                logger.error("messageConvert error: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()), e);
             }
             if (convertResult != null) {
                 process(convertResult);
             } else {
-                logger.warn("empty msg: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(),
-                    message.getTags(), new String(message.getBody()));
+                logger.warn("empty msg: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()));
             }
-            logger.info("process message success: useTime={},msgId={},topic={},tags={},body={}",
-                DateUtils.getUsedTime(startTime,System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(),
-                new String(message.getBody()));
+            logger.info("process message success: useTime={},msgId={},topic={},tags={},body={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()));
         } catch (Exception e) {
-            logger.error("process message error: useTime={},msgId={},topic={},tags={},body={}",
-                DateUtils.getUsedTime(startTime,System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(),
-                new String(message.getBody()), e);
+            logger.error("process message error: useTime={},msgId={},topic={},tags={},body={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()), e);
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
@@ -68,9 +61,7 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
             logger.error("params init error!");
             throw new RuntimeException("params init error!");
         }
-        Map<String, String> topicMap = (Map<String, String>) GsonUtils.fromJson(topicJson,
-            new TypeToken<Map<String, String>>() {
-            }.getType());
+        Map<String, String> topicMap = (Map<String, String>) GsonUtils.fromJson(topicJson, new TypeToken<Map<String, String>>() {}.getType());
         logger.debug("listener topicJson is {}", topicJson);
         for (Entry<String, String> entry : topicMap.entrySet()) {
             mqConsumer.subscribe(entry.getKey(), entry.getValue());

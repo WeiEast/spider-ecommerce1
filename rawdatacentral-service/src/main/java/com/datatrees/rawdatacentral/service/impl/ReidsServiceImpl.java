@@ -1,11 +1,14 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import org.apache.commons.lang3.StringUtils;
@@ -15,24 +18,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ReidsServiceImpl implements RedisService {
-    private static final Logger logger = LoggerFactory.getLogger(ReidsServiceImpl.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(ReidsServiceImpl.class);
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-
     @Resource
     private RedisTemplate       redisTemplate;
-
     /**
      * 默认超时时间(单位:秒),默认1小时
      */
@@ -144,16 +138,13 @@ public class ReidsServiceImpl implements RedisService {
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
                 if (stringRedisTemplate.hasKey(key)) {
                     String value = stringRedisTemplate.opsForValue().get(key);
-                    logger.info("getString success,useTime={}, key={}",
-                        DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
+                    logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
                     return value;
                 }
             } while (System.currentTimeMillis() <= endTime);
-            logger.warn("getString fail,useTime={}, key={}",
-                DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
+            logger.warn("getString fail,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
         } catch (Exception e) {
-            logger.error("getString error,useTime={}, key={}",
-                DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
+            logger.error("getString error,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
         }
         return null;
     }
@@ -186,16 +177,13 @@ public class ReidsServiceImpl implements RedisService {
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
                 if (stringRedisTemplate.hasKey(key)) {
                     String value = stringRedisTemplate.opsForList().rightPop(key);
-                    logger.info("rightPop success,useTime={}, key={}",
-                        DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
+                    logger.info("rightPop success,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
                     return value;
                 }
             } while (System.currentTimeMillis() <= endTime);
-            logger.warn("rightPop fail,useTime={},key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()),
-                key);
+            logger.warn("rightPop fail,useTime={},key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
         } catch (Exception e) {
-            logger.error("rightPop error,useTime={},key={}",
-                DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
+            logger.error("rightPop error,useTime={},key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
         }
         return null;
     }
@@ -239,7 +227,7 @@ public class ReidsServiceImpl implements RedisService {
             if (StringUtils.isBlank(key) || null == list) {
                 throw new RuntimeException("saveToList invalid param key or value");
             }
-            if(list.isEmpty()){
+            if (list.isEmpty()) {
                 logger.info("saveToList success key={},list is empty", key);
                 return true;
             }
@@ -264,8 +252,7 @@ public class ReidsServiceImpl implements RedisService {
         //TODO加入事物控制
         saveToList(result.getGroupKey(), json, defaultTimeOut, TimeUnit.SECONDS);
         saveString(result.getDirectiveKey(), json, defaultTimeOut, TimeUnit.SECONDS);
-        logger.info("saveDirectiveResult success,groupKey={},directiveKey={},directiveId={}", result.getGroupKey(),
-            result.getDirectiveKey(), directiveId);
+        logger.info("saveDirectiveResult success,groupKey={},directiveKey={},directiveId={}", result.getGroupKey(), result.getDirectiveKey(), directiveId);
         return directiveId;
     }
 
@@ -291,8 +278,7 @@ public class ReidsServiceImpl implements RedisService {
         String value = rightPop(groupKey, timeout, timeUnit);
         if (StringUtils.isNotBlank(value)) {
             logger.info("getNextDirectiveResult success groupKey={}", groupKey);
-            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
-            });
+            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {});
         }
         logger.info("getNextDirectiveResult fail groupKey={}", groupKey);
         return null;
@@ -303,8 +289,7 @@ public class ReidsServiceImpl implements RedisService {
         String value = getString(directiveKey, timeout, timeUnit);
         if (StringUtils.isNoneBlank(value)) {
             logger.info("getDirectiveResult success directiveKey={}", directiveKey);
-            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
-            });
+            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {});
         }
         logger.info("getDirectiveResult fail directiveKey={}", directiveKey);
         return null;
@@ -340,15 +325,13 @@ public class ReidsServiceImpl implements RedisService {
 
     @Override
     public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Object value) {
-        cache(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(),
-            redisKeyPrefixEnum.getTimeUnit());
+        cache(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
 
     }
 
     @Override
     public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object value) {
-        cache(redisKeyPrefixEnum.getRedisKey(), value, redisKeyPrefixEnum.getTimeout(),
-            redisKeyPrefixEnum.getTimeUnit());
+        cache(redisKeyPrefixEnum.getRedisKey(), value, redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
     }
 
     @Override
@@ -376,8 +359,7 @@ public class ReidsServiceImpl implements RedisService {
     public Boolean lock(Object postfix) {
         String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(postfix.toString());
         if (stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "locked")) {
-            stringRedisTemplate.expire(lockKey, RedisKeyPrefixEnum.LOCK.getTimeout(),
-                RedisKeyPrefixEnum.LOCK.getTimeUnit());
+            stringRedisTemplate.expire(lockKey, RedisKeyPrefixEnum.LOCK.getTimeout(), RedisKeyPrefixEnum.LOCK.getTimeUnit());
             return true;
         }
         return false;

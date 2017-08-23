@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.search;
 
 import java.io.Serializable;
@@ -21,7 +21,6 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 5:05:45 PM
@@ -33,18 +32,15 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
      *
      */
     private static final long serialVersionUID = -7796504114576595157L;
-    private SearchType type;
-    private Integer maxDepth;
-    private Request request;
+    private SearchType               type;
+    private Integer                  maxDepth;
+    private Request                  request;
     private List<SearchSequenceUnit> searchSequence;
-    private AbstractPlugin plugin;
-
-    private List<String> resultTagList;
-
-    private Boolean autoStart;
-    private Integer threadCount;
-    private Integer waitIntervalMillis;
-
+    private AbstractPlugin           plugin;
+    private List<String>             resultTagList;
+    private Boolean                  autoStart;
+    private Integer                  threadCount;
+    private Integer                  waitIntervalMillis;
 
     public SearchTemplateConfig() {
         super();
@@ -52,18 +48,15 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
         resultTagList = new ArrayList<String>();
     }
 
-
     @ChildTag("result-tag-list/result-tag")
     public List<String> getResultTagList() {
         return Collections.unmodifiableList(resultTagList);
     }
 
-
     @Node("result-tag-list/result-tag/text()")
     public void setResultTagList(String resultTag) {
         this.resultTagList.add(resultTag);
     }
-
 
     @Attr("thread-count")
     public Integer getThreadCount() {
@@ -74,7 +67,6 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
     public void setThreadCount(Integer threadCount) {
         this.threadCount = threadCount;
     }
-
 
     @Attr("auto-start")
     public Boolean getAutoStart() {
@@ -156,6 +148,5 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
     public String toString() {
         return "SearchTemplateConfig [id=" + getId() + " ,type=" + type + ", maxDepth=" + maxDepth + ", autoStart=" + autoStart + "]";
     }
-
 
 }

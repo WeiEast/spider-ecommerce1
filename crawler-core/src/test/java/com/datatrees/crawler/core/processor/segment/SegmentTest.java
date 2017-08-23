@@ -3,20 +3,14 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.segment;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
@@ -27,19 +21,21 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
-
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 25, 2014 10:41:32 AM
  */
 public class SegmentTest extends BaseConfigTest {
 
-    private static final Logger log = LoggerFactory.getLogger(SegmentTest.class);
-
-    private static SearchProcessorContext config = null;
+    private static final Logger                 log    = LoggerFactory.getLogger(SegmentTest.class);
+    private static       SearchProcessorContext config = null;
 
     @BeforeClass
     public static void init() {
@@ -62,9 +58,7 @@ public class SegmentTest extends BaseConfigTest {
             Request request = new Request("xxx");
             Response response = Response.build();
             segmentBase.invoke(request, response);
-            List<Map<String, Object>> resultList =
-                    (List<Map<String, Object>>) response
-                            .getAttribute(Constants.SEGMENTS_RESULTS);
+            List<Map<String, Object>> resultList = (List<Map<String, Object>>) response.getAttribute(Constants.SEGMENTS_RESULTS);
             log.info("result size:\t" + resultList);
             for (Map<String, Object> map : resultList) {
 
@@ -75,7 +69,6 @@ public class SegmentTest extends BaseConfigTest {
             e.printStackTrace();
         }
     }
-
 
     @Test
     public void testSearchSegment() {
@@ -92,8 +85,7 @@ public class SegmentTest extends BaseConfigTest {
         try {
             SegmentBase segmentBase = ProcessorFactory.getSegment(segment);
             segmentBase.invoke(req, resp);
-            List<Map<String, Object>> resultList =
-                    (List<Map<String, Object>>) resp.getAttribute(Constants.SEGMENTS_RESULTS);
+            List<Map<String, Object>> resultList = (List<Map<String, Object>>) resp.getAttribute(Constants.SEGMENTS_RESULTS);
             log.info("result size:\t" + resultList.size());
             for (Map<String, Object> map : resultList) {
 

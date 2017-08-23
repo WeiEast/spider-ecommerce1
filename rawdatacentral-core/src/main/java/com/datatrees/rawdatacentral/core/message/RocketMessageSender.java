@@ -2,19 +2,18 @@ package com.datatrees.rawdatacentral.core.message;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.message.MessageSender;
 import com.datatrees.common.util.GsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RocketMessageSender implements MessageSender<Object> {
-    private static final Logger logger = LoggerFactory.getLogger(RocketMessageSender.class);
 
-    private MQProducer producer;
+    private static final Logger logger = LoggerFactory.getLogger(RocketMessageSender.class);
+    private MQProducer     producer;
     private MessageFactory factory;
 
     public MessageFactory getFactory() {

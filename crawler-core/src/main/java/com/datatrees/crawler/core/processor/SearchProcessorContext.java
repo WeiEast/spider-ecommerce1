@@ -3,25 +3,12 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.Website;
@@ -45,43 +32,36 @@ import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.page.DummyPage;
 import com.datatrees.webrobot.driver.WebRobotClientDriver;
 import com.google.common.base.Preconditions;
-
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 7, 2014 2:14:19 PM
  */
 public class SearchProcessorContext extends AbstractProcessorContext {
-    private static final Logger log = LoggerFactory.getLogger(SearchProcessorContext.class);
-    private ProxyManager proxyManager;
-    private LoginResource loginResource;
 
-
-    private final Map<SearchTemplateConfig, Map<Integer, List<SearchSequenceUnit>>> depthPageMap = new HashMap<>();
-    private final Map<SearchTemplateConfig, Map<String, SearchSequenceUnit>> pathPageMap = new HashMap<>();
-    private final Map<String, SearchTemplateConfig> searchTemplateConfigMap = new HashMap<>();
-    private final Map<SearchType, List<SearchTemplateConfig>> searchTemplateConfigListMap = new HashMap<>();
+    private static final Logger                                                            log                         = LoggerFactory.getLogger(SearchProcessorContext.class);
+    private final        Map<SearchTemplateConfig, Map<Integer, List<SearchSequenceUnit>>> depthPageMap                = new HashMap<>();
+    private final        Map<SearchTemplateConfig, Map<String, SearchSequenceUnit>>        pathPageMap                 = new HashMap<>();
+    private final        Map<String, SearchTemplateConfig>                                 searchTemplateConfigMap     = new HashMap<>();
+    private final        Map<SearchType, List<SearchTemplateConfig>>                       searchTemplateConfigListMap = new HashMap<>();
     // page id ===> page
-    private final Map<String, Page> pageMap = new HashMap<String, Page>();
-
-    private String webServiceUrl;
-
-    private Proxy proxyConf;
-
+    private final        Map<String, Page>                                                 pageMap                     = new HashMap<String, Page>();
+    private ProxyManager   proxyManager;
+    private LoginResource  loginResource;
+    private String         webServiceUrl;
+    private Proxy          proxyConf;
     private AbstractCookie cookieConf;
-
-    private Login.Status status;
-
-    private Map<String, String> defaultHeader = new HashMap<String, String>();
-
-    private Map<Page, Integer> pageVisitCountMap = new HashMap<Page, Integer>();
-
-    private boolean loginCheckIgnore;
-
+    private Login.Status   status;
+    private Map<String, String> defaultHeader     = new HashMap<String, String>();
+    private Map<Page, Integer>  pageVisitCountMap = new HashMap<Page, Integer>();
+    private boolean              loginCheckIgnore;
     private WebRobotClientDriver webRobotClientDriver;
-
 
     /**
      * @param website
@@ -112,9 +92,8 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         }
     }
 
-
     /**
-     * 
+     *
      */
     public void init() {
         // init search template map
@@ -152,7 +131,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
                 pages.add(searchSequenceUnit);
             }
         }
-
 
         // init page Map
         List<Page> pageList = website.getSearchConfig().getPageList();
@@ -201,14 +179,12 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return website.getSearchConfig();
     }
 
-
     public ProxyManager getProxyManager() {
         return proxyManager;
     }
 
     /**
      * wrapper for proxy manager with scope states
-     * 
      * @param proxyManager
      */
     public void setProxyManager(ProxyManager proxyManager) {
@@ -218,7 +194,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     public Page getPage(String pid) {
         return pageMap.get(pid);
     }
-
 
     public Page getPageDefination(LinkNode url, String templateId) {
         Page page = null;
@@ -271,7 +246,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return page;
     }
 
-
     public void adjustUrlDepth(LinkNode curr, String templateId, int parent) {
         String url = curr.getUrl();
         int result = parent + 1;
@@ -319,8 +293,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
             // If not, will maintain the original logic
             needProxy = (proxyConf.getProxy() != null);
             if (log.isDebugEnabled()) {
-                log.debug(" needProxy :  " + needProxy + "  url : " + url + "  regex : " + pattern + " proxyConf.getProxy()  : "
-                        + proxyConf.getProxy());
+                log.debug(" needProxy :  " + needProxy + "  url : " + url + "  regex : " + pattern + " proxyConf.getProxy()  : " + proxyConf.getProxy());
             }
             return needProxy;
         } else {
@@ -345,9 +318,8 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     }
 
     public List<SearchTemplateConfig> getSearchTempldateConfigList(SearchType taskType) {
-        List<SearchTemplateConfig> searchTemplateConfigs = searchTemplateConfigListMap
-            .get(taskType);
-        return searchTemplateConfigs == null? Collections.emptyList():searchTemplateConfigs;
+        List<SearchTemplateConfig> searchTemplateConfigs = searchTemplateConfigListMap.get(taskType);
+        return searchTemplateConfigs == null ? Collections.emptyList() : searchTemplateConfigs;
     }
 
     /**
@@ -370,8 +342,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         }
         return pidSet;
     }
-
-
 
     /**
      * @return the webServiceUrl
@@ -399,7 +369,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return result;
     }
 
-
     public String getHttpClientType() {
         Properties properties = this.getSearchConfig().getProperties();
         if (properties != null) {
@@ -407,7 +376,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         }
         return null;
     }
-
 
     public Boolean getRedirectUriEscaped() {
         Properties properties = this.getSearchConfig().getProperties();
@@ -449,7 +417,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
     /**
      * 目前当LoginType为plugin时，一般都需要前后端交互
-     * 
      * @return
      */
     public boolean needInteractive() {

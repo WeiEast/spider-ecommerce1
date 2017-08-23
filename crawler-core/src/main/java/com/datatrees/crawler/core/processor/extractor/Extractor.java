@@ -3,24 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.extractor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
@@ -36,9 +25,13 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.selector.ExtratorSelectorImpl;
 import com.google.common.base.Preconditions;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 8:48:55 PM
@@ -49,7 +42,6 @@ public class Extractor {
 
     /**
      * crawler request main route step 1: request via httpclient step 2: parse page content
-     * 
      * @param request
      * @return
      */
@@ -103,8 +95,7 @@ public class Extractor {
         return response;
     }
 
-    private static boolean doPageExtractor(Request request, Response response, Collection<PageExtractor> list,
-            Map<String, PageExtractor> totalPageExtractors) throws Exception {
+    private static boolean doPageExtractor(Request request, Response response, Collection<PageExtractor> list, Map<String, PageExtractor> totalPageExtractors) throws Exception {
         for (PageExtractor pageExtractor : list) {
             log.info("use " + pageExtractor + " to extract page...");
             totalPageExtractors.remove(pageExtractor.getId());
@@ -129,7 +120,6 @@ public class Extractor {
 
     /**
      * add default conf if not exists
-     * 
      * @param request
      */
     private static void checkConf(CrawlRequest request) {

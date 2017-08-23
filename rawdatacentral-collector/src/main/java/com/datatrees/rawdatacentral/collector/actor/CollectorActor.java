@@ -1,21 +1,18 @@
 package com.datatrees.rawdatacentral.collector.actor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.actor.AbstractActor;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //@Service
 //@Scope("prototype")
 @Deprecated
 public class CollectorActor extends AbstractActor {
+
     private static final Logger logger = LoggerFactory.getLogger(CollectorActor.class);
-
-//    @Resource
+    //    @Resource
     private Collector collector;
-
-
 
     /*
      * (non-Javadoc)
@@ -31,8 +28,6 @@ public class CollectorActor extends AbstractActor {
             unhandled(message);
         }
     }
-
-
 
     /*
      * (non-Javadoc)

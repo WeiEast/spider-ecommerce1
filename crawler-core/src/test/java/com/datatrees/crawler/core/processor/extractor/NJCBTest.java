@@ -9,16 +9,16 @@ import java.util.Map;
  */
 public class NJCBTest extends BaseExtractorTest {
 
-  @Override
-  protected String getConfigFile() {
-    return "njcb/NJCBExtractor.xml";
-  }
+    @Override
+    protected String getConfigFile() {
+        return "njcb/NJCBExtractor.xml";
+    }
 
-  @Override
-  protected void addSimpleExtractSource(Map<String, Object> map) throws Exception {
-    map.put("subject", "南京银行账单");
-    // map.put("pageContent", this.getPageContent("src/test/resources/ABC/page_201502.html"));
-    map.put("pageContent", this.getPageContent("/Users/luyuan/Downloads/6/pageContent"));
-  }
+    @Override
+    protected void addSimpleExtractSource(Map<String, Object> map) throws Exception {
+        map.put("subject", "南京银行账单");
+        // map.put("pageContent", this.getPageContent("src/test/resources/ABC/page_201502.html"));
+        map.put("pageContent", this.getPageContent("/Users/luyuan/Downloads/6/pageContent"));
+    }
 
 }

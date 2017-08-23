@@ -1,5 +1,8 @@
 package com.datatrees.crawler.core.processor.service.impl;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -12,21 +15,20 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
+import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PluginServiceImpl extends ServiceBase {
-    private static final Logger log = LoggerFactory.getLogger(PluginServiceImpl.class);
-    private final int retryCount = PropertiesConfiguration.getInstance().getInt("pluginService.retry.count", 3);
+
+    private static final Logger log        = LoggerFactory.getLogger(PluginServiceImpl.class);
+    private final        int    retryCount = PropertiesConfiguration.getInstance().getInt("pluginService.retry.count", 3);
 
     @Override
     public void process(Request request, Response response) throws Exception {

@@ -1,4 +1,3 @@
-
 package com.datatrees.rawdatacentral.collector.chain;
 
 import java.util.concurrent.LinkedBlockingDeque;
@@ -7,14 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * @author  <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since   2015年7月29日 上午2:35:30 
+ * @since 2015年7月29日 上午2:35:30
  */
 public class FilterChain implements Filter {
-    private static final Logger logger = LoggerFactory.getLogger(FilterChain.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(FilterChain.class);
     LinkedBlockingDeque<Filter> filterDeque = new LinkedBlockingDeque<Filter>();
 
     public void addFilter(Filter filter) {
@@ -25,7 +23,7 @@ public class FilterChain implements Filter {
         Filter filter = filterDeque.poll();
         if (null != filter) {
             filter.doFilter(context, filterChain);
-        } else{
+        } else {
             logger.debug("All FilterChain execute finished ...");
         }
     }

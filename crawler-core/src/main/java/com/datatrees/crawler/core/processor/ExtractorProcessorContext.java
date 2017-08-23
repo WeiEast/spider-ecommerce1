@@ -3,31 +3,27 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.google.common.base.Preconditions;
-
+import org.apache.commons.collections.CollectionUtils;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 7, 2014 2:14:19 PM
  */
 public class ExtractorProcessorContext extends AbstractProcessorContext {
-
 
     private final Map<String, PageExtractor> pageExtractorMap = new HashMap<String, PageExtractor>();
 
@@ -63,6 +59,5 @@ public class ExtractorProcessorContext extends AbstractProcessorContext {
     public Map<String, PageExtractor> getPageExtractorMap() {
         return pageExtractorMap;
     }
-
 
 }

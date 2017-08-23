@@ -3,21 +3,17 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.common;
 
+import javax.crypto.Cipher;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -25,24 +21,21 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.crypto.Cipher;
-
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年11月11日 下午1:47:04
  */
 public class RSAUtil {
+
     private static Logger logger = LoggerFactory.getLogger(RSAUtil.class);
 
     /**
      * 生成密钥对
-     * 
      * @param filePath 生成密钥的路径
      * @return
      */
@@ -87,9 +80,8 @@ public class RSAUtil {
 
     /**
      * 得到公钥
-     * 
      * @param key 密钥字符串（经过base64编码）
-     * @throws Exception
+     * @exception Exception
      */
     public static PublicKey getPublicKey(String key) throws Exception {
         byte[] keyBytes;
@@ -102,9 +94,8 @@ public class RSAUtil {
 
     /**
      * 得到私钥
-     * 
      * @param key 密钥字符串（经过base64编码）
-     * @throws Exception
+     * @exception Exception
      */
     public static PrivateKey getPrivateKey(String key) throws Exception {
         byte[] keyBytes;
@@ -117,7 +108,6 @@ public class RSAUtil {
 
     /**
      * 得到密钥字符串（经过base64编码）
-     * 
      * @return
      */
     public static String getKeyString(Key key) throws Exception {
@@ -128,7 +118,6 @@ public class RSAUtil {
 
     /**
      * 使用公钥对明文进行加密，返回BASE64编码的字符串
-     * 
      * @param publicKey
      * @param plainText
      * @return
@@ -182,11 +171,8 @@ public class RSAUtil {
         return encrypt(publicKeyString, plainText, false);
     }
 
-
-
     /**
      * 使用私钥对明文密文进行解密
-     * 
      * @param privateKey
      * @param enStr
      * @return
@@ -205,9 +191,8 @@ public class RSAUtil {
 
     /**
      * 使用keystore对密文进行解密
-     * 
      * @param privateKeystore 私钥路径
-     * @param enStr 密文
+     * @param enStr           密文
      * @return
      */
     public static String decryptWithKeystore(String privateKeystore, String enStr) {

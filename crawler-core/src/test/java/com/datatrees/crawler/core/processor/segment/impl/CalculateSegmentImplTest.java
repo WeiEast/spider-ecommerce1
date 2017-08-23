@@ -9,6 +9,7 @@ import org.junit.Test;
  * @since 23:14 21/05/2017
  */
 public class CalculateSegmentImplTest {
+
     @Test
     public void getSplit() throws Exception {
         CalculateSegmentImpl segmentImpl = new CalculateSegmentImpl();

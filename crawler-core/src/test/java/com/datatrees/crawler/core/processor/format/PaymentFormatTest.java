@@ -1,11 +1,11 @@
 package com.datatrees.crawler.core.processor.format;
 
-import org.junit.Test;
-
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.processor.format.impl.PaymentFormatImpl;
+import org.junit.Test;
 
 public class PaymentFormatTest {
+
     @Test
     public void testPF() {
 
@@ -22,7 +22,6 @@ public class PaymentFormatTest {
         System.out.println("payment formate result: " + paymentFormatImpl.format(req, null, "15,075.00", ""));
         System.out.println("payment formate result: " + paymentFormatImpl.format(req, null, "-890.00", ""));
         System.out.println("payment formate result: " + paymentFormatImpl.format(req, null, "-4,820.00", ""));
-
 
         System.out.println("payment formate result: " + paymentFormatImpl.format(req, null, "(消费)4,820.00", "存入,消费"));
 

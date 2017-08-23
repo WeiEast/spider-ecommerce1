@@ -3,33 +3,23 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.extractor.builder.impl;
 
-import com.datatrees.rawdatacentral.extractor.builder.ExtractResultBuilder;
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.stereotype.Service;
+package com.datatrees.rawdatacentral.extractor.builder.impl;
 
 import com.datatrees.rawdatacentral.core.common.UniqueKeyGenUtil;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
-import com.datatrees.rawdatacentral.core.model.data.DefaultData;
-import com.datatrees.rawdatacentral.core.model.data.EBankData;
-import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
-import com.datatrees.rawdatacentral.core.model.data.MailBillData;
-import com.datatrees.rawdatacentral.core.model.data.OperatorData;
+import com.datatrees.rawdatacentral.core.model.data.*;
+import com.datatrees.rawdatacentral.domain.model.*;
 import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
-import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
-import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
-import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
-import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
-import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
+import com.datatrees.rawdatacentral.extractor.builder.ExtractResultBuilder;
 import com.datatrees.rawdatacentral.extractor.common.StoragePathUtil;
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.stereotype.Service;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月30日 下午9:09:05

@@ -3,22 +3,20 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.decode.impl;
 
 import java.nio.charset.Charset;
 
+import com.datatrees.common.util.StringUtils;
+import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datatrees.common.util.StringUtils;
-import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月21日 下午5:48:19

@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.service.impl.GrabService;
-import org.apache.commons.collections.CollectionUtils;
-
 import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
 import com.datatrees.crawler.core.domain.config.login.LoginConfig;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
@@ -14,15 +11,16 @@ import com.datatrees.crawler.core.domain.config.parser.Parser;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.datatrees.crawler.core.domain.config.service.impl.GrabService;
 import com.datatrees.crawler.core.domain.config.service.impl.PluginService;
 import com.datatrees.crawler.core.domain.config.service.impl.WebRobotService;
 import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Path;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 3:14:15 PM
@@ -35,16 +33,15 @@ public class SearchConfig extends AbstractWebsiteConfig {
      *
      */
     private static final long serialVersionUID = -3594853402134944912L;
-    private List<String> protocolTypeList;
-    private List<UrlFilter> urlFilterList;
-    private Properties properties;
-    private List<AbstractService> serviceList;
-    private List<Parser> parserList;
-    private List<Page> pageList;
+    private List<String>               protocolTypeList;
+    private List<UrlFilter>            urlFilterList;
+    private Properties                 properties;
+    private List<AbstractService>      serviceList;
+    private List<Parser>               parserList;
+    private List<Page>                 pageList;
     private List<SearchTemplateConfig> searchTemplateConfigList;
-    private LoginConfig loginConfig;
-    private List<String> resultTagList;
-
+    private LoginConfig                loginConfig;
+    private List<String>               resultTagList;
 
     public SearchConfig() {
         super();
@@ -57,18 +54,15 @@ public class SearchConfig extends AbstractWebsiteConfig {
         resultTagList = new ArrayList<String>();
     }
 
-
     @ChildTag("result-tag-list/result-tag")
     public List<String> getResultTagList() {
         return Collections.unmodifiableList(resultTagList);
     }
 
-
     @Node("result-tag-list/result-tag/text()")
     public void setResultTagList(String resultTag) {
         this.resultTagList.add(resultTag);
     }
-
 
     @ChildTag("protocol-type-list/protocol-type")
     public List<String> getProtocolTypeList() {
@@ -79,7 +73,6 @@ public class SearchConfig extends AbstractWebsiteConfig {
     public void setProtocolTypeList(String protocolTypeList) {
         this.protocolTypeList.add(protocolTypeList);
     }
-
 
     @Tag("url-filters")
     public List<UrlFilter> getUrlFilterList() {
@@ -101,13 +94,12 @@ public class SearchConfig extends AbstractWebsiteConfig {
         this.properties = properties;
     }
 
-
     @Tag("service-definition")
     public List<AbstractService> getServiceList() {
         return Collections.unmodifiableList(serviceList);
     }
 
-    @Node(value = "service-definition/service", types = { WebRobotService.class, PluginService.class, GrabService.class}, registered = true)
+    @Node(value = "service-definition/service", types = {WebRobotService.class, PluginService.class, GrabService.class}, registered = true)
     public void setServiceList(AbstractService service) {
         this.serviceList.add(service);
     }
@@ -141,7 +133,6 @@ public class SearchConfig extends AbstractWebsiteConfig {
     public void setSearchTemplateConfigList(SearchTemplateConfig searchTemplateConfig) {
         this.searchTemplateConfigList.add(searchTemplateConfig);
     }
-
 
     @Tag("login")
     public LoginConfig getLoginConfig() {

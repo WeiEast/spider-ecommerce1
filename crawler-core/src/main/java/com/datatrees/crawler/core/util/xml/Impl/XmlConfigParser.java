@@ -1,18 +1,7 @@
 package com.datatrees.crawler.core.util.xml.Impl;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 import com.datatrees.common.util.ReflectionUtils;
 import com.datatrees.crawler.core.util.XmlParser;
@@ -21,28 +10,30 @@ import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Path;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
-
-
+import org.apache.commons.lang.StringUtils;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 5:48:40 PM
  */
 public class XmlConfigParser implements ConfigParser {
+
+    static final         List<Class<?>>        valueTypes       = Arrays.asList(new Class<?>[]{String.class, Boolean.class, Integer.class, Float.class, Double.class});
+    private static final Logger                logger           = LoggerFactory.getLogger(XmlConfigParser.class);
+    final                Map<String, Object>   contentMap       = new HashMap<String, Object>();
+    final                Map<Class<?>, Object> typeSetMethodMap = new HashMap<Class<?>, Object>();
+
     private XmlConfigParser() {}
 
     public static XmlConfigParser getInstance() {
         return new XmlConfigParser();
     }
-
-    static final List<Class<?>> valueTypes = Arrays.asList(new Class<?>[] {String.class, Boolean.class, Integer.class, Float.class, Double.class});
-    private static final Logger logger = LoggerFactory.getLogger(XmlConfigParser.class);
-
-    final Map<String, Object> contentMap = new HashMap<String, Object>();
-    final Map<Class<?>, Object> typeSetMethodMap = new HashMap<Class<?>, Object>();
 
     /*
      * (non-Javadoc)
@@ -87,8 +78,6 @@ public class XmlConfigParser implements ConfigParser {
         return parent;
     }
 
-
-
     @SuppressWarnings("unchecked")
     private <V> List<Method> listOrderedSetMethod(Class<V> type) {
         List<Method> registeredList = (List<Method>) typeSetMethodMap.get(type);
@@ -130,7 +119,6 @@ public class XmlConfigParser implements ConfigParser {
             elements = parser.getElementsByXPath(e, node.value());
         }
 
-
         for (Object element : elements) {
             if (node.types().length == 0) {// default use setClassType
                 if (valueTypes.contains(setClassType)) {
@@ -149,7 +137,6 @@ public class XmlConfigParser implements ConfigParser {
             }
         }
     }
-
 
     private void defaultTypeProcess(Object element, Class<?> setClassType, Object parent, Method method) {
         Object value = processValue(element, setClassType);

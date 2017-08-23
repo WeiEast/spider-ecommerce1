@@ -2,14 +2,15 @@
  * www.gf-dai.com.cn
  * Copyright (c) 2015 All Rights Reserved.
  */
-package com.datatrees.crawler.core.processor.crawler.operator.model;
 
-import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+package com.datatrees.crawler.core.processor.crawler.operator.model;
 
 import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
  * 月账单信息
@@ -17,40 +18,40 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @version $Id: BillDetail.java, v 0.1 Jul 18, 2015 4:37:15 PM likun Exp $
  */
 public class BillDetail implements Serializable {
-    private static final long serialVersionUID = 5923546344368948356L;
 
+    private static final long serialVersionUID = 5923546344368948356L;
     /**
      * 账单月
      */
-    private Date              billMonth;
+    private Date   billMonth;
     /**
      * 月基本费
      */
-    private Double            baseFee;
+    private Double baseFee;
     /**
      * 语音通话费
      */
-    private Double            voiceCallFee;
+    private Double voiceCallFee;
     /**
      * 上网费
      */
-    private Double            networkFee;
+    private Double networkFee;
     /**
      * 本月消费合计
      */
-    private Double            totalFee;
+    private Double totalFee;
     /**
      * 本月抵扣合计
      */
-    private Double            deductionFee;
+    private Double deductionFee;
     /**
      * 实际应缴合计
      */
-    private Double            payFee;
+    private Double payFee;
     /**
      * 姓名
      */
-    private String            name;
+    private String name;
 
     public Date getBillMonth() {
         return billMonth;

@@ -1,5 +1,9 @@
 package com.datatrees.crawler.plugin.crawl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
@@ -15,15 +19,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 /**
  * APP抓取任务
- * 
  * 业务场景:部分容易被封的url让APP端抓取,成功率会高些
- * 
  * 处理流程:
  * 1.程序启动后发送指令,并进入等待结果状态
  * 2.APP端导入数据前端就完成任务
@@ -64,11 +62,9 @@ public abstract class AbstractGrabPlugin extends AbstractRawdataPlugin {
         //等待APP处理完成,并通过dubbo将数据写入redis
         String resultKey = sendDirective.getDirectiveKey(DirectiveRedisCode.WAIT_SERVER_PROCESS);
 
-        DirectiveResult<Map<String, String>> receiveDirective = getRedisService().getDirectiveResult(resultKey, 120,
-            TimeUnit.SECONDS);
+        DirectiveResult<Map<String, String>> receiveDirective = getRedisService().getDirectiveResult(resultKey, 120, TimeUnit.SECONDS);
         if (null == receiveDirective) {
-            logger.error("get grab url result timeout,taskId={},websiteName={},resultKey={}", taskId, websiteName,
-                resultKey);
+            logger.error("get grab url result timeout,taskId={},websiteName={},resultKey={}", taskId, websiteName, resultKey);
             resultMap.put(AttributeKey.ERROR_CODE, "-1");
             return resultMap;
         }
@@ -215,7 +211,7 @@ public abstract class AbstractGrabPlugin extends AbstractRawdataPlugin {
      "visible": true,
      "visitType": "url"
      }
-    
+
      name	value	description
      usePCUA：	true／false	是否需要使用pc的useagent
      startUrl	url数组／页面内容	需要请求的url或者页面

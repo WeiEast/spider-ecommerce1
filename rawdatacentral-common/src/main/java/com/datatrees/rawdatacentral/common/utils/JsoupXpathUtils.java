@@ -1,10 +1,10 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import java.util.List;
+
 import cn.wanghaomiao.xpath.model.JXDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class JsoupXpathUtils {
 
@@ -21,11 +21,9 @@ public class JsoupXpathUtils {
                 logger.warn("not found content for xpath={}", xpath);
                 result = list.get(0).toString();
             }
-            logger.info("selectFirstString success xpath={},content={}", xpath,
-                result.length() > 200 ? result.substring(0, 200) : result);
+            logger.info("selectFirstString success xpath={},content={}", xpath, result.length() > 200 ? result.substring(0, 200) : result);
         } catch (Exception e) {
-            logger.error("selectFirstString error, xpath={},content={}", xpath,
-                result.length() > 200 ? result.substring(0, 200)+"....." : result, e);
+            logger.error("selectFirstString error, xpath={},content={}", xpath, result.length() > 200 ? result.substring(0, 200) + "....." : result, e);
         }
         return result;
     }

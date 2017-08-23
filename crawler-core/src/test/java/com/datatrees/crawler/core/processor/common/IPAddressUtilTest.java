@@ -7,6 +7,7 @@ import org.junit.Test;
  * @since 22:50 21/05/2017
  */
 public class IPAddressUtilTest {
+
     @Test
     public void internalIp() throws Exception {
         System.out.println(IPAddressUtil.internalIp("58.246.138.171"));

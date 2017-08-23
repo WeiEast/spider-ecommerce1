@@ -2,13 +2,12 @@ package com.datatrees.rawdatacentral.extractor.actor;
 
 import javax.annotation.Resource;
 
+import com.datatrees.common.actor.AbstractActor;
+import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import com.datatrees.common.actor.AbstractActor;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 
 /**
  * Created by wuminlang on 15/7/29.
@@ -16,8 +15,8 @@ import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 @Service
 @Scope("prototype")
 public class ExtractorActor extends AbstractActor {
-    private static final Logger logger = LoggerFactory.getLogger(ExtractorActor.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(ExtractorActor.class);
     @Resource
     private ExtractWorker extractWorker;
 

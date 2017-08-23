@@ -3,18 +3,13 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.search;
 
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
@@ -31,16 +26,17 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.plugin.SimplePluginManager;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import org.apache.commons.collections.MapUtils;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 3:51:07 PM
  */
 public class CrawlerTest extends BaseConfigTest {
-
-
 
     @Test
     public void testParser() throws Exception {
@@ -48,7 +44,7 @@ public class CrawlerTest extends BaseConfigTest {
         try {
             SearchProcessorContext context = getProcessorContext(conf, "baidu");
             context.setPluginManager(new SimplePluginManager());
-//            context.setProxyManager(new SimpleProxyManager());
+            //            context.setProxyManager(new SimpleProxyManager());
             context.setWebServiceUrl("http://localhost:8080");
             context.setLoginResource(new SimpleLoginResource());
             context.init();
@@ -65,15 +61,10 @@ public class CrawlerTest extends BaseConfigTest {
                 }
 
                 for (String template : SearchTemplateConfig.getRequest().getSearchTemplateList()) {
-                    String url =
-                            SearchTemplateCombine
-                                    .constructSearchURL(template, "账单", context.getSearchConfig().getProperties().getEncoding(), 0,
-                                    true, context.getContext());
+                    String url = SearchTemplateCombine.constructSearchURL(template, "账单", context.getSearchConfig().getProperties().getEncoding(), 0, true, context.getContext());
                     url = ReplaceUtils.replaceMap(context.getContext(), url);
 
-                    CrawlRequest request =
-                            CrawlRequest.build().setProcessorContext(context).setUrl(new LinkNode(url))
-                                    .setSearchTemplateId("keyword-search-template").setSearchTemplate(template).contextInit();
+                    CrawlRequest request = CrawlRequest.build().setProcessorContext(context).setUrl(new LinkNode(url)).setSearchTemplateId("keyword-search-template").setSearchTemplate(template).contextInit();
 
                     CrawlResponse resp = Crawler.crawl(request);
                     List<LinkNode> urls = ResponseUtil.getResponseLinkNodes(resp);
@@ -88,8 +79,6 @@ public class CrawlerTest extends BaseConfigTest {
                 }
             }
 
-
-
         } catch (ParseException e) {
             Assert.fail("not well format config!");
         }
@@ -101,7 +90,7 @@ public class CrawlerTest extends BaseConfigTest {
         try {
             SearchProcessorContext context = getProcessorContext(conf, "qq");
             context.setPluginManager(new SimplePluginManager());
-//            context.setProxyManager(new SimpleProxyManager());
+            //            context.setProxyManager(new SimpleProxyManager());
             context.setWebServiceUrl("http://localhost:8080");
             context.setLoginResource(new SimpleLoginResource());
 
@@ -118,15 +107,10 @@ public class CrawlerTest extends BaseConfigTest {
                 }
 
                 for (String template : SearchTemplateConfig.getRequest().getSearchTemplateList()) {
-                    String url =
-                            SearchTemplateCombine
-                                    .constructSearchURL(template, "账单", context.getSearchConfig().getProperties().getEncoding(), 0,
-                                    true, context.getContext());
+                    String url = SearchTemplateCombine.constructSearchURL(template, "账单", context.getSearchConfig().getProperties().getEncoding(), 0, true, context.getContext());
                     url = ReplaceUtils.replaceMap(context.getContext(), url);
 
-                    CrawlRequest request =
-                            CrawlRequest.build().setProcessorContext(context).setUrl(new LinkNode(url))
-                                    .setSearchTemplateId("keyword-search-template").setSearchTemplate(template).contextInit();
+                    CrawlRequest request = CrawlRequest.build().setProcessorContext(context).setUrl(new LinkNode(url)).setSearchTemplateId("keyword-search-template").setSearchTemplate(template).contextInit();
 
                     CrawlResponse resp = Crawler.crawl(request);
                     List<LinkNode> urls = ResponseUtil.getResponseLinkNodes(resp);
@@ -135,9 +119,7 @@ public class CrawlerTest extends BaseConfigTest {
                     for (LinkNode linkNode : urls) {
                         System.out.println(linkNode + "  propertys " + linkNode.getPropertys());
                         System.out.println("Crawler url " + linkNode.getUrl());
-                        CrawlRequest subRequest =
-                                CrawlRequest.build().setProcessorContext(context).setUrl(linkNode).setSearchTemplateId("keyword-search-template")
-                                        .contextInit();
+                        CrawlRequest subRequest = CrawlRequest.build().setProcessorContext(context).setUrl(linkNode).setSearchTemplateId("keyword-search-template").contextInit();
                         CrawlResponse subResp = Crawler.crawl(subRequest);
 
                         // check bloack
@@ -162,8 +144,6 @@ public class CrawlerTest extends BaseConfigTest {
                     System.out.println(System.currentTimeMillis() - start);
                 }
             }
-
-
 
         } catch (ParseException e) {
             Assert.fail("not well format config!");

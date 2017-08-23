@@ -1,33 +1,30 @@
 package com.datatrees.crawler.core.processor.crawler.operator.model;
 
-import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
-
 import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 /**
  * Created by zhangke on 7/17/15.
  */
 public class OperatorData implements Serializable {
-    private static final long        serialVersionUID = -3376020743505858335L;
 
+    private static final long serialVersionUID = -3376020743505858335L;
     /**
      * 通话详单
      */
     private List<CallDetail>         callDetails;
-
     /**
      * 短信详单
      */
     private List<ShortMessageDetail> shortMessageDetails;
-
     /**
      * 个人信息
      */
     private PersonalInformation      personalInformation;
-
     /**
      * 账单
      */

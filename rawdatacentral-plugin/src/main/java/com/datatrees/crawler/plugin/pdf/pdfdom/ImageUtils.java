@@ -1,13 +1,13 @@
 package com.datatrees.crawler.plugin.pdf.pdfdom;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 public class ImageUtils {
+
     public static BufferedImage rotateImage(BufferedImage image, double theta) {
         int degrees = (int) Math.abs(Math.toDegrees(theta));
         double xCenter = image.getWidth() / 2;

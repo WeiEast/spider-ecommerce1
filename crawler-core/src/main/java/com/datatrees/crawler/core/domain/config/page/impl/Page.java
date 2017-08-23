@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.page.impl;
 
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 2:02:36 PM
@@ -29,39 +28,30 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Tag("page")
 public class Page extends AbstractPage {
 
-    private String path;
-    private String contentRegex;
-
-    private String pageNumRegex;
-    private String contentPageRegex;
-    private AbstractService service;
-
-    private String pageTitleRegex;
-
-    private Boolean urlExtract;
-
-    private List<ReplaceMent> replaceMentList;
+    private String               path;
+    private String               contentRegex;
+    private String               pageNumRegex;
+    private String               contentPageRegex;
+    private AbstractService      service;
+    private String               pageTitleRegex;
+    private Boolean              urlExtract;
+    private List<ReplaceMent>    replaceMentList;
     private PageContentExtractor pageContentExtractor;
-
-    private Boolean redirectUrlAdd;
-
-    private Integer maxPageCount;
-
-    private Boolean responseCheck;
-
-    private String failedCodePattern;
-    private String pageFailedPattern;
-
+    private Boolean              redirectUrlAdd;
+    private Integer              maxPageCount;
+    private Boolean              responseCheck;
+    private String               failedCodePattern;
+    private String               pageFailedPattern;
     /* config for wbsite trigger temporary blockade */
-    private String pageRetryPattern;
-    private Integer retrySleepSecond;/* unit:s */
-    private RetryMode retryMode;
+    private String               pageRetryPattern;
+    private Integer              retrySleepSecond;/* unit:s */
+    private RetryMode            retryMode;
 
     public Page() {
         super();
         replaceMentList = new ArrayList<ReplaceMent>();
     }
-    
+
     @Attr("page-failed-pattern")
     public String getPageFailedPattern() {
         return pageFailedPattern;
@@ -81,7 +71,6 @@ public class Page extends AbstractPage {
     public void setRetrySleepSecond(Integer retrySleepSecond) {
         this.retrySleepSecond = retrySleepSecond;
     }
-
 
     @Attr("retry-mode")
     public RetryMode getRetryMode() {
@@ -138,22 +127,19 @@ public class Page extends AbstractPage {
         return urlExtract;
     }
 
+    @Node("@url-extract")
+    public void setUrlExtract(Boolean urlExtract) {
+        this.urlExtract = urlExtract;
+    }
 
     @Attr("max-page-count")
     public Integer getMaxPageCount() {
         return maxPageCount;
     }
 
-
     @Node("@max-page-count")
     public void setMaxPageCount(Integer maxPageCount) {
         this.maxPageCount = maxPageCount;
-    }
-
-
-    @Node("@url-extract")
-    public void setUrlExtract(Boolean urlExtract) {
-        this.urlExtract = urlExtract;
     }
 
     @Attr("content-regex")
@@ -165,7 +151,6 @@ public class Page extends AbstractPage {
     public void setContentRegex(String contentRegex) {
         this.contentRegex = contentRegex;
     }
-
 
     @Attr("path")
     public String getPath() {
@@ -196,7 +181,6 @@ public class Page extends AbstractPage {
     public void setService(AbstractService service) {
         this.service = service;
     }
-
 
     @Attr("content-page-regex")
     public String getContentPageRegex() {

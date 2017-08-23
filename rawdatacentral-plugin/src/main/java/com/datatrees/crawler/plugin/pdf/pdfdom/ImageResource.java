@@ -1,12 +1,12 @@
 package com.datatrees.crawler.plugin.pdf.pdfdom;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
 public class ImageResource extends HtmlResource {
+
     private final BufferedImage image;
     private double x = 0;
     private double y = 0;
@@ -31,20 +31,20 @@ public class ImageResource extends HtmlResource {
         return "image/png";
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
     public double getX() {
         return x;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public void setX(double x) {
+        this.x = x;
     }
 
     public double getY() {
         return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
     }
 
     public float getHeight() {

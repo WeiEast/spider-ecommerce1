@@ -1,18 +1,10 @@
 /**
  * www.gf-dai.com.cn Copyright (c) 2015 All Rights Reserved.
  */
+
 package com.datatrees.crawler.core.processor.operation.impl;
 
 import java.util.Map;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DurationFieldType;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -25,9 +17,16 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DurationFieldType;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author likun
  * @version $Id: DateTimeOperationImpl.java, v 0.1 Jul 22, 2015 11:57:20 AM likun Exp $
  */
@@ -35,11 +34,8 @@ public class DateTimeOperationImpl extends Operation {
 
     private static final Logger log = LoggerFactory.getLogger(DateTimeOperationImpl.class);
 
-
     /**
-     * 
-     * @see Operation#process(Request,
-     *      Response)
+     * @see Operation#process(Request, * Response)
      */
     @Override
     public void process(Request request, Response response) throws Exception {

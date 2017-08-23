@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.format.impl;
 
 import java.io.File;
@@ -14,10 +14,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.UUID;
-
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -32,14 +28,17 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月9日 下午1:11:32
  */
 public class FileFormatImpl extends AbstractFormat {
+
     private static final Logger logger = LoggerFactory.getLogger(FileFormatImpl.class);
 
     @Deprecated
@@ -57,7 +56,6 @@ public class FileFormatImpl extends AbstractFormat {
         String timeString = DateUtils.baseFormatDateTime(new Date(), "yyyyMMdd");
         return filePathPrfix + timeString + "/" + siteName + "/" + UUID.randomUUID();
     }
-
 
     /*
      * (non-Javadoc)

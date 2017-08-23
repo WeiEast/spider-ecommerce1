@@ -7,34 +7,28 @@ import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 13, 2014 2:47:02 PM
  */
 public class Website implements Serializable {
+
     /**
      *
      */
     private static final long serialVersionUID = -2630430042887742711L;
-    private Integer id;
-    private String websiteName;
-    private String websiteDomain;
-    private String websiteType;
-
-    private Boolean isEnabled;
-
-    private SearchConfig searchConfig;
+    private           Integer         id;
+    private           String          websiteName;
+    private           String          websiteDomain;
+    private           String          websiteType;
+    private           Boolean         isEnabled;
+    private           SearchConfig    searchConfig;
     @SerializedName("searchconfig")
-    private transient String searchConfigSource;
-
-    private ExtractorConfig extractorConfig;
+    private transient String          searchConfigSource;
+    private           ExtractorConfig extractorConfig;
     @SerializedName("extractorconfig")
-    private transient String extractorConfigSource;
-
-    private String taskRegion;
-
-
+    private transient String          extractorConfigSource;
+    private           String          taskRegion;
 
     public Integer getId() {
         return id;
@@ -67,8 +61,6 @@ public class Website implements Serializable {
     public void setWebsiteType(String websiteType) {
         this.websiteType = websiteType;
     }
-
-
 
     /**
      * @return the isEnabled
@@ -155,9 +147,7 @@ public class Website implements Serializable {
      */
     @Override
     public String toString() {
-        return "Website [id=" + id + ", websiteName=" + websiteName + ", websiteDomain=" + websiteDomain + ", websiteType=" + websiteType
-                + ", isEnabled=" + isEnabled + "]";
+        return "Website [id=" + id + ", websiteName=" + websiteName + ", websiteDomain=" + websiteDomain + ", websiteType=" + websiteType + ", isEnabled=" + isEnabled + "]";
     }
-
 
 }

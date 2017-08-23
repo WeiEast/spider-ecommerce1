@@ -1,16 +1,13 @@
 package com.datatrees.rawdatacentral.core.common;
 
+import com.datatrees.crawler.core.processor.common.resource.BeanResource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.datatrees.crawler.core.processor.common.resource.BeanResource;
-
-
 /**
- *
  * @author <A HREF="mailto:wang_cheng@treefinance.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 10, 2014 4:20:16 PM
@@ -18,13 +15,8 @@ import com.datatrees.crawler.core.processor.common.resource.BeanResource;
 @Scope("singleton")
 @Component
 public class BeansFactory implements BeanFactoryAware, BeanResource {
+
     private static BeanFactory beanFactory = null;
-
-
-    public BeanFactory getBeanFactory() {
-        return beanFactory;
-    }
-
 
     /**
      * @param servName
@@ -34,7 +26,6 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
         return beanFactory.getBean(servName);
     }
 
-
     /**
      * @param servName
      * @param clazz
@@ -42,6 +33,10 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
      */
     public static Object getService(String servName, Class clazz) {
         return beanFactory.getBean(servName, clazz);
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
     }
 
     /*
@@ -56,7 +51,6 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
         this.beanFactory = beanFactory;
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -67,7 +61,6 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
     public Object getBean(String beanName) {
         return beanFactory.getBean(beanName);
     }
-
 
     /*
      * (non-Javadoc)
@@ -80,7 +73,6 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
         return beanFactory.getBean(beanType);
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -92,7 +84,6 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
     public <T> T getBean(String beanName, Class<T> beanType) {
         return beanFactory.getBean(beanName, beanType);
     }
-
 
     /*
      * (non-Javadoc)

@@ -3,15 +3,10 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.crawler.core.processor.common;
 
-import com.datatrees.crawler.core.processor.service.impl.GrabServiceImpl;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.datatrees.crawler.core.processor.common;
 
 import com.datatrees.common.conf.Configurable;
 import com.datatrees.common.conf.Configuration;
@@ -27,75 +22,37 @@ import com.datatrees.crawler.core.domain.config.segment.SegmentType;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.domain.config.service.ServiceType;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
-import com.datatrees.crawler.core.processor.format.impl.BooleanFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.CurrencyFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.CurrencyPaymentFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.DateFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.FileFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.IntFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.LongFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.NumberFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.PaymentFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.RMBFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.ResourceStringFormatImpl;
-import com.datatrees.crawler.core.processor.format.impl.StringFormatImpl;
+import com.datatrees.crawler.core.processor.format.impl.*;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.impl.AppendOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.CalculateOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.CodecOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.DateTimeOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.DecodeOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.EscapeOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.ExtractOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.JsonPathOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.MailParserOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.MappingOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.MatchGroupOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.ParserOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.ProxySetOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.RegexOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.ReplaceOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.ReturnMatchOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.ReturnOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.SetOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.SleepOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.TemplateOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.TrimOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.TripleOperationImpl;
-import com.datatrees.crawler.core.processor.operation.impl.XpathOperationImpl;
+import com.datatrees.crawler.core.processor.operation.impl.*;
 import com.datatrees.crawler.core.processor.page.AbstractPage;
 import com.datatrees.crawler.core.processor.page.PageImpl;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
-import com.datatrees.crawler.core.processor.segment.impl.BaseSegmentImpl;
-import com.datatrees.crawler.core.processor.segment.impl.CalculateSegmentImpl;
-import com.datatrees.crawler.core.processor.segment.impl.JsonPathSegmentImpl;
-import com.datatrees.crawler.core.processor.segment.impl.RegexSegmentImpl;
-import com.datatrees.crawler.core.processor.segment.impl.SplitSegmentImpl;
-import com.datatrees.crawler.core.processor.segment.impl.XpathSegmentImpl;
+import com.datatrees.crawler.core.processor.segment.impl.*;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.crawler.core.processor.service.impl.DefaultService;
+import com.datatrees.crawler.core.processor.service.impl.GrabServiceImpl;
 import com.datatrees.crawler.core.processor.service.impl.PluginServiceImpl;
 import com.datatrees.crawler.core.processor.service.impl.WebRobotServiceImpl;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 1:23:56 PM
  */
 public class ProcessorFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(ProcessorFactory.class);
-
-    protected static final String SegmentPrefix = "Segment_";
-    protected static final String OperationPrefix = "Operation_";
+    protected static final String SegmentPrefix    = "Segment_";
+    protected static final String OperationPrefix  = "Operation_";
     protected static final String ResultTypePrefix = "ResultType_";
-    protected static final String ServicePrefix = "Service_";
-    protected static final String PluginPrefix = "Plugin_";
-
-    protected static final String PagePrefix = "Page_";
-
-    protected static final String DEFAULT_KEY = "default";
+    protected static final String ServicePrefix    = "Service_";
+    protected static final String PluginPrefix     = "Plugin_";
+    protected static final String PagePrefix       = "Page_";
+    protected static final String DEFAULT_KEY      = "default";
+    private static final   Logger log              = LoggerFactory.getLogger(ProcessorFactory.class);
 
     static {
         try {
@@ -133,7 +90,6 @@ public class ProcessorFactory {
             registOperation(OperationType.SLEEP, SleepOperationImpl.class);
             registOperation(OperationType.RETURNMATCH, ReturnMatchOperationImpl.class);
 
-
             // regist service
             registService(ServiceType.WebRobot_Service, WebRobotServiceImpl.class);
             registService(ServiceType.Plugin_Service, PluginServiceImpl.class);
@@ -157,8 +113,6 @@ public class ProcessorFactory {
             registFormat(ResultType.BOOLEAN, BooleanFormatImpl.class);
             registFormat(ResultType.INT, IntFormatImpl.class);
             registFormat(ResultType.LONG, LongFormatImpl.class);
-
-
 
         } catch (Exception e) {
             // ignore

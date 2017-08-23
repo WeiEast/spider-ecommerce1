@@ -2,6 +2,7 @@ package com.datatrees.crawler.core.processor.common.html;
 
 import java.io.File;
 import java.util.HashMap;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import org.junit.Test;
  * @since 22:38 21/05/2017
  */
 public class HTMLParserTest {
+
     @Test
     public void parse() throws Exception {
         File f = new File("/tmp/a.html");

@@ -3,48 +3,41 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.bean;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.*;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.common.protocol.WebClientUtil;
 import com.datatrees.common.util.PatternUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月9日 下午4:10:25
  */
 public class FileWapper {
-    private static final Logger logger = LoggerFactory.getLogger(FileWapper.class);
-    private int sleepSecond = PropertiesConfiguration.getInstance().getInt("default.sleep.seconds", 2000);
-    private int retryCount = PropertiesConfiguration.getInstance().getInt("default.file.download.retry.count", 3);
-    private String textFileNameSuffixPattern = PropertiesConfiguration.getInstance().get("text.filename.suffix.pattern", "htm$|html$|txt$");
-    private String textMimeTypePattern = PropertiesConfiguration.getInstance().get("text.mimeType.pattern", "^text/");
 
-
-    private String name;
-    private String mimeType;
-    private String charSet;
-    private long size;
-    private File file;
-    private String sourceURL;
+    private static final Logger logger                    = LoggerFactory.getLogger(FileWapper.class);
+    private              int    sleepSecond               = PropertiesConfiguration.getInstance().getInt("default.sleep.seconds", 2000);
+    private              int    retryCount                = PropertiesConfiguration.getInstance().getInt("default.file.download.retry.count", 3);
+    private              String textFileNameSuffixPattern = PropertiesConfiguration.getInstance().get("text.filename.suffix.pattern", "htm$|html$|txt$");
+    private              String textMimeTypePattern       = PropertiesConfiguration.getInstance().get("text.mimeType.pattern", "^text/");
+    private String        name;
+    private String        mimeType;
+    private String        charSet;
+    private long          size;
+    private File          file;
+    private String        sourceURL;
     private ProtocolInput input;
 
     /**
@@ -75,7 +68,6 @@ public class FileWapper {
         this.mimeType = mimeType;
     }
 
-
     /**
      * @return the size
      */
@@ -92,8 +84,8 @@ public class FileWapper {
 
     /**
      * @return the file
-     * @throws FileNotFoundException
-     * @throws InterruptedException
+     * @exception FileNotFoundException
+     * @exception InterruptedException
      */
     public FileInputStream getFileInputStream() throws FileNotFoundException, InterruptedException {
         for (int i = 0; i < retryCount; i++) {
@@ -126,17 +118,13 @@ public class FileWapper {
         return file.exists() ? new FileInputStream(file) : null;
     }
 
-
-
     public boolean needDetectContent() {
-        if ((this.getMimeType() != null && PatternUtils.match(textMimeTypePattern, this.getMimeType()))
-                || (name != null && PatternUtils.match(textFileNameSuffixPattern, name))) {
+        if ((this.getMimeType() != null && PatternUtils.match(textMimeTypePattern, this.getMimeType())) || (name != null && PatternUtils.match(textFileNameSuffixPattern, name))) {
             return true;
         } else {
             return false;
         }
     }
-
 
     /**
      * @return the file
@@ -166,14 +154,12 @@ public class FileWapper {
         this.sourceURL = sourceURL;
     }
 
-
     /**
      * @param charSet the charSet to set
      */
     public void setCharSet(String charSet) {
         this.charSet = charSet;
     }
-
 
     /**
      * @return the input
@@ -197,8 +183,6 @@ public class FileWapper {
         FileUtils.deleteQuietly(file);
     }
 
-
-
     /*
      * (non-Javadoc)
      * 
@@ -206,10 +190,7 @@ public class FileWapper {
      */
     @Override
     public String toString() {
-        return "FileWapper [name=" + name + ", mimeType=" + mimeType + ", charSet=" + charSet + ", size=" + size + ", file=" + file + ", sourceURL="
-                + sourceURL + "]";
+        return "FileWapper [name=" + name + ", mimeType=" + mimeType + ", charSet=" + charSet + ", size=" + size + ", file=" + file + ", sourceURL=" + sourceURL + "]";
     }
-
-
 
 }

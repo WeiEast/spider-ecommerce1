@@ -3,10 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.worker;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 import akka.dispatch.Future;
 import akka.pattern.Patterns;
@@ -14,30 +18,25 @@ import akka.util.Timeout;
 import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月31日 上午10:45:33
  */
 @Service
 public class ResultDataHandler {
-    private static final Logger log = LoggerFactory.getLogger(ResultDataHandler.class);
 
+    private static final Logger log = LoggerFactory.getLogger(ResultDataHandler.class);
     @Resource
     private NormalizerFactory collectNormalizerFactory;
 
@@ -55,7 +54,6 @@ public class ResultDataHandler {
         return parentTask;
     }
 
-
     public List<Future<Object>> resultListHandler(List<Object> objs, TaskMessage taskMessage, WrappedActorRef extractorActorRef) {
         List<Future<Object>> futureList = new ArrayList<Future<Object>>();
         Task task = taskMessage.getTask();
@@ -69,8 +67,7 @@ public class ResultDataHandler {
             try {
                 boolean result = collectNormalizerFactory.normalize(message);
                 if (result) {
-                    Future<Object> future =
-                            Patterns.ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
+                    Future<Object> future = Patterns.ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
                     futureList.add(future);
                 } else {
                     log.warn("message normalize failed, message:" + message + ", obj:" + obj);

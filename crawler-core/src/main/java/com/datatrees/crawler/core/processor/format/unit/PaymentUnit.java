@@ -1,26 +1,26 @@
 package com.datatrees.crawler.core.processor.format.unit;
 
 public enum PaymentUnit {
-	IN("-"),OUT("");
+    IN("-"),
+    OUT("");
+    private final String value;
 
-	private final String value;
+    PaymentUnit(String value) {
+        this.value = value;
+    }
 
-	PaymentUnit(String value) {
-		this.value = value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public String getValue() {
-		return value;
-	}
-	
-	public String toString() {
-		switch (this) {
-		case IN:
-			return "payment.－";
-		case OUT:
-			return "payment.＋";
-		default:
-			return "unknown payment";
-		}
-	}
+    public String toString() {
+        switch (this) {
+            case IN:
+                return "payment.－";
+            case OUT:
+                return "payment.＋";
+            default:
+                return "unknown payment";
+        }
+    }
 }

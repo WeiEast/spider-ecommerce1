@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.service.plugin;
 
+import javax.annotation.Resource;
+
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.common.resource.PluginManager;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
@@ -10,18 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 /**
  * Created by zhouxinghai on 2017/7/6.
  */
 @Service
 public class RedisPluginManager extends PluginManager {
 
-    @Resource
-    private PluginService       pluginService;
-
     private static final Logger logger = LoggerFactory.getLogger(RedisPluginManager.class);
+    @Resource
+    private PluginService pluginService;
 
     @Override
     public PluginWrapper getPlugin(String websiteName, AbstractPlugin pluginDesc) {

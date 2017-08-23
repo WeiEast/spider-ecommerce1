@@ -2,10 +2,9 @@ package com.datatrees.crawler.core.util.xpath;
 
 import java.util.List;
 
+import com.datatrees.crawler.core.processor.BaseConfigTest;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.datatrees.crawler.core.processor.BaseConfigTest;
 
 public class XPathUtilTest extends BaseConfigTest {
 
@@ -34,13 +33,13 @@ public class XPathUtilTest extends BaseConfigTest {
 
     @Test
     public void testText() {
-        
+
         String select = "p:contains(联系地址):not(:has(p))/text()";
         // String select = tr:contains(Min.Payment):contains(Post
         // Date):not(:has(table:contains(Tran Date):contains(Post Date)))
         // "p:contains(费用返还明细):not(:has(p)) + table tr:not(:has(tr)):matches([\\d/]{8,})";
         String content = getContent("xpath/table.html");
-     //   System.out.println(content);
+        //   System.out.println(content);
         // "tr:has(tbody div[id~=groupHeader]:contains(5491)) + tr div[id=fixBand7]>table>tbody>tr";
         // String select =
         // "tr:contains(卡号：6258********8487（大额账户）) + tr:not(:contains(卡号：)) div[id=fixBand7]>table>tbody>tr";
@@ -49,34 +48,33 @@ public class XPathUtilTest extends BaseConfigTest {
 
         // String select =
         // "tr:has(td>table div[id~=groupHeader]:contains(卡号：)):not(matches([\\d\\-]{8,}))";
-//        List<String> list = new LinkedList<String>();
-//
-//        String split = "尊敬的.{2,10}您好";
-//        String[] regexResult = content.split(split);
-//        if (regexResult != null && regexResult.length > 0) {
-//            Matcher m = PatternUtils.matcher(split, content);
-//            int count = 0;
-//            while (count < regexResult.length) {
-//                if (BooleanUtils.isTrue(null)) {
-//                    if (m.find()) {
-//                        regexResult[count] = regexResult[count] + m.group();
-//                    }
-//                } else {
-//                    if (count > 0 && m.find()) {
-//                        regexResult[count] = m.group() + regexResult[count];
-//                    }
-//                }
-//                count++;
-//            }
-//            list.addAll(Arrays.asList(regexResult));
-//        }
+        //        List<String> list = new LinkedList<String>();
+        //
+        //        String split = "尊敬的.{2,10}您好";
+        //        String[] regexResult = content.split(split);
+        //        if (regexResult != null && regexResult.length > 0) {
+        //            Matcher m = PatternUtils.matcher(split, content);
+        //            int count = 0;
+        //            while (count < regexResult.length) {
+        //                if (BooleanUtils.isTrue(null)) {
+        //                    if (m.find()) {
+        //                        regexResult[count] = regexResult[count] + m.group();
+        //                    }
+        //                } else {
+        //                    if (count > 0 && m.find()) {
+        //                        regexResult[count] = m.group() + regexResult[count];
+        //                    }
+        //                }
+        //                count++;
+        //            }
+        //            list.addAll(Arrays.asList(regexResult));
+        //        }
 
-         List<String> list = XPathUtil.getXpath(select, content);
+        List<String> list = XPathUtil.getXpath(select, content);
         for (String string : list) {
             System.out.println(string);
         }
         System.out.println(list.size());
-
 
         // content = getContent("comm/201507_fenqi.html");
         // //

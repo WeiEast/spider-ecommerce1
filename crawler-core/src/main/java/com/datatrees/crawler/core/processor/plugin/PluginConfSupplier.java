@@ -8,5 +8,5 @@ import java.util.Map;
  */
 public interface PluginConfSupplier {
 
-  Map<String, String> get(PluginWrapper pluginWrapper) throws Exception;
+    Map<String, String> get(PluginWrapper pluginWrapper) throws Exception;
 }

@@ -3,14 +3,12 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.service;
 
 import java.util.List;
-
-import org.junit.Test;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -24,15 +22,14 @@ import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import org.junit.Test;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 10:46:28 AM
  */
 public class JSXserviceImplTest extends BaseConfigTest {
-
 
     @Test
     public void testJSXservice() {
@@ -49,7 +46,7 @@ public class JSXserviceImplTest extends BaseConfigTest {
             SearchProcessorContext wrapper = new SearchProcessorContext(website);
 
             RequestUtil.setProcessorContext(req, wrapper);
-            LinkNode url = new LinkNode("http://www.baidu.com",0);
+            LinkNode url = new LinkNode("http://www.baidu.com", 0);
             wrapper.setWebServiceUrl("http://127.0.0.1:8083");
             RequestUtil.setCurrentUrl(req, url);
 
@@ -72,13 +69,9 @@ public class JSXserviceImplTest extends BaseConfigTest {
                 }
             }
 
-
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-
 
     }
 

@@ -3,32 +3,26 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
+
 package com.datatrees.crawler.core.mail;
 
-import java.util.Properties;
-
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Properties;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年4月22日 下午4:05:23
  */
 public class MailSenderTest {
+
     /**
-     * @throws MessagingException 
- * 
- */
+     * @exception MessagingException
+     */
     public void send() throws MessagingException {
         Properties props = new Properties();
 
@@ -58,7 +52,7 @@ public class MailSenderTest {
         Transport transport = session.getTransport();
         transport.connect("smtp.qq.com", "**发送人的邮箱地址**", "**你的邮箱密码或者授权码**");
 
-        transport.sendMessage(msg, new Address[] {new InternetAddress("**接收人的邮箱地址**")});
+        transport.sendMessage(msg, new Address[]{new InternetAddress("**接收人的邮箱地址**")});
         transport.close();
 
     }

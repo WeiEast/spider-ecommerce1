@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.domain.config.extractor;
 
 import java.io.Serializable;
@@ -14,29 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.AppendOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.CalculateOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.CodecOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.DecodeOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.EscapeOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.JsonPathOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.MailParserOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.MappingOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.MatchGroupOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.ParserOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.ProxySetOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.RegexOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.ReplaceOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.ReturnMatchOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.ReturnOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.SetOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.SleepOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.TemplateOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.TrimOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.XpathOperation;
+import com.datatrees.crawler.core.domain.config.operation.impl.*;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
@@ -44,7 +22,6 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 2:23:17 PM
@@ -56,39 +33,32 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
      *
      */
     private static final long serialVersionUID = 169636932735670442L;
-    private String field;
-    private String sourceId;
-    private String encoding;
-    private ResultType resultType;
-    private String format;
-    private AbstractPlugin plugin;
+    private String                  field;
+    private String                  sourceId;
+    private String                  encoding;
+    private ResultType              resultType;
+    private String                  format;
+    private AbstractPlugin          plugin;
     private List<AbstractOperation> operationList;
-
-    private Boolean notEmpty;
-
-    private FieldVisibleType fieldVisibleType;
-
-    private Boolean standBy;
-
-    private String defaultValue;
+    private Boolean                 notEmpty;
+    private FieldVisibleType        fieldVisibleType;
+    private Boolean                 standBy;
+    private String                  defaultValue;
 
     public FieldExtractor() {
         super();
         operationList = new ArrayList<AbstractOperation>();
     }
 
-
     @Attr("default-value")
     public String getDefaultValue() {
         return defaultValue;
     }
 
-
     @Node("@default-value")
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
-
 
     @Attr("field")
     public String getField() {
@@ -99,7 +69,6 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
     public void setField(String field) {
         this.field = field;
     }
-
 
     @Attr("source")
     public String getSourceId() {
@@ -131,18 +100,15 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
         this.resultType = ResultType.getResultType(resultType);
     }
 
-
     @Attr("field-visible-type")
     public FieldVisibleType getFieldVisibleType() {
         return fieldVisibleType;
     }
 
-
     @Node("@field-visible-type")
     public void setFieldVisibleType(String fieldVisibleType) {
         this.fieldVisibleType = FieldVisibleType.getFieldVisibleType(fieldVisibleType);
     }
-
 
     @Attr("format")
     public String getFormat() {
@@ -169,11 +135,7 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
         return Collections.unmodifiableList(operationList);
     }
 
-    @Node(value = "operation", types = {ParserOperation.class, RegexOperation.class, ReplaceOperation.class, TemplateOperation.class,
-            XpathOperation.class, JsonPathOperation.class, CodecOperation.class, TrimOperation.class, ReturnOperation.class, SetOperation.class,
-            ExtractOperation.class, AppendOperation.class, MatchGroupOperation.class, DateTimeOperation.class, TripleOperation.class,
-            MailParserOperation.class, CalculateOperation.class, EscapeOperation.class, DecodeOperation.class, ProxySetOperation.class,
-            MappingOperation.class, SleepOperation.class,ReturnMatchOperation.class})
+    @Node(value = "operation", types = {ParserOperation.class, RegexOperation.class, ReplaceOperation.class, TemplateOperation.class, XpathOperation.class, JsonPathOperation.class, CodecOperation.class, TrimOperation.class, ReturnOperation.class, SetOperation.class, ExtractOperation.class, AppendOperation.class, MatchGroupOperation.class, DateTimeOperation.class, TripleOperation.class, MailParserOperation.class, CalculateOperation.class, EscapeOperation.class, DecodeOperation.class, ProxySetOperation.class, MappingOperation.class, SleepOperation.class, ReturnMatchOperation.class})
     public void setOperationList(AbstractOperation operation) {
         this.operationList.add(operation);
     }
@@ -188,7 +150,6 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
         this.notEmpty = notEmpty;
     }
 
-
     @Attr("stand-by")
     public Boolean getStandBy() {
         return standBy;
@@ -198,7 +159,6 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
     public void setStandBy(Boolean standBy) {
         this.standBy = standBy;
     }
-
 
     /*
      * (non-Javadoc)

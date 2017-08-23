@@ -1,5 +1,10 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -16,23 +21,15 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Http工具类
- *
  * @author xiannenglin
  */
 public class HttpUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(HttpUtils.class);
-
-    private static final CloseableHttpClient httpClient;
-
     public static final String CHARSET = "UTF-8";
+    private static final CloseableHttpClient httpClient;
+    private static Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
     static {
         RequestConfig config = RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(3000).build();
@@ -90,7 +87,6 @@ public class HttpUtils {
 
     /**
      * HTTP Get 获取内容
-     *
      * @param url     请求的url地址?之前的地址
      * @param params  请求的参数
      * @param charset 编码格式
@@ -143,7 +139,6 @@ public class HttpUtils {
 
     /**
      * HTTP Post 获取内容
-     *
      * @param url     请求的url地址 ?之前的地址
      * @param params  请求的参数
      * @param charset 编码格式

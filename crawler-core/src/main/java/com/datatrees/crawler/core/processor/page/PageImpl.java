@@ -3,28 +3,15 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.page;
 
-import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
@@ -57,22 +44,26 @@ import com.datatrees.crawler.core.processor.common.html.urlspliter.URLSplitter;
 import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
 import com.datatrees.crawler.core.processor.filter.URLRegexFilter;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.google.common.base.Preconditions;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 6:35:43 PM
  */
 public class PageImpl extends AbstractPage {
 
-    private static final Logger log = LoggerFactory.getLogger(PageImpl.class);
-
-    private static final String titleRegex = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
-    private static final int URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
-
+    private static final Logger log            = LoggerFactory.getLogger(PageImpl.class);
+    private static final String titleRegex     = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
+    private static final int    URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
 
     @Override
     public void process(Request request, Response response) throws Exception {
@@ -85,8 +76,8 @@ public class PageImpl extends AbstractPage {
 
         setPageNum(current);
         Map<String, LinkNode> pageUrlMap = findPageUrls(content, current, searchTemplate, request);// detect
-                                                                                                   // page
-                                                                                                   // linknode
+        // page
+        // linknode
         content = DecodeUtil.decodeContent(content, request);
         // check block pattern
         checkBlock(request, response);
@@ -121,7 +112,6 @@ public class PageImpl extends AbstractPage {
                 Map<String, LinkNode> urlLists = null;
                 List<AbstractSegment> segments = page.getSegmentList();
 
-
                 if (CollectionUtils.isNotEmpty(segments)) {
                     // extract url with segment
                     urlLists = extractObjectsWithSegments(segments, request, response);
@@ -154,8 +144,6 @@ public class PageImpl extends AbstractPage {
         ResponseUtil.setResponseLinkNodes(response, urlLinkNodes);
     }
 
-
-
     private Map<String, LinkNode> findPageUrls(String content, LinkNode current, String searchTemplate, Request request) {
         Map<String, LinkNode> urlLists = new LinkedHashMap<String, LinkNode>();
         String charset = RequestUtil.getContentCharset(request);
@@ -169,9 +157,7 @@ public class PageImpl extends AbstractPage {
                     try {
                         int pNum = Integer.valueOf(pNumber);
                         log.info("add paging number...." + pNum + "  orginal.." + matcher.group(0));
-                        String pageUrl =
-                                SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false,
-                                        ((SearchProcessorContext) RequestUtil.getProcessorContext(request)).getContext());
+                        String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, ((SearchProcessorContext) RequestUtil.getProcessorContext(request)).getContext());
                         if (StringUtils.isNotEmpty(pageUrl)) {
                             log.info("add page url..." + pageUrl);
                             LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
@@ -189,7 +175,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     * 
      * @param responseStatus
      * @return
      */
@@ -199,8 +184,6 @@ public class PageImpl extends AbstractPage {
         }
         return true;
     }
-
-
 
     private void setPageNum(LinkNode current) {
         try {
@@ -223,7 +206,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     * 
      * @param request
      * @param response
      */
@@ -240,7 +222,6 @@ public class PageImpl extends AbstractPage {
                 String noResultPattern = reqBean.getNoResultPattern();
                 String lastPagePattern = reqBean.getLastPagePattern();
 
-
                 setResponseStatus(response, Status.LAST_PAGE, lastPagePattern, content);
                 setResponseStatus(response, Status.NO_SEARCH_RESULT, noResultPattern, content);
                 setResponseStatus(response, Status.BLOCKED, blockPattern, content);
@@ -254,12 +235,12 @@ public class PageImpl extends AbstractPage {
             if (PatternUtils.match(pattern, content)) {
                 log.info("set status " + StatusUtil.format(status));
                 ResponseUtil.setResponseStatus(response, status);
-            };
+            }
+            ;
         }
     }
 
     /**
-     * 
      * @param content
      * @return
      */
@@ -272,9 +253,7 @@ public class PageImpl extends AbstractPage {
         return title;
     }
 
-
     /**
-     * 
      * @param content
      * @return
      */
@@ -283,11 +262,8 @@ public class PageImpl extends AbstractPage {
         return PatternUtils.group(title, pattern, 1);
     }
 
-
-
     /**
      * using white and black list to filter web url adjust depth
-     * 
      * @param config
      * @param urlLists
      */
@@ -300,8 +276,7 @@ public class PageImpl extends AbstractPage {
 
         SearchTemplateConfig searchTemplateConfig = wrapper.getSearchTempldateConfig(RequestUtil.getCurrentTemplateId(req));
         String revisitPattern = null;
-        if (searchTemplateConfig != null && searchTemplateConfig.getRequest() != null
-                && StringUtils.isNotBlank(searchTemplateConfig.getRequest().getReVisitPattern())) {
+        if (searchTemplateConfig != null && searchTemplateConfig.getRequest() != null && StringUtils.isNotBlank(searchTemplateConfig.getRequest().getReVisitPattern())) {
             revisitPattern = searchTemplateConfig.getRequest().getReVisitPattern();
         }
         List<LinkNode> nodes = new ArrayList<LinkNode>();
@@ -337,7 +312,6 @@ public class PageImpl extends AbstractPage {
                             log.error("invoke url handler exception!", e);
                         }
                     }
-
 
                     if (!removed) {
                         if (tmp.isHosting() || StringUtils.isNotEmpty(dest)) {
@@ -383,10 +357,7 @@ public class PageImpl extends AbstractPage {
         return nodes;
     }
 
-
-
     /**
-     * 
      * @param filters
      */
     private List<UrlFilter> addDefaultFilter(List<UrlFilter> filters, Request req) {
@@ -417,7 +388,6 @@ public class PageImpl extends AbstractPage {
     }
 
     /**
-     * 
      * @param content
      * @param request
      * @param response
@@ -457,12 +427,11 @@ public class PageImpl extends AbstractPage {
     /**
      * get url list need too steps first extract field urls second extract page by regex finally
      * resovle url by base url
-     * 
      * @param segments
      * @param request
      * @param response
      * @return
-     * @throws ResultEmptyException
+     * @exception ResultEmptyException
      */
     private Map<String, LinkNode> extractObjectsWithSegments(List<AbstractSegment> segments, Request req, Response resp) throws ResultEmptyException {
         Map<String, LinkNode> linkNodes = new LinkedHashMap<String, LinkNode>();
@@ -482,11 +451,9 @@ public class PageImpl extends AbstractPage {
 
                 segmentBase.invoke(req, segResponse);
 
-                @SuppressWarnings("unchecked")
-                List<String> contentSplit = ResponseUtil.getSegmentsContent(segResponse);
+                @SuppressWarnings("unchecked") List<String> contentSplit = ResponseUtil.getSegmentsContent(segResponse);
 
-                @SuppressWarnings("unchecked")
-                Object segResult = ResponseUtil.getSegmentsResults(segResponse);
+                @SuppressWarnings("unchecked") Object segResult = ResponseUtil.getSegmentsResults(segResponse);
 
                 if (segResult instanceof Map) {
                     segmentResult.add((Map) segResult);
@@ -511,7 +478,6 @@ public class PageImpl extends AbstractPage {
 
             }
         }
-
 
         // combine field urls
         log.debug("start extract field urls" + baseURL);
@@ -542,7 +508,6 @@ public class PageImpl extends AbstractPage {
         // return all linknodes in current page
         return linkNodes;
     }
-
 
     public Page getPage() {
         return page;

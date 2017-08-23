@@ -1,5 +1,9 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.dao.EcommerceDAO;
@@ -10,10 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Created by zhouxinghai on 2017/6/29.
  */
@@ -21,20 +21,17 @@ import java.util.concurrent.TimeUnit;
 public class EcommerceServiceImpl implements EcommerceService {
 
     private static final Logger logger = LoggerFactory.getLogger(EcommerceServiceImpl.class);
-
     @Resource
-    private RedisService        redisService;
-
+    private RedisService redisService;
     @Resource
-    private EcommerceDAO        ecommerceDAO;
+    private EcommerceDAO ecommerceDAO;
 
     @Override
     public Ecommerce getByWebsiteId(Integer websiteId) {
         Ecommerce ecommerce = null;
         if (null != websiteId) {
             String key = "rawdatacentral_ecommerce_websiteid_" + websiteId;
-            ecommerce = redisService.getCache(key, new TypeReference<Ecommerce>() {
-            });
+            ecommerce = redisService.getCache(key, new TypeReference<Ecommerce>() {});
             if (null == ecommerce) {
                 EcommerceExample example = new EcommerceExample();
                 example.createCriteria().andWebsiteidEqualTo(websiteId).andIsenabledEqualTo(true);

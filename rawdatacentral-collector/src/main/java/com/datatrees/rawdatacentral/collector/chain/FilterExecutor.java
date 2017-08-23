@@ -1,13 +1,11 @@
 package com.datatrees.rawdatacentral.collector.chain;
 
-
 import java.util.List;
 
 /**
- *
- * @author  <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since   2015年7月29日 上午2:36:37 
+ * @since 2015年7月29日 上午2:36:37
  */
 public enum FilterExecutor {
     INSTANCE;

@@ -26,12 +26,10 @@ public enum TaskStatusEnum {
     TASK_TIMEOUT("TASK_TIMEOUT", "任务超时"),
     TASK_SUCCESS("TASK_SUCCESS", "任务成功"),
     TASK_FAIL("TASK_FAIL", "任务失败"),;
-
     /**
      * 状态码
      */
     private String code;
-
     /**
      * 描述
      */

@@ -1,18 +1,18 @@
 package com.datatrees.rawdatacentral.core.model;
 
-import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 
 /**
  * Created by wuminlang on 15/7/28.
  */
 public class SubmitMessage {
-    private ExtractMessage extractMessage;
-    private Map extractResultMap;
-    private AbstractExtractResult result;
 
+    private ExtractMessage        extractMessage;
+    private Map                   extractResultMap;
+    private AbstractExtractResult result;
     private Map<String, String> submitkeyResult = new HashMap<String, String>();
 
     /**

@@ -1,8 +1,8 @@
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.rawdatacentral.domain.model.Bank;
-
 import java.util.Map;
+
+import com.datatrees.rawdatacentral.domain.model.Bank;
 
 /**
  * 银行配置信息

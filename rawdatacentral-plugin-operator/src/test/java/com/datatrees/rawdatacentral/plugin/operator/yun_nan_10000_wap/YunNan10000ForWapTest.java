@@ -1,23 +1,24 @@
 package com.datatrees.rawdatacentral.plugin.operator.yun_nan_10000_wap;
 
+import javax.script.Invocable;
+import java.io.InputStream;
+
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.script.Invocable;
-import java.io.InputStream;
 
 public class YunNan10000ForWapTest {
 
     @Test
     public void testEncrypt() throws Exception {
         /**
-         * var accNbr = $("#accNbr").val();
+         *  var accNbr = $("#accNbr").val();
          var password = $("#password").val();
          var enAccNbr = strEnc(accNbr,'wap_accnbr_2016','','');
          var enPassword = strEnc(password,'wap_password_2016','','');
          $("#enAccNbr").val(enAccNbr);
          $("#enPassword").val(enPassword);
+         *
          */
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
         Invocable invocable = ScriptEngineUtil.createInvocable(inputStream, "UTF-8");

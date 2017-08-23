@@ -1,5 +1,10 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -15,11 +20,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Created by zhouxinghai on 2017/7/6.
  */
@@ -27,14 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PluginServiceImpl implements PluginService, InitializingBean {
 
     private static final Logger              logger    = LoggerFactory.getLogger(PluginServiceImpl.class);
-
-    @Resource
-    private RedisService                     redisService;
-
-    @Value("${plugin.local.store.path:/dashu/log/plugins}")
-    private String                           pluginPath;
-
     private static final Map<String, String> pluginMd5 = new ConcurrentHashMap<>();
+    @Resource
+    private RedisService redisService;
+    @Value("${plugin.local.store.path:/dashu/log/plugins}")
+    private String       pluginPath;
 
     @Override
     public String savePlugin(String fileName, byte[] bytes) {
@@ -43,8 +40,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         redisService.saveBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName), bytes);
         redisService.saveBytes("plugin_class_" + fileName, bytes);
         redisService.cache(RedisKeyPrefixEnum.PLUGIN_FILE_MD5, fileName, md5);
-        redisService.cache("plugin_file_md5_" + fileName, md5, RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getTimeout(),
-            RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getTimeUnit());
+        redisService.cache("plugin_file_md5_" + fileName, md5, RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getTimeout(), RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getTimeUnit());
         logger.info("cache plugin fileName={},md5={}", fileName, md5);
         return md5;
     }

@@ -1,21 +1,20 @@
 package com.datatrees.rawdatacentral.web.controller;
 
+import javax.annotation.Resource;
+
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.api.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.annotation.Resource;
 
 /**
  * Created by zhouxinghai on 2017/7/5.
@@ -24,14 +23,11 @@ import javax.annotation.Resource;
 @RequestMapping("/website")
 public class WebsiteController {
 
-    private static final Logger  logger = LoggerFactory.getLogger(WebsiteController.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(WebsiteController.class);
     @Resource
     private WebsiteConfigService websiteConfigService;
-
     @Resource
     private RedisService         redisService;
-
     @Resource
     private PluginService        pluginService;
 
@@ -67,10 +63,8 @@ public class WebsiteController {
         try {
             MultipartFile jar = multiReq.getFile("jar");
             String uploadFilePath = jar.getOriginalFilename();
-            String uploadFileName = uploadFilePath.substring(uploadFilePath.lastIndexOf('\\') + 1,
-                uploadFilePath.indexOf('.'));
-            String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1,
-                uploadFilePath.length());
+            String uploadFileName = uploadFilePath.substring(uploadFilePath.lastIndexOf('\\') + 1, uploadFilePath.indexOf('.'));
+            String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1, uploadFilePath.length());
             if (StringUtils.isBlank(fileName)) {
                 fileName = uploadFileName + "." + uploadFileSuffix;
             }
@@ -78,8 +72,7 @@ public class WebsiteController {
             String md5 = pluginService.savePlugin(fileName, jar.getBytes());
             boolean change = !StringUtils.equals(md5, beforeMd5);
             logger.info("uploadPluginJar success fileName={},md5={},change={},token={}", fileName, md5, change, token);
-            return result.append("upload plugin success:").append(fileName).append(", md5:").append(md5)
-                .append(change ? " ,插件已经更新\n" : "\n").toString();
+            return result.append("upload plugin success:").append(fileName).append(", md5:").append(md5).append(change ? " ,插件已经更新\n" : "\n").toString();
         } catch (Exception e) {
             logger.error("uploadPluginJar error token={}", token);
             return "上传失败";
@@ -92,10 +85,8 @@ public class WebsiteController {
         try {
             MultipartFile jar = multiReq.getFile("jar");
             String uploadFilePath = jar.getOriginalFilename();
-            String uploadFileName = uploadFilePath.substring(uploadFilePath.lastIndexOf('\\') + 1,
-                uploadFilePath.indexOf('.'));
-            String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1,
-                uploadFilePath.length());
+            String uploadFileName = uploadFilePath.substring(uploadFilePath.lastIndexOf('\\') + 1, uploadFilePath.indexOf('.'));
+            String uploadFileSuffix = uploadFilePath.substring(uploadFilePath.indexOf('.') + 1, uploadFilePath.length());
             String fileName = uploadFileName + "." + uploadFileSuffix;
             redisService.deleteKey(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
             redisService.deleteKey(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));

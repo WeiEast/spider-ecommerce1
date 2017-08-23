@@ -1,8 +1,6 @@
 package com.datatrees.crawler.core.processor.proxy;
 
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月5日 下午11:29:46

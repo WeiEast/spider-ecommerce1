@@ -3,10 +3,16 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.format.impl;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
@@ -16,29 +22,21 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 13, 2014 9:57:14 AM
  */
 public class DateFormatImpl extends AbstractFormat {
 
-    private static final Logger log = LoggerFactory.getLogger(DateFormatImpl.class);
-    private String DATE_PATTERN_SEPERATOR = ";";
-
+    private static final Logger log                    = LoggerFactory.getLogger(DateFormatImpl.class);
+    private              String DATE_PATTERN_SEPERATOR = ";";
 
     /**
-     * 
      * @param request
      * @param pattern
      * @return
@@ -59,7 +57,6 @@ public class DateFormatImpl extends AbstractFormat {
         }
         return result;
     }
-
 
     @Override
     public Object format(Request request, Response response, String orginal, String pattern) {
@@ -109,7 +106,6 @@ public class DateFormatImpl extends AbstractFormat {
         }
         return result;
     }
-
 
     /*
      * (non-Javadoc)

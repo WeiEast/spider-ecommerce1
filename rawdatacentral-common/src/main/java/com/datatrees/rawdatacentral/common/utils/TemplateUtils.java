@@ -21,7 +21,7 @@ public class TemplateUtils {
                 }
                 template = template.replaceFirst("\\{}", String.valueOf(arg));
             }
-//            template = template.replaceAll("\\{}", "");
+            //            template = template.replaceAll("\\{}", "");
         }
         return template;
     }

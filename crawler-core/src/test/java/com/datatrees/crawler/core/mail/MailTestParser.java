@@ -3,54 +3,54 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.mail;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年9月19日 下午3:38:12
  */
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Map;
 
+import com.datatrees.common.util.ResourceUtil;
+import com.datatrees.crawler.core.processor.BaseConfigTest;
+import com.datatrees.crawler.core.processor.mail.MailParserImpl;
 import org.apache.james.mime4j.codec.DecoderUtil;
-import org.apache.james.mime4j.message.BinaryBody;
-import org.apache.james.mime4j.message.BodyPart;
-import org.apache.james.mime4j.message.Entity;
-import org.apache.james.mime4j.message.Message;
-import org.apache.james.mime4j.message.Multipart;
-import org.apache.james.mime4j.message.TextBody;
+import org.apache.james.mime4j.message.*;
 import org.apache.james.mime4j.parser.Field;
 import org.apache.james.mime4j.util.CharsetUtil;
 import org.apache.james.mime4j.util.ContentUtil;
 import org.apache.tika.io.IOUtils;
 import org.junit.Test;
 
-import com.datatrees.common.util.ResourceUtil;
-import com.datatrees.crawler.core.processor.BaseConfigTest;
-import com.datatrees.crawler.core.processor.mail.MailParserImpl;
-
 /**
- * 
+ *
  * @author Denis Lunev <den@mozgoweb.com>
  */
-
 public class MailTestParser extends BaseConfigTest {
 
     private StringBuffer txtBody;
     private StringBuffer htmlBody;
     private ArrayList<BodyPart> attachments = new ArrayList<BodyPart>();
+
+    /**
+     *
+     * @param args
+     * @throws UnsupportedEncodingException
+     */
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        MailTestParser parser = new MailTestParser();
+        // parser.parseMessage("mail/qqfujianHeader");
+        parser.parseMessage("mail/cmb.eml");
+
+    }
 
     public void parseMessage(String fileName) throws UnsupportedEncodingException {
 
@@ -79,7 +79,6 @@ public class MailTestParser extends BaseConfigTest {
             System.out.println("Subject: " + mimeMsg.getSubject());
 
             System.out.println("date: " + mimeMsg.getDate());
-
 
             // Get custom header by name
             Field priorityFld = mimeMsg.getHeader().getField("X-Priority");
@@ -135,7 +134,7 @@ public class MailTestParser extends BaseConfigTest {
 
     /**
      * This method classifies bodyPart as text, html or attached file
-     * 
+     *
      * @param multipart
      * @throws IOException
      */
@@ -173,20 +172,7 @@ public class MailTestParser extends BaseConfigTest {
     }
 
     /**
-     * 
-     * @param args
-     * @throws UnsupportedEncodingException
-     */
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        MailTestParser parser = new MailTestParser();
-        // parser.parseMessage("mail/qqfujianHeader");
-        parser.parseMessage("mail/cmb.eml");
-
-
-    }
-
-    /**
-     * 
+     *
      */
     @Test
     public void testcha() {
@@ -219,7 +205,6 @@ public class MailTestParser extends BaseConfigTest {
         System.err.println(new String(buffer));
     }
 
-
     @Test
     public void mailMimeParserTest() {
         String content = ResourceUtil.getContent("mailmime/emltest", null);
@@ -233,13 +218,10 @@ public class MailTestParser extends BaseConfigTest {
                 System.out.println();
             }
 
-
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
     }
-
-
 
 }

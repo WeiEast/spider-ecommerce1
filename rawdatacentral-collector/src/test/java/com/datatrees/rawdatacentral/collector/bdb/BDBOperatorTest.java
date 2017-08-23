@@ -1,22 +1,16 @@
 package com.datatrees.rawdatacentral.collector.bdb;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import com.datatrees.rawdatacentral.collector.bdb.operator.BDBOperator;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.*;
 
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.classloader.ClassLoaderFactory;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
+import com.datatrees.rawdatacentral.collector.bdb.operator.BDBOperator;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午10:45:23
@@ -71,8 +65,7 @@ public class BDBOperatorTest {
     public void testPluginFactory() throws Exception {
         ClassLoader loader = null;
         for (int i = 0; i < 3; i++) {
-            File file = new File(
-                    "/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/target/plugin-tj189Plugin-1.0.10-SNAPSHOT.jar");
+            File file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/target/plugin-tj189Plugin-1.0.10-SNAPSHOT.jar");
             List<File> paked = new ArrayList<File>();
             paked.add(file);
             loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
@@ -80,8 +73,7 @@ public class BDBOperatorTest {
             AbstractClientPlugin pluginMain = (AbstractClientPlugin) clazz.newInstance();
             System.out.println(pluginMain.process("dd"));
 
-            file = new File(
-                    "/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/src/web/resources/tj189Plugin.jar_version2");
+            file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/src/web/resources/tj189Plugin.jar_version2");
             paked = new ArrayList<File>();
             paked.add(file);
             loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());

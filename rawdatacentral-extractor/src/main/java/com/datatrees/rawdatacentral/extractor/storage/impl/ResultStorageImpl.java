@@ -3,42 +3,35 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.extractor.storage.impl;
 
 import javax.annotation.Resource;
 
+import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.common.util.GsonUtils;
+import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
+import com.datatrees.rawdatacentral.domain.model.*;
+import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
+import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.util.GsonUtils;
-import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
-import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
-import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
-import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
-import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
-import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
-import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
-import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月31日 上午1:39:17
  */
 @Service
 public class ResultStorageImpl implements ResultStorage {
-    private static final Logger logger = LoggerFactory.getLogger(ResultStorageImpl.class);
-    private int remarkLength = PropertiesConfiguration.getInstance().getInt("remark.max.length", 255);
-    private int urlLength = PropertiesConfiguration.getInstance().getInt("url.max.length", 512);
 
-
+    private static final Logger logger       = LoggerFactory.getLogger(ResultStorageImpl.class);
+    private              int    remarkLength = PropertiesConfiguration.getInstance().getInt("remark.max.length", 255);
+    private              int    urlLength    = PropertiesConfiguration.getInstance().getInt("url.max.length", 512);
     @Resource
     private ExtractorResultService extractorService;
 

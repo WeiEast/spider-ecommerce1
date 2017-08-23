@@ -3,23 +3,23 @@ package com.datatrees.crawler.core.processor.format.impl;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CurrencyFormatImpl extends AbstractFormat {
 
-    private static final Logger log = LoggerFactory.getLogger(CurrencyFormatImpl.class);
+    private static final Logger              log                = LoggerFactory.getLogger(CurrencyFormatImpl.class);
     private static final Map<String, String> defaultCurrencyMap = new LinkedHashMap<String, String>();
-    private static String defaultCurrency = "RMB";
+    private static       String              defaultCurrency    = "RMB";
+
     static {
         defaultCurrencyMap.put("美元|美金|\\$|＄|USD|U\\.S\\.", "USD");
         defaultCurrencyMap.put("欧元|€|EUR", "EUR");

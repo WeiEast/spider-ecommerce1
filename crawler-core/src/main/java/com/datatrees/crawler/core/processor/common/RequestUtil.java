@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.common;
 
 import java.text.DateFormat;
@@ -24,7 +24,6 @@ import com.datatrees.crawler.core.processor.format.container.NumberMapContainer;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 8:14:36 PM
@@ -91,12 +90,10 @@ public class RequestUtil {
         return fields;
     }
 
-
     @SuppressWarnings("unchecked")
     public static void setRequestVisibleFields(Request req, Map<String, Object> fields) {
         req.setAttribute(Constants.RREQUEST_VISIBLE_FIELS, fields);
     }
-
 
     public static String getCurrentTemplateId(Request req) {
         return (String) req.getAttribute(Constants.CURRENT_SEARCH_TEMPLATE);
@@ -131,7 +128,6 @@ public class RequestUtil {
         req.setAttribute(Constants.CRAWLER_REQUEST_KEYWORD, keyword);
     }
 
-
     public static String getContentCharset(Request req) {
         return (String) req.getAttribute(Constants.CRAWLER_PAGECONTENT_CHARSET);
     }
@@ -165,7 +161,6 @@ public class RequestUtil {
         return (Map<String, DateFormat>) req.getAttribute(Constants.CRAWLER_DATE_FROMAT);
     }
 
-
     public static void setNumberFormat(Request req, NumberMapContainer container) {
         req.setAttribute(Constants.CRAWLER_REQUEST_NUMBER_MAP, container);
     }
@@ -173,7 +168,6 @@ public class RequestUtil {
     public static NumberMapContainer getNumberFormat(Request req) {
         return (NumberMapContainer) req.getAttribute(Constants.CRAWLER_REQUEST_NUMBER_MAP);
     }
-
 
     public static String getSearchTemplate(Request req) {
         return (String) req.getAttribute(Constants.CRAWLER_REQUEST_TEMPLATE);
@@ -190,7 +184,6 @@ public class RequestUtil {
     public static void setAttribute(Request req, String key, Object obj) {
         req.setAttribute(Constants.REQUEST_PREFIX + key, obj);
     }
-
 
     public static Map<String, Object> getSourceMap(Request request) {
         Map<String, Object> sourceMap = new HashMap<String, Object>();

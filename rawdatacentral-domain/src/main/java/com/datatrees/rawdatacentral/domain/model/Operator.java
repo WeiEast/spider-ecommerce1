@@ -3,30 +3,24 @@ package com.datatrees.rawdatacentral.domain.model;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table t_operator(operator basic info)  */
+/** create by system from table t_operator(operator basic info) */
 public class Operator implements Serializable {
-    /** operator Id */
-    private Integer id;
-
-    /** not null if operator support search */
-    private Integer websiteId;
-
-    /** operator name */
-    private String operatorName;
-
-    /** operator region */
-    private String region;
-
-    /** 0:false,1:true */
-    private Boolean isenabled;
-
-    /**  */
-    private Date createdAt;
-
-    /**  */
-    private Date updatedAt;
 
     private static final long serialVersionUID = 1L;
+    /** operator Id */
+    private Integer id;
+    /** not null if operator support search */
+    private Integer websiteId;
+    /** operator name */
+    private String  operatorName;
+    /** operator region */
+    private String  region;
+    /** 0:false,1:true */
+    private Boolean isenabled;
+    /**  */
+    private Date    createdAt;
+    /**  */
+    private Date    updatedAt;
 
     public Integer getId() {
         return id;

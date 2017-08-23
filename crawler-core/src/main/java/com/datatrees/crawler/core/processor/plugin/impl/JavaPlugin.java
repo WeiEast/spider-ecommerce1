@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.plugin.impl;
 
 import com.datatrees.common.pipeline.Request;
@@ -20,7 +20,6 @@ import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 
 /**
  * java plugin for
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 1:10:33 PM
@@ -38,8 +37,7 @@ public class JavaPlugin extends Plugin {
         }
         // add http client
         clientPlugin.setWebClient(WebClientUtil.getWebClient());
-        String params = ((com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) plugin.getPlugin())
-            .getParams();
+        String params = ((com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) plugin.getPlugin()).getParams();
         return clientPlugin.process(args, params);
     }
 }

@@ -1,8 +1,16 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
+import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BooleanUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
@@ -16,17 +24,9 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.rawdatacentral.api.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhouxinghai on 2017/7/17.
@@ -35,18 +35,14 @@ import java.util.concurrent.TimeUnit;
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
-
     @Resource
-    private CrawlerService                crawlerService;
-
+    private CrawlerService     crawlerService;
     @Resource
-    private ClassLoaderService            classLoaderService;
-
+    private ClassLoaderService classLoaderService;
     @Resource
-    private RedisService                  redisService;
-
+    private RedisService       redisService;
     @Resource
-    private MessageService                messageService;
+    private MessageService     messageService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -99,16 +95,13 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return result;
         }
         //刷新短信间隔时间
-        int sendSmsInterval = PropertiesConfiguration.getInstance()
-            .getInt(RedisKeyPrefixEnum.SEND_SMS_INTERVAL.getRedisKey(param.getWebsiteName()), 0);
+        int sendSmsInterval = PropertiesConfiguration.getInstance().getInt(RedisKeyPrefixEnum.SEND_SMS_INTERVAL.getRedisKey(param.getWebsiteName()), 0);
         String latestSendSmsTime = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME);
         if (StringUtils.isNoneBlank(latestSendSmsTime) && sendSmsInterval > 0) {
             long endTime = Long.valueOf(latestSendSmsTime) + TimeUnit.SECONDS.toMillis(sendSmsInterval);
             if (System.currentTimeMillis() < endTime) {
                 try {
-                    logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒",
-                        DateUtils.formatYmdhms(Long.valueOf(latestSendSmsTime)),
-                        DateUtils.getUsedTime(System.currentTimeMillis(), endTime));
+                    logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒", DateUtils.formatYmdhms(Long.valueOf(latestSendSmsTime)), DateUtils.getUsedTime(System.currentTimeMillis(), endTime));
                     TimeUnit.MILLISECONDS.sleep(endTime - System.currentTimeMillis());
                 } catch (InterruptedException e) {
                     throw new RuntimeException("refeshSmsCode error", e);
@@ -117,11 +110,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         }
         result = getLoginService(param).refeshSmsCode(param);
         if (result.getStatus()) {
-            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME,
-                System.currentTimeMillis() + "");
+            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME, System.currentTimeMillis() + "");
         }
-        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->短信验证码-->刷新{}!",
-            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->短信验证码-->刷新{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         return result;
     }
 
@@ -148,8 +139,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                     break;
             }
         }
-        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->图片验证码-->校验{}!",
-            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->图片验证码-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         return result;
     }
 
@@ -175,8 +165,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 }
             }
         }
-        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->校验{}!",
-            FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        messageService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         sendLoginSuccessMessage(result, param);
         return result;
     }
@@ -223,12 +212,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             if (StringUtils.isBlank(param.getRealName()) && map.containsKey(AttributeKey.REAL_NAME)) {
                 param.setRealName(map.get(AttributeKey.REAL_NAME));
             }
-            if (StringUtils.equals(FormType.LOGIN, param.getFormType()) && StringUtils.isBlank(param.getPicCode())
-                && map.containsKey(AttributeKey.LOGIN_PIC_CODE)) {
+            if (StringUtils.equals(FormType.LOGIN, param.getFormType()) && StringUtils.isBlank(param.getPicCode()) && map.containsKey(AttributeKey.LOGIN_PIC_CODE)) {
                 param.setPicCode(map.get(AttributeKey.LOGIN_PIC_CODE));
             }
-            if (StringUtils.equals(FormType.VALIDATE_BILL_DETAIL, param.getFormType())
-                && StringUtils.isBlank(param.getPicCode()) && map.containsKey(AttributeKey.BILL_DETAIL_PIC_CODE)) {
+            if (StringUtils.equals(FormType.VALIDATE_BILL_DETAIL, param.getFormType()) && StringUtils.isBlank(param.getPicCode()) && map.containsKey(AttributeKey.BILL_DETAIL_PIC_CODE)) {
                 param.setPicCode(map.get(AttributeKey.BILL_DETAIL_PIC_CODE));
             }
         }
@@ -264,8 +251,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
      */
     private void sendLoginSuccessMessage(HttpResult result, OperatorParam param) {
         if (null != result && result.getStatus()) {
-            String sendLoginStage = PropertiesConfiguration.getInstance().get(
-                RedisKeyPrefixEnum.SEND_LOGIN_MSG_STAGE.getRedisKey(param.getWebsiteName()), "VALIDATE_BILL_DETAIL");
+            String sendLoginStage = PropertiesConfiguration.getInstance().get(RedisKeyPrefixEnum.SEND_LOGIN_MSG_STAGE.getRedisKey(param.getWebsiteName()), "VALIDATE_BILL_DETAIL");
             if (StringUtils.equals(sendLoginStage, param.getFormType())) {
                 messageService.sendLoginSuccessMessage(param.getTaskId(), param.getWebsiteName());
                 logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());

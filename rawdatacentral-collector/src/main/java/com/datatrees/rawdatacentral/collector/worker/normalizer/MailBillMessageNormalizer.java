@@ -3,10 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.worker.normalizer;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
@@ -24,28 +28,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.*;
-import java.util.regex.Pattern;
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月31日 上午11:50:36
  */
 @Service
 public class MailBillMessageNormalizer implements DataNormalizer {
+
     private static final Logger logger = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
-
     @Resource
-    private BankService         bankService;
-
-    private String              loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids",
-        "3");
-
-    private List<String>        loadFileBankList  = null;
-    private List<String>        needLoadFieldList = null;
+    private BankService bankService;
+    private String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
+    private List<String> loadFileBankList  = null;
+    private List<String> needLoadFieldList = null;
 
     {
         loadFileBankList = Arrays.asList(loadFileBankIds.split(" *; *"));
@@ -72,8 +68,7 @@ public class MailBillMessageNormalizer implements DataNormalizer {
             ((MailBillData) object).setResultType(message.getResultType().getValue());
             processLoadFile((MailBillData) object);
             return true;
-        } else if (object instanceof HashMap && StringUtils.equals(
-            (String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), MailBillData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), MailBillData.class.getSimpleName())) {
             MailBillData mailBillData = new MailBillData();
             mailBillData.putAll((Map) object);
             mailBillData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
@@ -91,8 +86,7 @@ public class MailBillMessageNormalizer implements DataNormalizer {
     }
 
     private void processLoadFile(MailBillData mailData) {
-        if (mailData == null || mailData.getBankId() == null
-            || !loadFileBankList.contains(mailData.getBankId().toString())) {
+        if (mailData == null || mailData.getBankId() == null || !loadFileBankList.contains(mailData.getBankId().toString())) {
             logger.warn("bankid or result is empty! bankid: " + mailData.getBankId());
             return;
         }
@@ -118,8 +112,7 @@ public class MailBillMessageNormalizer implements DataNormalizer {
                 loadFile(sub);
             }
         } else {
-            if (logger.isDebugEnabled())
-                logger.debug("only load file wapper and skip other type!");
+            if (logger.isDebugEnabled()) logger.debug("only load file wapper and skip other type!");
         }
     }
 

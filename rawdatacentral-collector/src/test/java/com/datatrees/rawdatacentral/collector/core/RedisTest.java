@@ -1,15 +1,15 @@
 package com.datatrees.rawdatacentral.collector.core;
 
-import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
-import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import com.datatrees.rawdatacentral.api.RedisService;
-import org.apache.commons.lang3.RandomUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+
+import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
+import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import org.apache.commons.lang3.RandomUtils;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Created by zhouxinghai on 2017/5/22.

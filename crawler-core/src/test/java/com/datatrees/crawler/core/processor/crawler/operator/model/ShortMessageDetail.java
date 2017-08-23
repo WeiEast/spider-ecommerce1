@@ -1,45 +1,44 @@
 package com.datatrees.crawler.core.processor.crawler.operator.model;
 
-import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
-
 import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 /**
  * 短信记录信息
- * 
  * @author likun
  * @version $Id: ShortMessageDetail.java, v 0.1 Jul 18, 2015 5:47:21 PM likun Exp $
  */
 public class ShortMessageDetail implements Serializable {
-    private static final long serialVersionUID = -4001240239142312790L;
 
+    private static final long serialVersionUID = -4001240239142312790L;
     /**
      * 序号
      */
-    private Integer           serialNum;
+    private Integer serialNum;
     /**
      * 业务类型，表示短信指向的套餐项目
      */
-    private String            businessType;
+    private String  businessType;
     /**
      * 起始时间
      */
-    private Date              smsDateTime;
+    private Date    smsDateTime;
     /**
      * 短信收发类型, 1-接受；2-发送
      */
-    private String            smsType;
+    private String  smsType;
     /**
      * 对方号码
      */
-    private String            otherNum;
+    private String  otherNum;
     /**
      * 费用
      */
-    private Double            fee;
+    private Double  fee;
 
     public Integer getSerialNum() {
         return serialNum;

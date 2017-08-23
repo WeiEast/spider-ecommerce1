@@ -5,6 +5,7 @@ package com.datatrees.crawler.core.processor.common.exception;
  * @since 11:48 14/08/2017
  */
 public class PluginInvokeException extends Exception {
+
     public PluginInvokeException(String message) {
         super(message);
     }

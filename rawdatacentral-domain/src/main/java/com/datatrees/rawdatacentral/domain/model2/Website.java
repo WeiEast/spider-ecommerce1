@@ -3,66 +3,48 @@ package com.datatrees.rawdatacentral.domain.model2;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table t_website(website basic info)  */
+/** create by system from table t_website(website basic info) */
 public class Website implements Serializable {
-    /**  */
-    private Integer websiteId;
-
-    /** 1:mail,2:operator,3:ecommerce，4:bank,5:internal */
-    private String websiteType;
-
-    /** website name */
-    private String websiteName;
-
-    /** website domain */
-    private String websiteDomain;
-
-    /** 0:false,1:true */
-    private Boolean isenabled;
-
-    /** 登录过程中自定义提示 */
-    private String loginTip;
-
-    /** 验证码提示 */
-    private String verifyTip;
-
-    /** 登录页初始化超时 */
-    private Integer initTimeout;
-
-    /** 验证码等待时间 */
-    private Integer codeWaitTime;
-
-    /** 登录超时 */
-    private Integer loginTimeout;
-
-    /** 重置类型：SMS|WEB */
-    private String resetType;
-
-    /** 短信模板 */
-    private String smsTemplate;
-
-    /** 短信接收方 */
-    private String smsReceiver;
-
-    /** 网页方式重置的url */
-    private String resetURL;
-
-    /** 密码重置提示 */
-    private String resetTip;
-
-    /**  */
-    private Date createdAt;
-
-    /**  */
-    private Date updatedAt;
-
-    /**  */
-    private Boolean simulate;
-
-    /**  */
-    private Integer templateId;
 
     private static final long serialVersionUID = 1L;
+    /**  */
+    private Integer websiteId;
+    /** 1:mail,2:operator,3:ecommerce，4:bank,5:internal */
+    private String  websiteType;
+    /** website name */
+    private String  websiteName;
+    /** website domain */
+    private String  websiteDomain;
+    /** 0:false,1:true */
+    private Boolean isenabled;
+    /** 登录过程中自定义提示 */
+    private String  loginTip;
+    /** 验证码提示 */
+    private String  verifyTip;
+    /** 登录页初始化超时 */
+    private Integer initTimeout;
+    /** 验证码等待时间 */
+    private Integer codeWaitTime;
+    /** 登录超时 */
+    private Integer loginTimeout;
+    /** 重置类型：SMS|WEB */
+    private String  resetType;
+    /** 短信模板 */
+    private String  smsTemplate;
+    /** 短信接收方 */
+    private String  smsReceiver;
+    /** 网页方式重置的url */
+    private String  resetURL;
+    /** 密码重置提示 */
+    private String  resetTip;
+    /**  */
+    private Date    createdAt;
+    /**  */
+    private Date    updatedAt;
+    /**  */
+    private Boolean simulate;
+    /**  */
+    private Integer templateId;
 
     public Integer getWebsiteId() {
         return websiteId;

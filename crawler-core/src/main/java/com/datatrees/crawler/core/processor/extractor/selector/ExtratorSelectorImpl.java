@@ -3,17 +3,15 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.extractor.selector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -25,16 +23,16 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang.StringUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月14日 下午3:59:14
  */
 public class ExtratorSelectorImpl extends Processor {
-    private List<ExtratorSelector> extratorSelectorList;
 
+    private List<ExtratorSelector> extratorSelectorList;
 
     /**
      * @param extratorSelectorList
@@ -43,8 +41,6 @@ public class ExtratorSelectorImpl extends Processor {
         super();
         this.extratorSelectorList = extratorSelectorList;
     }
-
-
 
     private boolean selectorCheck(ExtratorSelector selector, Request request, Set<String> blackPageExtractorIdSet) {
         Object input = request.getInput();

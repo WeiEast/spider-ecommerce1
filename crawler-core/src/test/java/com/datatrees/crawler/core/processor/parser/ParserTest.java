@@ -3,19 +3,15 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.parser;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -29,9 +25,10 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import junit.framework.Assert;
+import org.junit.Test;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 10:00:24 AM
@@ -49,7 +46,6 @@ public class ParserTest extends BaseConfigTest {
             e.printStackTrace();
         }
     }
-
 
     // @Ignore
     @Test
@@ -93,7 +89,6 @@ public class ParserTest extends BaseConfigTest {
             Assert.assertEquals(expected, resp.getOutPut());
         }
     }
-
 
     @Test
     public void testParserWithRequestWithErrorContext() {
@@ -225,7 +220,6 @@ public class ParserTest extends BaseConfigTest {
                 e.printStackTrace();
             }
 
-
             // String expected = "{\"vv\":341475,\"ss\":\"4QcpSTQzzjQ0A-0KAnsRMdA\"}";
             // System.out.println(resp.getOutPut());
             List<String> results = (List<String>) resp.getOutPut();
@@ -241,7 +235,6 @@ public class ParserTest extends BaseConfigTest {
                 e.printStackTrace();
             }
 
-
             // String expected = "{\"vv\":341475,\"ss\":\"4QcpSTQzzjQ0A-0KAnsRMdA\"}";
             // System.out.println(resp.getOutPut());
             System.out.println(results.size());
@@ -253,18 +246,14 @@ public class ParserTest extends BaseConfigTest {
 
     }
 
-
     /**
-     * 
-     <parser id="viewcount-parser"> <patterns> <pattern> <regex><![CDATA[videoId =
+     * <parser id="viewcount-parser"> <patterns> <pattern> <regex><![CDATA[videoId =
      * '(\d+)']]></regex> <mappings> <map group-index="1" placeholder="id" /> </mappings> </pattern>
-     * 
      * <pattern> <regex><![CDATA[showid="(\d+)"]]></regex> <mappings> <map group-index="1"
      * placeholder="sid" /> </mappings> </pattern> </patterns>
      * <url-template><![CDATA[http://v.youku.
      * com/QVideo/~ajax/getVideoPlayInfo?__rt=1&__ro=&id=${id}&
      * sid=${sid}&type=vv&catid=97]]></url-template>
-     * 
      * </parser>
      */
     private Parser getViewParser() {
@@ -277,7 +266,6 @@ public class ParserTest extends BaseConfigTest {
         indexMapping.setPlaceholder("id");
         // pattern.setIndexMapping(indexMapping);
         // parser.setPattern(pattern);
-
 
         pattern = new ParserPattern();
         pattern.setRegex("showid=\"(\\d+)\"");
@@ -303,7 +291,6 @@ public class ParserTest extends BaseConfigTest {
         // pattern.setIndexMapping(indexMapping);
         // parser.setPattern(pattern);
 
-
         pattern = new ParserPattern();
         pattern.setRegex("showid=\"(\\d+)\"");
         indexMapping = new IndexMapping();
@@ -316,7 +303,6 @@ public class ParserTest extends BaseConfigTest {
         parser.setUrlTemplate("layInfo?__rt=1&__ro=&id=${id}&sid=${sid}&type=vv&catid=97");
         return parser;
     }
-
 
     private Parser getVkParserWithEmptyMappings() {
         Parser parser = new Parser();
@@ -343,10 +329,7 @@ public class ParserTest extends BaseConfigTest {
      * 'http:]]></regex> <mappings> <map group-index="1" placeholder="1" /> <map group-index="2"
      * placeholder="2" /> </mappings> </pattern> </patterns>
      * <url-template><![CDATA[http://vk.com/video${1}_${2}]]></url-template> </parser>
-     * 
-     * 
      */
-
     private Parser getVkParser() {
         Parser parser = new Parser();
 

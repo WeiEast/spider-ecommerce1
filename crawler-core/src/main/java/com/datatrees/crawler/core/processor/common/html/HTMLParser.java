@@ -1,27 +1,24 @@
 /**
  * HTMLParser.java 1.0 Jul 19, 2011 Copyright @ 2011 Vobile, Inc. All right reserved.
  */
-package com.datatrees.crawler.core.processor.common.html;
 
-import it.unimi.dsi.parser.BulletParser;
+package com.datatrees.crawler.core.processor.common.html;
 
 import java.util.HashMap;
 
+import it.unimi.dsi.parser.BulletParser;
 import org.apache.commons.lang.StringUtils;
-
 
 /**
  * HTMLParser.java 1.0 Jul 19, 2011
- * 
  * The content parser of page html content.
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 1.0
- * 
  */
 public class HTMLParser {
-    private BulletParser bulletParser;
+
+    private BulletParser  bulletParser;
     private LinkExtractor linkExtractor;
 
     /**
@@ -34,7 +31,6 @@ public class HTMLParser {
 
     /**
      * parse method
-     * 
      * @param htmlContent
      * @param contextURL
      */
@@ -47,7 +43,6 @@ public class HTMLParser {
 
     /**
      * get page title
-     * 
      * @return title
      */
     public String getTitle() {
@@ -60,7 +55,6 @@ public class HTMLParser {
 
     /**
      * get found links
-     * 
      * @return links
      */
     public HashMap<String, String> getLinks() {

@@ -3,10 +3,13 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.plugin;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -14,30 +17,26 @@ import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
 import com.google.common.base.Preconditions;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 1:10:48 PM
  */
 public abstract class Plugin extends Processor {
 
-    private static final Logger logger = LoggerFactory.getLogger(Plugin.class);
-
-    protected PluginWrapper     plugin = null;
-
-    public void setPluginDesc(PluginWrapper plugin) {
-        this.plugin = plugin;
-    }
+    private static final Logger        logger = LoggerFactory.getLogger(Plugin.class);
+    protected            PluginWrapper plugin = null;
 
     public PluginWrapper getPluginDesc() {
         return plugin;
+    }
+
+    public void setPluginDesc(PluginWrapper plugin) {
+        this.plugin = plugin;
     }
 
     @Override

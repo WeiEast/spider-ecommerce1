@@ -8,6 +8,7 @@ import org.junit.Test;
  * @since 22:46 21/05/2017
  */
 public class NumberMapContainerTest {
+
     @Test
     public void get() throws Exception {
         NumberMapContainer container = NumberMapContainer.get(new DefaultConfiguration());

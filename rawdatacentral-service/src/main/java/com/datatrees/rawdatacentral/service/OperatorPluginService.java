@@ -1,10 +1,9 @@
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import java.util.Map;
+
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-
-import java.util.Map;
 
 /**
  * 运营商登陆接口

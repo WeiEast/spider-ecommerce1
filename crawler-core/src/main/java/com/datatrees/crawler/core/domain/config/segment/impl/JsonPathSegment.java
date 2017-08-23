@@ -11,6 +11,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Path;
  */
 @Path(".[@type='jsonpath']")
 public class JsonPathSegment extends AbstractSegment {
+
     private String jsonpath;
 
     @Attr("value")

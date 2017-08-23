@@ -1,21 +1,18 @@
 package com.datatrees.rawdatacentral.submitter.filestore;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.util.*;
+
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssService;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -25,10 +22,9 @@ import org.slf4j.LoggerFactory;
 public class UploadTask implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadTask.class);
-
-    private ExtractMessage      extractMessage;
-    private List<String>        fieldList;
-    private String              ossKey;
+    private ExtractMessage extractMessage;
+    private List<String>   fieldList;
+    private String         ossKey;
 
     UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
         this.extractMessage = extractMessage;

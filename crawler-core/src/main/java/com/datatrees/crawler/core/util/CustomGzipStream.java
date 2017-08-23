@@ -1,50 +1,47 @@
 package com.datatrees.crawler.core.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.SequenceInputStream;
+import java.io.*;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-public class CustomGzipStream extends InflaterInputStream{
+public class CustomGzipStream extends InflaterInputStream {
 
-	
-	/**
+    /**
+     * GZIP header magic number.
+     */
+    public final static  int   GZIP_MAGIC = 0x8b1f;
+    /*
+     * File header flags.
+     */
+    private final static int   FTEXT      = 1;    // Extra text
+    private final static int   FHCRC      = 2;    // Header CRC
+    private final static int   FEXTRA     = 4;    // Extra field
+    private final static int   FNAME      = 8;    // File name
+    private final static int   FCOMMENT   = 16;    // File comment
+    /**
      * CRC-32 for uncompressed data.
      */
-    protected CRC32 crc = new CRC32();
-
+    protected            CRC32 crc        = new CRC32();
     /**
      * Indicates end of input stream.
      */
     protected boolean eos;
-
     private boolean closed = false;
-    
-    /**
-     * Check to make sure that this stream has not been closed
-     */
-    private void ensureOpen() throws IOException {
-	if (closed) {
-	    throw new IOException("Stream closed");
-        }
-    }
+    private byte[]  tmpbuf = new byte[128];
 
     /**
      * Creates a new input stream with the specified buffer size.
-     * @param in the input stream
+     * @param in   the input stream
      * @param size the input buffer size
-     * @exception IOException if an I/O error has occurred
+     * @exception IOException              if an I/O error has occurred
      * @exception IllegalArgumentException if size is <= 0
      */
     public CustomGzipStream(InputStream in, int size) throws IOException {
-	super(in, new Inflater(true), size);
-//        usesDefaultInflater = true;
-            readHeader(in);
+        super(in, new Inflater(true), size);
+        //        usesDefaultInflater = true;
+        readHeader(in);
     }
 
     /**
@@ -53,7 +50,16 @@ public class CustomGzipStream extends InflaterInputStream{
      * @exception IOException if an I/O error has occurred
      */
     public CustomGzipStream(InputStream in) throws IOException {
-	this(in, 512);
+        this(in, 512);
+    }
+
+    /**
+     * Check to make sure that this stream has not been closed
+     */
+    private void ensureOpen() throws IOException {
+        if (closed) {
+            throw new IOException("Stream closed");
+        }
     }
 
     /**
@@ -63,14 +69,14 @@ public class CustomGzipStream extends InflaterInputStream{
      * @param buf the buffer into which the data is read
      * @param off the start offset in the destination array <code>b</code>
      * @param len the maximum number of bytes read
-     * @return	the actual number of bytes read, or -1 if the end of the
-     *		compressed input stream is reached
-     * @exception  NullPointerException If <code>buf</code> is <code>null</code>.
-     * @exception  IndexOutOfBoundsException If <code>off</code> is negative, 
-     * <code>len</code> is negative, or <code>len</code> is greater than 
-     * <code>buf.length - off</code>
-     * @exception IOException if an I/O error has occurred or the compressed
-     *			      input data is corrupt
+     * @return the actual number of bytes read, or -1 if the end of the
+     * compressed input stream is reached
+     * @exception NullPointerException      If <code>buf</code> is <code>null</code>.
+     * @exception IndexOutOfBoundsException If <code>off</code> is negative,
+     *                                      <code>len</code> is negative, or <code>len</code> is greater than
+     *                                      <code>buf.length - off</code>
+     * @exception IOException               if an I/O error has occurred or the compressed
+     *                                      input data is corrupt
      */
     public int read(byte[] buf, int off, int len) throws IOException {
         ensureOpen();
@@ -80,10 +86,9 @@ public class CustomGzipStream extends InflaterInputStream{
 
         int n = super.read(buf, off, len);
         if (n == -1) {
-            if (readTrailer()){
+            if (readTrailer()) {
                 eos = true;
-            }
-            else{
+            } else {
                 return this.read(buf, off, len);
             }
         } else {
@@ -99,29 +104,15 @@ public class CustomGzipStream extends InflaterInputStream{
      */
     public void close() throws IOException {
         if (!closed) {
-            super.close();	
+            super.close();
             eos = true;
             closed = true;
         }
     }
 
-    /**
-     * GZIP header magic number.
-     */
-    public final static int GZIP_MAGIC = 0x8b1f;
-
-    /*
-     * File header flags.
-     */
-    private final static int FTEXT	= 1;	// Extra text
-    private final static int FHCRC	= 2;	// Header CRC
-    private final static int FEXTRA	= 4;	// Extra field
-    private final static int FNAME	= 8;	// File name
-    private final static int FCOMMENT	= 16;	// File comment
-
     /*
      * Reads GZIP member header and returns the total byte number
-     * of this member header. 
+     * of this member header.
      */
     private int readHeader(InputStream this_in) throws IOException {
         CheckedInputStream in = new CheckedInputStream(this_in, crc);
@@ -161,7 +152,7 @@ public class CustomGzipStream extends InflaterInputStream{
         }
         // Check optional header CRC
         if ((flg & FHCRC) == FHCRC) {
-            int v = (int)crc.getValue() & 0xffff;
+            int v = (int) crc.getValue() & 0xffff;
             if (readUShort(in) != v) {
                 throw new IOException("Corrupt GZIP header");
             }
@@ -172,26 +163,23 @@ public class CustomGzipStream extends InflaterInputStream{
         return n;
     }
 
-   /*
-    * Reads GZIP member trailer and returns true if the eos
-    * reached, false if there are more (concatenated gzip
-    * data set)
-    */ 
+    /*
+     * Reads GZIP member trailer and returns true if the eos
+     * reached, false if there are more (concatenated gzip
+     * data set)
+     */
     private boolean readTrailer() throws IOException {
         InputStream in = this.in;
         int n = inf.getRemaining();
         if (n > 0) {
-            in = new SequenceInputStream(
-                        new ByteArrayInputStream(buf, len - n, n), in);
+            in = new SequenceInputStream(new ByteArrayInputStream(buf, len - n, n), in);
         }
         // Uses left-to-right evaluation order
         if ((readUInt(in) != crc.getValue()) ||
-            // rfc1952; ISIZE is the input size modulo 2^32
-            (readUInt(in) != (inf.getBytesWritten() & 0xffffffffL)))
-        	return true;
-//            throw new IOException("Corrupt GZIP trailer");
+                // rfc1952; ISIZE is the input size modulo 2^32
+                (readUInt(in) != (inf.getBytesWritten() & 0xffffffffL))) return true;
+        //            throw new IOException("Corrupt GZIP trailer");
 
-        
         // If there are more bytes available in "in" or
         // the leftover in the "inf" is > 26 bytes:
         // this.trailer(8) + next.header.min(10) + next.trailer(8)
@@ -205,8 +193,7 @@ public class CustomGzipStream extends InflaterInputStream{
             }
 
             inf.reset();
-            if (n > m)
-                inf.setInput(buf, len - n + m, n - m);
+            if (n > m) inf.setInput(buf, len - n + m, n - m);
             return false;
         }
 
@@ -217,49 +204,45 @@ public class CustomGzipStream extends InflaterInputStream{
      * Reads unsigned integer in Intel byte order.
      */
     private long readUInt(InputStream in) throws IOException {
-	long s = readUShort(in);
-	return ((long)readUShort(in) << 16) | s;
+        long s = readUShort(in);
+        return ((long) readUShort(in) << 16) | s;
     }
 
     /*
      * Reads unsigned short in Intel byte order.
      */
     private int readUShort(InputStream in) throws IOException {
-	int b = readUByte(in);
-	return ((int)readUByte(in) << 8) | b;
+        int b = readUByte(in);
+        return ((int) readUByte(in) << 8) | b;
     }
 
     /*
      * Reads unsigned byte.
      */
     private int readUByte(InputStream in) throws IOException {
-	int b = in.read();
-	if (b == -1) {
-	    throw new EOFException();
-	}
+        int b = in.read();
+        if (b == -1) {
+            throw new EOFException();
+        }
         if (b < -1 || b > 255) {
             // Report on this.in, not argument in; see read{Header, Trailer}.
-            throw new IOException(this.in.getClass().getName()
-                + ".read() returned value out of range -1..255: " + b);
+            throw new IOException(this.in.getClass().getName() + ".read() returned value out of range -1..255: " + b);
         }
-	return b;
+        return b;
     }
-
-
-    private byte[] tmpbuf = new byte[128];
 
     /*
      * Skips bytes of input data blocking until all bytes are skipped.
      * Does not assume that the input stream is capable of seeking.
      */
     private void skipBytes(InputStream in, int n) throws IOException {
-	while (n > 0) {
-	    int len = in.read(tmpbuf, 0, n < tmpbuf.length ? n : tmpbuf.length);
-	    if (len == -1) {
-		throw new EOFException();
-	    }
-	    n -= len;
-	}
+        while (n > 0) {
+            int len = in.read(tmpbuf, 0, n < tmpbuf.length ? n : tmpbuf.length);
+            if (len == -1) {
+                throw new EOFException();
+            }
+            n -= len;
+        }
     }
 }
 

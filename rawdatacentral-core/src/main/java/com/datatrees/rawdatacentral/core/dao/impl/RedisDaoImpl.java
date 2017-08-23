@@ -1,22 +1,21 @@
 package com.datatrees.rawdatacentral.core.dao.impl;
 
-import com.datatrees.rawdatacentral.service.constants.Constants;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
+import com.datatrees.rawdatacentral.service.constants.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 @Component
 public class RedisDaoImpl implements RedisDao {
 
-    private static final Logger   logger = LoggerFactory.getLogger(RedisDaoImpl.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(RedisDaoImpl.class);
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 

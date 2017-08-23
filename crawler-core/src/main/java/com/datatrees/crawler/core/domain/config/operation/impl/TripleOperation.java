@@ -16,7 +16,7 @@ public class TripleOperation extends AbstractOperation {
      */
     private static final long serialVersionUID = 393008470332561298L;
     private TripleType tripleType;
-    private String value;
+    private String     value;
 
     @Attr("triple-type")
     public TripleType getTripleType() {

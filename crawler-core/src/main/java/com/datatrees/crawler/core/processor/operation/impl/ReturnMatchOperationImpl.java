@@ -3,15 +3,12 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
+
 package com.datatrees.crawler.core.processor.operation.impl;
 
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -21,14 +18,16 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
  * @version 1.0
  * @since 2016年5月30日 下午8:33:11
  */
 public class ReturnMatchOperationImpl extends Operation {
+
     private static final Logger log = LoggerFactory.getLogger(ReturnMatchOperationImpl.class);
 
     /*
@@ -54,10 +53,10 @@ public class ReturnMatchOperationImpl extends Operation {
                 result.append(matchedKey + ",");
             }
         }
-        if(result.length()>=1){
+        if (result.length() >= 1) {
             if (result.charAt(result.length() - 1) == ',') {
                 result = new StringBuilder(result.substring(0, result.length() - 1));
-             }
+            }
         }
         if (log.isDebugEnabled()) {
             log.debug("ReturnMatchOperation input: " + String.format("value: %s", value));

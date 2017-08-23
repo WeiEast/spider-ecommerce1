@@ -1,61 +1,60 @@
 package com.datatrees.crawler.core.processor.crawler.operator.model;
 
-import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
-
 import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 /**
  * 手机使用者在运营商处登记基本信息(个人信息，套餐信息，余额信息...)
- * 
  * @author likun
  * @version $Id: PersonalInformation.java, v 0.1 Jul 18, 2015 5:29:05 PM likun Exp $
  */
 public class PersonalInformation implements Serializable {
-    private static final long serialVersionUID = 5923546344368948356L;
 
+    private static final long serialVersionUID = 5923546344368948356L;
     /**
      * 运营商处登记姓名
      */
-    private String            name;
+    private String name;
     /**
      * 运营商处登记身份证号
      */
-    private String            identityCard;
+    private String identityCard;
     /**
      * 手机号码
      */
-    private String            telNum;
+    private String telNum;
     /**
      * 手机号码归属地：中国移动，中国联通，中国电信
      */
-    private String            telNumAttribution;
+    private String telNumAttribution;
     /**
      * 号码所在省份
      */
-    private String            telNumProvince;
+    private String telNumProvince;
     /**
      * 运营商用户等级
      */
-    private String            telCustomerLevel;
+    private String telCustomerLevel;
     /**
      * 账户余额
      */
-    private Double            accountBalance;
+    private Double accountBalance;
     /**
      * 入网时间
      */
-    private Date              netJoinDate;
+    private Date   netJoinDate;
     /**
      * 当前开机状态
      */
-    private String            telNumStatus;
+    private String telNumStatus;
     /**
      * 当前套餐
      */
-    private String            telPackage;
+    private String telPackage;
 
     public String getName() {
         return name;

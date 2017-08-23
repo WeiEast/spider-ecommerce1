@@ -3,23 +3,23 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.plugin;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.classfile.ClassLoaderUtils;
 import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.processor.common.exception.PluginException;
 import com.google.gson.reflect.TypeToken;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Apr 1, 2014 4:27:41 PM
@@ -34,9 +34,7 @@ public final class PluginUtil {
     public static Map<String, Object> checkPluginResult(String result) throws PluginException {
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
         try {
-            resultMap.putAll((LinkedHashMap<String, Object>) GsonUtils.fromJson(result,
-                new TypeToken<LinkedHashMap<String, Object>>() {
-                }.getType()));
+            resultMap.putAll((LinkedHashMap<String, Object>) GsonUtils.fromJson(result, new TypeToken<LinkedHashMap<String, Object>>() {}.getType()));
             if (resultMap.containsKey("errorCode")) {
                 throw new PluginException("error duing plugin invoke!");
             }
@@ -57,9 +55,7 @@ public final class PluginUtil {
         return result;
     }
 
-    public static AbstractClientPlugin loadPlugin(PluginWrapper plugin,
-                                                  ClassLoader parent) throws ClassNotFoundException,
-                                                                      IllegalAccessException, InstantiationException {
+    public static AbstractClientPlugin loadPlugin(PluginWrapper plugin, ClassLoader parent) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         String mainClass = ((JavaPlugin) plugin.getPlugin()).getMainClass();
 
         ClassLoader parentLoader = parent;
@@ -67,7 +63,6 @@ public final class PluginUtil {
             parentLoader = PluginUtil.class.getClassLoader();
         }
 
-        return ClassLoaderUtils.loadAndInstantiate(plugin.getFile(), parentLoader, plugin.isForceReload(), mainClass,
-            AbstractClientPlugin.class);
+        return ClassLoaderUtils.loadAndInstantiate(plugin.getFile(), parentLoader, plugin.isForceReload(), mainClass, AbstractClientPlugin.class);
     }
 }

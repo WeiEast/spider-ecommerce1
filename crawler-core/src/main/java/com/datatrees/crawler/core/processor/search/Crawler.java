@@ -3,15 +3,10 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.crawler.core.processor.search;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.datatrees.crawler.core.processor.search;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
@@ -33,9 +28,12 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.page.AbstractPage;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 8:48:55 PM
@@ -46,10 +44,9 @@ public class Crawler {
 
     /**
      * crawler request main route step 1: request via httpclient step 2: parse page content
-     * 
      * @param request
      * @return
-     * @throws ResultEmptyException
+     * @exception ResultEmptyException
      */
     public static CrawlResponse crawl(CrawlRequest request) throws ResultEmptyException {
         CrawlResponse response = CrawlResponse.build();
@@ -80,10 +77,7 @@ public class Crawler {
                     doResponseCheck(page, RequestUtil.getContent(request), url.getUrl());
                 } catch (Exception e) {
                     // response code faild
-                    if (BooleanUtils.isTrue(page.getResponseCheck())
-                            && PatternUtils.match(
-                                    StringUtils.defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|"
-                                            + ProtocolStatusCodes.SERVER_EXCEPTION + ")$"), ResponseUtil.getResponseStatus(response).toString())) {
+                    if (BooleanUtils.isTrue(page.getResponseCheck()) && PatternUtils.match(StringUtils.defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$"), ResponseUtil.getResponseStatus(response).toString())) {
                         throw new ResponseCheckException("page:" + page.getId() + ",url:" + request.getUrl() + " response check failed!", e);
                     } else {
                         throw e;
@@ -101,8 +95,7 @@ public class Crawler {
                 }
             } else {
                 ResponseUtil.setResponseStatus(response, Status.FILTERED);
-                LOGGER
-                    .info("no avliable page found for linknode:" + url + ",template:" + templateId + ",set filtered.");
+                LOGGER.info("no avliable page found for linknode:" + url + ",template:" + templateId + ",set filtered.");
             }
 
         } catch (Exception e) {
@@ -119,18 +112,13 @@ public class Crawler {
 
     private static void doResponseCheck(Page page, String content, String url) throws ResponseCheckException {
         // check if response failed
-        if (page != null
-                && BooleanUtils.isTrue(page.getResponseCheck())
-                && (StringUtils.isBlank(content) || (StringUtils.isNotBlank(page.getPageFailedPattern()) && PatternUtils.match(
-                        page.getPageFailedPattern(), content)))) {
-            throw new ResponseCheckException("page:" + page.getId() + ",url:" + url + " response check failed contains "
-                    + page.getPageFailedPattern());
+        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) || (StringUtils.isNotBlank(page.getPageFailedPattern()) && PatternUtils.match(page.getPageFailedPattern(), content)))) {
+            throw new ResponseCheckException("page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
         }
     }
 
     /**
      * add default conf if not exists
-     * 
      * @param request
      */
     private static void checkConf(CrawlRequest request) {

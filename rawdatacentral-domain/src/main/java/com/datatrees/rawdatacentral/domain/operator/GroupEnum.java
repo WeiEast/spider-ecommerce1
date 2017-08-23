@@ -5,6 +5,7 @@
  * All rights are reserved.
  * Copyright (c) datatrees.com Inc. 2017
  */
+
 package com.datatrees.rawdatacentral.domain.operator;
 
 /**
@@ -74,17 +75,14 @@ public enum GroupEnum {
     GUI_ZHOU_10086("GUI_ZHOU_10086", "贵州移动", "gui_zhou_10086_shop"),
     QING_HAI_10086("QING_HAI_10086", "青海移动", "qing_hai_10086_shop"),
     NING_XIA_10086("NING_XIA_10086", "宁夏移动", "ning_xia_10086_shop");
-
     /**
      * 运营商类别代码
      */
     private final String groupCode;
-
     /**
      * 运营商类别名称
      */
     private final String groupName;
-
     /**
      * 默认站点名称
      */

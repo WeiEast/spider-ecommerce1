@@ -3,23 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.extractor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -33,9 +24,12 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.source.PageSourceImpl;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月14日 下午9:14:20
@@ -43,9 +37,7 @@ import com.datatrees.crawler.core.processor.segment.SegmentBase;
 public class PageExtractorImpl extends Processor {
 
     private static final Logger log = LoggerFactory.getLogger(PageExtractorImpl.class);
-
     private PageExtractor pageExtractor;
-
 
     /**
      * @param pageExtractor
@@ -119,13 +111,11 @@ public class PageExtractorImpl extends Processor {
         ResponseUtil.setResponsePageExtractResultMap(resp, segmentResultMap);
     }
 
-
     @SuppressWarnings({"unused", "rawtypes", "unchecked"})
     private Object resultMapConvert(Map<String, Object> resultMap) {
         String className = null;
         try {
-            if (resultMap == null || resultMap.isEmpty()
-                    || StringUtils.isBlank((className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
+            if (resultMap == null || resultMap.isEmpty() || StringUtils.isBlank((className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
                 return resultMap;
             } else {
                 // Reflect to class instance

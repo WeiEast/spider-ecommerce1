@@ -3,29 +3,19 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.crawler.core.processor.service.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.protocol.Constant;
-import com.datatrees.common.protocol.Protocol;
-import com.datatrees.common.protocol.ProtocolInput;
+import com.datatrees.common.protocol.*;
 import com.datatrees.common.protocol.ProtocolInput.CookieScope;
-import com.datatrees.common.protocol.ProtocolOutput;
-import com.datatrees.common.protocol.WebClientUtil;
 import com.datatrees.common.protocol.http.HTTPConstants;
 import com.datatrees.common.protocol.http.HttpResponse;
 import com.datatrees.common.protocol.util.CookieFormater;
@@ -47,28 +37,28 @@ import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * default httpclient service
- * 
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 10:55:36 AM
  */
 public class DefaultService extends ServiceBase {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultService.class);
-    private static int defaultMaxRetryCount = PropertiesConfiguration.getInstance().getInt("default.request.max.retrycount", 3);
-    private static int defaultWaitInterval = PropertiesConfiguration.getInstance().getInt("default.wait.interval", 500);
-
+    private static final Logger log                  = LoggerFactory.getLogger(DefaultService.class);
+    private static       int    defaultMaxRetryCount = PropertiesConfiguration.getInstance().getInt("default.request.max.retrycount", 3);
+    private static       int    defaultWaitInterval  = PropertiesConfiguration.getInstance().getInt("default.wait.interval", 500);
 
     private int getMaxRetryCount(Request request, SearchProcessorContext context) {
         if (RequestUtil.getRetryCount(request) != null) {
             return RequestUtil.getRetryCount(request);
-        } else if (context != null && context.getSearchConfig() != null && context.getSearchConfig().getProperties() != null
-                && context.getSearchConfig().getProperties().getMaxRetryCount() != null
-                && context.getSearchConfig().getProperties().getMaxRetryCount() > 0) {
+        } else if (context != null && context.getSearchConfig() != null && context.getSearchConfig().getProperties() != null && context.getSearchConfig().getProperties().getMaxRetryCount() != null && context.getSearchConfig().getProperties().getMaxRetryCount() > 0) {
             return context.getSearchConfig().getProperties().getMaxRetryCount();
         } else {
             return defaultMaxRetryCount;
@@ -76,8 +66,7 @@ public class DefaultService extends ServiceBase {
     }
 
     private int getWaitInterval(SearchProcessorContext context) {
-        if (context != null && context.getSearchConfig() != null && context.getSearchConfig().getProperties() != null
-                && context.getSearchConfig().getProperties().getWaitIntervalMillis() != null) {
+        if (context != null && context.getSearchConfig() != null && context.getSearchConfig().getProperties() != null && context.getSearchConfig().getProperties().getWaitIntervalMillis() != null) {
             return context.getSearchConfig().getProperties().getWaitIntervalMillis();
         } else {
             return defaultWaitInterval;
@@ -145,12 +134,9 @@ public class DefaultService extends ServiceBase {
         }
     }
 
-
-    private void resetCookie(AbstractCookie cookie, SearchProcessorContext context, String[] setCookies,
-            com.datatrees.common.protocol.Response response) {
+    private void resetCookie(AbstractCookie cookie, SearchProcessorContext context, String[] setCookies, com.datatrees.common.protocol.Response response) {
         String cookieString = "";
-        if (cookie != null && cookie instanceof BaseCookie && BooleanUtils.isTrue(((BaseCookie) cookie).getCoexist()) && response != null
-                && response instanceof HttpResponse) {
+        if (cookie != null && cookie instanceof BaseCookie && BooleanUtils.isTrue(((BaseCookie) cookie).getCoexist()) && response != null && response instanceof HttpResponse) {
             HttpResponse httpResponse = (HttpResponse) response;
             ProcessorContextUtil.setHttpState(context, httpResponse.getState());
             if (httpResponse.getState() != null) {
@@ -197,9 +183,7 @@ public class DefaultService extends ServiceBase {
             headers.put("Referer", current.getReferer());
         }
 
-        input.setUrl(url).addHeaders(headers).setFollowRedirect(true).setRedirectUriEscaped(context.getRedirectUriEscaped()).setCookieScope(scope)
-                .setCookie(ProcessorContextUtil.getCookieString(context)).setState(ProcessorContextUtil.getHttpState(context))
-                .setAllowCircularRedirects(context.getAllowCircularRedirects());
+        input.setUrl(url).addHeaders(headers).setFollowRedirect(true).setRedirectUriEscaped(context.getRedirectUriEscaped()).setCookieScope(scope).setCookie(ProcessorContextUtil.getCookieString(context)).setState(ProcessorContextUtil.getHttpState(context)).setAllowCircularRedirects(context.getAllowCircularRedirects());
 
         if (cookie instanceof BaseCookie) {
             input.setCoExist(((BaseCookie) cookie).getCoexist());
@@ -240,9 +224,7 @@ public class DefaultService extends ServiceBase {
             if (output.isSuccess() || output.isRedirector()) {
                 visitSucess = true;
                 // cookie reset while USER_SESSION
-                String[] vals =
-                        (String[]) ArrayUtils.addAll(output.getContent().getMetadata().getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE), output
-                                .getContent().getMetadata().getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE2));
+                String[] vals = (String[]) ArrayUtils.addAll(output.getContent().getMetadata().getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE), output.getContent().getMetadata().getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE2));
                 if (scope == CookieScope.USER_SESSION && ArrayUtils.isNotEmpty(vals)) {
                     this.resetCookie(cookie, context, vals, output.getResponse());
                 }
@@ -263,11 +245,9 @@ public class DefaultService extends ServiceBase {
                         // node requeue
                         current.setNeedRequeue(true);
                         ResponseUtil.setResponseStatus(response, Status.REQUEUE);
-                        log.warn("sleep " + sleepSecond + "ms, request [" + current.getRetryCount() + "] retry, node will requeue url:" + url
-                                + ", content:" + content);
+                        log.warn("sleep " + sleepSecond + "ms, request [" + current.getRetryCount() + "] retry, node will requeue url:" + url + ", content:" + content);
                     } else if (page.getRetryMode() == RetryMode.PROXY_RETRY) {
-                        log.warn("wait proxy change sleep " + sleepSecond + "ms, request [" + current.getRetryCount() + "] retry, url:" + url
-                                + ", content:" + content);
+                        log.warn("wait proxy change sleep " + sleepSecond + "ms, request [" + current.getRetryCount() + "] retry, url:" + url + ", content:" + content);
                         this.proxyRelease(proxy, context);
                         continue;
                     } else if (page.getRetryMode() == RetryMode.PROXY_REQUEUE) {
@@ -275,8 +255,7 @@ public class DefaultService extends ServiceBase {
                         current.setNeedRequeue(true);
                         ResponseUtil.setResponseStatus(response, Status.REQUEUE);
                         this.proxyRelease(proxy, context);
-                        log.warn("wait proxy change sleep " + sleepSecond + "ms, request [" + current.getRetryCount()
-                                + "] retry, node will requeue url:" + url + ", content:" + content);
+                        log.warn("wait proxy change sleep " + sleepSecond + "ms, request [" + current.getRetryCount() + "] retry, node will requeue url:" + url + ", content:" + content);
                     }
                 }
 
@@ -302,7 +281,6 @@ public class DefaultService extends ServiceBase {
         }
     }
 
-
     private long sleep(int seed, SearchProcessorContext context, long sleepMillis) throws InterruptedException {
         if (sleepMillis == 0L) {
             sleepMillis = 100 * (seed + 1) + (int) (Math.random() * getWaitInterval(context) * (seed + 1));
@@ -312,7 +290,6 @@ public class DefaultService extends ServiceBase {
     }
 
     /**
-     * 
      * @param output
      * @param current
      */
