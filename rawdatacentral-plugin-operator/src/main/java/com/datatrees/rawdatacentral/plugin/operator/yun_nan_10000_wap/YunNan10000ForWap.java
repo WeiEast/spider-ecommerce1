@@ -108,7 +108,7 @@ public class YunNan10000ForWap implements OperatorPluginService {
             Object encodePassword = invocable.invokeFunction("strEnc", param.getPassword(), "wap_password_2016", "", "");
             response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_002").setFullUrl(templateUrl, encodeMobile, encodePassword, param.getPicCode()).invoke();
             String pageContent = response.getPageContent();
-            String errorMsg = JsoupXpathUtils.selectFirstString(pageContent, "//div[@id='valcellphoneLoginFormMsgId']/text()");
+            String errorMsg = JsoupXpathUtils.selectFirst(pageContent, "//div[@id='valcellphoneLoginFormMsgId']/text()");
             if (StringUtils.isBlank(errorMsg)) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();
