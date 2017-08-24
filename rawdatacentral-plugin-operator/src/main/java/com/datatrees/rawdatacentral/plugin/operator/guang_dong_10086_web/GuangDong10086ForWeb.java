@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.plugin.operator.guang_dong_10086_web;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
@@ -16,6 +17,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +89,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/getSmsCode.jsps";
             String templateData = "mobile={}";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_001").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_001").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             JSONObject json = response.getPageContentForJSON();
             String returnCode = json.getString("returnCode");
             if (StringUtils.equals("1000", returnCode)) {
@@ -112,7 +114,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/webForm.jsps";
             String templateData = "mobile={}&smsPwd={}&loginType=1&cookieMobile=on&backURL=http://gd.10086.cn/commodity/index.shtml";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_002").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_002").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"backUrl":"http:\/\/gd.10086.cn\/commodity\/index.shtml","failMsg":"成功[0]","returnCode":"1000"}
@@ -124,12 +126,11 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                 logger.info("登陆成功,param={}", param);
 
                 /**
-                 * 访问http://gd.10086.cn/commodity/servicio/nostandardserv/mobileInfoQuery/index.jsps"operaType=QUERY&servCode=MY_BASICINFO
+                 * 访问http://gd.10086.cn/commodity/servicio/nostandardserv/mobileInfoQuery/index.jsps?operaType=QUERY&servCode=MY_BASICINFO
                  * 获取校验服务密码请求所需要的参数
                  */
-                templateUrl = "http://gd.10086.cn/commodity/servicio/nostandardserv/mobileInfoQuery/index.jsps";
-                data = "operaType=QUERY&servCode=MY_BASICINFO";
-                response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+                templateUrl = "http://gd.10086.cn/commodity/servicio/nostandardserv/mobileInfoQuery/index.jsps?operaType=QUERY&servCode=MY_BASICINFO";
+                response = TaskHttpClient.create(param, RequestType.GET, "guang_dong_10086_web_003").setFullUrl(templateUrl).invoke();
 
                 /**
                  * 获取参数列表
@@ -143,12 +144,19 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                  * %2FmyBasicInfo.shtml
                  */
                 templateUrl = "https://gd.ac.10086.cn/ucs/ucs/secondAuth.jsps";
-                json = response.getPageContentForJSON();
-                String content = json.getString("content");
-                content = content.replace("https://gd.ac.10086.cn/ucs/ucs/second/login.jsps?reqType=\\d+", "");
-                templateData = "serPwd={}{}";
-                data = TemplateUtils.format(templateData, param.getPassword(), content);
-                response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
+                String pageContent = response.getPageContent();
+
+                String saType = PatternUtils.group(pageContent, "saType\":\\s*\"([^\"]*)\"", 1);
+                String channel = PatternUtils.group(pageContent, "channel\":\\s*\"([^\"]*)\"", 1);
+                String st = PatternUtils.group(pageContent, "st\":\\s*\"([^\"]*)\"", 1);
+                String sign = PatternUtils.group(pageContent, "sign\":\\s*\"([^\"]*)\"", 1);
+                String token = PatternUtils.group(pageContent, "token\":\\s*\"([^\"]*)\"", 1);
+                String appid = PatternUtils.group(pageContent, "appid\":\\s*\"([^\"]*)\"", 1);
+                String backURL = PatternUtils.group(pageContent, "backURL\":\\s*\"([^\"]*)\"", 1);
+
+                templateData = "mobile={}&serPwd={}&saType={}&channel={}&st={}&sign={}&token={}&appid={}&backURL=http://gd.10086.cn/my/myService/myBasicInfo.shtml";
+                data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), saType, channel, st, sign, token, appid, backURL);
+                response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_004").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
 
                 json = response.getPageContentForJSON();
                 returnCode = json.getString("returnCode");
@@ -160,7 +168,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                         logger.warn("登录失败-->密码验证错误,param={}", param);
                         return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
                     default:
-                        logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                        logger.error("登陆失败,param={},data={},pageContent={}", param, data, response.getPageContent());
                         return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }
             }
