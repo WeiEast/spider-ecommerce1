@@ -108,7 +108,7 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://uam.ct10000.com/ct10000uam/validateImg.jsp";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hai_nan_10000_web_002").setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hai_nan_10000_web_002").setResponseCharset("BASE64").setFullUrl(templateUrl).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
