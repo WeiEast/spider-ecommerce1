@@ -24,11 +24,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 海南电信--web版
- * 登陆地址:https://login.10086.cn/html/login/login.html
+ * 登陆地址:http://www.189.cn/login/index/box/uam.do
  * 登陆方式:服务密码登陆
  * 图片验证码:支持
- * 验证图片验证码:支持
- * 短信验证码:支持
+ *
  * Created by guimeichao on 17/8/24.
  */
 public class HaiNan10000ForWeb implements OperatorPluginService {
