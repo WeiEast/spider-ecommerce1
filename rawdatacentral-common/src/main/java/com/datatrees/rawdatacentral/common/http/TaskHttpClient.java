@@ -175,8 +175,10 @@ public class TaskHttpClient {
             proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
             request.setProxy(proxyConfig.getId() + ":" + proxyConfig.getPort());
         }
-        RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout()).build();
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore).build();
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
+                .build();
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
+                .build();
 
         try {
             //参数处理
@@ -217,16 +219,23 @@ public class TaskHttpClient {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
             response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
+            if (RequestType.POST == request.getRequestType() && 302 == statusCode) {
+                String location = httpResponse.getFirstHeader("Location").getValue();
+                client = new HttpGet(location);
+                httpResponse = httpclient.execute(client);
+                response.setStatusCode(statusCode);
+                response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
+                statusCode = httpResponse.getStatusLine().getStatusCode();
+            }
             if (statusCode != 200) {
                 client.abort();
                 logger.error("HttpClient status error, statusCode={}", statusCode);
                 return response;
-            } else {
-                TaskUtils.saveCookie(request.getTaskId(), cookieStore);
-                //httpResponse.getAllHeaders()
-                byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
-                response.setResponse(data);
             }
+            TaskUtils.saveCookie(request.getTaskId(), cookieStore);
+            //httpResponse.getAllHeaders()
+            byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
+            response.setResponse(data);
         } catch (SocketTimeoutException e) {
             if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
                 logger.error("http timeout ,will retry request={}", request);
