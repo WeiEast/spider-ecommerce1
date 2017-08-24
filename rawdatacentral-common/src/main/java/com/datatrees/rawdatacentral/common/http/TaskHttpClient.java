@@ -2,6 +2,8 @@ package com.datatrees.rawdatacentral.common.http;
 
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,20 +33,43 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TaskHttpClient {
 
-    private static final Logger       logger       = LoggerFactory.getLogger(TaskHttpClient.class);
-    private static       RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger                     logger       = LoggerFactory.getLogger(TaskHttpClient.class);
+    private static       RedisService               redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private static       SSLConnectionSocketFactory sslsf        = null;
+
+    static {
+        try {
+            SSLContextBuilder builder = new SSLContextBuilder();
+            // 全部信任 不做身份鉴定
+            builder.loadTrustMaterial(null, new TrustStrategy() {
+                @Override
+                public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                    return true;
+                }
+            });
+            sslsf = new SSLConnectionSocketFactory(builder.build(), new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.2"}, null,
+                    NoopHostnameVerifier.INSTANCE);
+        } catch (Exception e) {
+            logger.error("init SSLConnectionSocketFactory error", e);
+        }
+    }
+
     private Request     request;
     private Response    response;
     private ContentType requestContentType;
@@ -178,7 +203,7 @@ public class TaskHttpClient {
         RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
                 .build();
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
-                .build();
+                .setSSLSocketFactory(sslsf).build();
 
         try {
             //参数处理
