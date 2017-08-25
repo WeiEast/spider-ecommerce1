@@ -39,6 +39,7 @@ import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+import com.datatrees.rawdatacentral.domain.exception.LoginTimeOutException;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
@@ -109,6 +110,9 @@ public class CollectorWorker {
             }
             if (e instanceof ResultEmptyException) {
                 return loginResult.failure(ErrorCode.NOT_EMPTY_ERROR_CODE.getErrorCode(), e.getMessage());
+            }
+            if (e instanceof LoginTimeOutException) {
+                return loginResult.failure(ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorCode(), e.getMessage());
             }
             return loginResult.failure(ErrorCode.COOKIE_INVALID);
         }

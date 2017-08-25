@@ -60,7 +60,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
-        logger.info("websiteName:{} getWebsiteConf Start", websiteName);
+        logger.info("getWebsiteConf start websiteName={}", websiteName);
         Map<String, String> map = redisService.getCache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, new TypeReference<Map<String, String>>() {});
         String newWebsiteName;
         if (map != null) {
