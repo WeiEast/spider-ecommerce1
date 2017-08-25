@@ -2,11 +2,9 @@ package com.datatrees.rawdatacentral.plugin.operator.hei_long_jiang_10086_web;
 
 import javax.script.Invocable;
 import java.io.InputStream;
-import java.util.Base64;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -22,6 +20,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,10 +159,14 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://hl.10086.cn/login/sso/doUnifyLogin/";
-            String templateData = "{\"userName\":\"{}\",\"passWord\":\"{}\",\"pwdType\":\"01\",\"clientIP\":\"{}\"}";
-            String data = TemplateUtils.format(templateData, param.getMobile(), getEncryptPwd(param), param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
-                    .invoke();
+            //{"userName":"{}","passWord":"{}","pwdType":"01","clientIP":"{}"}
+            Map<String, Object> params = new HashMap<>();
+            params.put("userName", param.getMobile());
+            params.put("passWord", getEncryptPwd(param));
+            params.put("pwdType", "01");
+            params.put("clientIP", param.getPicCode());
+            String data = JSON.toJSONString(params);
+            response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data).setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"data":"5c600ce90ad44248aefce5b7fc87160d","retCode":"000000","retMsg":"success","detail_msg":null,"user_msg":null,
@@ -206,9 +209,15 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://hl.10086.cn/sms/sendSmsMsg";
-            String data = "{\"func_code\":\"000004\",\"sms_type\":\"2\",\"phone_no\":\"\",\"sms_params\":\"\"}";
+            //{"func_code":"000004","sms_type":"2","phone_no":"","sms_params":""}
+            Map<String, Object> params = new HashMap<>();
+            params.put("func_code", "000004");
+            params.put("sms_type", "2");
+            params.put("phone_no", "");
+            params.put("sms_params", "");
+            String data = JSON.toJSONString(params);
             response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10086_web_006").setFullUrl(templateUrl).setRequestBody(data)
-                    .invoke();
+                    .setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
@@ -237,8 +246,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
              * "retCode":"100004"
              */
             String templateUrl = "http://hl.10086.cn/sms/checkSmsCode?func_code=000004&sms_type=2&phone_no=&sms_code={}&_={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_007").setFullUrl(templateUrl, param.getSmsCode(), System
-                    .currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_007").setFullUrl(templateUrl, param.getSmsCode(), System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
@@ -295,7 +303,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             String encryptPwd = invocable.invokeFunction("encrypt", param.getPassword(), key).toString();
             return encryptPwd;
         } catch (Exception e) {
-            logger.error("加密、失败,param={},response={}", param, response, e);
+            logger.error("加密失败,param={},response={}", param, response, e);
             return null;
         }
     }
