@@ -12,7 +12,6 @@ import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
-import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -30,10 +29,9 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
 
     private static final Logger                   logger        = LoggerFactory.getLogger(DefineCheckPlugin.class);
     private              CrawlerOperatorService   pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
-    private              RedisService             redisService  = BeanFactoryUtils.getBean(RedisService.class);
     private              AbstractProcessorContext context       = PluginFactory.getProcessorContext();
     private String fromType;
-    private Map<String, String> pluginResult = new HashMap<>();
+    private Map<String, Object> pluginResult = new HashMap<>();
 
     @Override
     public String process(String... args) throws Exception {
@@ -50,7 +48,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
 
         HttpResult<Object> result = pluginService.defineProcess(param);
         if (result.getStatus()) {
-            pluginResult.put(PluginConstants.FIELD, JSON.toJSONString(result.getData()));
+            pluginResult.put(PluginConstants.FIELD, result.getData());
         }
         String cookieString = TaskUtils.getCookieString(taskId);
         ProcessorContextUtil.setCookieString(context, cookieString);
@@ -59,7 +57,6 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
         for (Map.Entry<String, String> entry : shares.entrySet()) {
             context.setString(entry.getKey(), entry.getValue());
         }
-
         return JSON.toJSONString(pluginResult);
     }
 
