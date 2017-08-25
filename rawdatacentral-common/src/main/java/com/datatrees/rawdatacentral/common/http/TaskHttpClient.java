@@ -51,7 +51,7 @@ public class TaskHttpClient {
 
     private static final Logger                     logger       = LoggerFactory.getLogger(TaskHttpClient.class);
     private static       RedisService               redisService = BeanFactoryUtils.getBean(RedisService.class);
-    private static       SSLConnectionSocketFactory sslsf        = null;
+    private static       SSLConnectionSocketFactory sslsf        = null;//海南电信,重定向要忽略证书
 
     static {
         try {
