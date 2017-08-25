@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.plugin.operator.hai_nan_10000_web;
 
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -27,7 +28,6 @@ import org.slf4j.LoggerFactory;
  * 登陆地址:http://www.189.cn/login/index/box/uam.do
  * 登陆方式:服务密码登陆
  * 图片验证码:支持
- *
  * Created by guimeichao on 17/8/24.
  */
 public class HaiNan10000ForWeb implements OperatorPluginService {
@@ -119,13 +119,14 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+        String lt = TaskUtils.getTaskShare(param.getTaskId(), "lt");
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
             String templateUrl = "https://uam.ct10000.com/ct10000uam/login?service=http://www.189.cn:80/login/uam.do&returnURL=1&register=register2.0&UserIp=";
-            String templateData = "forbidpass=null&forbidaccounts=null&authtype=c2000004&customFileld02=22&areaname=海南&username={}&customFileld01=1" + "&password={}&randomId={}&lt={}&_eventId=submit" + "&open_no=1";
-            String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            String templateData = "forbidpass=null&forbidaccounts=null&authtype=c2000004&customFileld02=22&areaname=" + URLEncoder.encode("海南", "UTF-8") + "&username={}&customFileld01" + "=1&password={}&randomId={}&lt={}&_eventId=submit&open_no=1";
+            String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getPicCode(), lt);
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_003").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             /**
              * 结果枚举:
              * 登陆成功:<script type='text/javascript'>location.replace('http://www.189.cn:80/login/uam.do?UATicket=35nullST--174603-eUnkIrlk4upEVeWrS2St-ct10000uam'
@@ -142,10 +143,16 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
                 /**
                  * 获取查询权限
                  */
-                templateUrl = "http://www.189.cn/login/sso/uam.do?method=linkTo&shopId=10022&toStUrl=http://hi.189.cn/service/bill/feequery" + ".jsp?TABNAME=yecx&fastcode=02091574&cityCode=hi";
+                templateUrl = "http://www.189.cn/login/sso/uam.do?method=linkTo&shopId=10022&toStUrl=http://hi.189.cn/service/bill/feequery.jsp?TABNAME=yecx&fastcode=02091574&cityCode=hi";
                 response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_005").setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+
                 templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'", 1);
                 response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_006").setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+
+                logger.info("pageContent2222: "+response);
+
                 String citycode = PatternUtils.group(pageContent, "var citycode=\"(\\d+)\"", 1);
                 String prodid = PatternUtils.group(pageContent, "value='SHOUJI\\|" + param.getMobile() + "\\|(\\d+)\\|\\d+\\|[^\\|]+\\|[^']+", 1);
                 String prodcode = PatternUtils.group(pageContent, "value='SHOUJI\\|" + param.getMobile() + "\\|\\d+\\|(\\d+)\\|[^\\|]+\\|[^']+", 1);
