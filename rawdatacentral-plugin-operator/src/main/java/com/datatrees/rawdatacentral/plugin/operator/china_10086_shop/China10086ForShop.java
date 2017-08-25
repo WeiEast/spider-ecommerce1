@@ -118,7 +118,7 @@ public class China10086ForShop implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://login.10086.cn/captchazh.htm?type=05&timestamp={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_001").setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_001").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -159,7 +159,7 @@ public class China10086ForShop implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://shop.10086.cn/i/authImg?t={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_006").setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_006").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("详单-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {

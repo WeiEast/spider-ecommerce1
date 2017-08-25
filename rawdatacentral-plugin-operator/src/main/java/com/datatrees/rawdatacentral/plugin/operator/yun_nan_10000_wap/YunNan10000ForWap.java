@@ -16,6 +16,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String url = "http://wapyn.189.cn/vcImage.do";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "yun_nan_10000_wap_001").setResponseCharset("BASE64").setFullUrl(url).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "yun_nan_10000_wap_001")
+                    .setResponseContentType(ContentType.create("image/png")).setFullUrl(url).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -106,7 +108,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
             Invocable invocable = ScriptEngineUtil.createInvocable(inputStream, "UTF-8");
             String encodeMobile = invocable.invokeFunction("strEnc", param.getMobile().toString(), "wap_accnbr_2016", "", "").toString();
             Object encodePassword = invocable.invokeFunction("strEnc", param.getPassword(), "wap_password_2016", "", "");
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_002").setFullUrl(templateUrl, encodeMobile, encodePassword, param.getPicCode()).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_002")
+                    .setFullUrl(templateUrl, encodeMobile, encodePassword, param.getPicCode()).invoke();
             String pageContent = response.getPageContent();
             String errorMsg = JsoupXpathUtils.selectFirst(pageContent, "//div[@id='valcellphoneLoginFormMsgId']/text()");
             if (StringUtils.isBlank(errorMsg)) {

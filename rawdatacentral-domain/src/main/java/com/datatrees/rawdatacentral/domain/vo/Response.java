@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.domain.vo;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class Response implements Serializable {
     @JSONField(serialize = false)
     private byte[]              response;
     @JSONField(ordinal = 6)
-    private String              charsetName;
+    private Charset             charset;
     @JSONField(ordinal = 7)
     private String              redirectUrl;
     @JSONField(ordinal = 8)
@@ -33,9 +34,9 @@ public class Response implements Serializable {
         this.request = request;
     }
 
-    public Response(Request request, String charsetName) {
+    public Response(Request request, Charset charset) {
         this.request = request;
-        this.charsetName = charsetName;
+        this.charset = charset;
     }
 
     public String getContentType() {
@@ -54,12 +55,12 @@ public class Response implements Serializable {
         this.redirectUrl = redirectUrl;
     }
 
-    public String getCharsetName() {
-        return charsetName;
+    public Charset getCharset() {
+        return charset;
     }
 
-    public void setCharsetName(String charsetName) {
-        this.charsetName = charsetName;
+    public void setCharset(Charset charset) {
+        this.charset = charset;
     }
 
     public Request getRequest() {
@@ -109,17 +110,20 @@ public class Response implements Serializable {
             if (null == response) {
                 return "";
             }
-            if (charsetName.toUpperCase().equals("BASE64")) {
+            if (null != contentType && (contentType.contains("image") || contentType.contains("IMAGE"))) {
                 return getPageContentForBase64();
             }
-            return new String(response, charsetName);
+            if (null != charset) {
+                return new String(response, charset);
+            }
+            return new String(response, DEFAULT_CHARSET);
         } catch (Exception e) {
             throw new RuntimeException("getPateContent error,charsetName=UTF-8,request=" + request, e);
         }
 
     }
 
-    public String getPageContent(String charsetName) {
+    public String getPageContent(Charset charsetName) {
         try {
             return new String(response, charsetName);
         } catch (Exception e) {

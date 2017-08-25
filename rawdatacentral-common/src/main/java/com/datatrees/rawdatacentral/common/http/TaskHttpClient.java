@@ -71,6 +71,7 @@ public class TaskHttpClient {
     private Request     request;
     private Response    response;
     private ContentType requestContentType;
+    private ContentType responseContentType;
 
     private TaskHttpClient(Request request) {
         this.request = request;
@@ -136,8 +137,8 @@ public class TaskHttpClient {
         return this;
     }
 
-    public TaskHttpClient setResponseCharset(String charsetName) {
-        response.setCharsetName(charsetName);
+    public TaskHttpClient setResponseCharset(Charset charset) {
+        response.setCharset(charset);
         return this;
     }
 
@@ -178,6 +179,15 @@ public class TaskHttpClient {
         if (null != contentType) {
             request.setCharset(contentType.getCharset());
             request.setContentType(contentType.toString());
+        }
+        return this;
+    }
+
+    public TaskHttpClient setResponseContentType(ContentType contentType) {
+        this.responseContentType = contentType;
+        if (null != contentType) {
+            response.setCharset(contentType.getCharset());
+            response.setContentType(contentType.toString());
         }
         return this;
     }
@@ -257,13 +267,15 @@ public class TaskHttpClient {
                 return response;
             }
             Header header = httpResponse.getFirstHeader(HttpHeadKey.CONTENT_TYPE);
-            if(null != header){
+            if (null != header) {
                 String contentType = header.getValue();
-                response.setContentType(contentType);
-                if(StringUtils.isBlank(contentType) && StringUtils.contains(contentType,"charset")){
-                    String charset = RegexpUtils.select(contentType,"charset=(.+)",1);
-                    if(StringUtils.isNoneBlank(charset)){
-                        response.setCharsetName(charset);
+                if (StringUtils.isBlank(response.getContentType())) {
+                    response.setContentType(contentType);
+                }
+                if (StringUtils.isNoneBlank(contentType) && StringUtils.contains(contentType, "charset")) {
+                    String charset = RegexpUtils.select(contentType, "charset=(.+)", 1);
+                    if (StringUtils.isNoneBlank(charset)) {
+                        response.setCharset(Charset.forName(charset));
                     }
                 }
             }

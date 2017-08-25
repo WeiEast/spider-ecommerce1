@@ -89,7 +89,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "https://zj.ac.10086.cn/ImgDisp?tmp={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "zhe_jiang_10086_web_001")
-                    .setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -197,7 +197,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
             }
 
             TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10086_web_002")
-                    .setFullUrl("http://www.zj.10086.cn/my/index.do?ul_loginclient=my").setResponseCharset("GBK").invoke();
+                    .setFullUrl("http://www.zj.10086.cn/my/index.do?ul_loginclient=my").invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
@@ -232,8 +232,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         responseCharsetName = StringUtils.isBlank(responseCharsetName) ? "UTF-8" : responseCharsetName;
         String url = fullUrl.substring(0, fullUrl.length() - 1);
         RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
-        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).setResponseCharset(responseCharsetName)
-                .invoke();
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
         return response.getPageContent();
     }
 
