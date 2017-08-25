@@ -11,10 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -25,6 +22,7 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.treefinance.proxy.domain.Proxy;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
@@ -83,7 +81,7 @@ public class TaskHttpClient {
         Request request = new Request();
         request.setTaskId(taskId);
         request.setWebsiteName(websiteName);
-        request.setRequestType(requestType);
+        request.setType(requestType);
         request.setRemarkId(remark);
         TaskHttpClient client = new TaskHttpClient(request);
         return client;
@@ -93,7 +91,7 @@ public class TaskHttpClient {
         Request request = new Request();
         request.setTaskId(operatorParam.getTaskId());
         request.setWebsiteName(operatorParam.getWebsiteName());
-        request.setRequestType(requestType);
+        request.setType(requestType);
         request.setRemarkId(remark);
         TaskHttpClient client = new TaskHttpClient(request);
         return client;
@@ -160,7 +158,7 @@ public class TaskHttpClient {
 
     public TaskHttpClient setRequestBody(String requestBody, ContentType contentType) {
         this.requestContentType = contentType;
-        request.setRequestType(RequestType.POST);
+        request.setType(RequestType.POST);
         request.setRequestBodyContent(requestBody);
         if (null != contentType) {
             request.setCharset(contentType.getCharset());
@@ -170,7 +168,7 @@ public class TaskHttpClient {
     }
 
     public TaskHttpClient setRequestBody(String requestBody) {
-        request.setRequestType(RequestType.POST);
+        request.setType(RequestType.POST);
         request.setRequestBodyContent(requestBody);
         return this;
     }
@@ -222,7 +220,7 @@ public class TaskHttpClient {
                 url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getCharset()));
             }
             HttpRequestBase client = null;
-            if (RequestType.GET == request.getRequestType()) {
+            if (RequestType.GET == request.getType()) {
                 client = new HttpGet(url);
             } else {
                 HttpPost httpPost = new HttpPost(url);
@@ -244,7 +242,7 @@ public class TaskHttpClient {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
             response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
-            if (RequestType.POST == request.getRequestType() && 302 == statusCode) {
+            if (RequestType.POST == request.getType() && 302 == statusCode) {
                 String location = httpResponse.getFirstHeader("Location").getValue();
                 client = new HttpGet(location);
                 response.setRedirectUrl(location);
@@ -258,7 +256,17 @@ public class TaskHttpClient {
                 logger.error("HttpClient status error, statusCode={}", statusCode);
                 return response;
             }
-            httpResponse.getHeaders(HttpHeadKey.CONTENT_TYPE)
+            Header header = httpResponse.getFirstHeader(HttpHeadKey.CONTENT_TYPE);
+            if(null != header){
+                String contentType = header.getValue();
+                response.setContentType(contentType);
+                if(StringUtils.isBlank(contentType) && StringUtils.contains(contentType,"charset")){
+                    String charset = RegexpUtils.select(contentType,"charset=(.+)",1);
+                    if(StringUtils.isNoneBlank(charset)){
+                        response.setCharsetName(charset);
+                    }
+                }
+            }
             TaskUtils.saveCookie(request.getTaskId(), cookieStore);
             //httpResponse.getAllHeaders()
             byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());

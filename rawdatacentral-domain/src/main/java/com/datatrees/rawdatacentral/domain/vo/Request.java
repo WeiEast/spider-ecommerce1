@@ -161,12 +161,12 @@ public class Request implements Serializable {
         this.charset = charset;
     }
 
-    public RequestType getRequestType() {
-        return requestType;
+    public RequestType getType() {
+        return type;
     }
 
-    public void setRequestType(RequestType requestType) {
-        this.requestType = requestType;
+    public void setType(RequestType requestType) {
+        this.type = requestType;
     }
 
     public int getMaxRetry() {

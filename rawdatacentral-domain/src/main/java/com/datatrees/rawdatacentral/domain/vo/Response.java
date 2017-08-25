@@ -10,6 +10,8 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 public class Response implements Serializable {
 
+    @JSONField(serialize = false)
+    private static final String DEFAULT_CHARSET = "UTF-8";
     @JSONField(ordinal = 1)
     private Request             request;
     @JSONField(ordinal = 2)
@@ -21,11 +23,11 @@ public class Response implements Serializable {
     @JSONField(serialize = false)
     private byte[]              response;
     @JSONField(ordinal = 6)
-    private String charsetName = "UTF-8";
+    private String              charsetName;
     @JSONField(ordinal = 7)
-    private String redirectUrl;
+    private String              redirectUrl;
     @JSONField(ordinal = 8)
-    private String contentType = "";
+    private String              contentType;
 
     public Response(Request request) {
         this.request = request;
@@ -34,6 +36,14 @@ public class Response implements Serializable {
     public Response(Request request, String charsetName) {
         this.request = request;
         this.charsetName = charsetName;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
     public String getRedirectUrl() {
