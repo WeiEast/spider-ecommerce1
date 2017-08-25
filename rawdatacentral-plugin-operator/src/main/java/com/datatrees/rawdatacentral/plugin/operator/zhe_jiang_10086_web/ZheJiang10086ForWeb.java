@@ -1,10 +1,8 @@
 package com.datatrees.rawdatacentral.plugin.operator.zhe_jiang_10086_web;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -24,12 +22,9 @@ import org.slf4j.LoggerFactory;
 /**
  * 中国移动--全国通用
  * 登陆地址:http://www.zj.10086.cn/my/login/login.jsp?AISSO_LOGIN=true&jumpurl=http://www.zj.10086.cn/my/index.jsp?ul_loginclient=my
- * 登陆方式:服务密码登陆
- * 图片验证码:支持
- * 验证图片验证码:支持
- * 短信验证码:支持
- * 这个网站如果出现:{"retCode":"400000","retMsg":"parameter illegal!"},请将get/post请求互换
- * Created by zhouxinghai on 2017/7/17.
+ * 登陆(服务密码登陆):手机号,服务密码,图片验证码(不支持验证)
+ * 详单:短信验证码
+ * Created by zhouxinghai on 2017/8/25.
  */
 public class ZheJiang10086ForWeb implements OperatorPluginService {
 
@@ -85,7 +80,6 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        logger.warn("defineProcess fail,params={}", param);
         return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
@@ -95,7 +89,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "https://zj.ac.10086.cn/ImgDisp?tmp={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "zhe_jiang_10086_web_001")
-                    .setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -152,39 +146,22 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
     }
 
     private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
-        //https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13844034615?callback=jQuery183042723042018780055_1500975082967&pwdTempSerCode=NzE2MjUz&pwdTempRandCode=NDI4MTUz&captchaVal=a3xeva&_=1500975147178";
-        String templateUrl = "https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/{}?pwdTempSerCode={}&pwdTempRandCode={}&captchaVal={}&_={}";
-        String pwdTempSerCode = Base64.getEncoder().encodeToString(param.getPassword().getBytes());
-        String pwdTempRandCode = Base64.getEncoder().encodeToString(param.getSmsCode().getBytes());
-        String loginName = TaskUtils.getCookieValue(param.getTaskId(), "loginName");
-
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        if (!result.getStatus()) {
-            return result;
-        }
         Response response = null;
+
         try {
-            /**
-             * 结果枚举:
-             //jQuery183042723042018780055_1500975082967({"data":null,"retCode":"000000","retMsg":"认证成功!","sOperTime":null})
-             */
-            //没有设置referer会出现connect reset
-            String referer = "http://shop.10086.cn/i/?f=home&welcome={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_009")
-                    .setFullUrl(templateUrl, loginName, pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
-                    .setReferer(referer, System.currentTimeMillis()).invoke();
-            JSONObject json = response.getPageContentForJSON();
-            String code = json.getString("retCode");
-            switch (code) {
-                case "000000":
+            String bid = TaskUtils.getTaskShare(param.getTaskId(), "bid");
+            String templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?validateCode={}&bid={}";
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_008").setFullUrl(templateUrl, param.getSmsCode(), bid)
+                    .invoke();
+            String pageContent = response.getPageContent();
+            switch (pageContent) {
+                case "12":
                     logger.info("详单-->校验成功,param={}", param);
                     return result.success();
-                case "570005":
-                    logger.warn("详单-->短信验证码错误,param={}", param);
-                    return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 default:
-                    logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPageContent());
-                    return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
+                    logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
+                    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
@@ -205,19 +182,22 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
 
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "authnresponseform")) {
+                logger.warn("登录失败,response not contains authnresponseform ,params={}", param);
                 return result.failure();
             }
             pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent, null);
             if (!StringUtils.contains(pageContent, "authnrequestform")) {
+                logger.warn("登录失败,response not contains authnrequestform ,params={}", param);
                 return result.failure();
             }
             pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent, null);
             if (!StringUtils.contains(pageContent, "/my/index.do")) {
+                logger.warn("登录失败,response not contains /my/index.do ,params={}", param);
                 return result.failure();
             }
 
             TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10086_web_002")
-                    .setFullUrl("http://www.zj.10086.cn/my/index.do?ul_loginclient=my").setResponseCharset("gbk").invoke();
+                    .setFullUrl("http://www.zj.10086.cn/my/index.do?ul_loginclient=my").invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
@@ -252,8 +232,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         responseCharsetName = StringUtils.isBlank(responseCharsetName) ? "UTF-8" : responseCharsetName;
         String url = fullUrl.substring(0, fullUrl.length() - 1);
         RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
-        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).setResponseCharset(responseCharsetName)
-                .invoke();
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
         return response.getPageContent();
     }
 

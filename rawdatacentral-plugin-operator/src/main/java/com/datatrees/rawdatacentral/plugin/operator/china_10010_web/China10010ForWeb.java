@@ -137,7 +137,7 @@ public class China10010ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/CreateImage?t={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001").setResponseCharset("BASE64").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {

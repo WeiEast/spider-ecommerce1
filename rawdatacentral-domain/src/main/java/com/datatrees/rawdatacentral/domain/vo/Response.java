@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.domain.vo;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Map;
 
@@ -10,6 +11,8 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 public class Response implements Serializable {
 
+    @JSONField(serialize = false)
+    private static final String DEFAULT_CHARSET = "UTF-8";
     @JSONField(ordinal = 1)
     private Request             request;
     @JSONField(ordinal = 2)
@@ -21,23 +24,43 @@ public class Response implements Serializable {
     @JSONField(serialize = false)
     private byte[]              response;
     @JSONField(ordinal = 6)
-    private String charsetName = "UTF-8";
+    private Charset             charset;
+    @JSONField(ordinal = 7)
+    private String              redirectUrl;
+    @JSONField(ordinal = 8)
+    private String              contentType;
 
     public Response(Request request) {
         this.request = request;
     }
 
-    public Response(Request request, String charsetName) {
+    public Response(Request request, Charset charset) {
         this.request = request;
-        this.charsetName = charsetName;
+        this.charset = charset;
     }
 
-    public String getCharsetName() {
-        return charsetName;
+    public String getContentType() {
+        return contentType;
     }
 
-    public void setCharsetName(String charsetName) {
-        this.charsetName = charsetName;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
+
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public void setCharset(Charset charset) {
+        this.charset = charset;
     }
 
     public Request getRequest() {
@@ -87,17 +110,20 @@ public class Response implements Serializable {
             if (null == response) {
                 return "";
             }
-            if (charsetName.toUpperCase().equals("BASE64")) {
+            if (null != contentType && (contentType.contains("image") || contentType.contains("IMAGE"))) {
                 return getPageContentForBase64();
             }
-            return new String(response, charsetName);
+            if (null != charset) {
+                return new String(response, charset);
+            }
+            return new String(response, DEFAULT_CHARSET);
         } catch (Exception e) {
             throw new RuntimeException("getPateContent error,charsetName=UTF-8,request=" + request, e);
         }
 
     }
 
-    public String getPageContent(String charsetName) {
+    public String getPageContent(Charset charsetName) {
         try {
             return new String(response, charsetName);
         } catch (Exception e) {
