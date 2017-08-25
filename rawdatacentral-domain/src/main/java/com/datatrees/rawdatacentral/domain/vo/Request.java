@@ -38,19 +38,19 @@ public class Request implements Serializable {
     @JSONField(ordinal = 11)
     private String protocol;
     @JSONField(ordinal = 12)
-    private String        requestContentType = "";
+    private String        contentType    = "";
     @JSONField(ordinal = 12)
-    private Charset       requestCharset     = Charset.forName("ISO-8859-1");
+    private Charset       charset        = Charset.forName("ISO-8859-1");
     @JSONField(ordinal = 13)
-    private RequestType   requestType        = RequestType.GET;
+    private RequestType   type           = RequestType.GET;
     @JSONField(ordinal = 9)
-    private int           maxRetry           = 1;
+    private int           maxRetry       = 1;
     @JSONField(ordinal = 10)
-    private AtomicInteger retry              = new AtomicInteger(0);
+    private AtomicInteger retry          = new AtomicInteger(0);
     @JSONField(ordinal = 11)
-    private int           connectTimeout     = 10000;
+    private int           connectTimeout = 10000;
     @JSONField(ordinal = 12)
-    private int           socketTimeout      = 20000;
+    private int           socketTimeout  = 20000;
     @JSONField(ordinal = 13)
     private String requestBodyContent;
 
@@ -145,20 +145,20 @@ public class Request implements Serializable {
         this.protocol = protocol;
     }
 
-    public String getRequestContentType() {
-        return requestContentType;
+    public String getContentType() {
+        return contentType;
     }
 
-    public void setRequestContentType(String requestContentType) {
-        this.requestContentType = requestContentType;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
-    public Charset getRequestCharset() {
-        return requestCharset;
+    public Charset getCharset() {
+        return charset;
     }
 
-    public void setRequestCharset(Charset requestCharset) {
-        this.requestCharset = requestCharset;
+    public void setCharset(Charset charset) {
+        this.charset = charset;
     }
 
     public RequestType getRequestType() {

@@ -163,8 +163,8 @@ public class TaskHttpClient {
         request.setRequestType(RequestType.POST);
         request.setRequestBodyContent(requestBody);
         if (null != contentType) {
-            request.setRequestCharset(contentType.getCharset());
-            request.setRequestContentType(contentType.toString());
+            request.setCharset(contentType.getCharset());
+            request.setContentType(contentType.toString());
         }
         return this;
     }
@@ -178,14 +178,14 @@ public class TaskHttpClient {
     public TaskHttpClient setRequestContentType(ContentType contentType) {
         this.requestContentType = contentType;
         if (null != contentType) {
-            request.setRequestCharset(contentType.getCharset());
-            request.setRequestContentType(contentType.toString());
+            request.setCharset(contentType.getCharset());
+            request.setContentType(contentType.toString());
         }
         return this;
     }
 
     public TaskHttpClient setRequestCharset(Charset charset) {
-        request.setRequestCharset(charset);
+        request.setCharset(charset);
         return this;
     }
 
@@ -219,7 +219,7 @@ public class TaskHttpClient {
                         pairs.add(new BasicNameValuePair(entry.getKey(), value));
                     }
                 }
-                url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getRequestCharset()));
+                url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getCharset()));
             }
             HttpRequestBase client = null;
             if (RequestType.GET == request.getRequestType()) {
@@ -236,8 +236,8 @@ public class TaskHttpClient {
                     client.setHeader(entry.getKey(), entry.getValue());
                 }
             }
-            if (StringUtils.isNoneBlank(request.getRequestContentType())) {
-                client.setHeader(HttpHeadKey.CONTENT_TYPE, request.getRequestContentType());
+            if (StringUtils.isNoneBlank(request.getContentType())) {
+                client.setHeader(HttpHeadKey.CONTENT_TYPE, request.getContentType());
             }
             request.setRequestTimestamp(System.currentTimeMillis());
             httpResponse = httpclient.execute(client);
@@ -247,6 +247,7 @@ public class TaskHttpClient {
             if (RequestType.POST == request.getRequestType() && 302 == statusCode) {
                 String location = httpResponse.getFirstHeader("Location").getValue();
                 client = new HttpGet(location);
+                response.setRedirectUrl(location);
                 httpResponse = httpclient.execute(client);
                 response.setStatusCode(statusCode);
                 response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
@@ -257,6 +258,7 @@ public class TaskHttpClient {
                 logger.error("HttpClient status error, statusCode={}", statusCode);
                 return response;
             }
+            httpResponse.getHeaders(HttpHeadKey.CONTENT_TYPE)
             TaskUtils.saveCookie(request.getTaskId(), cookieStore);
             //httpResponse.getAllHeaders()
             byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());

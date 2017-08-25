@@ -22,6 +22,10 @@ public class Response implements Serializable {
     private byte[]              response;
     @JSONField(ordinal = 6)
     private String charsetName = "UTF-8";
+    @JSONField(ordinal = 7)
+    private String redirectUrl;
+    @JSONField(ordinal = 8)
+    private String contentType = "";
 
     public Response(Request request) {
         this.request = request;
@@ -30,6 +34,14 @@ public class Response implements Serializable {
     public Response(Request request, String charsetName) {
         this.request = request;
         this.charsetName = charsetName;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 
     public String getCharsetName() {
