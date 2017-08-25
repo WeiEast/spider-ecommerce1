@@ -1,8 +1,11 @@
 package com.datatrees.rawdatacentral.plugin.operator.zhe_jiang_10086_web;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -29,6 +32,7 @@ import org.slf4j.LoggerFactory;
 public class ZheJiang10086ForWeb implements OperatorPluginService {
 
     private static final Logger logger = LoggerFactory.getLogger(ZheJiang10086ForWeb.class);
+
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -179,6 +183,22 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                     ".jsp?ul_loginclient=my&failurl=/login/login.jsp&loginUserType=1&passwd={}&pwdType=2&service=my&validCode={}";
             response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_002")
                     .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getPicCode()).invoke();
+
+            //出现错误返回304
+            if (StringUtils.isNoneBlank(response.getRedirectUrl())) {
+                String redirectUrl = URLDecoder.decode(response.getRedirectUrl(), "GBK");
+                String errorMsg = RegexpUtils.select(redirectUrl, "&msg=(.+)", 1);
+                switch (errorMsg) {
+                    case "您输入的验证码不正确，请重新输入验证码":
+                        logger.warn("登录-->图片验证码--校验失败,params={}", param);
+                        return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+                    default:
+                        logger.warn("登录失败,response not contains authnresponseform ,params={},errorMsg={},redirectUrl={}", param, errorMsg,
+                                redirectUrl);
+                        return result.failure();
+                }
+
+            }
 
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "authnresponseform")) {
