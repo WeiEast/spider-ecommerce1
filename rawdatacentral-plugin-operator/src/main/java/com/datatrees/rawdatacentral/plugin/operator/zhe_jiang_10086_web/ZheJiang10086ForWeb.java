@@ -1,11 +1,9 @@
 package com.datatrees.rawdatacentral.plugin.operator.zhe_jiang_10086_web;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -27,12 +25,11 @@ import org.slf4j.LoggerFactory;
  * 登陆地址:http://www.zj.10086.cn/my/login/login.jsp?AISSO_LOGIN=true&jumpurl=http://www.zj.10086.cn/my/index.jsp?ul_loginclient=my
  * 登陆(服务密码登陆):手机号,服务密码,图片验证码(不支持验证)
  * 详单:短信验证码
- * Created by zhouxinghai on 2017/8/25.
+ * Created by zhouxinghai on 2017/8/25
  */
 public class ZheJiang10086ForWeb implements OperatorPluginService {
 
     private static final Logger logger = LoggerFactory.getLogger(ZheJiang10086ForWeb.class);
-
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -116,12 +113,12 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                 if (!StringUtils.contains(pageContent, "authnrequestform")) {
                     return result.failure(ErrorCode.REFESH_SMS_FAIL);
                 }
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent, null);
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent);
 
                 if (!StringUtils.contains(pageContent, "authnrequestform")) {
                     return result.failure(ErrorCode.REFESH_SMS_FAIL);
                 }
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent, "GBK");
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent);
 
                 bid = RegexpUtils.select(pageContent, "\"bid\":\"(.*)\"", 1);
                 if (StringUtils.isBlank(bid)) {
@@ -205,12 +202,12 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                 logger.warn("登录失败,response not contains authnresponseform ,params={}", param);
                 return result.failure();
             }
-            pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent, null);
+            pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent);
             if (!StringUtils.contains(pageContent, "authnrequestform")) {
                 logger.warn("登录失败,response not contains authnrequestform ,params={}", param);
                 return result.failure();
             }
-            pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent, null);
+            pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent);
             if (!StringUtils.contains(pageContent, "/my/index.do")) {
                 logger.warn("登录失败,response not contains /my/index.do ,params={}", param);
                 return result.failure();
@@ -230,7 +227,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
      * @param pageContent
      * @return
      */
-    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent, String responseCharsetName) {
+    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent) {
         String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
         String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
         List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "//input");
@@ -249,7 +246,6 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                 }
             }
         }
-        responseCharsetName = StringUtils.isBlank(responseCharsetName) ? "UTF-8" : responseCharsetName;
         String url = fullUrl.substring(0, fullUrl.length() - 1);
         RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
         Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
