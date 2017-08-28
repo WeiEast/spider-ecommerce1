@@ -98,7 +98,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
         } while (System.currentTimeMillis() < maxInterval);
         if (hasSms) {
             getMessageService().sendTaskLog(taskId, inputSmsCount == 0 ? "短信验证码校验超时" : "短信验证码校验失败");
-            throw new ResultEmptyException("get pic code error,inputSmsCount:" + inputSmsCount);
+            throw new ResultEmptyException("get sms code error,inputSmsCount:" + inputSmsCount);
         }
         return resultMap;
     }
