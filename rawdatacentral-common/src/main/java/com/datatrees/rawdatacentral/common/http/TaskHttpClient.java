@@ -309,7 +309,7 @@ public class TaskHttpClient {
     private void checkRequest(Request request) {
         CheckUtils.checkNotNull(request, "request is null");
         CheckUtils.checkNotPositiveNumber(request.getTaskId(), ErrorCode.EMPTY_TASK_ID);
-        CheckUtils.checkNotBlank(request.getRemarkId(), "remarkId is empty");
+        //CheckUtils.checkNotBlank(request.getRemarkId(), "remarkId is empty");
         if (StringUtils.isBlank(request.getUrl()) && StringUtils.isBlank(request.getFullUrl())) {
             throw new RuntimeException("url and fullUrl is blank");
         }

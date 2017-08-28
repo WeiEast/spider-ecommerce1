@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
+import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -35,7 +35,8 @@ public class JiangSu10086ForWap implements OperatorPluginService {
         try {
             //获取imgReqSeq
             Response response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("http://wap.js.10086.cn/login.thtml").invoke();
-            String imgReqSeq = JsoupXpathUtils.selectFirst(response.getPageContent(), "//input[@id='imgReqSeq']/@value");
+            String pageContent = response.getPageContent();
+            String imgReqSeq = RegexpUtils.select(pageContent, "id=\\\\\"imgReqSeq\\\\\" value=\\\\\"(.+?)\\\\\"", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "imgReqSeq", imgReqSeq);
             return result.success();
         } catch (Exception e) {
@@ -147,7 +148,8 @@ public class JiangSu10086ForWap implements OperatorPluginService {
             String imgReqSeq = TaskUtils.getTaskShare(param.getTaskId(), "imgReqSeq");
             String encodePassword = Base64.getEncoder().encodeToString(param.getPassword().getBytes());
             String templateUrl = "http://wap.js.10086.cn/actionDispatcher" +
-                    ".do?reqUrl=loginTouch&busiNum=login&mobile={}&password=MTIxMjIx&isSavePasswordVal=1&verifyCode={}&isSms=0&ver=t&imgReqSeq={}&loginType=0&browserFinger=67be1e5ef791cecddc38fd6990b6ce1f";
+                    ".do?reqUrl=loginTouch&busiNum=login&mobile={}&password={}&isSavePasswordVal=1&verifyCode={}&isSms=0&ver=t&imgReqSeq" +
+                    "={}&loginType=0&browserFinger=67be1e5ef791cecddc38fd6990b6ce1f";
             response = TaskHttpClient.create(param, RequestType.POST, "jiang_su_10086_wap_002")
                     .setFullUrl(templateUrl, param.getMobile(), encodePassword, param.getPicCode(), imgReqSeq).invoke();
             JSONObject json = response.getPageContentForJSON();
