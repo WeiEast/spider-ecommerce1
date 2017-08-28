@@ -47,13 +47,8 @@ import org.slf4j.LoggerFactory;
  * 陕西无账单详单查询
  * 海南无账单详单查询
  * 内蒙古无账单详单查询
- * <p>
- * 登陆地址:https://login.10086.cn/html/login/login.html
- * 登陆方式:服务密码登陆
- * 图片验证码:支持
- * 验证图片验证码:支持
- * 短信验证码:支持
- * <p>
+ *
+ *
  * Created by guimeichao on 17/8/17.
  */
 public class China10000ForApp implements OperatorPluginService {
