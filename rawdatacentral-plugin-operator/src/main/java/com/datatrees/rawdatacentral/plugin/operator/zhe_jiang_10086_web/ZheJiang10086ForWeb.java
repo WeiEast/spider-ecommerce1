@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 中国移动--全国通用
+ * 浙江移动--web
  * 登陆地址:http://www.zj.10086.cn/my/login/login.jsp?AISSO_LOGIN=true&jumpurl=http://www.zj.10086.cn/my/index.jsp?ul_loginclient=my
  * 登陆(服务密码登陆):手机号,服务密码,图片验证码(不支持验证)
  * 详单:短信验证码
