@@ -43,6 +43,16 @@ public class DateUtils {
     }
 
     /**
+     * 格式化
+     * @param date 时间
+     * @return
+     */
+    public static String format(Date date,String pattern) {
+        return getDateFormat(pattern).format(date);
+    }
+
+
+    /**
      * 格式化成yyyy-MM-dd HH:mm:ss
      * @param date 时间
      * @return
@@ -50,6 +60,7 @@ public class DateUtils {
     public static String formatYmdhms(Date date) {
         return getDateFormat(YMDHMS).format(date);
     }
+
 
     /**
      * 格式化成yyyy-MM-dd HH:mm:ss

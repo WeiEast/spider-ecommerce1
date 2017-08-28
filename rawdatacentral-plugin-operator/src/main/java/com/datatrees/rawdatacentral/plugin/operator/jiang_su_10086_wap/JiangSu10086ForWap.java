@@ -1,12 +1,14 @@
 package com.datatrees.rawdatacentral.plugin.operator.jiang_su_10086_wap;
 
 import java.util.Base64;
+import java.util.Date;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -108,7 +110,21 @@ public class JiangSu10086ForWap implements OperatorPluginService {
         Response response = null;
         String pageContent = null;
         try {
-            return result.success();
+            // TODO: 2017/8/28 验证码在5分钟内有效，3次输入错误后失效。
+            String templateUrl = "http://wap.js.10086.cn/actionDispatcher.do?reqUrl=smsVerifyCode&busiNum=QDCX";
+            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).invoke();
+            pageContent = response.getPageContent();
+            JSONObject json = response.getPageContentForJSON();
+            if (json.getBoolean("success")) {
+                logger.info("详单-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
+            }
+            String logicCode = json.getString("logicCode");
+            switch (logicCode) {
+                default:
+                    logger.error("详单-->短信验证码-->刷新失败,param={},pageContent={}", param, pageContent);
+                    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+            }
         } catch (Exception e) {
             logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
@@ -120,18 +136,19 @@ public class JiangSu10086ForWap implements OperatorPluginService {
         Response response = null;
 
         try {
-            String bid = TaskUtils.getTaskShare(param.getTaskId(), "bid");
-            String templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?validateCode={}&bid={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_004").setFullUrl(templateUrl, param.getSmsCode(), bid)
-                    .invoke();
+            String queryMonth = DateUtils.format(new Date(), "yyyyMM");
+            String templateUrl = "http://wap.js.10086.cn/actionDispatcher" +
+                    ".do?reqUrl=billDetailTQry&busiNum=QDCX&currentPage=1&queryMonth={}&password_str=&ver=t&queryItem=1&browserFinger" +
+                    "=&confirm_smsPassword={}&confirmFlg=1";
+            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl, queryMonth, param.getSmsCode()).invoke();
             String pageContent = response.getPageContent();
-            switch (pageContent) {
-                case "12":
-                    logger.info("详单-->校验成功,param={}", param);
-                    return result.success();
-                default:
-                    logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
-                    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+            JSONObject json = response.getPageContentForJSON();
+            if (json.getBoolean("success")) {
+                logger.info("详单-->校验成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
+                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
