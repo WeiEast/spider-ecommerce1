@@ -106,6 +106,11 @@ public class TaskHttpClient {
         return response;
     }
 
+    public TaskHttpClient addHeader(String name, String value) {
+        request.getHeader().put(name, value);
+        return this;
+    }
+
     public TaskHttpClient setFullUrl(String url) {
         request.setFullUrl(url);
         return this;
