@@ -1,10 +1,10 @@
 package com.datatrees.rawdatacentral.plugin.operator.yun_nan_10086_app;
 
-
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -19,6 +19,7 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +27,17 @@ import org.slf4j.LoggerFactory;
  * 云南移动App
  * 登录方式：云南移动App
  * 登陆方式:服务密码登陆
+ *
+ * 每日各类详单查询次数有限
+ * 之后则会提示：您当日查询此类详单已上限，请明日再试。
+ *
  * Created by guimeichao on 17/8/28.
  */
 public class YunNan10086ForApp implements OperatorPluginService {
 
     private static final Logger logger       = LoggerFactory.getLogger(YunNan10086ForApp.class);
     private static final String templateUrl  = "http://www.yn.10086.cn/appsrv/actionDispatcher.do";
-    private static final String templateData = "deviceid=D7F40D126FE979D7C24E5FB874DBB84D&appKey=11100&cstamp={}&internet=WIFI&sys_version=6.0.1" +
-            "&screen" + "=1080x1920&model=Mi Note 2&imsi=460078065323889&imei=8697{}&md5sign={}&jsonParam={}";
+    private              String templateData = "deviceid=D7F40D126FE979D7C24E5FB874DBB84D&appKey=11100&cstamp={}&internet=WIFI&sys_version=6.0.1" + "&screen" + "=1080x1920&model=Mi Note 2&imsi=460078065323889&imei=8697{}&md5sign={}&jsonParam={}";
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -107,10 +111,11 @@ public class YunNan10086ForApp implements OperatorPluginService {
              *  {
              *      "dynamicURI":"/login",
              *      "dynamicParameter":{
-             *          "method":"ln",
+             *          "method":"lnU",
              *          "m":"userName",
              *          "p":"encryPwd",
-             *          "deviceCode":""
+             *          "deviceCode":"3644755659516982113_870344981452283454",
+             *          "t":"1503888366795"
              *      },
              *      "dynamicDataNodeName":"pwdLogin_node"
              *  }
@@ -118,10 +123,11 @@ public class YunNan10086ForApp implements OperatorPluginService {
              */
 
             Map<String, Object> dynamicParameter = new HashMap<>();
-            dynamicParameter.put("method", "ln");
+            dynamicParameter.put("method", "lnU");
             dynamicParameter.put("m", param.getMobile());
             dynamicParameter.put("p", encryptPassword);
-            dynamicParameter.put("deviceCode", "");
+            dynamicParameter.put("deviceCode", "3644755659516982113_870344981452283454");
+            dynamicParameter.put("t", System.currentTimeMillis());
             Map<String, Object> params = new HashMap<>();
             params.put("dynamicURI", "/login");
             params.put("dynamicParameter", dynamicParameter);
@@ -132,12 +138,9 @@ public class YunNan10086ForApp implements OperatorPluginService {
 
             String base64Data = Base64.getEncoder().encodeToString(JSON.toJSONString(paramsList).getBytes());
 
-            String data = TemplateUtils
-                    .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
-                            base64Data);
+            String data = TemplateUtils.format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data), base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_001").setFullUrl(templateUrl).setRequestBody(data)
-                    .addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_001").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
             /**
              * 结果枚举
              *
@@ -154,7 +157,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
              * {"pwdLogin_node":{"errorCode":"-900006","errorMessage":"用户服务密码错误！","resultCode":"0","resultObj":null}}
              */
             JSONObject json = response.getPageContentForJSON();
-            String resultCode = json.getString("resultCode");
+            String resultCode = (String) JSONPath.eval(json, "$.pwdLogin_node.resultCode");
             if (StringUtils.equals("1", resultCode)) {
                 logger.info("登陆成功,param={}", param);
                 //存储登陆响应信息里的个人信息
@@ -169,7 +172,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
                     logger.warn("登录失败-->手机号码归属地不符(可能性比较大)/其他异常,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_PHONE_FAIL);
                 } else {
-                    logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                    logger.error("登陆失败,param={},pageContent={}", param, response);
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }
             }
@@ -207,15 +210,12 @@ public class YunNan10086ForApp implements OperatorPluginService {
 
             String base64Data = Base64.getEncoder().encodeToString(JSON.toJSONString(paramsList).getBytes());
 
-            String data = TemplateUtils
-                    .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
-                            base64Data);
+            String data = TemplateUtils.format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data), base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_002").setFullUrl(templateUrl).setRequestBody(data)
-                    .addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_002").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
             //{"smsPwdLogin":{"errorCode":"","errorMessage":"","resultCode":"1","resultObj":"短信下发成功"}}
             JSONObject json = response.getPageContentForJSON();
-            String resultCode = json.getString("resultCode");
+            String resultCode = (String) JSONPath.eval(json, "$.smsPwdLogin.resultCode");
             if (StringUtils.equals("1", resultCode)) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
@@ -260,12 +260,9 @@ public class YunNan10086ForApp implements OperatorPluginService {
 
             String base64Data = Base64.getEncoder().encodeToString(JSON.toJSONString(paramsList).getBytes());
 
-            String data = TemplateUtils
-                    .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
-                            base64Data);
+            String data = TemplateUtils.format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data), base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_002").setFullUrl(templateUrl).setRequestBody(data)
-                    .addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_003").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
             /**
              * 结果枚举
              *
@@ -275,7 +272,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
              * {"ckeckSmsCode_node":{"errorCode":"-20028","errorMessage":"对不起，您输入的验证码不正确","resultCode":"0","resultObj":null}}
              */
             JSONObject json = response.getPageContentForJSON();
-            String resultCode = json.getString("resultCode");
+            String resultCode = (String) JSONPath.eval(json, "$.ckeckSmsCode_node.resultCode");
             switch (resultCode) {
                 case "1":
                     logger.info("详单-->校验成功,param={}", param);
@@ -296,8 +293,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
     private HttpResult<Object> processForBill(OperatorParam param) {
         HttpResult<Object> result = new HttpResult<>();
 
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
-                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
         String billMonth = paramMap.get("page_content");
         Response response = null;
         try {
@@ -328,12 +324,9 @@ public class YunNan10086ForApp implements OperatorPluginService {
 
             String base64Data = Base64.getEncoder().encodeToString(JSON.toJSONString(paramsList).getBytes());
 
-            String data = TemplateUtils
-                    .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
-                            base64Data);
+            String data = TemplateUtils.format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data), base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_002").setFullUrl(templateUrl).setRequestBody(data)
-                    .addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_004").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
             return result.success(response.getPageContent());
         } catch (Exception e) {
             logger.error("账单页访问失败,param={},response={}", param, response, e);
@@ -344,8 +337,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
     private HttpResult<Object> processForDetails(OperatorParam param, String queryType) {
         HttpResult<Object> result = new HttpResult<>();
 
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
-                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
         String[] times = paramMap.get("page_content").split("#");
 
         Response response = null;
@@ -383,12 +375,9 @@ public class YunNan10086ForApp implements OperatorPluginService {
 
             String base64Data = Base64.getEncoder().encodeToString(JSON.toJSONString(paramsList).getBytes());
 
-            String data = TemplateUtils
-                    .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
-                            base64Data);
+            String data = TemplateUtils.format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data), base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_002").setFullUrl(templateUrl).setRequestBody(data)
-                    .addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_005").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4").invoke();
             return result.success(response.getPageContent());
         } catch (Exception e) {
             logger.error("通话记录页访问失败,param={},response={}", param, response, e);
