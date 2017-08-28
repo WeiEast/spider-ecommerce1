@@ -28,6 +28,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 中国电信App--部分省份通用
+ *
+ * 登陆地址:电信营业厅App
+ * 登陆方式:服务密码登陆
+ *
  * 目前已知（2017.8.18）
  * 支持：
  * 甘肃、黑龙江、北京、江苏、山东、湖南、天津、四川、重庆、安徽、浙江、江西、福建、山西
@@ -47,13 +51,8 @@ import org.slf4j.LoggerFactory;
  * 陕西无账单详单查询
  * 海南无账单详单查询
  * 内蒙古无账单详单查询
- * <p>
- * 登陆地址:https://login.10086.cn/html/login/login.html
- * 登陆方式:服务密码登陆
- * 图片验证码:支持
- * 验证图片验证码:支持
- * 短信验证码:支持
- * <p>
+ *
+ *
  * Created by guimeichao on 17/8/17.
  */
 public class China10000ForApp implements OperatorPluginService {
