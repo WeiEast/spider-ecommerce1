@@ -113,12 +113,12 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                 if (!StringUtils.contains(pageContent, "authnrequestform")) {
                     return result.failure(ErrorCode.REFESH_SMS_FAIL);
                 }
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent);
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_003", pageContent);
 
                 if (!StringUtils.contains(pageContent, "authnrequestform")) {
                     return result.failure(ErrorCode.REFESH_SMS_FAIL);
                 }
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_002", pageContent);
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_003", pageContent);
 
                 bid = RegexpUtils.select(pageContent, "\"bid\":\"(.*)\"", 1);
                 if (StringUtils.isBlank(bid)) {
@@ -130,7 +130,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
             logger.info("frefeshSmsCodeForBillDetail find bid={},param={}", bid, param);
 
             templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?bid={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_008").setFullUrl(templateUrl, bid).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_003").setFullUrl(templateUrl, bid).invoke();
             pageContent = response.getPageContent();
             switch (pageContent) {
                 case "1":
@@ -153,7 +153,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         try {
             String bid = TaskUtils.getTaskShare(param.getTaskId(), "bid");
             String templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?validateCode={}&bid={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_008").setFullUrl(templateUrl, param.getSmsCode(), bid)
+            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_004").setFullUrl(templateUrl, param.getSmsCode(), bid)
                     .invoke();
             String pageContent = response.getPageContent();
             switch (pageContent) {
