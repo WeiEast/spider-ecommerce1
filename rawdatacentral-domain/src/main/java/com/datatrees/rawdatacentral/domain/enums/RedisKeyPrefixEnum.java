@@ -8,19 +8,21 @@ import java.util.concurrent.TimeUnit;
 public enum RedisKeyPrefixEnum {
 
     WEBSITENAME_TRANSFORM_MAP("websitename.transform.map", 60, TimeUnit.MINUTES, "websitename中文转英文名称"),
+    WEBSITE_CONF_WEBSITENAME("website.conf.websitename", 60, TimeUnit.MINUTES, "根据websitename查找website.conf"),
     LOCK("lock", 1, TimeUnit.MINUTES, "共享锁"),
     TASK_COOKIE("task.cookie", 30, TimeUnit.MINUTES, " 根据taskId共享cookie"),
     TASK_SHARE("task.share", 30, TimeUnit.MINUTES, " 根据taskId共享中间属性"),
     TASK_PROXY("task.proxy", 30, TimeUnit.MINUTES, " 根据taskId共享代理"),
     TASK_REQUEST("task.request", 30, TimeUnit.MINUTES, "根据taskId共享代理"),
-    WEBSITE_CONF_WEBSITENAME("website.conf.websitename", 60, TimeUnit.MINUTES, "根据websitename查找website.conf"),
-    ALL_OPERATOR_CONFIG("all.operator.config", 60, TimeUnit.MINUTES, "运营商配置"),
     PLUGIN_CLASS("plugin.class", 24, TimeUnit.HOURS, "根据taskId共享cookie"),
     PLUGIN_FILE("plugin.file", 365, TimeUnit.DAYS, "插件jar存储"),
     PLUGIN_FILE_MD5("plugin.file.md5", 365, TimeUnit.DAYS, "插件md5"),
     PLUGIN_FILE_WEBSITE("plugin.file.website", 60, TimeUnit.MINUTES, "开发环境,将website的plugin jar临时映射到固定的jar"),
     SEND_LOGIN_MSG_STAGE("send.login.msg.stage", 24, TimeUnit.HOURS, "发送登录成功消息阶段"),
-    SEND_SMS_INTERVAL("send.sms.interval", 60, TimeUnit.SECONDS, "发送短信间隔时间");
+    SEND_SMS_INTERVAL("send.sms.interval", 60, TimeUnit.SECONDS, "发送短信间隔时间"),
+    MAX_WEIGHT_OPERATOR("max.weight.operator", 365, TimeUnit.DAYS, "最大权重运营商"),
+    ALL_OPERATOR_CONFIG("all.operator.config", 60, TimeUnit.MINUTES, "运营商配置"),
+    WEBSITE_OPERATOR("website.operator", 1, TimeUnit.HOURS, "运营商配置");
     /**
      * 备注
      */

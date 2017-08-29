@@ -48,9 +48,9 @@ public class DefaultProcessorContextBuilder {
             switch (resultType) {
                 case MAILBILL:
                     String websiteIdStr = Integer.valueOf(extractMessage.getWebsiteId()).toString();
-                    if (extractorUseDefaultWebsiteIdsSet.contains(websiteIdStr))
+                    if (extractorUseDefaultWebsiteIdsSet.contains(websiteIdStr)) {
                         context = websiteConfigService.getExtractorProcessorContext(extractMessage.getWebsiteId());
-                    else context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId());
+                    } else { context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId());}
                     break;
                 default:
                     // use the same website config to extract

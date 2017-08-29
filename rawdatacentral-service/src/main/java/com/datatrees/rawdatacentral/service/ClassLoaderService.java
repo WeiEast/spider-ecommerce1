@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.service;
 
 /**
+ * 目前只给运营商用
  * Created by zhouxinghai on 2017/7/14.
  */
 public interface ClassLoaderService {

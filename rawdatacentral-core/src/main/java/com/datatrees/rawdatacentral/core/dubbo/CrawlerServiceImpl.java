@@ -75,7 +75,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
             return null;
         }
-        WebsiteConf conf = websiteConfigService.getWebsiteConfFromCache(newWebsiteName);
+        WebsiteConf conf = websiteConfigService.getWebsiteConf(newWebsiteName);
         if (null != conf) {
             //中文
             conf.setName(websiteName);
@@ -103,7 +103,8 @@ public class CrawlerServiceImpl implements CrawlerService {
                 extra = new HashMap<>();
             }
             if (taskId <= 0 || type < 0 || StringUtils.isAnyBlank(directiveId, code)) {
-                logger.warn("invalid param taskId={},type={},directiveId={},code={},extra={}", taskId, type, directiveId, code, JSON.toJSONString(extra));
+                logger.warn("invalid param taskId={},type={},directiveId={},code={},extra={}", taskId, type, directiveId, code,
+                        JSON.toJSONString(extra));
                 return result.failure("参数为空或者参数不完整");
             }
             String status = DirectiveRedisCode.WAIT_SERVER_PROCESS;
@@ -257,20 +258,7 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
-        HttpResult<List<OperatorCatalogue>> result = new HttpResult<>();
-        try {
-            List<OperatorCatalogue> list = redisService.getCache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, new TypeReference<List<OperatorCatalogue>>() {});
-            if (null == list) {
-                logger.warn("not found OperatorCatalogue from cache");
-                list = websiteConfigService.queryAllOperatorConfig();
-                redisService.cache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, list);
-            }
-            return result.success(list);
-        } catch (Exception e) {
-            logger.error("queryAllOperatorConfig error", e);
-            return result.failure();
-        }
-
+        return crawlerOperatorService.queryAllConfig();
     }
 
 }

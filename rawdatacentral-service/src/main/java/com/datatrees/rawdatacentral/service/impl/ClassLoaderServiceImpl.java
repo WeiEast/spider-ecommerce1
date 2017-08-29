@@ -90,7 +90,8 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
             logger.info("websiteName={},独立映射到了插件pluginFileName={}", websiteName, pluginFileName);
             return pluginFileName;
         }
-        WebsiteConf websiteConf = websiteConfigService.getWebsiteConfFromCache(websiteName);
+        //todo 有问题
+        WebsiteConf websiteConf = websiteConfigService.getWebsiteConf(websiteName);
         if (StringUtils.equals(websiteConf.getWebsiteType(), "2")) {
             logger.info("load plugin={} for websiteName={}", operatorPluginFilename, websiteName);
             return operatorPluginFilename;
