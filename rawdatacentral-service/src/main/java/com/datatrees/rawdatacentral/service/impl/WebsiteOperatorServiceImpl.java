@@ -1,15 +1,21 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.dao.OperatorGroupDAO;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.dao.WebsiteOperatorDAO;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
+import com.datatrees.rawdatacentral.domain.model.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample;
+import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang.StringUtils;
@@ -25,11 +31,29 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     private WebsiteOperatorDAO websiteOperatorDAO;
     @Resource
     private WebsiteConfigDAO   websiteConfigDAO;
+    @Resource
+    private OperatorGroupDAO   operatorGroupDAO;
+
+    @Override
+    public WebsiteOperator getByWebsiteName(String websiteName) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        WebsiteOperatorExample example = new WebsiteOperatorExample();
+        example.createCriteria().andWebsiteNameEqualTo(websiteName);
+        return getByWebsiteName(websiteName);
+    }
 
     @Override
     public WebsiteOperator queryMaxWeightWebsite(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         return websiteOperatorDAO.queryMaxWeightWebsite(websiteName);
+    }
+
+    @Override
+    public List<OperatorGroup> queryByGroupCode(String groupCode) {
+        CheckUtils.checkNotBlank(groupCode, "groupCode is blank");
+        OperatorGroupExample example = new OperatorGroupExample();
+        example.createCriteria().andGroupCodeEqualTo(groupCode);
+        return operatorGroupDAO.selectByExample(example);
     }
 
     @Override
@@ -64,5 +88,24 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             config.setPluginClass(pluginClass);
         }
         websiteOperatorDAO.insertSelective(config);
+    }
+
+    @Override
+    public List<OperatorGroup> configOperatorGroup(String groupCode, Map<String, Integer> config) {
+        CheckUtils.checkNotBlank(groupCode, "groupCode is null");
+        if (null == config || !config.isEmpty()) {
+            throw new CommonException("config is empty");
+        }
+        OperatorGroupExample example = new OperatorGroupExample();
+        example.createCriteria().andGroupCodeEqualTo(groupCode);
+        for (Map.Entry<String, Integer> entry : config.entrySet()) {
+            OperatorGroup operatorGroup = new OperatorGroup();
+            operatorGroup.setGroupCode(groupCode);
+            operatorGroup.setWebsiteName(entry.getKey());
+            operatorGroup.setWeight(entry.getValue());
+            operatorGroup.setWebsiteTitle(getByWebsiteName(entry.getKey()).getWebsiteTitle());
+            operatorGroupDAO.insertSelective(operatorGroup);
+        }
+        return queryByGroupCode(groupCode);
     }
 }
