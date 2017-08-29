@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Param;
 public interface OperatorGroupMapper {
     int countByExample(OperatorGroupExample example);
 
+    int deleteByExample(OperatorGroupExample example);
+
     int insertSelective(OperatorGroup record);
 
     List<OperatorGroup> selectByExample(OperatorGroupExample example);

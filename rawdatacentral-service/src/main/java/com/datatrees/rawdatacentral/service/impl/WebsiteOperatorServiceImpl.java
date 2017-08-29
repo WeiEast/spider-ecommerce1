@@ -58,6 +58,13 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Override
+    public void deleteGroupConfig(String groupCode) {
+        OperatorGroupExample example = new OperatorGroupExample();
+        example.createCriteria().andGroupCodeEqualTo(groupCode);
+         operatorGroupDAO.deleteByExample(example);
+    }
+
+    @Override
     public void importWebsite(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "config is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
@@ -97,6 +104,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         if (null == config || config.isEmpty()) {
             throw new CommonException("config is empty");
         }
+        deleteGroupConfig(groupCode);
         OperatorGroupExample example = new OperatorGroupExample();
         example.createCriteria().andGroupCodeEqualTo(groupCode);
         for (Map.Entry<String, Integer> entry : config.entrySet()) {

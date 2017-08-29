@@ -56,4 +56,17 @@ public class WebsiteOperatorController {
         }
     }
 
+    @RequestMapping("/deleteGroupConfig")
+    public HttpResult<Object> deleteGroupConfig(String groupCode) {
+        HttpResult<Object> result = new HttpResult<>();
+        try {
+            websiteOperatorService.deleteGroupConfig(groupCode);
+            logger.info("deleteGroupConfig success groupCode={}", groupCode);
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("deleteGroupConfig error groupCode={}", groupCode, e);
+            return result.failure();
+        }
+    }
+
 }

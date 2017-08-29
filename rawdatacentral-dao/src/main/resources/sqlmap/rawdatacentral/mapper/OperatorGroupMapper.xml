@@ -86,6 +86,12 @@
         limit ${limitStart} , ${pageSize}
     </if>
   </select>
+  <delete id="deleteByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample">
+    delete from operator_group
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
   <insert id="insertSelective" parameterType="com.datatrees.rawdatacentral.domain.model.OperatorGroup">
     insert into operator_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
