@@ -157,13 +157,13 @@ public class FuJian10086ForWeb implements OperatorPluginService {
             //TODO
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
-                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
 
             String errorMessage = PatternUtils.group(pageContent, "errorMsg=([^\"]+)", 1);
             if (StringUtils.isNotBlank(errorMessage)) {
-                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
 
