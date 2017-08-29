@@ -1,17 +1,18 @@
 package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.domain.model.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,16 +41,17 @@ public class WebsiteOperatorController {
         }
     }
 
-    @RequestMapping("/configOperatorGroup")
-    public HttpResult<Object> configOperatorGroup(String groupCode, String config) {
+    @RequestMapping("/configGroup")
+    public HttpResult<Object> configGroup(@RequestBody Map<String, Object> map) {
         HttpResult<Object> result = new HttpResult<>();
         try {
-            Map<String, Integer> map = JSON.parseObject(config, new TypeReference<Map<String, Integer>>() {});
-            List<OperatorGroup> list = websiteOperatorService.configOperatorGroup(groupCode, map);
-            logger.info("importWebsite success groupCode={},config={}", groupCode, config);
+            String groupCode = (String) map.get("groupCode");
+            Map<String, Integer> config = (LinkedHashMap<String, Integer>) map.get("config");
+            List<OperatorGroup> list = websiteOperatorService.configOperatorGroup(groupCode, config);
+            logger.info("configGroup success config={}", JSON.toJSONString(map));
             return result.success(list);
         } catch (Exception e) {
-            logger.error("importWebsite error groupCode={},config={}", groupCode, config, e);
+            logger.error("configGroup error config={}", JSON.toJSONString(map), e);
             return result.failure();
         }
     }
