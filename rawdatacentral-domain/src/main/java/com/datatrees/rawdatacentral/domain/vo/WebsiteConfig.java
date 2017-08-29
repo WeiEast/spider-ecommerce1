@@ -24,20 +24,12 @@ public class WebsiteConfig {
     private String  websiteType;
     /** website name */
     private String  websiteName;
-    /** website domain */
-    private String  websiteDomain;
     /** 0:false,1:true */
     private Boolean isenabled;
     /** 登录过程中自定义提示 */
     private String  loginTip;
     /** 验证码提示 */
     private String  verifyTip;
-    /** 登录页初始化超时 */
-    private Integer initTimeout;
-    /** 验证码等待时间 */
-    private Integer codeWaitTime;
-    /** 登录超时 */
-    private Integer loginTimeout;
     /** 重置类型：SMS|WEB */
     private String  resetType;
     /** 短信模板 */
@@ -93,14 +85,6 @@ public class WebsiteConfig {
         this.websiteName = websiteName;
     }
 
-    public String getWebsiteDomain() {
-        return websiteDomain;
-    }
-
-    public void setWebsiteDomain(String websiteDomain) {
-        this.websiteDomain = websiteDomain;
-    }
-
     public Boolean getIsenabled() {
         return isenabled;
     }
@@ -123,30 +107,6 @@ public class WebsiteConfig {
 
     public void setVerifyTip(String verifyTip) {
         this.verifyTip = verifyTip;
-    }
-
-    public Integer getInitTimeout() {
-        return initTimeout;
-    }
-
-    public void setInitTimeout(Integer initTimeout) {
-        this.initTimeout = initTimeout;
-    }
-
-    public Integer getCodeWaitTime() {
-        return codeWaitTime;
-    }
-
-    public void setCodeWaitTime(Integer codeWaitTime) {
-        this.codeWaitTime = codeWaitTime;
-    }
-
-    public Integer getLoginTimeout() {
-        return loginTimeout;
-    }
-
-    public void setLoginTimeout(Integer loginTimeout) {
-        this.loginTimeout = loginTimeout;
     }
 
     public String getResetType() {
