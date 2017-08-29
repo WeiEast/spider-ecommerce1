@@ -28,9 +28,6 @@ public interface CrawlerService {
     // 未来可以增加每个网页显示什么字段，给什么提示，有多少tab，点击每个tab访问什么连接的配置
     public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
 
-    // 修改配置
-    public boolean updateWebsiteConfig(String websiteName, String searchConfig, String extractConfig);
-
     /**
      * 运营商登陆,获取验证码
      * 这里是登陆插件用,插件里的是通过指令发出去了,而且不支持刷新

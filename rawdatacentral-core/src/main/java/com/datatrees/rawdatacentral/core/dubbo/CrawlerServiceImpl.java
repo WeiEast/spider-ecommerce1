@@ -96,11 +96,6 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     @Override
-    public boolean updateWebsiteConfig(String websiteName, String searchConfig, String extractConfig) {
-        return websiteConfigService.updateWebsiteConf(websiteName, searchConfig, extractConfig);
-    }
-
-    @Override
     public HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code, Map<String, String> extra) {
         HttpResult<Boolean> result = new HttpResult<>();
         try {
