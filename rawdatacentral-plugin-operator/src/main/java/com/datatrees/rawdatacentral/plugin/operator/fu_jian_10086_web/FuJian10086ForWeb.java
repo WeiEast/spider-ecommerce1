@@ -223,10 +223,12 @@ public class FuJian10086ForWeb implements OperatorPluginService {
             String pageContent = response.getPageContent();
 
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
+            TaskUtils.addTaskShare(param.getTaskId(),"basicInfoReferUrl",templateUrl);
             response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_009").setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
 
             templateUrl = PatternUtils.group(pageContent, "href = \"([^\"]+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(),"basicInfoUrl",templateUrl);
             response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_010").setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
 
