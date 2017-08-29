@@ -39,7 +39,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         WebsiteOperatorExample example = new WebsiteOperatorExample();
         example.createCriteria().andWebsiteNameEqualTo(websiteName);
-        return getByWebsiteName(websiteName);
+        List<WebsiteOperator> list = websiteOperatorDAO.selectByExample(example);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
@@ -54,6 +55,13 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         OperatorGroupExample example = new OperatorGroupExample();
         example.createCriteria().andGroupCodeEqualTo(groupCode);
         return operatorGroupDAO.selectByExample(example);
+    }
+
+    @Override
+    public void deleteGroupConfig(String groupCode) {
+        OperatorGroupExample example = new OperatorGroupExample();
+        example.createCriteria().andGroupCodeEqualTo(groupCode);
+         operatorGroupDAO.deleteByExample(example);
     }
 
     @Override
@@ -93,9 +101,10 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     @Override
     public List<OperatorGroup> configOperatorGroup(String groupCode, Map<String, Integer> config) {
         CheckUtils.checkNotBlank(groupCode, "groupCode is null");
-        if (null == config || !config.isEmpty()) {
+        if (null == config || config.isEmpty()) {
             throw new CommonException("config is empty");
         }
+        deleteGroupConfig(groupCode);
         OperatorGroupExample example = new OperatorGroupExample();
         example.createCriteria().andGroupCodeEqualTo(groupCode);
         for (Map.Entry<String, Integer> entry : config.entrySet()) {

@@ -34,6 +34,13 @@ public interface WebsiteOperatorService {
     List<OperatorGroup> queryByGroupCode(String groupCode);
 
     /**
+     * 删除分组配置
+     * @param groupCode
+     * @return
+     */
+    void deleteGroupConfig(String groupCode);
+
+    /**
      * 从老配置导入配置信息
      * @param config 自定义信息
      */
