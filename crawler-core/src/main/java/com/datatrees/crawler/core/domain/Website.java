@@ -19,6 +19,7 @@ public class Website implements Serializable {
     private static final long serialVersionUID = -2630430042887742711L;
     private           Integer         id;
     private           String          websiteName;
+    @Deprecated
     private           String          websiteDomain;
     private           String          websiteType;
     private           Boolean         isEnabled;
