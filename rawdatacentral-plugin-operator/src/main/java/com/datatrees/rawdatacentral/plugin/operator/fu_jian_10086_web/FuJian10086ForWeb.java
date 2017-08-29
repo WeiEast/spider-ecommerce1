@@ -46,6 +46,7 @@ public class FuJian10086ForWeb implements OperatorPluginService {
             }
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "fu_jian_10086_web_002").setFullUrl(templateUrl).invoke();
+            pageContent = response.getPageContent();
 
             String backUrl = "https://fj.ac.10086.cn/4login/backPage.jsp";
             String errorurl = "https://fj.ac.10086.cn/4login/errorPage.jsp";
@@ -157,13 +158,13 @@ public class FuJian10086ForWeb implements OperatorPluginService {
             //TODO
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
-                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
 
             String errorMessage = PatternUtils.group(pageContent, "errorMsg=([^\"]+)", 1);
             if (StringUtils.isNotBlank(errorMessage)) {
-                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
 
