@@ -110,4 +110,11 @@ public interface WebsiteConfigService {
      */
     Website buildWebsite(WebsiteOperator websiteOperator);
 
+    /**
+     * 根据taskId从缓存取Website
+     * @param taskId
+     * @return
+     */
+    Website getWebsiteFromCache(Long taskId);
+
 }

@@ -76,6 +76,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             message.setWebsiteName(websiteName);
             TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, websiteName);
             WebsiteOperator websiteOperator = BeanFactoryUtils.getBean(WebsiteOperatorService.class).getByWebsiteName(websiteName);
+
             website = BeanFactoryUtils.getBean(WebsiteConfigService.class).buildWebsite(websiteOperator);
             OperatorPluginService operatorPluginService = BeanFactoryUtils.getBean(ClassLoaderService.class).getOperatorPluginService(websiteName);
             OperatorParam param = new OperatorParam();

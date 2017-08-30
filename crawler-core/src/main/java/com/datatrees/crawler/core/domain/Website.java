@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
-import com.google.gson.annotations.SerializedName;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -13,22 +12,15 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Website implements Serializable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -2630430042887742711L;
     private           Integer         id;
     private           String          websiteName;
-    @Deprecated
     private           String          websiteDomain;
     private           String          websiteType;
     private           Boolean         isEnabled;
-    private           SearchConfig    searchConfig;
-    @SerializedName("searchconfig")
-    private transient String          searchConfigSource;
-    private           ExtractorConfig extractorConfig;
-    @SerializedName("extractorconfig")
-    private transient String          extractorConfigSource;
+    private transient SearchConfig    searchConfig;
+    private           String          searchConfigSource;
+    private transient ExtractorConfig extractorConfig;
+    private           String          extractorConfigSource;
     private           String          taskRegion;
 
     public Integer getId() {
@@ -63,72 +55,42 @@ public class Website implements Serializable {
         this.websiteType = websiteType;
     }
 
-    /**
-     * @return the isEnabled
-     */
-    public Boolean getIsEnabled() {
+    public Boolean getIdEnabled() {
         return isEnabled;
     }
 
-    /**
-     * @param isEnabled the isEnabled to set
-     */
-    public void setIsEnabled(Boolean isEnabled) {
-        this.isEnabled = isEnabled;
+    public void setIsEnabled(Boolean enabled) {
+        isEnabled = enabled;
     }
 
-    /**
-     * @return the searchConfig
-     */
     public SearchConfig getSearchConfig() {
         return searchConfig;
     }
 
-    /**
-     * @param searchConfig the searchConfig to set
-     */
     public void setSearchConfig(SearchConfig searchConfig) {
         this.searchConfig = searchConfig;
     }
 
-    /**
-     * @return the searchConfigSource
-     */
     public String getSearchConfigSource() {
         return searchConfigSource;
     }
 
-    /**
-     * @param searchConfigSource the searchConfigSource to set
-     */
     public void setSearchConfigSource(String searchConfigSource) {
         this.searchConfigSource = searchConfigSource;
     }
 
-    /**
-     * @return the extractorConfig
-     */
     public ExtractorConfig getExtractorConfig() {
         return extractorConfig;
     }
 
-    /**
-     * @param extractorConfig the extractorConfig to set
-     */
     public void setExtractorConfig(ExtractorConfig extractorConfig) {
         this.extractorConfig = extractorConfig;
     }
 
-    /**
-     * @return the extractorConfigSource
-     */
     public String getExtractorConfigSource() {
         return extractorConfigSource;
     }
 
-    /**
-     * @param extractorConfigSource the extractorConfigSource to set
-     */
     public void setExtractorConfigSource(String extractorConfigSource) {
         this.extractorConfigSource = extractorConfigSource;
     }
@@ -139,16 +101,6 @@ public class Website implements Serializable {
 
     public void setTaskRegion(String taskRegion) {
         this.taskRegion = taskRegion;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Website [id=" + id + ", websiteName=" + websiteName + ", websiteDomain=" + websiteDomain + ", websiteType=" + websiteType + ", isEnabled=" + isEnabled + "]";
     }
 
 }

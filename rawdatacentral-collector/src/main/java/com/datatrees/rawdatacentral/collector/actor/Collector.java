@@ -76,8 +76,10 @@ public class Collector {
 
     private static final Logger logger                     = LoggerFactory.getLogger(Collector.class);
     private static       String duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
-    private static       String mqStatusTags               = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
-    private static       String mqMessageSendTagPattern    = PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
+    private static       String mqStatusTags               = PropertiesConfiguration.getInstance()
+            .get("core.mq.status.tags", "bankbill,ecommerce,operator");
+    private static       String mqMessageSendTagPattern    = PropertiesConfiguration.getInstance()
+            .get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
     @Resource
     private WebsiteConfigService   websiteConfigService;
     @Resource
@@ -228,7 +230,8 @@ public class Collector {
 
             boolean needLogin = context.needLogin();
             LoginType loginType = context.getLoginConfig() != null ? context.getLoginConfig().getType() : null;
-            logger.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin, loginType, context.getWebsiteName());
+            logger.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin, loginType,
+                    context.getWebsiteName());
 
             HttpResult<Boolean> loginResult = new HttpResult<>();
             if (needLogin) {
@@ -268,7 +271,8 @@ public class Collector {
                         }
                     }
                     if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                        logger.error("Thread interrupt bafore result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
+                        logger.error("Thread interrupt bafore result send to queue. threadId={},taskId={},websiteName={}",
+                                Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
                         task.setStatus(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode());
                         task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg());
                     } else {
@@ -278,46 +282,56 @@ public class Collector {
                 }
             }
         } catch (Exception e) {
-            logger.error("processMessage error taskId={}", taskMessage.getTask().getTaskId(), e);
-            if (e instanceof LoginTimeOutException) {
-                taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMsg() + " " + e.getMessage());
-            } else if (e instanceof InterruptedException) {
-                taskMessage.getTask().setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR, ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg() + " " + e.getMessage());
-            } else {
-                taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
+            logger.error("processMessage error taskId={}", message.getTaskId(), e);
+            if (null != taskMessage && null != taskMessage.getTask()) {
+                if (e instanceof LoginTimeOutException) {
+                    taskMessage.getTask()
+                            .setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMsg() + " " + e.getMessage());
+                } else if (e instanceof InterruptedException) {
+                    taskMessage.getTask()
+                            .setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR, ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg() + " " + e.getMessage());
+                } else {
+                    taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
+                }
             }
         } finally {
-            if (!task.isSubTask()) {
-                String redisKey = "run_count_" + task.getTaskId();
-                long totalRun = 0;
-                if (redisDao.getRedisTemplate().hasKey(redisKey)) {
-                    totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(redisKey));
-                }
-                boolean isRepeatTask = totalRun > message.getTotalRun();
-                logger.info("ready complete task taskId={},newTotalRun={},oldTotalRun={},isRepeatTask={}", task.getTaskId(), totalRun, message.getTotalRun(), isRepeatTask);
-
-                String logMsg = null;
-                switch (taskMessage.getTask().getStatus()) {
-                    case 0:
-                        logMsg = "抓取成功";
-                        break;
-                    case 306:
-                        logMsg = isRepeatTask ? "用户刷新任务或者重试,抓取中断" : "抓取中断";
-                        break;
-                    case 308:
-                        logMsg = "登陆超时";
-                        break;
-                    default:
-                        logMsg = "抓取失败";
-                        break;
-                }
-                messageService.sendTaskLog(task.getTaskId(), logMsg, task.getRemark());
-                if (task.getStatus() != 0 && !isRepeatTask) {
-                    messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), null);
-                }
+            if (null != watcher) {
+                this.actorLockWatchRelease(watcher);
             }
-            this.actorLockWatchRelease(watcher);
-            logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={},status={}", task.getTaskId(), task.isSubTask(), task.getStatus(), task.getRemark(), task.getWebsiteName(), task.getStatus());
+            if (null != task) {
+                if (!task.isSubTask()) {
+                    String redisKey = "run_count_" + task.getTaskId();
+                    long totalRun = 0;
+                    if (redisDao.getRedisTemplate().hasKey(redisKey)) {
+                        totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(redisKey));
+                    }
+                    boolean isRepeatTask = totalRun > message.getTotalRun();
+                    logger.info("ready complete task taskId={},newTotalRun={},oldTotalRun={},isRepeatTask={}", task.getTaskId(), totalRun,
+                            message.getTotalRun(), isRepeatTask);
+
+                    String logMsg = null;
+                    switch (taskMessage.getTask().getStatus()) {
+                        case 0:
+                            logMsg = "抓取成功";
+                            break;
+                        case 306:
+                            logMsg = isRepeatTask ? "用户刷新任务或者重试,抓取中断" : "抓取中断";
+                            break;
+                        case 308:
+                            logMsg = "登陆超时";
+                            break;
+                        default:
+                            logMsg = "抓取失败";
+                            break;
+                    }
+                    messageService.sendTaskLog(task.getTaskId(), logMsg, task.getRemark());
+                    if (task.getStatus() != 0 && !isRepeatTask) {
+                        messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), null);
+                    }
+                }
+                logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={},status={}", task.getTaskId(), task.isSubTask(),
+                        task.getStatus(), task.getRemark(), task.getWebsiteName(), task.getStatus());
+            }
         }
         this.messageComplement(taskMessage, message);
         message.setFinish(true);
@@ -342,7 +356,8 @@ public class Collector {
             String startMsgJson = GsonUtils.toJson(message);
 
             if (startMsgJson.length() > PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000)) {
-                String path = "task/" + taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/" + taskMessage.getTask().getId();
+                String path = "task/" + taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/" +
+                        taskMessage.getTask().getId();
                 map.put("startMsgOSSPath", path);
                 SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -350,7 +365,8 @@ public class Collector {
                     Map<String, SubmitFile> uploadMap = new HashMap<>();
                     uploadMap.put("startMsg.json", file);
                     ZipCompressUtils.compress(baos, uploadMap);
-                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), baos.toByteArray());
+                    OssServiceProvider.getDefaultService()
+                            .putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), baos.toByteArray());
                 } catch (Exception e) {
                     logger.error("upload startMsg.json error:" + e.getMessage(), e);
                 } finally {
@@ -437,7 +453,8 @@ public class Collector {
                         keyResult.setResultEmpty(!notEmptyTag.contains(key));
                     }
                     try {
-                        Message mqMessage = messageFactory.getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
+                        Message mqMessage = messageFactory
+                                .getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
                         SendResult sendResult = producer.send(mqMessage);
                         logger.info("send result message:" + mqMessage + "result:" + sendResult);
                     } catch (Exception e) {

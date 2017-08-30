@@ -259,7 +259,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public SearchProcessorContext getSearchProcessorContext(Long taskId) {
-        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
+        Website website = getWebsiteFromCache(taskId);
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
             searchProcessorContext.setPluginManager(pluginManager);
@@ -272,7 +272,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public ExtractorProcessorContext getExtractorProcessorContext(Long taskId) {
-        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
+        Website website = getWebsiteFromCache(taskId);
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website);
             extractorProcessorContext.setPluginManager(pluginManager);
@@ -331,6 +331,34 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public Website buildWebsite(WebsiteOperator websiteOperator) {
         WebsiteConfig config = buildWebsiteConfig(websiteOperator);
         Website website = buildWebsite(config);
+        return website;
+    }
+
+    @Override
+    public Website getWebsiteFromCache(Long taskId) {
+        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
+        if (website != null) {
+            if (StringUtils.isNotEmpty(website.getSearchConfigSource())) {
+                try {
+                    SearchConfig searchConfig = XmlConfigParser.getInstance()
+                            .parse(website.getSearchConfigSource(), SearchConfig.class, parentConfigHandler);
+                    website.setSearchConfig(searchConfig);
+                    website.setSearchConfigSource(null);
+                } catch (Exception e) {
+                    logger.error("parse searchConfig  error websiteId={},websiteName={}", website.getId(), website.getWebsiteName(), e);
+                }
+            }
+            if (StringUtils.isNotEmpty(website.getExtractorConfigSource())) {
+                try {
+                    ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
+                            .parse(website.getExtractorConfigSource(), ExtractorConfig.class, parentConfigHandler);
+                    website.setExtractorConfig(extractorConfig);
+                    website.setExtractorConfigSource(null);
+                } catch (Exception e) {
+                    logger.error("parse extractorConfig  error websiteId={},websiteName={}", website.getId(), website.getWebsiteName(), e);
+                }
+            }
+        }
         return website;
     }
 
