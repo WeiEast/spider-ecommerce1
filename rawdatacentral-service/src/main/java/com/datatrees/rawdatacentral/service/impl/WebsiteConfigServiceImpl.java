@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
 import com.datatrees.crawler.core.domain.config.ExtractorConfig;
@@ -21,10 +22,10 @@ import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.*;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
-import com.datatrees.rawdatacentral.service.OperatorGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
@@ -40,8 +41,6 @@ import org.springframework.stereotype.Service;
 public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     private static final Logger logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
-    @Resource
-    private OperatorGroupService   operatorGroupService;
     @Resource
     private WebsiteOperatorService websiteOperatorService;
     @Resource
@@ -119,7 +118,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public Website getFromWebsiteConfig(WebsiteConfig websiteConfig) {
         CheckUtils.checkNotNull(websiteConfig, "websiteConfig is null");
-        Website website = websiteContextBuild(websiteConfig);
+        Website website = buildWebsite(websiteConfig);
         website.setId(websiteConfig.getWebsiteId());
         website.setIsEnabled(websiteConfig.getIsenabled());
         website.setWebsiteName(websiteConfig.getWebsiteName());
@@ -150,24 +149,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         return conf;
     }
-
-    //@Override
-    //public WebsiteConf getWebsiteConfFromCache(String websiteName) {
-    //    CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
-    //    WebsiteConf conf = redisService.getCache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName, new TypeReference<WebsiteConf>() {});
-    //    if (null != conf) {
-    //        logger.info("find WebsiteConf from cache websiteName={}", websiteName);
-    //        return conf;
-    //    }
-    //    conf = getWebsiteConf(websiteName);
-    //    if (null != conf) {
-    //        logger.info("find WebsiteConf from db websiteName={}", websiteName);
-    //        redisService.cache(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME, websiteName, conf);
-    //        return conf;
-    //    }
-    //    logger.info("conf not found from db websiteName={}", websiteName);
-    //    return null;
-    //}
 
     @Override
     public boolean updateWebsiteConf(String websiteName, String searchConfig, String extractConfig) {
@@ -210,7 +191,15 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         list.add(new OperatorCatalogue("联通", map10010));
         list.add(new OperatorCatalogue("电信", map10000));
         for (GroupEnum group : GroupEnum.values()) {
-            WebsiteConfig websiteConfig = getWebsiteConfigByWebsiteName(group.getWebsiteName());
+            WebsiteConfig websiteConfig = null;
+            String websiteName = redisService.getString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
+            if (StringUtils.isBlank(websiteName)) {
+                websiteConfig = getWebsiteConfigByWebsiteName(group.getWebsiteName());
+            } else {
+                WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+                websiteConfig = buildWebsiteConfig(websiteOperator);
+            }
+
             CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + group.getWebsiteName());
             String initSetting = websiteConfig.getInitSetting();
             if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
@@ -269,12 +258,12 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
-        Website website = this.getWebsiteByWebsiteName(websiteName);
+    public SearchProcessorContext getSearchProcessorContext(Long taskId) {
+        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
             searchProcessorContext.setPluginManager(pluginManager);
-            searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, websiteName, proxyService));
+            searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, website.getWebsiteName(), proxyService));
             searchProcessorContext.init();
             return searchProcessorContext;
         }
@@ -303,7 +292,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public Website websiteContextBuild(WebsiteConfig websiteConfig) {
+    public Website buildWebsite(WebsiteConfig websiteConfig) {
         Website website = new Website();
         if (websiteConfig != null) {
             if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
@@ -330,6 +319,34 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             }
         }
         return website;
+    }
+
+    @Override
+    public Website buildWebsite(WebsiteOperator websiteOperator) {
+        WebsiteConfig config = buildWebsiteConfig(websiteOperator);
+        Website website = buildWebsite(config);
+        return website;
+    }
+
+    private WebsiteConfig buildWebsiteConfig(WebsiteOperator operator) {
+        CheckUtils.checkNotNull(operator, "operator is null");
+        WebsiteConfig config = new WebsiteConfig();
+        config.setWebsiteConfId(operator.getWebsiteId());
+        config.setWebsiteName(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(operator.getWebsiteName()));
+        config.setWebsiteType("2");
+        config.setIsenabled(true);
+        config.setLoginTip(operator.getLoginTip());
+        config.setVerifyTip(operator.getVerifyTip());
+        config.setResetType(operator.getResetType());
+        config.setSmsReceiver(operator.getSmsReceiver());
+        config.setSmsTemplate(operator.getSmsTemplate());
+        config.setResetTip(operator.getResetTip());
+        config.setResetURL(operator.getResetUrl());
+        config.setInitSetting(operator.getLoginConfig());
+        config.setSearchConfig(operator.getSearchConfig());
+        config.setExtractorConfig(operator.getExtractorConfig());
+        config.setSimulate(operator.getSimulate());
+        return config;
     }
 
 }

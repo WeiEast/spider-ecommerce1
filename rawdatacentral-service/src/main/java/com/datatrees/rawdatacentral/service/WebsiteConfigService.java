@@ -6,6 +6,7 @@ import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 
@@ -84,12 +85,29 @@ public interface WebsiteConfigService {
      */
     List<OperatorCatalogue> queryAllOperatorConfig();
 
-    SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName);
+    /**
+     * 获取SearchProcessorContext,taskInit使用
+     * @param taskId
+     * @return
+     */
+    SearchProcessorContext getSearchProcessorContext(Long taskId);
 
     ExtractorProcessorContext getExtractorProcessorContext(int websiteId);
 
     ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId);
 
-    Website websiteContextBuild(WebsiteConfig websiteConfig);
+    /**
+     * 将WebsiteConfig转化成Website
+     * @param websiteConfig
+     * @return
+     */
+    Website buildWebsite(WebsiteConfig websiteConfig);
+
+    /**
+     * 将WebsiteOperator转化成Website
+     * @param websiteOperator
+     * @return
+     */
+    Website buildWebsite(WebsiteOperator websiteOperator);
 
 }

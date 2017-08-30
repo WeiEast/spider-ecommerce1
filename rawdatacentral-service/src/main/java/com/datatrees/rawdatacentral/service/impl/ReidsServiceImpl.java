@@ -252,7 +252,8 @@ public class ReidsServiceImpl implements RedisService {
         //TODO加入事物控制
         saveToList(result.getGroupKey(), json, defaultTimeOut, TimeUnit.SECONDS);
         saveString(result.getDirectiveKey(), json, defaultTimeOut, TimeUnit.SECONDS);
-        logger.info("saveDirectiveResult success,groupKey={},directiveKey={},directiveId={}", result.getGroupKey(), result.getDirectiveKey(), directiveId);
+        logger.info("saveDirectiveResult success,groupKey={},directiveKey={},directiveId={}", result.getGroupKey(), result.getDirectiveKey(),
+                directiveId);
         return directiveId;
     }
 
@@ -324,7 +325,7 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Object value) {
+    public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, Object value) {
         cache(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
 
     }
@@ -351,7 +352,7 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, TypeReference<T> typeReference) {
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, TypeReference<T> typeReference) {
         return getCache(redisKeyPrefixEnum.getRedisKey(postfix), typeReference);
     }
 

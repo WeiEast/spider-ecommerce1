@@ -136,6 +136,9 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<String> fetchLoginCode(long taskId, int type, String username, String password, Map<String, String> extra) {
+
+
+
         HttpResult<String> result = new HttpResult<>();
         OperatorParam param = new OperatorParam();
         param.setTaskId(taskId);

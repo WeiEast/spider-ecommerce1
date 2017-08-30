@@ -15,6 +15,7 @@ public interface ClassLoaderService {
     Class loadPlugin(String jarName, String className);
 
     /**
+     * 加载运营商插件
      * @param websiteName
      * @return
      */

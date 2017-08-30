@@ -19,12 +19,14 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,13 +39,15 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
     @Resource
-    private ClassLoaderService   classLoaderService;
+    private ClassLoaderService     classLoaderService;
     @Resource
-    private RedisService         redisService;
+    private RedisService           redisService;
     @Resource
-    private MessageService       messageService;
+    private MessageService         messageService;
     @Resource
-    private WebsiteConfigService websiteConfigService;
+    private WebsiteConfigService   websiteConfigService;
+    @Resource
+    private WebsiteOperatorService websiteOperatorService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -58,7 +62,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(param.getTaskId()));
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(param.getTaskId()));
             //保存mobile和websiteName
-            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
+            if (null != param.getMobile()) {
+                TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
+            }
             TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
             logger.info("初始化运营商插件taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
         }
@@ -95,9 +101,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", result);
             return result;
         }
+        WebsiteOperator website = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
         //刷新短信间隔时间
-        int sendSmsInterval = PropertiesConfiguration.getInstance()
-                .getInt(RedisKeyPrefixEnum.SEND_SMS_INTERVAL.getRedisKey(param.getWebsiteName()), 0);
+        int sendSmsInterval = website.getSmsInterval();
         String latestSendSmsTime = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME);
         if (StringUtils.isNoneBlank(latestSendSmsTime) && sendSmsInterval > 0) {
             long endTime = Long.valueOf(latestSendSmsTime) + TimeUnit.SECONDS.toMillis(sendSmsInterval);
@@ -260,9 +266,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (StringUtils.isBlank(param.getWebsiteName())) {
             return result.failure(ErrorCode.EMPTY_WEBSITE_NAME);
         }
-        if (BooleanUtils.isNotPositiveNumber(param.getMobile())) {
-            return result.failure(ErrorCode.EMPTY_MOBILE);
-        }
+        //暂时手机号不强制
+        //if (BooleanUtils.isNotPositiveNumber(param.getMobile())) {
+        //    return result.failure(ErrorCode.EMPTY_MOBILE);
+        //}
         return result.success();
     }
 

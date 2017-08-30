@@ -8,16 +8,23 @@
 
 package com.datatrees.rawdatacentral.collector.listener;
 
-import java.util.concurrent.TimeUnit;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.crawler.core.domain.Website;
+import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.core.message.AbstractRocketMessageListener;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
-import org.apache.commons.lang.StringUtils;
+import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -48,14 +55,28 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
 
     @Override
     public void process(CollectorMessage message) {
-        String key = "raw_task_run_" + message.getTaskId();
-        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(key, "run");
+        Long taskId = message.getTaskId();
+        String websiteName = message.getWebsiteName();
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId), "");
         if (!ifAbsent) {
-            logger.warn("重复消息,不处理,taskId={},websiteName={}", message.getTaskId(), message.getWebsiteName());
+            logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, websiteName);
             return;
         }
-        //30分钟后删除
-        redisTemplate.expire(key, 10, TimeUnit.MINUTES);
+        Website website = null;
+        if (StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix())) {
+            websiteName = RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName);
+            message.setWebsiteName(websiteName);
+            //独立运营商
+            OperatorParam param = new OperatorParam();
+            param.setTaskId(taskId);
+            param.setWebsiteName(websiteName);
+            BeanFactoryUtils.getBean(CrawlerOperatorService.class).init(param);
+            WebsiteOperator websiteOperator = BeanFactoryUtils.getBean(WebsiteOperatorService.class).getByWebsiteName(websiteName);
+            website = BeanFactoryUtils.getBean(WebsiteConfigService.class).buildWebsite(websiteOperator);
+        } else {
+            website = BeanFactoryUtils.getBean(WebsiteConfigService.class).getWebsiteByWebsiteName(websiteName);
+        }
+        BeanFactoryUtils.getBean(RedisService.class).cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
         logger.info("receve login message taskId={}", message.getTaskId());
         collector.processMessage(message);
     }
@@ -77,7 +98,8 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                     if (StringUtils.isBlank(loginInfo.getCookie())) {
                         collectorMessage.setCookie(loginInfo.getSetCookie());
                     } else {
-                        String cookie = collectorMessage.getCookie().endsWith(";") ? collectorMessage.getCookie() + loginInfo.getSetCookie() : collectorMessage.getCookie() + ";" + loginInfo.getSetCookie();
+                        String cookie = collectorMessage.getCookie().endsWith(";") ? collectorMessage.getCookie() + loginInfo.getSetCookie() :
+                                collectorMessage.getCookie() + ";" + loginInfo.getSetCookie();
                         collectorMessage.setCookie(cookie);
                     }
                 }

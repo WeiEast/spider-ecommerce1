@@ -111,7 +111,7 @@ public class Collector {
         task.setNetworkTraffic(new AtomicLong(0));
         task.setStatus(0);
 
-        SearchProcessorContext context = websiteConfigService.getSearchProcessorContext(message.getTaskId(), message.getWebsiteName());
+        SearchProcessorContext context = websiteConfigService.getSearchProcessorContext(message.getTaskId());
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");

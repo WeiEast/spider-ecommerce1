@@ -64,7 +64,8 @@ public class OperatorController {
             headers.add("Content-Disposition", "inline");
             headers.add("Pragma", "no-cache");
             headers.add("Expires", "0");
-            return ResponseEntity.ok().headers(headers).contentLength(bytes.length).contentType(MediaType.IMAGE_JPEG).body(new InputStreamResource(new ByteArrayInputStream(bytes)));
+            return ResponseEntity.ok().headers(headers).contentLength(bytes.length).contentType(MediaType.IMAGE_JPEG)
+                    .body(new InputStreamResource(new ByteArrayInputStream(bytes)));
 
         }
         return null;
@@ -102,7 +103,7 @@ public class OperatorController {
     public Object mappingPluginFile(String websiteName, String fileName) throws IOException {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         CheckUtils.checkNotBlank(fileName, "fileName is empty");
-        redisService.saveString(RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getRedisKey(websiteName), fileName, RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeout(), RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeUnit());
+        redisService.cache(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME, websiteName, fileName);
         return new HttpResult<>().success();
     }
 
