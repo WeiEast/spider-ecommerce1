@@ -15,6 +15,7 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.OperatorGroupService;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class OperatorController {
     private CrawlerOperatorService crawlerOperatorService;
     @Resource
     private RedisService           redisService;
+    @Resource
+    private OperatorGroupService   operatorGroupService;
 
     @RequestMapping("/queryAllOperatorConfig")
     public Object queryAllOperatorConfig() {
@@ -105,6 +108,20 @@ public class OperatorController {
         CheckUtils.checkNotBlank(fileName, "fileName is empty");
         redisService.cache(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME, websiteName, fileName);
         return new HttpResult<>().success();
+    }
+
+    @RequestMapping("/updateCache")
+    public HttpResult<Boolean> updateCache(String websiteName) {
+        HttpResult<Boolean> result = new HttpResult<>();
+        try {
+            operatorGroupService.updateCache();
+            redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
+            logger.info("updateCache success websiteName={}", websiteName);
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("updateCache error websiteName={}", websiteName, e);
+            return result.failure();
+        }
     }
 
 }

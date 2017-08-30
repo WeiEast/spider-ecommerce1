@@ -88,7 +88,7 @@ public class OperatorGroupServiceImpl implements OperatorGroupService {
             }
         }
         if (null != maxWeight && maxWeight.getWeight() > 0) {
-            redisService.cache(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR, groupCode, maxWeight.getWebsiteName());
+            redisService.saveString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR, groupCode, maxWeight.getWebsiteName());
         }
     }
 

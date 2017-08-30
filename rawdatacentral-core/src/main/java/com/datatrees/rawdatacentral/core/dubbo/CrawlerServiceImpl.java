@@ -142,7 +142,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             return result.failure("参数为空或者参数不完整");
         }
         try {
-            if (redisService.hasKey(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId))) {
+            if (isNewOperator(taskId)) {
                 OperatorParam param = new OperatorParam();
                 param.setTaskId(taskId);
                 param.setFormType(FormType.LOGIN);
@@ -232,11 +232,10 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("fetchLoginCode  empty password, taskId={},username={}", taskId, username);
             return result.failure("invalid params,empty password");
         }
-
         long timeout = 30;
         String directiveId = null;
         try {
-            if (redisService.hasKey(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId))) {
+            if (isNewOperator(taskId)) {
                 OperatorParam param = new OperatorParam();
                 param.setTaskId(taskId);
                 param.setFormType(FormType.LOGIN);
@@ -361,6 +360,13 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
         return crawlerOperatorService.queryAllConfig();
+    }
+
+    private boolean isNewOperator(Long taskId) {
+        String websiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId), 15, TimeUnit.SECONDS);
+        //是否是独立运营商
+        Boolean isNewOperator = StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
+        return isNewOperator;
     }
 
 }

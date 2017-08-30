@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -19,6 +18,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -164,6 +164,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         result = getLoginService(param).submit(param);
         if (null != result && result.getStatus()) {
             if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
                 //登录成功
                 if (StringUtils.isNoneBlank(param.getPassword())) {
                     TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());
@@ -279,9 +280,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
      */
     private void sendLoginSuccessMessage(HttpResult result, OperatorParam param) {
         if (null != result && result.getStatus()) {
-            String sendLoginStage = PropertiesConfiguration.getInstance()
-                    .get(RedisKeyPrefixEnum.SEND_LOGIN_MSG_STAGE.getRedisKey(param.getWebsiteName()), "VALIDATE_BILL_DETAIL");
+            WebsiteOperator operator = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
+            String sendLoginStage = operator.getStartStage();
             if (StringUtils.equals(sendLoginStage, param.getFormType())) {
+                redisService.saveString(RedisKeyPrefixEnum.TASK_RUN_STAGE, param.getTaskId(), TaskStageEnum.CRAWLER_START.getStatus());
                 messageService.sendLoginSuccessMessage(param.getTaskId(), param.getWebsiteName());
                 logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
             }

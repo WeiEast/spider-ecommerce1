@@ -16,7 +16,7 @@ public enum GroupEnum {
 
     CHINA_10010("CHINA_10010", "中国联通", "china_10010_app"),
     ZHE_JIANG_10086("ZHE_JAING_10086", "浙江移动", "zhe_jiang_10086_web"),
-    ZHE_JIANG_10000("ZHE_JAING_10000", "浙江电信", "china_10000_app"),
+    ZHE_JIANG_10000("ZHE_JAING_10000", "浙江电信", "zhe_jiang_10000_web"),
     GUANG_DONG_10086("GUANG_DONG_10086", "广东移动", "guang_dong_10086_web"),
     GUANG_DONG_10000("GUANG_DONG_10000", "广东电信", "guang_dong_10000_web"),
     JIANG_SU_10086("JIANG_SU_10086", "江苏移动", "jiang_su_10086_wap"),

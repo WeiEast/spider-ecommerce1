@@ -31,19 +31,6 @@ public class WebsiteController {
     @Resource
     private PluginService        pluginService;
 
-    @RequestMapping("/deleteCacheByWebsiteName")
-    public HttpResult<Boolean> deleteCacheByWebsiteName(String websiteName) {
-        HttpResult<Boolean> result = new HttpResult<>();
-        try {
-            websiteConfigService.deleteCacheByWebsiteName(websiteName);
-            logger.info("delete cache success websiteName={}", websiteName);
-            return result.success(true);
-        } catch (Exception e) {
-            logger.error("deleteCacheByWebsiteName error websiteName={}", websiteName, e);
-            return result.failure();
-        }
-    }
-
     @RequestMapping(value = "/updateWebsiteConf", method = RequestMethod.POST)
     public HttpResult<Boolean> updateWebsiteConf(String websiteName, String searchConfig, String extractConfig) {
         HttpResult<Boolean> result = new HttpResult<>();

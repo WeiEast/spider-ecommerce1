@@ -119,12 +119,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public Website getFromWebsiteConfig(WebsiteConfig websiteConfig) {
         CheckUtils.checkNotNull(websiteConfig, "websiteConfig is null");
         Website website = buildWebsite(websiteConfig);
-        website.setId(websiteConfig.getWebsiteId());
-        website.setIsEnabled(websiteConfig.getIsenabled());
-        website.setWebsiteName(websiteConfig.getWebsiteName());
-        website.setWebsiteType(websiteConfig.getWebsiteType());
-        website.setSearchConfigSource(websiteConfig.getSearchConfig());
-        website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
         return website;
     }
 
@@ -191,33 +185,35 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         list.add(new OperatorCatalogue("联通", map10010));
         list.add(new OperatorCatalogue("电信", map10000));
         for (GroupEnum group : GroupEnum.values()) {
-            WebsiteConfig websiteConfig = null;
-            String websiteName = redisService.getString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
-            if (StringUtils.isBlank(websiteName)) {
-                websiteConfig = getWebsiteConfigByWebsiteName(group.getWebsiteName());
-            } else {
-                WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-                websiteConfig = buildWebsiteConfig(websiteOperator);
-            }
-
-            CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + group.getWebsiteName());
-            String initSetting = websiteConfig.getInitSetting();
-            if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
-                throw new RuntimeException("initSetting is blank websiteName=" + group.getWebsiteName());
-            }
-            JSONObject json = JSON.parseObject(initSetting);
-            if (!json.containsKey("fields")) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
-            }
-            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
-            if (null == fieldInitSettings) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + group.getWebsiteName());
-            }
-
             OperatorConfig config = new OperatorConfig();
             config.setGroupCode(group.getGroupCode());
             config.setGroupName(group.getGroupName());
-            config.setWebsiteName(group.getWebsiteName());
+
+            WebsiteConfig websiteConfig = null;
+            String websiteName = redisService.getString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
+            if (StringUtils.isNotBlank(websiteName)) {
+                WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+                websiteConfig = buildWebsiteConfig(websiteOperator);
+                //设置别名
+                websiteConfig.setWebsiteName(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(websiteName));
+            } else {
+                websiteName = group.getWebsiteName();
+                websiteConfig = getWebsiteConfigByWebsiteName(websiteName);
+            }
+            CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + websiteName);
+            String initSetting = websiteConfig.getInitSetting();
+            if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
+                throw new RuntimeException("initSetting is blank websiteName=" + websiteName);
+            }
+            JSONObject json = JSON.parseObject(initSetting);
+            if (!json.containsKey("fields")) {
+                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
+            }
+            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
+            if (null == fieldInitSettings) {
+                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
+            }
+            config.setWebsiteName(websiteConfig.getWebsiteName());
             config.setLoginTip(websiteConfig.getLoginTip());
             config.setResetTip(websiteConfig.getResetTip());
             config.setResetType(websiteConfig.getResetType());
@@ -299,31 +295,38 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public Website buildWebsite(WebsiteConfig websiteConfig) {
+        if (websiteConfig == null) {
+            return null;
+        }
         Website website = new Website();
-        if (websiteConfig != null) {
-            if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
-                try {
-                    SearchConfig searchConfig = XmlConfigParser.getInstance()
-                            .parse(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
-                    website.setSearchConfig(searchConfig);
-                    website.setSearchConfigSource(null);
-                } catch (Exception e) {
-                    logger.error("parse searchConfig  error websiteId={},websiteName={}", websiteConfig.getWebsiteId(),
-                            websiteConfig.getWebsiteName(), e);
-                }
-            }
-            if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
-                try {
-                    ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
-                            .parse(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
-                    website.setExtractorConfig(extractorConfig);
-                    website.setExtractorConfigSource(null);
-                } catch (Exception e) {
-                    logger.error("parse extractorConfig  error websiteId={},websiteName={}", websiteConfig.getWebsiteId(),
-                            websiteConfig.getWebsiteName(), e);
-                }
+        if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
+            try {
+                SearchConfig searchConfig = XmlConfigParser.getInstance()
+                        .parse(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
+                website.setSearchConfig(searchConfig);
+                website.setSearchConfigSource(websiteConfig.getSearchConfig());
+            } catch (Exception e) {
+                logger.error("parse searchConfig  error websiteId={},websiteName={}", websiteConfig.getWebsiteId(), websiteConfig.getWebsiteName(),
+                        e);
             }
         }
+        if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
+            try {
+                ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
+                        .parse(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
+                website.setExtractorConfig(extractorConfig);
+                website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
+            } catch (Exception e) {
+                logger.error("parse extractorConfig  error websiteId={},websiteName={}", websiteConfig.getWebsiteId(), websiteConfig.getWebsiteName(),
+                        e);
+            }
+        }
+        website.setId(websiteConfig.getWebsiteId());
+        website.setIsEnabled(websiteConfig.getIsenabled());
+        website.setWebsiteName(websiteConfig.getWebsiteName());
+        website.setWebsiteType(websiteConfig.getWebsiteType());
+        website.setSearchConfigSource(websiteConfig.getSearchConfig());
+        website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
         return website;
     }
 
@@ -343,7 +346,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
                     SearchConfig searchConfig = XmlConfigParser.getInstance()
                             .parse(website.getSearchConfigSource(), SearchConfig.class, parentConfigHandler);
                     website.setSearchConfig(searchConfig);
-                    website.setSearchConfigSource(null);
                 } catch (Exception e) {
                     logger.error("parse searchConfig  error websiteId={},websiteName={}", website.getId(), website.getWebsiteName(), e);
                 }
@@ -353,7 +355,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
                     ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
                             .parse(website.getExtractorConfigSource(), ExtractorConfig.class, parentConfigHandler);
                     website.setExtractorConfig(extractorConfig);
-                    website.setExtractorConfigSource(null);
                 } catch (Exception e) {
                     logger.error("parse extractorConfig  error websiteId={},websiteName={}", website.getId(), website.getWebsiteName(), e);
                 }
@@ -365,8 +366,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     private WebsiteConfig buildWebsiteConfig(WebsiteOperator operator) {
         CheckUtils.checkNotNull(operator, "operator is null");
         WebsiteConfig config = new WebsiteConfig();
-        config.setWebsiteConfId(operator.getWebsiteId());
-        config.setWebsiteName(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(operator.getWebsiteName()));
+        config.setWebsiteId(operator.getWebsiteId());
+        config.setWebsiteName(operator.getWebsiteName());
         config.setWebsiteType("2");
         config.setIsenabled(true);
         config.setLoginTip(operator.getLoginTip());

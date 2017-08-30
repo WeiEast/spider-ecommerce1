@@ -124,6 +124,11 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
+    public String getString(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix) {
+        return getString(redisKeyPrefixEnum.getRedisKey(postfix), redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
+    }
+
+    @Override
     public String getString(String key, long timeout, TimeUnit timeUnit) {
         if (StringUtils.isBlank(key)) {
             return null;
@@ -194,7 +199,7 @@ public class ReidsServiceImpl implements RedisService {
             throw new RuntimeException("saveString invalid param key or value");
         }
         if (timeout <= 0) {
-            throw new RuntimeException("saveString invalid param timeout");
+            throw new RuntimeException("saveString invalid param");
         }
         try {
             stringRedisTemplate.opsForValue().set(key, value, timeout, unit);
@@ -203,6 +208,11 @@ public class ReidsServiceImpl implements RedisService {
             logger.error("saveString error key={}", key, e);
             return false;
         }
+    }
+
+    @Override
+    public boolean saveString(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, String value) {
+        return saveString(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
     }
 
     @Override

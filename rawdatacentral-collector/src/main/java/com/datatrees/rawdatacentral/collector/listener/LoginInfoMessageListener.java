@@ -8,6 +8,8 @@
 
 package com.datatrees.rawdatacentral.collector.listener;
 
+import java.util.concurrent.TimeUnit;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
@@ -20,6 +22,7 @@ import com.datatrees.rawdatacentral.core.message.AbstractRocketMessageListener;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -60,35 +63,67 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
     public void process(CollectorMessage message) {
         Long taskId = message.getTaskId();
         String websiteName = message.getWebsiteName();
-        String key = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
-        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(key, "INIT");
-        if (!ifAbsent) {
-            logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, websiteName);
-            return;
-        }
-        redisTemplate.expire(key, RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeout(), RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeUnit());
-
         RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
-        Website website = null;
-        if (StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix())) {
-            redisService.cache(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
-            websiteName = RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName);
-            message.setWebsiteName(websiteName);
-            TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, websiteName);
-            WebsiteOperator websiteOperator = BeanFactoryUtils.getBean(WebsiteOperatorService.class).getByWebsiteName(websiteName);
+        WebsiteConfigService websiteConfigService = BeanFactoryUtils.getBean(WebsiteConfigService.class);
+        //是否是独立运营商
+        Boolean isNewOperator = StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
 
-            website = BeanFactoryUtils.getBean(WebsiteConfigService.class).buildWebsite(websiteOperator);
-            OperatorPluginService operatorPluginService = BeanFactoryUtils.getBean(ClassLoaderService.class).getOperatorPluginService(websiteName);
-            OperatorParam param = new OperatorParam();
-            param.setTaskId(taskId);
-            param.setWebsiteName(websiteName);
-            operatorPluginService.init(param);
+        String key = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
+        Boolean initStatus = redisTemplate.opsForValue().setIfAbsent(key, TaskStageEnum.INIT.getStatus());
+        //第一次收到启动消息
+        if (initStatus) {
+            //30不再接受重复消息
+            redisTemplate.expire(key, RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeout(), RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeUnit());
+            //记录运营商别名,有别名就是独立模块
+            redisService.saveString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
+            Website website = null;
+            if (isNewOperator) {
+                //数据库真实websiteName
+                websiteName = RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName);
+                //之后运行还是数据库真实websiteName
+                message.setWebsiteName(websiteName);
+                TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, websiteName);
+                //从新的运营商表读取配置
+                WebsiteOperator websiteOperator = BeanFactoryUtils.getBean(WebsiteOperatorService.class).getByWebsiteName(websiteName);
+                website = websiteConfigService.buildWebsite(websiteOperator);
+                OperatorPluginService operatorPluginService = BeanFactoryUtils.getBean(ClassLoaderService.class)
+                        .getOperatorPluginService(websiteName);
+                OperatorParam param = new OperatorParam();
+                param.setTaskId(taskId);
+                param.setWebsiteName(websiteName);
+                //执行运营商插件初始化操作
+                operatorPluginService.init(param);
+                //保存taskId对应的website,因为运营过程中用的是
+                redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
+                //运营商独立部分第一次初始化后不启动爬虫
+            } else {
+                //非运营商或者老运营商
+                website = BeanFactoryUtils.getBean(WebsiteConfigService.class).getWebsiteByWebsiteName(websiteName);
+                redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
+                collector.processMessage(message);
+            }
+            logger.info("receve login message taskId={}", message.getTaskId());
         } else {
-            website = BeanFactoryUtils.getBean(WebsiteConfigService.class).getWebsiteByWebsiteName(websiteName);
+            //独立运营商登录成功消息是真实的websiteName,用从redis里取第一次的websiteName
+            websiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId), 15, TimeUnit.SECONDS);
+            //是否是独立运营商
+            isNewOperator = StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
+            //非运营商或者老运营商,重复消息不处理
+            if (!isNewOperator) {
+                logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, websiteName);
+                return;
+            }
+            //如果是登录成功消息就启动爬虫
+            String taskStage = redisService.getString(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
+            if (StringUtils.equals(taskStage, TaskStageEnum.CRAWLER_START.getStatus())) {
+                websiteName = RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName);
+                //之后运行还是数据库真实websiteName
+                message.setWebsiteName(websiteName);
+                collector.processMessage(message);
+                logger.info("receve login message taskId={}", message.getTaskId());
+            }
         }
-        redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
-        logger.info("receve login message taskId={}", message.getTaskId());
-        collector.processMessage(message);
+
     }
 
     @Override

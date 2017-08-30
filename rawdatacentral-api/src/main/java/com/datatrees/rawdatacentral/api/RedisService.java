@@ -66,12 +66,20 @@ public interface RedisService {
 
     /**
      * 获取,有超时时间
+     *
+     */
+    public String getString(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix);
+
+
+    /**
+     * 获取,有超时时间
      * @param key
      * @param timeout
      * @param timeUnit
      * @return
      */
     public String getString(String key, long timeout, TimeUnit timeUnit);
+
 
     /**
      * 从list取最后一个值
@@ -98,6 +106,11 @@ public interface RedisService {
      * @return
      */
     public boolean saveString(String key, String value, long timeout, TimeUnit unit);
+
+    /**
+     * 保存
+     */
+    public boolean saveString(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, String value);
 
     /**
      * 保存到list
