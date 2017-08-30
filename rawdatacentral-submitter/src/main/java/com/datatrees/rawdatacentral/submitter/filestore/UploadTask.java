@@ -35,7 +35,7 @@ public class UploadTask implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.debug("start upload task! id: " + extractMessage.getTaskId());
+        LOGGER.info("start upload task! id={},taskId={}" + extractMessage.getTaskLogId());
         try {
             Map<String, SubmitFile> uploadMap = this.getSubmitFiles(extractMessage.getMessageObject());
             // after upload complete remove extractmessage object
@@ -44,12 +44,12 @@ public class UploadTask implements Runnable {
                 ZipCompressUtils.compress(baos, uploadMap);
                 OssService service = OssServiceProvider.getDefaultService();
                 service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, baos.toByteArray());
-                LOGGER.debug("upload task completed! id: " + extractMessage.getTaskId() + ",osskey:" + ossKey);
+                LOGGER.debug("upload task completed! id: " + extractMessage.getTaskLogId() + ",osskey:" + ossKey);
             } else {
                 LOGGER.info("no need to upload file for message:" + extractMessage);
             }
         } catch (Exception e) {
-            LOGGER.error("upload task run failed! taskId:" + extractMessage.getTaskId(), e);
+            LOGGER.error("upload task run failed! taskId:" + extractMessage.getTaskLogId(), e);
         }
     }
 

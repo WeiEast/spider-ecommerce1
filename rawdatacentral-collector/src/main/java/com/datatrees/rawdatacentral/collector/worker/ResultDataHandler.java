@@ -61,7 +61,7 @@ public class ResultDataHandler {
         for (Object obj : objs) {
             ExtractMessage message = new ExtractMessage();
             message.setMessageObject(obj);
-            message.setTaskId(task.getId());
+            message.setTaskLogId(task.getId());
             message.setWebsiteId(task.getWebsiteId());
             message.setTask(parentTask);
             try {

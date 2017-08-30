@@ -23,7 +23,7 @@ import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
  */
 public class ExtractMessage {
 
-    private int         taskId;//TaskLog Id
+    private int         taskLogId;//TaskLog Id
     private int         websiteId;// search websiteid
     private ResultType  ResultType;
     private int         typeId;// maybe bankid，operatorid，ecommerceid
@@ -48,18 +48,12 @@ public class ExtractMessage {
         this.messageIndex = messageIndex;
     }
 
-    /**
-     * @return the taskId
-     */
-    public int getTaskId() {
-        return taskId;
+    public int getTaskLogId() {
+        return taskLogId;
     }
 
-    /**
-     * @param taskId the taskId to set
-     */
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
+    public void setTaskLogId(int taskLogId) {
+        this.taskLogId = taskLogId;
     }
 
     /**
@@ -192,7 +186,7 @@ public class ExtractMessage {
      */
     @Override
     public String toString() {
-        return "ExtractMessage [taskId=" + taskId + ", ResultType=" + ResultType + ", typeId=" + typeId + "]";
+        return "ExtractMessage [taskLogId=" + taskLogId + ", ResultType=" + ResultType + ", typeId=" + typeId + "]";
     }
 
 }
