@@ -22,6 +22,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -154,7 +155,9 @@ public class FuJian10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://fj.ac.10086.cn/Login";
             String templateData = "type={}&backurl={}&errorurl={}&spid={}&RelayState={}&mobileNum={}&servicePassword={}&smsValidCode=&validCode" + "={}&Password-type=&button=%E7%99%BB++%E5%BD%95";
             String data = TemplateUtils.format(templateData, loginType, URLEncoder.encode(backUrl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid, URLEncoder.encode(relayStateId, "UTF-8"), param.getMobile(), encryptPwd, param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10086_web_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10086_web_004").setFullUrl(templateUrl).setRequestBody(data,
+                    ContentType.APPLICATION_FORM_URLENCODED).addHeader("X-Requested-With","XMLHttpRequest")
+                    .invoke();
             //TODO
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -175,7 +178,8 @@ public class FuJian10086ForWeb implements OperatorPluginService {
             String samLart = PatternUtils.group(pageContent, "callBackurlAll\\('([^']+)'", 1);
 
             templateUrl = "http://www.fj.10086.cn/my/?SAMLart={}&RelayState=";
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_006").setFullUrl(templateUrl, samLart).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_006").setFullUrl(templateUrl, samLart)
+                    .setMaxRetry(2).invoke();
             pageContent = response.getPageContent();
 
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains(param.getMobile().toString())) {
@@ -217,10 +221,12 @@ public class FuJian10086ForWeb implements OperatorPluginService {
         String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
         Response response = null;
         try {
+            String referer = "http://www.fj.10086.cn/my/index.jsp?id_type=YANZHENGMA";
             String templateUrl = "https://fj.ac.10086.cn/Login";
             String templateData = "s02=false&Password=&Password-type=&spid={}&validCode=0000&servicePassword=&n1=1&sso=0&RelayState=1&ocs_url=&s02" + "=false&sp_id=&do_login_type=&isValidateCode=1&type=A&smscode={}&mobileNum={}&agentcode=&backurl=http%3A%2F%2Fwww" + ".fj.10086.cn%3A80%2Fmy%2FssoAssert.jsp%3Ftypesso%3DC%26CALLBACK_URL%3Dhttp%3A%2F%2Fwww" + ".fj.10086.cn%3A80%2Fmy%2Fuser%2FgetUserInfo.do&errorurl=http%3A%2F%2Fwww.fj.10086.cn%3A80%2Fmy%2Flogin%2Fsend" + ".jsp&smsValidCode={}&smscode1={}";
             String data = TemplateUtils.format(templateData, spid, param.getSmsCode(), param.getMobile(), param.getSmsCode(), param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10086_web_008").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10086_web_008").setFullUrl(templateUrl).setRequestBody(data,ContentType.APPLICATION_FORM_URLENCODED)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
