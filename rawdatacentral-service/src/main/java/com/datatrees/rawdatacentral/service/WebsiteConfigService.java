@@ -92,7 +92,7 @@ public interface WebsiteConfigService {
      */
     SearchProcessorContext getSearchProcessorContext(Long taskId);
 
-    ExtractorProcessorContext getExtractorProcessorContext(int websiteId);
+    ExtractorProcessorContext getExtractorProcessorContext(Long taskId);
 
     ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId);
 

@@ -12,16 +12,19 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.core.message.AbstractRocketMessageListener;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.service.ClassLoaderService;
+import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang3.StringUtils;
@@ -57,26 +60,32 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
     public void process(CollectorMessage message) {
         Long taskId = message.getTaskId();
         String websiteName = message.getWebsiteName();
-        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId), "");
+        String key = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(key, "INIT");
         if (!ifAbsent) {
             logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, websiteName);
             return;
         }
+        redisTemplate.expire(key, RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeout(), RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeUnit());
+
+        RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
         Website website = null;
         if (StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix())) {
+            redisService.cache(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
             websiteName = RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName);
             message.setWebsiteName(websiteName);
-            //独立运营商
+            TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, websiteName);
+            WebsiteOperator websiteOperator = BeanFactoryUtils.getBean(WebsiteOperatorService.class).getByWebsiteName(websiteName);
+            website = BeanFactoryUtils.getBean(WebsiteConfigService.class).buildWebsite(websiteOperator);
+            OperatorPluginService operatorPluginService = BeanFactoryUtils.getBean(ClassLoaderService.class).getOperatorPluginService(websiteName);
             OperatorParam param = new OperatorParam();
             param.setTaskId(taskId);
             param.setWebsiteName(websiteName);
-            BeanFactoryUtils.getBean(CrawlerOperatorService.class).init(param);
-            WebsiteOperator websiteOperator = BeanFactoryUtils.getBean(WebsiteOperatorService.class).getByWebsiteName(websiteName);
-            website = BeanFactoryUtils.getBean(WebsiteConfigService.class).buildWebsite(websiteOperator);
+            operatorPluginService.init(param);
         } else {
             website = BeanFactoryUtils.getBean(WebsiteConfigService.class).getWebsiteByWebsiteName(websiteName);
         }
-        BeanFactoryUtils.getBean(RedisService.class).cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
+        redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
         logger.info("receve login message taskId={}", message.getTaskId());
         collector.processMessage(message);
     }

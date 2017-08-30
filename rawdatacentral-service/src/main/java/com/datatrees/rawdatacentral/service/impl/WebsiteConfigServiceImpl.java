@@ -271,8 +271,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public ExtractorProcessorContext getExtractorProcessorContext(int websiteId) {
-        Website website = this.getWebsiteByWebsiteId(websiteId);
+    public ExtractorProcessorContext getExtractorProcessorContext(Long taskId) {
+        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website);
             extractorProcessorContext.setPluginManager(pluginManager);
@@ -286,7 +286,13 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId) {
         Bank bank = bankService.getByBankIdFromCache(bankId);
         if (bank != null) {
-            return this.getExtractorProcessorContext(bank.getWebsiteId());
+            Website website = getWebsiteByWebsiteId(bank.getWebsiteId());
+            if (website != null) {
+                ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website);
+                extractorProcessorContext.setPluginManager(pluginManager);
+                extractorProcessorContext.init();
+                return extractorProcessorContext;
+            }
         }
         return null;
     }
