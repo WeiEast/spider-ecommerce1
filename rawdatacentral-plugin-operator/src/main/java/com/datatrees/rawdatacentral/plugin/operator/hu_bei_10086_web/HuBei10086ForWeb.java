@@ -341,9 +341,6 @@ public class HuBei10086ForWeb implements OperatorPluginService {
                             stringBuilder.append("{\"netStartDateTime\":\"" + sheet.getCell(0, j).getContents().trim() + "\",\"netLocation\":\"" + sheet.getCell(1, j).getContents().trim() + "\",\"businessType\":\"" + sheet.getCell(2, j).getContents().trim() + "\",\"netDuration\":\"" + sheet.getCell(3, j).getContents().trim() + "\",\"totalFlow\":\"" + sheet.getCell(4, j).getContents().trim() + "\",\"totalFee\":\"" + sheet.getCell(6, j).getContents().trim() + "\"},");
                         }
                 }
-                if (sheet.getCell(0, j).getContents().trim().matches("\\d{4}-\\d+-\\d+\\s*\\d{2}:\\d{2}:\\d{2}")) {
-                    stringBuilder.append("{\"callStartDateTime\":\"" + sheet.getCell(0, j).getContents().trim() + "\",\"callLocation\":\"" + sheet.getCell(1, j).getContents().trim() + "\",\"callType\":\"" + sheet.getCell(2, j).getContents().trim() + "\",\"otherTelNum\":\"" + sheet.getCell(3, j).getContents().trim() + "\",\"callDuration\":\"" + sheet.getCell(4, j).getContents().trim() + "\",\"callTypeDetail\":\"" + sheet.getCell(5, j).getContents().trim() + "\",\"totalFee\":\"" + sheet.getCell(6, j).getContents().trim() + "\"},");
-                }
             }
             if (stringBuilder.length() > 0) {
                 stringBuilder.substring(0, stringBuilder.length() - 1);
