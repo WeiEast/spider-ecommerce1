@@ -17,6 +17,7 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -296,9 +297,11 @@ public class HuBei10086ForWeb implements OperatorPluginService {
         try {
             String content = "{\"data\":[";
             StringBuilder stringBuilder = new StringBuilder(content);
+            String smsCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS.getRedisKey(FormType.VALIDATE_BILL_DETAIL));
 
             String templateUrl = "http://www.hb.10086.cn/my/detailbill/generateNewDetailExcel.action?menuid=myDetailBill&detailBean" + ".billcycle={}&detailBean.password={}&detailBean.chkey={}&detailBean.startdate={}&detailBean" + ".enddate={}&detailBean.flag={}&detailBean.selecttype=0";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003").setFullUrl(templateUrl, params[0], param.getPassword(), param.getSmsCode(), params[1], params[2], queryType).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003").setFullUrl(templateUrl, params[0], param.getPassword
+                    (), smsCode, params[1], params[2], queryType).invoke();
             byte[] bytes = response.getResponse();
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             String str = getJsonBody(in, queryType);
