@@ -8,8 +8,6 @@
 
 package com.datatrees.rawdatacentral.domain.enums;
 
-import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
-
 /**
  * 爬虫分组
  * Created by zhouxinghai on 2017/6/22
@@ -96,6 +94,15 @@ public enum GroupEnum {
         this.groupName = groupName;
         this.websiteName = websiteName;
         this.websiteType = websiteType;
+    }
+
+    public static GroupEnum getByGroupCode(String groupCode) {
+        for (GroupEnum e : GroupEnum.values()) {
+            if (e.groupCode.equals(groupCode)) {
+                return e;
+            }
+        }
+        return null;
     }
 
     public String getGroupCode() {

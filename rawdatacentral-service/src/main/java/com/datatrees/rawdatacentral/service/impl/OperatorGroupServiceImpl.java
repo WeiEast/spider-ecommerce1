@@ -8,11 +8,11 @@ import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.dao.OperatorGroupDAO;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample;
-import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.service.OperatorGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
@@ -59,9 +59,12 @@ public class OperatorGroupServiceImpl implements OperatorGroupService {
             throw new CommonException("config is empty");
         }
         deleteByGroupCode(groupCode);
+        GroupEnum groupEnum = GroupEnum.getByGroupCode(groupCode);
+        CheckUtils.checkNotNull(groupEnum, "groupCode not found");
         for (Map.Entry<String, Integer> entry : config.entrySet()) {
             OperatorGroup operatorGroup = new OperatorGroup();
             operatorGroup.setGroupCode(groupCode);
+            operatorGroup.setGroupName(groupEnum.getGroupName());
             operatorGroup.setWebsiteName(entry.getKey());
             operatorGroup.setWeight(entry.getValue());
             operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());

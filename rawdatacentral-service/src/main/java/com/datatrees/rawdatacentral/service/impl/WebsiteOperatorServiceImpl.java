@@ -4,8 +4,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.dao.WebsiteOperatorDAO;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -46,6 +46,13 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         if (null == source) {
             throw new CommonException("websiteName config not found");
         }
+        if (StringUtils.isBlank(config.getOperatorType())) {
+            String websiteType = RegexpUtils.select(config.getWebsiteName(), "\\d+", 0);
+            config.setOperatorType(websiteType);
+        }
+        String region = config.getWebsiteName().split("\\(")[0].replaceAll("移动", "").replaceAll("联通", "").replaceAll("电信", "");
+        config.setRegionName(region);
+
         config.setWebsiteId(source.getWebsiteId());
         config.setWebsiteName(source.getWebsiteName());
         config.setSearchConfig(source.getSearchConfig());

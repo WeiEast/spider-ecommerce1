@@ -13,6 +13,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.OperatorGroupService;
@@ -94,14 +95,6 @@ public class OperatorController {
         return TaskHttpClient.create(taskId, "openpage", RequestType.valueOf(type.trim()), "remark01").setFullUrl(url).invoke().getPageContent();
     }
 
-    @RequestMapping("/deleteRedisResult")
-    public Object deleteRedisResult(Long taskId) throws IOException {
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
-        return new HttpResult<>().success();
-    }
-
     @RequestMapping("/mappingPluginFile")
     public Object mappingPluginFile(String websiteName, String fileName) throws IOException {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
@@ -122,6 +115,16 @@ public class OperatorController {
             logger.error("updateCache error websiteName={}", websiteName, e);
             return result.failure();
         }
+    }
+
+
+
+    @RequestMapping("/deleteRedisResult")
+    public Object deleteRedisResult(Long taskId) throws IOException {
+        redisService.deleteKey(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
+        redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
+        redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
+        return new HttpResult<>().success();
     }
 
 }
