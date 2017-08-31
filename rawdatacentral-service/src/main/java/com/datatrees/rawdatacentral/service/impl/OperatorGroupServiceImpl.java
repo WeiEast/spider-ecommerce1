@@ -90,6 +90,7 @@ public class OperatorGroupServiceImpl implements OperatorGroupService {
         if (null != maxWeight && maxWeight.getWeight() > 0) {
             redisService.saveString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR, groupCode, maxWeight.getWebsiteName());
         }
+        redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
     }
 
     @Override
@@ -97,5 +98,6 @@ public class OperatorGroupServiceImpl implements OperatorGroupService {
         for (GroupEnum group : GroupEnum.values()) {
             updateCacheByGroupCode(group.getGroupCode());
         }
+        redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
     }
 }
