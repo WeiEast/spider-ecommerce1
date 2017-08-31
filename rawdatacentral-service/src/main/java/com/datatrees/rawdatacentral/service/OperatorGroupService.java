@@ -42,6 +42,7 @@ public interface OperatorGroupService {
     /**
      * 根据groupCode更新缓存
      * 计算MAX_WEIGHT_OPERATOR
+     * weith>0
      * @param groupCode 分组
      * @return
      */
@@ -50,6 +51,7 @@ public interface OperatorGroupService {
     /**
      * 根据groupCode更新缓存
      * 计算MAX_WEIGHT_OPERATOR
+     * weith>0
      * @return
      */
     void updateCache();
