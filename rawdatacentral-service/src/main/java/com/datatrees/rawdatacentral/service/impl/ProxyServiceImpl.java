@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -45,7 +46,7 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
         try {
             proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId), new TypeReference<Proxy>() {});
             if (null != proxy) {
-                logger.info("getProxy success from redis taskId={},websiteName={},proxy={}", taskId, websiteName, proxy.getIp());
+                logger.info("getProxy success from redis taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
                 return proxy;
             }
             if (StringUtils.isBlank(websiteName)) {
@@ -56,7 +57,7 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
             }
             proxy = proxyProvider.getProxy(taskId, websiteName);
             if (null != proxy) {
-                logger.info("getProxy success from dubbo taskId={},websiteName={},proxy={}", taskId, websiteName, proxy.getIp());
+                logger.info("getProxy success from dubbo taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
                 return proxy;
             }
             logger.warn("getProxy error,user local network taskId={},websiteName={}", taskId, websiteName);
@@ -87,6 +88,8 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        proxyCallbackPool = new ThreadPoolExecutor(Constants.PROXY_CALLBACK_CORE_POOL_SIZE, Constants.PROXY_CALLBACK_MAX_POOL_SIZE, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(Constants.PROXY_CALLBACK_MAX_TASK_SIZE), new ThreadPoolExecutor.AbortPolicy());
+        proxyCallbackPool = new ThreadPoolExecutor(Constants.PROXY_CALLBACK_CORE_POOL_SIZE, Constants.PROXY_CALLBACK_MAX_POOL_SIZE, 0L,
+                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(Constants.PROXY_CALLBACK_MAX_TASK_SIZE),
+                new ThreadPoolExecutor.AbortPolicy());
     }
 }
