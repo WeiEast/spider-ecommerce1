@@ -65,7 +65,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
             WebsiteGroup operatorGroup = new WebsiteGroup();
             operatorGroup.setGroupCode(groupCode);
             operatorGroup.setGroupName(groupEnum.getGroupName());
-            operatorGroup.setWebsiteType(groupEnum.getWebsiteType().getType());
+            operatorGroup.setWebsiteType(groupEnum.getWebsiteType().getValue());
             operatorGroup.setWebsiteName(entry.getKey());
             operatorGroup.setWeight(entry.getValue());
             operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());
