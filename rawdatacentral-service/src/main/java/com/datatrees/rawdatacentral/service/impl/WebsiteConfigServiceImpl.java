@@ -187,7 +187,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         list.add(new OperatorCatalogue("联通", map10010));
         list.add(new OperatorCatalogue("电信", map10000));
         for (GroupEnum group : GroupEnum.values()) {
-            if (group.getWebsiteType() != WebsiteType.OPERATOR) {
+            if (group.getWebsiteType() != WebsiteType.OPERATOR | group == GroupEnum.CHINA_10000 || group == GroupEnum.CHINA_10086) {
                 continue;
             }
             OperatorConfig config = new OperatorConfig();
