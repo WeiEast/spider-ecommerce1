@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.domain.model;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table operator_group(运营商分组)  */
+ /** create by system from table website_group(配置分组)  */
 public class WebsiteGroup implements Serializable {
     /** 分组代码 */
     private String groupCode;

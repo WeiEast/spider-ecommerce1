@@ -5,7 +5,7 @@ import com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
- /** create by system from table operator_group(运营商分组)  */
+ /** create by system from table website_group(配置分组)  */
 public interface WebsiteGroupMapper {
     int countByExample(WebsiteGroupExample example);
 

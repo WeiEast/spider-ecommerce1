@@ -16,6 +16,7 @@
     <result column="plugin_class" jdbcType="VARCHAR" property="pluginClass" />
     <result column="login_config" jdbcType="VARCHAR" property="loginConfig" />
     <result column="sms_interval" jdbcType="INTEGER" property="smsInterval" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="login_tip" jdbcType="VARCHAR" property="loginTip" />
     <result column="verify_tip" jdbcType="VARCHAR" property="verifyTip" />
     <result column="reset_type" jdbcType="VARCHAR" property="resetType" />
@@ -86,8 +87,8 @@
   <sql id="Base_Column_List">
     website_id, website_name, website_title, search_config, extractor_config, group_code, 
     operator_type, region_name, updated_at, start_stage, login_url, plugin_class, login_config, 
-    sms_interval, login_tip, verify_tip, reset_type, sms_template, sms_receiver, reset_url, 
-    reset_tip, simulate
+    sms_interval, remark, login_tip, verify_tip, reset_type, sms_template, sms_receiver, 
+    reset_url, reset_tip, simulate
   </sql>
   <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample" resultMap="BaseResultMap">
     select
@@ -161,6 +162,9 @@
       <if test="smsInterval != null">
         sms_interval,
       </if>
+      <if test="remark != null">
+        remark,
+      </if>
       <if test="loginTip != null">
         login_tip,
       </if>
@@ -225,6 +229,9 @@
       </if>
       <if test="smsInterval != null">
         #{smsInterval,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
       </if>
       <if test="loginTip != null">
         #{loginTip,jdbcType=VARCHAR},
@@ -303,6 +310,9 @@
       <if test="record.smsInterval != null">
         sms_interval = #{record.smsInterval,jdbcType=INTEGER},
       </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
       <if test="record.loginTip != null">
         login_tip = #{record.loginTip,jdbcType=VARCHAR},
       </if>
@@ -373,6 +383,9 @@
       </if>
       <if test="smsInterval != null">
         sms_interval = #{smsInterval,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
       </if>
       <if test="loginTip != null">
         login_tip = #{loginTip,jdbcType=VARCHAR},

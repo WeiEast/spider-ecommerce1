@@ -76,7 +76,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from operator_group
+    from website_group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -88,13 +88,13 @@
     </if>
   </select>
   <delete id="deleteByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample">
-    delete from operator_group
+    delete from website_group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
   <insert id="insertSelective" parameterType="com.datatrees.rawdatacentral.domain.model.WebsiteGroup">
-    insert into operator_group
+    insert into website_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="groupCode != null">
         group_code,
@@ -137,13 +137,13 @@
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample" resultType="java.lang.Integer">
-    select count(*) from operator_group
+    select count(*) from website_group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update operator_group
+    update website_group
     <set>
       <if test="record.groupCode != null">
         group_code = #{record.groupCode,jdbcType=VARCHAR},

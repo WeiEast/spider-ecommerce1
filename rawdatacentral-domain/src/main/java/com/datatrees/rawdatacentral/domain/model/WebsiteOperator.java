@@ -47,6 +47,9 @@ public class WebsiteOperator implements Serializable {
     /** 短信重发间隔时间(全局) */
     private Integer smsInterval;
 
+    /** 描述 */
+    private String remark;
+
     /** 登录过程中自定义提示 */
     private String loginTip;
 
@@ -183,6 +186,14 @@ public class WebsiteOperator implements Serializable {
 
     public void setSmsInterval(Integer smsInterval) {
         this.smsInterval = smsInterval;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 
     public String getLoginTip() {
