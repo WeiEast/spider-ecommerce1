@@ -14,17 +14,26 @@ public class WebsiteOperator implements Serializable {
     /** 配置标题 */
     private String websiteTitle;
 
-    /** 修改时间 */
-    private Date updatedAt;
-
-    /** 插件启动阶段(在***表单提交成功之后发送登录成功消息) */
-    private String startStage;
-
     /** 搜索配置 */
     private String searchConfig;
 
     /** 解析配置 */
     private String extractorConfig;
+
+    /** 分组 */
+    private String groupCode;
+
+    /** 运营商类型:10086,10010,10000 */
+    private String operatorType;
+
+    /** 区域 */
+    private String regionName;
+
+    /** 修改时间 */
+    private Date updatedAt;
+
+    /** 插件启动阶段(在***表单提交成功之后发送登录成功消息) */
+    private String startStage;
 
     /** 登录地址 */
     private String loginUrl;
@@ -88,22 +97,6 @@ public class WebsiteOperator implements Serializable {
         this.websiteTitle = websiteTitle == null ? null : websiteTitle.trim();
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getStartStage() {
-        return startStage;
-    }
-
-    public void setStartStage(String startStage) {
-        this.startStage = startStage == null ? null : startStage.trim();
-    }
-
     public String getSearchConfig() {
         return searchConfig;
     }
@@ -118,6 +111,46 @@ public class WebsiteOperator implements Serializable {
 
     public void setExtractorConfig(String extractorConfig) {
         this.extractorConfig = extractorConfig == null ? null : extractorConfig.trim();
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode == null ? null : groupCode.trim();
+    }
+
+    public String getOperatorType() {
+        return operatorType;
+    }
+
+    public void setOperatorType(String operatorType) {
+        this.operatorType = operatorType == null ? null : operatorType.trim();
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName == null ? null : regionName.trim();
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getStartStage() {
+        return startStage;
+    }
+
+    public void setStartStage(String startStage) {
+        this.startStage = startStage == null ? null : startStage.trim();
     }
 
     public String getLoginUrl() {

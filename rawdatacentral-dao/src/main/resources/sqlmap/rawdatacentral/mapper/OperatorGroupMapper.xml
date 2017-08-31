@@ -3,6 +3,7 @@
 <mapper namespace="com.datatrees.rawdatacentral.dao.OperatorGroupDAO">
   <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.OperatorGroup">
     <result column="group_code" jdbcType="VARCHAR" property="groupCode" />
+    <result column="group_name" jdbcType="VARCHAR" property="groupName" />
     <result column="website_name" jdbcType="VARCHAR" property="websiteName" />
     <result column="website_title" jdbcType="VARCHAR" property="websiteTitle" />
     <result column="weight" jdbcType="INTEGER" property="weight" />
@@ -67,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    group_code, website_name, website_title, weight, updated_at
+    group_code, group_name, website_name, website_title, weight, updated_at
   </sql>
   <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample" resultMap="BaseResultMap">
     select
@@ -98,6 +99,9 @@
       <if test="groupCode != null">
         group_code,
       </if>
+      <if test="groupName != null">
+        group_name,
+      </if>
       <if test="websiteName != null">
         website_name,
       </if>
@@ -114,6 +118,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="groupCode != null">
         #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null">
+        #{groupName,jdbcType=VARCHAR},
       </if>
       <if test="websiteName != null">
         #{websiteName,jdbcType=VARCHAR},
@@ -140,6 +147,9 @@
     <set>
       <if test="record.groupCode != null">
         group_code = #{record.groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupName != null">
+        group_name = #{record.groupName,jdbcType=VARCHAR},
       </if>
       <if test="record.websiteName != null">
         website_name = #{record.websiteName,jdbcType=VARCHAR},

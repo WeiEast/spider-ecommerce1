@@ -5,10 +5,13 @@
     <id column="website_id" jdbcType="INTEGER" property="websiteId" />
     <result column="website_name" jdbcType="VARCHAR" property="websiteName" />
     <result column="website_title" jdbcType="VARCHAR" property="websiteTitle" />
-    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
-    <result column="start_stage" jdbcType="VARCHAR" property="startStage" />
     <result column="search_config" jdbcType="VARCHAR" property="searchConfig" />
     <result column="extractor_config" jdbcType="VARCHAR" property="extractorConfig" />
+    <result column="group_code" jdbcType="VARCHAR" property="groupCode" />
+    <result column="operator_type" jdbcType="VARCHAR" property="operatorType" />
+    <result column="region_name" jdbcType="VARCHAR" property="regionName" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+    <result column="start_stage" jdbcType="VARCHAR" property="startStage" />
     <result column="login_url" jdbcType="VARCHAR" property="loginUrl" />
     <result column="plugin_class" jdbcType="VARCHAR" property="pluginClass" />
     <result column="login_config" jdbcType="VARCHAR" property="loginConfig" />
@@ -81,9 +84,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    website_id, website_name, website_title, updated_at, start_stage, search_config, 
-    extractor_config, login_url, plugin_class, login_config, sms_interval, login_tip, 
-    verify_tip, reset_type, sms_template, sms_receiver, reset_url, reset_tip, simulate
+    website_id, website_name, website_title, search_config, extractor_config, group_code, 
+    operator_type, region_name, updated_at, start_stage, login_url, plugin_class, login_config, 
+    sms_interval, login_tip, verify_tip, reset_type, sms_template, sms_receiver, reset_url, 
+    reset_tip, simulate
   </sql>
   <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample" resultMap="BaseResultMap">
     select
@@ -124,17 +128,26 @@
       <if test="websiteTitle != null">
         website_title,
       </if>
-      <if test="updatedAt != null">
-        updated_at,
-      </if>
-      <if test="startStage != null">
-        start_stage,
-      </if>
       <if test="searchConfig != null">
         search_config,
       </if>
       <if test="extractorConfig != null">
         extractor_config,
+      </if>
+      <if test="groupCode != null">
+        group_code,
+      </if>
+      <if test="operatorType != null">
+        operator_type,
+      </if>
+      <if test="regionName != null">
+        region_name,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+      <if test="startStage != null">
+        start_stage,
       </if>
       <if test="loginUrl != null">
         login_url,
@@ -180,17 +193,26 @@
       <if test="websiteTitle != null">
         #{websiteTitle,jdbcType=VARCHAR},
       </if>
-      <if test="updatedAt != null">
-        #{updatedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="startStage != null">
-        #{startStage,jdbcType=VARCHAR},
-      </if>
       <if test="searchConfig != null">
         #{searchConfig,jdbcType=VARCHAR},
       </if>
       <if test="extractorConfig != null">
         #{extractorConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="groupCode != null">
+        #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorType != null">
+        #{operatorType,jdbcType=VARCHAR},
+      </if>
+      <if test="regionName != null">
+        #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startStage != null">
+        #{startStage,jdbcType=VARCHAR},
       </if>
       <if test="loginUrl != null">
         #{loginUrl,jdbcType=VARCHAR},
@@ -248,17 +270,26 @@
       <if test="record.websiteTitle != null">
         website_title = #{record.websiteTitle,jdbcType=VARCHAR},
       </if>
-      <if test="record.updatedAt != null">
-        updated_at = #{record.updatedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.startStage != null">
-        start_stage = #{record.startStage,jdbcType=VARCHAR},
-      </if>
       <if test="record.searchConfig != null">
         search_config = #{record.searchConfig,jdbcType=VARCHAR},
       </if>
       <if test="record.extractorConfig != null">
         extractor_config = #{record.extractorConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupCode != null">
+        group_code = #{record.groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operatorType != null">
+        operator_type = #{record.operatorType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.regionName != null">
+        region_name = #{record.regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatedAt != null">
+        updated_at = #{record.updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.startStage != null">
+        start_stage = #{record.startStage,jdbcType=VARCHAR},
       </if>
       <if test="record.loginUrl != null">
         login_url = #{record.loginUrl,jdbcType=VARCHAR},
@@ -310,17 +341,26 @@
       <if test="websiteTitle != null">
         website_title = #{websiteTitle,jdbcType=VARCHAR},
       </if>
-      <if test="updatedAt != null">
-        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="startStage != null">
-        start_stage = #{startStage,jdbcType=VARCHAR},
-      </if>
       <if test="searchConfig != null">
         search_config = #{searchConfig,jdbcType=VARCHAR},
       </if>
       <if test="extractorConfig != null">
         extractor_config = #{extractorConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="groupCode != null">
+        group_code = #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorType != null">
+        operator_type = #{operatorType,jdbcType=VARCHAR},
+      </if>
+      <if test="regionName != null">
+        region_name = #{regionName,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startStage != null">
+        start_stage = #{startStage,jdbcType=VARCHAR},
       </if>
       <if test="loginUrl != null">
         login_url = #{loginUrl,jdbcType=VARCHAR},
