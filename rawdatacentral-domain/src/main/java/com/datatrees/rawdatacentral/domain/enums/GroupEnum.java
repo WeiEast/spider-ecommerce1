@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2017
  */
 
-package com.datatrees.rawdatacentral.domain.operator;
+package com.datatrees.rawdatacentral.domain.enums;
 
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 

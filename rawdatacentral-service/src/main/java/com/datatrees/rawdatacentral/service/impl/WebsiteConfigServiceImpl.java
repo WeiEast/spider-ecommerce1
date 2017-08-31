@@ -19,7 +19,9 @@ import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
@@ -185,6 +187,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         list.add(new OperatorCatalogue("联通", map10010));
         list.add(new OperatorCatalogue("电信", map10000));
         for (GroupEnum group : GroupEnum.values()) {
+            if (group.getWebsiteType() != WebsiteType.OPERATOR) {
+                continue;
+            }
             OperatorConfig config = new OperatorConfig();
             config.setGroupCode(group.getGroupCode());
             config.setGroupName(group.getGroupName());

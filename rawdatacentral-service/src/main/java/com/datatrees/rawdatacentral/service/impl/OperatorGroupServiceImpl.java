@@ -12,7 +12,7 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample;
-import com.datatrees.rawdatacentral.domain.operator.GroupEnum;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.service.OperatorGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
