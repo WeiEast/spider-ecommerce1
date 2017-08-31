@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.WebsiteGroup">
     <result column="group_code" jdbcType="VARCHAR" property="groupCode" />
     <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+    <result column="website_type" jdbcType="VARCHAR" property="websiteType" />
     <result column="website_name" jdbcType="VARCHAR" property="websiteName" />
     <result column="website_title" jdbcType="VARCHAR" property="websiteTitle" />
     <result column="weight" jdbcType="INTEGER" property="weight" />
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    group_code, group_name, website_name, website_title, weight, updated_at
+    group_code, group_name, website_type, website_name, website_title, weight, updated_at
   </sql>
   <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample" resultMap="BaseResultMap">
     select
@@ -102,6 +103,9 @@
       <if test="groupName != null">
         group_name,
       </if>
+      <if test="websiteType != null">
+        website_type,
+      </if>
       <if test="websiteName != null">
         website_name,
       </if>
@@ -121,6 +125,9 @@
       </if>
       <if test="groupName != null">
         #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="websiteType != null">
+        #{websiteType,jdbcType=VARCHAR},
       </if>
       <if test="websiteName != null">
         #{websiteName,jdbcType=VARCHAR},
@@ -150,6 +157,9 @@
       </if>
       <if test="record.groupName != null">
         group_name = #{record.groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.websiteType != null">
+        website_type = #{record.websiteType,jdbcType=VARCHAR},
       </if>
       <if test="record.websiteName != null">
         website_name = #{record.websiteName,jdbcType=VARCHAR},

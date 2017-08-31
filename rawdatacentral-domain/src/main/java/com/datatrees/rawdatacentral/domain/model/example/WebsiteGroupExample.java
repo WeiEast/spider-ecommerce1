@@ -282,6 +282,76 @@ public class WebsiteGroupExample implements Serializable {
             return (Criteria) this;
         }
 
+        public Criteria andWebsiteTypeIsNull() {
+            addCriterion("website_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeIsNotNull() {
+            addCriterion("website_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeEqualTo(String value) {
+            addCriterion("website_type =", value, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeNotEqualTo(String value) {
+            addCriterion("website_type <>", value, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeGreaterThan(String value) {
+            addCriterion("website_type >", value, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("website_type >=", value, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeLessThan(String value) {
+            addCriterion("website_type <", value, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeLessThanOrEqualTo(String value) {
+            addCriterion("website_type <=", value, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeLike(String value) {
+            addCriterion("website_type like", value, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeNotLike(String value) {
+            addCriterion("website_type not like", value, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeIn(List<String> values) {
+            addCriterion("website_type in", values, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeNotIn(List<String> values) {
+            addCriterion("website_type not in", values, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeBetween(String value1, String value2) {
+            addCriterion("website_type between", value1, value2, "websiteType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteTypeNotBetween(String value1, String value2) {
+            addCriterion("website_type not between", value1, value2, "websiteType");
+            return (Criteria) this;
+        }
+
         public Criteria andWebsiteNameIsNull() {
             addCriterion("website_name is null");
             return (Criteria) this;

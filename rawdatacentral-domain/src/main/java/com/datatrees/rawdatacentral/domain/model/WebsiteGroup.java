@@ -11,6 +11,9 @@ public class WebsiteGroup implements Serializable {
     /** 分组名称 */
     private String groupName;
 
+    /** 配置类型 */
+    private String websiteType;
+
     /** 配置名称 */
     private String websiteName;
 
@@ -39,6 +42,14 @@ public class WebsiteGroup implements Serializable {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName == null ? null : groupName.trim();
+    }
+
+    public String getWebsiteType() {
+        return websiteType;
+    }
+
+    public void setWebsiteType(String websiteType) {
+        this.websiteType = websiteType == null ? null : websiteType.trim();
     }
 
     public String getWebsiteName() {

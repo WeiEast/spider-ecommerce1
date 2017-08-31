@@ -62,13 +62,14 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         GroupEnum groupEnum = GroupEnum.getByGroupCode(groupCode);
         CheckUtils.checkNotNull(groupEnum, "groupCode not found");
         for (Map.Entry<String, Integer> entry : config.entrySet()) {
-            WebsiteGroup websiteGroup = new WebsiteGroup();
-            websiteGroup.setGroupCode(groupCode);
-            websiteGroup.setGroupName(groupEnum.getGroupName());
-            websiteGroup.setWebsiteName(entry.getKey());
-            websiteGroup.setWeight(entry.getValue());
-            websiteGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());
-            websiteGroupDAO.insertSelective(websiteGroup);
+            WebsiteGroup operatorGroup = new WebsiteGroup();
+            operatorGroup.setGroupCode(groupCode);
+            operatorGroup.setGroupName(groupEnum.getGroupName());
+            operatorGroup.setWebsiteType(groupEnum.getWebsiteType().getType());
+            operatorGroup.setWebsiteName(entry.getKey());
+            operatorGroup.setWeight(entry.getValue());
+            operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());
+            websiteGroupDAO.insertSelective(operatorGroup);
         }
         updateCacheByGroupCode(groupCode);
         return queryByGroupCode(groupCode);

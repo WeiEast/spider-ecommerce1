@@ -6,4 +6,9 @@
         select * from website_group where group_code = #{groupCode} order by weight desc limit 1;
     </select>
 
+    <!--
+    这个sql很重要
+    select a.* from website_group a right join  (select group_code,max(weight) as weight from website_group group by group_code) b on a.group_code = b.group_code and a.weight = b.weight ;
+    -->
+
 </mapper>
