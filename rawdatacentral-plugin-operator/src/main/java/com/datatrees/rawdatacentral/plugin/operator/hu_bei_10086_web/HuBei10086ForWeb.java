@@ -109,7 +109,8 @@ public class HuBei10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://hb.ac.10086.cn/SSO/img?codeType=0&rand={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hu_bei_10086_web_001").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hu_bei_10086_web_001")
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -124,9 +125,13 @@ public class HuBei10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String referer = "https://hb.ac.10086.cn/SSO/loginbox?service=servicenew&style=mymobile&continue=http://www" + ".hb.10086.cn/servicenew/index.action";
-            String templateUrl = "https://hb.ac.10086.cn/SSO/loginbox?accountType=0&username={}&passwordType=1&password={}" + "&smsRandomCode=&emailusername=请输入登录帐号&emailpassword=&validateCode={}&action=/SSO/loginbox&style=mymobile&service=servicenew" + "&continue=http://www.hb.10086.cn/servicenew/index.action&submitMode=login&guestIP=";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_002").setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getPicCode()).setReferer(referer).invoke();
+            String referer = "https://hb.ac.10086.cn/SSO/loginbox?service=servicenew&style=mymobile&continue=http://www" +
+                    ".hb.10086.cn/servicenew/index.action";
+            String templateUrl = "https://hb.ac.10086.cn/SSO/loginbox?accountType=0&username={}&passwordType=1&password={}" +
+                    "&smsRandomCode=&emailusername=请输入登录帐号&emailpassword=&validateCode={}&action=/SSO/loginbox&style=mymobile&service=servicenew" +
+                    "&continue=http://www.hb.10086.cn/servicenew/index.action&submitMode=login&guestIP=";
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_002")
+                    .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getPicCode()).setReferer(referer).invoke();
             String pageContent = processSSOLogin(param, response.getPageContent());
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("登陆失败,param={},response={}", param, response);
@@ -145,7 +150,8 @@ public class HuBei10086ForWeb implements OperatorPluginService {
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains("success")) {
                 logger.info("登陆成功,param={}", param);
 
-                String rsaModule = "8a4928b7e4ce5943230539120cb6ee7a64000034b11b923a91faf8c381dd09b4a9a9a6fa02ca0bd3b90576ac1498983f7c78d8f8f5126a24a30f75eac86815c3430fe3e77f81a326d0d2f7ffbfe285bb368175d66c29777ec031c0c75f64da92aa43866fdfa2597cfb4ce614f450e95670be7cc27e4b05b7a48ca876305e5d51";
+                String rsaModule
+                        = "8a4928b7e4ce5943230539120cb6ee7a64000034b11b923a91faf8c381dd09b4a9a9a6fa02ca0bd3b90576ac1498983f7c78d8f8f5126a24a30f75eac86815c3430fe3e77f81a326d0d2f7ffbfe285bb368175d66c29777ec031c0c75f64da92aa43866fdfa2597cfb4ce614f450e95670be7cc27e4b05b7a48ca876305e5d51";
                 String rsaEmpoent = "10001";
                 templateUrl = "http://www.hb.10086.cn/my/index.action";
                 response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10086_web_007").setFullUrl(templateUrl).invoke();
@@ -230,7 +236,9 @@ public class HuBei10086ForWeb implements OperatorPluginService {
             return null;
         }
         String templateUrl = "{}?timeStamp={}&RelayState={}&SAMLart={}&artifact={}&accountType={}&PasswordType={}&errorMsg={}&errFlag={}&telNum={}";
-        Response response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003").setFullUrl(templateUrl, action, System.currentTimeMillis(), relayState, samLart, artifact, accountType, passwordType, errorMsg, errFlag, telNum).invoke();
+        Response response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003")
+                .setFullUrl(templateUrl, action, System.currentTimeMillis(), relayState, samLart, artifact, accountType, passwordType, errorMsg,
+                        errFlag, telNum).invoke();
 
         return response.getPageContent();
     }
@@ -272,8 +280,10 @@ public class HuBei10086ForWeb implements OperatorPluginService {
             String encryptPwd = (String) invocable.invokeFunction("encryptedString", param.getPassword());
             String encryptSmsCode = (String) invocable.invokeFunction("encryptedString", param.getSmsCode());
             SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
-            String templateUrl = "http://www.hb.10086.cn/my/detailbill/detailBillQry.action?postion=outer&detailBean.billcycle={}&detailBean.selecttype=0&detailBean.flag=GSM&selecttype=%E5%85%A8%E9%83%A8%E6%9F%A5%E8%AF%A2&flag=%E9%80%9A%E8%AF%9D%E8%AF%A6%E5%8D%95&detailBean.password={}&detailBean.chkey={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003").setFullUrl(templateUrl, sf.format(new Date()), encryptPwd, encryptSmsCode).invoke();
+            String templateUrl
+                    = "http://www.hb.10086.cn/my/detailbill/detailBillQry.action?postion=outer&detailBean.billcycle={}&detailBean.selecttype=0&detailBean.flag=GSM&selecttype=%E5%85%A8%E9%83%A8%E6%9F%A5%E8%AF%A2&flag=%E9%80%9A%E8%AF%9D%E8%AF%A6%E5%8D%95&detailBean.password={}&detailBean.chkey={}";
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003")
+                    .setFullUrl(templateUrl, sf.format(new Date()), encryptPwd, encryptSmsCode).invoke();
             String pageContent = response.getPageContent();
             if (!pageContent.contains("暂时无法为您提供服务")) {
                 logger.info("详单-->校验成功,param={}", param);
@@ -291,7 +301,8 @@ public class HuBei10086ForWeb implements OperatorPluginService {
     private HttpResult<Object> processForDetails(OperatorParam param, String queryType) {
         HttpResult<Object> result = new HttpResult<>();
         Map<String, Object> map = new HashMap<String, Object>();
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
         String[] params = paramMap.get("page_content").split(":");
         Response response = null;
         try {
@@ -299,9 +310,11 @@ public class HuBei10086ForWeb implements OperatorPluginService {
             StringBuilder stringBuilder = new StringBuilder(content);
             String smsCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS.getRedisKey(FormType.VALIDATE_BILL_DETAIL));
 
-            String templateUrl = "http://www.hb.10086.cn/my/detailbill/generateNewDetailExcel.action?menuid=myDetailBill&detailBean" + ".billcycle={}&detailBean.password={}&detailBean.chkey={}&detailBean.startdate={}&detailBean" + ".enddate={}&detailBean.flag={}&detailBean.selecttype=0";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003").setFullUrl(templateUrl, params[0], param.getPassword
-                    (), smsCode, params[1], params[2], queryType).invoke();
+            String templateUrl = "http://www.hb.10086.cn/my/detailbill/generateNewDetailExcel.action?menuid=myDetailBill&detailBean" +
+                    ".billcycle={}&detailBean.password={}&detailBean.chkey={}&detailBean.startdate={}&detailBean" +
+                    ".enddate={}&detailBean.flag={}&detailBean.selecttype=0";
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003")
+                    .setFullUrl(templateUrl, params[0], param.getPassword(), smsCode, params[1], params[2], queryType).invoke();
             byte[] bytes = response.getResponse();
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             String str = getJsonBody(in, queryType);
@@ -330,19 +343,28 @@ public class HuBei10086ForWeb implements OperatorPluginService {
             Sheet sheet = wb.getSheet(0);
             StringBuilder stringBuilder = new StringBuilder();
             for (int j = 0; j < sheet.getRows(); j++) {
-                switch (queryType) {
-                    case "GSM":
-                        if (sheet.getCell(0, j).getContents().trim().matches("\\d{4}-\\d+-\\d+\\s*\\d{2}:\\d{2}:\\d{2}")) {
-                            stringBuilder.append("{\"callStartDateTime\":\"" + sheet.getCell(0, j).getContents().trim() + "\",\"callLocation\":\"" + sheet.getCell(1, j).getContents().trim() + "\",\"callType\":\"" + sheet.getCell(2, j).getContents().trim() + "\",\"otherTelNum\":\"" + sheet.getCell(3, j).getContents().trim() + "\",\"callDuration\":\"" + sheet.getCell(4, j).getContents().trim() + "\",\"callTypeDetail\":\"" + sheet.getCell(5, j).getContents().trim() + "\",\"totalFee\":\"" + sheet.getCell(6, j).getContents().trim() + "\"},");
-                        }
-                    case "SMS":
-                        if (sheet.getCell(0, j).getContents().trim().matches("\\d{4}-\\d+-\\d+\\s*\\d{2}:\\d{2}:\\d{2}")) {
-                            stringBuilder.append("{\"smsDateTime\":\"" + sheet.getCell(0, j).getContents().trim() + "\",\"otherNum\":\"" + sheet.getCell(2, j).getContents().trim() + "\",\"smsType\":\"" + sheet.getCell(3, j).getContents().trim() + "\",\"businessType\":\"" + sheet.getCell(4, j).getContents().trim() + "\",\"fee\":\"" + sheet.getCell(6, j).getContents().trim() + "\"},");
-                        }
-                    case "GPRSWLAN":
-                        if (sheet.getCell(0, j).getContents().trim().matches("\\d{4}-\\d+-\\d+\\s*\\d{2}:\\d{2}:\\d{2}")) {
-                            stringBuilder.append("{\"netStartDateTime\":\"" + sheet.getCell(0, j).getContents().trim() + "\",\"netLocation\":\"" + sheet.getCell(1, j).getContents().trim() + "\",\"businessType\":\"" + sheet.getCell(2, j).getContents().trim() + "\",\"netDuration\":\"" + sheet.getCell(3, j).getContents().trim() + "\",\"totalFlow\":\"" + sheet.getCell(4, j).getContents().trim() + "\",\"totalFee\":\"" + sheet.getCell(6, j).getContents().trim() + "\"},");
-                        }
+                if (StringUtils.equals("GSM", queryType)) {
+                    if (sheet.getCell(0, j).getContents().trim().matches("\\d{4}-\\d+-\\d+\\s*\\d{2}:\\d{2}:\\d{2}")) {
+                        stringBuilder.append("{\"callStartDateTime\":\"" + sheet.getCell(0, j).getContents().trim() + "\",\"callLocation\":\"" +
+                                sheet.getCell(1, j).getContents().trim() + "\",\"callType\":\"" + sheet.getCell(2, j).getContents().trim() +
+                                "\",\"otherTelNum\":\"" + sheet.getCell(3, j).getContents().trim() + "\",\"callDuration\":\"" +
+                                sheet.getCell(4, j).getContents().trim() + "\",\"callTypeDetail\":\"" + sheet.getCell(5, j).getContents().trim() +
+                                "\",\"totalFee\":\"" + sheet.getCell(6, j).getContents().trim() + "\"},");
+                    }
+                } else if (StringUtils.equals("SMS", queryType)) {
+                    if (sheet.getCell(0, j).getContents().trim().matches("\\d{4}-\\d+-\\d+\\s*\\d{2}:\\d{2}:\\d{2}")) {
+                        stringBuilder.append("{\"smsDateTime\":\"" + sheet.getCell(0, j).getContents().trim() + "\",\"otherNum\":\"" +
+                                sheet.getCell(2, j).getContents().trim() + "\",\"smsType\":\"" + sheet.getCell(3, j).getContents().trim() +
+                                "\",\"businessType\":\"" + sheet.getCell(4, j).getContents().trim() + "\",\"fee\":\"" +
+                                sheet.getCell(6, j).getContents().trim() + "\"},");
+                    }
+                } else if (StringUtils.equals("GPRSWLAN", queryType)) {
+                    if (sheet.getCell(0, j).getContents().trim().matches("\\d{4}-\\d+-\\d+\\s*\\d{2}:\\d{2}:\\d{2}")) {
+                        stringBuilder.append("{\"netStartDateTime\":\"" + sheet.getCell(0, j).getContents().trim() + "\",\"netLocation\":\"" +
+                                sheet.getCell(1, j).getContents().trim() + "\",\"businessType\":\"" + sheet.getCell(2, j).getContents().trim() +
+                                "\",\"netDuration\":\"" + sheet.getCell(3, j).getContents().trim() + "\",\"totalFlow\":\"" +
+                                sheet.getCell(4, j).getContents().trim() + "\",\"totalFee\":\"" + sheet.getCell(6, j).getContents().trim() + "\"},");
+                    }
                 }
             }
             if (stringBuilder.length() > 0) {
