@@ -50,7 +50,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             String websiteType = RegexpUtils.select(config.getWebsiteName(), "\\d+", 0);
             config.setOperatorType(websiteType);
         }
-        String region = config.getWebsiteName().split("\\(")[0].replaceAll("移动", "").replaceAll("联通", "").replaceAll("电信", "");
+        String region = config.getWebsiteTitle().split("\\(")[0].replaceAll("移动", "").replaceAll("联通", "").replaceAll("电信", "");
         config.setRegionName(region);
 
         config.setWebsiteId(source.getWebsiteId());
