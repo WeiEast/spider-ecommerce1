@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class OperatorGroupExample implements Serializable {
+public class WebsiteGroupExample implements Serializable {
     private static final long serialVersionUID = 1L;
 
     protected String orderByClause;
@@ -20,7 +20,7 @@ public class OperatorGroupExample implements Serializable {
     /** 每页数据条数 */
     protected int pageSize;
 
-    public OperatorGroupExample() {
+    public WebsiteGroupExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 

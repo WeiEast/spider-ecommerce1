@@ -3,13 +3,13 @@ package com.datatrees.rawdatacentral.service;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.model.OperatorGroup;
+import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
 
 /**
  * 运营商分组和权重
  * Created by zhouxinghai on 2017/8/29
  */
-public interface OperatorGroupService {
+public interface WebsiteGroupService {
 
     /**
      * 删除分组配置
@@ -23,21 +23,21 @@ public interface OperatorGroupService {
      * @param groupCode 分组
      * @return
      */
-    OperatorGroup queryMaxWeightWebsite(String groupCode);
+    WebsiteGroup queryMaxWeightWebsite(String groupCode);
 
     /**
      * 根据运营商查询groupCode
      * @param groupCode 分组
      * @return
      */
-    List<OperatorGroup> queryByGroupCode(String groupCode);
+    List<WebsiteGroup> queryByGroupCode(String groupCode);
 
     /**
      * 配置运营商分组和权重
      * @param groupCode 分组
      * @param config    运营商-->权重
      */
-    List<OperatorGroup> configGroup(String groupCode, Map<String, Integer> config);
+    List<WebsiteGroup> configGroup(String groupCode, Map<String, Integer> config);
 
     /**
      * 根据groupCode更新缓存

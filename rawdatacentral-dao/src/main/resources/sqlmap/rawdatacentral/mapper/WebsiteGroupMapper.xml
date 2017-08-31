@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.datatrees.rawdatacentral.dao.OperatorGroupDAO">
-  <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.OperatorGroup">
+<mapper namespace="com.datatrees.rawdatacentral.dao.WebsiteGroupDAO">
+  <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.WebsiteGroup">
     <result column="group_code" jdbcType="VARCHAR" property="groupCode" />
     <result column="group_name" jdbcType="VARCHAR" property="groupName" />
     <result column="website_name" jdbcType="VARCHAR" property="websiteName" />
@@ -70,7 +70,7 @@
   <sql id="Base_Column_List">
     group_code, group_name, website_name, website_title, weight, updated_at
   </sql>
-  <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -87,13 +87,13 @@
         limit ${limitStart} , ${pageSize}
     </if>
   </select>
-  <delete id="deleteByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample">
+  <delete id="deleteByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample">
     delete from operator_group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insertSelective" parameterType="com.datatrees.rawdatacentral.domain.model.OperatorGroup">
+  <insert id="insertSelective" parameterType="com.datatrees.rawdatacentral.domain.model.WebsiteGroup">
     insert into operator_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="groupCode != null">
@@ -136,7 +136,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample" resultType="java.lang.Integer">
+  <select id="countByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample" resultType="java.lang.Integer">
     select count(*) from operator_group
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />

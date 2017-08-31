@@ -13,10 +13,9 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.OperatorGroupService;
+import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public class OperatorController {
     @Resource
     private RedisService           redisService;
     @Resource
-    private OperatorGroupService   operatorGroupService;
+    private WebsiteGroupService    websiteGroupService;
 
     @RequestMapping("/queryAllOperatorConfig")
     public Object queryAllOperatorConfig() {
@@ -107,7 +106,7 @@ public class OperatorController {
     public HttpResult<Boolean> updateCache(String websiteName) {
         HttpResult<Boolean> result = new HttpResult<>();
         try {
-            operatorGroupService.updateCache();
+            websiteGroupService.updateCache();
             redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
             logger.info("updateCache success websiteName={}", websiteName);
             return result.success(true);

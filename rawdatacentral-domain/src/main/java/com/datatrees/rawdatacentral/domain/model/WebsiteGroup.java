@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
  /** create by system from table operator_group(运营商分组)  */
-public class OperatorGroup implements Serializable {
+public class WebsiteGroup implements Serializable {
     /** 分组代码 */
     private String groupCode;
 

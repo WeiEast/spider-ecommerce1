@@ -7,53 +7,53 @@ import java.util.Map;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
-import com.datatrees.rawdatacentral.dao.OperatorGroupDAO;
+import com.datatrees.rawdatacentral.dao.WebsiteGroupDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.rawdatacentral.domain.model.OperatorGroup;
-import com.datatrees.rawdatacentral.domain.model.example.OperatorGroupExample;
-import com.datatrees.rawdatacentral.service.OperatorGroupService;
+import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
+import com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample;
+import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OperatorGroupServiceImpl implements OperatorGroupService {
+public class WebsiteGroupServiceImpl implements WebsiteGroupService {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperatorGroupServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebsiteGroupServiceImpl.class);
     @Resource
-    private OperatorGroupDAO       operatorGroupDAO;
+    private WebsiteGroupDAO        websiteGroupDAO;
     @Resource
     private WebsiteOperatorService websiteOperatorService;
     @Resource
     private RedisService           redisService;
 
     @Override
-    public List<OperatorGroup> queryByGroupCode(String groupCode) {
+    public List<WebsiteGroup> queryByGroupCode(String groupCode) {
         CheckUtils.checkNotBlank(groupCode, "groupCode is blank");
-        OperatorGroupExample example = new OperatorGroupExample();
+        WebsiteGroupExample example = new WebsiteGroupExample();
         example.createCriteria().andGroupCodeEqualTo(groupCode);
-        return operatorGroupDAO.selectByExample(example);
+        return websiteGroupDAO.selectByExample(example);
     }
 
     @Override
     public void deleteByGroupCode(String groupCode) {
-        OperatorGroupExample example = new OperatorGroupExample();
+        WebsiteGroupExample example = new WebsiteGroupExample();
         example.createCriteria().andGroupCodeEqualTo(groupCode);
-        operatorGroupDAO.deleteByExample(example);
+        websiteGroupDAO.deleteByExample(example);
         updateCacheByGroupCode(groupCode);
     }
 
     @Override
-    public OperatorGroup queryMaxWeightWebsite(String groupCode) {
+    public WebsiteGroup queryMaxWeightWebsite(String groupCode) {
         CheckUtils.checkNotBlank(groupCode, "groupCode is blank");
-        return operatorGroupDAO.queryMaxWeightWebsite(groupCode);
+        return websiteGroupDAO.queryMaxWeightWebsite(groupCode);
     }
 
     @Override
-    public List<OperatorGroup> configGroup(String groupCode, Map<String, Integer> config) {
+    public List<WebsiteGroup> configGroup(String groupCode, Map<String, Integer> config) {
         CheckUtils.checkNotBlank(groupCode, "groupCode is null");
         if (null == config || config.isEmpty()) {
             throw new CommonException("config is empty");
@@ -62,13 +62,13 @@ public class OperatorGroupServiceImpl implements OperatorGroupService {
         GroupEnum groupEnum = GroupEnum.getByGroupCode(groupCode);
         CheckUtils.checkNotNull(groupEnum, "groupCode not found");
         for (Map.Entry<String, Integer> entry : config.entrySet()) {
-            OperatorGroup operatorGroup = new OperatorGroup();
-            operatorGroup.setGroupCode(groupCode);
-            operatorGroup.setGroupName(groupEnum.getGroupName());
-            operatorGroup.setWebsiteName(entry.getKey());
-            operatorGroup.setWeight(entry.getValue());
-            operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());
-            operatorGroupDAO.insertSelective(operatorGroup);
+            WebsiteGroup websiteGroup = new WebsiteGroup();
+            websiteGroup.setGroupCode(groupCode);
+            websiteGroup.setGroupName(groupEnum.getGroupName());
+            websiteGroup.setWebsiteName(entry.getKey());
+            websiteGroup.setWeight(entry.getValue());
+            websiteGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());
+            websiteGroupDAO.insertSelective(websiteGroup);
         }
         updateCacheByGroupCode(groupCode);
         return queryByGroupCode(groupCode);
@@ -78,12 +78,12 @@ public class OperatorGroupServiceImpl implements OperatorGroupService {
     public void updateCacheByGroupCode(String groupCode) {
         CheckUtils.checkNotBlank(groupCode, "groupCode is null");
         redisService.deleteKey(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(groupCode));
-        List<OperatorGroup> list = queryByGroupCode(groupCode);
+        List<WebsiteGroup> list = queryByGroupCode(groupCode);
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        OperatorGroup maxWeight = null;
-        for (OperatorGroup group : list) {
+        WebsiteGroup maxWeight = null;
+        for (WebsiteGroup group : list) {
             if (null == maxWeight) {
                 maxWeight = group;
             } else if (group.getWeight() > maxWeight.getWeight()) {
