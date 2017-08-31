@@ -313,7 +313,7 @@ public class HuBei10086ForWeb implements OperatorPluginService {
             map.put("pageContentFile", bytes);
             return result.success(map);
         } catch (Exception e) {
-            logger.error("获取加密密码失败,param={},response={}", param, e);
+            logger.error("解析详单PDF失败,param={},response={}", param, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
         }
     }
