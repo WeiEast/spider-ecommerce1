@@ -204,6 +204,7 @@ public class TaskHttpClient {
 
     public Response invoke() {
         checkRequest(request);
+        request.setRequestId(RequestIdUtils.createId());
         CloseableHttpResponse httpResponse = null;
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));

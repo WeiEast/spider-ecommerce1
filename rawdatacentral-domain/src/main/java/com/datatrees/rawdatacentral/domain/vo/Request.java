@@ -15,6 +15,11 @@ import com.datatrees.rawdatacentral.domain.enums.RequestType;
  */
 public class Request implements Serializable {
 
+    /**
+     * 请求ID随机,不保证重复,重复概率低
+     */
+    @JSONField(ordinal = 1)
+    private Long requestId;
     @JSONField(ordinal = 1)
     private Long   taskId;
     @JSONField(ordinal = 2)
@@ -55,6 +60,14 @@ public class Request implements Serializable {
     private String requestBodyContent;
 
     public Request() {
+    }
+
+    public Long getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Long requestId) {
+        this.requestId = requestId;
     }
 
     public Long getTaskId() {
