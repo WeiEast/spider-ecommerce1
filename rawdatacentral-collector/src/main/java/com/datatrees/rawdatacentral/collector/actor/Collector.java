@@ -32,7 +32,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.collector.chain.common.WebsiteType;
+import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
