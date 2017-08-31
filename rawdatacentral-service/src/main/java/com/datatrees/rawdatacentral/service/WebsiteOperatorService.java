@@ -21,4 +21,10 @@ public interface WebsiteOperatorService {
      */
     void importWebsite(WebsiteOperator config);
 
+    /**
+     * 更新配置
+     * @param config
+     */
+    void updateWebsite(WebsiteOperator config);
+
 }

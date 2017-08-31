@@ -40,4 +40,17 @@ public class WebsiteOperatorController {
         }
     }
 
+    @RequestMapping("/updateConfig")
+    public HttpResult<Object> updateConfig(WebsiteOperator operator) {
+        HttpResult<Object> result = new HttpResult<>();
+        try {
+            websiteOperatorService.updateWebsite(operator);
+            logger.info("updateConfig success websiteName={}", operator.getWebsiteName());
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("updateConfig error websiteName={}", operator.getWebsiteName(), e);
+            return result.failure();
+        }
+    }
+
 }

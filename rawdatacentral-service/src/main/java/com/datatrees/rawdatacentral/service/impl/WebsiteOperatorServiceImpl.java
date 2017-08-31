@@ -79,4 +79,19 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         websiteOperatorDAO.insertSelective(config);
     }
 
+    @Override
+    public void updateWebsite(WebsiteOperator config) {
+        WebsiteOperator operatorDb = getByWebsiteName(config.getWebsiteName());
+        if (null == operatorDb) {
+            throw new CommonException("websiteName not found,websiteName=" + config.getWebsiteName());
+        }
+        CheckUtils.checkNotBlank(config.getSearchConfig(), "searchConfig is empty");
+        CheckUtils.checkNotBlank(config.getExtractorConfig(), "extractorConfig is empty");
+        WebsiteOperator updateObj = new WebsiteOperator();
+        updateObj.setWebsiteId(operatorDb.getWebsiteId());
+        updateObj.setSearchConfig(config.getSearchConfig());
+        updateObj.setExtractorConfig(config.getExtractorConfig());
+        websiteOperatorDAO.updateByPrimaryKeySelective(updateObj);
+    }
+
 }
