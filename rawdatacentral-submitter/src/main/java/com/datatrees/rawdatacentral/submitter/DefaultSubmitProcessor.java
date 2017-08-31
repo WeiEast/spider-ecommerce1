@@ -113,10 +113,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
     private boolean saveToRedis(SubmitMessage submitMessage) {
         Map<String, Object> extractResultMap = submitMessage.getExtractResultMap();
         ExtractMessage extractMessage = submitMessage.getExtractMessage();
-        int taskId = extractMessage.getTaskId();
-        if (logger.isDebugEnabled()) {
-            logger.debug("start save message to redis, taskid: " + taskId + " result: " + extractResultMap);
-        }
+        int taskLogId = extractMessage.getTaskLogId();
         if (MapUtils.isEmpty(extractResultMap)) {
             logger.warn("no data save to redis by taskid: " + submitMessage);
             return true;
@@ -124,7 +121,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         submitNormalizerFactory.normalize(submitMessage);
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
-            String redisKey = RedisKeyUtils.genRedisKey(taskId, entry.getKey());
+            String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), entry.getKey());
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();

@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.domain.model.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.OperatorGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,8 @@ public class WebsiteOperatorController {
     private static final Logger logger = LoggerFactory.getLogger(WebsiteOperatorController.class);
     @Resource
     private WebsiteOperatorService websiteOperatorService;
+    @Resource
+    private OperatorGroupService   operatorGroupService;
 
     @RequestMapping("/importWebsite")
     public HttpResult<Object> importWebsite(WebsiteOperator config) {
@@ -47,7 +50,7 @@ public class WebsiteOperatorController {
         try {
             String groupCode = (String) map.get("groupCode");
             Map<String, Integer> config = (LinkedHashMap<String, Integer>) map.get("config");
-            List<OperatorGroup> list = websiteOperatorService.configOperatorGroup(groupCode, config);
+            List<OperatorGroup> list = operatorGroupService.configGroup(groupCode, config);
             logger.info("configGroup success config={}", JSON.toJSONString(map));
             return result.success(list);
         } catch (Exception e) {
@@ -60,7 +63,7 @@ public class WebsiteOperatorController {
     public HttpResult<Object> deleteGroupConfig(String groupCode) {
         HttpResult<Object> result = new HttpResult<>();
         try {
-            websiteOperatorService.deleteGroupConfig(groupCode);
+            operatorGroupService.deleteByGroupCode(groupCode);
             logger.info("deleteGroupConfig success groupCode={}", groupCode);
             return result.success(true);
         } catch (Exception e) {

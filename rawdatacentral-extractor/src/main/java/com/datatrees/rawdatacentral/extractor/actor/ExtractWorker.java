@@ -53,7 +53,7 @@ public class ExtractWorker {
                     subExtractMessage.setMessageObject(map);
                     subExtractMessage.setTask(extractMessage.getTask());
                     subExtractMessage.setResultType(extractMessage.getResultType());
-                    subExtractMessage.setTaskId(extractMessage.getTaskId());
+                    subExtractMessage.setTaskLogId(extractMessage.getTaskLogId());
                     subExtractMessage.setTypeId(extractMessage.getTypeId());
                     subExtractMessage.setWebsiteId(extractMessage.getWebsiteId());
                     subExtractMessage.setMessageIndex(messageIndex);

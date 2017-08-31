@@ -61,13 +61,15 @@ public class ResultDataHandler {
         for (Object obj : objs) {
             ExtractMessage message = new ExtractMessage();
             message.setMessageObject(obj);
-            message.setTaskId(task.getId());
+            message.setTaskLogId(task.getId());
+            message.setTaskId(task.getTaskId());
             message.setWebsiteId(task.getWebsiteId());
             message.setTask(parentTask);
             try {
                 boolean result = collectNormalizerFactory.normalize(message);
                 if (result) {
-                    Future<Object> future = Patterns.ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
+                    Future<Object> future = Patterns
+                            .ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
                     futureList.add(future);
                 } else {
                     log.warn("message normalize failed, message:" + message + ", obj:" + obj);

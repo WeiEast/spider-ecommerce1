@@ -15,6 +15,7 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.OperatorGroupService;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class OperatorController {
     private CrawlerOperatorService crawlerOperatorService;
     @Resource
     private RedisService           redisService;
+    @Resource
+    private OperatorGroupService   operatorGroupService;
 
     @RequestMapping("/queryAllOperatorConfig")
     public Object queryAllOperatorConfig() {
@@ -64,7 +67,8 @@ public class OperatorController {
             headers.add("Content-Disposition", "inline");
             headers.add("Pragma", "no-cache");
             headers.add("Expires", "0");
-            return ResponseEntity.ok().headers(headers).contentLength(bytes.length).contentType(MediaType.IMAGE_JPEG).body(new InputStreamResource(new ByteArrayInputStream(bytes)));
+            return ResponseEntity.ok().headers(headers).contentLength(bytes.length).contentType(MediaType.IMAGE_JPEG)
+                    .body(new InputStreamResource(new ByteArrayInputStream(bytes)));
 
         }
         return null;
@@ -102,8 +106,22 @@ public class OperatorController {
     public Object mappingPluginFile(String websiteName, String fileName) throws IOException {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         CheckUtils.checkNotBlank(fileName, "fileName is empty");
-        redisService.saveString(RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getRedisKey(websiteName), fileName, RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeout(), RedisKeyPrefixEnum.PLUGIN_FILE_WEBSITE.getTimeUnit());
+        redisService.cache(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME, websiteName, fileName);
         return new HttpResult<>().success();
+    }
+
+    @RequestMapping("/updateCache")
+    public HttpResult<Boolean> updateCache(String websiteName) {
+        HttpResult<Boolean> result = new HttpResult<>();
+        try {
+            operatorGroupService.updateCache();
+            redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
+            logger.info("updateCache success websiteName={}", websiteName);
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("updateCache error websiteName={}", websiteName, e);
+            return result.failure();
+        }
     }
 
 }
