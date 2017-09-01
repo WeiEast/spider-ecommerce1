@@ -39,20 +39,20 @@ public class SimpleProxyManager extends ProxyManager {
 
     @Override
     public Proxy getProxy() throws Exception {
-        if (null == last) {
-            try {
-                com.treefinance.proxy.domain.Proxy proxy = proxyService.getProxy(taskId, websiteName);
-                if (null != proxy) {
-                    last = new Proxy(proxy.getIp(), Integer.valueOf(proxy.getPort()));
-                }
-            } catch (Exception e) {
-                logger.error("getProxy error taskId={},websiteName={}", taskId, websiteName, e);
+        if (null != last) {
+            return last;
+        }
+        try {
+            com.treefinance.proxy.domain.Proxy proxy = proxyService.getProxy(taskId, websiteName);
+            if (null != proxy) {
+                last = new Proxy(proxy.getIp(), Integer.valueOf(proxy.getPort()));
+                return last;
             }
+            return null;
+        } catch (Exception e) {
+            logger.error("getProxy error taskId={},websiteName={}", taskId, websiteName, e);
+            return null;
         }
-        if (null == last) {
-            logger.warn("getProxy error,user local network taskId={},websiteName={}", taskId, websiteName);
-        }
-        return last;
     }
 
     @Override

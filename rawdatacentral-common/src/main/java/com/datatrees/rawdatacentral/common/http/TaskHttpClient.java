@@ -209,10 +209,10 @@ public class TaskHttpClient {
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
         HttpHost proxy = null;
-        Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), null);
+        Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
         if (null != proxyConfig) {
-            proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
-            request.setProxy(proxyConfig.getId() + ":" + proxyConfig.getPort());
+            proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
+            request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
         }
         RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
                 .build();
@@ -267,6 +267,8 @@ public class TaskHttpClient {
                 response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
                 statusCode = httpResponse.getStatusLine().getStatusCode();
             }
+            long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
+            response.setTotalTime(totalTime);
             if (statusCode != 200) {
                 client.abort();
                 logger.error("HttpClient status error, statusCode={}", statusCode);
