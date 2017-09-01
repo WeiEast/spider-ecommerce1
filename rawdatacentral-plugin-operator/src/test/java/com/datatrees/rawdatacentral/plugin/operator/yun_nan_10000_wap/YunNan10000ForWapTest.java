@@ -21,7 +21,7 @@ public class YunNan10000ForWapTest {
          *
          */
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
-        Invocable invocable = ScriptEngineUtil.createInvocable(inputStream, "UTF-8");
+        Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(inputStream, "UTF-8");
         String mobile = "15368726413";
         String password = "869380";
         String encodeMobile = invocable.invokeFunction("strEnc", mobile, "wap_accnbr_2016", "", "").toString();

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * Created by guimeichao on 17/8/24.
  */
 public class HeiLongJiang10086ForWeb implements OperatorPluginService {
-
+    private static final String javaScript = "ZnVuY3Rpb24gZW5jcnlwdChzdHIsa2V5KXsKICAgIHZhciBjb2RlID0nJzsKICAgIHZhciBjID0gc3RyLnNwbGl0KCcnKTsKICAgIHZhciBrID0ga2V5LnNwbGl0KCcnKTsKCiAgICBmb3IodmFyIGk9MDsgaTxjLmxlbmd0aDsgaSsrKXsKCiAgICAgICAgdmFyIGhjID0gY1tpXS5jaGFyQ29kZUF0KCk7CiAgICAgICAgdmFyIGtpID0gaTsKCiAgICAgICAgaWYoaSA+PSBrLmxlbmd0aCl7CiAgICAgICAgICAgIGtpID0gaSAlIGsubGVuZ3RoOwogICAgICAgIH0KCiAgICAgICAgdmFyIGt0ID0ga1traV0uY2hhckNvZGVBdCgpIC0gOTc7CiAgICAgICAgaWYoaGMgPj0gOTcgJiYgaGMgPD0gMTIyKXsKICAgICAgICAgICAgaGMgPSA5NyArICgoKGhjIC05NykgKyBrdCkgJSAyNik7CiAgICAgICAgfQogICAgICAgIGlmKGhjID49IDY1ICYmIGhjIDw9IDkwKXsKICAgICAgICAgICAgaGMgPSA2NSArICgoKGhjIC0gNjUpICsga3QpICUgMjYpOwogICAgICAgIH0KICAgICAgICBpZihoYyA+PTQ4ICYmIGhjPD01Nyl7CiAgICAgICAgICAgIGlmKGt0ID49IDEwKXsKICAgICAgICAgICAgICAgIGt0ID0gMTA7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgaGMgPSA0OCArICgoKGhjIC0gNDgpICsga3QpICUgMTApOwogICAgICAgIH0KICAgICAgICB2YXIgdGVtcCA9IFN0cmluZy5mcm9tQ2hhckNvZGUoaGMpOwogICAgICAgIGNvZGUgKz0gdGVtcDsKCiAgICB9CiAgICByZXR1cm4gY29kZTsKfQ==";
     private static final Logger logger = LoggerFactory.getLogger(HeiLongJiang10086ForWeb.class);
 
     @Override
@@ -298,7 +298,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
              * 加载js加密脚本
              */
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("hei_long_jiang_10086_web/des.js");
-            Invocable invocable = ScriptEngineUtil.createInvocable(inputStream, "UTF-8");
+            Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPwd = invocable.invokeFunction("encrypt", param.getPassword(), key).toString();
             return encryptPwd;
         } catch (Exception e) {

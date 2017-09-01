@@ -3,39 +3,29 @@ package com.datatrees.rawdatacentral.common.utils;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import java.io.InputStream;
+import java.util.Base64;
 
-import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * js引擎
  */
 public class ScriptEngineUtil {
 
-    /**
-     * 创建js引擎
-     * @param inputStream 文件流
-     * @param charsetName 源文件编码
-     * @return
-     * @exception Exception
-     */
-    public static Invocable createInvocable(InputStream inputStream, String charsetName) throws Exception {
-        CheckUtils.checkNotBlank(charsetName, "empty charsetName");
-        String javaScrit = IOUtils.toString(inputStream, charsetName);
-        IOUtils.closeQuietly(inputStream);
-        CheckUtils.checkNotBlank(javaScrit, "empty javaScrit");
-        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
-        scriptEngine.eval(javaScrit);
-        return (Invocable) scriptEngine;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(ScriptEngineUtil.class);
 
     /**
      * 创建js引擎
-     * @param inputStream 文件流,默认编码UTF-8
+     * @param javaScrit 文件流
      * @return
      * @exception Exception
      */
-    public static Invocable createInvocable(InputStream inputStream) throws Exception {
-        return createInvocable(inputStream, "UTF-8");
+    public static Invocable createInvocableFromBase64(String javaScrit) throws Exception {
+        CheckUtils.checkNotBlank(javaScrit, "empty base64");
+        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
+        scriptEngine.eval(new String(Base64.getDecoder().decode(javaScrit)));
+        return (Invocable) scriptEngine;
     }
+
 }
