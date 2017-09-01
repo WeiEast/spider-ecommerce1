@@ -118,7 +118,8 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://hl.10086.cn/common/vali/valiImage?imgCode={}&_={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_002").setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_002")
+                    .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             /**
              * 结果枚举:
              * 正确
