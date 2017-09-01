@@ -14,7 +14,6 @@ public class ProxyUtils {
 
     private static final Logger       logger       = LoggerFactory.getLogger(ProxyUtils.class);
     private static       ProxyService proxyService = BeanFactoryUtils.getBean(ProxyService.class);
-    private static       RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
 
     public static Proxy getProxy(Long taskId, String websiteName) {
         return proxyService.getProxy(taskId, websiteName);
