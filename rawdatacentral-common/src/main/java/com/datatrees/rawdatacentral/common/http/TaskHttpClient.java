@@ -208,14 +208,14 @@ public class TaskHttpClient {
         CloseableHttpResponse httpResponse = null;
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
-        // TODO: 2017/8/31 ip怎么处理 
+        // TODO: 2017/8/31 ip怎么处理
         HttpHost proxy = null;
-        Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), null);
+        Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
         if (null != proxyConfig) {
             proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
             request.setProxy(proxyConfig.getId() + ":" + proxyConfig.getPort());
-        }else {
-            logger.warn("get proxy error taskId={},websiteName={},will use local ip",request.getTaskId(),request.getWebsiteName());
+        } else {
+            logger.warn("get proxy error taskId={},websiteName={},will use local ip", request.getTaskId(), request.getWebsiteName());
         }
         RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
                 .build();
@@ -270,6 +270,8 @@ public class TaskHttpClient {
                 response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
                 statusCode = httpResponse.getStatusLine().getStatusCode();
             }
+            long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
+            response.setTotalTime(totalTime);
             if (statusCode != 200) {
                 client.abort();
                 logger.error("HttpClient status error, statusCode={}", statusCode);

@@ -15,6 +15,8 @@ public class Response implements Serializable {
     private static final String DEFAULT_CHARSET = "UTF-8";
     @JSONField(ordinal = 1)
     private Request             request;
+    @JSONField(ordinal = 1)
+    private long                totalTime;
     @JSONField(ordinal = 2)
     private int                 statusCode;
     @JSONField(ordinal = 3)
@@ -37,6 +39,14 @@ public class Response implements Serializable {
     public Response(Request request, Charset charset) {
         this.request = request;
         this.charset = charset;
+    }
+
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(long totalTime) {
+        this.totalTime = totalTime;
     }
 
     public String getContentType() {
