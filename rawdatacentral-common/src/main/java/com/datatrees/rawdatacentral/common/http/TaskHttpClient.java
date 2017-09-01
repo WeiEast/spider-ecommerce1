@@ -212,7 +212,7 @@ public class TaskHttpClient {
         Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
         if (null != proxyConfig) {
             proxy = new HttpHost(proxyConfig.getId().toString(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
-            request.setProxy(proxyConfig.getId() + ":" + proxyConfig.getPort());
+            request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
         }
         RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
                 .build();
