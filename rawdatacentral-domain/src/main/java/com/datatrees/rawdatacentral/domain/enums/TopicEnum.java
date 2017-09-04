@@ -7,6 +7,7 @@ package com.datatrees.rawdatacentral.domain.enums;
 public enum TopicEnum {
 
     TASK_NEXT_DIRECTIVE("task_next_directive", "交互指令"),
+    CRAWLER_TASK_MONITOR("crawler_task_monitor", " 爬虫任务监控"),
     TASK_LOG("task_log", "任务状态日志"),
     RAWDATA_INPUT("rawData_input", "登录成功消息"),;
     /**
