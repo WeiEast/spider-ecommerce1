@@ -11,6 +11,7 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
+import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
@@ -110,8 +111,9 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
         }
 
         redisMap.put(PluginConstants.FIELD, DirectiveRedisCode.SKIP);
-        logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId, websiteName, DirectiveRedisCode.SKIP);
-        return resultMap;
+        logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId,
+            websiteName, DirectiveRedisCode.SKIP);
+        throw new ResultEmptyException("二维码验证失败");
     }
 
     public Map<String, String> perpareParam(Map<String, String> parms) {
