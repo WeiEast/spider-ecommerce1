@@ -310,7 +310,7 @@ public class HuBei10086ForWeb implements OperatorPluginService {
         try {
             String content = "{\"data\":[";
             StringBuilder stringBuilder = new StringBuilder(content);
-            String smsCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS.getRedisKey(FormType.VALIDATE_BILL_DETAIL));
+            String smsCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(FormType.VALIDATE_BILL_DETAIL));
 
             String templateUrl = "http://www.hb.10086.cn/my/detailbill/generateNewDetailExcel.action?menuid=myDetailBill&detailBean" +
                     ".billcycle={}&detailBean.password={}&detailBean.chkey={}&detailBean.startdate={}&detailBean" +

@@ -20,6 +20,7 @@ public class AttributeKey implements Serializable {
     public static final String TIPS                     = "tips"; // 提示信息
     public static final String TOKEN                    = "token";  // 请求的token信息
     public static final String ERROR_CODE               = "errorCode"; //错误代码
+    public static final String MSG                      = "msg"; //信息
     public static final String ERROR_MSG                = "errorMsg"; // 错误信息
     public static final String ERROR_DETAIL             = "errorDetail"; // 详细错误信息
     public static final String TIMESTAMP                = "timestamp"; // 时间戳

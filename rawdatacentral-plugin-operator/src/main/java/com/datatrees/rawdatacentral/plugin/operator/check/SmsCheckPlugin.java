@@ -110,7 +110,6 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
             if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
                 context.setString(AttributeKey.SMS_CODE, smsCode);
                 pluginResult.put(PluginConstants.FIELD, smsCode);
-                TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS.getRedisKey(fromType), smsCode);
                 messageService.sendTaskLog(taskId, "短信验证码校验成功");
                 return;
             }

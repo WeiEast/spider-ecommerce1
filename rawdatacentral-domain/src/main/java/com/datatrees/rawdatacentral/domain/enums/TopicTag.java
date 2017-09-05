@@ -4,6 +4,7 @@ public enum TopicTag {
 
     TASK_COMPLETE("task_complete", "task完成"),
     TASK_ERROR("task_error", "task错误信息"),
+    TASK_LOG("task_log", "task日志"),
     ;
     private String tag;
     private String remark;
