@@ -19,7 +19,6 @@ import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -97,7 +96,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             data.put(AttributeKey.REMARK, picCode);
             String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), JSON.toJSONString(data));
             //等待用户输入图片验证码,等待120秒
-            messageService.sendTaskLog(taskId, websiteName, "等待用户输入图片验证码");
+            messageService.sendTaskLog(taskId, "等待用户输入图片验证码");
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
             if (null == receiveDirective) {
                 messageService.sendTaskLog(taskId, "图片验证码校验超时");
@@ -120,8 +119,8 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
                 logger.error("验证图片验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), taskId, websiteName);
                 throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
             }
+            messageService.sendTaskLog(taskId, "图片验证码校验失败");
         } while (retry++ < maxRetry);
-        messageService.sendTaskLog(taskId, "图片验证码校验失败");
         //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("图片验证码校验失败,最大重试次数{}", maxRetry));
         throw new ResultEmptyException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT.getErrorMsg());
     }
