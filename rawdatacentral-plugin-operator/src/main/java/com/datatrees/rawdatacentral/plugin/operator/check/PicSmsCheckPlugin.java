@@ -167,6 +167,6 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         }
         messageService.sendTaskLog(taskId, "短信验证码校验成功");
         pluginResult.put(PluginConstants.FIELD, smsCode);
-        TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS.getRedisKey(fromType), smsCode);
+        TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(fromType), smsCode);
     }
 }
