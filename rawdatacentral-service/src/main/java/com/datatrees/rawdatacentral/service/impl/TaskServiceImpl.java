@@ -10,9 +10,11 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 import com.datatrees.rawdatacentral.dao.TaskDAO;
 import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.rawdatacentral.domain.model.example.TaskExample;
 import com.datatrees.rawdatacentral.service.TaskService;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Date selectNow() {
         return taskDAO.selectNow();
+    }
+
+    @Override
+    public Task getByTaskId(Long taskId) {
+        TaskExample example = new TaskExample();
+        example.createCriteria().andTaskidEqualTo(taskId);
+        List<Task> list = taskDAO.selectByExample(example);
+        return list.isEmpty() ? null : list.get(0);
     }
 
 }
