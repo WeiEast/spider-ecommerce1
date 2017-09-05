@@ -20,15 +20,15 @@ public class YunNan10000ForWapTest {
          $("#enPassword").val(enPassword);
          *
          */
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
-        Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(inputStream, "UTF-8");
-        String mobile = "15368726413";
-        String password = "869380";
-        String encodeMobile = invocable.invokeFunction("strEnc", mobile, "wap_accnbr_2016", "", "").toString();
-        Assert.assertEquals(encodeMobile, "7BB8AB1C627DA1326101BCCEB7C8DA56B819B66058CCA6BD");
-
-        Object encodePassword = invocable.invokeFunction("strEnc", password, "wap_password_2016", "", "");
-        Assert.assertEquals(encodePassword, "83A5AA2D78E94FBCF3862E863BDD78E5");
+        //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
+        //Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(inputStream, "UTF-8");
+        //String mobile = "15368726413";
+        //String password = "869380";
+        //String encodeMobile = invocable.invokeFunction("strEnc", mobile, "wap_accnbr_2016", "", "").toString();
+        //Assert.assertEquals(encodeMobile, "7BB8AB1C627DA1326101BCCEB7C8DA56B819B66058CCA6BD");
+        //
+        //Object encodePassword = invocable.invokeFunction("strEnc", password, "wap_password_2016", "", "");
+        //Assert.assertEquals(encodePassword, "83A5AA2D78E94FBCF3862E863BDD78E5");
 
     }
 
