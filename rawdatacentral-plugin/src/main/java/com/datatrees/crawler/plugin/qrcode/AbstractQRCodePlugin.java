@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
@@ -120,6 +121,7 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
         redisMap.put(PluginConstants.FIELD, DirectiveRedisCode.SKIP);
         logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId,
             websiteName, DirectiveRedisCode.SKIP);
+        ThreadInterruptedUtil.setInterrupt(Thread.currentThread());
         throw new ResultEmptyException("二维码验证失败");
     }
 
