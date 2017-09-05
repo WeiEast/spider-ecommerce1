@@ -19,7 +19,6 @@ import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -97,11 +96,12 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             data.put(AttributeKey.REMARK, picCode);
             String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), JSON.toJSONString(data));
             //等待用户输入图片验证码,等待120秒
-
+            messageService.sendTaskLog(taskId, "等待用户输入图片验证码");
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
             if (null == receiveDirective) {
+                messageService.sendTaskLog(taskId, "图片验证码校验超时");
                 logger.error("等待用户输入图片验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
-                messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入图片验证码超时({}秒)", timeOut));
+                //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入图片验证码超时({}秒)", timeOut));
                 throw new ResultEmptyException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT.getErrorMsg());
             }
 
@@ -109,6 +109,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             param.setPicCode(picCode);
             result = pluginService.validatePicCode(param);
             if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
+                messageService.sendTaskLog(taskId, "图片验证码校验成功");
                 TaskUtils.addTaskShare(taskId, AttributeKey.PIC_CODE, picCode);
                 //图片验证码结束,进入短信验证
                 submit(taskId, websiteName);
@@ -118,8 +119,9 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
                 logger.error("验证图片验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), taskId, websiteName);
                 throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
             }
+            messageService.sendTaskLog(taskId, "图片验证码校验失败");
         } while (retry++ < maxRetry);
-        messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("图片验证码校验失败,最大重试次数{}", maxRetry));
+        //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("图片验证码校验失败,最大重试次数{}", maxRetry));
         throw new ResultEmptyException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT.getErrorMsg());
     }
 
@@ -144,12 +146,13 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         Map<String, String> data = new HashMap<>();
         data.put(AttributeKey.REMARK, "");
         String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), JSON.toJSONString(data));
-
+        messageService.sendTaskLog(taskId, "等待用户输入短信验证码");
         //等待用户输入图片验证码,等待120秒
         DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
         if (null == receiveDirective) {
             logger.error("等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
-            messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入短信验证码超时({}秒)", timeOut));
+            //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入短信验证码超时({}秒)", timeOut));
+            messageService.sendTaskLog(taskId, "短信验证码校验超时");
             throw new ResultEmptyException(ErrorCode.VALIDATE_SMS_TIMEOUT.getErrorMsg());
         }
         String smsCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
@@ -158,9 +161,11 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         param.setPicCode(picCode);
         result = pluginService.submit(param);
         if (!result.getStatus()) {
+            messageService.sendTaskLog(taskId, "短信验证码校验失败");
             //短信验证码验证失败重新验证图片验证码
             validatePicCode(taskId, websiteName);
         }
+        messageService.sendTaskLog(taskId, "短信验证码校验成功");
         pluginResult.put(PluginConstants.FIELD, smsCode);
         TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS.getRedisKey(fromType), smsCode);
     }

@@ -68,7 +68,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
             logger.info("初始化运营商插件taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
         }
-        messageService.sendTaskLog(param.getTaskId(), "准备登陆");
+        //messageService.sendTaskLog(param.getTaskId(), "准备登陆");
         return getLoginService(param).init(param);
     }
 
@@ -90,7 +90,16 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             map.put(AttributeKey.PIC_CODE, picResult.getData());
             result.success(map);
         }
-        messageService.sendTaskLog(param.getTaskId(), log);
+        if (result.getStatus()) {
+            switch (param.getFormType()) {
+                case FormType.LOGIN:
+                    messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
+                    break;
+                default:
+                    break;
+            }
+        }
+        //messageService.sendTaskLog(param.getTaskId(), log);
         return result;
     }
 
@@ -121,8 +130,17 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (result.getStatus()) {
             TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME, System.currentTimeMillis() + "");
         }
-        messageService.sendTaskLog(param.getTaskId(),
-                TemplateUtils.format("{}-->短信验证码-->刷新{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        if (result.getStatus()) {
+            switch (param.getFormType()) {
+                case FormType.LOGIN:
+                    messageService.sendTaskLog(param.getTaskId(), "向手机发送短信验证码");
+                    break;
+                default:
+                    break;
+            }
+        }
+        //messageService.sendTaskLog(param.getTaskId(),
+        //        TemplateUtils.format("{}-->短信验证码-->刷新{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         return result;
     }
 
@@ -149,8 +167,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                     break;
             }
         }
-        messageService.sendTaskLog(param.getTaskId(),
-                TemplateUtils.format("{}-->图片验证码-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        //messageService.sendTaskLog(param.getTaskId(),
+        //        TemplateUtils.format("{}-->图片验证码-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         return result;
     }
 
@@ -177,8 +195,25 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 }
             }
         }
-        messageService.sendTaskLog(param.getTaskId(),
-                TemplateUtils.format("{}-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        if (result.getStatus()) {
+            switch (param.getFormType()) {
+                case FormType.LOGIN:
+                    //messageService.sendTaskLog(param.getTaskId(), "登陆成功");
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            switch (param.getFormType()) {
+                case FormType.LOGIN:
+                    messageService.sendTaskLog(param.getTaskId(), "登陆失败");
+                    break;
+                default:
+                    break;
+            }
+        }
+        //messageService.sendTaskLog(param.getTaskId(),
+        //        TemplateUtils.format("{}-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
         sendLoginSuccessMessage(result, param);
         return result;
     }
