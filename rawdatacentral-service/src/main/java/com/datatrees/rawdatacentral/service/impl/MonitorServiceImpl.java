@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
-import com.datatrees.rawdatacentral.domain.enums.TopicTag;
+import com.datatrees.rawdatacentral.domain.enums.*;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.MonitorService;
+import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,7 +22,32 @@ public class MonitorServiceImpl implements MonitorService {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorServiceImpl.class);
     @Resource
-    private MessageService messageService;
+    private MessageService         messageService;
+    @Resource
+    private WebsiteOperatorService websiteOperatorService;
+
+    @Override
+    public void initTask(Long taskId, String websiteName) {
+        CheckUtils.checkNotPositiveNumber(taskId, ErrorCode.EMPTY_TASK_ID);
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
+        Boolean isNewOperator = StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
+        GroupEnum group = null;
+        if (isNewOperator) {
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+            map.put(AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
+            group = GroupEnum.getByGroupCode(websiteOperator.getGroupCode());
+        } else {
+            group = GroupEnum.getByWebsiteName(websiteName);
+        }
+        map.put(AttributeKey.GROUP_CODE, group.getGroupCode());
+        map.put(AttributeKey.GROUP_NAME, group.getGroupName());
+        map.put(AttributeKey.WEBSITE_TYPE, group.getWebsiteType().getValue());
+        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
+        messageService.sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_INIT.getTag(), map);
+    }
 
     @Override
     public void sendTaskCompleteMsg(Long taskId, Integer errorCode, String errorMsg) {

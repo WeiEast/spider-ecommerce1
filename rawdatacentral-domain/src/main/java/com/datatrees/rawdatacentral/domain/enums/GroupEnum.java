@@ -105,6 +105,15 @@ public enum GroupEnum {
         return null;
     }
 
+    public static GroupEnum getByWebsiteName(String websiteName) {
+        for (GroupEnum e : GroupEnum.values()) {
+            if (e.getWebsiteName().equals(websiteName)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
     public String getGroupCode() {
         return groupCode;
     }

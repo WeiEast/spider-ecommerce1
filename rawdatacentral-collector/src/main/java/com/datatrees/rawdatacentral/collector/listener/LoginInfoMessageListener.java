@@ -26,10 +26,7 @@ import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
-import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.rawdatacentral.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +69,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         Boolean initStatus = redisTemplate.opsForValue().setIfAbsent(key, TaskStageEnum.INIT.getStatus());
         //第一次收到启动消息
         if (initStatus) {
+            BeanFactoryUtils.getBean(MonitorService.class).initTask(taskId, websiteName);
             //30不再接受重复消息
             redisTemplate.expire(key, RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeout(), RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeUnit());
             //记录运营商别名,有别名就是独立模块

@@ -48,5 +48,9 @@ public class AttributeKey implements Serializable {
     public static final String LATEST_REQUEST_TIMESTAMP = "latestRequestimestamp"; // 最后一次请求时间
     public static final String LATEST_REQUEST_COOKIE    = "latestRequestCookie"; // 最后一次请求时间
     public static final String FORM_TYPE                = "formType"; // 表单类型
+    public static final String GROUP_CODE               = "groupCode"; //分组代码
+    public static final String GROUP_NAME               = "groupName"; //分组名称
+    public static final String WEBSITE_TYPE             = "websiteType"; //配置类型
+    public static final String WEBSITE_TITLE             = "websiteTitle"; //配置类型
 
 }
