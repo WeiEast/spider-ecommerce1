@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.submitter.common;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ public class RedisKeyUtils {
             return null;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(REDIS_PREFIX).append(taskId).append("_").append(resultClass);
+        sb.append(RedisKeyPrefixEnum.TASK_RES.getRedisKey(taskId)).append(".").append(resultClass);
         String redisKey = sb.toString();
         log.debug("generate redis key " + redisKey);
         return redisKey;
