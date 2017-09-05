@@ -31,8 +31,6 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
 import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -49,8 +47,10 @@ import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.MonitorService;
 import com.datatrees.rawdatacentral.service.TaskService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
@@ -97,7 +97,7 @@ public class Collector {
     @Resource
     private MessageService         messageService;
     @Resource
-    private RedisService           redisService;
+    private MonitorService         monitorService;
 
     private TaskMessage taskMessageInit(CollectorMessage message) {
         Task task = new Task();
@@ -336,6 +336,8 @@ public class Collector {
         this.messageComplement(taskMessage, message);
         message.setFinish(true);
         taskService.updateTask(task);
+        boolean success = task.getStatus() == 0;
+        monitorService.sendTaskCompleteMsg(task.getTaskId(), success, success ? null : task.getStatus(), task.getRemark());
         return taskMessage.getContext().getProcessorResult();
     }
 

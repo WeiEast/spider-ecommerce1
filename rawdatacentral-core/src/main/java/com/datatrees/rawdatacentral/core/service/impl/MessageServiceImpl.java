@@ -78,7 +78,13 @@ public class MessageServiceImpl implements MessageService {
         return sendMessage(topic, null, msg, charsetName, maxRetry);
     }
 
-    private boolean sendMessage(String topic, String tags, Object msg, String charsetName, int maxRetry) {
+    @Override
+    public boolean sendMessage(String topic, String tags, Object msg) {
+        return sendMessage(topic, tags, msg, DEFAULT_CHARSET_NAME, 3);
+    }
+
+    @Override
+    public boolean sendMessage(String topic, String tags, Object msg, String charsetName, int maxRetry) {
         if (StringUtils.isBlank(topic) || null == msg) {
             logger.error("invalid param  topic={},msg={}", topic, msg);
             return false;
@@ -98,7 +104,8 @@ public class MessageServiceImpl implements MessageService {
                 }
                 SendResult sendResult = producer.send(mqMessage);
                 if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                    logger.info("send message success topic={},content={},retry={},charsetName={}", topic, content.length() > 100 ? content.substring(0, 100) : content, retry, charsetName);
+                    logger.info("send message success topic={},content={},retry={},charsetName={}", topic,
+                            content.length() > 100 ? content.substring(0, 100) : content, retry, charsetName);
                     return true;
                 }
             } catch (Exception e) {

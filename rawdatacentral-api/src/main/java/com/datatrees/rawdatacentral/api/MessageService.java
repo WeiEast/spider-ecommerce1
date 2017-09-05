@@ -51,8 +51,29 @@ public interface MessageService {
     boolean sendMessage(String topic, Object msg, String charsetName, int maxRetry);
 
     /**
+     * 发送消息
+     * @param topic 订阅主题
+     * @param tags  tags
+     * @param msg   消息
+     * @return
+     */
+    boolean sendMessage(String topic, String tags, Object msg);
+
+    /**
+     * 发送消息
+     * @param topic       订阅主题
+     * @param tags        tags
+     * @param msg         消息
+     * @param charsetName JSON个时候发送编码类型
+     * @param maxRetry    失败重试次数
+     * @return
+     */
+    boolean sendMessage(String topic, String tags, Object msg, String charsetName, int maxRetry);
+
+    /**
      * 发送登录成功消息
      * @return
      */
     boolean sendLoginSuccessMessage(Long taskId, String websiteName);
+
 }
