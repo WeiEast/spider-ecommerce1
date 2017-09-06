@@ -69,7 +69,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.ERROR_CODE, errorCode);
         map.put(AttributeKey.ERROR_MSG, errorMsg);
         map.put(AttributeKey.ERROR_DETAIL, errorDetail);
-        messageService.sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), map);
+        messageService.sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), map);
     }
 
     @Override
@@ -87,6 +87,6 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.TASK_ID, taskId);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         map.put(AttributeKey.MSG, msg);
-        messageService.sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), map);
+        messageService.sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), map);
     }
 }
