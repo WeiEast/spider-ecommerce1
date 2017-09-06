@@ -1,9 +1,11 @@
 package com.datatrees.rawdatacentral.plugin.operator.zhe_jiang_10086_web;
 
 import java.net.URLDecoder;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -16,6 +18,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +84,12 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case "BASEINFO_DETAILS":
+                return processForBaseinfo(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
@@ -250,6 +258,29 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
         Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
         return response.getPageContent();
+    }
+
+    private HttpResult<Object> processForBaseinfo(OperatorParam param) {
+        HttpResult<Object> result = new HttpResult<>();
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        String smsCode = paramMap.get("page_content");
+        Response response = null;
+        try {
+            String templateUrl = "http://www.zj.10086.cn/my/userinfo/queryUserYdInfo.do?fromFlag=&secPwd={}";
+            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_005").setFullUrl(templateUrl, smsCode).invoke();
+            String pageContent = response.getPageContent();
+            if (StringUtils.contains(pageContent, "authnrequestform") || StringUtils.contains(pageContent, "authnrequestform")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_006", pageContent);
+            }
+            if (StringUtils.contains(pageContent, "authnrequestform") || StringUtils.contains(pageContent, "authnrequestform")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_006", pageContent);
+            }
+            return result.success(pageContent);
+        } catch (Exception e) {
+            logger.error("个人信息页访问失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
+        }
     }
 
 }
