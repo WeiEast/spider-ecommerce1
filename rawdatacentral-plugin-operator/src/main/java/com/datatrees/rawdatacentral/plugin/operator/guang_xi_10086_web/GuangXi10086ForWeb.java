@@ -21,7 +21,7 @@ import org.springframework.util.CollectionUtils;
 
 /**
  * https://gx.ac.10086.cn/login
- * Created by guimeichao on 17/9/5.
+ * Created by guimeichao on 17/9/5.LiaoNing10086ForWeb.java
  */
 public class GuangXi10086ForWeb implements OperatorPluginService {
 
@@ -144,7 +144,8 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        return null;
+        logger.warn("defineProcess fail,params={}", param);
+        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
@@ -201,7 +202,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String relayState = TaskUtils.getTaskShare(param.getTaskId(), "relayState");
             String isValidateCode = TaskUtils.getTaskShare(param.getTaskId(), "isValidateCode");
 
-            response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_005")
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_005")
                     .setFullUrl(templateUrl, type, backurl, errorurl, spid, relayState, param.getMobile(), param.getPassword(), param.getPicCode(),
                             isValidateCode).invoke();
             String pageContent = response.getPageContent();
@@ -250,20 +251,19 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            String referer = "http://www.gx.10086.cn/wodeyidong/mymob/xiangdan.jsp";
             String templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/initBusi" +
                     ".menu?is_first_render=true&_menuId=410900003558&=&_lastCombineChild=false&_zoneId=busimain&_tmpDate=&_buttonId=";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_004").setFullUrl(templateUrl)
-                    .addHeader("Accept", "application/json, text/javascript, */*; q=0.01").addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/sendSecondPsw" +
                     ".menu?ajaxType=json&_tmpDate=&_menuId=410900003558&_buttonId=";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_012").setFullUrl(templateUrl)
-                    .addHeader("Accept", "application/json, text/javascript, */*; q=0.01").addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_012").setFullUrl(templateUrl).setReferer(referer).invoke();
             if (response.getPageContent().contains("随机短信验证码已发送成功")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+                logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.REFESH_SMS_FAIL);
             }
         } catch (Exception e) {

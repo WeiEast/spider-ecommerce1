@@ -1,12 +1,14 @@
 package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,7 +43,7 @@ public class WebsiteOperatorController {
     }
 
     @RequestMapping("/updateConfig")
-    public HttpResult<Object> updateConfig(WebsiteOperator operator) {
+    public HttpResult<Object> updateConfig(@RequestBody WebsiteOperator operator) {
         HttpResult<Object> result = new HttpResult<>();
         try {
             websiteOperatorService.updateWebsite(operator);
@@ -50,6 +52,38 @@ public class WebsiteOperatorController {
         } catch (Exception e) {
             logger.error("updateConfig error websiteName={}", operator.getWebsiteName(), e);
             return result.failure();
+        }
+    }
+
+    /**
+     * 从其他环境导入配置
+     * @param websiteName
+     * @param from
+     * @return
+     */
+    @RequestMapping("/importConfig")
+    public HttpResult<Object> importConfig(String websiteName, String from) {
+        HttpResult<Object> result = new HttpResult<>();
+        try {
+            websiteOperatorService.importConfig(websiteName, from);
+            logger.info("importConfig success websiteName={},from={}", websiteName, from);
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("importConfig error websiteName={},from={}", websiteName, from, e);
+            return result.failure();
+        }
+    }
+
+    /**
+     * 查询配置
+     */
+    @RequestMapping("/getByWebsiteName")
+    public Object getByWebsiteName(String websiteName) {
+        try {
+            return websiteOperatorService.getByWebsiteName(websiteName);
+        } catch (Exception e) {
+            logger.error("getByWebsiteName error websiteName={}", websiteName, e);
+            return new HashMap<>();
         }
     }
 

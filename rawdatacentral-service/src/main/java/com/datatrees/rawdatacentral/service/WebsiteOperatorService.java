@@ -27,4 +27,14 @@ public interface WebsiteOperatorService {
      */
     void updateWebsite(WebsiteOperator config);
 
+    /**
+     * 从其他环境导入配置
+     * @param websiteName
+     * @param from        dev=192.168.5.15,test=rawdatacentral.saas.test.treefinance.com.cn
+     *                    test=rawdatacentral.saas.test.treefinance.com.cn
+     *                    zsc=rawdatacentral.approach.saas.treefinance.com.cn
+     *                    yfb=rawdatecentral.yfb.saas.treefinance.com.cn
+     */
+    void importConfig(String websiteName, String from);
+
 }
