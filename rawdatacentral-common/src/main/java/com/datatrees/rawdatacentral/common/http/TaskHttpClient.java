@@ -162,6 +162,11 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setProxyEnable(boolean proxyEnable) {
+        request.setProxyEnable(proxyEnable);
+        return this;
+    }
+
     public TaskHttpClient setRequestBody(String requestBody, ContentType contentType) {
         this.requestContentType = contentType;
         request.setType(RequestType.POST);
@@ -209,10 +214,12 @@ public class TaskHttpClient {
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
         HttpHost proxy = null;
-        Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
-        if (null != proxyConfig) {
-            proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
-            request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
+        if(request.getProxyEnable()) {
+            Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
+            if (null != proxyConfig) {
+                proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
+                request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
+            }
         }
         RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
                 .build();
