@@ -7,7 +7,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
@@ -28,7 +30,8 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
 
     @Override
     public String process(String... args) throws Exception {
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
         return GsonUtils.toJson(doProcess(paramMap));
     }
 
@@ -85,12 +88,14 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
                     //已扫描,待确认
                     sendDirective.fill(DirectiveRedisCode.SCANNED, null);
                     getRedisService().saveDirectiveResult(directiveId, sendDirective);
-                    logger.info("verifyQRCodeStatus taskId={},directiveId={},websiteName={},status = {}", taskId, directiveId, websiteName, DirectiveRedisCode.SCANNED);
+                    logger.info("verifyQRCodeStatus taskId={},directiveId={},websiteName={},status = {}", taskId, directiveId, websiteName,
+                            DirectiveRedisCode.SCANNED);
                 }
                 if (QRCodeStatus.CONFIRMED == verifyResult.status) {
                     QRCodeResult confirmResult = confirmQRCodeStatus(paramsMap);
                     if (null != confirmResult) {
-                        logger.info("confirmQRCodeStatus taskId={},directiveId={},websiteName={},confirmResult = {}", taskId, directiveId, websiteName, confirmResult.status);
+                        logger.info("confirmQRCodeStatus taskId={},directiveId={},websiteName={},confirmResult = {}", taskId, directiveId,
+                                websiteName, confirmResult.status);
                         if (QRCodeStatus.SUCCESS == confirmResult.status) {
                             resultMap.put(PluginConstants.FIELD, this.postQRCode(confirmResult.result));
                             sendDirective.fill(DirectiveRedisCode.SUCCESS, null);
@@ -110,8 +115,10 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
         }
 
         redisMap.put(PluginConstants.FIELD, DirectiveRedisCode.SKIP);
-        logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId, websiteName, DirectiveRedisCode.SKIP);
-        return resultMap;
+        logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId, websiteName,
+                DirectiveRedisCode.SKIP);
+        ThreadInterruptedUtil.setInterrupt(Thread.currentThread());
+        throw new ResultEmptyException("二维码验证失败");
     }
 
     public Map<String, String> perpareParam(Map<String, String> parms) {
