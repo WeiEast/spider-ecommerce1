@@ -36,7 +36,8 @@ public class MonitorServiceImpl implements MonitorService {
         Boolean isNewOperator = StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
         GroupEnum group = null;
         if (isNewOperator) {
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+            WebsiteOperator websiteOperator = websiteOperatorService
+                    .getByWebsiteName(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName));
             map.put(AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
             group = GroupEnum.getByGroupCode(websiteOperator.getGroupCode());
         } else {
