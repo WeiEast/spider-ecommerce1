@@ -13,6 +13,7 @@ import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -86,7 +87,9 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
     public HttpResult<Object> defineProcess(OperatorParam param) {
         switch (param.getFormType()) {
             case "BASEINFO_DETAILS":
-                return processForBaseinfo(param);
+                return processForBaseInfo(param);
+            case "BALANCEINFO_DETAILS":
+                return processForBalanceInfo(param);
             default:
                 return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -260,13 +263,11 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         return response.getPageContent();
     }
 
-    private HttpResult<Object> processForBaseinfo(OperatorParam param) {
+    private HttpResult<Object> processForBaseInfo(OperatorParam param) {
         HttpResult<Object> result = new HttpResult<>();
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
-                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
-        String smsCode = paramMap.get("page_content");
         Response response = null;
         try {
+            String smsCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(FormType.VALIDATE_BILL_DETAIL));
             String templateUrl = "http://www.zj.10086.cn/my/userinfo/queryUserYdInfo.do?fromFlag=&secPwd={}";
             response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_005").setFullUrl(templateUrl, smsCode).invoke();
             String pageContent = response.getPageContent();
@@ -283,4 +284,23 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         }
     }
 
+    private HttpResult<Object> processForBalanceInfo(OperatorParam param) {
+        HttpResult<Object> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "http://service.zj.10086.cn/yw/bill/realFee.do?menuId=13004&bid=";
+            response = TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10086_web_007").setFullUrl(templateUrl).invoke();
+            String pageContent = response.getPageContent();
+            if (StringUtils.contains(pageContent, "authnrequestform") || StringUtils.contains(pageContent, "authnrequestform")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_008", pageContent);
+            }
+            if (StringUtils.contains(pageContent, "authnrequestform") || StringUtils.contains(pageContent, "authnrequestform")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_008", pageContent);
+            }
+            return result.success(pageContent);
+        } catch (Exception e) {
+            logger.error("余额信息页访问失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
+        }
+    }
 }
