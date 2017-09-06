@@ -87,6 +87,6 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.TASK_ID, taskId);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         map.put(AttributeKey.MSG, msg);
-        messageService.sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), msg);
+        messageService.sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), map);
     }
 }

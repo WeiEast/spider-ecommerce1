@@ -14,6 +14,7 @@ import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
@@ -99,12 +100,23 @@ public class MessageServiceImpl implements MessageService {
                 Message mqMessage = new Message();
                 mqMessage.setTopic(topic);
                 mqMessage.setBody(content.getBytes(charsetName));
+                StringBuilder key = new StringBuilder(topic);
+                if (StringUtils.isNotBlank(tags)) {
+                    key.append("_").append(tags);
+                }
+                String taskId = RegexpUtils.select(content, "taskId\":(\\d+)", 1);
+                if (StringUtils.isNotBlank(taskId)) {
+                    key.append("_").append(taskId);
+                } else {
+                    key.append("_").append(System.currentTimeMillis());
+                }
+                mqMessage.setKeys(key.toString());
                 if (StringUtils.isNotBlank(tags)) {
                     mqMessage.setTags(tags);
                 }
                 SendResult sendResult = producer.send(mqMessage);
                 if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                    logger.info("send message success topic={},content={},retry={},charsetName={}", topic,
+                    logger.info("send message success topic={},tags={},content={},retry={},charsetName={}", topic, tags,
                             content.length() > 100 ? content.substring(0, 100) : content, retry, charsetName);
                     return true;
                 }
