@@ -118,7 +118,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         if (!hosts.containsKey(from)) {
             throw new RuntimeException("from 配置不存在");
         }
-        String queryUrl = TemplateUtils.format("http://{}/website/operator/getByWebsiteName?websiteName=zhe_jiang_10086_web", hosts.get(from));
+        String queryUrl = TemplateUtils.format("http://{}/website/operator/getByWebsiteName?websiteName={}", hosts.get(from), websiteName);
         String json = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST, "china_10000_app_001").setFullUrl(queryUrl).setProxyEnable(false)
                 .invoke().getPageContent();
         WebsiteOperator config = JSON.parseObject(json, new TypeReference<WebsiteOperator>() {});
