@@ -22,6 +22,7 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
@@ -166,5 +167,6 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         }
         messageService.sendTaskLog(taskId, "短信验证码校验成功");
         pluginResult.put(PluginConstants.FIELD, smsCode);
+        TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(fromType), smsCode);
     }
 }
