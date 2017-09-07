@@ -4,17 +4,12 @@
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved. Copyright (c) datatrees.com Inc. 2016
  */
+
 package com.datatrees.crawler.plugin;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.share.MessageService;
-import com.datatrees.rawdatacentral.share.RedisService;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.common.BeanResourceFactory;
@@ -22,8 +17,14 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
+import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -33,7 +34,6 @@ import com.google.gson.reflect.TypeToken;
 public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
 
     private Logger logger = LoggerFactory.getLogger(AbstractRawdataPlugin.class);
-
     private String tags;
 
     public String getTags() {
@@ -47,9 +47,7 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
     protected Map<String, Object> parserResponseMessage(String resultContent) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         if (StringUtils.isNotBlank(resultContent)) {
-            resultMap = (Map<String, Object>) GsonUtils.fromJson(resultContent,
-                new TypeToken<HashMap<String, Object>>() {
-                }.getType());
+            resultMap = (Map<String, Object>) GsonUtils.fromJson(resultContent, new TypeToken<HashMap<String, Object>>() {}.getType());
             Map<String, Object> bodyMap = (Map<String, Object>) resultMap.get("body");
             if (MapUtils.isNotEmpty(bodyMap)) {
                 resultMap.putAll(bodyMap);

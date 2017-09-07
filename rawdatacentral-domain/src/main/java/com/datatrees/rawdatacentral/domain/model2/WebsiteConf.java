@@ -3,27 +3,22 @@ package com.datatrees.rawdatacentral.domain.model2;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table t_website_conf(website config,sopport search)  */
+/** create by system from table t_website_conf(website config,sopport search) */
 public class WebsiteConf implements Serializable {
-    /**  */
-    private Integer websiteConfId;
-
-    /**  */
-    private Integer websiteId;
-
-    /** extractor config */
-    private String extractorConfig;
-
-    /**  */
-    private Date createdAt;
-
-    /**  */
-    private Date updatedAt;
-
-    /** search config */
-    private String searchConfig;
 
     private static final long serialVersionUID = 1L;
+    /**  */
+    private Integer websiteConfId;
+    /**  */
+    private Integer websiteId;
+    /** extractor config */
+    private String  extractorConfig;
+    /**  */
+    private Date    createdAt;
+    /**  */
+    private Date    updatedAt;
+    /** search config */
+    private String  searchConfig;
 
     public Integer getWebsiteConfId() {
         return websiteConfId;

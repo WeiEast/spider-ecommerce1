@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+	<extrator-selectors>
+		<selector field="pageContent" contain="招商银行信用卡" dis-contain="" ref="page-extractor_1">
+		</selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<page-extractor id="page-extractor_1">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+
+			<object-segment name="bill" result-class="cn.datatrees.domain.bill">
+				<!--temp field ,临时变量结构化时不会输出，可以被其他字段引用 -->
+				<field-extractor id="basicString" field="temp">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand4']/text()"//span[@id='fixBand40']/text()]]></operation>
+					<operation from="&amp;nbsp;" to="" type="replace"></operation>
+					<operation from="\?" to="" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="detailTemp" field="temp">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand34']//span[@id='fixBand1']]]></operation>
+				</field-extractor>
+				<field-extractor id="integralTemp" field="temp">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand31']]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_0" source="basicString" field="NameOnCard" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA[尊敬的([^，]*)..，您好]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_1" field="BillMonth" result-type="string">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand6']//a/@href"//span[@id='fixBand1']//a/@href]]></operation>
+					<operation type="regex" index="1"><![CDATA[billMonth=(\d+)]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" source="basicString" field="BillStartDate" result-type="string">
+					<operation type="regex" index="1"><![CDATA[([\d/]*)-[\d/]*]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" source="basicString" field="BillDate" result-type="string">
+					<operation type="regex" index="1"><![CDATA[[\d/]*-([\d/]*)]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_4" source="basicString" field="PaymentDueDate" result-type="string">
+					<operation type="regex" index="1"><![CDATA[Date([\d/]*)]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_5" source="detailTemp" field="CardNums" field-visible-type="context" result-type="string">
+					<operation type="xpath"><![CDATA[//span[@id='loopBand2']/table/tbody/tr[2]//span[@id='fixBand15']//td[6]/text()]]>
+					</operation>
+				</field-extractor>
+
+				<field-extractor id="testMatchGroup" source="basicString" field="temp">
+					<operation type="regex"><![CDATA[Credit ?Limit([￥\.\d,]*).*New ?Balance([￥\.\d,]*)]]></operation>
+				</field-extractor>
+
+				<field-extractor id="field-extractor_6" field="CreditLimit" result-type="string">
+					<operation type="matchgroup" source="testMatchGroup" index="1"></operation>
+				</field-extractor>
+
+				<field-extractor id="field-extractor_7" field="NewBalance" result-type="string">
+					<operation type="matchgroup" source="testMatchGroup" index="2"></operation>
+				</field-extractor>
+
+				<field-extractor id="field-extractor_8" source="detailTemp" field="LastBalance" result-type="string">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand13']//td[3]/text()]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_9" source="detailTemp" field="LastPayment" result-type="string">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand13']//td[4]/text()]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_10" source="detailTemp" field="NewCharges" result-type="string">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand13']//td[5]/text()]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_11" source="detailTemp" field="Adjustment" result-type="string">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand13']//td[6]/text()]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_12" source="detailTemp" field="Interest" result-type="string">
+					<operation type="xpath"><![CDATA[//span[@id='fixBand13']//td[7]/text()]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_13" source="integralTemp" field="Integral" result-type="string">
+					<operation type="xpath"><![CDATA[//td[2]/text()]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_14" source="integralTemp" field="IntegralAdd" result-type="string">
+					<operation type="xpath"><![CDATA[//td[4]/text()]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_15" source="integralTemp" field="IntegralAdjust" result-type="string">
+					<operation type="xpath"><![CDATA[//td[5]/text()]]>
+					</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_16" source="integralTemp" field="IntegralUsed" result-type="string">
+					<operation type="xpath"><![CDATA[//td[7]/text()]]>
+					</operation>
+				</field-extractor>
+
+				<object-segment name="ShoppingSheet" type="xpath" value="//span[@id='loopBand2']/table/tbody/tr//span[@id='fixBand15']" max-cycles="2" is-reverse="true">
+					<field-extractor id="ShoppingSheetTemp" field="temp">
+						<operation from="&lt;td style=&quot;border-width:0px;width:73px.*&lt;img[^&lt;]*&gt;&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;" to="" type="replace"></operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_1" source="ShoppingSheetTemp" field="TransDate" result-type="string">
+						<operation type="xpath"><![CDATA[//span[@id='fixBand15']//td[2]/text()]]>
+						</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_2" source="ShoppingSheetTemp" field="PostDate" result-type="string">
+						<operation type="xpath"><![CDATA[//span[@id='fixBand15']//td[3]/text()]]>
+						</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_3" source="ShoppingSheetTemp" field="Description" result-type="string">
+						<operation type="xpath"><![CDATA[//span[@id='fixBand15']//td[4]/text()]]>
+						</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_4" source="ShoppingSheetTemp" field="RMBAmount" result-type="string">
+						<operation type="xpath"><![CDATA[//span[@id='fixBand15']//td[5]/text()]]>
+						</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_5" source="ShoppingSheetTemp" field="CardNumber" result-type="string">
+						<operation type="xpath"><![CDATA[//span[@id='fixBand15']//td[6]/text()]]>
+						</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_6" source="ShoppingSheetTemp" field="Country" result-type="string">
+						<operation type="xpath"><![CDATA[//span[@id='fixBand15']//td[7]/text()]]>
+						</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_7" source="ShoppingSheetTemp" field="OriginalTransAmount" result-type="string">
+						<operation type="xpath"><![CDATA[//span[@id='fixBand15']//td[8]/text()]]>
+						</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page-extractor>
+
+
+	</page-extractor-definition>
+	<plugin-definition>
+
+	</plugin-definition>
+</config>

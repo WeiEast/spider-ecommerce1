@@ -4,6 +4,7 @@ server_application="/dashu/application/rawdatacentral"
 server_log_path="/dashu/log/rawdatacentral"
 
 gradle clean build installApp -x test --refresh-dependencies -Denv=dev
+
 cd target/;
 file=`ls -rt *.tar.gz|tail -1`
 if [ ! -e "$file" ]

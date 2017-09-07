@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<url-filters>
+		<url-filter type="+">.10010.com</url-filter>
+	</url-filters>
+
+	<properties>
+		<encoding>GBK</encoding>
+		<cookie scope="user_session"></cookie>
+		<http-client-type><![CDATA[operator]]></http-client-type>
+	</properties>
+
+	<result-tag-list>
+		<result-tag><![CDATA[operator]]></result-tag>
+	</result-tag-list>
+
+	<login login-type="app">
+		<login-check success-pattern="&quot;isLogin&quot;:true" fail-pattern="未登录">
+			<check-url><![CDATA[http://iservice.10010.com/e3/static/check/checklogin/"]]></check-url>
+		</login-check>
+	</login>
+
+	<search>
+		<search-template id="calldetails-linknodes-discover-search-template" type="category_search" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://iservice.10010.com/e3/query/call_dan.html]]></url-template>
+				</url-templates>
+				<ref-template><![CDATA[http://iservice.10010.com/e3/index_server.html]]></ref-template>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page>20</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="calldetails-linknodes-discover-search-page" />
+				<page depth="1" ref="calldetails-search-page" />
+			</page-sequence>
+		</search-template>
+
+		<search-template id="smsdetails-linknodes-discover-search-template" type="category_search" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://iservice.10010.com/e3/query/call_sms.html]]></url-template>
+				</url-templates>
+				<ref-template><![CDATA[http://iservice.10010.com/e3/index_server.html]]></ref-template>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page>20</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="smsdetails-linknodes-discover-search-page" />
+				<page depth="1" ref="smsdetails-search-page" />
+			</page-sequence>
+		</search-template>
+
+		<search-template id="billdetails-linknodes-discover-search-template" type="category_search" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://iservice.10010.com/e3/query/history_list.html]]></url-template>
+				</url-templates>
+				<ref-template><![CDATA[http://iservice.10010.com/e3/index_server.html]]></ref-template>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page>20</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="billdetails-linknodes-discover-search-page" />
+				<page depth="1" ref="billdetail-search-page" />
+			</page-sequence>
+		</search-template>
+
+		<search-template id="personalinformation-search-template" type="category_search" max-depth="0">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://iservice.10010.com/e3/static/query/accountBalance/search"type=onlyAccount]]></url-template>
+				</url-templates>
+				<ref-template><![CDATA[http://iservice.10010.com/e3/query/account_balance.html]]></ref-template>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page>1</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="personalinformation-search-page" />
+			</page-sequence>
+		</search-template>
+
+	</search>
+
+	<page-definition>
+		<page id="calldetails-linknodes-discover-search-page" path="/e3/query/call_dan.html" response-check="true">
+			<object-segment name="result" result-class="LinkNode">
+				<field-extractor id="firstday-of-thismonth-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="lastday-of-thismonth-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="firstday-of-lastmonth-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-1" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="lastday-of-lastmonth-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-1" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="firstday-of-last2month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-2" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="lastday-of-last2month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-2" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="firstday-of-last3month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-3" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="lastday-of-last3month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-3" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="calldetais-startdate-enddate-literal-id" field="temp" result-type="string">
+					<operation type="template"><![CDATA[${firstday-of-thismonth-literal-id}:${lastday-of-thismonth-literal-id},${firstday-of-lastmonth-literal-id}:${lastday-of-lastmonth-literal-id},${firstday-of-last2month-literal-id}:${lastday-of-last2month-literal-id},${firstday-of-last3month-literal-id}:${lastday-of-last3month-literal-id}]]></operation>
+				</field-extractor>
+				<field-extractor id="calldetails-search-urls" field="url" source="calldetais-startdate-enddate-literal-id" result-type="string">
+					<operation type="parser" ref="calldetails-linknodes-discover-search-parser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="smsdetails-linknodes-discover-search-page" path="/e3/query/call_sms.html" response-check="true">
+			<object-segment name="result" result-class="LinkNode">
+				<field-extractor id="firstday-of-thismonth-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" format="yyyyMMdd" />
+				</field-extractor>
+				<field-extractor id="now-date-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" format="yyyyMMdd" />
+				</field-extractor>
+				<field-extractor id="firstday-of-lastmonth-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-1" format="yyyyMMdd" />
+				</field-extractor>
+				<field-extractor id="lastday-of-lastmonth-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-1" format="yyyyMMdd" />
+				</field-extractor>
+				<field-extractor id="firstday-of-last2month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-2" format="yyyyMMdd" />
+				</field-extractor>
+				<field-extractor id="lastday-of-last2month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-2" format="yyyyMMdd" />
+				</field-extractor>
+				<field-extractor id="firstday-of-last3month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-3" format="yyyyMMdd" />
+				</field-extractor>
+				<field-extractor id="lastday-of-last3month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-3" format="yyyyMMdd" />
+				</field-extractor>
+				<field-extractor id="smsdetails-search-urls" field="url" result-type="string">
+					<operation type="template"><![CDATA[${firstday-of-thismonth-literal-id}:${now-date-literal-id},${firstday-of-lastmonth-literal-id}:${lastday-of-lastmonth-literal-id},${firstday-of-last2month-literal-id}:${lastday-of-last2month-literal-id},${firstday-of-last3month-literal-id}:${lastday-of-last3month-literal-id}]]></operation>
+					<operation type="parser" ref="smsdetails-linknodes-discover-search-parser"></operation>
+				</field-extractor>
+				<field-extractor id="businesstype-map-id" field="businesstype-map" result-type="string">
+					<operation type="xpath"><![CDATA[#smsmmsResultTemple]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="billdetails-linknodes-discover-search-page" path="/e3/query/history_list.html" response-check="true">
+			<object-segment name="result" result-class="LinkNode">
+				<field-extractor id="firstday-of-lastmonth-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-1" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="firstday-of-last2month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-2" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="firstday-of-last3month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-3" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="firstday-of-last4month-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-4" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="billdetails-search-urls" field="url" result-type="string">
+					<operation type="template"><![CDATA[${firstday-of-lastmonth-literal-id},${firstday-of-last2month-literal-id},${firstday-of-last3month-literal-id},${firstday-of-last4month-literal-id},]]></operation>
+					<operation type="parser" ref="billdetails-linknodes-discover-search-parser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="personalinformation-search-page" path="/e3/static/query/accountBalance" response-check="true">
+			<object-segment name="result" result-class="OperatorData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="tempContent" field="temp" result-type="string">
+					<operation type="parser" ref="personalinfo-linknodes-discover-search-parser" />
+				</field-extractor>
+				<field-extractor id="field-extractor_2" source="tempContent" field="identityCard" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.result.MyDetail.certnum]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" source="tempContent" field="name" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.result.MyDetail.custname]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="calldetails-search-page" path="/e3/static/query/callDetail" response-check="true">
+			<object-segment name="result" result-class="OperatorData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="smsdetails-search-page" path="/e3/static/query/sms" response-check="true">
+			<object-segment name="result" result-class="OperatorData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="businesstype-map_File" result-type="string">
+					<operation type="template"><![CDATA[${businesstype-map}]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="billdetail-search-page" path="/e3/static/query/queryHistoryBill" response-check="true">
+			<object-segment name="result" result-class="OperatorData">
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<parser-definition>
+		<parser id="calldetails-linknodes-discover-search-parser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([\d-]+):([\d-]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="beginDate"></map>
+						<map group-index="2" placeholder="endDate"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://iservice.10010.com/e3/static/query/callDetail"pageNo=1&pageSize=2147483647&beginDate=${beginDate}&endDate=${endDate}
+                ]]></url-template>
+			<link-url-template><![CDATA[http://iservice.10010.com/e3/query/call_dan.html]]>
+			</link-url-template>
+		</parser>
+
+		<parser id="smsdetails-linknodes-discover-search-parser">
+			<headers><![CDATA[{"Accept":"application/json, text/javascript, */*; q=0.01","Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+):([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="begindate"></map>
+						<map group-index="2" placeholder="enddate"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://iservice.10010.com/e3/static/query/sms"pageNo=1&pageSize=2147483647&begindate=${begindate}&enddate=${enddate}]]></url-template>
+			<link-url-template><![CDATA[http://iservice.10010.com/e3/query/call_sms.html]]></link-url-template>
+		</parser>
+
+		<parser id="billdetails-linknodes-discover-search-parser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+),]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="billdate"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://iservice.10010.com/e3/static/query/queryHistoryBill"billdate=${billdate}]]></url-template>
+			<link-url-template><![CDATA[http://iservice.10010.com/e3/query/history_list.html]]></link-url-template>
+		</parser>
+
+		<parser id="personalinfo-linknodes-discover-search-parser">
+			<headers><![CDATA[{"X-Requested-With":"XMLHttpRequest","Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"}]]></headers>
+			<url-template><![CDATA[http://iservice.10010.com/e3/static/query/searchPerInfo"]]></url-template>
+			<link-url-template><![CDATA[http://iservice.10010.com/e3/query/personal_xx.html]]></link-url-template>
+		</parser>
+	</parser-definition>
+</config>

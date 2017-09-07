@@ -1,0 +1,1109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <extrator-selectors>
+    <selector field="pageContent" contain="广发补发账单" dis-contain="" ref="page-extractor_bufa"></selector>
+    <selector field="pageContent" contain="广发银行" dis-contain="" ref="page-extractor_duoka"></selector>
+    <selector field="pageContent" contain="━━━━━" dis-contain="" ref="page-extractor_201512new"></selector>
+    <selector field="subject" contain="补发|补寄" dis-contain="" ref="page-extractor_bufa_subExtrat"></selector>
+    <selector field="pageContent" contain="turnPageShowNum" dis-contain="" ref="page-extractor_Deposit"></selector>
+    <selector field="url" contain="perbank/CR1080.do" dis-contain="" ref="ebank_page-extractor_2"></selector>
+  </extrator-selectors>
+
+  <page-extractor-definition>
+    <page-extractor id="page-extractor_bufa_subExtrat" dis-alternative="true">
+      <page-sources>
+        <source field="attachment" split="~~~"></source>
+      </page-sources>
+      <object-segment name="subExtrat" type="split" value="~~~" not-empty="true">
+        <field-extractor id="pageContent" field="pageContent">
+          <operation type="return"></operation>
+          <operation type="append" index="0">广发补发账单</operation>
+        </field-extractor>
+        <field-extractor id="attachment" field="attachment">
+          <operation type="set"><![CDATA[${empty}]]></operation>
+        </field-extractor>
+      </object-segment>
+    </page-extractor>
+
+    <page-extractor id="page-extractor_bufa" dis-alternative="true">
+      <page-sources>
+        <source field="pageContent">
+        </source>
+      </page-sources>
+      <object-segment name="bankBills">
+        <field-extractor id="baseString" field="temp">
+          <operation type="xpath"><![CDATA[/text()]]></operation>
+          <operation from="&amp;nbsp;" to="" type="replace"></operation>
+        </field-extractor>
+        <field-extractor id="baseStringSplit" field="temp">
+          <operation type="xpath"><![CDATA[/text(###)]]></operation>
+          <operation from="&amp;nbsp;" to="" type="replace"></operation>
+        </field-extractor>
+        <field-extractor id="NameOnCard" field="NameOnCard" source="baseString" result-type="string">
+          <operation type="regex" index="1"><![CDATA[尊敬的([^：,]{2,10})(先生|女士),]]></operation>
+        </field-extractor>
+        <field-extractor id="NameOnCard" field="NameOnCard" source="baseString" result-type="string" stand-by="true" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[尊敬的([^：,>]{2,10})客户]]></operation>
+        </field-extractor>
+        <field-extractor id="yearTemp" field="temp" source="baseString" result-type="string" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[以下是您(\d+)年信用卡账户信息]]></operation>
+        </field-extractor>
+        <field-extractor id="BillMonth" field="BillMonth" source="baseString" result-type="date" format="yyyyMM" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[StatementInformation(\d{2})月的账单]]></operation>
+          <operation type="append" index="0">${yearTemp}</operation>
+        </field-extractor>
+
+        <field-extractor id="BillDateMatcher" field="temp" source="baseString">
+          <operation type="regex"><![CDATA[账单周期(\d{4}/\d{2}/\d{2})-(\d{4}/\d{2}/\d{2})]]></operation>
+        </field-extractor>
+        <field-extractor id="BillStartDate" field="BillStartDate" result-type="date" format="yyyy/MM/dd" not-empty="true">
+          <operation type="matchgroup" source="BillDateMatcher" index="1"></operation>
+        </field-extractor>
+        <field-extractor id="BillDate" field="BillDate" result-type="date" format="yyyy/MM/dd">
+          <operation type="matchgroup" source="BillDateMatcher" index="2"></operation>
+        </field-extractor>
+        <field-extractor id="CreditLimit" source="baseString" field="CreditLimit" result-type="currency_payment">
+          <operation type="regex" index="1"><![CDATA[客户消费额度([-\d\.,]+)]]></operation>
+        </field-extractor>
+        <field-extractor id="CreditLimit" source="baseString" field="CreditLimit" result-type="currency_payment" stand-by="true" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[综合信用额度([-\d\.,]+)]]></operation>
+        </field-extractor>
+        <object-segment name="PaymentDueDate" result-class="date" type="xpath" value="div:matchesOwn(\d{4}/\d{2}/\d{2}):not(:contains(-))">
+          <field-extractor id="PaymentDueDate" field="PaymentDueDate" result-type="date" format="yyyy/MM/dd">
+            <operation type="xpath"><![CDATA[/text()]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="CardNums" type="xpath" value="div:matchesOwn(\d{4}\**\d{4})" result-class="string" merge="true" not-empty="true">
+          <field-extractor id="CardNums" field="CardNums" result-type="string">
+            <operation type="xpath"><![CDATA[/text( )]]></operation>
+            <operation type="regex" index="1"><![CDATA[\*+(\d{4})]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <!-- ###277,000.00###5289********5413###215,409.9###6###2015/12/02###21,541.00 -->
+        <!-- 人民币###277,000.00###5289********5413###215,409.9###6###2015/12/02###21,541.00 -->
+        <object-segment name="MinPayment" source="baseStringSplit" type="regex" value="人民币###(无需还款|[\d\.,]+)###\d{4}\*+\d{4}###(([^#]*###)?[\d\.,]+(###\d+)?)###(无需还款|[\d/]{10})###(无需还款|[\d\.,]+)"
+          result-class="currency_payment" group-index="0">
+          <field-extractor id="MinPayment" field="MinPayment" result-type="currency_payment">
+            <operation type="regex" index="6"><![CDATA[人民币###(无需还款|[\d\.,]+)###\d{4}\*+\d{4}###(([^#]*###)?[\d\.,]+(###\d+)?)###(无需还款|[\d/]{10})###(无需还款|[\d\.,]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCMinPayment" source="baseStringSplit" type="regex" value="美元###(无需还款|[\d\.,]+)###\d{4}\*+\d{4}###(([^#]*###)?[\d\.,]+(###\d+)?)###(无需还款|[\d/]{10})###(无需还款|[\d\.,]+)"
+          result-class="currency_payment" group-index="0">
+          <field-extractor id="FCMinPayment" field="FCMinPayment" result-type="currency_payment">
+            <operation type="regex" index="6"><![CDATA[(美元###(无需还款|[\d\.,]+)###\d{4}\*+\d{4}###(([^#]*###)?[\d\.,]+(###\d+)?)###(无需还款|[\d/]{10})###(无需还款|[\d\.,]+))]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+        <!-- stand-by for 163,993.35###16,400.00###2015/01/02###人民币###5289********5413 -->
+        <object-segment name="MinPayment" source="baseStringSplit" type="regex" value="(([^#]*###)?[\d\.,]+(###\d+)?)###(无需还款|[\d\.,]+)###(无需还款|[\d/]{10})###人民币###\d{4}\*+\d{4}"
+          result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="MinPayment" field="MinPayment" result-type="currency_payment">
+            <operation type="regex" index="4"><![CDATA[(([^#]*###)?[\d\.,]+(###\d+)?)###(无需还款|[\d\.,]+)###(无需还款|[\d/]{10})###人民币###\d{4}\*+\d{4}]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCMinPayment" source="baseStringSplit" type="regex" value="(([^#]*###)?[\d\.,]+(###\d+)?)###(无需还款|[\d\.,]+)###(无需还款|[\d/]{10})###美元###\d{4}\*+\d{4}"
+          result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="FCMinPayment" field="FCMinPayment" result-type="currency_payment">
+            <operation type="regex" index="4"><![CDATA[(([^#]*###)?[\d\.,]+(###\d+)?)###(无需还款|[\d\.,]+)###(无需还款|[\d/]{10})###美元###\d{4}\*+\d{4}]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+        <!-- 6225********4265###(含大额账户和普通账###户)###6,526.40###2016/10/17###人民币###653.00###10,000.00 -->
+        <object-segment name="MinPayment" source="baseStringSplit" type="regex" value="\d{4}\*+\d{4}###(([^#]*###)*[\d\.,]+)###(无需还款|[\d/]{10})###人民币###(无需还款|[\d\.,]+)###(无需还款|[\d\.,]+)"
+          result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="MinPayment" field="MinPayment" result-type="currency_payment">
+            <operation type="regex" index="4"><![CDATA[\d{4}\*+\d{4}###(([^#]*###)*[\d\.,]+)###(无需还款|[\d/]{10})###人民币###(无需还款|[\d\.,]+)###(无需还款|[\d\.,]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCMinPayment" source="baseStringSplit" type="regex" value="\d{4}\*+\d{4}###(([^#]*###)*[\d\.,]+)###(无需还款|[\d/]{10})###美元###(无需还款|[\d\.,]+)###(无需还款|[\d\.,]+)"
+          result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="FCMinPayment" field="FCMinPayment" result-type="currency_payment">
+            <operation type="regex" index="4"><![CDATA[\d{4}\*+\d{4}###(([^#]*###)*[\d\.,]+)###(无需还款|[\d/]{10})###美元###(无需还款|[\d\.,]+)###(无需还款|[\d\.,]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+        <!-- ###5289*******5413###232,199.08###6,876.88###23,666.00###215,409.96###人民币 -->
+        <object-segment name="NewBalance" source="baseStringSplit" type="regex" value="###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###人民币" result-class="currency_payment"
+          group-index="0">
+          <field-extractor id="NewBalance" field="NewBalance" result-type="currency_payment">
+            <operation type="regex" index="5"><![CDATA[###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###人民币]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCNewBalance" source="baseStringSplit" type="regex" value="###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###美元" result-class="currency_payment"
+          group-index="0">
+          <field-extractor id="FCNewBalance" field="FCNewBalance" result-type="currency_payment">
+            <operation type="regex" index="5"><![CDATA[###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###美元]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+        <!-- 6225********4265###(含大额账户和普通账###户)###6,526.40###2016/10/17###人民币###653.00###10,000.00 -->
+        <object-segment name="NewBalance" source="baseStringSplit" type="regex" value="\d{4}\*+\d{4}###(([^#]*###)*[\d\.,]+)###(无需还款|[\d/]{10})###人民币###(无需还款|[\d\.,]+)###(无需还款|[\d\.,]+)" result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="NewBalance" field="NewBalance" result-type="currency_payment">
+            <operation type="regex" index="3"><![CDATA[\d{4}\*+\d{4}###(([^#]*###)*([\d\.,]+))###(无需还款|[\d/]{10})###人民币###(无需还款|[\d\.,]+)###(无需还款|[\d\.,]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCNewBalance" source="baseStringSplit" type="regex" value="\d{4}\*+\d{4}###(([^#]*###)*[\d\.,]+)###(无需还款|[\d/]{10})###美元###(无需还款|[\d\.,]+)###(无需还款|[\d\.,]+)" result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="FCNewBalance" field="FCNewBalance" result-type="currency_payment">
+            <operation type="regex" index="3"><![CDATA[\d{4}\*+\d{4}###(([^#]*###)*([\d\.,]+))###(无需还款|[\d/]{10})###美元###(无需还款|[\d\.,]+)###(无需还款|[\d\.,]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="LastBalance" source="baseStringSplit" type="regex" value="###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###人民币" result-class="currency_payment"
+          group-index="0">
+          <field-extractor id="LastBalance" field="LastBalance" result-type="currency_payment">
+            <operation type="regex" index="2"><![CDATA[###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###人民币]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCLastBalance" source="baseStringSplit" type="regex" value="###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###美元" result-class="currency_payment"
+          group-index="0">
+          <field-extractor id="FCLastBalance" field="FCLastBalance" result-type="currency_payment">
+            <operation type="regex" index="2"><![CDATA[###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###美元]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+        <!-- 普通账户###人民币###6,179.55###1,033.33###9,461.52###10,148.00###6,526.40 -->
+        <object-segment name="LastBalance" source="baseStringSplit" type="regex" value="普通账户###人民币###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)" result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="LastBalance" field="LastBalance" result-type="currency_payment">
+            <operation type="regex" index="1"><![CDATA[普通账户###人民币###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCLastBalance" source="baseStringSplit" type="regex" value="普通账户###美元###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)" result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="FCLastBalance" field="FCLastBalance" result-type="currency_payment">
+            <operation type="regex" index="1"><![CDATA[普通账户###美元###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="LastPayment" source="baseStringSplit" type="regex" value="###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###人民币" result-class="currency_payment"
+          group-index="0">
+          <field-extractor id="LastPayment" field="LastPayment" result-type="currency_payment">
+            <operation type="regex" index="4"><![CDATA[###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###人民币]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCLastPayment" source="baseStringSplit" type="regex" value="###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###美元" result-class="currency_payment"
+          group-index="0">
+          <field-extractor id="FCLastPayment" field="FCLastPayment" result-type="currency_payment">
+            <operation type="regex" index="4"><![CDATA[###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###美元]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+        <!-- 普通账户###人民币###6,179.55###1,033.33###9,461.52###10,148.00###6,526.40 -->
+        <object-segment name="LastPayment" source="baseStringSplit" type="regex" value="普通账户###人民币###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)" result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="LastPayment" field="LastPayment" result-type="currency_payment">
+            <operation type="regex" index="4"><![CDATA[普通账户###人民币###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCLastPayment" source="baseStringSplit" type="regex" value="普通账户###美元###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)" result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="FCLastPayment" field="FCLastPayment" result-type="currency_payment">
+            <operation type="regex" index="4"><![CDATA[普通账户###美元###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="NewCharges" source="baseStringSplit" type="regex" value="###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###人民币" result-class="currency_payment"
+          group-index="0">
+          <field-extractor id="NewCharges" field="NewCharges" result-type="currency_payment">
+            <operation type="regex" index="3"><![CDATA[###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###人民币]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCNewCharges" source="baseStringSplit" type="regex" value="###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###美元" result-class="currency_payment"
+          group-index="0">
+          <field-extractor id="FCNewCharges" field="FCNewCharges" result-type="currency_payment">
+            <operation type="regex" index="3"><![CDATA[###([\d\*]+)###([\d\.,-]+)###([\d\.,]+)###([\d\.,]+)###([\d\.,-]+)###美元]]></operation>
+            <operation type="append" index="0"><![CDATA[美元]]></operation>
+          </field-extractor>
+        </object-segment>
+        <!-- 普通账户###人民币###6,179.55###1,033.33###9,461.52###10,148.00###6,526.40 -->
+        <object-segment name="NewCharges" source="baseStringSplit" type="regex" value="普通账户###人民币###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)" result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="NewChargesTemp" field="temp" result-type="string">
+            <operation type="regex" index="2"><![CDATA[普通账户###人民币###([\d\.,-]+)((###[\d\.,]+)+)###([\d\.,]+)###([\d\.,-]+)]]></operation>
+          </field-extractor>
+          <object-segment name="NewCharges" source="NewChargesTemp" type="regex" value="###([\d\.,]+)" result-class="currency_payment" group-index="1">
+            <field-extractor id="NewCharges" field="NewCharges" result-type="currency_payment">
+              <operation type="regex" index="1"><![CDATA[([\d\.,]+)]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+        <object-segment name="FCNewCharges" source="baseStringSplit" type="regex" value="普通账户###美元###([\d\.,-]+)(###([\d\.,]+))+###([\d\.,]+)###([\d\.,-]+)" result-class="currency_payment" group-index="0" stand-by="true">
+          <field-extractor id="FCNewChargesTemp" field="FCNewChargesTemp" result-type="string">
+            <operation type="regex" index="2"><![CDATA[普通账户###美元###([\d\.,-]+)((###[\d\.,]+)+)###([\d\.,]+)###([\d\.,-]+)]]></operation>
+          </field-extractor>
+          <object-segment name="FCNewCharges" source="FCNewChargesTemp" type="regex" value="###([\d\.,]+)" result-class="currency_payment" group-index="1">
+            <field-extractor id="FCNewCharges" field="FCNewCharges" result-type="currency_payment">
+              <operation type="regex" index="1"><![CDATA[([\d\.,]+)]]></operation>
+              <operation type="append" index="0"><![CDATA[美元]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+
+        <object-segment name="Integral" type="regex" group-index="0" value="###([^#]*积分)###(\d+)###(\d+)###(\d+)###(\d+)###([\d\*]+)" source="baseStringSplit" result-class="number">
+          <field-extractor id="field-extractor_1" field="Integral" result-type="number">
+            <operation type="regex" index="5"><![CDATA[###([^#]*积分)###(\d+)###(\d+)###(\d+)###(\d+)###([\d\*]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="IntegralAdd" type="regex" value="###([^#]*积分)###(\d+)###(\d+)###(\d+)###(\d+)###([\d\*]+)" group-index="0" source="baseStringSplit" result-class="number">
+          <field-extractor id="field-extractor_1" field="IntegralAdd" result-type="number">
+            <operation type="regex" index="3"><![CDATA[###([^#]*积分)###(\d+)###(\d+)###(\d+)###(\d+)###([\d\*]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="LastIntegral" type="regex" value="###([^#]*积分)###(\d+)###(\d+)###(\d+)###(\d+)###([\d\*]+)" group-index="0" source="baseStringSplit" result-class="number">
+          <field-extractor id="field-extractor_1" field="LastIntegral" result-type="number">
+            <operation type="regex" index="2"><![CDATA[###([^#]*积分)###(\d+)###(\d+)###(\d+)###(\d+)###([\d\*]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="IntegralUsed" type="regex" value="###([^#]*积分)###(\d+)###(\d+)###(\d+)###(\d+)###([\d\*]+)" group-index="0" source="baseStringSplit" result-class="number">
+          <field-extractor id="field-extractor_1" field="IntegralUsed" result-type="number">
+            <operation type="regex" index="4"><![CDATA[###([^#]*积分)###(\d+)###(\d+)###(\d+)###(\d+)###([\d\*]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="ShoppingSheet" source="baseStringSplit" type="regex" value="([\d\*]+)?(###)?((\d{8})?###(\d{8})?###([\d\-\.,]+)###([\d\-\.,]+)###([^#]*(###)?[^#]*)###(人民币|美元|其他货币)###)"
+          group-index="0">
+          <field-extractor id="CardNoTemp" field="temp" field-visible-type="request" default-value="${CardNoTemp}">
+            <operation type="regex" index="1"><![CDATA[([\d\*]+)###((\d{8})?###(\d{8})?###([\d\-\.,]+)###([\d\-\.,]+)###([^#]*(###)?[^#]*)###(人民币|美元|其他货币)###)]]></operation>
+            <operation type="regex" index="1"><![CDATA[\*+(\d{4})]]></operation>
+          </field-extractor>
+          <field-extractor id="ShoppingSheetMatcher" field="temp">
+            <operation type="regex"><![CDATA[((\d{8})?###(\d{8})?###([\d\-\.,]+)###([\d\-\.,]+)###([^#]*(###)?[^#]*)###(人民币|美元|其他货币)###)]]></operation>
+          </field-extractor>
+          <field-extractor id="CardNo" field="CardNo" result-type="string">
+            <operation type="template"><![CDATA[${CardNoTemp}]]></operation>
+          </field-extractor>
+          <field-extractor id="TransDate" field="TransDate" result-type="date" format="yyyyMMdd">
+            <operation type="matchgroup" source="ShoppingSheetMatcher" index="1"></operation>
+          </field-extractor>
+          <field-extractor id="PostDate" field="PostDate" result-type="date" format="yyyyMMdd">
+            <operation type="matchgroup" source="ShoppingSheetMatcher" index="2"></operation>
+          </field-extractor>
+          <field-extractor id="Description" field="Description" result-type="string">
+            <operation type="matchgroup" source="ShoppingSheetMatcher" index="6"></operation>
+            <operation from="&amp;nbsp;" to="" type="replace"></operation>
+            <operation from="###" to="" type="replace"></operation>
+          </field-extractor>
+          <field-extractor id="CurrencyType" field="CurrencyType" result-type="currency">
+            <operation type="matchgroup" source="ShoppingSheetMatcher" index="8"></operation>
+          </field-extractor>
+          <field-extractor id="AmountMoney" field="AmountMoney" result-type="currency_payment">
+            <operation type="matchgroup" source="ShoppingSheetMatcher" index="5"></operation>
+            <operation type="append" index="0"><![CDATA[${CurrencyType}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="Installment" source="baseStringSplit" type="regex" group-index="0"
+          value="\d+/###\d{4}###(\d+)###(([\d\.,元]+(###)?[\d\.,元]*)/(\d+)期)###(\d+)期###([\d\.,]+)###([\d\.,]+)###([\d\.,]+)###([^#]+(###((?!合计)[^#\d])*)?)">
+          <field-extractor id="InstallmentMatcher" field="temp">
+            <operation type="regex"><![CDATA[\d+/###\d{4}###(\d+)###(([\d\.,元]+(###)?[\d\.,元]*)/(\d+)期)###(\d+)期###([\d\.,]+)###([\d\.,]+)###([\d\.,]+)###([^#]+(###((?!合计)[^#\d])*)?)]]></operation>
+          </field-extractor>
+          <field-extractor id="InstallmentInfo" field="InstallmentInfo" result-type="string">
+            <operation type="matchgroup" source="InstallmentMatcher" index="10"></operation>
+            <operation from="###" to="" type="replace"></operation>
+          </field-extractor>
+          <field-extractor id="ImTotalTerm" field="ImTotalTerm" result-type="number">
+            <operation type="matchgroup" source="InstallmentMatcher" index="5"></operation>
+          </field-extractor>
+          <field-extractor id="ImTotalBalance" field="ImTotalBalance" result-type="currency_payment">
+            <operation type="matchgroup" source="InstallmentMatcher" index="3"></operation>
+            <operation from="###" to="" type="replace"></operation>
+          </field-extractor>
+          <field-extractor id="UnRecordedTerm" field="UnRecordedTerm" result-type="number">
+            <operation type="matchgroup" source="InstallmentMatcher" index="6"></operation>
+          </field-extractor>
+          <field-extractor id="ImNewFees" field="ImNewFees" result-type="currency_payment">
+            <operation type="matchgroup" source="InstallmentMatcher" index="8"></operation>
+          </field-extractor>
+          <field-extractor id="UnRecordedBalance" field="UnRecordedBalance" result-type="currency_payment">
+            <operation type="matchgroup" source="InstallmentMatcher" index="9"></operation>
+          </field-extractor>
+          <field-extractor id="ImNewBalance" field="ImNewBalance" result-type="currency_payment">
+            <operation type="matchgroup" source="InstallmentMatcher" index="7"></operation>
+          </field-extractor>
+          <field-extractor id="InstallmentDate" field="InstallmentDate" result-type="date" format="yyyyMMdd">
+            <operation type="matchgroup" source="InstallmentMatcher" index="1"></operation>
+          </field-extractor>
+        </object-segment>
+      </object-segment>
+    </page-extractor>
+
+    <page-extractor id="page-extractor_201512new">
+      <page-sources>
+        <source field="pageContent">
+        </source>
+      </page-sources>
+      <object-segment name="bankBills">
+        <field-extractor id="NameOnCard" field="NameOnCard" result-type="string">
+          <operation type="regex" index="1"><![CDATA[尊敬的([^：,]{2,10})(先生|女士),]]></operation>
+        </field-extractor>
+        <field-extractor id="NameOnCard" field="NameOnCard" result-type="string" stand-by="true">
+          <operation type="regex" index="1"><![CDATA[尊敬的([^：,]{2,10})(..),|：]]></operation>
+        </field-extractor>
+        <field-extractor id="NameOnCard" field="NameOnCard" result-type="string" stand-by="true" not-empty="true">
+          <operation type="xpath"><![CDATA[/text()]]></operation>
+          <operation type="regex" index="1"><![CDATA[尊敬的([^：,]{2,10})(先生|女士),]]></operation>
+        </field-extractor>
+        <field-extractor id="BillMonth" field="BillMonth" result-type="date" format="yyyyMM" not-empty="true">
+          <operation from="年" to="" type="replace"></operation>
+          <operation type="regex" index="1"><![CDATA[下是您(\d+)月的]]></operation>
+        </field-extractor>
+
+        <field-extractor id="BillDateMatcher" field="temp">
+          <operation type="xpath"><![CDATA[tr:contains(账单周期):contains(至):not(:has(tr))/text()]]></operation>
+          <operation from="&amp;nbsp;" to="" type="replace"></operation>
+          <operation type="regex"><![CDATA[(\d{4}/\d{2}/\d{2})\s*至\s*(\d{4}/\d{2}/\d{2})]]></operation>
+        </field-extractor>
+        <field-extractor id="BillStartDate" field="BillStartDate" result-type="date" format="yyyy/MM/dd" not-empty="true">
+          <operation type="matchgroup" source="BillDateMatcher" index="1"></operation>
+        </field-extractor>
+        <field-extractor id="BillDate" field="BillDate" result-type="date" format="yyyy/MM/dd">
+          <operation type="matchgroup" source="BillDateMatcher" index="2"></operation>
+        </field-extractor>
+
+        <field-extractor id="BillBaseInfo" field="temp">
+          <operation type="xpath"><![CDATA[table:contains(账单周期):contains(本期应还总额):not(:has(table:contains(账单周期):contains(本期应还总额)))]]></operation>
+        </field-extractor>
+        <object-segment name="CreditLimit" source="BillBaseInfo" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment" not-empty="true">
+          <field-extractor id="CreditLimit" field="CreditLimit" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text( )]]></operation>
+            <operation type="regex" index="1"><![CDATA[人民币\s*([-\d\.,]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCCreditLimit" source="BillBaseInfo" type="xpath" value="tr:contains(*****):not(:has(tr)):not(:contains(人民币))" result-class="currency_payment">
+          <field-extractor id="FCCreditLimit" field="FCCreditLimit" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text( )]]></operation>
+            <operation type="regex" index="1"><![CDATA[.+\s+([^\s]+\s+[-\d\.,]+)\s*]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="PaymentDueDate" source="BillBaseInfo" type="xpath" value="tr:contains(*****):not(:has(tr))" result-class="date">
+          <field-extractor id="PaymentDueDate" field="PaymentDueDate" result-type="date" format="yyyy/MM/dd">
+            <operation type="xpath"><![CDATA[/text( )]]></operation>
+            <operation type="regex" index="1"><![CDATA[(\d{4}/\d{2}/\d{2})]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="CardNums" source="BillBaseInfo" type="xpath" value="tr:contains(*****):not(:has(tr))" result-class="string" not-empty="true">
+          <field-extractor id="CardNums" field="CardNums" result-type="string">
+            <operation type="xpath"><![CDATA[/text( )]]></operation>
+            <operation type="regex" index="1"><![CDATA[\*+(\d{4})]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="MinPayment" source="BillBaseInfo" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment">
+          <field-extractor id="MinPayment" field="MinPayment" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text( )]]></operation>
+            <operation type="regex" index="1"><![CDATA[([-\d\.,]+)\s*\d{4}/\d{2}/\d{2}]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="FCMinPayment" source="BillBaseInfo" type="xpath" value="tr:contains(*****):not(:has(tr)):not(:contains(人民币))" result-class="currency_payment">
+          <field-extractor id="currency" field="temp">
+            <operation type="xpath"><![CDATA[/text( )]]></operation>
+            <operation type="regex" index="1"><![CDATA[.+\s+([^\s]+)\s+[-\d\.,]+\s*]]></operation>
+          </field-extractor>
+          <field-extractor id="FCMinPayment" field="FCMinPayment" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text( )]]></operation>
+            <operation type="regex" index="1"><![CDATA[([-\d\.,]+)\s*\d{4}/\d{2}/\d{2}]]></operation>
+            <operation type="append" index="0"><![CDATA[${currency}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <field-extractor id="BalanceTemp" field="temp">
+          <operation type="xpath"><![CDATA[tr:contains(本期应还总额):contains(本期支出) + tr tr:has(:contains(****)):not(:has(tr)):not(:contains(积分))]]></operation>
+        </field-extractor>
+
+        <object-segment name="NewBalance" source="BalanceTemp" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment">
+          <field-extractor id="NewBalance" field="NewBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <!-- 3791@@人民币@@1,751.25@@0.00@@1,751.25@@0.00 -->
+            <!-- 5203********1726@@5203********7746@@人民币@@22,758.96@@17,732.41@@7,779.55@@2,753.00@@ -->
+            <operation type="regex" index="2"><![CDATA[(\*+\d+)@@人民币@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="NewBalance" source="BalanceTemp" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment" stand-by="true" not-empty="true">
+          <field-extractor id="NewBalanceTemp" field="temp">
+            <operation type="xpath"><![CDATA[td:contains(人民币) + td]]></operation>
+          </field-extractor>
+          <object-segment name="NewBalance" source="NewBalanceTemp" type="split" value="&lt;br /&gt;" result-class="currency_payment">
+            <field-extractor id="NewBalance" field="NewBalance" result-type="currency_payment">
+              <operation type="xpath"><![CDATA[/text()]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+        <object-segment name="FCNewBalance" source="BalanceTemp" type="xpath" value="tr:contains(*****):not(:has(tr)):not(:contains(人民币))" result-class="currency_payment">
+          <field-extractor id="currency" field="temp">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <operation type="regex" index="1"><![CDATA[\*+\d+@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+          </field-extractor>
+          <field-extractor id="FCNewBalance" field="FCNewBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <operation type="regex" index="2"><![CDATA[\*+\d+@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[${currency}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="LastBalance" source="BalanceTemp" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment">
+          <field-extractor id="LastBalance" field="LastBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <!-- 3791@@人民币@@1,751.25@@0.00@@1,751.25@@0.00 -->
+            <operation type="regex" index="3"><![CDATA[(\*+\d+)@@人民币@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="LastBalance" source="BalanceTemp" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment" stand-by="true">
+          <field-extractor id="LastBalanceTemp" field="temp">
+            <operation type="xpath"><![CDATA[td:contains(人民币) + td + td]]></operation>
+          </field-extractor>
+          <object-segment name="LastBalance" source="LastBalanceTemp" type="split" value="&lt;br /&gt;" result-class="currency_payment">
+            <field-extractor id="LastBalance" field="LastBalance" result-type="currency_payment">
+              <operation type="xpath"><![CDATA[/text()]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+        <object-segment name="FCLastBalance" source="BalanceTemp" type="xpath" value="tr:contains(*****):not(:has(tr)):not(:contains(人民币))" result-class="currency_payment">
+          <field-extractor id="currency" field="temp">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <operation type="regex" index="1"><![CDATA[\*+\d+@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+          </field-extractor>
+          <field-extractor id="FCLastBalance" field="FCLastBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <operation type="regex" index="3"><![CDATA[\*+\d+@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[${currency}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="LastPayment" source="BalanceTemp" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment">
+          <field-extractor id="LastPayment" field="LastPayment" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <!-- 3791@@人民币@@1,751.25@@0.00@@1,751.25@@0.00 -->
+            <operation type="regex" index="5"><![CDATA[(\*+\d+)@@人民币@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="LastPayment" source="BalanceTemp" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment" stand-by="true">
+          <field-extractor id="LastPaymentTemp" field="temp">
+            <operation type="xpath"><![CDATA[td:contains(人民币) + td + td + td + td]]></operation>
+          </field-extractor>
+          <object-segment name="LastPayment" source="LastPaymentTemp" type="split" value="&lt;br /&gt;" result-class="currency_payment">
+            <field-extractor id="LastPayment" field="LastPayment" result-type="currency_payment">
+              <operation type="xpath"><![CDATA[/text()]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+        <object-segment name="FCLastPayment" source="BalanceTemp" type="xpath" value="tr:contains(*****):not(:has(tr)):not(:contains(人民币))" result-class="currency_payment">
+          <field-extractor id="currency" field="temp">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <operation type="regex" index="1"><![CDATA[\*+\d+@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+          </field-extractor>
+          <field-extractor id="FCLastPayment" field="FCLastPayment" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <operation type="regex" index="5"><![CDATA[\*+\d+@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[${currency}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="NewCharges" source="BalanceTemp" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment">
+          <field-extractor id="NewCharges" field="NewCharges" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <!-- 3791@@人民币@@1,751.25@@0.00@@1,751.25@@0.00 -->
+            <operation type="regex" index="4"><![CDATA[(\*+\d+)@@人民币@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="NewCharges" source="BalanceTemp" type="xpath" value="tr:contains(*****):contains(人民币):not(:has(tr))" result-class="currency_payment" stand-by="true">
+          <field-extractor id="NewChargesTemp" field="temp">
+            <operation type="xpath"><![CDATA[td:contains(人民币) + td + td + td ]]></operation>
+          </field-extractor>
+          <object-segment name="NewCharges" source="NewChargesTemp" type="split" value="&lt;br /&gt;" result-class="currency_payment">
+            <field-extractor id="NewCharges" field="NewCharges" result-type="currency_payment">
+              <operation type="xpath"><![CDATA[/text()]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+        <object-segment name="FCNewCharges" source="BalanceTemp" type="xpath" value="tr:contains(*****):not(:has(tr)):not(:contains(人民币))" result-class="currency_payment">
+          <field-extractor id="currency" field="temp">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <operation type="regex" index="1"><![CDATA[\*+\d+@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+          </field-extractor>
+          <field-extractor id="FCNewCharges" field="FCNewCharges" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+            <operation type="regex" index="4"><![CDATA[\*+\d+@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[${currency}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <field-extractor id="integralTemp" field="temp">
+          <operation type="xpath"><![CDATA[tr:contains(本期新增):contains(积分) + tr:has(:contains(****))]]></operation>
+          <operation type="xpath"><![CDATA[tr:not(:has(tr))/text( )]]></operation>
+          <operation from="\r|\n" to="" type="replace"></operation>
+          <operation from="&amp;nbsp;" to=" " type="replace"></operation>
+        </field-extractor>
+        <object-segment name="Integral" type="regex" value="(\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+\d+)" group-index="1" source="integralTemp" result-class="number">
+          <field-extractor id="field-extractor_1" field="Integral" result-type="number">
+            <operation type="regex" index="1"><![CDATA[\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+(\d+)]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="LastIntegral" type="regex" value="(\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+\d+)" group-index="1" source="integralTemp" result-class="number">
+          <field-extractor id="field-extractor_1" field="LastIntegral" result-type="number">
+            <operation type="regex" index="1"><![CDATA[\d{4}\*+\d{4}\s+[^ ]+\s+(\d+)\s+\d+\s+\d+\s+\d+]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="IntegralAdd" type="regex" value="(\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+\d+)" group-index="1" source="integralTemp" result-class="number">
+          <field-extractor id="field-extractor_1" field="IntegralAdd" result-type="number">
+            <operation type="regex" index="1"><![CDATA[\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+(\d+)\s+\d+\s+\d+]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="IntegralUsed" type="regex" value="(\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+\d+)" group-index="1" source="integralTemp" result-class="number">
+          <field-extractor id="field-extractor_1" field="IntegralUsed" result-type="number">
+            <operation type="regex" index="1"><![CDATA[\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+(\d+)\s+\d+]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="ShoppingSheet" type="xpath" value="tr:contains(交易明细):not(:contains(分期付款明细)):not(:contains(交易明细已搬家到“发现精彩”APP啦)):not(:contains(本期账户明细)) tr:not(:has(tr))"
+          break-pattern="积分明细">
+          <field-extractor id="CardNoTemp" field="temp" field-visible-type="request" default-value="${CardNoTemp}">
+            <operation type="regex" index="1"><![CDATA[\*+(\d{4})]]></operation>
+          </field-extractor>
+          <object-segment name="ShoppingSheet" type="xpath" value="tr:has(td:gt(4))" contains="[\d-]{8,}|人民币">
+            <field-extractor id="ShoppingSheetMatcher" field="temp">
+              <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+              <!-- 2015-11-15@@2015-11-15@@网上转账还款（支付宝）@@-0.16@@人民币@@-0.16@@ -->
+              <operation type="regex"><![CDATA[([^@]*)@@([^@]*)@@(.*)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+            </field-extractor>
+            <field-extractor id="ShoppingSheetMatcher" field="temp" stand-by="true">
+              <operation type="xpath"><![CDATA[/text(@@)]]></operation>
+              <!-- @@网上转账还款（支付宝）@@-0.16@@人民币@@-0.16@@ -->
+              <operation type="regex"><![CDATA[()()([^@]+)@@([^@]+)@@([^@]+)@@([^@]+)]]></operation>
+            </field-extractor>
+            <field-extractor id="CardNo" field="CardNo" result-type="string">
+              <operation type="template"><![CDATA[${CardNoTemp}]]></operation>
+            </field-extractor>
+            <field-extractor id="TransDate" field="TransDate" result-type="date" format="yyyy-MM-dd;yyyyMMdd">
+              <operation type="matchgroup" source="ShoppingSheetMatcher" index="1"></operation>
+            </field-extractor>
+            <field-extractor id="PostDate" field="PostDate" result-type="date" format="yyyy-MM-dd;yyyyMMdd">
+              <operation type="matchgroup" source="ShoppingSheetMatcher" index="2"></operation>
+            </field-extractor>
+            <field-extractor id="Description" field="Description" result-type="string">
+              <operation type="matchgroup" source="ShoppingSheetMatcher" index="3"></operation>
+              <operation from="&amp;nbsp;" to="" type="replace"></operation>
+              <operation from="@@" to="" type="replace"></operation>
+            </field-extractor>
+            <field-extractor id="CurrencyType" field="CurrencyType" result-type="currency">
+              <operation type="matchgroup" source="ShoppingSheetMatcher" index="5"></operation>
+            </field-extractor>
+            <field-extractor id="AmountMoney" field="AmountMoney" result-type="currency_payment">
+              <operation type="matchgroup" source="ShoppingSheetMatcher" index="6"></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+
+        <object-segment name="Installment" type="xpath" value="tr:contains(分期类型):not(:has(金额单位)) + tr:has(:contains(期)):matches([\d/]{10,}) tr:not(:has(tr)):has(:contains(期)):matches([\d]{10,}/\d{4})">
+          <field-extractor id="InstallmentInfo" field="InstallmentInfo" result-type="string">
+            <operation type="xpath"><![CDATA[//td[2]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="ImTotalTerm" field="ImTotalTerm" result-type="number">
+            <operation type="xpath"><![CDATA[//td[4]/text()]]></operation>
+            <operation type="regex" index="1"><![CDATA[/(\d+)期]]></operation>
+          </field-extractor>
+          <field-extractor id="ImTotalBalance" field="ImTotalBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[//td[4]/text()]]></operation>
+            <operation type="regex" index="1"><![CDATA[([-\d\.,]+)]]></operation>
+          </field-extractor>
+          <field-extractor id="UnRecordedTerm" field="UnRecordedTerm" result-type="number">
+            <operation type="xpath"><![CDATA[//td[5]/text()]]></operation>
+            <operation type="regex" index="1"><![CDATA[(\d+)期]]></operation>
+          </field-extractor>
+          <field-extractor id="ImNewFees" field="ImNewFees" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[//td[7]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="UnRecordedBalance" field="UnRecordedBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[//td[8]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="ImNewBalance" field="ImNewBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[//td[6]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="InstallmentDate" field="InstallmentDate" result-type="date" format="yyyy-MM-dd">
+            <operation type="xpath"><![CDATA[//td[3]/text()]]></operation>
+          </field-extractor>
+        </object-segment>
+      </object-segment>
+    </page-extractor>
+
+    <page-extractor id="page-extractor_duoka">
+      <page-sources>
+        <source field="pageContent">
+        </source>
+      </page-sources>
+
+      <object-segment name="bankBills">
+        <field-extractor id="s️tatementInformation" field="temp">
+          <operation type="xpath"><![CDATA[table:contains(账单周期):contains(Min.Payment):not(:has(table:contains(账单周期):contains(Min.Payment)))/text( )]]></operation>
+        </field-extractor>
+        <field-extractor id="s️tatementInformationText" field="temp" source="s️tatementInformation">
+          <operation from="\r|\n" to="" type="replace"></operation>
+          <operation from="&amp;nbsp;" to=" " type="replace"></operation>
+        </field-extractor>
+        <field-extractor id="detailTemp" field="temp" field-visible-type="request">
+          <operation type="xpath"><![CDATA[tr:contains(交易摘要) + tr:contains(交易明细) + tr]]></operation>
+        </field-extractor>
+        <field-extractor id="integralTemp" field="temp">
+          <operation type="xpath"><![CDATA[tr:contains(本期新增):contains(积分) + tr:has(:contains(****))]]></operation>
+          <operation type="xpath"><![CDATA[tr:not(:has(tr))/text( )]]></operation>
+          <operation from="\r|\n" to="" type="replace"></operation>
+          <operation from="&amp;nbsp;" to=" " type="replace"></operation>
+        </field-extractor>
+
+        <field-extractor id="field-extractor_0" field="NameOnCard" result-type="string" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[尊敬的([^：]*)(先生|女士)：]]></operation>
+        </field-extractor>
+        <field-extractor id="field-extractor_1" field="BillMonth" result-type="date" format="yyyyMM" not-empty="true">
+          <operation from="年" to="" type="replace"></operation>
+          <operation type="regex" index="1"><![CDATA[您好,您(\d+)月]]></operation>
+        </field-extractor>
+
+        <field-extractor id="field-extractor_2" source="s️tatementInformationText" field="BillStartDate" result-type="date" format="yyyy/MM/dd" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[(\d{4}/\d{2}/\d{2}) - \d{4}/\d{2}/\d{2}]]></operation>
+        </field-extractor>
+        <field-extractor id="field-extractor_3" source="s️tatementInformationText" field="BillDate" result-type="date" format="yyyy/MM/dd">
+          <operation type="regex" index="1"><![CDATA[\d{4}/\d{2}/\d{2} - (\d{4}/\d{2}/\d{2})]]></operation>
+        </field-extractor>
+        <field-extractor id="field-extractor_4" source="s️tatementInformationText" field="CreditLimit" result-type="currency_payment" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[Total Credit Limit ([\.\d,]+)]]></operation>
+        </field-extractor>
+
+        <object-segment name="PaymentDueDate" type="regex" value="(((\d{4}\*+(\d{4})\s+)+)[^\d-]*([-\d\.,]+)\s+([^ ]*)\s+([^ ]*)\s+([^ ]*)\s+([\-\d\.,]+))" group-index="1"
+          source="s️tatementInformationText" result-class="date">
+          <field-extractor id="field-extractor_1" field="PaymentDueDate" result-type="date" format="yyyy/MM/dd">
+            <operation type="regex" index="1"><![CDATA[(\d{4}/\d{2}/\d{2})]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="CardNums" type="regex" value="(((\d{4}\*+(\d{4})\s+)+)[^\d-]*([-\d\.,]+)\s+([^ ]*)\s+([^ ]*)\s+([^ ]*)\s+([\-\d\.,]+))" group-index="1" source="s️tatementInformationText"
+          result-class="string" not-empty="true">
+          <object-segment name="CardNums" type="regex" value="\*+(\d{4})" group-index="1" result-class="string">
+            <field-extractor id="field-extractor_1" field="CardNums" result-type="string">
+              <operation type="return"></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+        <object-segment name="MinPayment" type="regex" value="(((\d{4}\*+(\d{4})\s+)+)[^\d-]*([-\d\.,]+)\s+([^ ]*)\s+([^ ]*)\s+([^ ]*)\s+([\-\d\.,]+))" group-index="1"
+          source="s️tatementInformationText" result-class="currency_payment" not-empty="true">
+          <field-extractor id="field-extractor_0" field="temp">
+            <operation type="regex" index="8"><![CDATA[(((\d{4}\*+(\d{4})\s+)+)[^\d-]*([-\d\.,]+)\s+([^ ]*)\s+([^ ]*)\s+([^ ]*)\s+([\-\d\.,]+))]]></operation>
+          </field-extractor>
+          <field-extractor id="field-extractor_1" field="MinPayment" result-type="currency_payment">
+            <operation type="regex" index="6"><![CDATA[(((\d{4}\*+(\d{4})\s+)+)[^\d-]*([-\d\.,]+)\s+([^ ]*)\s+([^ ]*)\s+([^ ]*)\s+([\-\d\.,]+))]]></operation>
+            <operation type="append" index="0"><![CDATA[${field-extractor_0}]]></operation>
+          </field-extractor>
+        </object-segment>
+        <object-segment name="NewBalance" type="regex" value="(((\d{4}\*+(\d{4})\s+)+)[^\d-]*([-\d\.,]+)\s+([^ ]*)\s+([^ ]*)\s+([^ ]*)\s+([\-\d\.,]+))" group-index="1"
+          source="s️tatementInformationText" result-class="currency_payment" not-empty="true">
+          <field-extractor id="field-extractor_0" field="temp">
+            <operation type="regex" index="8"><![CDATA[(((\d{4}\*+(\d{4})\s+)+)[^\d-]*([-\d\.,]+)\s+([^ ]*)\s+([^ ]*)\s+([^ ]*)\s+([\-\d\.,]+))]]></operation>
+          </field-extractor>
+          <field-extractor id="NewBalance" field="NewBalance" result-type="currency_payment">
+            <operation type="regex" index="5"><![CDATA[(((\d{4}\*+(\d{4})\s+)+)([^\d-]*[-\d\.,]+)\s+([^ ]*)\s+([^ ]*)\s+([^ ]*)\s+([\-\d\.,]+))]]></operation>
+            <operation type="append" index="0"><![CDATA[${field-extractor_0}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <field-extractor id="Balance_temp" field="temp">
+          <operation type="xpath"><![CDATA[tr:contains(本期应还总额):contains(本期支出) + tr tr:has(:contains(****)):not(:has(tr)):not(:contains(积分))]]></operation>
+        </field-extractor>
+
+
+        <object-segment name="LastBalance" source="Balance_temp" type="xpath" value="tr" result-class="currency_payment">
+          <field-extractor id="BalanceCurrency" field="temp" field-visible-type="request">
+            <operation type="xpath"><![CDATA[td:eq(1)/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="LastBalanceTemp" field="temp">
+            <operation type="xpath"><![CDATA[td:eq(2)/text(@@)]]></operation>
+          </field-extractor>
+          <object-segment name="LastBalance" type="split" value="@@" source="LastBalanceTemp" result-class="currency_payment">
+            <field-extractor id="field-extractor_0" field="LastBalance" result-type="currency_payment">
+              <operation type="append" index="0"><![CDATA[${BalanceCurrency}]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+
+
+        <object-segment name="LastPayment" source="Balance_temp" type="xpath" value="tr" result-class="currency_payment">
+          <field-extractor id="BalanceCurrency" field="temp" field-visible-type="request">
+            <operation type="xpath"><![CDATA[td:eq(1)/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="LastPaymentTemp" field="temp">
+            <operation type="xpath"><![CDATA[td:eq(6)/text(@@)]]></operation>
+          </field-extractor>
+          <object-segment name="LastPayment" type="split" value="@@" source="LastPaymentTemp" result-class="currency_payment">
+            <field-extractor id="LastPayment" field="LastPayment" result-type="currency_payment">
+              <operation type="append" index="0"><![CDATA[${BalanceCurrency}]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+
+        <object-segment name="NewCharges" source="Balance_temp" type="xpath" value="tr" result-class="currency_payment">
+          <field-extractor id="BalanceCurrency" field="temp" field-visible-type="request">
+            <operation type="xpath"><![CDATA[td:eq(1)/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="NewChargesTemp" field="temp">
+            <operation type="xpath"><![CDATA[td:eq(4)/text(@@)]]></operation>
+          </field-extractor>
+          <object-segment name="NewCharges" type="split" value="@@" source="NewChargesTemp" result-class="currency_payment">
+            <field-extractor id="field-extractor_0" field="NewCharges" result-type="currency_payment">
+              <operation type="append" index="0"><![CDATA[${BalanceCurrency}]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+
+        <object-segment name="Integral" type="regex" value="(\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+\d+)" group-index="1" source="integralTemp" result-class="number">
+          <field-extractor id="field-extractor_1" field="Integral" result-type="number">
+            <operation type="regex" index="1"><![CDATA[\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+(\d+)]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="LastIntegral" type="regex" value="(\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+\d+)" group-index="1" source="integralTemp" result-class="number">
+          <field-extractor id="field-extractor_1" field="LastIntegral" result-type="number">
+            <operation type="regex" index="1"><![CDATA[\d{4}\*+\d{4}\s+[^ ]+\s+(\d+)\s+\d+\s+\d+\s+\d+]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="IntegralAdd" type="regex" value="(\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+\d+)" group-index="1" source="integralTemp" result-class="number">
+          <field-extractor id="field-extractor_1" field="IntegralAdd" result-type="number">
+            <operation type="regex" index="1"><![CDATA[\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+(\d+)\s+\d+\s+\d+]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="IntegralUsed" type="regex" value="(\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+\d+\s+\d+)" group-index="1" source="integralTemp" result-class="number">
+          <field-extractor id="field-extractor_1" field="IntegralUsed" result-type="number">
+            <operation type="regex" index="1"><![CDATA[\d{4}\*+\d{4}\s+[^ ]+\s+\d+\s+\d+\s+(\d+)\s+\d+]]></operation>
+          </field-extractor>
+        </object-segment>
+
+
+        <object-segment name="ShoppingSheet" type="xpath" value="tr:not(:has(tr))" source="detailTemp">
+          <field-extractor id="CardNoTemp" field="temp" field-visible-type="request" default-value="${CardNoTemp}">
+            <operation type="regex" index="1"><![CDATA[\*+(\d{4})]]></operation>
+          </field-extractor>
+          <object-segment name="ShoppingSheet" type="xpath" value="tr" contains="[\d-]{8,}|人民币" dis-contains="开通人民币">
+            <field-extractor id="CardNo" field="CardNo" result-type="string">
+              <operation type="template"><![CDATA[${CardNoTemp}]]></operation>
+            </field-extractor>
+            <field-extractor id="TransDate" field="TransDate" result-type="date" format="yyyy-MM-dd;yyyyMMdd">
+              <operation type="xpath"><![CDATA[//td[1]/text()]]></operation>
+            </field-extractor>
+            <field-extractor id="PostDate" field="PostDate" result-type="date" format="yyyy-MM-dd;yyyyMMdd">
+              <operation type="xpath"><![CDATA[//td[2]/text()]]></operation>
+            </field-extractor>
+            <field-extractor id="Description" field="Description" result-type="string">
+              <operation type="xpath"><![CDATA[//td[3]/text()]]></operation>
+              <operation from="&amp;nbsp;" to="" type="replace"></operation>
+            </field-extractor>
+            <field-extractor id="CurrencyType" field="CurrencyType" result-type="currency">
+              <operation type="xpath"><![CDATA[//td[5]/text()]]></operation>
+            </field-extractor>
+            <field-extractor id="AmountMoney" field="AmountMoney" result-type="currency_payment">
+              <operation type="xpath"><![CDATA[//td[6]/text()]]></operation>
+            </field-extractor>
+            <field-extractor id="AmountMoney" field="AmountMoney" result-type="currency_payment" stand-by="true">
+              <operation type="xpath"><![CDATA[//td[4]/text()]]></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+
+        <object-segment name="Installment" type="xpath" value="tr:contains(分期类型):not(:has(金额单位)) + tr:has(:contains(期)):matches([\d/]{10,}) tr:not(:has(tr)):has(:contains(期)):matches([\d]{10,}/\d{4})">
+          <field-extractor id="InstallmentInfo" field="InstallmentInfo" result-type="string">
+            <operation type="xpath"><![CDATA[//td[2]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="ImTotalTerm" field="ImTotalTerm" result-type="number">
+            <operation type="xpath"><![CDATA[//td[4]/text()]]></operation>
+            <operation type="regex" index="1"><![CDATA[/(\d+)期]]></operation>
+          </field-extractor>
+          <field-extractor id="ImTotalBalance" field="ImTotalBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[//td[4]/text()]]></operation>
+            <operation type="regex" index="1"><![CDATA[([-\d\.,]+)]]></operation>
+          </field-extractor>
+          <field-extractor id="UnRecordedTerm" field="UnRecordedTerm" result-type="number">
+            <operation type="xpath"><![CDATA[//td[5]/text()]]></operation>
+            <operation type="regex" index="1"><![CDATA[(\d+)期]]></operation>
+          </field-extractor>
+          <field-extractor id="ImNewFees" field="ImNewFees" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[//td[7]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="UnRecordedBalance" field="UnRecordedBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[//td[8]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="ImNewBalance" field="ImNewBalance" result-type="currency_payment">
+            <operation type="xpath"><![CDATA[//td[6]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="InstallmentDate" field="InstallmentDate" result-type="date" format="yyyy-MM-dd">
+            <operation type="xpath"><![CDATA[//td[3]/text()]]></operation>
+          </field-extractor>
+        </object-segment>
+      </object-segment>
+    </page-extractor>
+
+
+    <page-extractor id="page-extractor_Deposit">
+      <page-sources>
+        <source field="pageContent" split="~~~"></source>
+        <source field="cardNo"></source>
+        <source field="NameOnCard"></source>
+        <source field="AccountBalance"></source>
+        <source field="AvailableBalance"></source>
+        <source field="OpeningBank"></source>
+      </page-sources>
+      <object-segment name="depositcards">
+        <field-extractor id="CardNo" field="CardNo" result-type="string" not-empty="true">
+          <operation type="template" >${cardNo}</operation>
+        </field-extractor>
+        <field-extractor id="NameOnCard" field="NameOnCard" result-type="string" not-empty="true">
+          <operation type="template" >${NameOnCard}</operation>
+        </field-extractor>
+        <field-extractor id="AccountBalance" field="AccountBalance" result-type="number" >
+          <operation type="template" >${AccountBalance}</operation>
+        </field-extractor>
+        <field-extractor id="AvailableBalance" field="AvailableBalance" result-type="number" >
+          <operation type="template" >${AvailableBalance}</operation>
+        </field-extractor>
+        <field-extractor id="OpeningBank" field="OpeningBank" result-type="string">
+          <operation type="template" >${OpeningBank}</operation>
+          <operation type="trim" ></operation>
+        </field-extractor>
+        <field-extractor id="BankName" field="BankName" result-type="string" >
+          <operation type="template" >广发银行</operation>
+        </field-extractor>
+        <object-segment name="DealSheet" type="split" value="~~~">
+          <field-extractor id="DealSheetTemp" field="temp" result-type="string" >
+            <operation type="return" ></operation>
+            <operation type="replace" from="~~~" to="" ></operation>
+          </field-extractor>
+          <object-segment name="DealSheet" type="jsonpath"
+            value="$.cd.iTransferDetailList[*]" source="DealSheetTemp">
+            <field-extractor id="TransDate" field="TransDate"
+              result-type="date" format="yyyyMMdd">
+              <operation type="jsonpath">$.transDate</operation>
+            </field-extractor>
+            <field-extractor id="PostDate" field="PostDate"
+              result-type="date" format="yyyyMMdd">
+              <operation type="jsonpath">$.recordDate</operation>
+            </field-extractor>
+            <field-extractor id="Description" field="Description"
+              result-type="string">
+              <operation type="jsonpath">$.handAmount</operation>
+            </field-extractor>
+            <field-extractor id="OtherInformation" field="OtherInformation"
+              result-type="string">
+              <operation type="jsonpath">$.opponencyAcctName</operation>
+            </field-extractor>
+            <field-extractor id="OtherAccount" field="OtherAccount"
+              result-type="string">
+              <operation type="jsonpath">$.opponencyAccount</operation>
+            </field-extractor>
+            <field-extractor id="transferType" field="temp"
+              result-type="string">
+              <operation type="jsonpath">$.transferType</operation>
+              <operation type="replace" from="D" to="-"></operation>
+              <operation type="replace" from="C" to=""></operation>
+            </field-extractor>
+            <field-extractor id="transferAmt" field="temp"
+              result-type="string">
+              <operation type="jsonpath">$.transferAmt</operation>
+              <operation type="append" index="0">${transferType}</operation>
+              <operation type="replace" from="--" to=""></operation>
+            </field-extractor>
+            <field-extractor id="CurrencyType" field="CurrencyType"
+              result-type="string">
+              <operation type="jsonpath">$.currencyType</operation>
+              <operation type="replace" from="156" to="RMB"></operation>
+              <operation type="replace" from="840" to="USD"></operation>
+              <operation type="replace" from="392" to="JPY"></operation>
+            </field-extractor>
+            <field-extractor id="AmountMoney" field="AmountMoney"
+              result-type="number">
+              <operation type="calculate">${transferAmt}/100</operation>
+            </field-extractor>
+            <field-extractor id="AccountBalanceTemp" field="temp"
+              result-type="number">
+              <operation type="jsonpath">$.usableBalance</operation>
+            </field-extractor>
+            <field-extractor id="AccountBalance" field="AccountBalance"
+              result-type="number">
+              <operation type="calculate">${AccountBalanceTemp}/100
+              </operation>
+            </field-extractor>
+
+          </object-segment>
+        </object-segment>
+
+      </object-segment>
+    </page-extractor>
+    <page-extractor id="ebank_page-extractor_2" dis-alternative="true">
+      <page-sources>
+        <source field="pageContent"></source>
+      </page-sources>
+      <object-segment name="bankBills">
+        <field-extractor id="BillMonth" field="BillMonth" result-type="date" format="yyyyMM" not-empty="true">
+          <operation type="xpath"><![CDATA[/text()]]></operation>
+          <operation from="&amp;nbsp;" to="" type="replace"></operation>
+          <operation from="年" to="" type="replace"></operation>
+          <operation type="regex" index="1"><![CDATA[您好,您(\d+)月]]></operation>
+        </field-extractor>
+        <field-extractor id="NameOnCard" field="NameOnCard" not-empty="true">
+          <operation type="xpath"><![CDATA[tr:contains(尊敬的):not(:has(tr))/text()]]></operation>
+          <operation type="replace" from="&amp;nbsp;" to=""></operation>
+          <operation type="regex" index="1"><![CDATA[尊敬的([^：,]{2,10})(先生|女士)]]></operation>
+        </field-extractor>
+
+        <field-extractor id="basicTemp" field="temp" result-type="string">
+          <operation type="xpath">table:contains(信用卡账户信息):matches(\d{4}\*+\d{4}):not(:has(table:contains(信用卡账户信息):matches(\d{4}\*+\d{4})))</operation>
+          <operation type="replace" from="&amp;nbsp;" to=""></operation>
+        </field-extractor>
+        <field-extractor id="BillStartDate" field="BillStartDate" source="basicTemp" result-type="date" format="yyyy/MM/dd" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[(\d{4}/\d{2}/\d{2})-(\d{4}/\d{2}/\d{2})]]></operation>
+        </field-extractor>
+        <field-extractor id="BillDate" field="BillDate" source="basicTemp" result-type="date" format="yyyy/MM/dd" not-empty="true">
+          <operation type="regex" index="1"><![CDATA[\d{4}/\d{2}/\d{2}-(\d{4}/\d{2}/\d{2})]]></operation>
+        </field-extractor>
+        <field-extractor id="CreditLimit" field="CreditLimit" source="basicTemp" result-type="currency_payment" not-empty="true">
+          <operation type="xpath">td:contains(CreditLimit):not(:has(td))+td/text()</operation>
+          <operation type="trim"></operation>
+        </field-extractor>
+        <field-extractor id="balanceTemp" field="temp" source="basicTemp" result-type="string">
+          <operation type="xpath"><![CDATA[tr:matches(\d{4}\*+(\d{4})):not(:has(tr:matches(\d{4}\*+(\d{4}))))/text(##)]]></operation>
+        </field-extractor>
+        <object-segment name="CardNums" type="xpath" value="tr:matches(\d{4}\*+(\d{4})):not(:has(tr:matches(\d{4}\*+(\d{4}))))" source="basicTemp" result-class="string" not-empty="true">
+          <field-extractor id="CardNums" field="CardNums" result-type="string" not-empty="true">
+            <operation type="regex" index="1">\d{4}\*+(\d{4})</operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="NewBalance" type="xpath" value="tr:matches(\d{4}\*+(\d{4})):not(:has(tr:matches(\d{4}\*+(\d{4}))))" source="basicTemp" result-class="currency_payment" not-empty="true">
+          <field-extractor id="contentTemp" field="temp" result-type="string">
+            <operation type="xpath"><![CDATA[/text(##)]]></operation>
+          </field-extractor>
+          <field-extractor id="paymentSuffix" field="temp" source="contentTemp" result-type="string">
+            <operation type="regex" index="6"><![CDATA[\d{4}\*+\d{4}\s*##\s*(无需还款|([^#\d]*##)*[\d\.,]+)##(无需还款|([^#\d]*##)*[\d\.,]+)##(无需还款|[\d/]{10})##([^#]+)]]></operation>
+          </field-extractor>
+          <field-extractor id="NewBalance" field="NewBalance" source="contentTemp" result-type="currency_payment" not-empty="true">
+            <operation type="regex" index="2"><![CDATA[\d{4}\*+(\d{4})\s*##\s*(无需还款|([^#\d]*##)*[\d\.,]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[${paymentSuffix}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="MinPayment" type="xpath" value="tr:matches(\d{4}\*+(\d{4})):not(:has(tr:matches(\d{4}\*+(\d{4}))))" source="basicTemp" result-class="currency_payment" not-empty="true">
+          <field-extractor id="contentTemp" field="temp" result-type="string">
+            <operation type="xpath"><![CDATA[/text(##)]]></operation>
+          </field-extractor>
+          <field-extractor id="paymentSuffix" field="temp" source="contentTemp" result-type="string">
+            <operation type="regex" index="6"><![CDATA[\d{4}\*+\d{4}\s*##\s*(无需还款|([^#\d]*##)*[\d\.,]+)##(无需还款|([^#\d]*##)*[\d\.,]+)##(无需还款|[\d/]{10})##([^#]+)]]></operation>
+          </field-extractor>
+          <field-extractor id="MinPayment" field="MinPayment" source="contentTemp" result-type="currency_payment" not-empty="true">
+            <operation type="regex" index="3"><![CDATA[\d{4}\*+\d{4}\s*##\s*(无需还款|([^#\d]*##)*[\d\.,]+)##(无需还款|([^#\d]*##)*[\d\.,]+)##(无需还款|[\d/]{10})##([^#]+)]]></operation>
+            <operation type="append" index="0"><![CDATA[${paymentSuffix}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <!-- <object-segment name="PaymentDueDate" type="xpath" value="tr:matches(\d{4}\*+(\d{4})):not(:has(tr:matches(\d{4}\*+(\d{4}))))" source="basicTemp" result-type="date" not-empty="true">
+          <field-extractor id="contentTemp" field="temp" result-type="string">
+            <operation type="xpath"><![CDATA[/text(##)]]></operation>
+          </field-extractor>
+          <field-extractor id="PaymentDueDate" field="PaymentDueDate" source="contentTemp" result-type="date" format="yyyy/MM/dd">
+            <operation type="regex" index="5"><![CDATA[\d{4}\*+\d{4}##(无需还款|([^#\d]*##)*[\d\.,]+)##(无需还款|([^#\d]*##)*[\d\.,]+)##(无需还款|[\d/]{10})##([^#]+)]]></operation>
+          </field-extractor>
+        </object-segment> -->
+
+        <field-extractor id="paymentTemp" field="temp" result-type="string">
+          <operation type="xpath">table:contains(本期应还总额情况):matches(\d{4}\*+\d{4}):not(:has(table:contains(本期应还总额情况):matches(\d{4}\*+\d{4})))</operation>
+          <operation type="replace" from="&amp;nbsp;" to=""></operation>
+        </field-extractor>
+
+        <object-segment name="LastPayment" type="xpath" value="tr:matches(\d{4}\*+\d{4}):not(:has(tr:matches(\d{4}\*+\d{4})))" source="paymentTemp" result-class="currency_payment" not-empty="true">
+          <field-extractor id="paymentSuffix" field="temp" result-type="string">
+            <operation type="xpath"><![CDATA[//td[2]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="LastPayment" field="LastPayment" source="paymentTemp" result-type="currency_payment" not-empty="true">
+            <operation type="xpath"><![CDATA[//td[7]/text()]]></operation>
+            <operation type="append" index="0"><![CDATA[${paymentSuffix}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="NewCharges" type="xpath" value="tr:matches(\d{4}\*+\d{4}):not(:has(tr:matches(\d{4}\*+\d{4})))" source="paymentTemp" result-class="currency_payment" not-empty="true">
+          <field-extractor id="paymentSuffix" field="temp" result-type="string">
+            <operation type="xpath"><![CDATA[//td[2]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="NewCharges" field="NewCharges" source="paymentTemp" result-type="currency_payment" not-empty="true">
+            <operation type="xpath"><![CDATA[//td[5]/text()]]></operation>
+            <operation type="append" index="0"><![CDATA[${paymentSuffix}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="LastBalance" type="xpath" value="tr:matches(\d{4}\*+\d{4}):not(:has(tr:matches(\d{4}\*+\d{4})))" source="paymentTemp" result-class="currency_payment" not-empty="true">
+          <field-extractor id="paymentSuffix" field="temp" result-type="string">
+            <operation type="xpath"><![CDATA[//td[2]/text()]]></operation>
+          </field-extractor>
+          <field-extractor id="LastBalance" field="LastBalance" source="paymentTemp" result-type="currency_payment" not-empty="true">
+            <operation type="xpath"><![CDATA[//td[3]/text()]]></operation>
+            <operation type="append" index="0"><![CDATA[${paymentSuffix}]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <field-extractor id="integralTemp" field="temp" result-type="string">
+          <operation type="xpath">table:contains(积分按卡号汇总):matches(\d{4}\*+\d{4}):not(:has(table:contains(积分按卡号汇总):matches(\d{4}\*+\d{4})))</operation>
+          <operation type="replace" from="&amp;nbsp;" to=""></operation>
+        </field-extractor>
+
+        <object-segment name="LastIntegral" type="xpath" value="tr:matches(\d{4}\*+\d{4}):not(:has(tr:matches(\d{4}\*+\d{4})))" source="integralTemp" result-class="number" >
+          <field-extractor id="LastIntegral" field="LastIntegral" result-type="number" >
+            <operation type="xpath"><![CDATA[//td[3]/text()]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="IntegralAdd" type="xpath" value="tr:matches(\d{4}\*+\d{4}):not(:has(tr:matches(\d{4}\*+\d{4})))" source="integralTemp" result-class="number" >
+          <field-extractor id="IntegralAdd" field="IntegralAdd" result-type="number" >
+            <operation type="xpath"><![CDATA[//td[4]/text()]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="IntegralUsed" type="xpath" value="tr:matches(\d{4}\*+\d{4}):not(:has(tr:matches(\d{4}\*+\d{4})))" source="integralTemp" result-class="number" >
+          <field-extractor id="IntegralUsed" field="IntegralUsed" result-type="number" >
+            <operation type="xpath"><![CDATA[//td[5]/text()]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <object-segment name="Integral" type="xpath" value="tr:matches(\d{4}\*+\d{4}):not(:has(tr:matches(\d{4}\*+\d{4})))" source="integralTemp" result-class="number" >
+          <field-extractor id="Integral" field="Integral" result-type="number" >
+            <operation type="xpath"><![CDATA[//td[6]/text()]]></operation>
+          </field-extractor>
+        </object-segment>
+
+        <field-extractor id="shoppingSheetTemp" field="temp" result-type="string">
+          <operation type="xpath">table:contains(交易明细):contains(交易日):not(:has(table:contains(交易明细):contains(交易日)))</operation>
+          <operation type="replace" from="&amp;nbsp;" to=""></operation>
+        </field-extractor>
+        <object-segment name="ShoppingSheet" type="xpath" value="tr:not(:has(tr))" source="shoppingSheetTemp" dis-contains="交易摘要">
+          <field-extractor id="CardNoTemp" field="temp" result-type="string" default-value="${CardNoTemp}" field-visible-type="request">
+            <operation type="regex" index="1">\d{4}\*+(\d{4})</operation>
+          </field-extractor>
+          <object-segment name="ShoppingSheet" type="xpath" value="tr:not(:has(tr)):has(td:gt(4))">
+            <field-extractor id="CardNo" field="CardNo" result-type="string">
+              <operation type="template">${CardNoTemp}</operation>
+            </field-extractor>
+            <field-extractor id="TransDate" field="TransDate" result-type="date" format="yyyy-MM-dd">
+              <operation type="xpath">//td[1]/text()</operation>
+            </field-extractor>
+            <field-extractor id="PostDate" field="PostDate" result-type="date" format="yyyy-MM-dd">
+              <operation type="xpath">//td[2]/text()</operation>
+            </field-extractor>
+            <field-extractor id="Description" field="Description" result-type="string">
+              <operation type="xpath">//td[3]/text()</operation>
+              <operation type="trim"></operation>
+            </field-extractor>
+            <field-extractor id="AmountMoney" field="AmountMoney" result-type="currency_payment">
+              <operation type="xpath">//td[4]/text()</operation>
+            </field-extractor>
+            <field-extractor id="CurrencyType" field="CurrencyType" result-type="string">
+              <operation type="xpath">//td[5]/text()</operation>
+              <operation type="trim"></operation>
+            </field-extractor>
+          </object-segment>
+        </object-segment>
+      </object-segment>
+    </page-extractor>
+  </page-extractor-definition>
+  <plugin-definition>
+
+  </plugin-definition>
+</config>

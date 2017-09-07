@@ -1,12 +1,14 @@
 package com.datatrees.rawdatacentral.dao.mapper;
 
+import java.util.List;
+
 import com.datatrees.rawdatacentral.domain.model2.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.model2.example.WebsiteConfExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
- /** create by system from table t_website_conf(website config,sopport search)  */
+/** create by system from table t_website_conf(website config,sopport search) */
 public interface WebsiteConfMapper {
+
     long countByExample(WebsiteConfExample example);
 
     int deleteByPrimaryKey(Integer websiteConfId);

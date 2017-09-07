@@ -1,0 +1,315 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=gb18030" /><meta name="renderer" content="webkit" /><title>尊敬的客户：您的账单为补发的账单，在色彩、格式上与正式账单会有差异，请着重核对交易明细，其它内容仅供参考，敬请谅解。祝您用卡愉快！【广发银行】 - QQ邮箱</title><script>
+document.domain="mail.qq.com";
+function getTop()
+{
+var f=arguments.callee,w;
+    !(f.execption) && (f.execption = "");
+if(!f.t)
+{try{w=window;f.t=w!=parent?(parent.getTop?parent.getTop():parent.parent.getTop()):w;}catch(e){f.t=reTryGetTop();f.execption=e.message;}}
+return f.t;
+}
+function reTryGetTop()
+{
+var _oWin = window,
+_oWinParent = parent;
+try
+{
+while(_oWin != _oWinParent)
+{
+_oWin = _oWinParent;
+_oWinParent = _oWinParent.parent;
+}
+}
+catch(e)
+{
+ossLogForSetFrame.getTopException = true;
+}
+return _oWin;
+};
+try{window.top=getTop();}catch(e){eval("var top=getTop();");}
+var gsUsed="94";
+var gbSupportNW=true;
+var g_uin="656859247";
+window == getTop() && document.write('<script src="https://res.mail.qq.com/zh_CN/htmledition/js/all288080.js"></'+'script>');
+(getTop().initPageEvent || function(){})(window);
+</script><script>parent.beginStatTime && parent.beginStatTime(window);</script><script>
+(function(){
+})();
+</script><link rel="stylesheet" type="text/css" href="https://res.mail.qq.com/zh_CN/htmledition/style/comm201027ba92.css" /><link rel="stylesheet" type="text/css" href="https://rl.mail.qq.com/cgi-bin/getcss?sid=6YbYrU1JY0VFeV4I&ft=skin" /><link rel="stylesheet" type="text/css" href="https://res.mail.qq.com/zh_CN/htmledition/style/readmail2012277e00.css" /><script>
+getTop().loadJsFileToTop([
+"https://res.mail.qq.com/zh_CN/htmledition/js/readmail2288074.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/qmqzoneimg24e6b9.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/com/kits/qmeditor/qqmail/release/editor288080.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/com/kits/qmpreviewer/js/qmpreviewer284f39.js", "https://res.mail.qq.com/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js"
+]);
+
+getTop().loadJsFileToTop(["https://res.mail.qq.com/zh_CN/htmledition/js/qmnetdisk276205.js"]);
+</script><script> /*function SendStatusOpt(isIng, isFail)
+{
+getTop().show(getTop().S("sendstatusloading", document), isIng);
+getTop().show(getTop().S("sendstatusloadfail", document), isFail);
+}
+
+function GetSendStatusIng()
+{
+SendStatusOpt(true, false);
+}
+
+function GetSendStatusOK()
+{
+SendStatusOpt(false, false);
+}
+
+function GetSendStatusFail()
+{
+var frame = getTop().S("mailSendStatus", document);
+if (getTop().isShow("sendstatusloading") && frame.src != "")
+{
+SendStatusOpt(false, true);
+frame.src = "";
+}
+}*/
+
+_sModule = "sendstatus";
+function StatusOpt(isIng, isFail)
+{
+getTop().show(getTop().S(_sModule+"loading", document), isIng);
+getTop().show(getTop().S(_sModule+"loadfail", document), isFail);
+}
+
+function GetStatusIng()
+{
+StatusOpt(true, false);
+}
+
+function GetStatusOK()
+{
+StatusOpt(false, false);
+}
+
+function GetStatusFail()
+{
+var frame = getTop().S("mail"+_sModule, document);
+if (getTop().isShow(_sModule+"loading") && frame.src != "")
+{
+StatusOpt(false, true);
+frame.src = "";
+}
+}
+
+
+
+
+
+function checkSenderImg( _aImgObj, _aReportEmail ) 
+{
+var _isLoadGravaterOK = parseInt( _aImgObj.width ) == 40 || parseInt(_aImgObj.width) == 96;
+if ( _isLoadGravaterOK )
+{
+_aImgObj.parentNode.style.visibility='visible';
+}
+}
+
+</script><style>body {background:#fff;color:#000;font-weight:normal;font-family:"lucida Grande",Verdana,"Microsoft YaHei";padding:0 7px 6px 4px;margin:0;}.MacOS body {font-family:"lucida Grande",Verdana;}.qmbox{padding:0;}.qm_con_body_content{height:auto;min-height:100px;_height:100px;word-wrap:break-word;font-size:14px;font-family: "lucida Grande",Verdana,"Microsoft YaHei";}.MacOS .qm_con_body_content{font-family: "lucida Grande",Verdana;}body.thumb_list_readmail {padding:0;}.thumb_list_readmail #nextnewDiv,.thumb_list_readmail #nextmail_top,.thumb_list_readmail #nextmail_bt{display:none;}</style></head><body  context="ZC1309-WDe7YIB8MhTSIwRRsBGsR58" module="qmReadMail" md="md" mu="mu"><div class="mailcontainer" id="qqmail_mailcontainer"><div module="qmSenderInfo" id="senderInfo" class="attbg mysidebar" style="_margin-top:2px;height:auto;*height:100%;display:none;z-index:20"><div class="bd" style="font-size:14px;font-weight:bold;border-width:0 0 2px 0;height:auto;padding:7px 2px 3px;margin:6px;clear:both;"><div  style="float:right;"><a ck="toggle" href="javascript:;" style="font-size:12px;font-weight:normal;">关闭</a></div>发件人信息</div><div style="margin:8px 6px 0 6px;"><div style="height:40px;"><div class="tcolor qm_left txtflow" style="margin:2px 0 0 2px;width:168px;"><b class="grn" style="font-size:14px;font-weight:bold;">广发对账单</b>&nbsp;</div><div class="clear" style="margin:2px 0 0 2px;width:164px;"><div class="qm_left txtflow graytext" style="width:128px"><span title="creditcard@cgbchina.com.cn">creditcard@cgbchina.com.cn</span></div><div style="float:right;"><a href="/cgi-bin/addr_detail?sid=6YbYrU1JY0VFeV4I&AddrID=-1&t=addr_detail_edit&s=edit&rmqqgroup=1">编辑</a></div></div></div><div class="toolbg clear" style="padding:5px 0 4px 6px;margin-top:4px;height:auto;"><span class="txtcolor">往来邮件</span>&nbsp;</div><div id="divMails_sidebar" class="clear" style="margin:6px 0 0 0"><div style="margin:6px" class="tcolor">正在加载...</div></div><br/><br/></div></div><form id="remind_frm" name="remind_frm" method="post" target="actionFrame" action="/cgi-bin/reminder_mgr?sid=6YbYrU1JY0VFeV4I"><input type="hidden" name="sid" value="6YbYrU1JY0VFeV4I"/><input type="hidden" name="action" value="cancle"/><input type="hidden" name="ruleid"/><input type="hidden" name="from"/></form><div id="mainmail" style="position:relative;z-index:1;margin-bottom:12px;"><div class="toolbg toolbgline toolheight" id="toolbgline_top" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_top"><a href="javascript:;" ck="prevandnext"mailid="ZL1309-jeLHBeXSBCLlcVYDsHxYd58" type="normal" title="上一封：广发银行&lt;span&gt;&lt;span&gt;账单&lt;/span&gt;&lt;/span&gt;" id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="ZL1327-8Z6WimorcVcyEjVgMupeF55" type="normal"title="下一封：中行、农行、广州银行&lt;span&gt;&lt;span&gt;账单&lt;/span&gt;&lt;/span&gt;（丁健灵）" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all1" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="creditcard@cgbchina.com.cn" name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="creditcard@cgbchina.com.cn"name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div><div class="readmailinfo" style="position:relative;z-index:2;zoom:1;"><span id="subjectTip"></span><table style="height:24px" border="0" cellspacing="0" cellpadding="0"><tr><td height="24" valign="middle" style="word-break:break-all;padding:9px 8px 2px 14px;" class="txt_left settingtable readmail_subject"><div class="qm_left"  style="padding-bottom:3px;"><span id="subject" class="sub_title " >尊敬的客户：您的账单为补发的账单，在色彩、格式上与正式账单会有差异，请着重核对交易明细，其它内容仅供参考，敬请谅解。祝您用卡愉快！【广发银行】</span><input type="button" id="img_star" ck="starMail" class="qm_ico_flagoff" title="标为星标"  hidefocus/></div><div id="tagContainer" ck="tag" class="TagDiv TagReadmail" style="overflow:visible;margin-top:0;"></div><div class="clr"></div></td><td module="qmSenderInfo" id="senderInfo2" width="1%" nowrap  class="f_size settingtable" style="padding:5px 12px 0 0;text-align:right;"><div style="width:45px;text-align:left;visibility:hidden;"> <img id="qqiconimg" src="/cgi-bin/getqqicon?sid=6YbYrU1JY0VFeV4I&uin=&mode=newaddr&mailaddr=creditcard%40cgbchina.com.cn" style="position:absolute;margin:-14px 0 0 0;" class="qqshowbd"  onload="checkSenderImg(this)"/></td></tr></table><table border="0" cellspacing="0" cellpadding="0"><tr><td style="padding-left:14px;" class="settingtable txt_left"><span class="addrtitle">发件人：</span><span rejecthtml="rejectionhtml"  t="1" e="creditcard@cgbchina.com.cn" u="" n="广发对账单" addrvip="false" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58" xqs="0" fid="1" cfid="1" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="-100" isad="0"mop="1"sa="0"   addrid="-1"  se="1" ><b t="u" class="grn">广发对账单</b>&nbsp;<b class="tcolor" t="u" id="tipFromAddr_readmail" fromaddr="creditcard@cgbchina.com.cn">&lt;creditcard@cgbchina.com.cn&gt;</b>&nbsp;&nbsp;<input t="u" type="button" class="ico_profileTips" align="top" />&nbsp;</span>&nbsp;<script type="text/javascript">
+(function(_aoWin){
+_aoWin["_oOperPanel"] = {};
+                            1
+_aoWin["_oOperPanel"].rejectionhtml = '<a id="antispamid2" href="javascript:;" mimefrom="creditcard@cgbchina.com.cn" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a>';
+_aoWin["_oOperPanel"].filinghtml = '<a id="exbookid1" href="javascript:;" ck="exbookEmlMgr" book="2" module="qmAntiSpam" name="spam" title="将此发件人的邮件归档到个人文件夹" class="pointer">自动归档</a></span>';
+_aoWin["_oOperPanel"].operhidepanel = '<span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span>';
+if(_aoWin["_oOperPanel"].rejectionhtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="rejectionhtml">' +  _aoWin["_oOperPanel"].rejectionhtml + '</span>';
+}
+if(_aoWin["_oOperPanel"].filinghtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="filinghtml">' +  _aoWin["_oOperPanel"].filinghtml + '</span>';
+}
+})(window)
+</script><span id="operhidepanel" style="display:none"><span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span><span id="rejectionhtml"><a id="antispamid2" href="javascript:;" mimefrom="creditcard@cgbchina.com.cn" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a></span><span id="filinghtml"><a id="exbookid1" href="javascript:;" ck="exbookEmlMgr" book="2" module="qmAntiSpam" name="spam" title="将此发件人的邮件归档到个人文件夹" class="pointer">自动归档</a></span></span><span id="latestqzone"></span>      </td><td width="1%" nowrap style="padding-right:12px;" class="settingtable"></td></tr></table><table  border="0" cellspacing="0" cellpadding="0"><tr><td style="word-break:break-all;padding:2px 12px 0 14px;line-height:19px;" width="99%" class="settingtable txt_left"><span class="addrtitle">时&nbsp;&nbsp;&nbsp;间：</span><b class="tcolor">2015年8月9日(星期天) 下午3:09</b></td><td nowrap valign="bottom" style="padding:4px 10px 2px 0;*padding:4px 10px 2px 0;text-align:right" width="1%" rowspan="2"  class="txt_right settingtable noUnderLineList"><span style="display:none;vertical-align:6px;vertical-align:4px\9;"><a  href="javascript:location.href='/cgi-bin/readmail?disptype=text&sid=6YbYrU1JY0VFeV4I&mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&s='+(getTop().bnewwin?'&newwin=true':'')">纯文本</a> | </span><a href="javascript:;" ck="newWinRead"><span type="button" class="qm_ico_reopen" title="新窗口读信" ></span></a><a href="javascript:;"><span id="rmd" module="qmRemark" ck="toggle" class="qm_ico_remarkoff" title="添加邮件备注" ></span></a><a href="javascript:;"><span ck="createRule" fromaddr="creditcard@cgbchina.com.cn"                     class="qm_ico_addFilter" title="归档至..."></span></a><a href="javascript:;"><span class="qm_ico_print" id="mail_print" title="打印" onClick="window.open('/cgi-bin/readmail?sid=6YbYrU1JY0VFeV4I&t=readmail_print&s=print&filterflag=true&mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58');" ></span></a><a id="aSwitchOption" onClick="getTop().switchOption(window)" style="text-decoration:none;" hidefocus><span class="qm_ico_quickdown" alt="显示更多操作" id="display_more_operator" ></span></a><span id="tipRemindEdit"></span></td></tr><tr><td style="padding:0 0 0 14px;line-height:19px;"  class="settingtable txt_left"><div><div class="addrtitle nowrap" style="position:absolute;">收件人：</div><div style="padding-left:48px;font-size:12px;overflow:hidden; zoom:1;"><span style="white-space:nowrap;height:18px;line-height:18px; " class="left" t="1" e="656859247@qq.com" u="-1717958233" n="Utral" mop="1" addrvip="false" rejecthtml="rejectionhtml" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58" xqs="0" fid="1" cfid="1" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="-100" sd="0"se="0" >Utral&nbsp;<b t="u" class="tcolor">&lt;656859247@qq.com&gt;</b></span></div></div><div style="margin-top:1px;"><div class="addrtitle nowrap" style="position:absolute;">附&nbsp;&nbsp;&nbsp;件：</div><div style="padding-left:48px;font-size:12px;overflow:hidden;height:20px; _padding-top:2px; _height:17px;"><span ck="toAttach" class="pointer"><span>7</span>&nbsp;个 <span class="tcolor">( <a href="javascript:;"><img style="margin-right:2px;" src="/zh_CN/htmledition/images/xdisk/ico_min/fu_html.gif" align="absmiddle" />20150809378216716839.html</a><a  href="javascript:;">...</a><span id="showDayoff" class="txt_red hide cur_default">&nbsp;&nbsp;部分附件即将过期</span>)</span></span></div></div></td></tr><tr><td style="padding:0 14px;line-height:20px;"  class="settingtable txt_left"><span id="trOption" style="display:none"><span class="addrtitle">大&nbsp;&nbsp;&nbsp;小：</span>351K<br/><a  href="javascript:;" ck="optMail2" opt="print">打印</a>&nbsp;|&nbsp;<a  href="javascript:;" ck="optMail2" opt="mime" title="显示邮件的源代码">显示邮件原文</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="dleml" title="导出为邮件客户端可用的文件">导出为eml文件</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="code" title="改变页面编码以解决邮件乱码问题">邮件有乱码？</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fwgroup">转发到群邮件</a><span >&nbsp;|&nbsp;<a id="savetonotepad" href="javascript:;" ck="optMail2" opt="note">保存到记事本</a><span id="remind_add_mailid:ZC1309-WDe7YIB8MhTSIwRRsBGsR58">&nbsp;<span id="addtoremind">|&nbsp;<a href="javascript:;" ck="optMail2" opt="remind">添加到日历</a></span><span id="remind_edit_ZC1309-WDe7YIB8MhTSIwRRsBGsR58" class="pointer"></span></span>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fweml">作为附件转发</a></span></td></tr></table><div module="qmRemark" id="remarkcontainer" style="display:none; margin:5px 0 0;; padding:2px 0 0;"><div  class="qqshowbd" style="border-width:1px 0 0;padding:7px 14px 2px;"><div class="addrtitle qm_left" style="*margin-top:3px;">备　注：</div><div id="remarkread" style="display:none; margin-left:48px;*margin-left:45px;width:463px;*width:475px;"><div class="remarksContent" id="remarkContent" ck="modify" style="font-size:12px;min-height:42px;padding:10px;background:#fff6cf; border:1px solid #dec694;color:#733900;line-height:18px;" title="点击编辑"></div><div class="attbg" style="padding:4px 0 4px 8px;"><a href="javascript:;" ck="modify" style="margin-right:5px;"><input style="background:url(https://res.mail.qq.com/zh_CN/htmledition/images/newicon/mail2757b6.png) scroll -64px -142px; width:12px; height:14px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()" />编辑</a><a href="javascript:;" ck="del"><input style="background:url(https://res.mail.qq.com/zh_CN/htmledition/images/newicon/mail2757b6.png) scroll -80px -142px; width:13px; height:13px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()">删除</a></div></div><div class="remarkModify" style="display:none;margin-left:45px;" id="remarkwrite"><textarea id="remarktext" style="width:475px;*height:74px;min-height:72px;font-size:14px; overflow:hidden; margin:0 0 3px; padding:3px; color:#A0A0A0;" class="qm_txt" >请在此输入备注...</textarea><div style="margin-left:3px;*margin-left:6px;"><input type="button" class="qm_btn wd2" value="保存" ck="save" id="remarksave"/><a ck="cancel" id="remarkdel" style="*vertical-align:5px;display:inline-block;padding-left:6px;">取消</a></div></div></div></div><table border="0" cellspacing="0" cellpadding="0">        <tr><td class="onesize settingtable" style="height:5px;"></td></tr></table>    <div class="txt_left"><div class="attbg" id="starStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件。&nbsp;<a id="starStatuslink" ck="starMail" href="javascript:;">取消星标</a></div><div class="attbg" id="mailtopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件在列表中置顶。&nbsp;<a id="mailtopStatuslink" ck="topMail" href="javascript:;">取消置顶</a></div><div class="attbg" id="starTopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件，并在列表中置顶。&nbsp;<a ck="starMail" href="javascript:;">取消星标</a>&nbsp;<a ck="topMail" href="javascript:;">取消置顶</a></div><script>
+
+</script><div class="attbg" id="reminderContainer_mailid:ZC1309-WDe7YIB8MhTSIwRRsBGsR58" style="padding:5px 14px;display:none;"></div><div id="spam" module="qmAntiSpam" name="spam" style="zoom:1;">  </div>        </div></div><!-- page end--><div id="pageEnd" style="display:none;clear:both;position:relative;z-index:2;"><div id="bgmusic" style="padding:6px 0;display:none;margin-left:12px">您的朋友 广发对账单 为这封邮件插入了背景音乐 - <a  target="_blank">下载</a>&nbsp;&nbsp;<a href="javascript:;">播放</a><a name="player"></a></div><div id="mp3player_info" style="padding:0 0 10px 0;margin-left:12px;display:none;">&nbsp;</div><div id="mp3player_container" style="padding:0 0 20px 0;margin-left:12px; margin-top:10px; display:none;">播放器加载中...</div><div module="qmQReply" id="quickreply" class="quickreply" style="margin:0;"><div class="qm_msg infobar" id="afterSendingDiv" style="margin-top:-25px;position:absolute;border:0;padding:4px 12px 4px;display:none;">正在发送...</div><div class="bd" style="border-width:0 0 1px 0;"></div><div style="padding:10px 0 0 8px;border-bottom:1px solid #fff;height:24px;display:none;" class="settingtable" id="afterSendDiv"> 此邮件已成功发送。<a ck="readyToWrite" href="javascript:;" >再回一封</a></div><div class="settingtable" id="QuickReplyPart" style="height:auto;min-height:10px;border-bottom:1px solid #fff;padding-top:10px;padding-botom:8px;overflow:hidden;z-index:1000;clear:both;"><div style="width:100%;"><div id="Senderdiv" style="margin:-10px 0 0 0;*margin:-3px 0 0 0;padding:6px 0 10px 0;*padding:0 0 7px 0;display:none;"></div><div class="qm_left" style="width:99.5%;" id="qmQuickReplyTextContainer" ><div style="width:99.5%;"><textarea id="source" md="checkBcc" class="graytext qm_txt" accesskey="q" style="height:16px;width:100%;overflow:hidden;">快捷回复给：广发对账单</textarea></div></div><div class="" style="width:99.5%;display:none;z-index:1;float:left;" id="rteContainer"><div md="stopFold" ck="jump" style="float:right;margin:3px 0 0 6px;*margin:0;" ><input type="button" class="ico_input icon_switch_compose"  style="margin-right:4px;margin-bottom:3px;*margin-bottom:0;vertical-align:middle;"/><a href="javascript:;" id="jumpToNewWin">切换到完整写信模式</a></div><div style="margin:2px 0 3px 1px;white-space:nowrap;*margin-top:0;" class="addrtitle"><span id="QMEditorToolBarPlusArea"  ></span><span id="tooBarContain"></span></div><div id="QMEditorArea" style="" tIndex="1"><script>try{document.write( outputDataLoading( true ) );}catch(e){}</script></div><div class="clr"></div></div><div style="display:none;clear:both;float:left;width:99.5%;margin-top:5px;height:40px;" id="qmQuickReplyButtonContainer"><a md="stopFold" ck="send" href="javascript:void(0);" tabIndex="2" id="sendbtn" name="sendbtn" class="left bold b_size button_green_s">&nbsp;发送&nbsp;</a><div class="clr"></div></div><div class="clr"></div></div></div></div><div id="nextnewDiv" onMouseOver="this.className='attbg mail_readmode'" onMouseOut="this.className='toolbg mail_readmode'" class="toolbg mail_readmode" style="clear:both;position:relative;z-index:2;cursor:pointer;padding:0 8px 0 7px;zoom:1;display:none;" ck="prevandnext" mailid="" ><div class="bd" style="padding:2px 0 6px 0;*padding:6px 0 0 0;border-width:0 0 1px 0;"><div class="qm_left" style="margin:6px 0 0 1px;">下一封未读：</div><div class="qm_left" style="margin:0x 0 0 1px;*margin:-2px 0 0 1px"><input type="button"  style="display:block;padding:0;float:left;width:18px;height:16px;margin:5px 0 0;cursor:default;border:0;" class="Ru" /></div><div style="margin:6px 0 0 0;*margin:4px 0 0 0"><span id="nextnewmail" style="color:#000;" class="bold" target="actionFrame" name="_QQMail_ReferenceGroupMail_"></span></div><div class="clr"></div></div></div><div class="toolbg toolbgline toolheight" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_bt"><a href="javascript:;" ck="prevandnext"mailid="ZL1309-jeLHBeXSBCLlcVYDsHxYd58" type="normal" title="上一封：广发银行&lt;span&gt;&lt;span&gt;账单&lt;/span&gt;&lt;/span&gt;" id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="ZL1327-8Z6WimorcVcyEjVgMupeF55" type="normal"title="下一封：中行、农行、广州银行&lt;span&gt;&lt;span&gt;账单&lt;/span&gt;&lt;/span&gt;（丁健灵）" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all2" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="creditcard@cgbchina.com.cn" name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="creditcard@cgbchina.com.cn"name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div></div><div style="position:absolute;right:0px;width:1px;height:1px;"><div id="tip74container"></div></div><div id="contentDiv" onmouseover="getTop().stopPropagation(event);" onClick="getTop().preSwapLink(event, 'html', 'ZC1309-WDe7YIB8MhTSIwRRsBGsR58');" style="position:relative;font-size:14px;height:auto;padding:15px 15px 10px 15px;z-index:1;zoom:1;line-height:1.7;" class="body">    <div id="qm_con_body"><div id="mailContentContainer" class="qmbox qm_con_body_content">
+</div></div><!-- --><style>#mailContentContainer .txt {height:auto;}</style>  </div><script>
+(function()
+{
+var _oImgs = getTop().GelTags("img", getTop().S("mailContentContainer",window));
+getTop().E(_oImgs, function(_aoItem){ 
+_aoItem.onerror = function()
+{
+                if(this.src && /.*mail\.qq\.com\/cgi-bin\/viewfile.*/i.test(this.src)){
+                    getTop().LogKV({sValue:'getinvestigate|readmail|readmail|imgerror'});
+                }
+if (this.src && !/.*mail.qq.com\/cgi-bin.*/.test(this.src) && /http:\/\//.test(this.src) && this.clientHeight * this.clientWidth > 0) 
+{
+this.onerror = null;
+this.src = "/cgi-bin/get_netres?url=" + encodeURIComponent(this.src) + "&sid=" + getTop().getSid(); 
+}
+}
+});
+})();
+</script><div id="attachment"  style="padding:2px;" class="attbg" ui-type="attCon"><div style="padding:6px 10px 10px 8px;" class="txt_left"><div style="height:14px;">            <!--<a class="right" style="padding-top:1px;" href="javascript:;" ck="previewAttach" select=""><img src="https://res.mail.qq.com/zh_CN/htmledition/images/spacer1e9c5d.gif" class="ico_preview" />附件预览</a> --><b style="font-size:14px;"><img src="https://res.mail.qq.com/zh_CN/htmledition/images/spacer1e9c5d.gif" align="absmiddle" class="ico_att showattch" border="0" style="margin:-3px 2px 0 0;" />附件</b>(<span id="attachmentCount">7</span> 个)</div></div><div style="padding:0 8px 6px 12px;background:#fff;_height:60px;line-height:140%;"><div class="graytext clear" style="padding-top:12px; padding-bottom:5px"><span style="color:#000;font-weight:bold;font-size:12px;">普通附件</span>                 &nbsp;&nbsp;<a href="/cgi-bin/download?sid=6YbYrU1JY0VFeV4I&mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58" style="+zoom:1;font-size:12px;font-weight:normal;" title="请直接点击或鼠标右键转下载工具打开，请不要拖拽到下载工具悬浮框中" unset="true"><img src="https://res.mail.qq.com/zh_CN/htmledition/images/spacer1e9c5d.gif" class="ico_down" />全部下载</a>                    &nbsp;&nbsp;<a href="javascript:;" ck="attachBatchSetFlag" action="set">全部收藏</a></div><div class="att_bt attachitem"><div class="ico_big"><a id="AttachIconAZC1309-WDe7YIB8MhTSIwRRsBGsR580" attach="1" attid="20150809378216716839.html" viewmode="doc" url="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809378216716839.html&amp;sid=6YbYrU1JY0VFeV4I&action=view&viewtype=1&fromattach=1" ck="previewAttach2" idx="0" filename="20150809378216716839.html" down="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809378216716839.html&amp;sid=6YbYrU1JY0VFeV4I" iconurl="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"><img style="width:auto;"  src="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"/></a></div>   <div class="name_big">                        <span player="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809378216716839.html&amp;sid=6YbYrU1JY0VFeV4I">20150809378216716839.html</span><span class="graytext">&nbsp;(42.31K<span id="span_attachIndex_ZC1309-WDe7YIB8MhTSIwRRsBGsR58_3527254e50fe66a41b2de2834f9b588b" style="display:none">, <span style="color: #C00;">附件包含病毒，请勿下载打开 <input type="button" class="qm_conversation_input_info" mor="showPoisonWaring" mot="hidePoisonWaring" style="cursor:pointer;vertical-align:-4px;"></span></span>)</span><div class="down_big" ><a title="请直接点击或鼠标右键转下载工具打开，请不要拖拽到下载工具悬浮框中" href="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809378216716839.html&amp;sid=6YbYrU1JY0VFeV4I" unset="true">下载</a>&nbsp;&nbsp;<a href="javascript:;" ck="previewAttach" select="1">预览</a>&nbsp;&nbsp;&nbsp;<a style="" href="javascript:;" flag="0" class="needSetFlag" attachKey="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809378216716839.html|20150809378216716839.html|43322" onclick="var dom=this;getTop().attachSetFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809378216716839.html|20150809378216716839.html|43322',true,function(){getTop().attr(dom,'flag','1');getTop().show(dom,false);getTop().show(dom.nextSibling,true);})"><span>收藏</span></a><span style="display:none;" class="graytext"><span>已收藏,&nbsp;</span><a href="javascript:;" onclick="getTop().jumpToAttachFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58','20150809378216716839.html')">查看</a></span>&nbsp;&nbsp;&nbsp;<a ui-type="netdiskBind" attid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|3527254e50fe66a41b2de2834f9b588b|20150809378216716839.html" onclick="getTop().QMNetDisk.upload(this);" class="netdisk_hide"><span >转存</span><span class="bind_down_icon"></span></a></div></div></div><div class="att_bt attachitem"><div class="ico_big"><a id="AttachIconAZC1309-WDe7YIB8MhTSIwRRsBGsR581" attach="1" attid="20150809998770381462.html" viewmode="doc" url="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809998770381462.html&amp;sid=6YbYrU1JY0VFeV4I&action=view&viewtype=1&fromattach=1" ck="previewAttach2" idx="1" filename="20150809998770381462.html" down="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809998770381462.html&amp;sid=6YbYrU1JY0VFeV4I" iconurl="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"><img style="width:auto;"  src="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"/></a></div>   <div class="name_big">                        <span player="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809998770381462.html&amp;sid=6YbYrU1JY0VFeV4I">20150809998770381462.html</span><span class="graytext">&nbsp;(40.49K<span id="span_attachIndex_ZC1309-WDe7YIB8MhTSIwRRsBGsR58_96ce843989a18a416fd2c9d6c6840266" style="display:none">, <span style="color: #C00;">附件包含病毒，请勿下载打开 <input type="button" class="qm_conversation_input_info" mor="showPoisonWaring" mot="hidePoisonWaring" style="cursor:pointer;vertical-align:-4px;"></span></span>)</span><div class="down_big" ><a title="请直接点击或鼠标右键转下载工具打开，请不要拖拽到下载工具悬浮框中" href="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809998770381462.html&amp;sid=6YbYrU1JY0VFeV4I" unset="true">下载</a>&nbsp;&nbsp;<a href="javascript:;" ck="previewAttach" select="2">预览</a>&nbsp;&nbsp;&nbsp;<a style="" href="javascript:;" flag="0" class="needSetFlag" attachKey="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809998770381462.html|20150809998770381462.html|41457" onclick="var dom=this;getTop().attachSetFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809998770381462.html|20150809998770381462.html|41457',true,function(){getTop().attr(dom,'flag','1');getTop().show(dom,false);getTop().show(dom.nextSibling,true);})"><span>收藏</span></a><span style="display:none;" class="graytext"><span>已收藏,&nbsp;</span><a href="javascript:;" onclick="getTop().jumpToAttachFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58','20150809998770381462.html')">查看</a></span>&nbsp;&nbsp;&nbsp;<a ui-type="netdiskBind" attid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|96ce843989a18a416fd2c9d6c6840266|20150809998770381462.html" onclick="getTop().QMNetDisk.upload(this);" class="netdisk_hide"><span >转存</span><span class="bind_down_icon"></span></a></div></div></div><div class="att_bt attachitem"><div class="ico_big"><a id="AttachIconAZC1309-WDe7YIB8MhTSIwRRsBGsR582" attach="1" attid="20150809356146020520.html" viewmode="doc" url="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809356146020520.html&amp;sid=6YbYrU1JY0VFeV4I&action=view&viewtype=1&fromattach=1" ck="previewAttach2" idx="2" filename="20150809356146020520.html" down="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809356146020520.html&amp;sid=6YbYrU1JY0VFeV4I" iconurl="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"><img style="width:auto;"  src="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"/></a></div>   <div class="name_big">                        <span player="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809356146020520.html&amp;sid=6YbYrU1JY0VFeV4I">20150809356146020520.html</span><span class="graytext">&nbsp;(34.57K<span id="span_attachIndex_ZC1309-WDe7YIB8MhTSIwRRsBGsR58_0c8d22b47b9063a57cc8c7273bab766b" style="display:none">, <span style="color: #C00;">附件包含病毒，请勿下载打开 <input type="button" class="qm_conversation_input_info" mor="showPoisonWaring" mot="hidePoisonWaring" style="cursor:pointer;vertical-align:-4px;"></span></span>)</span><div class="down_big" ><a title="请直接点击或鼠标右键转下载工具打开，请不要拖拽到下载工具悬浮框中" href="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809356146020520.html&amp;sid=6YbYrU1JY0VFeV4I" unset="true">下载</a>&nbsp;&nbsp;<a href="javascript:;" ck="previewAttach" select="3">预览</a>&nbsp;&nbsp;&nbsp;<a style="" href="javascript:;" flag="0" class="needSetFlag" attachKey="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809356146020520.html|20150809356146020520.html|35399" onclick="var dom=this;getTop().attachSetFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809356146020520.html|20150809356146020520.html|35399',true,function(){getTop().attr(dom,'flag','1');getTop().show(dom,false);getTop().show(dom.nextSibling,true);})"><span>收藏</span></a><span style="display:none;" class="graytext"><span>已收藏,&nbsp;</span><a href="javascript:;" onclick="getTop().jumpToAttachFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58','20150809356146020520.html')">查看</a></span>&nbsp;&nbsp;&nbsp;<a ui-type="netdiskBind" attid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|0c8d22b47b9063a57cc8c7273bab766b|20150809356146020520.html" onclick="getTop().QMNetDisk.upload(this);" class="netdisk_hide"><span >转存</span><span class="bind_down_icon"></span></a></div></div></div><div class="att_bt attachitem"><div class="ico_big"><a id="AttachIconAZC1309-WDe7YIB8MhTSIwRRsBGsR583" attach="1" attid="20150809314407845003.html" viewmode="doc" url="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809314407845003.html&amp;sid=6YbYrU1JY0VFeV4I&action=view&viewtype=1&fromattach=1" ck="previewAttach2" idx="3" filename="20150809314407845003.html" down="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809314407845003.html&amp;sid=6YbYrU1JY0VFeV4I" iconurl="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"><img style="width:auto;"  src="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"/></a></div>   <div class="name_big">                        <span player="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809314407845003.html&amp;sid=6YbYrU1JY0VFeV4I">20150809314407845003.html</span><span class="graytext">&nbsp;(45.22K<span id="span_attachIndex_ZC1309-WDe7YIB8MhTSIwRRsBGsR58_44dd3780aeec6e77e62c72a032655c2f" style="display:none">, <span style="color: #C00;">附件包含病毒，请勿下载打开 <input type="button" class="qm_conversation_input_info" mor="showPoisonWaring" mot="hidePoisonWaring" style="cursor:pointer;vertical-align:-4px;"></span></span>)</span><div class="down_big" ><a title="请直接点击或鼠标右键转下载工具打开，请不要拖拽到下载工具悬浮框中" href="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809314407845003.html&amp;sid=6YbYrU1JY0VFeV4I" unset="true">下载</a>&nbsp;&nbsp;<a href="javascript:;" ck="previewAttach" select="4">预览</a>&nbsp;&nbsp;&nbsp;<a style="" href="javascript:;" flag="0" class="needSetFlag" attachKey="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809314407845003.html|20150809314407845003.html|46301" onclick="var dom=this;getTop().attachSetFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809314407845003.html|20150809314407845003.html|46301',true,function(){getTop().attr(dom,'flag','1');getTop().show(dom,false);getTop().show(dom.nextSibling,true);})"><span>收藏</span></a><span style="display:none;" class="graytext"><span>已收藏,&nbsp;</span><a href="javascript:;" onclick="getTop().jumpToAttachFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58','20150809314407845003.html')">查看</a></span>&nbsp;&nbsp;&nbsp;<a ui-type="netdiskBind" attid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|44dd3780aeec6e77e62c72a032655c2f|20150809314407845003.html" onclick="getTop().QMNetDisk.upload(this);" class="netdisk_hide"><span >转存</span><span class="bind_down_icon"></span></a></div></div></div><div class="att_bt attachitem"><div class="ico_big"><a id="AttachIconAZC1309-WDe7YIB8MhTSIwRRsBGsR584" attach="1" attid="20150809910506088317.html" viewmode="doc" url="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809910506088317.html&amp;sid=6YbYrU1JY0VFeV4I&action=view&viewtype=1&fromattach=1" ck="previewAttach2" idx="4" filename="20150809910506088317.html" down="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809910506088317.html&amp;sid=6YbYrU1JY0VFeV4I" iconurl="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"><img style="width:auto;"  src="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"/></a></div>   <div class="name_big">                        <span player="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809910506088317.html&amp;sid=6YbYrU1JY0VFeV4I">20150809910506088317.html</span><span class="graytext">&nbsp;(32.09K<span id="span_attachIndex_ZC1309-WDe7YIB8MhTSIwRRsBGsR58_f1152f0dcd3612724a4979b84143aa83" style="display:none">, <span style="color: #C00;">附件包含病毒，请勿下载打开 <input type="button" class="qm_conversation_input_info" mor="showPoisonWaring" mot="hidePoisonWaring" style="cursor:pointer;vertical-align:-4px;"></span></span>)</span><div class="down_big" ><a title="请直接点击或鼠标右键转下载工具打开，请不要拖拽到下载工具悬浮框中" href="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809910506088317.html&amp;sid=6YbYrU1JY0VFeV4I" unset="true">下载</a>&nbsp;&nbsp;<a href="javascript:;" ck="previewAttach" select="5">预览</a>&nbsp;&nbsp;&nbsp;<a style="" href="javascript:;" flag="0" class="needSetFlag" attachKey="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809910506088317.html|20150809910506088317.html|32862" onclick="var dom=this;getTop().attachSetFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809910506088317.html|20150809910506088317.html|32862',true,function(){getTop().attr(dom,'flag','1');getTop().show(dom,false);getTop().show(dom.nextSibling,true);})"><span>收藏</span></a><span style="display:none;" class="graytext"><span>已收藏,&nbsp;</span><a href="javascript:;" onclick="getTop().jumpToAttachFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58','20150809910506088317.html')">查看</a></span>&nbsp;&nbsp;&nbsp;<a ui-type="netdiskBind" attid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|f1152f0dcd3612724a4979b84143aa83|20150809910506088317.html" onclick="getTop().QMNetDisk.upload(this);" class="netdisk_hide"><span >转存</span><span class="bind_down_icon"></span></a></div></div></div><div class="att_bt attachitem"><div class="ico_big"><a id="AttachIconAZC1309-WDe7YIB8MhTSIwRRsBGsR585" attach="1" attid="20150809206992265589.html" viewmode="doc" url="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809206992265589.html&amp;sid=6YbYrU1JY0VFeV4I&action=view&viewtype=1&fromattach=1" ck="previewAttach2" idx="5" filename="20150809206992265589.html" down="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809206992265589.html&amp;sid=6YbYrU1JY0VFeV4I" iconurl="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"><img style="width:auto;"  src="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"/></a></div>   <div class="name_big">                        <span player="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809206992265589.html&amp;sid=6YbYrU1JY0VFeV4I">20150809206992265589.html</span><span class="graytext">&nbsp;(57.94K<span id="span_attachIndex_ZC1309-WDe7YIB8MhTSIwRRsBGsR58_20b33c5cb6d8a848023622dcf3d36a8f" style="display:none">, <span style="color: #C00;">附件包含病毒，请勿下载打开 <input type="button" class="qm_conversation_input_info" mor="showPoisonWaring" mot="hidePoisonWaring" style="cursor:pointer;vertical-align:-4px;"></span></span>)</span><div class="down_big" ><a title="请直接点击或鼠标右键转下载工具打开，请不要拖拽到下载工具悬浮框中" href="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809206992265589.html&amp;sid=6YbYrU1JY0VFeV4I" unset="true">下载</a>&nbsp;&nbsp;<a href="javascript:;" ck="previewAttach" select="6">预览</a>&nbsp;&nbsp;&nbsp;<a style="" href="javascript:;" flag="0" class="needSetFlag" attachKey="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809206992265589.html|20150809206992265589.html|59330" onclick="var dom=this;getTop().attachSetFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809206992265589.html|20150809206992265589.html|59330',true,function(){getTop().attr(dom,'flag','1');getTop().show(dom,false);getTop().show(dom.nextSibling,true);})"><span>收藏</span></a><span style="display:none;" class="graytext"><span>已收藏,&nbsp;</span><a href="javascript:;" onclick="getTop().jumpToAttachFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58','20150809206992265589.html')">查看</a></span>&nbsp;&nbsp;&nbsp;<a ui-type="netdiskBind" attid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20b33c5cb6d8a848023622dcf3d36a8f|20150809206992265589.html" onclick="getTop().QMNetDisk.upload(this);" class="netdisk_hide"><span >转存</span><span class="bind_down_icon"></span></a></div></div></div><div class="att_bt attachitem"><div class="ico_big"><a id="AttachIconAZC1309-WDe7YIB8MhTSIwRRsBGsR586" attach="1" attid="20150809249607868271.html" viewmode="doc" url="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809249607868271.html&amp;sid=6YbYrU1JY0VFeV4I&action=view&viewtype=1&fromattach=1" ck="previewAttach2" idx="6" filename="20150809249607868271.html" down="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809249607868271.html&amp;sid=6YbYrU1JY0VFeV4I" iconurl="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"><img style="width:auto;"  src="/zh_CN/htmledition/images/xdisk/ico_mid/fu_html.gif"/></a></div>   <div class="name_big">                        <span player="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809249607868271.html&amp;sid=6YbYrU1JY0VFeV4I">20150809249607868271.html</span><span class="graytext">&nbsp;(56.48K<span id="span_attachIndex_ZC1309-WDe7YIB8MhTSIwRRsBGsR58_afa6444a2667827fe07a15352c7d0fca" style="display:none">, <span style="color: #C00;">附件包含病毒，请勿下载打开 <input type="button" class="qm_conversation_input_info" mor="showPoisonWaring" mot="hidePoisonWaring" style="cursor:pointer;vertical-align:-4px;"></span></span>)</span><div class="down_big" ><a title="请直接点击或鼠标右键转下载工具打开，请不要拖拽到下载工具悬浮框中" href="/cgi-bin/download?mailid=ZC1309-WDe7YIB8MhTSIwRRsBGsR58&amp;filename=20150809249607868271.html&amp;sid=6YbYrU1JY0VFeV4I" unset="true">下载</a>&nbsp;&nbsp;<a href="javascript:;" ck="previewAttach" select="7">预览</a>&nbsp;&nbsp;&nbsp;<a style="" href="javascript:;" flag="0" class="needSetFlag" attachKey="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809249607868271.html|20150809249607868271.html|57837" onclick="var dom=this;getTop().attachSetFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58|20150809249607868271.html|20150809249607868271.html|57837',true,function(){getTop().attr(dom,'flag','1');getTop().show(dom,false);getTop().show(dom.nextSibling,true);})"><span>收藏</span></a><span style="display:none;" class="graytext"><span>已收藏,&nbsp;</span><a href="javascript:;" onclick="getTop().jumpToAttachFlag('ZC1309-WDe7YIB8MhTSIwRRsBGsR58','20150809249607868271.html')">查看</a></span>&nbsp;&nbsp;&nbsp;<a ui-type="netdiskBind" attid="ZC1309-WDe7YIB8MhTSIwRRsBGsR58|afa6444a2667827fe07a15352c7d0fca|20150809249607868271.html" onclick="getTop().QMNetDisk.upload(this);" class="netdisk_hide"><span >转存</span><span class="bind_down_icon"></span></a></div></div></div></div></div></div><img id="qqmailcontent_load_finsih" width=0 height=0 style="height:0;display:none;"/></div></body></html><script>
+var _oTop = getTop();
+
+function showNetDisk(_aoContainer)
+{
+getTop().waitFor(
+function()
+{
+return getTop().QMNetDisk && getTop().QMNetDisk.getInfo()
+},
+function(_abIsOk)
+{
+if(_abIsOk)
+{
+var _oDiskInfo = getTop().QMNetDisk.getInfo(),
+_oDomAttCon = getTop().finds("div[ui-type='attCon']", _aoContainer)[0],
+_oDomList = getTop().finds("a.netdisk_hide", _oDomAttCon||_aoContainer) || [],
+_oDomAtt = _oDomList[0];
+
+for(var i = 0; i < _oDomList.length;i++)
+{
+getTop().QMNetDisk.uploadEntry(_oDomList[i]);
+}
+
+_oDomAttCon && _oDomAtt
+&& setTimeout(function()
+{
+getTop().QMNetDisk.route("tips", "readmail", _oDomAttCon, {
+offsetLeft: _oDomAtt.offsetLeft + _oDomAtt.clientWidth/2, 
+offsetTop: 80
+});
+},3000);
+}
+}
+);
+}
+showNetDisk(document);
+_oTop.waitFor(
+function()
+{
+return !!(_oTop.QMReadMail);
+},
+function(_abIsOk)
+{
+if (_abIsOk)
+{
+try{
+window.QMReadMail = new (_oTop.QMReadMail.qmReadMail)(
+{
+                    
+ bNeedIdentifyLocation: true,
+sLocationIdentifyUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify_worker24e6ae.js',
+sLocationWorkerImportUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js',
+   
+logintype: '1',
+reandfw: "",
+mailtype        : 'comm',
+xqqstyle: '0',
+noIncludeArtcle: false,
+bOpenTag : "1",
+
+loc: "readmail,readmail,",
+subtmpl: "",
+folderid: "1",
+folderkey: "",
+saveFrom: "656859247@qq.com",
+titlePrefix: "0",
+sendmailname: "656859247@qq.com",
+disptype: "html",
+
+bNewMail        : 0,
+
+bNeedReceipt : 0,
+
+bStar : false,
+bAddrvip : false,
+bSys : false,
+                    bAd: false,
+oSysTag : "system:1|friend:0|important:0|",
+bDft : false,
+oMatchTag : [],
+oMoveItems: [ 
+{ sId: 'fid_1', sItemValue: "收件箱" },
+{ sId: 'fid_3', sItemValue: "已发送" },
+{ sId: "fid_130", sItemValue: "QQ邮件订阅" },
+{ sId: "fid_129", sItemValue: "邮件" },
+{ sId: "fid_131", sItemValue: "邮件归档" },
+{ sId: "fid_132", sItemValue: "工业园" },
+{ sId: "fid_133", sItemValue: "盛贤" },
+{ nHeight: 10, sItemValue: '<div style="background:#CCC; height:1px; margin-top:5px; overflow:hidden;"></div>' }, //'<hr style="color:#CCC;height:1px;"/>' },
+{ sId: "new", sItemValue : '新建文件夹...' }
+],
+oMoreOpt : ["addremark", "addstar", "addremind", "print"]
+},
+{
+from: { 
+                        name : "广发对账单", 
+                        addr : "creditcard@cgbchina.com.cn",
+                        qq : ""
+                    }, 
+date: "2015年8月9日(星期天) 下午3:09",
+dateeng: "",
+
+to: [
+{
+name : "Utral",
+addr : "656859247@qq.com",
+qq  : "-1717958233"
+},
+],
+
+cc: [
+],
+
+subject: "尊敬的客户：您的账单为补发的账单，在色彩、格式上与正式账单会有差异，请着重核对交易明细，其它内容仅供参考，敬请谅解。祝您用卡愉快！【广发银行】",
+
+replyTo: [
+{
+name : "广发对账单",
+addr : "creditcard@cgbchina.com.cn"
+}
+],
+
+replyCc: [
+],
+
+reSubject: "尊敬的客户：您的账单为补发的账单，在色彩、格式上与正式账单会有差异，请着重核对交易明细，其它内容仅供参考，敬请谅解。祝您用卡愉快！【广发银行】"
+},
+{
+oWin : window,
+sContext : "ZC1309-WDe7YIB8MhTSIwRRsBGsR58",
+sModuleName : "qmReadMail"
+}
+);
+}catch(e){alert(e.message)}
+
+var tag = [{}];
+tag.length = tag.length - 1;
+getTop().QMTag && getTop().QMTag.set(tag, "1442842419169214");
+
+}
+else
+{
+debug("读信readmail2.js加载失败");
+}
+}, 10);
+
+getTop().switchFolder('folder_1');
+</script> <script type="text/javascript" src="https://res.mail.qq.com/zh_CN/htmledition/js/bj-report2761dc.js"></script><script type="text/javascript">
+BJ_REPORT.init({
+id   : 112,
+ignore : [/Script error/i],
+random : 0.1
+});
+var _oTop = getTop();
+_oTop.waitFor(
+function()
+{
+return _oTop.resetTopFrameError;
+},
+function(_abIsOk)
+{
+_oTop.resetTopFrameError();
+});
+</script><script>parent.endStatTime && parent.endStatTime(window, 
+{mailid:"ZC1309-WDe7YIB8MhTSIwRRsBGsR58",folderid:"1",type:"readmail",rcgi:"readmail",rt:"readmail",rs:"",wm_flowid:"32633707"});</script>

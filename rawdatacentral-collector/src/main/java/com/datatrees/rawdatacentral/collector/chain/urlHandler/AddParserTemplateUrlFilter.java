@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.collector.chain.urlHandler;
 
+import java.util.List;
+
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
@@ -13,16 +15,13 @@ import com.datatrees.rawdatacentral.collector.search.URLHandlerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午11:41:34
  */
 public class AddParserTemplateUrlFilter implements Filter {
+
     private static final Logger log = LoggerFactory.getLogger(AddParserTemplateUrlFilter.class);
 
     @Override

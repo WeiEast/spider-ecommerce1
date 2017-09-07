@@ -9,7 +9,6 @@ import com.datatrees.rawdatacentral.domain.model.Operator;
 public interface OperatorService {
 
     /**
-     *
      * @param websiteId
      * @return
      */

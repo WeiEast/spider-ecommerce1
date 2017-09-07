@@ -5,25 +5,23 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.datatrees.rawdatacentral.collector.bdb.env.Environment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.rawdatacentral.collector.bdb.env.BDBEnvironmentContext;
+import com.datatrees.rawdatacentral.collector.bdb.env.Environment;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.EnvironmentLockedException;
 import com.sleepycat.je.SecondaryDatabase;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月20日 上午12:46:39
  */
 public class BDBEnvironmentWapper extends BDBEnvironmentContext implements Environment {
+
     private static final Logger log = LoggerFactory.getLogger(BDBEnvironmentWapper.class);
     // Save the number of created db
     private final AtomicInteger plusCount;
@@ -33,8 +31,8 @@ public class BDBEnvironmentWapper extends BDBEnvironmentContext implements Envir
 
     /**
      * @param env
-     * @throws DatabaseException
-     * @throws EnvironmentLockedException
+     * @exception DatabaseException
+     * @exception EnvironmentLockedException
      */
     public BDBEnvironmentWapper() throws Exception {
         super(UUID.randomUUID() + "");

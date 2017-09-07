@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<url-filters>
+		<url-filter type="+">.10086.cn</url-filter>
+	</url-filters>
+
+	<result-tag-list>
+		<result-tag><![CDATA[operator]]></result-tag>
+	</result-tag-list>
+
+	<properties>
+		<cookie scope="user_session"></cookie>
+	</properties>
+
+	<login login-type="app">
+ 		<login-check success-pattern="mobile">
+ 			<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=utf-8","Referer":"http://service.cq.10086.cn/myMobile/myMobile.html","X-Requested-With":"XMLHttpRequest"}]]></headers>
+			<check-url><![CDATA[http://service.cq.10086.cn/ics?service=ajaxDirect/1/myMobile/myMobile/javascript/&pagename=myMobile&eventname=Mail139&&ajaxSubmitType=post&ajax_randomcode=]]></check-url>
+			<object-segment name="account">
+				<field-extractor id="phone" field="phone" field-visible-type="context" result-type="string" not-empty="true">
+					<operation type="regex" index="1"><![CDATA["mobile":"(\d{11})",]]></operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<page-definition>
+		<page id="basicInfo-page" path="eventname=userInfo2" >
+			<!--用户基本信息切片-->
+			<object-segment name="basicInfo" result-class="OperatorData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			    <field-extractor id="phoneNum" field="phoneNum" field-visible-type="context" result-type="string">
+					<operation type="template"><![CDATA[[${phone}]]></operation>
+				</field-extractor>
+			    <field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="smsCode" field="smsCode" plugin-ref="cq10086smsCodePlugin" field-visible-type="request" result-type="string" not-empty="true">
+                </field-extractor>
+			</object-segment>
+			<!--组装账单url-->
+			<object-segment name="billLinkNode" result-class="LinkNode">
+				<field-extractor id="currentMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" />
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="lastMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" />
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" offset="-1" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="last2Month" field="temp" result-type="string"> 
+                    <operation type="datetime" base-type="now" /> 
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" offset="-2" format="yyyyMM" /> 
+                </field-extractor>
+                <field-extractor id="last3Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" />
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" offset="-3" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="last4Month" field="temp" result-type="string"> 
+                    <operation type="datetime" base-type="now" /> 
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" offset="-4" format="yyyyMM" /> 
+                </field-extractor> 
+				<field-extractor id="start-end-time" field="temp" result-type="string" field-visible-type="request"> 
+					<operation type="template"><![CDATA[${lastMonth},${last2Month},${last3Month},${last4Month}]]></operation> 
+				</field-extractor>
+				<field-extractor id="queryScope" field="temp" result-type="string" field-visible-type="request"> 
+					<operation type="template"><![CDATA[${currentMonth},${lastMonth},${last2Month},${last3Month}]]></operation> 
+				</field-extractor>
+				<field-extractor id="field-extractor_3" source="start-end-time" field="url" result-type="string">
+					<operation type="parser" ref="billDetail_parser"></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="callLinkNode" result-class="LinkNode">
+				<field-extractor id="call-extractor" source="queryScope" field="url" result-type="string">
+					<operation type="parser" ref="callDetail_parser"></operation>
+				</field-extractor>
+			</object-segment>
+			<!--组装短信记录url-->
+			<object-segment name="smsLinkNode" result-class="LinkNode">
+				<field-extractor id="sms-extractor" source="queryScope" field="url" result-type="string">
+					<operation type="parser" ref="smsDetail_parser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<!--查询账单 -->
+		<page id="bill-page" path="eventname=getUserBill2">
+			<replaces>
+			</replaces>
+			<regex></regex>
+			<object-segment name="billInfo" result-class="OperatorData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="billDate" field="billDate" field-visible-type="context" source="url" result-type="string">
+					<operation type="regex" index="1"><![CDATA[cond_QUERY_DATE=(\d+)&]]></operation>
+				</field-extractor>
+				<field-extractor id="phoneNumber" field="phoneNumber" field-visible-type="context" result-type="string">
+					<operation type="template"><![CDATA[${phone}]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<!--通话记录和短信页面-->
+		<page id="call-sms-page" path="eventname=getDetailBill">
+			<replaces>
+			</replaces>
+			<regex></regex>
+			<object-segment name="detailInfo" result-class="OperatorData">
+				<field-extractor id="detailBillPage-extractor" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="year" field="year" source="url" result-type="string" field-visible-type="context">
+					<operation type="regex" index="1"><![CDATA[cond_QUERY_MONTH=(\d{4})(\d{2})&]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="basicInfo-search-template" type="category_search" plugin-ref="" max-depth="1">
+			<request>
+				<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=utf-8","Referer":"http://service.cq.10086.cn/myMobile/myMobile.html","X-Requested-With","XMLHttpRequest"}]]></headers>
+				<url-templates>
+					<url-template><![CDATA[http://service.cq.10086.cn/ics?service=ajaxDirect/1/myMobile/myMobile/javascript/&pagename=myMobile&eventname=userInfo2&cond_GOODS_ENAME=GRXX&cond_GOODS_NAME=%E4%B8%AA%E4%BA%BA%E4%BF%A1%E6%81%AF&cond_TRANS_TYPE=Q&cond_GOODS_ID=2015061800000665&ajaxSubmitType=get&ajax_randomcode=]]></url-template>
+				</url-templates>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page>30</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="basicInfo-page" />
+				<page depth="1" ref="bill-page" />
+				<page depth="1" ref="call-sms-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+	<parser-definition>
+		<!--重庆移动通话记录url模版-->				
+		<parser id="callDetail_parser">
+			<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=utf-8","Referer":"http://service.cq.10086.cn/myMobile/detailBill.html","X-Requested-With","XMLHttpRequest"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://service.cq.10086.cn/ics?service=ajaxDirect/1/myMobile/myMobile/javascript/&pagename=myMobile&eventname=getDetailBill&cond_DETAIL_TYPE=3&cond_QUERY_TYPE=0&cond_QUERY_MONTH=${queryMonth}&cond_GOODS_ENAME=XFMX&cond_GOODS_NAME=%E6%B6%88%E8%B4%B9%E6%98%8E%E7%BB%86&cond_TRANS_TYPE=Q&cond_GOODS_ID=2015060500000083&ajaxSubmitType=post&ajax_randomcode=]]></url-template>
+		</parser>
+
+		<!--重庆移动短信记录url模版-->	
+		<parser id="smsDetail_parser">
+			<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=utf-8","Referer":"http://service.cq.10086.cn/myMobile/detailBill.html","X-Requested-With","XMLHttpRequest"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://service.cq.10086.cn/ics?service=ajaxDirect/1/myMobile/myMobile/javascript/&pagename=myMobile&eventname=getDetailBill&cond_DETAIL_TYPE=5&cond_QUERY_TYPE=0&cond_QUERY_MONTH=${queryMonth}&cond_GOODS_ENAME=XFMX&cond_GOODS_NAME=%E6%B6%88%E8%B4%B9%E6%98%8E%E7%BB%86&cond_TRANS_TYPE=Q&cond_GOODS_ID=2015060500000083&ajaxSubmitType=post&ajax_randomcode=]]></url-template>
+		</parser>
+
+		<!--重庆移动账单url模版-->
+		<parser id="billDetail_parser">
+			<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=utf-8","Referer":"http://service.cq.10086.cn/myMobile/queryBill.html","X-Requested-With","XMLHttpRequest"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://service.cq.10086.cn/ics?service=ajaxDirect/1/myMobile/myMobile/javascript/&pagename=myMobile&eventname=getUserBill2&cond_QUERY_DATE=${queryMonth}&cond_GOODS_ENAME=WDZD&cond_GOODS_NAME=%E6%88%91%E7%9A%84%E8%B4%A6%E5%8D%95&cond_TRANS_TYPE=Q&cond_GOODS_ID=2015060500000080&ajaxSubmitType=post&ajax_randomcode=]]></url-template>
+		</parser>
+
+
+	</parser-definition>
+
+    <plugin-definition>
+        <plugin id="cq10086LoginPlugin" file-type="jar" phase="login">
+            <main-class>com.datatrees.crawler.plugin.main.LoginMain</main-class>
+        </plugin>
+        <plugin id="cq10086smsCodePlugin" file-type="jar" phase="field">
+            <main-class>com.datatrees.crawler.plugin.main.SmsCodeMain</main-class>
+        </plugin>
+    </plugin-definition>
+</config>

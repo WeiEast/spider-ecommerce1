@@ -1,12 +1,6 @@
 package com.datatrees.rawdatacentral.submitter.common;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.CRC32;
@@ -19,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ZipCompressUtils {
-    private static final Logger logger = LoggerFactory.getLogger(ZipCompressUtils.class);
 
-    private static final int BUFFER = 8192;
+    private static final Logger logger = LoggerFactory.getLogger(ZipCompressUtils.class);
+    private static final int    BUFFER = 8192;
 
     public static void compress(String zipPathName, String srcPathName) {
         logger.debug("start compress file: " + srcPathName);
@@ -88,8 +82,7 @@ public class ZipCompressUtils {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(entry.getValue().getValue());
                 String basedir = "";
                 try {
-                    String fileName =
-                            StringUtils.isNotBlank(entry.getValue().getFileName()) ? entry.getValue().getFileName() : entry.getKey() + ".html";
+                    String fileName = StringUtils.isNotBlank(entry.getValue().getFileName()) ? entry.getValue().getFileName() : entry.getKey() + ".html";
                     compressInputStream(inputStream, out, basedir, fileName);
                 } finally {
                     try {

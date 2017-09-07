@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 我爱卡网查searchConfig -->
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<result-tag-list>
+		<result-tag><![CDATA[webDetect]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">.51credit.com</url-filter>
+	</url-filters>
+	<page-definition>
+		<page id="toKeyword-page" path="/static/">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="keyword1" field="temp"
+					result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+					<operation type="codec" codec-type="uri" handling-type="encode"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[http://so.51credit.com/cse/search?q=${keyword1}&s=12455798804538985593&flt=cse_block1%3DforumIn_forumName%253A%25E4%25BF%25A1%25E7%2594%25A8%25E8%25B4%25B7%25E6%25AC%25BE&nsid=1]]></operation>
+				</field-extractor>
+			</object-segment>
+
+		</page>
+		<page id="keyword-search-page" path="/cse/search" page-num-regex="p=(\d+)"
+			page-retry-pattern="^\s+$" retry-sleep-second="5">
+			<object-segment name="linkNode" result-class="LinkNode"
+				max-cycles="3" type="xpath" value="div.result.f.s3">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="xpath"><![CDATA[//h3/a/@href]]></operation>
+				</field-extractor>
+				<field-extractor id="searchPage" field="pageContent"
+					result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="overview" field="overview"
+					result-type="string">
+					<operation type="xpath"><![CDATA[//div[@class='c-abstract']/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="title" field="title"
+					result-type="string">
+					<operation type="xpath"><![CDATA[//h3/a/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="author" field="author"
+					result-type="string">
+					<operation type="xpath"><![CDATA[//div[@class='c-summary-1']/span[2]/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[作者：(.+)]]></operation>
+				</field-extractor>
+				<field-extractor id="time" field="time" result-type="date"
+					format="yyyy-MM-dd">
+					<operation type="xpath"><![CDATA[//div[@class='c-summary-1']/span[3]/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[发布：(.+)]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<page path="/thread" id="show-page">
+			<object-segment name="basicSearch" result-class="DefaultData">
+
+				<field-extractor id="searchPage" field="pageContent"
+					result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="keyword" field="keyword"
+					result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+				</field-extractor>
+				<field-extractor id="containKey" field="containKey"
+					result-type="string">
+					<operation type="template">${containKey}</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="overview" field="overview"
+					result-type="string">
+					<operation type="template">${overview}</operation>
+				</field-extractor>
+				<field-extractor id="title" field="title"
+					result-type="string">
+					<operation type="template">${title}</operation>
+				</field-extractor>
+				<field-extractor id="author" field="author"
+					result-type="string">
+					<operation type="template">${author}</operation>
+				</field-extractor>
+				<field-extractor id="time" field="time" result-type="date"
+					format="yyyy-MM-dd HH:mm">
+					<operation type="template">${time}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="keyword-search-template"
+			max-depth="2">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://bbs.51credit.com/static/image/common/logo.png]]></url-template>
+				</url-templates>
+				<max-page>100</max-page>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<result-tag-list>
+				<result-tag><![CDATA[webDetect]]></result-tag>
+			</result-tag-list>
+			<page-sequence>
+				<page depth="0" ref="toKeyword-page" />
+				<page depth="1" ref="keyword-search-page" />
+				<page depth="2" ref="show-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+</config>

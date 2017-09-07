@@ -3,19 +3,17 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
-package com.datatrees.rawdatacentral.domain.result;
 
-import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+package com.datatrees.rawdatacentral.domain.result;
 
 import java.io.Serializable;
 import java.util.Map;
 
+import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月27日 下午2:55:43
@@ -26,23 +24,20 @@ public abstract class AbstractExtractResult implements Serializable {
      *
      */
     private static final long serialVersionUID = 3890382241592488877L;
-    private int id;
-    private int taskId;
-    private int websiteId;
-    private String uniqueSign;
-    private String uniqueMd5;
-    private int status;
-    private String remark;
-    private String storagePath;
-    private String resultType;
-    private String url;
-    private String pageExtractId;
-
-    private long duration;
-
+    private int                 id;
+    private int                 taskId;
+    private int                 websiteId;
+    private String              uniqueSign;
+    private String              uniqueMd5;
+    private int                 status;
+    private String              remark;
+    private String              storagePath;
+    private String              resultType;
+    private String              url;
+    private String              pageExtractId;
+    private long                duration;
     private Map<String, Object> extraInfo;
 
-    
     /**
      * @return the extraInfo
      */
@@ -93,7 +88,6 @@ public abstract class AbstractExtractResult implements Serializable {
         this.url = url;
     }
 
-
     /**
      * @return the id
      */
@@ -107,7 +101,6 @@ public abstract class AbstractExtractResult implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
-
 
     /**
      * @return the taskId
@@ -243,8 +236,7 @@ public abstract class AbstractExtractResult implements Serializable {
      */
     @Override
     public String toString() {
-        return "ExtractResult [taskId=" + taskId + ", websiteId=" + websiteId + ", uniqueSign=" + uniqueSign + ", uniqueMd5="
-                + uniqueMd5 + "]";
+        return "ExtractResult [taskId=" + taskId + ", websiteId=" + websiteId + ", uniqueSign=" + uniqueSign + ", uniqueMd5=" + uniqueMd5 + "]";
     }
 
 }

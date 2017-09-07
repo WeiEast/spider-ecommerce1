@@ -1,0 +1,41 @@
+ext {
+    commonProtocol = "2.1.0"
+    commonPipeline = "2.1.0"
+    dsiutils = "2.0.14"
+    htmlcleaner = "2.13"
+    jdom2 = "2.0.4"
+    jaxen = "1.1.4"
+    jsonPath = "2.0.0"
+    jsoup = "1.7.2"
+    commonsExec = "1.1"
+    jodaTime = "2.7"
+    apacheMime4j = "0.6.1"
+    javassist = "3.20.0-GA"
+}
+
+dependencies {
+    compile project(':rawdatacentral-api')
+    compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocol}", changing: true)
+    compile(group: "com.datatrees.common", name: "common-pipeline", version: "${commonPipeline}", changing: true)
+    compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true)
+    compile("it.unimi.dsi:dsiutils:${dsiutils}")
+    compile "org.slf4j:log4j-over-slf4j:1.7.25"
+    compile "org.slf4j:jcl-over-slf4j:1.7.25"
+    compile "net.sourceforge.htmlcleaner:htmlcleaner:${htmlcleaner}"
+    compile "org.jdom:jdom2:${jdom2}"
+    compile "jaxen:jaxen:${jaxen}"
+    compile "com.jayway.jsonpath:json-path:${jsonPath}"
+    compile "org.jsoup:jsoup:${jsoup}"
+    compile "org.apache.commons:commons-exec:${commonsExec}"
+    compile "joda-time:joda-time:${jodaTime}"
+    compile "org.apache.james:apache-mime4j:${apacheMime4j}"
+    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
+    compile("com.alibaba:dubbo:${dubboVersion}") {
+        exclude(module: "spring")
+        exclude(module: "netty")
+    }
+    compile "org.javassist:javassist:${javassist}"
+    compile "com.101tec:zkclient:${zkclientVersion}"
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "javax.mail:mail:${mailVersion}"
+}

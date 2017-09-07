@@ -3,27 +3,22 @@ package com.datatrees.rawdatacentral.domain.model;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table t_ecommerce(ecommerce basic info)  */
+/** create by system from table t_ecommerce(ecommerce basic info) */
 public class Ecommerce implements Serializable {
-    /** bank Id */
-    private Integer id;
-
-    /** not null if ecommerce support search */
-    private Integer websiteId;
-
-    /** ecommerce name */
-    private String ecommerceName;
-
-    /** 0:false,1:true */
-    private Boolean isenabled;
-
-    /**  */
-    private Date createdAt;
-
-    /**  */
-    private Date updatedAt;
 
     private static final long serialVersionUID = 1L;
+    /** bank Id */
+    private Integer id;
+    /** not null if ecommerce support search */
+    private Integer websiteId;
+    /** ecommerce name */
+    private String  ecommerceName;
+    /** 0:false,1:true */
+    private Boolean isenabled;
+    /**  */
+    private Date    createdAt;
+    /**  */
+    private Date    updatedAt;
 
     public Integer getId() {
         return id;

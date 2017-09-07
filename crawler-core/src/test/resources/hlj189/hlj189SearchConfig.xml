@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<url-filters>
+		<url-filter type="+">.189.cn</url-filter>
+	</url-filters>
+
+	<result-tag-list>
+		<result-tag><![CDATA[operator]]></result-tag>
+	</result-tag-list>
+
+	<properties>
+		<cookie scope="user_session"></cookie>
+	</properties>
+
+	<login login-type="app">
+		<login-check success-pattern="您好">
+			<check-url><![CDATA[http://www.189.cn/dqmh/cms/index/login_jx.jsp?ifindex=index]]></check-url>
+		</login-check>
+	</login>
+
+	<page-definition>
+		<page id="basicInfo-page" path="service/crm_cust_info_show.do" >
+			<!--用户基本信息切片-->
+			<object-segment name="basicInfo" result-class="OperatorData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="redirect_temp" field="temp" result-type="string">
+					<operation type="parser" ref="redirect_parser"></operation>
+				</field-extractor>
+				<field-extractor id="redirect_temp_1" field="temp" result-type="string">
+					<operation type="parser" ref="redirect_parser_1"></operation>
+				</field-extractor>
+				<field-extractor id="redirect_temp_2" field="temp" result-type="string">
+					<operation type="parser" ref="redirect_parser_2"></operation>
+				</field-extractor>
+				<field-extractor id="account_temp" field="temp" result-type="string">
+					<operation type="parser" ref="accountBalance_parser"></operation>
+					<operation type="parser" ref="redirect_parser"></operation>
+					<operation type="parser" ref="accountBalance_parser"></operation>
+				</field-extractor>
+				<!--余额 -->
+				<field-extractor id="accountBalance" field="accountBalance" field-visible-type="context" source="account_temp" result-type="number" not-empty="true">
+					<operation type="xpath"><![CDATA[td:contains(普通预存款余额)+td]]></operation>
+					<operation type="xpath">/text()</operation>
+					<operation type="regex" index="1"><![CDATA[([\d,\.]+)]]></operation>
+				</field-extractor>
+				<!--手机号码 -->
+				<field-extractor id="phone" field="phone" field-visible-type="context" source="account_temp" result-type="string" not-empty="true">
+					<operation type="xpath"><![CDATA[tr:contains(帐号)]]></operation>
+					<operation type="regex" index="1"><![CDATA[(\d{11})]]></operation>
+				</field-extractor>
+				<!--accountNum -->
+				<field-extractor id="accountNumber" field="accountNumber" field-visible-type="context" result-type="string" not-empty="true">
+					<operation type="parser" ref="condition_parser"></operation>
+					<operation type="regex" index="1"><![CDATA[<input type="hidden" name="accountNum"  value="([\d,:]+)"/>]]></operation>
+				</field-extractor>
+
+			</object-segment>
+			<!--组装账单url-->
+			<object-segment name="billLinkNode" result-class="LinkNode">
+				<field-extractor id="currentMonth" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="lastMonth" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-1" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="last2Month" field="temp" result-type="string"> 
+					<operation type="datetime" base-type="now" /> 
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-2" format="yyyyMM" /> 
+				</field-extractor>
+				<field-extractor id="last3Month" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-3" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="last4Month" field="temp" result-type="string"> 
+					<operation type="datetime" base-type="now" /> 
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-4" format="yyyyMM" /> 
+				</field-extractor> 
+				<field-extractor id="start-end-time" field="temp" result-type="string" field-visible-type="request"> 
+					<operation type="template"><![CDATA[${lastMonth},${last2Month},${last3Month},${last4Month}]]></operation> 
+				</field-extractor>
+				<field-extractor id="queryScope" field="temp" result-type="string" field-visible-type="request"> 
+					<operation type="template"><![CDATA[${currentMonth},${lastMonth},${last2Month},${last3Month}]]></operation> 
+				</field-extractor>
+				<field-extractor id="field-extractor_3" source="start-end-time" field="url" result-type="string">
+					<operation type="parser" ref="billDetail_parser"></operation>
+				</field-extractor>
+			</object-segment>
+			<!--组装市话记录url-->
+			<object-segment name="cityCallLinkNode" result-class="LinkNode">
+				<field-extractor id="call-extractor" source="queryScope" field="url" result-type="string">
+					<operation type="parser" ref="citycallDetail_parser"></operation>
+				</field-extractor>
+			</object-segment>
+			<!--组装长途记录url-->
+			<object-segment name="longCallLinkNode" result-class="LinkNode">
+				<field-extractor id="call-extractor" source="queryScope" field="url" result-type="string">
+					<operation type="parser" ref="longCallDetail_parser"></operation>
+				</field-extractor>
+			</object-segment>
+			<!--组装漫游记录url-->
+			<object-segment name="wonderCallLinkNode" result-class="LinkNode">
+				<field-extractor id="call-extractor" source="queryScope" field="url" result-type="string">
+					<operation type="parser" ref="wonderCallDetail_parser"></operation>
+				</field-extractor>
+			</object-segment>
+			<!--组装短信记录url-->
+			<object-segment name="smsLinkNode" result-class="LinkNode">
+				<field-extractor id="sms-extractor" source="queryScope" field="url" result-type="string">
+					<operation type="parser" ref="smsDetail_parser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<!--查询账单 -->
+		<page id="bill-page" path="/service/billDateChoiceNew.do">
+			<replaces>
+			</replaces>
+			<regex></regex>
+			<object-segment name="billInfo" result-class="OperatorData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<!--通话记录和短信页面-->
+		<page id="call-sms-page" path="service/cqd/queryDetailList.do">
+			<replaces>
+			</replaces>
+			<regex></regex>
+			<object-segment name="detailInfo" result-class="OperatorData">
+				<field-extractor id="detailBillPage-extractor" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+	</page-definition>
+
+	<search>
+		<search-template id="basicInfo-search-template" type="category_search" plugin-ref="" max-depth="1">
+			<request>
+				<headers><![CDATA[{"Referer":"http://hl.189.cn/service/zzfw.do?method=khzlgl&id=19&fastcode=00560519"}]]></headers>
+				<url-templates>
+					<url-template><![CDATA[http://hl.189.cn/service/crm_cust_info_show.do?funcName=custSupport&canAdd2Tool=canAdd2Tool]]></url-template>
+				</url-templates>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page>300</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="basicInfo-page" />
+				<page depth="1" ref="bill-page" />
+				<page depth="1" ref="call-sms-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+	<parser-definition>
+		<parser id="redirect_parser">
+			<headers><![CDATA[{"Referer":"http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00520481"}]]></headers>
+			<url-template><![CDATA[http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10010&toStUrl=http://hl.189.cn/service/zzfw.do?method=fycx&id=6&fastcode=00520481]]></url-template>
+		</parser>
+		<parser id="redirect_parser_1">
+			<url-template><![CDATA[http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00520481]]></url-template>
+		</parser>
+		<parser id="redirect_parser_2">
+			<url-template><![CDATA[http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10010&toStUrl=http://hl.189.cn/service/crm_cust_info_show.do?funcName=custSupport&canAdd2Tool=canAdd2Tool]]></url-template>
+		</parser>
+		<parser id="accountBalance_parser">
+			<headers><![CDATA[{"Referer":"http://hl.189.cn/service/zzfw.do?method=fycx&id=6&fastcode=00520481"}]]></headers>
+			<url-template><![CDATA[http://hl.189.cn/service/selectBallance.do?method=ballance]]></url-template>
+		</parser>
+		<parser id="telPackage_parser">
+			<headers><![CDATA[{"Referer":"http://hl.189.cn/service/zzfw.do?method=fycx&id=6&fastcode=00520481"}]]></headers>
+			<url-template><![CDATA[http://hl.189.cn/service/zzfw.do?method=fycx&id=6&fastcode=00520481]]></url-template>
+		</parser>
+
+		<parser id="condition_parser">
+			<headers><![CDATA[{"Referer":"http://hl.189.cn/service/redirect.do?service=detailQuery"}]]></headers>
+			<url-template><![CDATA[http://hl.189.cn/service/cqd/detailQueryCondition.do?menuid=4&subNo=]]></url-template>
+		</parser>
+
+		<!--黑龙江电信账单url模版-->
+		<parser id="billDetail_parser">
+			<headers><![CDATA[{"Referer":"http://hl.189.cn/service/billDateChoiceNew.do?method=doInit"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://hl.189.cn/service/billDateChoiceNew.do?method=doSearch&selectDate=${queryMonth}]]></url-template>
+		</parser>
+
+		<!--黑龙江电信市话记录url模版-->				
+		<parser id="citycallDetail_parser">
+			<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://hl.189.cn/service/cqd/queryDetailList.do?isMobile=0&seledType=2&queryType=&pageSize=10000&pageNo=1&flag=&pflag=&accountNum=${accountNumber}&callType=3&selectType=1&detailType=2&selectedDate=${queryMonth}&method=queryCQDMain]]></url-template>
+		</parser>
+
+		<!--黑龙江电信长途记录url模版-->				
+		<parser id="longCallDetail_parser">
+			<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://hl.189.cn/service/cqd/queryDetailList.do?isMobile=0&seledType=1&queryType=&pageSize=10000&pageNo=1&flag=&pflag=&accountNum=${accountNumber}&callType=3&selectType=1&detailType=1&selectedDate=${queryMonth}&method=queryCQDMain]]></url-template>
+		</parser>
+
+		<!--黑龙江电信漫游记录url模版-->				
+		<parser id="wonderCallDetail_parser">
+			<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://hl.189.cn/service/cqd/queryDetailList.do?isMobile=0&seledType=0&queryType=&pageSize=10&pageNo=1&flag=&pflag=&accountNum=${accountNumber}&callType=3&selectType=1&detailType=0&selectedDate=${queryMonth}&method=queryCQDMain]]></url-template>
+		</parser>
+
+		<!--黑龙江电信短信记录url模版-->	
+		<parser id="smsDetail_parser">
+			<headers><![CDATA[{"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://hl.189.cn/service/cqd/queryDetailList.do?isMobile=0&seledType=5&queryType=&pageSize=10&pageNo=1&flag=&pflag=&accountNum=${accountNumber}&callType=3&selectType=1&detailType=5&selectedDate=${queryMonth}&method=queryCQDMain]]></url-template>
+		</parser>
+
+	</parser-definition>
+
+	<plugin-definition>
+	</plugin-definition>
+</config>

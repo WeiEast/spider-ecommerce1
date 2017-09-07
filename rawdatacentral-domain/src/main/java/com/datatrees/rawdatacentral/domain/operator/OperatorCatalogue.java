@@ -7,13 +7,12 @@ import java.util.List;
 /**
  * Created by zhouxinghai on 2017/6/23.
  */
-public class OperatorCatalogue implements Serializable{
+public class OperatorCatalogue implements Serializable {
 
     /**
      * 运营商:移动,电信,联通
      */
-    private String               catalogue;
-
+    private String catalogue;
     /**
      * 相关站点目录
      */

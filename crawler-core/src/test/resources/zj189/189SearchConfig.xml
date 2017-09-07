@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<url-filters>
+		<url-filter type="+">.10086.cn</url-filter>
+	</url-filters>
+	<result-tag-list>
+		<result-tag><![CDATA[operator]]></result-tag>
+	</result-tag-list>
+	<properties>
+		<cookie scope="user_session"></cookie>
+	</properties>
+
+	<login login-type="app">
+		<login-check success-pattern="湖北移动网厅">
+			<check-url><![CDATA[http://www.hb.10086.cn/servicenew/index.action]]></check-url>
+			<object-segment name="name">
+				<!-- 归属地 -->
+				<field-extractor id="userProvince" field="userProvinve" result-type="string" field-visible-type="context">
+					<operation type="set"><![CDATA[湖北武汉]]></operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+	<parser-defination>
+		<parser id="cookieParser">
+			<url-template><![CDATA[http://www.hb.10086.cn/my/billdetails/queryInvoice.action]]></url-template>
+		</parser>
+		<parser id="personnalAccount">
+			<url-template><![CDATA[http://www.hb.10086.cn/my/account/basicInfoAction.action]]></url-template>
+		</parser>
+		<parser id="bidsParser">
+			<url-template><![CDATA[http://www.hb.10086.cn/servicenew/addedprod/getAddedProdList.action]]></url-template>
+		</parser>
+		<parser id="userBillParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([\d]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://www.hb.10086.cn/my/billdetails/showbillMixQuery.action?postion=outer&qryMonthType=current&theMonth=${queryMonth}&menuid=myBill&groupId=tabs3]]></url-template>
+		</parser>
+
+		<parser id="userShortMesParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([\d]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://www.hb.10086.cn/my/billdetails/billDetailQry.action?postion=outer&detailBean.billcycle=${queryMonth}&detailBean.selecttype=0&detailBean.flag=SMS&menuid=myDetailBill&groupId=tabs3]]></url-template>
+		</parser>
+		<parser id="userCallDetailBillParser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([\d]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://www.hb.10086.cn/my/billdetails/billDetailQry.action?postion=outer&detailBean.billcycle=${queryMonth}&detailBean.selecttype=0&detailBean.flag=GSM&menuid=myDetailBill&groupId=tabs3&detailBean.password=199211&detailBean.chkey=661796]]></url-template>
+		</parser>
+	</parser-defination>
+
+	<page-definition>
+		<!-- userInformationKey对应Map: -->
+		<page id="userInformation" path="servicenew/index" response-check="true">
+			<!-- 账单 -->
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="lastmonth" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-1" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="last2month" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-2" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="last3month" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-3" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="last4month" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-4" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="last5month" field="temp" result-type="string">
+					<operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-5" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="start-end-time" field="temp" result-type="string">
+					<operation type="template"><![CDATA[${lastmonth},${last2month},${last3month},${last4month}]]></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor" source="start-end-time" field="url" result-type="string">
+					<operation type="parser" ref="userBillParser"></operation>
+				</field-extractor>
+			</object-segment>
+			<!--电话历史详单 -->
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="currMonth" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" format="yyyyMM" />
+				</field-extractor>
+
+				<field-extractor id="lastMonth" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-1" format="yyyyMM" />
+				</field-extractor>
+
+				<field-extractor id="last2Month" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-2" format="yyyyMM" />
+				</field-extractor>
+
+				<field-extractor id="last3Month" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-3" format="yyyyMM" />
+				</field-extractor>
+
+				<field-extractor id="last4Month" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-4" format="yyyMM" />
+				</field-extractor>
+				<field-extractor id="last5Month" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-5" format="yyyyMM" />
+				</field-extractor>
+				<field-extractor id="call-startdate-enddate" field="temp" field-visible-type="request" result-type="string">
+					<operation type="template"><![CDATA[${currMonth},${lastMonth},${last2Month},${last3Month},${last4Month},${last5Month}]]></operation>
+				</field-extractor>
+
+				<field-extractor id="field-extractor" source="call-startdate-enddate" field="url" result-type="string">
+					<operation type="parser" ref="userCallDetailBillParser"></operation>
+				</field-extractor>
+			</object-segment>
+
+			<!--短信历史详单 -->
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="field-extractor1" source="call-startdate-enddate" field="url" result-type="string">
+					<operation type="parser" ref="userShortMesParser"></operation>
+				</field-extractor>
+			</object-segment>
+			<object-segment name="linkNode" result-class="OperatorData">
+				<field-extractor id="field-extractor2" field="url" result-type="string">
+					<operation type="parser" ref="personnalAccount"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<!-- callDetailsKey对应Map -->
+		<page id="callDetails" path="billDetailQry.action?postion=outer" response-check="true">
+			<object-segment name="callDetails" result-class="OperatorData">
+				<field-extractor id="field_extractor1" field="pageContent">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url} </operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<!-- billDetailsKey对应Map: 账单 -->
+		<page id="billDetails" path="my/billdetails" response-check="true">
+			<object-segment name="billDetails" result-class="OperatorData">
+				<field-extractor id="field_extractor1" field="pageContent">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url} </operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<!-- familiarityNumbersKey对应Map（部分运营商该部分信息无法获取） -->
+		<page id="familiarityNumbers" path="addedprod/getProdDetailPage.action">
+			<object-segment name="familiarityNumbers" result-class="OperatorData">
+				<field-extractor id="field_extractor1" field="pageContent">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url} </operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+	<search>
+		<search-template id="search-template" type="category_search" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://www.hb.10086.cn/servicenew/index.action]]></url-template>
+				</url-templates>
+				<max-page>100</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="userInformation" />
+				<page depth="1" ref="callDetails" />
+				<page depth="1" ref="billDetails" />
+				<page depth="1" ref="familiarityNumbers" />
+			</page-sequence>
+		</search-template>
+	</search>
+	<plugin-definition>
+		<plugin>
+
+		</plugin>
+	</plugin-definition>
+</config>

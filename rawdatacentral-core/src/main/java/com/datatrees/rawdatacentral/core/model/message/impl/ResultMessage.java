@@ -3,27 +3,26 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.core.model.message.impl;
 
 import java.util.HashMap;
 
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年8月15日 上午2:43:21
  */
 public class ResultMessage extends HashMap<String, Object> {
-    public final static String TASK_ID = "taskId";
-    public final static String WEBSITE_NAME = "websiteName";
-    public final static String STATUS = "status";// "status":SUCCESS/FAIL/WAITING_FOR_SMS_VERIFY/WAITING_FOR_PICTURE_VERIFY,
+
+    public final static String TASK_ID        = "taskId";
+    public final static String WEBSITE_NAME   = "websiteName";
+    public final static String STATUS         = "status";// "status":SUCCESS/FAIL/WAITING_FOR_SMS_VERIFY/WAITING_FOR_PICTURE_VERIFY,
     public final static String ISRESULT_EMPTY = "isResultEmpty";
-    public final static String REMARK = "remark";
-    public final static String WEBSITE_TYPE = "websiteType";
+    public final static String REMARK         = "remark";
+    public final static String WEBSITE_TYPE   = "websiteType";
     public final static String LEVAL_1_STATUS = "level1Status";
 
     /**
@@ -39,7 +38,6 @@ public class ResultMessage extends HashMap<String, Object> {
     public void setLevel1Status(boolean level1Status) {
         this.put(LEVAL_1_STATUS, level1Status);
     }
-
 
     public Long getTaskId() {
         return (Long) this.get(TASK_ID);

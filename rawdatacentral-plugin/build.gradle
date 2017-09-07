@@ -10,7 +10,9 @@ ext {
 }
 
 dependencies {
-    compile project(':rawdatacentral-share')
+    compile project(':rawdatacentral-common')
+    compile project(':crawler-core')
+
     compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessage}", changing: true) {
         exclude(module: 'spring-amqp')
         exclude(module: 'spring-rabbit')
@@ -18,7 +20,6 @@ dependencies {
     compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: 'spring')
     }
-    compile(group: "com.datatrees.crawler", name: "crawler-core", version: "${crawlerCoreVersion}", changing: true)
     compile "org.javassist:javassist:${javassist}"
     compile "com.github.sgroschupf:zkclient:0.1"
     compile "com.datatrees.usercenter:user-center-api:${userCenterApi}"

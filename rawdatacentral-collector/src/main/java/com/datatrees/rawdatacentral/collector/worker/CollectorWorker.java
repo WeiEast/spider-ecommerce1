@@ -5,7 +5,11 @@
  * strictly prohibited. All rights are reserved.
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.worker;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import akka.dispatch.Await;
 import akka.dispatch.Future;
@@ -33,21 +37,12 @@ import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
-import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+import com.datatrees.rawdatacentral.domain.exception.LoginTimeOutException;
+import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.share.MessageService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -62,41 +57,24 @@ import org.slf4j.LoggerFactory;
  */
 public class CollectorWorker {
 
-    private static final Logger LOGGER                    = LoggerFactory.getLogger(CollectorWorker.class);
-
-    private Integer             maxExecuteMinutes         = PropertiesConfiguration.getInstance()
-        .getInt("default.collector.execute.minutes", 7);
-
-    private Integer             interactiveTimeoutSeconds = PropertiesConfiguration.getInstance()
-        .getInt("interactive.timeout.seconds", 300);
-
+    private static final Logger  LOGGER                    = LoggerFactory.getLogger(CollectorWorker.class);
+    private final        long    maxLiveTime               = TimeUnit.SECONDS.toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
+    private              Integer maxExecuteMinutes         = PropertiesConfiguration.getInstance().getInt("default.collector.execute.minutes", 7);
+    private              Integer interactiveTimeoutSeconds = PropertiesConfiguration.getInstance().getInt("interactive.timeout.seconds", 300);
     private CrawlExcutorHandler crawlExcutorHandler;
-
     private ResultDataHandler   resultDataHandler;
-
     private WrappedActorRef     extractorActorRef;
-
     private DuplicateChecker    duplicateChecker;
-
     private SubTaskManager      subTaskManager;
-
-    private Set<String>         resultTagSet              = new HashSet<String>();
-
-    private List<LinkNode>      initLinkNodeList;
-
-    private RedisDao            redisDao;
-
-    private final long          maxLiveTime               = TimeUnit.SECONDS
-        .toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
-
-    private MessageService      messageService;
+    private Set<String> resultTagSet = new HashSet<String>();
+    private List<LinkNode> initLinkNodeList;
+    private RedisDao       redisDao;
 
     /**
      * 登录
-     *
      * @param taskMessage
      * @return
-     * @throws InterruptedException
+     * @exception InterruptedException
      */
     public HttpResult<Boolean> doLogin(TaskMessage taskMessage) throws InterruptedException {
         HttpResult<Boolean> loginResult = new HttpResult<>();
@@ -113,9 +91,7 @@ public class CollectorWorker {
                 }
                 //消息延迟了
                 if ((System.currentTimeMillis() - taskMessage.getCollectorMessage().getBornTimestamp()) > maxLiveTime) {
-                    LOGGER.warn("Message drop! Born at  bornTime = {} ,maxLiveTime ={},taskId={},websiteName={}",
-                        DateUtils.formatYmdhms(taskMessage.getCollectorMessage().getBornTimestamp()), maxLiveTime,
-                        task.getTaskId(), task.getWebsiteName());
+                    LOGGER.warn("Message drop! Born at  bornTime = {} ,maxLiveTime ={},taskId={},websiteName={}", DateUtils.formatYmdhms(taskMessage.getCollectorMessage().getBornTimestamp()), maxLiveTime, task.getTaskId(), task.getWebsiteName());
                     return loginResult.failure(ErrorCode.MESSAGE_DROP);
                 }
                 redisDao.pushMessage(keyString, keyString, interactiveTimeoutSeconds);
@@ -135,13 +111,15 @@ public class CollectorWorker {
             if (e instanceof ResultEmptyException) {
                 return loginResult.failure(ErrorCode.NOT_EMPTY_ERROR_CODE.getErrorCode(), e.getMessage());
             }
+            if (e instanceof LoginTimeOutException) {
+                return loginResult.failure(ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorCode(), e.getMessage());
+            }
             return loginResult.failure(ErrorCode.COOKIE_INVALID);
         }
     }
 
     /**
      * 爬取数据
-     *
      * @param taskMessage
      * @return
      */
@@ -150,11 +128,9 @@ public class CollectorWorker {
         Task task = taskMessage.getTask();
         SearchProcessorContext context = taskMessage.getContext();
         try {
-            Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig()
-                .getSearchTemplateConfigList();
+            Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig().getSearchTemplateConfigList();
             if (CollectionUtils.isEmpty(templateList)) {
-                LOGGER.error("templateList is empty taskId={}, websiteName={}", task.getTaskId(),
-                    task.getWebsiteName());
+                LOGGER.error("templateList is empty taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName());
                 return searchResult.failure(ErrorCode.CONFIG_ERROR);
             }
             String templateId = taskMessage.getTemplateId();
@@ -162,14 +138,12 @@ public class CollectorWorker {
             for (SearchTemplateConfig templateConfig : templateList) {
                 if (StringUtils.isNotBlank(templateId)) {
                     if (!templateId.contains(templateConfig.getId())) {
-                        LOGGER.warn("filter template ,taskId={},templateId={} filter configId={},websiteName={}",
-                            task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
+                        LOGGER.warn("filter template ,taskId={},templateId={} filter configId={},websiteName={}", task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
                         continue;
                     }
                 } else {
                     if (BooleanUtils.isNotTrue(templateConfig.getAutoStart())) {
-                        LOGGER.warn("filter template ,taskId={},templateId={} filter configId={},websiteName={}",
-                            task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
+                        LOGGER.warn("filter template ,taskId={},templateId={} filter configId={},websiteName={}", task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
                         continue;
                     }
                 }
@@ -178,8 +152,7 @@ public class CollectorWorker {
 
                     Request request = templateConfig.getRequest();
                     if (null == request) {
-                        LOGGER.warn("request is empty ,taskId={},templateId={},configId={},websiteName={}",
-                            task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
+                        LOGGER.warn("request is empty ,taskId={},templateId={},configId={},websiteName={}", task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
                         continue;
                     }
                     // get from context ,seedurl may given by sub task or other external task
@@ -191,37 +164,28 @@ public class CollectorWorker {
                     }
 
                     if (StringUtils.isEmpty(searchTemplate)) {
-                        LOGGER.warn(
-                            "searchTemplate is empty or null,taskId={},templateId={},configId={},websiteName={}",
-                            task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
+                        LOGGER.warn("searchTemplate is empty or null,taskId={},templateId={},configId={},websiteName={}", task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
                         continue;
                     }
                     searchTemplate = ReplaceUtils.replaceMap(context.getContext(), searchTemplate);
-                    maxExecuteMinutes = request.getMaxExecuteMinutes() != null ? request.getMaxExecuteMinutes()
-                        : maxExecuteMinutes;
+                    maxExecuteMinutes = request.getMaxExecuteMinutes() != null ? request.getMaxExecuteMinutes() : maxExecuteMinutes;
                     String headerString = request.getDefaultHeader();
                     if (StringUtils.isNotBlank(headerString)) {
                         headerString = SourceUtil.sourceExpression(context.getContext(), headerString);
-                        Map<String, String> defaultHeader = (Map<String, String>) GsonUtils.fromJson(headerString,
-                            Map.class);
+                        Map<String, String> defaultHeader = (Map<String, String>) GsonUtils.fromJson(headerString, Map.class);
                         if (MapUtils.isNotEmpty(defaultHeader)) {
                             context.getDefaultHeader().putAll(defaultHeader);
                         }
                     }
                     // get all the possible result tag
                     resultTagSet.addAll(templateConfig.getResultTagList());
-                    SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate)
-                        .setTemplateId(templateConfig.getId()).setSearchTemplateConfig(templateConfig)
-                        .setMaxExecuteMinutes(maxExecuteMinutes).setResultDataHandler(resultDataHandler)
-                        .setExtractorActorRef(extractorActorRef).setDuplicateChecker(duplicateChecker)
-                        .setInitLinkNodeList(initLinkNodeList);
+                    SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate).setTemplateId(templateConfig.getId()).setSearchTemplateConfig(templateConfig).setMaxExecuteMinutes(maxExecuteMinutes).setResultDataHandler(resultDataHandler).setExtractorActorRef(extractorActorRef).setDuplicateChecker(duplicateChecker).setInitLinkNodeList(initLinkNodeList);
 
                     crawlExcutorHandler.crawlExecutor(searchProcessor);
                     futureList.addAll(searchProcessor.getFutureList());
                 } catch (Exception e) {
                     // 除了中断,内容为空,字段为空等错误,任务不算失败
-                    LOGGER.error("doSearch error taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(),
-                        e);
+                    LOGGER.error("doSearch error taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
                     if (e instanceof InterruptedException) {
                         return searchResult.failure(ErrorCode.TASK_INTERRUPTED_ERROR);
                     }
@@ -243,7 +207,10 @@ public class CollectorWorker {
         } finally {
             task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
             task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
-            context.release();
+            //释放代理
+            if (null == searchResult || searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
+                context.release();
+            }
         }
     }
 
@@ -255,8 +222,7 @@ public class CollectorWorker {
             Exception exception = null;
             for (Future future : futureList) {
                 try {
-                    ExtractMessage message = (ExtractMessage) Await.result(future,
-                        new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT).duration());
+                    ExtractMessage message = (ExtractMessage) Await.result(future, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT).duration());
                     this.extractCodeCount(extractCount, message, submitkeyResult);
                 } catch (Exception e) {
                     exception = e;
@@ -302,8 +268,7 @@ public class CollectorWorker {
         return resultMap;
     }
 
-    private void extractCodeCount(ExtractCount extractCount, ExtractMessage message,
-                                  Map<String, Object> submitkeyResult) {
+    private void extractCodeCount(ExtractCount extractCount, ExtractMessage message, Map<String, Object> submitkeyResult) {
         extractCount.extractedCount++;
         ExtractCode result = message.getExtractCode();
         if (result == null) {
@@ -323,19 +288,6 @@ public class CollectorWorker {
                 this.extractCodeCount(extractCount, subExtractMessage, submitkeyResult);
             }
         }
-    }
-
-    class ExtractCount {
-
-        int extractedCount      = 0;
-
-        int extractSucceedCount = 0;
-
-        int extractFailedCount  = 0;
-
-        int storeFailedCount    = 0;
-
-        int notExtractCount     = 0;
     }
 
     /**
@@ -447,8 +399,13 @@ public class CollectorWorker {
         return this;
     }
 
-    public CollectorWorker setMessageService(MessageService messageService) {
-        this.messageService = messageService;
-        return this;
+    class ExtractCount {
+
+        int extractedCount      = 0;
+        int extractSucceedCount = 0;
+        int extractFailedCount  = 0;
+        int storeFailedCount    = 0;
+        int notExtractCount     = 0;
     }
+
 }

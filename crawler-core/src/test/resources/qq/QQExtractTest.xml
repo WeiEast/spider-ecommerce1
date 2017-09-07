@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<extrator-selectors>
+		<selector field="pageContent" contain="群邮件" dis-contain="" ref="page-extractor-1"></selector>
+		<selector field="pageContent" contain="QQ好友" dis-contain="" ref="emailcontacts-extractor"></selector>
+		<selector field="url" contain="action=readmailmime" dis-contain="" ref="mime-extractor"></selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<page-extractor id="mime-extractor" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="detectResults">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${url}</operation>
+				</field-extractor>
+				<field-extractor id="billIds" field="billIds" result-type="string">
+					<operation type="template">${billIds}</operation>
+				</field-extractor>
+				<field-extractor id="mailId" field="mailId" result-type="string">
+					<operation type="template">${mailId}</operation>
+				</field-extractor>
+				<field-extractor id="mail" field="temp">
+					<operation type="mailparser"></operation>
+				</field-extractor>
+				<field-extractor id="serverIp" field="serverIp">
+					<operation type="template">${mail.mailServerIp}</operation>
+				</field-extractor>
+				<field-extractor id="serverIp" field="serverIp" stand-by="true" not-empty="true">
+					<operation type="template">${mail.x-originating-ip}</operation>
+					<operation type="regex" index="1"><![CDATA[(\d+.\d+.\d+.\d+)]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="emailcontacts-extractor">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="emailcontacts">
+				<field-extractor id="pageContentTemp" field="temp" result-type="string">
+					<operation type="regex" index="1"><![CDATA[goListData\s*=\s*(\{oList[\s\S]*\});[\s\S]*goGroupData]]></operation>
+				</field-extractor>
+				<object-segment name="emailcontacts" source="pageContentTemp" type="jsonpath" value="$.oList[*]">
+					<field-extractor id="Id" field="Id" result-type="string">
+						<operation type="jsonpath"><![CDATA[$.sId]]></operation>
+					</field-extractor>
+					<field-extractor id="ItemType" field="ItemType" result-type="string">
+						<operation type="jsonpath"><![CDATA[$.sItemType]]></operation>
+					</field-extractor>
+					<field-extractor id="ItemLevel" field="ItemLevel" result-type="string">
+						<operation type="jsonpath"><![CDATA[$.sLevel]]></operation>
+					</field-extractor>
+					<object-segment name="ItemName" type="jsonpath" value="$.oName[*]" result-class="string">
+						<field-extractor id="ItemName" field="ItemName" result-type="string">
+							<operation type="jsonpath"><![CDATA[$.sVal]]></operation>
+						</field-extractor>
+					</object-segment>
+					<object-segment name="Email" type="jsonpath" value="$.oEmail[*]" result-class="string">
+						<field-extractor id="Email" field="Email" result-type="string">
+							<operation type="jsonpath"><![CDATA[$.sVal]]></operation>
+						</field-extractor>
+					</object-segment>
+					<object-segment name="Tel" type="jsonpath" value="$.oTel[*]" result-class="string">
+						<field-extractor id="Tel" field="Tel" result-type="string">
+							<operation type="jsonpath"><![CDATA[$.sVal]]></operation>
+						</field-extractor>
+					</object-segment>
+					<object-segment name="ItemGroup" type="jsonpath" value="$.oGroup[*]" result-class="string">
+						<field-extractor id="ItemGroup" field="ItemGroup" result-type="string">
+							<operation type="jsonpath"><![CDATA[$.sName]]></operation>
+						</field-extractor>
+					</object-segment>
+					<object-segment name="ItemNickName" type="jsonpath" value="$.oQQNickName[*]" result-class="string">
+						<field-extractor id="ItemNickName" field="ItemNickName" result-type="string">
+							<operation type="jsonpath"><![CDATA[$.sVal]]></operation>
+						</field-extractor>
+					</object-segment>
+				</object-segment>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="page-extractor-1">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="mailgroups">
+				<object-segment name="mailgroups" type="xpath" value="//div[@id='folder_group']//div[@class='g_list']//a[@class='left']">
+					<field-extractor id="GroupName" field="GroupName" result-type="string">
+						<operation type="xpath"><![CDATA[//a/@title]]></operation>
+						<operation from="&amp;nbsp;" to="" type="replace"></operation>
+					</field-extractor>
+					<field-extractor id="GroupId" field="GroupId" result-type="string">
+						<operation type="regex" index="1"><![CDATA[groupid=(\d+)]]></operation>
+					</field-extractor>
+					<field-extractor id="Status" field="Status" result-type="number">
+						<operation type="set"><![CDATA[0]]></operation>
+					</field-extractor>
+				</object-segment>
+				<object-segment name="mailgroups" type="xpath" value="div:contains(未开通群邮件):not(:has(div)) ~ div" break-pattern="退出的QQ群">
+					<field-extractor id="GroupName" field="GroupName" result-type="string">
+						<operation type="xpath"><![CDATA[//a/@title]]></operation>
+						<operation from="&amp;nbsp;" to="" type="replace"></operation>
+					</field-extractor>
+					<field-extractor id="GroupId" field="GroupId" result-type="string">
+						<operation type="regex" index="1"><![CDATA[groupid=(\d+)]]></operation>
+					</field-extractor>
+					<field-extractor id="Status" field="Status" result-type="number">
+						<operation type="set"><![CDATA[1]]></operation>
+					</field-extractor>
+				</object-segment>
+				<object-segment name="mailgroups" type="xpath" value="div:contains(退出的QQ群):not(:has(div)) ~ div">
+					<field-extractor id="GroupName" field="GroupName" result-type="string">
+						<operation type="xpath"><![CDATA[//a/text()]]></operation>
+						<operation from="&amp;nbsp;" to="" type="replace"></operation>
+					</field-extractor>
+					<field-extractor id="GroupId" field="GroupId" result-type="string">
+						<operation type="regex" index="1"><![CDATA[groupid=(\d+)]]></operation>
+					</field-extractor>
+					<field-extractor id="Status" field="Status" result-type="number">
+						<operation type="set"><![CDATA[2]]></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+
+			<object-segment name="subSeed">
+				<field-extractor id="qqAccount" field="qqAccount">
+					<operation type="template"><![CDATA[${qqAccount}]]></operation>
+				</field-extractor>
+				<field-extractor id="3gurl" field="3gurl">
+					<operation type="template"><![CDATA[${3gurl}]]></operation>
+				</field-extractor>
+				<field-extractor id="websiteName" field="websiteName" result-type="string">
+					<operation type="set"><![CDATA[qq.qzone.com]]></operation>
+				</field-extractor>
+				<field-extractor id="templateId" field="templateId" result-type="string">
+					<operation type="set"><![CDATA[qq-home-template]]></operation>
+				</field-extractor>
+				<field-extractor id="loginCheckIgnore" field="loginCheckIgnore" result-type="boolean">
+					<operation type="set"><![CDATA[true]]></operation>
+				</field-extractor>
+				<field-extractor id="waiting" field="waiting">
+					<operation type="set"><![CDATA[parentTask]]></operation>
+				</field-extractor>
+				<field-extractor id="uniqueSuffix" field="uniqueSuffix" result-type="string">
+					<operation type="template"><![CDATA[${qqAccount}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+	</page-extractor-definition>
+	<plugin-definition>
+
+	</plugin-definition>
+</config>

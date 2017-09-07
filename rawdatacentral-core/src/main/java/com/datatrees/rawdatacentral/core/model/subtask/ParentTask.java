@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.core.model.subtask;
 
 import java.util.HashMap;
@@ -15,18 +15,17 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年12月20日 上午12:36:15
  */
 public class ParentTask {
-    private int taskId;
-    private String cookie;
-    private String websiteName;
+
+    private int              taskId;
+    private String           cookie;
+    private String           websiteName;
     private CollectorMessage collectorMessage;
     private Map<String, Object> property = new HashMap<String, Object>();
-
     private SearchProcessorContext processorContext;
 
     /**
@@ -112,8 +111,6 @@ public class ParentTask {
     public void setCollectorMessage(CollectorMessage collectorMessage) {
         this.collectorMessage = collectorMessage;
     }
-    
-    
 
     /*
      * (non-Javadoc)

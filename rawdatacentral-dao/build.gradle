@@ -1,4 +1,13 @@
 dependencies {
     compile project(":rawdatacentral-domain")
-    compile "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}"
+    compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}") {
+        exclude(module: 'spring-boot-starter')
+        exclude(module: 'spring-boot-starter-jdbc')
+        exclude(module: 'spring-boot-autoconfigure')
+    }
+    compile "org.springframework.boot:spring-boot-starter:${springBootVersion}"
+    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
+    compile "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
+    //spring-boot-devtools不兼容
+    //compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
 }

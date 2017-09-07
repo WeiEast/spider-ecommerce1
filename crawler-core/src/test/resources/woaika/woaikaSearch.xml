@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 我爱卡searchConfig -->
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<result-tag-list>
+		<result-tag><![CDATA[opinionDetect]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">.51credit.com</url-filter>
+	</url-filters>
+
+	<properties>
+		<encoding>UNICODE</encoding>
+		<unicode-mode><![CDATA[hex]]></unicode-mode>
+	</properties>
+
+	<page-definition>
+		<page id="toKeyword-page" path="/static/">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="keyword1" field="temp" result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+					<operation type="codec" codec-type="uri" handling-type="encode"></operation>
+				</field-extractor>
+				<field-extractor id="entryName1" field="temp" result-type="string">
+					<operation type="template"><![CDATA[${entryName}]]></operation>
+					<operation type="codec" codec-type="uri" handling-type="encode"></operation>
+					<operation type="codec" codec-type="uri" handling-type="encode"></operation>
+					<operation type="append" index="0">%253a</operation>
+				</field-extractor>
+
+
+
+				<!-- http://so.51credit.com/cse/search?q=%E5%8A%9F%E5%A4%AB%E8%B4%B7&s=12455798804538985593&flt=cse_block1%3DforumIn_forumName%253A%25E4%25BF%25A1%25E7%2594%25A8%25E8%25B4%25B7%25E6%25AC%25BE&srt=def&sti=10080&nsid=0 
+					一天之内：http://so.51credit.com/cse/search?q=${keyword}&s=12455798804538985593&flt=cse_block1%3DforumIn_forumName%253A%25E4%25BF%25A1%25E7%2594%25A8%25E8%25B4%25B7%25E6%25AC%25BE&srt=def&sti=1440&nsid=1 全部时间： 
+					q:关键字 p:页数-1 s:固定12455798804538985593 sti:定义搜索时间 1440表示一天之内 无表示全部时间 -->
+				<!--一天之内的 -->
+				<!-- <field-extractor id="url" field="url" result-type="string"> <operation type="template"><![CDATA[http://so.51credit.com/cse/search?q=${keyword1}&p=0&s=12455798804538985593&flt=cse_block1%3DforumIn_forumName${entryName1}&srt=def&sti=1440&nsid=1]]></operation> 
+					</field-extractor> -->
+				<!--一月之内的 -->
+				<!-- <field-extractor id="url" field="url" result-type="string"> <operation type="template"><![CDATA[http://so.51credit.com/cse/search?q=${keyword1}&p=0&s=12455798804538985593&flt=cse_block1%3DforumIn_forumName${entryName1}&srt=def&sti=43200&nsid=1]]></operation> 
+					</field-extractor> -->
+				<!--全部 -->
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[http://so.51credit.com/cse/search?q=${keyword1}&s=12455798804538985593&flt=cse_block1%3DforumIn_forumName${entryName1}&srt=def&sti=10080&nsid=1]]></operation>
+				</field-extractor>
+			</object-segment>
+
+		</page>
+		<page id="keyword-search-page" path="/cse/search" page-num-regex="p=(\d+)" page-retry-pattern="^\s+$" retry-sleep-second="5">
+			<object-segment name="basicSearch" result-class="DefaultData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="searchPage" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="keyword" field="keyword" result-type="string">
+					<operation type="template"><![CDATA[${keyword}]]></operation>
+				</field-extractor>
+				<field-extractor id="entryName" field="entryName" result-type="string">
+					<operation type="template"><![CDATA[${entryName}]]></operation>
+				</field-extractor>
+
+				<field-extractor id="containKey" field="containKey" result-type="string">
+					<operation type="template"><![CDATA[${containKey}]]></operation>
+				</field-extractor>
+				<field-extractor id="disContainKey" field="disContainKey" result-type="string">
+					<operation type="template"><![CDATA[${disContainKey}]]></operation>
+				</field-extractor>
+				<field-extractor id="businessType" field="businessType" result-type="string">
+					<operation type="template"><![CDATA[${businessType]]>}
+					</operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="nextSearch" type="xpath" value="//a[@class='pager-next-foot n']" result-class="LinkNode">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="extract"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="keyword-search-template" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://bbs.51credit.com/static/image/common/logo.png]]></url-template>
+				</url-templates>
+				<max-page>100</max-page>
+				<no-search-results-pattern></no-search-results-pattern>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<result-tag-list>
+				<result-tag><![CDATA[opinionDetect]]></result-tag>
+			</result-tag-list>
+			<page-sequence>
+				<page depth="0" ref="toKeyword-page" />
+				<page depth="1" ref="keyword-search-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+</config>

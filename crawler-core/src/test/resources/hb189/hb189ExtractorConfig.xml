@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<extrator-selectors>
+		<selector field="url" contain="userinfo/userInfo.action" dis-contain="" ref="page-extractor_1">
+		</selector>
+		<selector field="url" contain="feesquery/newBOSSQueryCustBill.action" dis-contain="" ref="page-extractor_2">
+		</selector>
+		<selector field="url" contain="type=1" dis-contain="type=3" ref="page-extractor_3">
+		</selector>
+		<selector field="url" contain="type=3" dis-contain="" ref="page-extractor_4">
+		</selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<!--基本信息解析-->
+		<page-extractor id="page-extractor_1" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="personalInformation" pop-return="true">
+				<!--余额 -->
+				<field-extractor id="field-extractor_1" field="accountBalance" result-type="string">
+					<operation type="template"><![CDATA[${accountBalance}]]></operation>
+				</field-extractor>
+
+				<!--套餐类型 -->
+				<field-extractor id="field-extractor_2" field="telPackage" result-type="string">
+					<operation type="template"><![CDATA[${packageType}]]></operation>
+				</field-extractor>
+
+				<!--身份证 -->
+				<field-extractor id="field-extractor_4" field="identityCard" result-type="string">
+					<operation type="xpath">//li[@id='zjhmli1']/text()</operation>
+					<operation type="regex" index="1"><![CDATA[证件号码：(.*)]]></operation>
+				</field-extractor>
+
+				<!--入网时间 -->
+				<field-extractor id="field-extractor_5" field="netJoinDate" result-type="date" format="yyyy-MM-dd">
+					<operation type="xpath">//li[@id='cjrqli1']/text()</operation>
+					<operation type="regex" index="1"><![CDATA[创建日期：(\d+-\d+-\d+)]]></operation>
+				</field-extractor>
+
+				<!--姓名 -->
+				<field-extractor id="field-extractor_6" field="name" result-type="string" not-empty="true">
+					<operation type="xpath">//ul[@class='ulone']/li[1]/text()</operation>
+					<operation type="regex" index="1"><![CDATA[机主姓名：(.*)]]></operation>
+				</field-extractor>
+
+				<!--省份 -->
+				<field-extractor id="field-extractor_7" field="telNumProvince" result-type="string" not-empty="true">
+					<operation type="set"><![CDATA[湖北]]></operation>
+				</field-extractor>
+
+				<!--手机号 -->
+				<field-extractor id="field-extractor_8" field="telNum" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${phone}]]></operation>
+				</field-extractor>
+
+				<!--手机号码所处运营商-->
+				<field-extractor id="field-extractor_9" field="telNumAttribution" result-type="string" not-empty="true">
+					<operation type="set"><![CDATA[中国电信]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+		<!--月账单解析-->
+		<page-extractor id="page-extractor_2" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+
+			<object-segment name="billDetails">
+				<!--账单月 -->
+				<field-extractor id="field-extractor_1" field="billMonth" result-type="date" format="yyyy/MM">
+					<operation type="xpath"><![CDATA[tr:contains(账单周期):not(:has(tr:contains(账单周期)))/text()]]></operation>
+					<operation type="regex" index="1">(\d{4}/\d{2})/\d{2}-\d{4}/\d{2}/\d{2}</operation>
+				</field-extractor>
+				<field-extractor id="telNum" field="telNum" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${phonenumber}]]></operation>
+					<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+				</field-extractor>
+				<field-extractor id="tempContent" field="temp" result-type="string" >
+					<operation type="xpath"><![CDATA[table:contains(${telNum}):contains(套餐月基本费):contains(本期费用合计):not(:has(table:contains(${telNum}):contains(套餐月基本费):contains(本期费用合计)))]]></operation>
+				</field-extractor>
+				<!--月基本费 -->
+				<field-extractor id="field-extractor_2" source="tempContent" field="baseFee" result-type="number">
+					<operation type="xpath"><![CDATA[tr:contains(套餐月基本费):contains(元):not(:has(tr:contains(套餐月基本费):contains(元)))]]></operation>
+					<operation type="regex" index="1"><![CDATA[([\d\.]+)元]]></operation>
+				</field-extractor>
+				<!--本月消费合计 -->
+				<field-extractor id="field-extractor_3" source="tempContent" field="totalFee" result-type="string">
+					<operation type="regex" index="1"><![CDATA[本期费用合计：\s*([\d\.]+)元]]></operation>
+				</field-extractor>
+
+				<!--本月抵扣合计 -->
+				<field-extractor id="field-extractor_3" source="tempContent" field="deductionFee" result-type="string">
+					<operation type="regex" index="1"><![CDATA[本期已付费用：\s*([\d\.]+)元]]></operation>
+				</field-extractor>
+
+				<!--实际应缴合计 -->
+				<field-extractor id="field-extractor_4" source="tempContent" field="payFee" result-type="number" not-empty="true">
+					<operation type="regex" index="1"><![CDATA[本期应付费用：\s*([\d\.]+)元]]></operation>
+				</field-extractor>
+
+				<!--姓名-->
+				<field-extractor id="field-extractor_5" field="name" result-type="string">
+					<operation type="xpath"><![CDATA[td:contains(客户名称):not(:has(tr:contains(客户名称)))/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[客户名称：\s*([^ ]+)]]></operation>
+				</field-extractor>
+
+			</object-segment>
+		</page-extractor>
+		<!--通话记录账单解析-->
+		<page-extractor id="page-extractor_3" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="callDetails">
+				<object-segment name="callDetails" type="xpath" value="tr.hovergray">
+					<!--序号 -->
+					<field-extractor id="field-extractor_1" field="serialNum" result-type="string">
+						<operation type="xpath">//td[1]/text()</operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+					</field-extractor>
+					<!--通话起始时间 -->
+					<field-extractor id="field-extractor_2" field="callStartDateTime" result-type="date" format="yyyy-MM-dd HH:mm:ss">
+						<operation type="xpath">//td[2]/text()</operation>
+					</field-extractor>
+					<!--通话时长 -->
+					<field-extractor id="durationSec" field="temp" result-type="string">
+						<operation type="xpath">//td[5]/text()</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_3" field="callDuration" result-type="string" not-empty="true">
+						<operation type="template"><![CDATA[${durationSec}秒]]></operation>
+					</field-extractor>
+					<!--呼叫类型，1-主叫；2-被叫 ；3-呼叫转移； -->
+					<field-extractor id="field-extractor_4" field="callType" result-type="string" not-empty="true">
+						<operation type="xpath">//td[6]/text()</operation>
+						<operation type="replace" from="主叫" to="1"></operation>
+						<operation type="replace" from="被叫" to="2"></operation>
+						<operation type="replace" from="呼叫转移" to="3"></operation>
+						<operation type="regex" index="1"><![CDATA[(\d)]]></operation>
+					</field-extractor>
+					<!--对方号码 -->
+					<field-extractor id="field-extractor_5" field="otherTelNum" result-type="string" not-empty="true">
+						<operation type="xpath">//td[4]/text()</operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+					</field-extractor>
+					<!--通话类型，本地通话或者漫游通话 -->
+					<field-extractor id="field-extractor_6" field="callTypeDetail" result-type="string">
+						<operation type="xpath">//td[9]/text()</operation>
+					</field-extractor>
+					<!--通话费合计 -->
+					<field-extractor id="field-extractor_7" field="totalFee" result-type="number">
+						<operation type="xpath">//td[10]/text()</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page-extractor>
+		<!--短信账单解析-->
+		<page-extractor id="page-extractor_4" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="shortMessageDetails">
+				<object-segment name="shortMessageDetails" type="xpath" value="tr.hovergray">
+					<!--序号 -->
+					<field-extractor id="field-extractor_1" field="serialNum" result-type="string">
+						<operation type="xpath">//td[1]/text()</operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+					</field-extractor>
+					<!--起始时间 -->
+					<field-extractor id="field-extractor_2" source="smsTimeTemp" field="smsDateTime" result-type="date" format="yyyy/MM/dd HH:mm:ss" not-empty="true">
+						<operation type="xpath">//td[2]/text()</operation>
+					</field-extractor>
+					<!--对方号码 -->
+					<field-extractor id="field-extractor_3" field="otherNum" result-type="string" not-empty="true">
+						<operation type="xpath">//td[3]/text()</operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+					</field-extractor>
+					<!--费用 -->
+					<field-extractor id="field-extractor_4" field="fee" result-type="number">
+						<operation type="xpath">//td[6]/text()</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page-extractor>
+	</page-extractor-definition>
+
+</config>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+	<protocol-type-list>
+		<protocol-type>POP</protocol-type>
+		<protocol-type><![CDATA[IMAP]]></protocol-type>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<url-filters>
+		<!-- skip file: ftp: and mailto: urls -->
+		<url-filter type="-">^(file|ftp|mailto):</url-filter>
+		<!-- skip image and other suffixes we can't yet parse -->
+		<url-filter type="-">\.(gif|GIF|jpg|JPG|png|PNG|ico|ICO|css|CSS|sit|SIT|eps|EPS|wmf|WMF|zip|ZIP|ppt|PPT|mpg|MPG|xls|XLS|gz|GZ|rpm|RPM|tgz|TGZ|mov|MOV|exe|EXE|jpeg|JPEG|bmp|BMP|js|JS)$
+		</url-filter>
+		<!-- skip URLs containing certain characters as probable queries, etc. -->
+		<url-filter type="-">[?*!@=]</url-filter>
+		<!-- accept others -->
+		<url-filter type="+">.qq.com</url-filter>
+	</url-filters>
+
+
+	<properties>
+		<wait-interval>500</wait-interval>
+		<task-region>china</task-region>
+		<default-header><![CDATA[{"keep-alive": "true", "User Agent": "Firefox 10.0"}]]></default-header>
+		<cookie scope="request" fail-pattern="sorry"><![CDATA[http://www.alluc.to/]]></cookie>
+		<proxy scope="request"><![CDATA[http://192.168.10.112:8888?wensiteName=icbc]]></proxy>
+		<encoding>GBK</encoding>
+		<unicode-mode><![CDATA[hex]]></unicode-mode> <!--unicode bug check -->
+	</properties>
+
+
+	<!--server type get context from http://open.datatrees.com/contexts/${websiteName}/${appEmailKey}/${subAppEmailKey} 
+		then put back -->
+
+	<login login-type="server" plugin-ref="login-plugin">  <!-- client|server|app -->
+		<url-template><![CDATA[https://mail.10086.cn/Login/Login.ashx"UserName=${username}&Password=${password}&VerifyCode=]]></url-template>
+		<headers>{"keep-alive": "true", "User Agent": "Firefox 10.0"}</headers>
+		<success-pattern>${username}</success-pattern>
+		<fail-pattern>sorry</fail-pattern>
+		<check-interval>5</check-interval>
+	</login>
+
+	<service-definition>
+		<service id="js-service" type='jsx' method="extract_htmls">
+			<wait-time-out>30</wait-time-out>
+			<waiting-time>3</waiting-time>
+			<to-save-image>true</to-save-image>
+			<to-trigger-onclick>true</to-trigger-onclick>
+			<anchor-on>false</anchor-on>
+			<to-return-page>true</to-return-page>
+			<click-element><![CDATA[//div[@id='xxx']:click, //div[@id='xxx']:doubleclick]]></click-element>
+		</service>
+	</service-definition>
+
+	<parser-definition>
+		<parser id="attachment-parser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[id:'(\w+)']]></regex>
+					<mappings>
+						<map group-index="1" placeholder="keyid" />
+					</mappings>
+				</pattern>
+				<pattern>
+					<regex><![CDATA[y.episode.show\('(\w+)'\)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="reload_field" />
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://www.youku.com/show_episode/id_${keyid}.html?dt=json&divid=${reload_field}&__rt=1&__ro=${reload_field}]]></url-template>
+			<link-url-template><![CDATA[http://www.youku.com/show_episode/id_${keyid}.html]]></link-url-template>
+			<headers><![CDATA[Cookie: icbcUserAnalysisId=20140208123273479]]></headers>
+		</parser>
+	</parser-definition>
+
+	<page-definition>
+		<page id="keyword-search-page" path="/search/page" content-regex="搜索列表" plugin-ref="page-plugin"
+			service-ref="js-service" page-num-regex="(page(\d+))" page-title-regex="(pagetitle .*)"><!-- plugn 输出 List<Map> recheck -->
+			<replaces>
+				<replace from="\\" to="\" />
+			</replaces>
+			<regex index="1">(.*)</regex>
+			<object-segment name="mail" type="xpath"
+				value="//div[@id='attachment']//div[@class='att_bt attachitem']" result-class="cn.datatrees.domain.mail"
+				plugin-ref="segment-plugin">
+				<object-segment name="html" result-class="cn.datatrees.domain.filewapper">
+					<field-extractor id="field-extractor_tt" field="html" result-type="file" source="field-extractor_1" encoding="gbk"> 
+						<operation type="xpath">//div[@class='down_big']/a[1]/@href
+						</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_1" field="path" result-type="file"> <!-- file download, return file path wapper -->
+						<operation type="xpath">//div[@class='down_big']/a[1]/@href
+						</operation>
+					</field-extractor>
+				</object-segment>
+				<object-segment name="attachment" >
+					<field-extractor id="field-extractor_1" field="header" result-type="file">   <!--一样的key 转 list -->
+						<operation type="save"></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+
+
+			<object-segment name="mail" type="xpath"
+				value="//div[@id='attachment']//div[@class='att_bt attachitem']" result-class="cn.datatrees.domain.mail">
+				<object-segment name="file" >
+					<field-extractor id="field-extractor_1" field="html" result-type="file"> <!-- file download, return file path wapper -->
+						<operation type="xpath">//div[@class='down_big']/a[1]/@href
+						</operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_1" field="path" result-type="file"> <!-- file download, return file path wapper -->
+						<operation type="xpath">//div[@class='down_big']/a[1]/@href
+						</operation>
+					</field-extractor>
+				</object-segment>
+				<object-segment>
+					<field-extractor id="field-extractor_1" field="header" result-type="file">   <!--一样的key 转 list -->
+						<operation type="save"></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+	</page-definition>
+
+
+	<search>
+		<search-template id="keyword-search-template" type="keyword_search" plugin-ref="search-plugin"
+			max-depth="1">
+			<request>
+				<url-template><![CDATA[http://set3.mail.qq.com/cgi-bin/mail_list?sid=${cookie.msid}&s=search&folderid=all&page=${page,0,40,1+}&subject=${keyword}&sender=${keyword}&receiver=${keyword}&searchmode=&topmails=0&advancesearch=0&loc=frame_html,,,6
+				]]></url-template>
+				<ref-template>http://mail.qq.com/cgi-bin/frame_html?sid=${cookie.msid}</ref-template>
+				<max-page>1000</max-page>
+				<no-search-results-pattern>没有邮件</no-search-results-pattern>
+				<block-pattern>block</block-pattern>
+				<last-page-pattern>抱歉，没有找到.*的相关视频</last-page-pattern>
+				<re-visit-pattern><![CDATA[/link\?url=]]></re-visit-pattern>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="keyword-search-page" />
+				<page depth="1" ref="show-page" />
+			</page-sequence>
+		</search-template>
+
+		<search-template type="deep" max-depth="5" id="deep">
+			<request>
+				<url-templates>
+					<url-template>hst</url-template>
+				</url-templates>
+			</request>
+		</search-template>
+
+	</search>
+
+	<plugin-definition>
+		<plugin id="segment-plugin" file-type="sh" phase="segment">
+			<extra-config></extra-config>
+		</plugin>
+
+		<plugin id="login-plugin" file-type="py" phase="login">
+			<extra-config></extra-config>
+		</plugin>
+
+		<plugin id="search-plugin" file-type="sh" phase="search">
+			<extra-config></extra-config>
+		</plugin>
+
+		<plugin id="page-plugin" file-type="sh" phase="page">
+			<extra-config></extra-config>
+		</plugin>
+
+		<plugin id="field-download-plugin" file-type="sh" phase="field">
+			<extra-config></extra-config>
+		</plugin>
+	</plugin-definition>
+
+</config>

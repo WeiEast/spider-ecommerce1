@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly prohibited.
  * All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2017
  */
+
 package com.datatrees.rawdatacentral.domain.operator;
 
 import java.util.HashMap;
@@ -17,36 +17,16 @@ import java.util.Map;
  */
 public enum FieldBizType {
 
-    USERNAME("USERNAME", "手机号"),PASSWORD("PASSWORD", "服务密码"), SMS_CODE("SMS_CODE", "短信验证码"), PIC_CODE("PIC_CODE", "图片验证码"), REAL_NAME("REAL_NAME", "真实姓名"), ID_CARD("ID_CARD", "身份证号码");
-
-    /**
-     * 字段类型
-     */
-    private final String code;
-
-    /**
-     * 要显示的label
-     */
-    private final String remark;
-
+    USERNAME("USERNAME", "手机号"),
+    PASSWORD("PASSWORD", "服务密码"),
+    SMS_CODE("SMS_CODE", "短信验证码"),
+    PIC_CODE("PIC_CODE", "图片验证码"),
+    REAL_NAME("REAL_NAME", "真实姓名"),
+    ID_CARD("ID_CARD", "身份证号码");
     /**
      * bizType对应的input标签属性
      */
     public static Map<String, InputField> fields = new HashMap<>();
-
-    FieldBizType(String code, String remark) {
-        this.code = code;
-        this.remark = remark;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
 
     static {
         for (FieldBizType type : FieldBizType.values()) {
@@ -104,7 +84,30 @@ public enum FieldBizType {
         }
     }
 
-    @Override public String toString() {
+    /**
+     * 字段类型
+     */
+    private final String code;
+    /**
+     * 要显示的label
+     */
+    private final String remark;
+
+    FieldBizType(String code, String remark) {
+        this.code = code;
+        this.remark = remark;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    @Override
+    public String toString() {
         return "FieldBizType{" + "code='" + code + '\'' + ", remark='" + remark + '\'' + '}';
     }
 }

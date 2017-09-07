@@ -1,5 +1,0 @@
-dependencies {
-    compile project(':rawdatacentral-domain')
-    compile "com.alibaba:fastjson:${fastjsonVersion}"
-}
-apply from: rootProject.file('upload.gradle')

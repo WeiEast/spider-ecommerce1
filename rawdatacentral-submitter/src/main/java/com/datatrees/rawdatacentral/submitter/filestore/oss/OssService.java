@@ -1,23 +1,13 @@
 package com.datatrees.rawdatacentral.submitter.filestore.oss;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.*;
+import com.datatrees.rawdatacentral.submitter.common.StreamUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
 import org.apache.commons.lang.StringUtils;
-
-import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.model.ListObjectsRequest;
-import com.aliyun.oss.model.OSSObject;
-import com.aliyun.oss.model.OSSObjectSummary;
-import com.aliyun.oss.model.ObjectListing;
-import com.aliyun.oss.model.ObjectMetadata;
-import com.aliyun.oss.model.PutObjectResult;
-import com.datatrees.rawdatacentral.submitter.common.StreamUtils;
 
 public class OssService {
 
@@ -25,9 +15,8 @@ public class OssService {
 
     /**
      * 使用指定的OSS Endpoint、阿里云颁发的Access Id/Access Key构造一个新的{@link OssService}对象。
-     *
-     * @param endpoint OSS服务的Endpoint。
-     * @param accessKeyId 访问OSS的Access Key ID。
+     * @param endpoint        OSS服务的Endpoint。
+     * @param accessKeyId     访问OSS的Access Key ID。
      * @param secretAccessKey 访问OSS的Secret Access Key。
      */
     OssService(String endpoint, String accessKeyId, String secretAccessKey) {
@@ -37,11 +26,10 @@ public class OssService {
     /**
      * 使用指定的OSS Endpoint、STS提供的临时Token信息(Access Id/Access Key/Security Token) 构造一个新的
      * {@link OssService}对象。
-     *
-     * @param endpoint OSS服务的Endpoint。
-     * @param accessKeyId STS提供的临时访问ID。
+     * @param endpoint        OSS服务的Endpoint。
+     * @param accessKeyId     STS提供的临时访问ID。
      * @param secretAccessKey STS提供的访问密钥。
-     * @param securityToken STS提供的安全令牌。
+     * @param securityToken   STS提供的安全令牌。
      */
     OssService(String endpoint, String accessKeyId, String secretAccessKey, String securityToken) {
         ossClient = new OSSClient(endpoint, accessKeyId, secretAccessKey, securityToken);
@@ -49,7 +37,6 @@ public class OssService {
 
     /**
      * 判断Bucket是否存在
-     * 
      * @param bucketName
      * @return
      */
@@ -59,7 +46,6 @@ public class OssService {
 
     /**
      * 获取Bucket地址
-     * 
      * @param bucketName
      * @return
      */
@@ -69,12 +55,11 @@ public class OssService {
 
     /**
      * 上传文件
-     * 
      * @param bucketName 用于存储的bucket
-     * @param key 保存Object对应的key
-     * @param file 保存的文件
+     * @param key        保存Object对应的key
+     * @param file       保存的文件
      * @return 返回新创建的{@link com.aliyun.oss.model.OSSObject}的ETag值
-     * @throws FileNotFoundException
+     * @exception FileNotFoundException
      */
     public String putObject(String bucketName, String key, File file) throws FileNotFoundException {
         // 上传Object.
@@ -86,12 +71,11 @@ public class OssService {
 
     /**
      * 上传文件 {@link OssService#putObject(String, String, File)}
-     * 
      * @param bucketName 用于存储的bucket
-     * @param key 保存Object对应的key
-     * @param filePath 保存的文件
+     * @param key        保存Object对应的key
+     * @param filePath   保存的文件
      * @return
-     * @throws FileNotFoundException
+     * @exception FileNotFoundException
      */
     public String putObject(String bucketName, String key, String filePath) throws FileNotFoundException {
         return putObject(bucketName, key, new File(filePath));
@@ -99,11 +83,10 @@ public class OssService {
 
     /**
      * 上传{@link OSSObject}
-     * 
-     * @param bucketName 用于存储的bucket
-     * @param key 保存Object对应的key
+     * @param bucketName  用于存储的bucket
+     * @param key         保存Object对应的key
      * @param inputStream Object输入流
-     * @param metadata {@link ObjectMetadata} 用户对该object的描述，由一系列name-value对组成；其中ContentLength是必须设置的
+     * @param metadata    {@link ObjectMetadata} 用户对该object的描述，由一系列name-value对组成；其中ContentLength是必须设置的
      * @return
      */
     public String putObject(String bucketName, String key, InputStream inputStream, ObjectMetadata metadata) {
@@ -116,7 +99,6 @@ public class OssService {
 
     /**
      * 上传{@link OSSObject}
-     * 
      * @param bucketName
      * @param key
      * @param object
@@ -135,12 +117,11 @@ public class OssService {
 
     /**
      * 上传{@link OSSObject}
-     * 
      * @param bucketName
      * @param key
      * @param object
      * @return
-     * @throws IOException
+     * @exception IOException
      */
     public String putObject(String bucketName, String key, Object object) throws IOException {
 
@@ -151,10 +132,9 @@ public class OssService {
 
     /**
      * 列出Bucket内符合条件的{@link OSSObject}相关信息，非Oject本身内容
-     * 
      * @param bucketName 用于对Object名字进行分组的字符。所有名字包含指定的前缀且第一次出现Delimiter字符之间的object作为一组元素 :
-     *        CommonPrefixes。
-     * @param prefix 限定返回的object key必须以Prefix作为前缀。注意使用prefix查询时，返回的key中仍会包含Prefix。
+     *                   CommonPrefixes。
+     * @param prefix     限定返回的object key必须以Prefix作为前缀。注意使用prefix查询时，返回的key中仍会包含Prefix。
      * @param delimiter
      * @return
      */
@@ -177,7 +157,6 @@ public class OssService {
      * <p>
      * {@link OssService#listObjects(String, String, String)}
      * </p>
-     * 
      * @param bucketName
      * @param prefix
      * @param delimiter
@@ -189,7 +168,6 @@ public class OssService {
 
     /**
      * 获取{@link OSSObject}
-     * 
      * @param bucketName
      * @param key
      * @return
@@ -200,7 +178,6 @@ public class OssService {
 
     /**
      * 获取{@link OSSObject}的content
-     * 
      * @param bucketName
      * @param key
      * @return
@@ -223,7 +200,6 @@ public class OssService {
 
     /**
      * 从默认的bucket中取数据
-     * 
      * @param key
      * @return
      */
@@ -231,10 +207,8 @@ public class OssService {
         return this.getObjectContent(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, key);
     }
 
-
     /**
      * 从默认的bucket中取数据
-     * 
      * @param key
      * @return
      */

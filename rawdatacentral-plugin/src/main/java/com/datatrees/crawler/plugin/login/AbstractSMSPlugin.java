@@ -1,5 +1,10 @@
 package com.datatrees.crawler.plugin.login;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
@@ -14,11 +19,6 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
 
@@ -75,20 +75,16 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             Map<String, String> data = new HashMap<String, String>();
             data.put(AttributeKey.REMARK, StringUtils.EMPTY);
             preSendMessageToApp(data);
-            String directiveId = getMessageService().sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(),
-                GsonUtils.toJson(data));
+            String directiveId = getMessageService().sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), GsonUtils.toJson(data));
             //保存状态到redis
             //等待APP处理完成,并通过dubbo将数据写入redis
-            DirectiveResult<Map<String, Object>> receiveDirective = getRedisService().getDirectiveResult(directiveId,
-                getMaxInterval(websiteName), TimeUnit.MILLISECONDS);
+            DirectiveResult<Map<String, Object>> receiveDirective = getRedisService().getDirectiveResult(directiveId, getMaxInterval(websiteName), TimeUnit.MILLISECONDS);
             if (null == receiveDirective) {
-                logger.error("wait user input smscode timeout,taskId={},websiteName={},directiveId={}", taskId,
-                    websiteName, directiveId);
+                logger.error("wait user input smscode timeout,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
             if (null == receiveDirective.getData() || !receiveDirective.getData().containsKey(AttributeKey.CODE)) {
-                logger.error("invalid receiveDirective,taskId={},websiteName={},directiveId={},receiveDirective={}",
-                    taskId, websiteName, directiveId, GsonUtils.toJson(receiveDirective));
+                logger.error("invalid receiveDirective,taskId={},websiteName={},directiveId={},receiveDirective={}", taskId, websiteName, directiveId, GsonUtils.toJson(receiveDirective));
                 continue;
             }
             inputSmsCount++;
@@ -96,20 +92,18 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             //返回不为空就"认为是正确",实际大概就是短信验证码不为空,就返回短信验证码,诡异的代码,踩坑了......
             String inputCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
             if (vaildSMSCode(paramsMap, inputCode)) {
-                logger.info("code vaild success! taskId={},websiteName={},code={},retry={}", taskId, websiteName,
-                    receiveDirective.getData(), retry);
+                logger.info("code vaild success! taskId={},websiteName={},code={},retry={}", taskId, websiteName, receiveDirective.getData(), retry);
                 //将结果返回给插件调用的地方,作为field的值,一般返回的就是短信验证码,有的和短信验证码一起验证,有的会设置not-empty=true属性
                 resultMap.put(PluginConstants.FIELD, inputCode);
                 getMessageService().sendTaskLog(taskId, "短信验证码校验成功");
                 return resultMap;
             }
-            logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputSmsCount={}", taskId,
-                websiteName, inputCode, retry, inputSmsCount);
+            logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputSmsCount={}", taskId, websiteName, inputCode, retry, inputSmsCount);
 
         } while (System.currentTimeMillis() < maxInterval);
         if (hasSms) {
             getMessageService().sendTaskLog(taskId, inputSmsCount == 0 ? "短信验证码校验超时" : "短信验证码校验失败");
-            throw new ResultEmptyException("get pic code error,inputSmsCount:" + inputSmsCount);
+            throw new ResultEmptyException("get sms code error,inputSmsCount:" + inputSmsCount);
         }
         return resultMap;
     }
@@ -149,9 +143,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
 
     @Override
     public String process(String... args) throws Exception {
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(args[0],
-            new TypeToken<LinkedHashMap<String, String>>() {
-            }.getType());
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
         return GsonUtils.toJson(doProcess(paramMap));
     }
 

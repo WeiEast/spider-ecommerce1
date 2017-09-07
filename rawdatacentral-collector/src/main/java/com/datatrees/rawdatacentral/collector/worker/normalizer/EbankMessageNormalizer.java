@@ -3,39 +3,38 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.collector.worker.normalizer;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.EBankData;
-import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.domain.model.Bank;
+import com.datatrees.rawdatacentral.service.BankService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月31日 上午11:50:36
  */
 @Service
 public class EbankMessageNormalizer implements DataNormalizer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EbankMessageNormalizer.class);
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EbankMessageNormalizer.class);
     @Resource
-    private BankService         bankService;
+    private BankService bankService;
 
     /*
      * (non-Javadoc)
@@ -54,8 +53,7 @@ public class EbankMessageNormalizer implements DataNormalizer {
             ((EBankData) object).setBankId(message.getTypeId());
             ((EBankData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap && StringUtils.equals(
-            (String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EBankData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EBankData.class.getSimpleName())) {
             EBankData eBankData = new EBankData();
             eBankData.putAll((Map) object);
             eBankData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

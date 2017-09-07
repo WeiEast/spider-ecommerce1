@@ -1,0 +1,448 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>重庆银行信用卡电子账单</title>
+<!--link href="http://www.cqcbank.com/portal/zh_CN/css/xyk.css" rel="stylesheet" type="text/css" / -->
+<style>
+@charset "gb2312";
+/* CSS Document */
+body{font:9pt "宋体",Arial,Verdana,Tahoma;}
+*{padding:0px;margin:0px;}
+* li{list-style:none;}
+table,caption,th,td{border-collapse:separate; border:none;}
+a img{border:none;}
+a:link,a:visited,a:active {
+	text-decoration: none;
+	color: #333333;
+}
+
+a:hover {
+	text-decoration: none;
+	color: #FF3300;
+}
+em{font-weight:normal;font-style:normal;}
+.clear{	clear: both;height:0px;display:block; *display:inline; line-height:0; font-size:1px;}
+.left{ float:left; display:block;}
+.right{ float:right; display:block;}
+a{text-decoration:none;}
+h3{font-size:14px;}
+.center{margin:0 auto;}
+.blod {font-weight: bold;}
+input {vertical-align:middle;}
+.block{ display:block;}
+.widthall{width:980px; margin:0 auto;}
+
+
+
+/* 高度公用ＣＳＳ*/
+.hignt16 { height:16px; line-height:16px;}
+.hignt18 { height:18px; line-height:18px;}
+.hignt20 { height:20px; line-height:20px;}
+.hignt22 { height:22px; line-height:22px;}
+.hignt24 { height:24px; line-height:24px;}
+.hignt26 { height:26px; line-height:26px;}
+.hignt28 { height:28px; line-height:28px;}
+.hignt30 { height:30px; line-height:30px;}
+
+.hignt16a { line-height:16px;}
+.hignt18a { line-height:18px;}
+.hignt20a { line-height:20px;}
+.hignt22a { line-height:22px;}
+.hignt24a { line-height:24px;}
+.hignt26a { line-height:26px;}
+.hignt28a { line-height:28px;}
+.hignt30a { line-height:30px;}
+
+/* 字体公用ＣＳＳ*/
+.txt12 { font-size: 9pt;}
+.txt13 { font-size: 13px;}
+.txt14 { font-size: 14px;}
+.txt16 { font-size: 16px;}
+.txt_black{color: #000000;}
+.txt_black1{color: #595959;}
+
+.txt_blue,.txt_blue:link,.txt_blue:link:visited,.txt_blue:hover{
+	color:#003f7c;
+}
+.txt_blue2,.txt_blue2:link,.txt_blue2:visited,.txt_blue2:hover{color:#0087e8;}
+.txt_blue1,.txt_blue1:link,.txt_blue1:visited,.txt_blue1:hover{color:#608099;}
+.txt_red,.txt_red:link,.txt_red:visited,.txt_red:hover{color: #ef3100;}
+.txt_Shadow {filter: DropShadow(Color=#ffffff, OffX=0, OffY=1, Positive=1);}
+.txt_Shadow1 {filter: DropShadow(Color=#333, OffX=0, OffY=1, Positive=1);}
+
+/* 边框及背景公用ＣＳＳ*/
+.border {border: 1px solid  #a5c8de;}
+.border_bottom {border-bottom: 1px solid  #a5c8de;}
+.bj1{ background-color:#f5fafe;}
+.pic {border: 1px solid  #a5c8de; padding:1px;}
+
+/* 公用边距　*/
+.margin_top { margin-top:10px;}
+.padding14 { padding:14px;}
+.padding16 { padding:16px;}
+.widthall {
+	width:980px;
+}
+
+.a1 {
+	background-image: url(http://www.cqcbank.com/portal/zh_CN/images/a2.gif);
+	height: 53px;
+}
+.a2 {
+	border-right-width: 18px;
+	border-left-width: 18px;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #cf271e;
+	border-left-color: #cf271e;
+}
+.a3 {
+	background-image: url(http://www.cqcbank.com/portal/zh_CN/images/a5.gif);
+	height: 27px;
+}
+.a4 {
+	height: 20px;
+	line-height: 20px;
+	margin-bottom: 9pt;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bolder;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	
+}
+
+.a6 {
+	float: left;
+	padding-left: 30px;
+	font-size: 14px;
+	font-weight: bolder;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+.a7 {
+	height: 36px;
+	background-color: #da251c;
+}
+.a8 {
+	height: 36px;
+}
+.a9 {
+	height: 36px;
+	width: 228px;
+	line-height: 36px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+.a10 {
+	height: 36px;
+	width: 200px;
+	line-height: 36px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+.a11 {
+	background-color: #fdf5ea;
+}
+.a12 {
+	width: 200px;
+}
+
+
+</style>
+
+</head>
+
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-image: url(http://www.cqcbank.com/portal/zh_CN/images/a2.gif);
+	height: 53px;">
+  <tr>
+    <td width="41%" align="left"><a href="http://www.cqcbank.com/"><img src="http://www.cqcbank.com/portal/zh_CN/images/a1.gif" width="420" height="53" /></a></td>
+    <td width="57%"><img src="http://www.cqcbank.com/portal/zh_CN/images/a2.gif" width="100%" height="53" /></td>
+    <td width="2%" align="right"><img src="http://www.cqcbank.com/portal/zh_CN/images/a3.gif" width="20" height="53" /></td>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" style="border-right-width: 18px;
+	border-left-width: 18px;
+	border-right-style: solid;
+	border-left-style: solid;
+	border-right-color: #cf271e;
+	border-left-color: #cf271e;">
+  <tr>
+    <td><br />
+        <br />
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:22px 0 32px 0;">
+          <tr>
+            <td width="56%" align="center"><table width="80%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td valign="top"  style="height:26px; line-height:26px;"><span style="font-weight: bold; font-size: 14px;" style="margin-right:8px;">
+<!--账户名-->
+</span>王雪梅 女士<span style="font-weight: bold; font-size: 14px;" style="margin-right:8px;">
+				</span></td>
+              </tr>
+              <tr>
+                <td  style="height:18px; line-height:18px;">
+<!--账单地址-->
+您好！感谢您使用重庆银行信用卡，特别呈上您2015年01月对账单。
+</td>
+
+<tr>
+                <td valign="top"  style="height:26px; line-height:26px;">
+<span style="font-weight: bold; font-size: 14px;" style="margin-right:8px;">
+<font color="#FF0000">&nbsp;&nbsp;&nbsp;&nbsp; </font>
+<a style="text-decoration: none; color: #333333" href="http://221.5.168.91:8083/sendpoint2.jsp?cardno=6226133330117304&&billday=2015/01/18">
+<font color="red">点击此处确认收到本月电子对账单，即可获赠我行信用卡300积分！</font></a></span></td>
+              </tr>
+            </table></td>
+          <td width="44%" style="line-height:32px;"><span style="height:24px; line-height:24px; font-size: 16px; font-weight: bold;">账户信息</span><br />
+                <span style="font-weight: bold;">信用额度：</span>人民币<span style="margin:0 6px 0 6px;">
+</span>3,000 元<br />
+                <span style="font-weight: bold;">预借现金额度：</span>人民币<span style="margin:0 6px 0 6px;">
+</span>1,500<span style="margin:0 6px 0 6px;">
+</span>元<br />
+                <span style="font-weight: bold;">本期账单日：</span>2015/01/18<br />
+                <span style="font-weight: bold;">本期最后还款日：</span>2015/02/13<br /></td>
+          </tr>
+        </table>
+      <div style="height: 20px;
+	line-height: 20px;
+	margin-bottom: 9pt;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bolder;
+	font-family: Verdana, Arial, Helvetica, sans-serif;">重庆银行信用卡对账单 ( 
+<!--账单年-->
+		2015
+年
+		01 月)</div>
+      <table width="98%" border="0" cellspacing="0" cellpadding="0" style="height: 36px;
+	background-color: #da251c;">
+          <tr>
+            <td width="26" align="left"><img src="http://www.cqcbank.com/portal/zh_CN/images/a8.gif" width="26" height="36" /></td>
+            <td><table width="100%" border="0" cellspacing="0" cellpadding="0" style="height: 36px;">
+              <tr>
+                <td width="33%" align="left"><img src="http://www.cqcbank.com/portal/zh_CN/images/a10.gif" width="198" height="36" /></td>
+                <td width="38%" bgcolor="#DA251C"><div style="height: 36px;
+	width: 228px;
+	line-height: 36px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFFFFF;"><span style="padding-left:9pt;">本期应还款金额：
+<!--本期应还-->
+</span>2,246.89</div></td>
+                <td width="29%" bgcolor="#DA251C"><div style="height: 36px;
+	width: 200px;
+	line-height: 36px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFFFFF;"><span style="padding-left:9pt;">最低还款额：
+<!--最低还款-->
+</span>271.44</div></td>
+              </tr>
+            </table></td>
+            <td width="22" align="right"><img src="http://www.cqcbank.com/portal/zh_CN/images/a9.gif" width="22" height="36" /></td>
+        </tr>
+      </table>
+      <table width="98%" border="0" cellspacing="0" cellpadding="0" style="center background-color: #fdf5ea;">
+        <tr>
+          <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td align="right" style="padding-right:32px;"><img src="http://www.cqcbank.com/portal/zh_CN/images/a13.gif" width="426" height="24" /></td>
+            </tr>
+          </table>
+            <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin:9pt 0 32px 24px; line-height:24px;">
+              <tr  style="font-size: 14px; font-weight: bold;">
+                <td width="16%" align="left">本期应还款金额</td>
+                <td width="3%" align="left">=</td>
+                <td width="14%" align="left">上期账单金额</td>
+                <td width="3%" align="left">&nbsp;-</td>
+                <td width="14%" align="left">上期已还金额</td>
+                <td width="3%" align="left">+</td>
+                <td width="14%" align="left">本期账单金额</td>
+                <td width="3%" align="left">+</td>
+                <td width="14%" align="left">本期调整金额</td>
+                <td width="3%" align="left">+</td>
+                <td width="13%" align="left">循环利息</td>
+              </tr>
+              
+
+            
+              <tr>
+<!--账单信息-->
+<td align="left">2,246.89</td>
+<td align="left">　</td>
+<td align="left">1,676.95</td>
+<td align="left">　</td>
+<td align="left">350.00</td>
+<td align="left">　</td>
+<td align="left">878.00</td>
+<td align="left">　</td>
+<td align="left">0.00</td>
+<td align="left">　</td>
+<td align="left">41.94</td>
+              </tr>
+              
+
+              <tr style="font-size: 14px; font-weight: bold;">
+<td colspan="4">              	
+<!--分期付款未还款总金额-->
+分期付款交易的未还款总金额：0.00</td>
+              </tr>
+
+              
+            </table>
+            <table width="96%" border="0" cellpadding="0" cellspacing="0" style=" height:47px; line-height:24px" style="margin-left:24px;">
+<!--交易明细列名-->
+<tr>
+<td width="15%"><strong>交易日期</strong></td>
+<td width="15%"><strong>入账日期</strong></td>
+<td width="40%"><strong>交易摘要</strong></td>
+<td width="15%"><strong>交易金额</strong></td>
+<td width="15%"><strong>卡号后四位</strong></td>
+</tr>
+              
+              
+              
+              
+              
+              
+              
+<tr>
+<td>2014/12/26</td>
+<td>2014/12/26</td>
+<td>2014重庆美食金秋刷卡消费节奖金</td>
+<td>-50.00</td>
+<td>7304</td>
+</tr>
+              
+<tr>
+<td>2015/01/08</td>
+<td>2015/01/08</td>
+<td>垫江个体贾海燕服装店</td>
+<td>368.00</td>
+<td>7304</td>
+</tr>
+              
+<tr>
+<td>2015/01/09</td>
+<td>2015/01/09</td>
+<td>预借现金-同城他行ATM</td>
+<td>500.00</td>
+<td>7304</td>
+</tr>
+              
+<tr>
+<td>2015/01/09</td>
+<td>2015/01/09</td>
+<td>预借现金费用-同城他行ATM</td>
+<td>10.00</td>
+<td>7304</td>
+</tr>
+              
+<tr>
+<td>2015/01/13</td>
+<td>2015/01/13</td>
+<td>ATM 转帐还款</td>
+<td>-300.00</td>
+<td>7304</td>
+</tr>
+              
+<tr>
+<td>2015/01/18</td>
+<td>2015/01/18</td>
+<td>利息交易</td>
+<td>41.94</td>
+<td>7304</td>
+</tr>
+              
+              
+              
+              
+              
+              
+              
+<!--交易明细-->
+            </table>
+            <br />
+            <br />
+          <div style="width:246px;" style="margin:0 auto;"><img src="http://www.cqcbank.com/portal/zh_CN/images/a14.gif" /><br />
+           
+          </div> 
+          <br />
+          <br />
+          <table width="96%" border="0" cellpadding="0" cellspacing="0" style="margin:9pt 0 32px 24px; line-height:24px;">
+           <tr  style=" font-size: 14px; font-weight: bold;">
+              <td colspan="9" align="left">您的积分信息：</td>
+              </tr>
+            <tr  style=" font-size: 14px; font-weight: bold;">
+              <td width="14%" align="left">账户累计总积分</td>
+              <td width="3%" align="left">=</td>
+              <td width="14%" align="left">上期账单积分</td>
+              <td width="3%" align="left">&nbsp;+</td>
+              <td width="14%" align="left">本期新增积分</td>
+              <td width="3%" align="left">+</td>
+              <td width="14%" align="left">本期调整积分</td>
+              <td width="3%" align="left">-</td>
+              <td width="14%" align="left">本期已兑换积分</td>
+              <td width="3%" align="left">+</td>
+              <td width="15%" align="left">本期已奖励积分</td>
+              </tr>
+<!--积分明细-->
+<tr>
+<td align="left">14,214</td>
+<td align="left">　</td>
+<td align="left">13,846</td>
+<td align="left">　</td>
+<td align="left">368</td>
+<td align="left">　</td>
+<td align="left">0</td>
+<td align="left">　</td>
+<td align="left">0</td>
+<td align="left">　</td>
+<td align="left">0</td>
+</tr>
+          </table>
+          <table width="94%" border="0" cellspacing="0" cellpadding="0" style="margin: 0 0 0 24px;">
+            <tr>
+              <td style="font-size: 14px; height:24px; line-height:24px; font-weight: bold;"><p align="left">友情提示：</p>
+                </td>
+            </tr>
+            <tr>
+              <td style=" height:24px; line-height:24px;"><p align="left">（1）请不要将您的信用卡和身份证件放在一起。</p>
+                <p align="left">（2）请不要将您的信用卡和密码放在一起。</p>
+                <p align="left">（3）请定期修改您的卡片密码；密码尽量不使用您的证件号码、生日等容易破解的数字。</p>
+                <p align="left">（4）请您保管ATM交易凭条及在商户刷卡的回单、消费小票、发票，以便出现问题时进行查证。</p>
+                <p align="left">（5）在ATM交易凭条和刷卡回单上打印有您的卡号等重要信息，请不要随意丢弃，以免被不法分子捡到后制作伪卡、盗用。如要丢弃，请将其彻底撕毁。</p>
+                <p align="left">（6）在ATM或商户输入密码时，请您注意安全，防止周围有不法分子偷看。<br />
+                  <br />
+                </p></td>
+            </tr>
+          </table>
+          </td>
+        </tr>
+      </table>
+      <br />
+<table width="80%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center">
+　</td>
+        </tr>
+    </table>
+    <br /></td>
+  </tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-image: url(http://www.cqcbank.com/portal/zh_CN/images/a5.gif);
+	height: 27px;">
+  <tr>
+    <td width="2%" align="left"><img src="http://www.cqcbank.com/portal/zh_CN/images/a4.gif" width="22" height="27" /></td>
+    <td width="74%"><img src="http://www.cqcbank.com/portal/zh_CN/images/a5.gif" width="100%" height="27" /></td>
+    <td width="24%" align="right"><img src="http://www.cqcbank.com/portal/zh_CN/images/a6.gif" width="301" height="27" /></td>
+  </tr>
+</table>
+</body>
+</html>

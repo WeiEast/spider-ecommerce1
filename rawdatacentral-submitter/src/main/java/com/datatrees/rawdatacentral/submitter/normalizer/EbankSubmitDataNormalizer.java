@@ -3,24 +3,22 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.submitter.normalizer;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
-
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
 import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
+import org.springframework.stereotype.Service;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年8月4日 下午5:33:54
@@ -53,6 +51,7 @@ public class EbankSubmitDataNormalizer implements DataNormalizer {
         }
         return false;
     }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void ebankDNormalize(Map map, EBankExtractResult result) {
         map.put("BankId", result.getBankId());

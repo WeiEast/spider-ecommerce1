@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+
+	<url-filters>
+		<url-filter type="+">.10086.cn</url-filter>
+	</url-filters>
+
+	<result-tag-list>
+		<result-tag><![CDATA[operator]]></result-tag>
+	</result-tag-list>
+
+	<properties>
+		<cookie scope="user_session"></cookie>
+        <http-client-type><![CDATA[operator]]></http-client-type>
+	</properties>
+
+	<login login-type="app">
+ 		<login-check success-pattern="success">
+ 			<headers><![CDATA[{"Referer":"http://shop.10086.cn/i/?f=custinfoqry","X-Requested-With":"XMLHttpRequest"}]]></headers>
+			<check-url><![CDATA[http://shop.10086.cn/i/v1/auth/loginfo?time=]]></check-url>
+			<object-segment name="account">
+				<field-extractor id="phoneNum" field="phoneNum" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="jsonpath"><![CDATA[$.data.loginValue]]></operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<page-definition>
+		<page id="basicInfo-page" path="cust/info" response-check="true">
+			<!--用户基本信息切片-->
+			<object-segment name="basicInfo" result-class="OperatorData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			    <field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+                <!--余额 -->
+				<field-extractor id="accountBalance" field="accountBalance" result-type="number" field-visible-type="context" not-empty="true">
+					<operation type="parser" ref="accountBalance_parser"></operation>
+					<operation type="jsonpath"><![CDATA[$.data.curFeeTotal]]></operation>
+				</field-extractor>
+				<!--姓名 -->
+				<field-extractor id="realname" field="realname" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="jsonpath"><![CDATA[$.data.name]]></operation>
+					<operation type="replace" from="x" to="*"></operation>
+				</field-extractor>
+				<!--手机号码 -->
+				<field-extractor id="realPhone" field="realPhone" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="template"><![CDATA[${phoneNum}]]></operation>
+				</field-extractor>
+			</object-segment>
+			<!--组装账单url-->
+			<object-segment name="billLinkNode" result-class="LinkNode">
+				<field-extractor id="currentMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" />
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="firstDayofcurrMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="firstdayofthismonth" format="dd" />
+                </field-extractor>
+                <field-extractor id="lastDayofcurrMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" format="dd" />
+                </field-extractor>
+                <field-extractor id="lastMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" />
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" offset="-1" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="firstDayofLastMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-1" format="dd" />
+                </field-extractor>
+                <field-extractor id="lastDayofLastMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-1" format="dd" />
+                </field-extractor>
+                <field-extractor id="last2Month" field="temp" result-type="string"> 
+                    <operation type="datetime" base-type="now" /> 
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" offset="-2" format="yyyyMM" /> 
+                </field-extractor>
+                <field-extractor id="firstDayofLast2Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-2" format="dd" />
+                </field-extractor>
+                <field-extractor id="lastDayofLast2Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-2" format="dd" />
+                </field-extractor>
+                <field-extractor id="last3Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" />
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" offset="-3" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="firstDayofLast3Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-3" format="dd" />
+                </field-extractor>
+                <field-extractor id="lastDayofLast3Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-3" format="dd" />
+                </field-extractor>
+                <field-extractor id="last4Month" field="temp" result-type="string"> 
+                    <operation type="datetime" base-type="now" /> 
+                    <operation type="datetime" base-type="custom" datetime-field-type="month" offset="-4" format="yyyyMM" /> 
+                </field-extractor> 
+				<field-extractor id="start-end-time" field="temp" result-type="string" field-visible-type="request"> 
+					<operation type="template"><![CDATA[${last4Month}:${lastMonth}]]></operation> 
+				</field-extractor>
+				<field-extractor id="queryScope" field="temp" result-type="string" field-visible-type="request"> 
+					<operation type="template"><![CDATA[${currentMonth},${lastMonth},${last2Month},${last3Month}]]></operation> 
+				</field-extractor>
+				<field-extractor id="field-extractor_3" source="start-end-time" field="url" result-type="string">
+					<operation type="parser" ref="billDetail_parser"></operation>
+				</field-extractor>
+				<field-extractor id="smsCode" field="smsCode" plugin-ref="ha10086ShopSmsPlugin" field-visible-type="context" result-type="string" not-empty="true">
+				</field-extractor>
+			</object-segment>
+
+			<!--组装通话记录url-->
+			<object-segment name="callLinkNode" result-class="LinkNode">
+				<field-extractor id="call-extractor" source="queryScope" field="url" result-type="string">
+					<operation type="parser" ref="call_parser"></operation>
+				</field-extractor>
+			</object-segment>
+			<!--组装短信记录url-->
+			<object-segment name="smsLinkNode" result-class="LinkNode">
+				<field-extractor id="call-extractor" source="queryScope" field="url" result-type="string">
+					<operation type="parser" ref="sms_parser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<!--查询账单 -->
+		<page id="bill-page" path="fee/billinfo" response-check="true">
+			<replaces>
+			</replaces>
+			<regex></regex>
+			<object-segment name="billInfo" result-class="OperatorData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="name" field="name" result-type="string">
+					<operation type="template"><![CDATA[${realname}]]></operation>
+				</field-extractor>
+				<field-extractor id="billPhone" field="billPhone" result-type="string">
+					<operation type="template"><![CDATA[${phoneNum}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<!--通话记录和短信页面-->
+		<page id="detail-page" path="/fee/detailbillinfojsonp" response-check="true">
+			<object-segment name="detailInfo" result-class="OperatorData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent" result-type="string">
+					<operation type="return" />
+				</field-extractor>
+				<field-extractor id="monthDate" field="monthDate" result-type="string" source="url">
+					<operation type="regex" index="1"><![CDATA[qryMonth=(\d{4})\d{2}]]></operation>
+				</field-extractor>
+			</object-segment>
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="tempContent" field="temp" result-type="string">
+					<operation type="regex" index="1"><![CDATA[result\((.*)\)]]></operation>
+				</field-extractor>
+				<field-extractor id="totalNum" field="temp" source="tempContent" field-visible-type="request" result-type="string" default-value="1">
+					<operation type="jsonpath"><![CDATA[$.totalNum]]></operation>
+				</field-extractor>
+				<field-extractor id="lastUrl" field="temp" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation type="replace" from="curCuror=\d+" to="curCuror=#{page,101,${totalNum}/100,100+}"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="parser" ref="next-page-parser"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+	<search>
+		<search-template id="basicInfo-search-template" type="category_search" plugin-ref="" max-depth="1">
+			<request>
+				<headers><![CDATA[{"Referer":"http://shop.10086.cn/i/?f=custinfoqry","X-Requested-With","XMLHttpRequest"}]]></headers>
+				<url-templates>
+					<url-template><![CDATA[http://shop.10086.cn/i/v1/cust/info/${phoneNum}?time=]]></url-template>
+				</url-templates>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+				<max-page>200</max-page>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="basicInfo-page" />
+				<page depth="1" ref="bill-page" />
+				<page depth="1" ref="detail-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+	<parser-definition>
+		<parser id="accountBalance_parser">
+			<headers><![CDATA[{"X-Requested-With":"XMLHttpRequest"}]]></headers>
+			<url-template><![CDATA[http://shop.10086.cn/i/v1/fee/real/${phoneNum}?time=]]></url-template>
+			<link-url-template><![CDATA[http://shop.10086.cn/i/?f=custinfoqry]]></link-url-template>
+		</parser>
+
+		<!--河南移动通话记录url模版-->	
+		<parser id="call_parser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/${phoneNum}?callback=result&curCuror=1&step=100&qryMonth=${queryMonth}&billType=02&_=]]></url-template>
+			<link-url-template><![CDATA[http://shop.10086.cn/i/?f=billdetailqry&welcome=]]></link-url-template>
+		</parser>
+
+	    <!--河南移动短信记录url模版-->	
+		<parser id="sms_parser">
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[https://shop.10086.cn/i/v1/fee/detailbillinfojsonp/${phoneNum}?callback=result&curCuror=1&step=100&qryMonth=${queryMonth}&billType=03&_=]]></url-template>
+			<link-url-template><![CDATA[http://shop.10086.cn/i/?f=billdetailqry&welcome=]]></link-url-template>
+		</parser>
+
+		<!--河南移动账单url模版-->
+		<parser id="billDetail_parser">
+			<headers><![CDATA[{"Referer":"http://shop.10086.cn/i/?f=custinfoqry","X-Requested-With":"XMLHttpRequest"}]]></headers>
+			<patterns>
+				<pattern>
+					<regex><![CDATA[([0-9]+):([0-9]+)]]></regex>
+					<mappings>
+						<map group-index="1" placeholder="queryStartMonth"></map>
+						<map group-index="2" placeholder="queryEndMonth"></map>
+					</mappings>
+				</pattern>
+			</patterns>
+			<url-template><![CDATA[http://shop.10086.cn/i/v1/fee/billinfo/${phoneNum}?bgnMonth=${queryStartMonth}&endMonth=${queryEndMonth}&time=]]></url-template>
+		</parser>
+
+		<parser id="next-page-parser">
+			<url-template><![CDATA[${lastUrl}]]></url-template>
+			<link-url-template><![CDATA[http://shop.10086.cn/i/?f=billdetailqry&welcome=]]></link-url-template>
+		</parser>
+
+	</parser-definition>
+
+    <plugin-definition>
+        <plugin id="ha10086ShopLoginPlugin" file-type="jar" phase="login">
+            <main-class>com.datatrees.crawler.plugin.main.LoginMainShop</main-class>
+        </plugin>
+        <plugin id="ha10086ShopSmsPlugin" file-type="jar" phase="field">
+            <main-class>com.datatrees.crawler.plugin.main.SmsCodeMainShop</main-class>
+        </plugin>
+    </plugin-definition>
+</config>
