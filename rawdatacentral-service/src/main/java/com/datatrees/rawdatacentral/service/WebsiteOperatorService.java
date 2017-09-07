@@ -27,4 +27,23 @@ public interface WebsiteOperatorService {
      */
     void updateWebsite(WebsiteOperator config);
 
+    /**
+     * 从其他环境导入配置
+     * @param websiteName
+     * @param from        开发,测试,准生产,预发布
+     */
+    void importConfig(String websiteName, String from);
+
+    /**
+     * 从其他环境导入配置
+     * @param websiteName
+     * @param to          开发,测试,准生产,预发布
+     */
+    void exportConfig(String websiteName, String to);
+
+    /**
+     * 保存运营商配置
+     */
+    void saveConfig(WebsiteOperator websiteOperator);
+
 }

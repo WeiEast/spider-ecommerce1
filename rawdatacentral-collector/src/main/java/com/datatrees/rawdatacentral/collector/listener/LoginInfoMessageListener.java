@@ -16,6 +16,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
+import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.core.message.AbstractRocketMessageListener;
@@ -83,6 +84,8 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, websiteName);
                 //从新的运营商表读取配置
                 WebsiteOperator websiteOperator = BeanFactoryUtils.getBean(WebsiteOperatorService.class).getByWebsiteName(websiteName);
+                //设置代理
+                ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
                 website = websiteConfigService.buildWebsite(websiteOperator);
                 OperatorPluginService operatorPluginService = BeanFactoryUtils.getBean(ClassLoaderService.class)
                         .getOperatorPluginService(websiteName);

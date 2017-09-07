@@ -19,7 +19,7 @@ public class Request implements Serializable {
      * 请求ID随机,不保证重复,重复概率低
      */
     @JSONField(ordinal = 1)
-    private Long requestId;
+    private Long   requestId;
     @JSONField(ordinal = 1)
     private Long   taskId;
     @JSONField(ordinal = 2)
@@ -57,9 +57,19 @@ public class Request implements Serializable {
     @JSONField(ordinal = 12)
     private int           socketTimeout  = 20000;
     @JSONField(ordinal = 13)
-    private String requestBodyContent;
+    private String  requestBodyContent;
+    @JSONField(ordinal = 14)
+    private Boolean proxyEnable;
 
     public Request() {
+    }
+
+    public Boolean getProxyEnable() {
+        return proxyEnable;
+    }
+
+    public void setProxyEnable(Boolean proxyEnable) {
+        this.proxyEnable = proxyEnable;
     }
 
     public Long getRequestId() {
