@@ -281,6 +281,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
                     "&_buttonId=other_sign_btn";
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_013")
                     .setFullUrl(templateUrl, param.getSmsCode(), param.getPassword()).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+            logger.info(response.getPageContent());
             if (response.getPageContent().contains("短信验证码错误")) {
                 logger.warn("详单-->短信验证码错误,param={}", param);
                 return result.failure(ErrorCode.VALIDATE_SMS_FAIL);

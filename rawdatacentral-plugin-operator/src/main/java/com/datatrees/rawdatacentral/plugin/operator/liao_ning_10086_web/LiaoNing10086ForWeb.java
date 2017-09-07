@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.plugin.operator.liao_ning_10086_web;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -122,6 +123,8 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
                 templateUrl = "http://www.ln.10086.cn/my/account/index.xhtml";
                 response = TaskHttpClient.create(param, RequestType.GET, "liao_ning_10086_web_005").setFullUrl(templateUrl).invoke();
                 if (StringUtils.contains(response.getPageContent(), param.getMobile().toString())) {
+                    String menuId = PatternUtils.group(response.getPageContent(), "var _menuId = '(\\d+)'", 1);
+                    TaskUtils.addTaskShare(param.getTaskId(), "menuId", menuId);
                     logger.info("登陆成功,param={}", param);
                     return result.success();
                 } else {
