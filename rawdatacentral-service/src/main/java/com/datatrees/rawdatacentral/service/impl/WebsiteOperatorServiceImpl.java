@@ -23,6 +23,7 @@ import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -122,7 +123,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
                 .invoke().getPageContent();
         WebsiteOperator config = JSON.parseObject(json, new TypeReference<WebsiteOperator>() {});
         if (null == config || StringUtils.isBlank(config.getWebsiteName())) {
-            throw new RuntimeException("config not found");
+            throw new RuntimeException("website not found");
         }
         saveConfig(config);
         logger.info("迁入运营商配置成功,websiteName={},from={}", websiteName, from);
@@ -130,6 +131,19 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Override
     public void exportConfig(String websiteName, String to) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        CheckUtils.checkNotBlank(to, "empty params to");
+        if (!hosts.containsKey(to)) {
+            throw new RuntimeException("from 配置不存在");
+        }
+        WebsiteOperator config = getByWebsiteName(websiteName);
+        if (null == config || StringUtils.isBlank(config.getWebsiteName())) {
+            throw new RuntimeException("website not found");
+        }
+        String queryUrl = TemplateUtils.format("http://{}/website/operator/saveConfig", hosts.get(to));
+        String result = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST, "china_10000_app_001").setFullUrl(queryUrl)
+                .setProxyEnable(false).setRequestBody(JSON.toJSONString(config), ContentType.APPLICATION_JSON).invoke().getPageContent();
+        logger.info("exportConfig websiteName={},to={},result={}", websiteName, to, result);
 
     }
 
