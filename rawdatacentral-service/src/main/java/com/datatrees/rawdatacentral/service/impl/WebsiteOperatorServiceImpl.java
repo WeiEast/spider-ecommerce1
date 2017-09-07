@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -24,6 +23,7 @@ import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -119,20 +119,44 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             throw new RuntimeException("from 配置不存在");
         }
         String queryUrl = TemplateUtils.format("http://{}/website/operator/getByWebsiteName?websiteName=zhe_jiang_10086_web", hosts.get(from));
-        String json = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST, "china_10000_app_001").setFullUrl(queryUrl)
-                .setProxyEnable(false).invoke().getPageContent();
+        String json = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST, "china_10000_app_001").setFullUrl(queryUrl).setProxyEnable(false)
+                .invoke().getPageContent();
         WebsiteOperator config = JSON.parseObject(json, new TypeReference<WebsiteOperator>() {});
         if (null == config || StringUtils.isBlank(config.getWebsiteName())) {
-            throw new RuntimeException("config not found");
+            throw new RuntimeException("website not found");
         }
-        WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
+        saveConfig(config);
+        logger.info("迁入运营商配置成功,websiteName={},from={}", websiteName, from);
+    }
+
+    @Override
+    public void exportConfig(String websiteName, String to) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        CheckUtils.checkNotBlank(to, "empty params to");
+        if (!hosts.containsKey(to)) {
+            throw new RuntimeException("from 配置不存在");
+        }
+        WebsiteOperator config = getByWebsiteName(websiteName);
+        if (null == config || StringUtils.isBlank(config.getWebsiteName())) {
+            throw new RuntimeException("website not found");
+        }
+        String queryUrl = TemplateUtils.format("http://{}/website/operator/saveConfig", hosts.get(to));
+        String result = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST, "china_10000_app_001").setFullUrl(queryUrl)
+                .setProxyEnable(false).setRequestBody(JSON.toJSONString(config), ContentType.APPLICATION_JSON).invoke().getPageContent();
+        logger.info("exportConfig websiteName={},to={},result={}", websiteName, to, result);
+
+    }
+
+    @Override
+    public void saveConfig(WebsiteOperator config) {
+        CheckUtils.checkNotNull(config, "param is null");
+        CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
+        WebsiteOperator websiteOperatorDb = getByWebsiteName(config.getWebsiteName());
         if (null == websiteOperatorDb) {
             websiteOperatorDAO.insertSelective(config);
         } else {
             config.setWebsiteId(websiteOperatorDb.getWebsiteId());
             websiteOperatorDAO.updateByPrimaryKeySelective(config);
         }
-        logger.info("迁入运营商配置成功,websiteName={},from={}", websiteName, from);
     }
-
 }
