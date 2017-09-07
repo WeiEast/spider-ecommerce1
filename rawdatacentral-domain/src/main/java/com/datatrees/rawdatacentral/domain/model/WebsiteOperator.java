@@ -14,6 +14,9 @@ public class WebsiteOperator implements Serializable {
     /** 配置标题 */
     private String websiteTitle;
 
+    /** 代理(0:不器用,1:启用) */
+    private Boolean proxyEnable;
+
     /** 搜索配置 */
     private String searchConfig;
 
@@ -98,6 +101,14 @@ public class WebsiteOperator implements Serializable {
 
     public void setWebsiteTitle(String websiteTitle) {
         this.websiteTitle = websiteTitle == null ? null : websiteTitle.trim();
+    }
+
+    public Boolean getProxyEnable() {
+        return proxyEnable;
+    }
+
+    public void setProxyEnable(Boolean proxyEnable) {
+        this.proxyEnable = proxyEnable;
     }
 
     public String getSearchConfig() {
