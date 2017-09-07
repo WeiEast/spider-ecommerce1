@@ -342,6 +342,66 @@ public class WebsiteOperatorExample implements Serializable {
             return (Criteria) this;
         }
 
+        public Criteria andProxyEnableIsNull() {
+            addCriterion("proxy_enable is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableIsNotNull() {
+            addCriterion("proxy_enable is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableEqualTo(Boolean value) {
+            addCriterion("proxy_enable =", value, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableNotEqualTo(Boolean value) {
+            addCriterion("proxy_enable <>", value, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableGreaterThan(Boolean value) {
+            addCriterion("proxy_enable >", value, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("proxy_enable >=", value, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableLessThan(Boolean value) {
+            addCriterion("proxy_enable <", value, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableLessThanOrEqualTo(Boolean value) {
+            addCriterion("proxy_enable <=", value, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableIn(List<Boolean> values) {
+            addCriterion("proxy_enable in", values, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableNotIn(List<Boolean> values) {
+            addCriterion("proxy_enable not in", values, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableBetween(Boolean value1, Boolean value2) {
+            addCriterion("proxy_enable between", value1, value2, "proxyEnable");
+            return (Criteria) this;
+        }
+
+        public Criteria andProxyEnableNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("proxy_enable not between", value1, value2, "proxyEnable");
+            return (Criteria) this;
+        }
+
         public Criteria andSearchConfigIsNull() {
             addCriterion("search_config is null");
             return (Criteria) this;

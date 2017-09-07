@@ -126,7 +126,7 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
             String templateUrl = "https://uam.ct10000.com/ct10000uam/login?service=http://www.189.cn:80/login/uam.do&returnURL=1&register=register2.0&UserIp=";
             String templateData = "forbidpass=null&forbidaccounts=null&authtype=c2000004&customFileld02=22&areaname=" + URLEncoder.encode("海南", "UTF-8") + "&username={}&customFileld01" + "=1&password={}&randomId={}&lt={}&_eventId=submit&open_no=1";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getPicCode(), lt);
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_003").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
             /**
              * 结果枚举:
              * 登陆成功:<script type='text/javascript'>location.replace('http://www.189.cn:80/login/uam.do?UATicket=35nullST--174603-eUnkIrlk4upEVeWrS2St-ct10000uam'

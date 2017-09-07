@@ -399,11 +399,13 @@ public class YunNan10086ForApp implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_005").setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4")
                     .invoke();
+            logger.info(response.getPageContent());
             for (int i = 0; i < 5; i++) {
                 if (response.getPageContent().contains("系统繁忙")) {
                     response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10086_app_005").setFullUrl(templateUrl)
                             .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android")
                             .addHeader("version", "5.0.4").invoke();
+                    logger.info("系统繁忙，刷新" + (i + 1) + "次，页面为：" + response.getPageContent());
                 } else {
                     break;
                 }

@@ -214,7 +214,10 @@ public class TaskHttpClient {
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
         HttpHost proxy = null;
-        if(request.getProxyEnable()) {
+        if (null == request.getProxyEnable()) {
+            request.setProxyEnable(ProxyUtils.getProxyEnable(request.getTaskId()));
+        }
+        if (request.getProxyEnable()) {
             Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
             if (null != proxyConfig) {
                 proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());

@@ -57,9 +57,9 @@ public class Request implements Serializable {
     @JSONField(ordinal = 12)
     private int           socketTimeout  = 20000;
     @JSONField(ordinal = 13)
-    private String requestBodyContent;
+    private String  requestBodyContent;
     @JSONField(ordinal = 14)
-    private Boolean proxyEnable = true;
+    private Boolean proxyEnable;
 
     public Request() {
     }
