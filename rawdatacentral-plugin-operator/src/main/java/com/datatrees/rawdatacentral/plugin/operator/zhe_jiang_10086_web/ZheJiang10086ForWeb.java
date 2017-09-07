@@ -1,11 +1,9 @@
 package com.datatrees.rawdatacentral.plugin.operator.zhe_jiang_10086_web;
 
 import java.net.URLDecoder;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -19,7 +17,6 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
