@@ -59,7 +59,7 @@ public class Request implements Serializable {
     @JSONField(ordinal = 13)
     private String requestBodyContent;
     @JSONField(ordinal = 14)
-    private Boolean proxyEnable = true;
+    private Boolean proxyEnable = false;
 
     public Request() {
     }
