@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
@@ -258,7 +259,7 @@ public class ReidsServiceImpl implements RedisService {
         }
         String directiveId = createDirectiveId();
         result.setDirectiveId(directiveId);
-        String json = JSON.toJSONString(result);
+        String json = JSON.toJSONString(result, SerializerFeature.DisableCircularReferenceDetect);
         //TODO加入事物控制
         saveToList(result.getGroupKey(), json, defaultTimeOut, TimeUnit.SECONDS);
         saveString(result.getDirectiveKey(), json, defaultTimeOut, TimeUnit.SECONDS);
@@ -273,7 +274,7 @@ public class ReidsServiceImpl implements RedisService {
             throw new RuntimeException("saveDirectiveResult error param is null");
         }
         result.setDirectiveId(directiveId);
-        String json = JSON.toJSONString(result);
+        String json = JSON.toJSONString(result, SerializerFeature.DisableCircularReferenceDetect);
         //TODO加入事物控制
         //        saveToList(result.getGroupKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
         saveString(directiveId, json, defaultTimeOut, TimeUnit.SECONDS);
@@ -329,7 +330,7 @@ public class ReidsServiceImpl implements RedisService {
             logger.error("invalid param key={} or value={}", key, value);
             throw new RuntimeException("invalid param key or value");
         }
-        String json = JSON.toJSONString(value);
+        String json = JSON.toJSONString(value, SerializerFeature.DisableCircularReferenceDetect);
         saveString(key, json, timeout, unit);
         logger.info("cache success key={}", key);
     }
