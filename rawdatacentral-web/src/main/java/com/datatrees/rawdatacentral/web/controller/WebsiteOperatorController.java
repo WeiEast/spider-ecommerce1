@@ -75,6 +75,43 @@ public class WebsiteOperatorController {
     }
 
     /**
+     * 导出配置到其他环境
+     * @param websiteName
+     * @param to
+     * @return
+     */
+    @RequestMapping("/exportConfig")
+    public HttpResult<Object> exportConfig(String websiteName, String to) {
+        HttpResult<Object> result = new HttpResult<>();
+        try {
+            websiteOperatorService.exportConfig(websiteName, to);
+            logger.info("importConfig success websiteName={},to={}", websiteName, to);
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("importConfig error websiteName={},to={}", websiteName, to, e);
+            return result.failure();
+        }
+    }
+
+    /**
+     * 保存配置
+     * @param websiteOperator
+     * @return
+     */
+    @RequestMapping("/saveConfig")
+    public HttpResult<Object> saveConfig(@RequestBody WebsiteOperator websiteOperator) {
+        HttpResult<Object> result = new HttpResult<>();
+        try {
+            websiteOperatorService.saveConfig(websiteOperator);
+            logger.info("importConfig success websiteName={}", websiteOperator.getWebsiteName());
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("importConfig error", e);
+            return result.failure();
+        }
+    }
+
+    /**
      * 查询配置
      */
     @RequestMapping("/getByWebsiteName")

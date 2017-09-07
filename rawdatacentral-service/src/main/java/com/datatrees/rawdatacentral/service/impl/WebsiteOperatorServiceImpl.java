@@ -4,7 +4,6 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -119,20 +118,31 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             throw new RuntimeException("from 配置不存在");
         }
         String queryUrl = TemplateUtils.format("http://{}/website/operator/getByWebsiteName?websiteName=zhe_jiang_10086_web", hosts.get(from));
-        String json = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST, "china_10000_app_001").setFullUrl(queryUrl)
-                .setProxyEnable(false).invoke().getPageContent();
+        String json = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST, "china_10000_app_001").setFullUrl(queryUrl).setProxyEnable(false)
+                .invoke().getPageContent();
         WebsiteOperator config = JSON.parseObject(json, new TypeReference<WebsiteOperator>() {});
         if (null == config || StringUtils.isBlank(config.getWebsiteName())) {
             throw new RuntimeException("config not found");
         }
-        WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
+        saveConfig(config);
+        logger.info("迁入运营商配置成功,websiteName={},from={}", websiteName, from);
+    }
+
+    @Override
+    public void exportConfig(String websiteName, String to) {
+
+    }
+
+    @Override
+    public void saveConfig(WebsiteOperator config) {
+        CheckUtils.checkNotNull(config, "param is null");
+        CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
+        WebsiteOperator websiteOperatorDb = getByWebsiteName(config.getWebsiteName());
         if (null == websiteOperatorDb) {
             websiteOperatorDAO.insertSelective(config);
         } else {
             config.setWebsiteId(websiteOperatorDb.getWebsiteId());
             websiteOperatorDAO.updateByPrimaryKeySelective(config);
         }
-        logger.info("迁入运营商配置成功,websiteName={},from={}", websiteName, from);
     }
-
 }
