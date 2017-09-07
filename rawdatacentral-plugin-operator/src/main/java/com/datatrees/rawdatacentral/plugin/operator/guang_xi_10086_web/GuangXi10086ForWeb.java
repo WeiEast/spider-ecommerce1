@@ -276,11 +276,13 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            String referer = "http://www.gx.10086.cn/wodeyidong/mymob/xiangdan.jsp";
             String templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/checkSecondPsw" +
                     ".menu?input_random_code={}&input_svr_pass={}&is_first_render=true&_zoneId=_sign_errzone&_tmpDate=&_menuId=410900003558" +
                     "&_buttonId=other_sign_btn";
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_013")
-                    .setFullUrl(templateUrl, param.getSmsCode(), param.getPassword()).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+                    .setFullUrl(templateUrl, param.getSmsCode(), param.getPassword()).setReferer(referer).addHeader("X-Requested-With",
+                            "XMLHttpRequest").invoke();
             logger.info(response.getPageContent());
             if (response.getPageContent().contains("短信验证码错误")) {
                 logger.warn("详单-->短信验证码错误,param={}", param);
