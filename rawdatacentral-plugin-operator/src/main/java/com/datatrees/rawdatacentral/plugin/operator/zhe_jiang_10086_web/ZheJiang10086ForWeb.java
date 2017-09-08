@@ -170,7 +170,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                     return result.success();
                 default:
                     logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
-                    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+                    return result.failure(ErrorCode.VALIDATE_SMS_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
