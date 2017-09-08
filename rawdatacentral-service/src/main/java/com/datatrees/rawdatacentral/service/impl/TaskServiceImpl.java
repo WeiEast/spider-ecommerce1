@@ -12,10 +12,12 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.dao.TaskDAO;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.model.example.TaskExample;
 import com.datatrees.rawdatacentral.service.TaskService;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskServiceImpl implements TaskService {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
     @Resource
     private TaskDAO taskDAO;
 
@@ -36,7 +39,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void updateTask(Task task) {
-        taskDAO.updateByPrimaryKeySelective(task);
+        try {
+            taskDAO.updateByPrimaryKeySelective(task);
+        } catch (Exception e) {
+            logger.error("updateTask error task={}", JSON.toJSONString(task), e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
