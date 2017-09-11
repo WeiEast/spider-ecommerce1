@@ -122,15 +122,18 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
             String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), entry.getKey());
+            String redisMonitorKey = redisKey+".monitor";
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();
                 for (Object obj : (Collection) entry.getValue()) {
                     jsonStringList.add(GsonUtils.toJson(obj));
                 }
-                flag = redisService.saveToList(redisKey, jsonStringList, 1, TimeUnit.HOURS);
+                redisService.saveToList(redisKey, jsonStringList, 1, TimeUnit.HOURS);
+                flag = redisService.saveToList(redisMonitorKey, jsonStringList, 1, TimeUnit.HOURS);
             } else {
-                flag = redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 1, TimeUnit.HOURS);
+                redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 1, TimeUnit.HOURS);
+                flag = redisService.saveString(redisMonitorKey, GsonUtils.toJson(entry.getValue()), 1, TimeUnit.HOURS);
             }
             if (!flag) {
                 logger.error("save to redis error! key: " + entry.getKey() + " value: " + entry.getValue());
