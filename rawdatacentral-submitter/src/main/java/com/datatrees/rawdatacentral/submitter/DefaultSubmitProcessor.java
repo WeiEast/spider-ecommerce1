@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -122,18 +123,17 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
             String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), entry.getKey());
-            String redisMonitorKey = redisKey+".monitor";
+            String redisMonitorKey = redisKey + ".monitor";
+            redisService.saveString(redisMonitorKey, JSON.toJSONString(entry.getValue()).trim().replaceAll(" ",""), 1, TimeUnit.HOURS);
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();
                 for (Object obj : (Collection) entry.getValue()) {
                     jsonStringList.add(GsonUtils.toJson(obj));
                 }
-                redisService.saveToList(redisKey, jsonStringList, 1, TimeUnit.HOURS);
-                flag = redisService.saveToList(redisMonitorKey, jsonStringList, 1, TimeUnit.HOURS);
+                flag = redisService.saveToList(redisKey, jsonStringList, 1, TimeUnit.HOURS);
             } else {
-                redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 1, TimeUnit.HOURS);
-                flag = redisService.saveString(redisMonitorKey, GsonUtils.toJson(entry.getValue()), 1, TimeUnit.HOURS);
+                flag = redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 1, TimeUnit.HOURS);
             }
             if (!flag) {
                 logger.error("save to redis error! key: " + entry.getKey() + " value: " + entry.getValue());
