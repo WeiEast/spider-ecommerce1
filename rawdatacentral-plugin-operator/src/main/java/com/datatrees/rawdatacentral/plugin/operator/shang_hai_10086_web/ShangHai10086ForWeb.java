@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.plugin.operator.shang_hai_10086_web;
 
 import javax.script.Invocable;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
@@ -37,7 +38,9 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
             /**
              * 没有这条请求，会获取不了短信验证码
              */
-            String templateUrl = "https://sh.ac.10086.cn/prx/000/http/localhost/login";
+            String templateUrl = "https://sh.ac.10086.cn/login";
+            response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_001").setFullUrl(templateUrl).invoke();
+            templateUrl = "https://sh.ac.10086.cn/prx/000/http/localhost/login";
             response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_001").setFullUrl(templateUrl).invoke();
             return result.success();
         } catch (Exception e) {
@@ -128,26 +131,29 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
             String artifact = json.getString("artifact");
             if (StringUtils.isNotBlank(uid) && (StringUtils.contains(message, "成功") || StringUtils.isBlank(message))) {
                 String referer = "https://sh.ac.10086.cn/login";
-                templateUrl
-                        = "https://login.10086.cn/AddUID.action?channelID=00210&Artifact={}&TransactionID={}&backUrl=http://www.sh.10086.cn/sh/wsyyt/ac/jtforward.jsp?source=wysso&uid={}&tourl=http://www.sh.10086.cn/sh/service/";
+                templateUrl = "https://login.10086.cn/AddUID.action?channelID=00210&Artifact={}&TransactionID={}&backUrl=" +
+                        URLEncoder.encode("http://www.sh.10086.cn/sh/wsyyt/ac/jtforward.jsp?source=wysso", "UTF-8") + "&uid={}&tourl=" +
+                        URLEncoder.encode("http://www.sh.10086.cn/sh/service/", "UTF-8");
                 response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_004")
                         .setFullUrl(templateUrl, artifact, transactionID, uid).setReferer(referer).invoke();
 
                 templateUrl = PatternUtils.group(response.getPageContent(), "location\\.replace\\(\"([^\"]+)\"\\)", 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_005").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_005").setFullUrl(templateUrl)
+                        .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8").invoke();
 
-                //templateUrl = "http://www.sh.10086.cn/sh/wsyyt/action?act=my.getMusType";
-                //response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_006").setFullUrl(templateUrl).addHeader("X-Requested-With","XMLHttpRequest").invoke();
-                //if (StringUtils.contains(response.getPageContent(), param.getMobile().toString()) &&
-                //        StringUtils.contains(response.getPageContent(), "\"code\":0")) {
-                //    logger.info("登陆成功,param={}", param);
-                //    return result.success();
-                //} else {
-                //    logger.error("登陆失败,param={},response={}", param, response);
-                //    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-                //}
-                logger.info("登陆成功,param={}", param);
-                return result.success();
+                templateUrl = "http://www.sh.10086.cn/sh/wsyyt/action?act=my.getMusType";
+                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_006").setFullUrl(templateUrl)
+                        .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+                if (StringUtils.contains(response.getPageContent(), param.getMobile().toString()) &&
+                        StringUtils.contains(response.getPageContent(), "\"code\":0")) {
+                    logger.info("登陆成功,param={}", param);
+                    return result.success();
+                } else {
+                    logger.error("登陆失败,param={},response={}", param, response);
+                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                }
+                //logger.info("登陆成功,param={}", param);
+                //return result.success();
             } else {
                 logger.error("登陆失败,param={},errorMsg={}", param, message);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
