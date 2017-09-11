@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
-import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
@@ -123,8 +123,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
             String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), entry.getKey());
-            String redisMonitorKey = redisKey + ".monitor";
-            redisService.saveString(redisMonitorKey, JSON.toJSONString(entry.getValue()).trim().replaceAll(" ",""), 1, TimeUnit.HOURS);
+            TaskUtils.addTaskResult(extractMessage.getTaskId(), entry.getKey(), entry.getValue());
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();

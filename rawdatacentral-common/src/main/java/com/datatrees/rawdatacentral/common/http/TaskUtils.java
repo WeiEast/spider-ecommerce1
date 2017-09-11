@@ -222,4 +222,29 @@ public class TaskUtils {
         return map;
     }
 
+    /**
+     * 添加任务结果
+     * @param taskId
+     * @param name
+     * @param value
+     */
+    public static void addTaskResult(Long taskId, String name, Object value) {
+        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
+        boolean lock = redisService.lock(taskId);
+        while (!lock && System.currentTimeMillis() < endTime) {
+            lock = redisService.lock(taskId);
+        }
+        if (!lock) {
+            throw new RuntimeException("lock error taskId=" + taskId);
+        }
+        String cacheKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
+        Map<String, Object> map = redisService.getCache(cacheKey, new TypeReference<Map<String, Object>>() {});
+        if (null == map) {
+            map = new HashMap<>();
+        }
+        map.put(name, value);
+        redisService.cache(cacheKey, map, RedisKeyPrefixEnum.TASK_RESULT.getTimeout(), RedisKeyPrefixEnum.TASK_RESULT.getTimeUnit());
+        redisService.unLock(taskId);
+    }
+
 }
