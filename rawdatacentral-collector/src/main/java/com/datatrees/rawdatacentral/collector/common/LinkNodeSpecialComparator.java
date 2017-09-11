@@ -1,14 +1,12 @@
-
 package com.datatrees.rawdatacentral.collector.common;
 
-
 /**
- *
- * @author  <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since   2015年7月20日 上午12:46:18 
+ * @since 2015年7月20日 上午12:46:18
  */
 public class LinkNodeSpecialComparator {
+
     public LinkNodeSpecialComparator() {}
 
     public static double byte2double(byte[] b) {

@@ -1,13 +1,17 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.domain.constant.CrawlConstant;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,24 +19,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ReidsServiceImpl implements RedisService {
-    private static final Logger logger = LoggerFactory.getLogger(ReidsServiceImpl.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(ReidsServiceImpl.class);
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-
     @Resource
     private RedisTemplate       redisTemplate;
-
     /**
-     * 默认超时时间(单位:秒),默认2分钟
+     * 默认超时时间(单位:秒),默认1小时
      */
     @Value("${rawdatacentral.redisKey.timeout:3600}")
     private long                defaultTimeOut;
@@ -128,26 +125,32 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
+    public String getString(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix) {
+        return getString(redisKeyPrefixEnum.getRedisKey(postfix), redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
+    }
+
+    @Override
     public String getString(String key, long timeout, TimeUnit timeUnit) {
         if (StringUtils.isBlank(key)) {
             return null;
         }
         long startTime = System.currentTimeMillis();
-        long endTime = startTime + timeUnit.toMillis(timeout);
-        long sleeptime = 300;
+        long wait = timeUnit.toMillis(timeout);
+        long endTime = startTime + wait;
+        long sleeptime = wait >= 300 ? 300 : wait;
         try {
             logger.info("getString wait {}s, key={}", timeUnit.toSeconds(timeout), key);
             do {
+                TimeUnit.MILLISECONDS.sleep(sleeptime);
                 if (stringRedisTemplate.hasKey(key)) {
                     String value = stringRedisTemplate.opsForValue().get(key);
-                    logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+                    logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
                     return value;
                 }
-                TimeUnit.MILLISECONDS.sleep(sleeptime);
             } while (System.currentTimeMillis() <= endTime);
-            logger.warn("getString fail,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+            logger.warn("getString fail,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
         } catch (Exception e) {
-            logger.error("getString error,useTime={}, key={}", DateUtils.getUsedTime(startTime), key, e);
+            logger.error("getString error,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
         }
         return null;
     }
@@ -166,45 +169,29 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public String rightPop(String key, long timeout, TimeUnit unit) {
+    public String rightPop(String key, long timeout, TimeUnit timeUnit) {
         if (!hasKey(key)) {
             return null;
         }
         long startTime = System.currentTimeMillis();
-        long endTime = startTime + unit.toMillis(timeout);
-        long sleeptime = 300;
+        long wait = timeUnit.toMillis(timeout);
+        long endTime = startTime + wait;
+        long sleeptime = wait >= 300 ? 300 : wait;
         try {
-            logger.info("rightPop wait {}s, key={}", unit.toSeconds(timeout), key);
+            logger.info("rightPop wait {}s, key={}", timeUnit.toSeconds(timeout), key);
             do {
+                TimeUnit.MILLISECONDS.sleep(sleeptime);
                 if (stringRedisTemplate.hasKey(key)) {
                     String value = stringRedisTemplate.opsForList().rightPop(key);
-                    if (StringUtils.isNoneBlank(value)) {
-                        logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
-                        return value;
-                    }
+                    logger.info("rightPop success,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
+                    return value;
                 }
-                TimeUnit.MILLISECONDS.sleep(sleeptime);
             } while (System.currentTimeMillis() <= endTime);
-            logger.warn("rightPop fail,useTime={}, key={}", DateUtils.getUsedTime(startTime), key);
+            logger.warn("rightPop fail,useTime={},key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
         } catch (Exception e) {
-            logger.error("rightPop error,useTime={}, key={}", DateUtils.getUsedTime(startTime), key, e);
+            logger.error("rightPop error,useTime={},key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
         }
         return null;
-    }
-
-    @Override
-    public boolean saveString(String key, Object value) {
-        if (StringUtils.isBlank(key) || null == value) {
-            throw new RuntimeException("saveString invalid param key or value");
-        }
-        try {
-            stringRedisTemplate.opsForValue().set(key, String.valueOf(value), defaultTimeOut, TimeUnit.SECONDS);
-            logger.info("saveString success key={}", key);
-            return true;
-        } catch (Exception e) {
-            logger.error("saveString error key={}", key, e);
-            return false;
-        }
     }
 
     @Override
@@ -213,7 +200,7 @@ public class ReidsServiceImpl implements RedisService {
             throw new RuntimeException("saveString invalid param key or value");
         }
         if (timeout <= 0) {
-            throw new RuntimeException("saveString invalid param timeout");
+            throw new RuntimeException("saveString invalid param");
         }
         try {
             stringRedisTemplate.opsForValue().set(key, value, timeout, unit);
@@ -225,12 +212,17 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
+    public boolean saveString(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, String value) {
+        return saveString(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
+    }
+
+    @Override
     public boolean saveToList(String key, String value, long timeout, TimeUnit unit) {
         try {
             if (StringUtils.isAnyBlank(key, value)) {
                 throw new RuntimeException("saveToList invalid param key or value");
             }
-            stringRedisTemplate.opsForList().rightPushAll(key, value);
+            stringRedisTemplate.opsForList().rightPush(key, value);
             stringRedisTemplate.expire(key, timeout, unit);
             logger.info("saveToList success key={}", key);
             return true;
@@ -241,27 +233,23 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public boolean saveListString(String key, List<String> valueList) {
+    public boolean saveToList(String key, List<String> list, long timeout, TimeUnit unit) {
         try {
-            if (!CollectionUtils.isEmpty(valueList)) {
-                stringRedisTemplate.opsForList().rightPushAll(key, valueList.toArray(new String[valueList.size()]));
-                stringRedisTemplate.expire(key, defaultTimeOut, TimeUnit.SECONDS);
+            if (StringUtils.isBlank(key) || null == list) {
+                throw new RuntimeException("saveToList invalid param key or value");
             }
-            logger.info("saveListString success key={}", key);
+            if (list.isEmpty()) {
+                logger.info("saveToList success key={},list is empty", key);
+                return true;
+            }
+            stringRedisTemplate.opsForList().rightPushAll(key, list);
+            stringRedisTemplate.expire(key, timeout, unit);
+            logger.info("saveToList success key={}", key);
             return true;
         } catch (Exception e) {
-            logger.error("saveListString error key={}", key, e);
+            logger.error("saveToList error key={}", key, e);
             return false;
         }
-    }
-
-    @Override
-    public String getResultFromApp(Object taskId) {
-        if (null == taskId) {
-            throw new RuntimeException("getResultFromApp error taskId is null");
-        }
-        String key = CrawlConstant.VERIFY_RESULT_PREFIX + String.valueOf(taskId);
-        return getString(key);
     }
 
     @Override
@@ -271,12 +259,12 @@ public class ReidsServiceImpl implements RedisService {
         }
         String directiveId = createDirectiveId();
         result.setDirectiveId(directiveId);
-        String json = JSON.toJSONString(result);
+        String json = JSON.toJSONString(result, SerializerFeature.DisableCircularReferenceDetect);
         //TODO加入事物控制
         saveToList(result.getGroupKey(), json, defaultTimeOut, TimeUnit.SECONDS);
         saveString(result.getDirectiveKey(), json, defaultTimeOut, TimeUnit.SECONDS);
-        logger.info("saveDirectiveResult success,groupKey={},directiveKey={},directiveId={}", result.getGroupKey(),
-            result.getDirectiveKey(), directiveId);
+        logger.info("saveDirectiveResult success,groupKey={},directiveKey={},directiveId={}", result.getGroupKey(), result.getDirectiveKey(),
+                directiveId);
         return directiveId;
     }
 
@@ -286,27 +274,12 @@ public class ReidsServiceImpl implements RedisService {
             throw new RuntimeException("saveDirectiveResult error param is null");
         }
         result.setDirectiveId(directiveId);
-        String json = JSON.toJSONString(result);
+        String json = JSON.toJSONString(result, SerializerFeature.DisableCircularReferenceDetect);
         //TODO加入事物控制
         //        saveToList(result.getGroupKey(), json, Constants.REDIS_KEY_TIMEOUT, TimeUnit.SECONDS);
         saveString(directiveId, json, defaultTimeOut, TimeUnit.SECONDS);
         logger.info("saveDirectiveResult success,directiveKey={},directiveId={}", directiveId, directiveId);
         return directiveId;
-    }
-
-    @Override
-    public <T> DirectiveResult<T> getNextDirectiveResult(String groupKey) {
-        if (StringUtils.isBlank(groupKey)) {
-            throw new RuntimeException("getDirectiveResult error key is blank");
-        }
-        String value = rightPop(groupKey);
-        if (StringUtils.isNotBlank(value)) {
-            logger.info("getNextDirectiveResult success groupKey={}", groupKey);
-            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
-            });
-        }
-        logger.info("getNextDirectiveResult fail groupKey={}", groupKey);
-        return null;
     }
 
     @Override
@@ -317,8 +290,7 @@ public class ReidsServiceImpl implements RedisService {
         String value = rightPop(groupKey, timeout, timeUnit);
         if (StringUtils.isNotBlank(value)) {
             logger.info("getNextDirectiveResult success groupKey={}", groupKey);
-            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
-            });
+            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {});
         }
         logger.info("getNextDirectiveResult fail groupKey={}", groupKey);
         return null;
@@ -329,8 +301,7 @@ public class ReidsServiceImpl implements RedisService {
         String value = getString(directiveKey, timeout, timeUnit);
         if (StringUtils.isNoneBlank(value)) {
             logger.info("getDirectiveResult success directiveKey={}", directiveKey);
-            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {
-            });
+            return JSON.parseObject(value, new TypeReference<DirectiveResult<T>>() {});
         }
         logger.info("getDirectiveResult fail directiveKey={}", directiveKey);
         return null;
@@ -359,20 +330,20 @@ public class ReidsServiceImpl implements RedisService {
             logger.error("invalid param key={} or value={}", key, value);
             throw new RuntimeException("invalid param key or value");
         }
-        String json = JSON.toJSONString(value);
+        String json = JSON.toJSONString(value, SerializerFeature.DisableCircularReferenceDetect);
         saveString(key, json, timeout, unit);
         logger.info("cache success key={}", key);
     }
 
     @Override
-    public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, Object value) {
-        cache(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(), TimeUnit.MINUTES);
+    public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, Object value) {
+        cache(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
 
     }
 
     @Override
     public void cache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object value) {
-        cache(redisKeyPrefixEnum.getRedisKey(), value, redisKeyPrefixEnum.getTimeout(), TimeUnit.MINUTES);
+        cache(redisKeyPrefixEnum.getRedisKey(), value, redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
     }
 
     @Override
@@ -392,8 +363,24 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, String postfix, TypeReference<T> typeReference) {
+    public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, TypeReference<T> typeReference) {
         return getCache(redisKeyPrefixEnum.getRedisKey(postfix), typeReference);
+    }
+
+    @Override
+    public Boolean lock(Object postfix) {
+        String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(postfix.toString());
+        if (stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "locked")) {
+            stringRedisTemplate.expire(lockKey, RedisKeyPrefixEnum.LOCK.getTimeout(), RedisKeyPrefixEnum.LOCK.getTimeUnit());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void unLock(Object postfix) {
+        String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(postfix.toString());
+        deleteKey(lockKey);
     }
 
 }

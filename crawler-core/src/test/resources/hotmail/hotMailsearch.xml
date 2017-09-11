@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<result-tag-list>
+		<result-tag><![CDATA[bankbill]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">.live.com</url-filter>
+	</url-filters>
+
+
+	<properties>
+		<cookie scope="user_session"></cookie>
+	</properties>
+
+	<login login-type="plugin" plugin-ref="outLookLoginPlugin">
+		<login-check success-pattern="&quot;userEmail&quot;:&quot;([^&quot;]*)&quot;|To find out whether your browser|正在处理...|/owa/logoff.owa">
+			<check-url><![CDATA[https://mail.live.com/default.aspx]]></check-url>
+			<headers><![CDATA[{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0"}]]></headers>
+			<object-segment name="emailAccount">
+				<field-extractor id="hn" field="hn" result-type="string" field-visible-type="context">
+					<operation type="regex" index="1"><![CDATA["hn":"([^"]*)"]]></operation>
+				</field-extractor>
+				<field-extractor id="SessionId" field="SessionId" result-type="string" field-visible-type="context">
+					<operation type="regex" index="1"><![CDATA["SessionId":"([^"]*)"]]></operation>
+				</field-extractor>
+				<field-extractor id="AuthUser" field="AuthUser" result-type="string" field-visible-type="context">
+					<operation type="regex" index="1"><![CDATA["AuthUser":"([^"]*)"]]></operation>
+				</field-extractor>
+				<field-extractor id="emailAccount" field="emailAccount" field-visible-type="processor_result">
+					<operation type="regex" index="1"><![CDATA["userEmail":"([^"]*)"]]></operation>
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+				<field-extractor id="emailAccount" field="emailAccount" field-visible-type="processor_result" stand-by="true">
+					<operation type="template">${cookie.DefaultAnchorMailbox}
+					</operation>
+				</field-extractor>
+				<field-extractor id="CANARY" field="CANARY" field-visible-type="processor_result">
+					<operation type="template">${cookie.X-OWA-CANARY}</operation>
+				</field-extractor>
+				<field-extractor id="jsonTemp" field="temp" result-type="resource_string">
+					<operation type="template"><![CDATA[https://outlook.live.com/owa/sessiondata.ashx?appcacheclient=1"]]></operation>
+				</field-extractor>
+				<field-extractor id="emailId" field="emailId" source="jsonTemp" result-type="string" field-visible-type="processor_result">
+					<operation type="jsonpath"><![CDATA[$.findFolders.Body.ResponseMessages.Items[0].RootFolder.Folders[0].FolderId.Id]]></operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+
+	</login>
+
+
+	<page-definition>
+		<page id="toKeyword-page" path="/prem/">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="nowTime" field="temp" result-type="long">
+					<operation type="datetime" base-type="now" format="timestamp" />
+				</field-extractor>
+				<field-extractor id="requestId" field="temp" result-type="string">
+					<operation type="template">${nowTime}</operation>
+					<operation type="append" index="13"><![CDATA[0]]></operation>
+				</field-extractor>
+
+				<field-extractor id="keyword1" field="temp" result-type="string">
+					<operation type="template">${keyword}</operation>
+					<operation type="codec" codec-type="uri" handling-type="encode"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://outlook.live.com/owa/service.svc?action=PerformInstantSearch"`{'Content-Type':'application/x-www-form-urlencoded','X-OWA-CANARY':'${CANARY}','X-OWA-UrlPostData':'%7B%22request%22%3A%7B%22__type%22%3A%22PerformInstantSearchRequest%3A%23Exchange%22%2C%22SearchSessionId%22%3A%221c729126-b0b9-526a-d811-4bec293b7ea6%22%2C%22ItemType%22%3A1%2C%22QueryOptions%22%3A30%2C%22SearchRequestId%22%3A${requestId}%2C%22KqlQuery%22%3A%22${keyword1}%22%2C%22FolderScope%22%3A%5B%7B%22__type%22%3A%22FolderId%3A%23Exchange%22%2C%22Id%22%3A%22${emailId}%22%7D%5D%2C%22ApplicationId%22%3A%22Owa%3BMailSearch%22%2C%22MaximumResultCount%22%3A250%2C%22IsDeepTraversal%22%3Atrue%2C%22WaitOnSearchResults%22%3Atrue%2C%22OptimizeFirstPageLoad%22%3Atrue%7D%7D','Action':'PerformInstantSearch'}]]></operation>
+				</field-extractor>
+			</object-segment>
+
+		</page>
+
+		<page id="keyword-new-search-page" path="/service.svc?action=PerformInstantSearch">
+			<object-segment name="linkNode" type="jsonpath" value="$.Payload.Items[*]" result-class="LinkNode">
+				<field-extractor id="notSupportReissue" field="notSupportReissue" field-visible-type="processor_result" result-type="boolean">
+					<operation type="template">true</operation>
+				</field-extractor>
+				<field-extractor id="subject" field="subject" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.Subject]]></operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" result-type="date" format="yyyy-MM-dd'T'HH:mm:ss">
+					<operation type="jsonpath"><![CDATA[$.DateTimeReceived]]></operation>
+				</field-extractor>
+				<field-extractor id="realdReceiveAt" field="realdReceiveAt" result-type="date" format="yyyy-MM-dd'T'HH:mm:ss">
+					<operation type="jsonpath"><![CDATA[$.LastModifiedTime]]></operation>
+				</field-extractor>
+				<field-extractor id="sender" field="sender" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.Sender.Mailbox.EmailAddress]]></operation>
+				</field-extractor>
+				<field-extractor id="itemId" field="temp" result-type="string" field-visible-type="processor_result">
+					<operation type="jsonpath"><![CDATA[$.ItemId.Id]]></operation>
+				</field-extractor>
+				<field-extractor id="ChangeKey" field="temp" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.ItemId.ChangeKey]]></operation>
+				</field-extractor>
+				<field-extractor id="CANARY1" field="temp" field-visible-type="processor_result">
+					<operation type="template">${cookie.X-OWA-CANARY}</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://outlook.live.com/owa/service.svc?action=GetItem"`{'Action':'GetItem','X-OWA-UrlPostData':'%7B%22__type%22%3A%22GetItemJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22Exchange2015%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22Greenwich%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22__type%22%3A%22GetItemRequest%3A%23Exchange%22%2C%22ItemShape%22%3A%7B%22__type%22%3A%22ItemResponseShape%3A%23Exchange%22%2C%22BaseShape%22%3A%22IdOnly%22%2C%22FilterHtmlContent%22%3Atrue%2C%22BlockExternalImagesIfSenderUntrusted%22%3Atrue%2C%22BlockContentFromUnknownSenders%22%3Afalse%2C%22AddBlankTargetToLinks%22%3Atrue%2C%22ClientSupportsIrm%22%3Atrue%2C%22InlineImageUrlTemplate%22%3A%22data%3Aimage%2Fgif%3Bbase64%2CR0lGODlhAQABAIAAAAAAAP%2F%2F%2FyH5BAEAAAEALAAAAAABAAEAAAIBTAA7%22%2C%22MaximumBodySize%22%3A2097152%2C%22MaximumRecipientsToReturn%22%3A20%2C%22CssScopeClassName%22%3A%22rps_58f3%22%2C%22InlineImageUrlOnLoadTemplate%22%3A%22InlineImageLoader.GetLoader().Load(this)%22%2C%22InlineImageCustomDataTemplate%22%3A%22%7Bid%7D%22%7D%2C%22ItemIds%22%3A%5B%7B%22__type%22%3A%22ItemId%3A%23Exchange%22%2C%22Id%22%3A%22${itemId}%22%2C%22ChangeKey%22%3A%22${ChangeKey}%22%7D%5D%2C%22ShapeName%22%3A%22ItemNormalizedBody%22%7D%7D','X-OWA-CANARY':'${CANARY1}','X-OWA-ActionName':'GetMailItem'}]]></operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${emailAccount}_${itemId}_${ChangeKey}
+					</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<page id="show-new-page" path="/service.svc?action=GetItem">
+			<object-segment name="mail" result-class="MailBillData">
+				<field-extractor id="sender" field="sender" result-type="string">
+					<operation type="template">${sender}</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${uniqueSign}</operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent" stand-by="true">
+					<operation type="jsonpath"><![CDATA[$.Body.ResponseMessages.Items[0].Items[0].NormalizedBody.Value]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">https://outlook.live.com/owa/service.svc?action=GetItem"id='${itemId}'canary='${CANARY1}'
+					</operation>
+				</field-extractor>
+				<field-extractor id="subject" field="subject" result-type="string">
+					<operation type="template">${subject}</operation>
+				</field-extractor>
+				<object-segment name="attachment" type="jsonpath" value="$.Body.ResponseMessages.Items[0].Items[0].Attachments[*]" result-class="file">
+					<field-extractor id="fileName" field="temp" result-type="string">
+						<operation type="jsonpath">$.Name</operation>
+					</field-extractor>
+					<field-extractor id="AttachmentId" field="temp" result-type="string">
+						<operation type="jsonpath">$.AttachmentId</operation>
+					</field-extractor>
+					<field-extractor id="attachment" field="attachment" result-type="file">
+						<operation type="template"><![CDATA[https://attachment.outlook.office.net/owa/fangtianlun@hotmail.com/service.svc/s/GetFileAttachment?id=${AttachmentId}&X-OWA-CANARY=${CANARY1}&token=8ea3dbe1-01fb-40f8-a5e9-ea4de56fd03d&owa=outlook.live.com]]></operation>
+					</field-extractor>
+				</object-segment>
+
+				<field-extractor id="modifyAtTemp" field="temp" result-type="date" format="yyyy-MM-dd HH:mm:ss" field-visible-type="request">
+					<operation type="template">${receiveAt}</operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" result-type="date" format="yyyy-MM-dd HH:mm:ss" not-empty="true">
+					<operation type="template">${realdReceiveAt}</operation>
+				</field-extractor>
+				<object-segment name="extraInfo" pop-return="true">
+					<field-extractor id="ModifiedAt" field="ModifiedAt" result-type="date">
+						<operation type="template" return-object="true">${modifyAtTemp}</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+
+		<page id="keyword-search-page" path="pidx=\d+" page-num-regex="pidx=(\d+)">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="pageContentTemp" field="temp" field-visible-type="request">
+					<operation type="return"></operation>
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+				<object-segment name="linkNode" type="xpath" value="li.c-MessageRow" result-class="LinkNode">
+					<field-extractor id="mailid" field="mailid" result-type="string">
+						<operation type="xpath">//li/@id</operation>
+						<operation from="^uk" to="cm" type="replace"></operation>
+					</field-extractor>
+					<field-extractor id="cvmailid" field="temp" result-type="string">
+						<operation type="template">${mailid}</operation>
+						<operation from="^cm" to="cv" type="replace"></operation>
+					</field-extractor>
+					<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+						<operation type="template">${emailAccount}_${mailid}</operation>
+					</field-extractor>
+					<!-- <field-extractor id="url" field="url" result-type="string"> <operation type="template"><![CDATA[https://${hn}/mail/?fid=1&mid=${mailid}&fv=1]]></operation> </field-extractor> -->
+					<field-extractor id="receiveAt" field="receiveAt" result-type="date" source="pageContentTemp" format="yyyy-MM-dd'T'HH:mm:ss">
+						<operation type="regex" index="1"><![CDATA[HM.RollupData\(new HM.Rollup\("${mailid}"[^\)]*,"([^"\)]*)","<span]]></operation>
+					</field-extractor>
+					<field-extractor id="receiveAt" field="receiveAt" result-type="date" source="pageContentTemp" format="yyyy-MM-dd'T'HH:mm:ss" stand-by="true">
+						<operation type="regex" index="1"><![CDATA[HM.RollupData\(new HM.Rollup\("${cvmailid}"[^\)]*,"([^"\)]*)","<span]]></operation>
+					</field-extractor>
+					<field-extractor id="subject" field="subject" result-type="string">
+						<operation type="xpath">//span[@class='Sb']/text()</operation>
+					</field-extractor>
+					<field-extractor id="sender" field="sender" result-type="string">
+						<operation type="xpath">span.Lt span[email]</operation>
+						<operation type="xpath">//span/@email</operation>
+					</field-extractor>
+					<field-extractor id="url" field="url" result-type="string">
+						<operation type="template"><![CDATA[https://${hn}/mail/GetMessageSource.aspx?tid=${mailid}&fid=flinbox]]></operation>
+					</field-extractor>
+					<field-extractor id="lastMailid" field="lastMailid" result-type="string" field-visible-type="request">
+						<operation type="template">${mailid}</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+
+			<object-segment name="linkNode" result-class="LinkNode">
+				<!--total page count for chineses version -->
+				<field-extractor id="totalCount" field="totalCount" result-type="string">
+					<operation type="regex" index="2"><![CDATA[第\s*(\d+)\s*页，共\s*(\d+)\s*页]]></operation>
+				</field-extractor>
+				<field-extractor id="nowPidx" field="temp" result-type="string">
+					<operation type="regex" index="1"><![CDATA[第\s*(\d+)\s*页，共\s*(\d+)\s*页]]></operation>
+				</field-extractor>
+
+				<!--total page count for english version -->
+				<field-extractor id="totalCount" field="totalCount" result-type="string" stand-by="true">
+					<operation type="regex" index="2"><![CDATA[Page\s*?(\d+?)\s*?of\s*?(\d+?)]]></operation>
+				</field-extractor>
+				<field-extractor id="nowPidx" field="temp" result-type="string" stand-by="true">
+					<operation type="regex" index="1"><![CDATA[Page\s*?(\d+?)\s*?of\s*?(\d+?)]]></operation>
+				</field-extractor>
+
+				<!--total page count for caculate version -->
+				<field-extractor id="nowPidx" field="temp" result-type="string" stand-by="true">
+					<operation type="xpath">//div[@id='mlPageNav']/text()</operation>
+					<operation type="regex" index="1"><![CDATA[第\s*(\d+)\s*页]]></operation>
+				</field-extractor>
+				<field-extractor id="totalMailCount" field="temp">
+					<operation type="xpath">//div[@id='mlRange']/text()</operation>
+					<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+				</field-extractor>
+				<field-extractor id="totalCount" field="totalCount" result-type="string" stand-by="true">
+					<operation type="calculate">${totalMailCount}/35+1</operation>
+				</field-extractor>
+
+				<field-extractor id="pidx" field="pidx" result-type="string">
+					<operation type="triple" triple-type="gt">${nowPidx}+1>${totalCount}?${totalCount}:${nowPidx}+1
+					</operation>
+					<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+				</field-extractor>
+				<field-extractor id="lastMailid" field="lastMailid" result-type="string">
+					<operation type="template"><![CDATA[${lastMailid}]]></operation>
+				</field-extractor>
+				<field-extractor id="lastReceiveAt" field="lastReceiveAt" source="pageContentTemp" result-type="string">
+					<operation type="regex" index="1"><![CDATA[HM.RollupData\(new HM.Rollup\("${lastMailid}"[^\)]*,"([^"\)]*)","<span]]></operation>
+				</field-extractor>
+				<field-extractor id="lastcvmailid" field="lastcvmailid" result-type="string">
+					<operation type="template">${lastMailid}</operation>
+					<operation from="^cm" to="cv" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="lastReceiveAt" field="lastReceiveAt" source="pageContentTemp" result-type="string" stand-by="true">
+					<operation type="regex" index="1"><![CDATA[HM.RollupData\(new HM.Rollup\("${lastcvmailid}"[^\)]*,"([^"\)]*)","<span]]></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[https://${hn}/?fid=flinbox&paid=${lastMailid}&pad=${lastReceiveAt}&pat=2&pidx=${pidx}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="show-page" path="/mail/">
+			<object-segment name="mail" result-class="MailBillData">
+				<field-extractor id="noNeedDetect" field="noNeedDetect" field-visible-type="processor_result" result-type="boolean">
+					<operation type="template">true</operation>
+				</field-extractor>
+				<field-extractor id="sender" field="sender" result-type="string">
+					<operation type="template">${sender}</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${uniqueSign}</operation>
+				</field-extractor>
+
+				<field-extractor id="pageContentFileTemp" field="temp">
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+				<field-extractor id="pageContentFile" source="pageContentFileTemp" field="pageContentFile">
+					<operation type="regex" index="1"><![CDATA[<pre>([\w\W]+)</pre>]]></operation>
+				</field-extractor>
+				<field-extractor id="pageContentFile" source="pageContentFileTemp" field="pageContentFile" stand-by="true">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="mail" field="temp" source="pageContentFile" field-visible-type="request">
+					<operation type="mailparser" body-parser="true"></operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="template">${mail.pageContent}</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="subject" field="subject" result-type="string" default-value="${subject}">
+					<operation type="template">${mail.Mail_Subject}</operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" result-type="date" format="yyyy-MM-dd hh:mm:ss">
+					<operation type="template" return-object="true">${receiveAt}</operation>
+				</field-extractor>
+				<field-extractor id="attachment" field="attachment" result-type="file">
+					<operation type="template" return-object="true">${mail.attachment}</operation>
+				</field-extractor>
+
+				<object-segment name="extraInfo" pop-return="true">
+					<field-extractor id="ServerIp" field="ServerIp">
+						<operation type="template">${mail.mailServerIp}</operation>
+					</field-extractor>
+					<field-extractor id="ServerIp" field="ServerIp" stand-by="true">
+						<operation type="template">${mail.x-originating-ip}</operation>
+						<operation type="regex" index="1"><![CDATA[(\d+.\d+.\d+.\d+)]]></operation>
+					</field-extractor>
+					<field-extractor id="ModifiedAt" field="ModifiedAt" result-type="date">
+						<operation type="template" return-object="true">${mail.Mail_Date}</operation>
+					</field-extractor>
+					<field-extractor id="IsImapTemp" field="temp">
+						<operation type="template">${mail.x-store-info}</operation>
+					</field-extractor>
+					<field-extractor id="IsImapTemp" field="temp" stand-by="true">
+						<operation type="template">${mail.x-cuid}</operation>
+					</field-extractor>
+					<field-extractor id="IsImap" field="IsImap" source="IsImapTemp" result-type="boolean">
+						<operation type="triple" triple-type="regex">${this} matches:X-CUID|\[x-store-info: [\w/]{10,50}, ?true:false</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+
+		<page id="server-detect-init-page" path="https://mail.live.com/">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="mailBillPageContent" field="temp" field-visible-type="request">
+					<operation type="template">${mailBills}</operation>
+				</field-extractor>
+				<object-segment name="linkNode" source="mailBillPageContent" type="jsonpath" value="$" result-class="LinkNode">
+					<field-extractor id="billIds" field="billIds" result-type="string" not-empty="true">
+						<operation type="jsonpath">$.billIds</operation>
+					</field-extractor>
+					<field-extractor id="mailId" field="mailId" result-type="string">
+						<operation type="jsonpath">$.mailId</operation>
+					</field-extractor>
+					<field-extractor id="urlTemp" field="urlTemp" result-type="string">
+						<operation type="jsonpath">$.url</operation>
+					</field-extractor>
+
+					<object-segment name="url" source="urlTemp" contains="owa/service.svc" result-class="string" pop-return="true">
+						<field-extractor id="itemId" field="temp" result-type="string">
+							<operation type="regex" index="1"><![CDATA[id='([^']+)'canary='([^']+)']]></operation>
+						</field-extractor>
+						<field-extractor id="CANARY2" field="temp" result-type="string">
+							<operation type="regex" index="2"><![CDATA[id='([^']+)'canary='([^']+)']]></operation>
+						</field-extractor>
+						<field-extractor id="url" field="url" result-type="string" stand-by="true">
+							<operation type="template"><![CDATA[https://outlook.live.com/owa/service.svc?action=GetItem"`{'X-OWA-UrlPostData':'%7B%22__type%22%3A%22GetItemJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22Exchange2013%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22Greenwich%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22__type%22%3A%22GetItemRequest%3A%23Exchange%22%2C%22ItemShape%22%3A%7B%22__type%22%3A%22ItemResponseShape%3A%23Exchange%22%2C%22BaseShape%22%3A%22IdOnly%22%2C%22IncludeMimeContent%22%3Atrue%7D%2C%22ItemIds%22%3A%5B%7B%22__type%22%3A%22ItemId%3A%23Exchange%22%2C%22Id%22%3A%22${itemId}%22%7D%5D%7D%7D','Action':'GetItem','X-OWA-CANARY':'${CANARY2}'}]]></operation>
+						</field-extractor>
+					</object-segment>
+					<object-segment name="url" source="urlTemp" contains="Fpp.MailBox.GetInboxData" stand-by="true" result-class="string" pop-return="true">
+						<field-extractor id="tid" field="temp" result-type="string">
+							<operation type="regex" index="1"><![CDATA[\[\{2,%22([^,]+)%22,%22flinbox%22]]></operation>
+						</field-extractor>
+						<field-extractor id="hn" field="temp" result-type="string">
+							<operation type="regex" index="1"><![CDATA[https?://([^/]+)/]]></operation>
+						</field-extractor>
+						<field-extractor id="url" field="url" result-type="string">
+							<operation type="template"><![CDATA[https://${hn}/mail/GetMessageSource.aspx?tid=${tid}&fid=flinbox]]></operation>
+						</field-extractor>
+					</object-segment>
+				</object-segment>
+			</object-segment>
+		</page>
+
+		<page id="server-detect-page" path="GetMessageSource">
+			<object-segment name="mime" result-class="DefaultData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="billIds" field="billIds" result-type="string" not-empty="true">
+					<operation type="template">${billIds}</operation>
+				</field-extractor>
+				<field-extractor id="mailId" field="mailId" result-type="string">
+					<operation type="template">${mailId}</operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<page id="server-detect-new-page" path="/owa/">
+			<object-segment name="mime" result-class="DefaultData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">mail.com</operation>
+				</field-extractor>
+				<field-extractor id="billIds" field="billIds" result-type="string" not-empty="true">
+					<operation type="template">${billIds}</operation>
+				</field-extractor>
+				<field-extractor id="mailId" field="mailId" result-type="string">
+					<operation type="template">${mailId}</operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="jsonpath">$.Body.ResponseMessages.Items[0].Items[0].MimeContent.Value
+					</operation>
+					<operation type="codec" codec-type="base64" handling-type="decode"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+
+	<search>
+		<search-template id="keyword-search-template" type="keyword_search" max-depth="1" thread-count="3">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[https://${hn}/?fid=flinbox]]></url-template>
+				</url-templates>
+				<max-page>1000</max-page>
+				<default-header><![CDATA[{"User-Agent":"Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0"}]]></default-header>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="keyword-search-page" />
+				<page depth="1" ref="show-page" />
+			</page-sequence>
+		</search-template>
+		<search-template id="keyword-new-search-template" type="keyword_search" max-depth="2" thread-count="3">
+			<request>
+				<url-templates>
+					<!--X-OWA-UrlPostData has keyword and MaximumResultCount = 250 and searchSessionId is null -->
+					<url-template><![CDATA[https://outlook.live.com/owa/userspecificresourceinjector.ashx?ver=16.1184.12.1961591&appcacheclient=1&layout=mouse&${keyword}]]></url-template>
+				</url-templates>
+				<max-page>1000</max-page>
+				<default-header>
+				</default-header>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="toKeyword-page" />
+				<page depth="1" ref="keyword-new-search-page" />
+				<page depth="2" ref="show-new-page" />
+			</page-sequence>
+		</search-template>
+
+		<search-template id="mailServer-detect-template" type="category_search" max-depth="1" auto-start="false">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[https://mail.live.com/]]></url-template>
+				</url-templates>
+				<max-page>200</max-page>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<result-tag-list>
+				<result-tag><![CDATA[detectResults]]></result-tag>
+			</result-tag-list>
+			<page-sequence>
+				<page depth="0" ref="server-detect-init-page" />
+				<page depth="1" ref="server-detect-page" />
+				<page depth="1" ref="server-detect-new-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+	<plugin-definition>
+		<plugin id="outLookLoginPlugin" file-type="jar" phase="login">
+			<main-class>com.datatrees.rawdata.hotmail.HotMailLogin</main-class>
+		</plugin>
+	</plugin-definition>
+
+</config>

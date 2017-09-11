@@ -1,5 +1,10 @@
 package com.datatrees.crawler.plugin.login;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -24,30 +29,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implements Login {
 
-    private static Logger        logger                = LoggerFactory.getLogger(AbstractLoginPlugin.class);
-
-    private static String        REDIS_PREFIX          = PropertiesConfiguration.getInstance()
-        .get("core.redis.redis.prefix", "rawdata_");
-
-    private static long          defaultTimeToLiveTime = PropertiesConfiguration.getInstance()
-        .getLong("data.default.ttl.time", 3600 * 24 * 2);
-
-    int                          refreshCodeCount      = 0;
-
-    int                          loginCount            = 0;
-
-    int                          qrCodeCount           = 0;
-
-    int                          verifyCodeCount       = 0;
-
+    private static Logger logger                = LoggerFactory.getLogger(AbstractLoginPlugin.class);
+    private static String REDIS_PREFIX          = PropertiesConfiguration.getInstance().get("core.redis.redis.prefix", "rawdata_");
+    private static long   defaultTimeToLiveTime = PropertiesConfiguration.getInstance().getLong("data.default.ttl.time", 3600 * 24 * 2);
     protected QRCodeVerification qRCodeVerification;
+    int refreshCodeCount = 0;
+    int loginCount       = 0;
+    int qrCodeCount      = 0;
+    int verifyCodeCount  = 0;
 
     /**
      * @return the qRCodeVerification
@@ -64,16 +55,14 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
     }
 
     public Map<String, Object> preLogin(Map<String, String> preLoginParams) {
-        if (logger.isDebugEnabled())
-            logger.debug("run default preLogin!");
+        if (logger.isDebugEnabled()) logger.debug("run default preLogin!");
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.putAll(preLoginParams);
         return paramsMap;
     }
 
     public Map<String, Object> postLogin(Map<String, Object> postLoginParams) {
-        if (logger.isDebugEnabled())
-            logger.debug("run default postLogin!");
+        if (logger.isDebugEnabled()) logger.debug("run default postLogin!");
         return postLoginParams;
     }
 
@@ -82,7 +71,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
     /**
      * 返回
      * @param params {"username":手机号}
-     * 有的要密码
+     *               有的要密码
      * @return 短信发送成功/短信验证码发送失败
      */
     public String sendRamdomPassword(Map<String, Object> params) {
@@ -97,9 +86,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         logger.info("start run Login plugin!taskId={},websiteName={}", taskId, websiteName);
 
         initLoginStatus();
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(args[0],
-            new TypeToken<LinkedHashMap<String, String>>() {
-            }.getType());
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
         // pre login param
         Map<String, Object> preParamMap = preLogin(paramMap);
         if (MapUtils.isNotEmpty(preParamMap) && preParamMap.get("errorCode") != null) {
@@ -116,11 +103,9 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         long maxInterval = TimeUnit.MINUTES.toMillis(5) + System.currentTimeMillis();
         while (System.currentTimeMillis() < maxInterval) {
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                throw new InterruptedException("refreshCodeCount:" + refreshCodeCount + ",loginCount:" + loginCount
-                                               + ",qrCodeCount:" + qrCodeCount + ",verifyCodeCount:" + verifyCodeCount);
+                throw new InterruptedException("refreshCodeCount:" + refreshCodeCount + ",loginCount:" + loginCount + ",qrCodeCount:" + qrCodeCount + ",verifyCodeCount:" + verifyCodeCount);
             }
-            DirectiveResult<Map<String, Object>> directive = getRedisService().getNextDirectiveResult(groupKey, 500,
-                TimeUnit.MILLISECONDS);
+            DirectiveResult<Map<String, Object>> directive = getRedisService().getNextDirectiveResult(groupKey, 500, TimeUnit.MILLISECONDS);
             if (null == directive) {
                 TimeUnit.MILLISECONDS.sleep(500);
                 continue;
@@ -135,8 +120,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                 getRedisService().saveDirectiveResult(directiveId, sendResult);
                 refreshCodeCount++;
                 getMessageService().sendTaskLog(taskId, "刷新图片验证码");
-                logger.info("refresh login code,taskId={},websiteName={},directiveId={}", taskId, websiteName,
-                    directiveId);
+                logger.info("refresh login code,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
             //刷新短信验证码
@@ -147,8 +131,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                 getRedisService().saveDirectiveResult(directiveId, sendResult);
                 refreshCodeCount++;
                 getMessageService().sendTaskLog(taskId, "向手机发送短信验证码");
-                logger.info("send ramdom password,taskId={},websiteName={},directiveId={}", taskId, websiteName,
-                    directiveId);
+                logger.info("send ramdom password,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
             //登陆
@@ -161,19 +144,16 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                 try {
                     loginResultMap = doLogin(loginParamMap);
                 } catch (Exception e) {
-                    logger.error("doLogin error,taskId={},websiteName={},directiveId={}", taskId, websiteName,
-                        directiveId, e);
+                    logger.error("doLogin error,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId, e);
                     loginResultMap = new HashMap<>();
                     loginResultMap.put(AttributeKey.ERROR_CODE, ErrorMessage.SERVER_INTERNAL_ERROR);
                 }
                 if (loginResultMap.get(AttributeKey.ERROR_CODE) != null) {
-                    errorCode = null != loginResultMap.get(AttributeKey.ERROR_CODE)
-                        ? String.valueOf(loginResultMap.get(AttributeKey.ERROR_CODE)) : StringUtils.EMPTY;
+                    errorCode = null != loginResultMap.get(AttributeKey.ERROR_CODE) ? String.valueOf(loginResultMap.get(AttributeKey.ERROR_CODE)) : StringUtils.EMPTY;
                     sendResult.fill(DirectiveRedisCode.SERVER_FAIL, errorCode);
                     getRedisService().saveDirectiveResult(directiveId, sendResult);
                     getMessageService().sendTaskLog(taskId, "登陆失败", errorCode);
-                    logger.warn("login fail taskId={},websiteName={},directiveId={},errorCode={},loginCount={}", taskId,
-                        websiteName, directiveId, errorCode, loginCount);
+                    logger.warn("login fail taskId={},websiteName={},directiveId={},errorCode={},loginCount={}", taskId, websiteName, directiveId, errorCode, loginCount);
                     //清理,避免对下一次登陆产生影响
                     loginResultMap.remove(AttributeKey.ERROR_CODE);
                     loginParamMap.putAll(loginResultMap);
@@ -182,8 +162,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                 sendResult.fill(DirectiveRedisCode.SERVER_SUCCESS, null);
                 getRedisService().saveDirectiveResult(directiveId, sendResult);
                 getMessageService().sendTaskLog(taskId, "登陆成功");
-                logger.info("login successs taskId={},websiteName={},directiveId={},loginCount={}", taskId, websiteName,
-                    directiveId, loginCount);
+                logger.info("login successs taskId={},websiteName={},directiveId={},loginCount={}", taskId, websiteName, directiveId, loginCount);
                 return GsonUtils.toJson(postLogin(loginResultMap));
             }
         }
@@ -191,21 +170,18 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
             logger.info("login timeout taskId={},websiteName={},loginCount={}", taskId, websiteName, loginCount);
             throw new com.datatrees.rawdatacentral.domain.exception.LoginTimeOutException(taskId);
         }
-        logger.info("login fail taskId={},websiteName={},loginCount={},errorCode={}", taskId, websiteName, loginCount,
-            errorCode);
+        logger.info("login fail taskId={},websiteName={},loginCount={},errorCode={}", taskId, websiteName, loginCount, errorCode);
         throw new LoginFailException(taskId, errorCode);
     }
 
     protected boolean isTimeOut(long startTime, String websiteName) throws LoginTimeOutException {
         long now = System.currentTimeMillis();
-        int maxInterval = PropertiesConfiguration.getInstance().getInt(websiteName + ".login.max.waittime",
-            2 * 60 * 1000);
+        int maxInterval = PropertiesConfiguration.getInstance().getInt(websiteName + ".login.max.waittime", 2 * 60 * 1000);
         if (now <= startTime + maxInterval) {
             return false;
         } else {
             // mark the task login time out
-            throw new LoginTimeOutException("refreshCodeCount:" + refreshCodeCount + ",loginCount:" + loginCount
-                                            + ",qrCodeCount:" + qrCodeCount + ",verifyCodeCount:" + verifyCodeCount);
+            throw new LoginTimeOutException("refreshCodeCount:" + refreshCodeCount + ",loginCount:" + loginCount + ",qrCodeCount:" + qrCodeCount + ",verifyCodeCount:" + verifyCodeCount);
         }
     }
 
@@ -278,16 +254,17 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         gatewayService.ttlPush(key, result, defaultTimeToLiveTime);
     }
 
-    public enum ContentType {
-                             ValidCode, Content
-    }
-
     protected void postSendMessageToApp(Map<String, Object> map) {
         if (map != null) {
             map.putAll(PluginFactory.getProcessorContext().getStatusContext());
         } else {
             logger.warn("illeage post map ...");
         }
+    }
+
+    public enum ContentType {
+        ValidCode,
+        Content
     }
 
 }

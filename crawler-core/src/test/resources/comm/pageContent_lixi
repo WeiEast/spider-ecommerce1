@@ -1,0 +1,486 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=gb18030" /><meta name="renderer" content="webkit" /><title>交通银行信用卡电子账单 - QQ邮箱</title><script>
+document.domain="mail.qq.com";
+function getTop()
+{
+var f=arguments.callee,w;
+    !(f.execption) && (f.execption = "");
+if(!f.t)
+{try{w=window;f.t=w!=parent?(parent.getTop?parent.getTop():parent.parent.getTop()):w;}catch(e){f.t=reTryGetTop();f.execption=e.message;}}
+return f.t;
+}
+function reTryGetTop()
+{
+var _oWin = window,
+_oWinParent = parent;
+try
+{
+while(_oWin != _oWinParent)
+{
+_oWin = _oWinParent;
+_oWinParent = _oWinParent.parent;
+}
+}
+catch(e)
+{
+ossLogForSetFrame.getTopException = true;
+}
+return _oWin;
+};
+try{window.top=getTop();}catch(e){eval("var top=getTop();");}
+var gsUsed="200";
+var gbSupportNW=true;
+var g_uin="536503763";
+window == getTop() && document.write('<script src="https://res.mail.qq.com/zh_CN/htmledition/js/all288080.js"></'+'script>');
+(getTop().initPageEvent || function(){})(window);
+</script><script>parent.beginStatTime && parent.beginStatTime(window);</script><script>
+(function(){
+})();
+</script><link rel="stylesheet" type="text/css" href="https://res.mail.qq.com/zh_CN/htmledition/style/comm201027ba92.css" /><link rel="stylesheet" type="text/css" href="https://rl.mail.qq.com/cgi-bin/getcss?sid=7zyliu_egHp6RlkP&ft=skin" /><link rel="stylesheet" type="text/css" href="https://res.mail.qq.com/zh_CN/htmledition/style/readmail2012277e00.css" /><script>
+getTop().loadJsFileToTop([
+"https://res.mail.qq.com/zh_CN/htmledition/js/readmail2288074.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/qmqzoneimg24e6b9.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/com/kits/qmeditor/qqmail/release/editor288080.js",
+"https://res.mail.qq.com/zh_CN/htmledition/js/com/kits/qmpreviewer/js/qmpreviewer284f39.js", "https://res.mail.qq.com/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js"
+]);
+
+getTop().loadJsFileToTop(["https://res.mail.qq.com/zh_CN/htmledition/js/qmnetdisk276205.js"]);
+</script><script> /*function SendStatusOpt(isIng, isFail)
+{
+getTop().show(getTop().S("sendstatusloading", document), isIng);
+getTop().show(getTop().S("sendstatusloadfail", document), isFail);
+}
+
+function GetSendStatusIng()
+{
+SendStatusOpt(true, false);
+}
+
+function GetSendStatusOK()
+{
+SendStatusOpt(false, false);
+}
+
+function GetSendStatusFail()
+{
+var frame = getTop().S("mailSendStatus", document);
+if (getTop().isShow("sendstatusloading") && frame.src != "")
+{
+SendStatusOpt(false, true);
+frame.src = "";
+}
+}*/
+
+_sModule = "sendstatus";
+function StatusOpt(isIng, isFail)
+{
+getTop().show(getTop().S(_sModule+"loading", document), isIng);
+getTop().show(getTop().S(_sModule+"loadfail", document), isFail);
+}
+
+function GetStatusIng()
+{
+StatusOpt(true, false);
+}
+
+function GetStatusOK()
+{
+StatusOpt(false, false);
+}
+
+function GetStatusFail()
+{
+var frame = getTop().S("mail"+_sModule, document);
+if (getTop().isShow(_sModule+"loading") && frame.src != "")
+{
+StatusOpt(false, true);
+frame.src = "";
+}
+}
+
+
+
+
+
+function checkSenderImg( _aImgObj, _aReportEmail ) 
+{
+var _isLoadGravaterOK = parseInt( _aImgObj.width ) == 40 || parseInt(_aImgObj.width) == 96;
+if ( _isLoadGravaterOK )
+{
+_aImgObj.parentNode.style.visibility='visible';
+}
+}
+
+</script><style>body {background:#fff;color:#000;font-weight:normal;font-family:"lucida Grande",Verdana,"Microsoft YaHei";padding:0 7px 6px 4px;margin:0;}.MacOS body {font-family:"lucida Grande",Verdana;}.qmbox{padding:0;}.qm_con_body_content{height:auto;min-height:100px;_height:100px;word-wrap:break-word;font-size:14px;font-family: "lucida Grande",Verdana,"Microsoft YaHei";}.MacOS .qm_con_body_content{font-family: "lucida Grande",Verdana;}body.thumb_list_readmail {padding:0;}.thumb_list_readmail #nextnewDiv,.thumb_list_readmail #nextmail_top,.thumb_list_readmail #nextmail_bt{display:none;}</style></head><body  context="ZC2617-E8C_J0KTL9UEaXYjB0NsB58" module="qmReadMail" md="md" mu="mu"><div class="mailcontainer" id="qqmail_mailcontainer"><div module="qmSenderInfo" id="senderInfo" class="attbg mysidebar" style="_margin-top:2px;height:auto;*height:100%;display:none;z-index:20"><div class="bd" style="font-size:14px;font-weight:bold;border-width:0 0 2px 0;height:auto;padding:7px 2px 3px;margin:6px;clear:both;"><div  style="float:right;"><a ck="toggle" href="javascript:;" style="font-size:12px;font-weight:normal;">关闭</a></div>发件人信息</div><div style="margin:8px 6px 0 6px;"><div style="height:40px;"><div class="tcolor qm_left txtflow" style="margin:2px 0 0 2px;width:168px;"><b class="grn" style="font-size:14px;font-weight:bold;">交通银行太平洋信用卡中心</b>&nbsp;</div><div class="clear" style="margin:2px 0 0 2px;width:164px;"><div class="qm_left txtflow graytext" style="width:128px"><span title="PCCC@bocomcc.com">PCCC@bocomcc.com</span></div><div style="float:right;"><a href="/cgi-bin/addr_detail?sid=7zyliu_egHp6RlkP&AddrID=-1&t=addr_detail_edit&s=edit&rmqqgroup=1">编辑</a></div></div></div><div class="toolbg clear" style="padding:5px 0 4px 6px;margin-top:4px;height:auto;"><span class="txtcolor">往来邮件</span>&nbsp;</div><div id="divMails_sidebar" class="clear" style="margin:6px 0 0 0"><div style="margin:6px" class="tcolor">正在加载...</div></div><br/><br/></div></div><form id="remind_frm" name="remind_frm" method="post" target="actionFrame" action="/cgi-bin/reminder_mgr?sid=7zyliu_egHp6RlkP"><input type="hidden" name="sid" value="7zyliu_egHp6RlkP"/><input type="hidden" name="action" value="cancle"/><input type="hidden" name="ruleid"/><input type="hidden" name="from"/></form><div id="mainmail" style="position:relative;z-index:1;margin-bottom:12px;"><div class="toolbg toolbgline toolheight" id="toolbgline_top" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_top"><a href="javascript:;" ck="prevandnext"mailid="ZC2602-C9hbJEGPEOoMBBtOCTYpe59" type="collo" title="上一封(未读邮件)：欢迎使用51信用卡管家" class="bold" id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="C1T3363B3AD" type="collo"title="下一封(未读邮件)：您的11月账户优惠券信息及省钱月报，欢迎点击查看！" class="bold" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all1" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="PCCC@bocomcc.com" name="spam" mailfrom="pccc.bill@bocomcc.com" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="PCCC@bocomcc.com"name="spam" mailfrom="pccc.bill@bocomcc.com" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div><div class="readmailinfo" style="position:relative;z-index:2;zoom:1;"><span id="subjectTip"></span><table style="height:24px" border="0" cellspacing="0" cellpadding="0"><tr><td height="24" valign="middle" style="word-break:break-all;padding:9px 8px 2px 14px;" class="txt_left settingtable readmail_subject"><div class="qm_left"  style="padding-bottom:3px;"><span id="subject" class="sub_title " >交通银行信用卡电子账单</span><input type="button" id="img_star" ck="starMail" class="qm_ico_flagoff" title="标为星标"  hidefocus/></div><div id="tagContainer" ck="tag" class="TagDiv TagReadmail" style="overflow:visible;margin-top:0;"></div><div class="clr"></div></td><td module="qmSenderInfo" id="senderInfo2" width="1%" nowrap  class="f_size settingtable" style="padding:5px 12px 0 0;text-align:right;"><div style="width:45px;text-align:left;visibility:hidden;"> <img id="qqiconimg" src="/cgi-bin/getqqicon?sid=7zyliu_egHp6RlkP&uin=&mode=newaddr&mailaddr=PCCC%40bocomcc.com" style="position:absolute;margin:-14px 0 0 0;" class="qqshowbd"  onload="checkSenderImg(this)"/></td></tr></table><table border="0" cellspacing="0" cellpadding="0"><tr><td style="padding-left:14px;" class="settingtable txt_left"><span class="addrtitle">发件人：</span><span rejecthtml="rejectionhtml"  t="1" e="PCCC@bocomcc.com" u="" n="交通银行太平洋信用卡中心" addrvip="" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC2617-E8C_J0KTL9UEaXYjB0NsB58" xqs="0" fid="1" cfid="1" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="-100" isad="0"mop="1"sa="0"   addrid="-1"  se="1" ><b t="u" class="grn">交通银行太平洋信用卡中心</b>&nbsp;<b class="tcolor" t="u" id="tipFromAddr_readmail" fromaddr="PCCC@bocomcc.com">&lt;PCCC@bocomcc.com&gt;</b>&nbsp;&nbsp;<input t="u" type="button" class="ico_profileTips" align="top" />&nbsp;</span>&nbsp;<script type="text/javascript">
+(function(_aoWin){
+_aoWin["_oOperPanel"] = {};
+                            1
+_aoWin["_oOperPanel"].rejectionhtml = '<a id="antispamid2" href="javascript:;" mimefrom="PCCC@bocomcc.com" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a>';
+_aoWin["_oOperPanel"].filinghtml = '<a id="exbookid1" href="javascript:;" ck="exbookEmlMgr" book="2" module="qmAntiSpam" name="spam" title="将此发件人的邮件归档到个人文件夹" class="pointer">自动归档</a></span>';
+_aoWin["_oOperPanel"].operhidepanel = '<span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span>';
+if(_aoWin["_oOperPanel"].rejectionhtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="rejectionhtml">' +  _aoWin["_oOperPanel"].rejectionhtml + '</span>';
+}
+if(_aoWin["_oOperPanel"].filinghtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="filinghtml">' +  _aoWin["_oOperPanel"].filinghtml + '</span>';
+}
+})(window)
+</script><span id="operhidepanel" style="display:none"><span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span><span id="rejectionhtml"><a id="antispamid2" href="javascript:;" mimefrom="PCCC@bocomcc.com" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a></span><span id="filinghtml"><a id="exbookid1" href="javascript:;" ck="exbookEmlMgr" book="2" module="qmAntiSpam" name="spam" title="将此发件人的邮件归档到个人文件夹" class="pointer">自动归档</a></span></span><span id="latestqzone"></span>      </td><td width="1%" nowrap style="padding-right:12px;" class="settingtable"></td></tr></table><table  border="0" cellspacing="0" cellpadding="0"><tr><td style="word-break:break-all;padding:2px 12px 0 14px;line-height:19px;" width="99%" class="settingtable txt_left"><span class="addrtitle">时&nbsp;&nbsp;&nbsp;间：</span><b class="tcolor">2015年8月17日(星期一) 晚上8:19</b></td><td nowrap valign="bottom" style="padding:4px 10px 2px 0;*padding:4px 10px 2px 0;text-align:right" width="1%" rowspan="2"  class="txt_right settingtable noUnderLineList"><span style="display:none;vertical-align:6px;vertical-align:4px\9;"><a  href="javascript:location.href='/cgi-bin/readmail?disptype=text&sid=7zyliu_egHp6RlkP&mailid=ZC2617-E8C_J0KTL9UEaXYjB0NsB58&s='+(getTop().bnewwin?'&newwin=true':'')">纯文本</a> | </span><a href="javascript:;" ck="newWinRead"><span type="button" class="qm_ico_reopen" title="新窗口读信" ></span></a><a href="javascript:;"><span id="rmd" module="qmRemark" ck="toggle" class="qm_ico_remarkoff" title="添加邮件备注" ></span></a><a href="javascript:;"><span ck="createRule" fromaddr="PCCC@bocomcc.com"                     class="qm_ico_addFilter" title="归档至..."></span></a><a href="javascript:;"><span class="qm_ico_print" id="mail_print" title="打印" onClick="window.open('/cgi-bin/readmail?sid=7zyliu_egHp6RlkP&t=readmail_print&s=print&filterflag=true&mailid=ZC2617-E8C_J0KTL9UEaXYjB0NsB58');" ></span></a><a id="aSwitchOption" onClick="getTop().switchOption(window)" style="text-decoration:none;" hidefocus><span class="qm_ico_quickdown" alt="显示更多操作" id="display_more_operator" ></span></a><span id="tipRemindEdit"></span></td></tr><tr><td style="padding:0 0 0 14px;line-height:19px;"  class="settingtable txt_left"><div><div class="addrtitle nowrap" style="position:absolute;">收件人：</div><div style="padding-left:48px;font-size:12px;overflow:hidden; zoom:1;"><span style="white-space:nowrap;height:18px;line-height:18px; " class="left" t="1" e="536503763@qq.com" u="-2783460866" n="HU.夏" mop="1" addrvip="" rejecthtml="rejectionhtml" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC2617-E8C_J0KTL9UEaXYjB0NsB58" xqs="0" fid="1" cfid="1" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="-100" sd="0"se="0" >HU.夏&nbsp;<b t="u" class="tcolor">&lt;536503763@qq.com&gt;</b></span></div></div></td></tr><tr><td style="padding:0 14px;line-height:20px;"  class="settingtable txt_left"><span id="trOption" style="display:none"><span class="addrtitle">大&nbsp;&nbsp;&nbsp;小：</span>50K<br/><a  href="javascript:;" ck="optMail2" opt="print">打印</a>&nbsp;|&nbsp;<a  href="javascript:;" ck="optMail2" opt="mime" title="显示邮件的源代码">显示邮件原文</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="dleml" title="导出为邮件客户端可用的文件">导出为eml文件</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="code" title="改变页面编码以解决邮件乱码问题">邮件有乱码？</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fwgroup">转发到群邮件</a><span >&nbsp;|&nbsp;<a id="savetonotepad" href="javascript:;" ck="optMail2" opt="note">保存到记事本</a><span id="remind_add_mailid:ZC2617-E8C_J0KTL9UEaXYjB0NsB58">&nbsp;<span id="addtoremind">|&nbsp;<a href="javascript:;" ck="optMail2" opt="remind">添加到日历</a></span><span id="remind_edit_ZC2617-E8C_J0KTL9UEaXYjB0NsB58" class="pointer"></span></span>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fweml">作为附件转发</a></span></td></tr></table><div module="qmRemark" id="remarkcontainer" style="display:none; margin:5px 0 0;; padding:2px 0 0;"><div  class="qqshowbd" style="border-width:1px 0 0;padding:7px 14px 2px;"><div class="addrtitle qm_left" style="*margin-top:3px;">备　注：</div><div id="remarkread" style="display:none; margin-left:48px;*margin-left:45px;width:463px;*width:475px;"><div class="remarksContent" id="remarkContent" ck="modify" style="font-size:12px;min-height:42px;padding:10px;background:#fff6cf; border:1px solid #dec694;color:#733900;line-height:18px;" title="点击编辑"></div><div class="attbg" style="padding:4px 0 4px 8px;"><a href="javascript:;" ck="modify" style="margin-right:5px;"><input style="background:url(https://res.mail.qq.com/zh_CN/htmledition/images/newicon/mail2757b6.png) scroll -64px -142px; width:12px; height:14px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()" />编辑</a><a href="javascript:;" ck="del"><input style="background:url(https://res.mail.qq.com/zh_CN/htmledition/images/newicon/mail2757b6.png) scroll -80px -142px; width:13px; height:13px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()">删除</a></div></div><div class="remarkModify" style="display:none;margin-left:45px;" id="remarkwrite"><textarea id="remarktext" style="width:475px;*height:74px;min-height:72px;font-size:14px; overflow:hidden; margin:0 0 3px; padding:3px; color:#A0A0A0;" class="qm_txt" >请在此输入备注...</textarea><div style="margin-left:3px;*margin-left:6px;"><input type="button" class="qm_btn wd2" value="保存" ck="save" id="remarksave"/><a ck="cancel" id="remarkdel" style="*vertical-align:5px;display:inline-block;padding-left:6px;">取消</a></div></div></div></div><table border="0" cellspacing="0" cellpadding="0">        <tr><td class="onesize settingtable" style="height:5px;"></td></tr></table>    <div class="txt_left"><div class="attbg" id="starStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件。&nbsp;<a id="starStatuslink" ck="starMail" href="javascript:;">取消星标</a></div><div class="attbg" id="mailtopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件在列表中置顶。&nbsp;<a id="mailtopStatuslink" ck="topMail" href="javascript:;">取消置顶</a></div><div class="attbg" id="starTopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件，并在列表中置顶。&nbsp;<a ck="starMail" href="javascript:;">取消星标</a>&nbsp;<a ck="topMail" href="javascript:;">取消置顶</a></div><script>
+
+</script><div class="attbg" id="reminderContainer_mailid:ZC2617-E8C_J0KTL9UEaXYjB0NsB58" style="padding:5px 14px;display:none;"></div><div id="spam" module="qmAntiSpam" name="spam" style="zoom:1;">  </div>        <div class="alert_tips_yellow">    <span>开通我的账单，轻松管理信用卡。&nbsp;&nbsp;<a href="/bill/?sid=7zyliu_egHp6RlkP&from=readmail_open">我要开通</a></span><script>
+(new Image()).src = '/cgi-bin/do?sid=7zyliu_egHp6RlkP&action=oss_report&group=ReadmailGuideTip';
+</script></div></div></div><!-- page end--><div id="pageEnd" style="display:none;clear:both;position:relative;z-index:2;"><div id="bgmusic" style="padding:6px 0;display:none;margin-left:12px">您的朋友 交通银行太平洋信用卡中心 为这封邮件插入了背景音乐 - <a  target="_blank">下载</a>&nbsp;&nbsp;<a href="javascript:;">播放</a><a name="player"></a></div><div id="mp3player_info" style="padding:0 0 10px 0;margin-left:12px;display:none;">&nbsp;</div><div id="mp3player_container" style="padding:0 0 20px 0;margin-left:12px; margin-top:10px; display:none;">播放器加载中...</div><div module="qmQReply" id="quickreply" class="quickreply" style="margin:0;"><div class="qm_msg infobar" id="afterSendingDiv" style="margin-top:-25px;position:absolute;border:0;padding:4px 12px 4px;display:none;">正在发送...</div><div class="bd" style="border-width:0 0 1px 0;"></div><div style="padding:10px 0 0 8px;border-bottom:1px solid #fff;height:24px;display:none;" class="settingtable" id="afterSendDiv"> 此邮件已成功发送。<a ck="readyToWrite" href="javascript:;" >再回一封</a></div><div class="settingtable" id="QuickReplyPart" style="height:auto;min-height:10px;border-bottom:1px solid #fff;padding-top:10px;padding-botom:8px;overflow:hidden;z-index:1000;clear:both;"><div style="width:100%;"><div id="Senderdiv" style="margin:-10px 0 0 0;*margin:-3px 0 0 0;padding:6px 0 10px 0;*padding:0 0 7px 0;display:none;"></div><div class="qm_left" style="width:99.5%;" id="qmQuickReplyTextContainer" ><div style="width:99.5%;"><textarea id="source" md="checkBcc" class="graytext qm_txt" accesskey="q" style="height:16px;width:100%;overflow:hidden;">快捷回复给：交通银行太平洋信用卡中心</textarea></div></div><div class="" style="width:99.5%;display:none;z-index:1;float:left;" id="rteContainer"><div md="stopFold" ck="jump" style="float:right;margin:3px 0 0 6px;*margin:0;" ><input type="button" class="ico_input icon_switch_compose"  style="margin-right:4px;margin-bottom:3px;*margin-bottom:0;vertical-align:middle;"/><a href="javascript:;" id="jumpToNewWin">切换到完整写信模式</a></div><div style="margin:2px 0 3px 1px;white-space:nowrap;*margin-top:0;" class="addrtitle"><span id="QMEditorToolBarPlusArea"  ></span><span id="tooBarContain"></span></div><div id="QMEditorArea" style="" tIndex="1"><script>try{document.write( outputDataLoading( true ) );}catch(e){}</script></div><div class="clr"></div></div><div style="display:none;clear:both;float:left;width:99.5%;margin-top:5px;height:40px;" id="qmQuickReplyButtonContainer"><a md="stopFold" ck="send" href="javascript:void(0);" tabIndex="2" id="sendbtn" name="sendbtn" class="left bold b_size button_green_s">&nbsp;发送&nbsp;</a><div class="clr"></div></div><div class="clr"></div></div></div></div><div id="nextnewDiv" onMouseOver="this.className='attbg mail_readmode'" onMouseOut="this.className='toolbg mail_readmode'" class="toolbg mail_readmode" style="clear:both;position:relative;z-index:2;cursor:pointer;padding:0 8px 0 7px;zoom:1;" ck="prevandnext" mailid="C1T3363B3AD" ><div class="bd" style="padding:2px 0 6px 0;*padding:6px 0 0 0;border-width:0 0 1px 0;"><div class="qm_left" style="margin:6px 0 0 1px;">下一封未读：</div><div class="qm_left" style="margin:0x 0 0 1px;*margin:-2px 0 0 1px"><input type="button"  style="display:block;padding:0;float:left;width:18px;height:16px;margin:5px 0 0;cursor:default;border:0;" class="Ru" /></div><div style="margin:6px 0 0 0;*margin:4px 0 0 0"><span id="nextnewmail" style="color:#000;" class="bold" target="actionFrame" name="_QQMail_ReferenceGroupMail_">vipshop &nbsp;&nbsp; 您的11月账户优惠券信息及省钱月报，欢迎点击查看！</span></div><div class="clr"></div></div></div><div class="toolbg toolbgline toolheight" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_bt"><a href="javascript:;" ck="prevandnext"mailid="ZC2602-C9hbJEGPEOoMBBtOCTYpe59" type="collo" title="上一封(未读邮件)：欢迎使用51信用卡管家" class="bold" id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="C1T3363B3AD" type="collo"title="下一封(未读邮件)：您的11月账户优惠券信息及省钱月报，欢迎点击查看！" class="bold" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all2" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="PCCC@bocomcc.com" name="spam" mailfrom="pccc.bill@bocomcc.com" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="PCCC@bocomcc.com"name="spam" mailfrom="pccc.bill@bocomcc.com" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div></div><div style="position:absolute;right:0px;width:1px;height:1px;"><div id="tip74container"></div></div><div id="contentDiv" onmouseover="getTop().stopPropagation(event);" onClick="getTop().preSwapLink(event, 'html', 'ZC2617-E8C_J0KTL9UEaXYjB0NsB58');" style="position:relative;font-size:14px;height:auto;padding:15px 15px 10px 15px;z-index:1;zoom:1;line-height:1.7;" class="body">    <div id="qm_con_body"><div id="mailContentContainer" class="qmbox qm_con_body_content">
+
+
+
+
+<img src="http://creditcard.bocomcc.com/s.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003" border="0" width="0"  /><p>
+<style type="text/css">.qmbox table { font-size: 13px; border: 0; font-family: "Hiragino Sans GB", "Lucida Grande", Microsoft YaHei, arial; color: #555; }
+.qmbox .center { margin: 0 auto; }
+.qmbox .clear { clear: both; }
+.qmbox img { border: none; }
+.qmbox a { color: #555; }
+.qmbox .h1 { color: #01357b; font-size: 20px; }
+.qmbox .h2 { color: #01357b; font-size: 17px; font-weight: bold; }
+.qmbox .h2 img { vertical-align: middle; }
+.qmbox .h3 { font-size: 17px; }
+.qmbox .f-wb { font-weight: bold; }
+.qmbox .bill-list { border-collapse: collapse; }
+.qmbox .bill-list td { border: #e3e4e8 solid 1px; padding-left: 46px; }
+.qmbox .bill-list th { border-left: #bdd0e1 solid 1px; border-right: #bdd0e1 solid 1px; border-top: #fff solid 1px; background-color: #e4eef8; height: 32px; line-height: 2.3; padding-left: 12px; color: #096bb4; }
+.qmbox .bill-list .tt { border-top: #bdd0e1 solid 1px; }
+.qmbox .bill-list .bb { border-bottom: #bdd0e1 solid 1px; }
+.qmbox .bg-box { background: url("http://182.180.19.96:9080/smartedm/t_images/10/box_t2.jpg") no-repeat; }
+.qmbox .u-top3 { background: url("http://182.180.19.96:9080/smartedm/t_images/10/box_t3.jpg") no-repeat; }
+.qmbox .m-tb { }
+.qmbox .m-tb th { color: #096bb4; padding-left: 12px; padding-top: 5px; padding-bottom: 5px; }
+.qmbox .m-tb td { padding-left: 12px; }
+.qmbox .m-tb2 th { color: #096bb4; padding: 10px 5px 10px 12px; text-align: left; }
+.qmbox .m-tb2 td { padding: 5px 5px 5px 12px; vertical-align: top; }
+.qmbox .m-tb2 tr:nth-child(2n+1) { background-color: #f9f9f9; }
+.qmbox .m-tb2 .more-bar { background-color: #fff; padding: 12px 0; }
+.qmbox .m-tb2-td td { padding: 10px 5px 10px 12px; }
+.qmbox .u-tit { background-color: #e4eef8; height: 33px; text-align: center; }
+.qmbox .u-txt { color: #096bb4; font-size: 14px; }
+.qmbox .small-txt { font-size: 12px; }
+.qmbox .m-c{background:url("http://182.180.19.96:9080/smartedm/t_images/10/e_edm_02.jpg") no-repeat 606px 16px;}
+.qmbox --&gt;}
+</style></p>
+<table align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: &#39;Hiragino Sans GB&#39;, &#39;Lucida Grande&#39;, Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="720">
+    <tbody>
+        <tr>
+            <td height="53">
+            <table border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: &#39;Hiragino Sans GB&#39;, &#39;Lucida Grande&#39;, Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="100%">
+                <tbody>
+                    <tr>
+                        <td align="left" colspan="6" valign="bottom"><img height="88" src="http://creditcard.bocomcc.com/t_images/10/header_01.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="720"  />
+</td>
+                    </tr>
+                    <tr>
+                        <td align="left" valign="bottom"><a href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E0" style="color: #555" target="_blank"><img height="34" src="http://creditcard.bocomcc.com/t_images/10/header_02.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="124"  />
+</a>
+</td>
+                        <td align="left" valign="bottom"><a href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E1" style="color: #555" target="_blank"><img height="34" src="http://creditcard.bocomcc.com/t_images/10/header_03.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="112"  />
+</a>
+</td>
+                        <td align="left" valign="bottom"><a href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E2" style="color: #555" target="_blank"><img height="34" src="http://creditcard.bocomcc.com/t_images/10/header_04.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="120"  />
+</a>
+</td>
+                        <td align="left" valign="bottom"><a href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E3" style="color: #555" target="_blank"><img height="34" src="http://creditcard.bocomcc.com/t_images/10/header_05.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="123"  />
+</a>
+</td>
+                        <td align="left" valign="bottom"><a href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E4" style="color: #555" target="_blank"><img height="34" src="http://creditcard.bocomcc.com/t_images/10/header_06.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="111"  />
+</a>
+</td>
+                        <td align="left" valign="bottom"><a href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E5" style="color: #555" target="_blank"><img height="34" src="http://creditcard.bocomcc.com/t_images/10/header_07.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="130"  />
+</a>
+</td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: &#39;Hiragino Sans GB&#39;, &#39;Lucida Grande&#39;, Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="720">
+    <tbody>
+        <tr>
+            <td><img height="84" src="http://creditcard.bocomcc.com/t_images/10/edm_final_01_02.jpg" style="border-bottom: 0px; border-left: 0px; border-top: 0px; border-right: 0px" width="720"  /></td>
+        </tr>
+        <tr>
+            <td><div id="cntDiv" style="width:725px; margin:0 2px;">	<div id="container">	    <div style="margin-top:20px; position:relative">		   <p style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; color:#666666; font-size:17px; margin-bottom:3px; margin-right:80px; ">&nbsp;&nbsp; 尊敬的 胡小川先生您好！</p>		   <p style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;color:#666666; font-size:14px; margin-bottom:3px; margin-right:80px; ">&nbsp;&nbsp;&nbsp; 感谢您使用交通银行信用卡，以下是您2015年08月份的信用卡电子账单。</p>		   <p style=" font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;color:#666666; font-size:14px; margin-bottom:3px;margin-right:80px; font-weight:bold;">&nbsp;&nbsp;&nbsp; 交通银行银联标准&nbsp; 卡号:622252******1571</p>		   <p style=" font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;color:#666666; font-size:14px; margin-bottom:3px;margin-right:80px; font-weight:bold;">&nbsp;&nbsp;&nbsp; 账单周期：2015/07/17-2015/08/16</p>		</div>		<div style=" margin-top:20px; " cnttitle="cnttitle" style="float:left; padding-left:20px; color:#00006F;font-weight:bold; font-size:16px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/title_pic1.png) no-repeat 0 0;">             本期账务说明		    </div> 		    			<div id="titleR" style="color:#666666;  margin-right:10px;float:right;">								</div>			<div style="clear:both"></div>			<div id="billInfo1" style="border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius:8px; -moz-border-radius: 8px; margin:10px; padding:20px;font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; ">			   <table id="table1" style="border-collapse:collapse; text-align:left; margin:10px;" border="1" bordercolor="#C1BDF7">			      <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         到期还款日				     </th>					 <td colspan="2" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px;padding:5px 10px;">2015/09/10</td>					 					 <td width="150px;" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px;padding:5px 10px;">					 	<a href="https://creditcardapp.bankcomm.com/member/member/value/add/service/detail.html?prodNo=XYBZ0001&cardNo=6222%20****%20****%201571&_channel=DX2"> 					 		<img style="cursor:pointer;" src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_sms.png" border="0/"  /> </a> 					 	</td>				   </tr>				    <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         本期应还款额				     </th>					 <td width="150px;" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;">￥ 2526.19</td>					 <td width="150px;" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;">$ ---</td>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">					 	<a href="https://creditcardapp.bankcomm.com/member/member/payment/index.html?_channel=HK2">					 		<img style="cursor:pointer;" src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_pay.png" border="0/"  />					 	</a>					 </td>				   </tr> 				   <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         最低还款额				     </th>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">￥ 291.04</td>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">$ ---</td>					  <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;padding:5px 10px;">					  	<a href="https://creditcardapp.bankcomm.com/member/member/qryInstallmentCNY.html?_channel=%20FQ2%20&cardNo=6222%20****%20****%201571"> 					  		<img style="cursor:pointer;" src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_plan.png" border="0/"  /> 					  	</a> 					   </td>				   </tr>				   <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         信用额度				     </th>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">￥ 2000</td>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;"> $ ---</td>					 					 <td rowspan="2" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">					 	 <a>  					 	 		<img style="cursor:pointer;" src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_limit_un.png" border="0"  /> 					   </a>						 	 </td>				   </tr>				   <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         取现额度				     </th>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">￥ 1000</td>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;"> $ ---</td>				   </tr>			   </table>			</div>																													<div style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px; border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius: 8px; -moz-border-radius: 8px; margin:10px; padding:20px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/tableTop.png) repeat-x;">				 <table id="table4" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px; border-collapse:collapse; text-align:left; margin:10px;margin:20px 10px; ">					  <tr>					  	<th></th>						  <th style=" color:rgb(10,108,183); font-size:13px; padding:5px 15px; border-bottom:1px solid white;padding:0;">本期账单应还款额&nbsp; = </th>						  <th style=" color:rgb(10,108,183); font-size:13px; padding:5px 15px; border-bottom:1px solid white;padding:0;">上期账单应还款额&nbsp; - </th>						  <th style=" color:rgb(10,108,183); font-size:13px; padding:5px 15px; border-bottom:1px solid white;padding:0;">还款/退货/费用返还&nbsp; +&nbsp; </th>						  <th style=" color:rgb(10,108,183); font-size:13px; padding:5px 15px; border-bottom:1px solid white;padding:0;">消费/取现/其他费用</th>					  </tr>					  				  <tr>						 <td style="color:rgb(10,108,183); font-weight:bold;">人民币账户</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2526.19</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2806.50</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">323.00 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">42.69</td>					  </tr>					   				  <tr>						 <td style="color:rgb(10,108,183); font-weight:bold;">美元账户</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">--- </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>					  </tr>					   				   </table>			</div>						   			   <div id="billInfo19" style=" font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px; border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius: 8px; -moz-border-radius: 8px; margin:10px; padding:20px; padding:0;">			     <div style=" height:50px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/tableTop.png) repeat-x;">					  <div id="floatL1" style="margin:10px;">							<div id="titleL12" style="float:left; padding-left:20px; color:#00006F;font-weight:bold; font-size:16px;background:url(https://e-creditcard.bankcomm.com/image/dzzd/title_pic1.png) no-repeat 0 0;">本期账务明细</div>					  </div>					  <div id="floatR12" style="float:right; color:#666666; font-size:14px;  margin-right:10px;">						  <a href="https://creditcardapp.bankcomm.com/member/member/value/add/service/detail.html?prodNo=YKWY0001&cardNo=6222%20****%20****%201571&_channel=JY2">  						  	<img src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_trad.gif" border="0/"  />						  </a> 	          </div>	         </div>	           	           																													  <div style="height:33px; line-height:33px; text-align:center; color:#0a6ab4;background:url(https://e-creditcard.bankcomm.com/image/dzzd/table_pic.png) repeat;">以下是您的还款、退货及费用返还明细</div>						 																		 			   	        <div style="margin-top:0px;">					<table id="table3" style="border-collapse:collapse; text-align:left; margin:10px;">					  <thead>					  <tr>						 <th width="11%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易日期</th>						 <th width="11%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">记账日期</th>						 <th width="38%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易说明</th>						 <th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易币种/金额</th>						 <th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">清算币种/金额</th>					   </tr>					   </thead>					 					   <tbody>					    							 <tr style='background:#EDF5FF;'>							   <td width="100%" colspan="20" style='text-align:center;' style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;" class="DetailDataCell"><span class="InfoData">							   	人民币账户明细							   </span></td>								 </tr>							 							 							 <tr style='background:#EDF5FF;'>							   <td width="100%" colspan="20" style='text-align:center; font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;' class="DetailDataCell"><span class="InfoData">							   	主卡 卡号末四位 1571							   </span></td>								 </tr>							 					   <tr style=''>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/08/12 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/08/12</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;"> 代发款项</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 323.00 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 323.00 </td>					   </tr>				   						</tbody>										</table></div>																																		 	<div style="height:33px; line-height:33px;text-align:center; color:#0a6ab4;background:url(https://e-creditcard.bankcomm.com/image/dzzd/table_pic.png) repeat;">以下是您的消费、取现及其他费用明细</div>							 												 			   	        <div style="margin-top:0px;">					<table id="table3" style="border-collapse:collapse; text-align:left; margin:10px;">					  <thead>					  <tr>						 <th width="11%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易日期</th>						 <th width="11%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">记账日期</th>						 <th width="38%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易说明</th>						 <th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易币种/金额</th>						 <th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">清算币种/金额</th>					   </tr>					   </thead>					 					   <tbody>					    							 <tr style='background:#EDF5FF;'>							   <td width="100%" colspan="20" style='text-align:center;' style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;" class="DetailDataCell"><span class="InfoData">							   	人民币账户明细							   </span></td>								 </tr>							 							 					   <tr style=''>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/08/16 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/08/16</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;"> 本期利息</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 42.69 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 42.69 </td>					   </tr>				   						</tbody>										</table></div>																										<p></p>					<div style="font-size:12px; width:80%; margin:10px 20px;"> 感谢您对交通银行信用卡业务的支持，我行将竭诚为您提供服务。<br  /> 您账户的透支余额已超过银行核定的信用额度，请尽快还款。<br  /> 您账户的透支余额已超过银行核定的信用额度，请尽快还款。<br  /></div>				</div>								<div id="billInfo20" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px; border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius: 8px; -moz-border-radius: 8px; margin:10px; padding:20px; padding:0;">				   <div style="height:50px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/tableTop.png);">				     <div class="floatL" style="margin:10px;">						 <div class="titleL" style="float:left; padding-left:20px; color:#00006F;font-weight:bold; font-size:16px;background:url(https://e-creditcard.bankcomm.com/image/dzzd/title_pic2.png) no-repeat 0 0;">本期积分说明</div>					  </div>					  <a style=" float:right;margin:10px; cursor:pointer;" class="floatR" href="http://club.bankcomm.com?_channel=JF2">					  	<img src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_bps.gif" border="0/"  />					  </a>					  </div> 					  <table id="table5" style="border-collapse:collapse; text-align:left; margin:10px;">					  <tr>						<th width="20%"></th>						<th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">积分余额 </th>						<th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">2015/08/31<br  />到期积分 </th>						<th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">2015/09/30<br  />到期积分 </th>						<th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">2015/10/31<br  />到期积分 </th>					  </tr>					  					  <tr>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px; color:rgb(10,108,183); font-weight:bold;">人民币账户</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2300</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>					  </tr>					  					  <tr>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px; color:rgb(10,108,183); font-weight:bold;">美元账户</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>					  </tr>					   				   </table>				</div>				                     			</div>				</div>								<div></div>	<div></div></td>
+        </tr>
+        <tr>
+            <td><img border="0" height="66" src="http://creditcard.bocomcc.com/t_images/10/edm_final_01_04.jpg" style="border-bottom: 0px; border-left: 0px; border-top: 0px; border-right: 0px" width="720"  /></td>
+        </tr>
+        <tr>
+            <td><img border="0" height="196" src="http://creditcard.bocomcc.com/t_images/10/edm_final_01_05.jpg" style="border-bottom: 0px; border-left: 0px; border-top: 0px; border-right: 0px" usemap="#Map2" width="720"  /></td>
+        </tr>
+        <tr>
+            <td><img border="0" height="160" src="http://creditcard.bocomcc.com/t_images/10/edm_final_01_06.jpg" style="border-bottom: 0px; border-left: 0px; border-top: 0px; border-right: 0px" width="720"  /></td>
+        </tr>
+        <tr>
+            <td><img border="0" height="556" src="http://creditcard.bocomcc.com/t_images/10/e_edm_04.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" usemap="#Map" width="720"  /></td>
+        </tr>
+    </tbody>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: &#39;Hiragino Sans GB&#39;, &#39;Lucida Grande&#39;, Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="740">
+    <tbody>
+        <tr>
+            <td bgcolor="#cb0600" colspan="3" height="4"></td>
+        </tr>
+        <tr>
+            <td width="24">&nbsp;</td>
+            <td colspan="2" height="22"><font style="line-height: 18px; font-size: 12px"><strong>欢迎登录交通银行信用卡网站 <a href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E6" style="color: #555" target="_blank"><font color="#d60c1c">creditcard.bankcomm.com</font></a> </strong></font></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td colspan="2" height="50"><font style="line-height: 18px; font-size: 12px">交通银行无论何时都不会向您发送电子邮件询问或确认您的私人数据，包括信用卡账户号码、网上账户密码、<br  />
+            账户余额、身份证号码或护照号码等等。</font></td>
+        </tr>
+    </tbody>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: &#39;Hiragino Sans GB&#39;, &#39;Lucida Grande&#39;, Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="740">
+    <tbody>
+        <tr>
+            <td width="28">&nbsp;</td>
+            <td valign="top" width="266"><font style="line-height: 18px; font-size: 12px"><strong>客服热线：<font color="#d60c1c">400-800-9888</font></strong><br  />
+            </font></td>
+            <td align="right"><img height="66" src="http://creditcard.bocomcc.com/t_images/10/footer_01.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="228"  /></td>
+            <td align="right" valign="top"><img height="87" src="http://creditcard.bocomcc.com/t_images/10/footer_02.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="181"  /></td>
+        </tr>
+    </tbody>
+</table>
+<table align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: &#39;Hiragino Sans GB&#39;, &#39;Lucida Grande&#39;, Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="740">
+    <tbody>
+        <tr>
+            <td height="30"></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+<p><map name="Map">
+<area coords="254,47,345,157" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E7" shape="rect" target="_blank"  />
+<area coords="370,44,459,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E2" shape="rect" target="_blank"  />
+<area coords="483,47,571,160" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E8" shape="rect" target="_blank"  />
+<area coords="596,46,685,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E9" shape="rect" target="_blank"  />
+<area coords="192,447,526,480" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E10" shape="rect" target="_blank"  /></map><map name="Map2">
+<area coords="24,4,247,183" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E11" shape="rect" target="_blank"  />
+<area coords="249,7,469,182" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E12" shape="rect" target="_blank"  />
+<area coords="477,6,697,181" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E13" shape="rect" target="_blank"  /></map></p>
+<p><map name="Map">
+<area coords="254,47,345,157" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E7" shape="rect" target="_blank"  />
+<area coords="370,44,459,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E2" shape="rect" target="_blank"  />
+<area coords="483,47,571,160" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E8" shape="rect" target="_blank"  />
+<area coords="596,46,685,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E9" shape="rect" target="_blank"  />
+<area coords="192,447,526,480" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E10" shape="rect" target="_blank"  /></map><map name="Map2">
+<area coords="24,4,247,183" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E14" shape="rect" target="_blank"  />
+<area coords="249,7,469,182" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E15" shape="rect" target="_blank"  />
+<area coords="477,6,697,181" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E16" shape="rect" target="_blank"  /></map></p>
+<p><map name="Map">
+<area coords="254,47,345,157" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E7" shape="rect" target="_blank"  />
+<area coords="370,44,459,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E2" shape="rect" target="_blank"  />
+<area coords="483,47,571,160" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E8" shape="rect" target="_blank"  />
+<area coords="596,46,685,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E9" shape="rect" target="_blank"  />
+<area coords="192,447,526,480" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E10" shape="rect" target="_blank"  /></map><map name="Map2">
+<area coords="24,4,247,183" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E17" shape="rect" target="_blank"  />
+<area coords="249,7,469,182" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E18" shape="rect" target="_blank"  />
+<area coords="477,6,697,181" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E19" shape="rect" target="_blank"  /></map></p>
+<p><map name="Map">
+<area coords="248,49,339,159" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E7" shape="rect" target="_blank"  />
+<area coords="371,49,461,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E2" shape="rect" target="_blank"  />
+<area coords="489,49,579,158" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E8" shape="rect" target="_blank"  />
+<area coords="610,48,700,158" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E9" shape="rect" target="_blank"  />
+<area coords="192,447,526,480" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E10" shape="rect" target="_blank"  /></map><map name="Map2">
+<area coords="24,4,247,183" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E20" shape="rect" target="_blank"  />
+<area coords="249,7,469,182" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E18" shape="rect" target="_blank"  />
+<area coords="476,6,696,181" href="http://creditcard.bocomcc.com/u.html?uid=bc&stime=1439814014&eid=1791749695&email=536503763@qq.com&tlid=121003&stid=523774&thid=121003&url=%7E21" shape="rect" target="_blank"  /></map></p>
+
+
+
+</div></div><!-- --><style>#mailContentContainer .txt {height:auto;}</style>  </div><script>
+(function()
+{
+var _oImgs = getTop().GelTags("img", getTop().S("mailContentContainer",window));
+getTop().E(_oImgs, function(_aoItem){ 
+_aoItem.onerror = function()
+{
+                if(this.src && /.*mail\.qq\.com\/cgi-bin\/viewfile.*/i.test(this.src)){
+                    getTop().LogKV({sValue:'getinvestigate|readmail|readmail|imgerror'});
+                }
+if (this.src && !/.*mail.qq.com\/cgi-bin.*/.test(this.src) && /http:\/\//.test(this.src) && this.clientHeight * this.clientWidth > 0) 
+{
+this.onerror = null;
+this.src = "/cgi-bin/get_netres?url=" + encodeURIComponent(this.src) + "&sid=" + getTop().getSid(); 
+}
+}
+});
+})();
+</script></div><img id="qqmailcontent_load_finsih" width=0 height=0 style="height:0;display:none;"/></div></body></html><script>
+var _oTop = getTop();
+
+function showNetDisk(_aoContainer)
+{
+getTop().waitFor(
+function()
+{
+return getTop().QMNetDisk && getTop().QMNetDisk.getInfo()
+},
+function(_abIsOk)
+{
+if(_abIsOk)
+{
+var _oDiskInfo = getTop().QMNetDisk.getInfo(),
+_oDomAttCon = getTop().finds("div[ui-type='attCon']", _aoContainer)[0],
+_oDomList = getTop().finds("a.netdisk_hide", _oDomAttCon||_aoContainer) || [],
+_oDomAtt = _oDomList[0];
+
+for(var i = 0; i < _oDomList.length;i++)
+{
+getTop().QMNetDisk.uploadEntry(_oDomList[i]);
+}
+
+_oDomAttCon && _oDomAtt
+&& setTimeout(function()
+{
+getTop().QMNetDisk.route("tips", "readmail", _oDomAttCon, {
+offsetLeft: _oDomAtt.offsetLeft + _oDomAtt.clientWidth/2, 
+offsetTop: 80
+});
+},3000);
+}
+}
+);
+}
+showNetDisk(document);
+_oTop.waitFor(
+function()
+{
+return !!(_oTop.QMReadMail);
+},
+function(_abIsOk)
+{
+if (_abIsOk)
+{
+try{
+window.QMReadMail = new (_oTop.QMReadMail.qmReadMail)(
+{
+                    
+ bNeedIdentifyLocation: true,
+sLocationIdentifyUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify_worker24e6ae.js',
+sLocationWorkerImportUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js',
+   
+logintype: '1',
+reandfw: "",
+mailtype        : 'comm',
+xqqstyle: '0',
+noIncludeArtcle: false,
+bOpenTag : "1",
+
+loc: "readmail,readmail,",
+subtmpl: "",
+folderid: "1",
+folderkey: "",
+saveFrom: "536503763@qq.com",
+titlePrefix: "0",
+sendmailname: "536503763@qq.com",
+disptype: "html",
+
+bNewMail        : 0,
+
+bNeedReceipt : 0,
+
+bStar : false,
+bAddrvip : false,
+bSys : false,
+                    bAd: false,
+oSysTag : "system:1|friend:0|important:0|",
+bDft : false,
+oMatchTag : [],
+oMoveItems: [ 
+{ sId: 'fid_1', sItemValue: "收件箱" },
+{ sId: 'fid_3', sItemValue: "已发送" },
+{ sId: "fid_130", sItemValue: "QQ邮件订阅" },
+{ nHeight: 10, sItemValue: '<div style="background:#CCC; height:1px; margin-top:5px; overflow:hidden;"></div>' }, //'<hr style="color:#CCC;height:1px;"/>' },
+{ sId: "new", sItemValue : '新建文件夹...' }
+],
+oMoreOpt : ["addremark", "addstar", "addremind", "print"]
+},
+{
+from: { 
+                        name : "交通银行太平洋信用卡中心", 
+                        addr : "PCCC@bocomcc.com",
+                        qq : ""
+                    }, 
+date: "2015年8月17日(星期一) 晚上8:19",
+dateeng: "",
+
+to: [
+{
+name : "HU.夏",
+addr : "536503763@qq.com",
+qq  : "-2783460866"
+},
+],
+
+cc: [
+],
+
+subject: "交通银行信用卡电子账单",
+
+replyTo: [
+{
+name : "交通银行太平洋信用卡中心",
+addr : "PCCC@bocomcc.com"
+}
+],
+
+replyCc: [
+],
+
+reSubject: "交通银行信用卡电子账单"
+},
+{
+oWin : window,
+sContext : "ZC2617-E8C_J0KTL9UEaXYjB0NsB58",
+sModuleName : "qmReadMail"
+}
+);
+}catch(e){alert(e.message)}
+
+var tag = [{}];
+tag.length = tag.length - 1;
+getTop().QMTag && getTop().QMTag.set(tag, "1442871851466818");
+
+}
+else
+{
+debug("读信readmail2.js加载失败");
+}
+}, 10);
+
+getTop().switchFolder('folder_1');
+</script> <script type="text/javascript" src="https://res.mail.qq.com/zh_CN/htmledition/js/bj-report2761dc.js"></script><script type="text/javascript">
+BJ_REPORT.init({
+id   : 112,
+ignore : [/Script error/i],
+random : 0.1
+});
+var _oTop = getTop();
+_oTop.waitFor(
+function()
+{
+return _oTop.resetTopFrameError;
+},
+function(_abIsOk)
+{
+_oTop.resetTopFrameError();
+});
+</script><script>parent.endStatTime && parent.endStatTime(window, 
+{mailid:"ZC2617-E8C_J0KTL9UEaXYjB0NsB58",folderid:"1",type:"readmail",rcgi:"readmail",rt:"readmail",rs:"",wm_flowid:"8693232"});</script>

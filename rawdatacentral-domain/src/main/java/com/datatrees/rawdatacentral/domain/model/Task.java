@@ -1,80 +1,60 @@
 package com.datatrees.rawdatacentral.domain.model;
 
-import com.datatrees.rawdatacentral.domain.model.base.AbstractTask;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
- /** create by system from table t_tasklog(task log info)  */
+import com.datatrees.rawdatacentral.domain.model.base.AbstractTask;
+
+/** create by system from table t_tasklog(task log info) */
 public class Task extends AbstractTask implements Serializable {
-    /** mail Id */
-    private Integer id;
-
-    /** user Id */
-    private Long taskId;
-
-    /** mail website id */
-    private Integer websiteId;
-
-    /**  */
-    private String nodeName;
-
-    /**  */
-    private AtomicInteger openUrlCount;
-
-    /**  */
-    private AtomicInteger openPageCount;
-
-    /**  */
-    private AtomicInteger requestFailedCount;
-
-    /**  */
-    private AtomicInteger retryCount;
-
-    /**  */
-    private AtomicInteger filteredCount;
-
-    /** 0:init;200:success;101:cookie Invalid，102：block 103：no result */
-    private Integer status;
-
-    /**  */
-    private String remark;
-
-    /**  */
-    private String resultMessage;
-
-    /** Task duration, in seconds */
-    private Long duration;
-
-    /**  */
-    private Integer extractedCount;
-
-    /**  */
-    private Integer extractSucceedCount;
-
-    /**  */
-    private Integer extractFailedCount;
-
-    /**  */
-    private Integer storeFailedCount;
-
-    /**  */
-    private Integer notExtractCount;
-
-    /**  */
-    private AtomicLong networkTraffic;
-
-    /**  */
-    private Date startedAt;
-
-    /**  */
-    private Date finishedAt;
-
-    /**  */
-    private Date createdAt;
 
     private static final long serialVersionUID = 1L;
+    /** mail Id */
+    private Integer       id;
+    /** user Id */
+    private Long          taskId;
+    /** mail website id */
+    private Integer       websiteId;
+    /**  */
+    private String        nodeName;
+    /**  */
+    private AtomicInteger openUrlCount;
+    /**  */
+    private AtomicInteger openPageCount;
+    /**  */
+    private AtomicInteger requestFailedCount;
+    /**  */
+    private AtomicInteger retryCount;
+    /**  */
+    private AtomicInteger filteredCount;
+    /** 0:init;200:success;101:cookie Invalid，102：block 103：no result */
+    private Integer       status;
+    /**  */
+    private String        remark;
+    /**  */
+    private String        resultMessage;
+    /** Task duration, in seconds */
+    private Long          duration;
+    /**  */
+    private Integer       extractedCount;
+    /**  */
+    private Integer       extractSucceedCount;
+    /**  */
+    private Integer       extractFailedCount;
+    /**  */
+    private Integer       storeFailedCount;
+    /**  */
+    private Integer       notExtractCount;
+    /**  */
+    private AtomicLong    networkTraffic;
+    /**  */
+    private Date          startedAt;
+    /**  */
+    private Date          finishedAt;
+    /**  */
+    private Date          createdAt;
 
     public Integer getId() {
         return id;

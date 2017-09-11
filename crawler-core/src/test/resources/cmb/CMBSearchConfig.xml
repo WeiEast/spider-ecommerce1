@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<result-tag-list>
+		<result-tag><![CDATA[bankbill]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">cmbchina.com</url-filter>
+	</url-filters>
+
+
+	<properties>
+		<cookie scope="user_session"></cookie>
+	</properties>
+
+	<login login-type="plugin" plugin-ref="cmbLoginPlugin">
+		<login-check success-pattern="尊敬的.*您好">
+			<check-url><![CDATA[https://mobile.cmbchina.com/MobileHtml/Login/HomePage.aspx?ClientNo=${clientNo}]]></check-url>
+			<object-segment name="NameOnCard">
+				<field-extractor id="ClientNo" field="ClientNo" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="template"><![CDATA[${clientNo}]]></operation>
+				</field-extractor>
+				<field-extractor id="NameOnCard" field="NameOnCard" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="regex" index="1"><![CDATA[尊敬的([^&]+).*您好]]></operation>
+				</field-extractor>
+				<field-extractor id="CreditLimitPage" field="CreditLimitPage" result-type="resource_string" field-visible-type="context" not-empty="true">
+					<operation type="template"><![CDATA[https://mobile.cmbchina.com/MobileHtml/creditcard/account/am_queryaccount.aspx"ClientNo=${ClientNo}&Command=&XmlReq=]]></operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<page-definition>
+		<page id="category-search-page" path="account/am_queryreckoningsurvey.aspx">
+			<object-segment name="linkNode" result-class="LinkNode">
+				<field-extractor id="CreditAccNo" field="temp" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="xpath">//div[@id='CreditCardAcc1']//option[@selected='selected']/@value</operation>
+				</field-extractor>
+				<field-extractor id="LocalCurrency" field="temp" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="regex" index="1"><![CDATA[\("Currency", "(\d+)"\)]]></operation>
+				</field-extractor>
+				<field-extractor id="ForeignCurrency" field="temp" result-type="string" field-visible-type="context" not-empty="true">
+					<operation from="&amp;#39;" to="'" type="replace"></operation>
+					<operation type="regex" index="1"><![CDATA[GetCurrencySwitchHeader\('1', '(\d+)']]></operation>
+				</field-extractor>
+				<object-segment name="linkNode" type="xpath" value="//button[@class='rowbtn']" result-class="LinkNode">
+					<field-extractor id="ColumnOfDate" field="ColumnOfDate" result-type="string">
+						<operation type="regex" index="1"><![CDATA[QueryReckoningDetail\('(\d+)',]]></operation>
+					</field-extractor>
+					<field-extractor id="url" field="url" result-type="string">
+						<operation type="template"><![CDATA[https://mobile.cmbchina.com/MobileHtml/CreditCard/Account/am_QueryReckoningList.aspx"CreditAccNo=${CreditAccNo}&Currency=${LocalCurrency}&ColumnOfDate=${ColumnOfDate}&Command=&ClientNo=${ClientNo}&DeviceTAB=TabDefault]]>
+						</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+
+		<page id="bill-page" path="Account/am_QueryReckoningList.aspx">
+			<object-segment name="EBank" result-class="EBankData">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<!-- 本币账户 -->
+				<field-extractor id="NameOnCard" field="NameOnCard" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${NameOnCard}]]></operation>
+				</field-extractor>
+				<field-extractor id="ColumnOfDate" field="ColumnOfDate" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${ColumnOfDate}]]></operation>
+				</field-extractor>
+				<field-extractor id="pageContent0" field="pageContent">
+					<operation type="template"><![CDATA[${CreditLimitPage}]]></operation>
+				</field-extractor>
+				<field-extractor id="pageContent1" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="pageContent2" field="pageContent" result-type="resource_string">
+					<operation type="template"><![CDATA[https://mobile.cmbchina.com/MobileHtml/CreditCard/Account/am_QueryReckoningList.aspx"CreditAccNo=${CreditAccNo}&Currency=${LocalCurrency}&ColumnOfDate=${ColumnOfDate}&Command=CMD_DETAIL&ClientNo=${ClientNo}&DeviceTAB=TabDefault]]></operation>
+				</field-extractor>
+				<field-extractor id="totalPageCount" field="temp" field-visible-type="request" result-type="string">
+					<operation type="return"></operation>
+					<operation type="xpath">//div/text()</operation>
+					<operation type="regex" index="1"><![CDATA[当前第\d+/(\d+)页]]></operation>
+				</field-extractor>
+				<object-segment name="pageContent" type="calculate" value="1,${totalPageCount},1,+" result-class="string">
+					<field-extractor id="PageNo" field="temp">
+						<operation type="return"></operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+					</field-extractor>
+					<field-extractor id="pageContent" field="pageContent" result-type="resource_string">
+						<operation type="template"><![CDATA[https://mobile.cmbchina.com/MobileHtml/CreditCard/Account/am_QueryReckoningList.aspx"CreditAccNo=${CreditAccNo}&Currency=${LocalCurrency}&ColumnOfDate=${ColumnOfDate}&PageNo=${PageNo}&Command=&ClientNo=${ClientNo}&DeviceTAB=TabDefault]]></operation>
+					</field-extractor>
+				</object-segment>
+				<!-- 外币账户 -->
+				<field-extractor id="foreignPageContentDETAIL" field="pageContent" result-type="resource_string">
+					<operation type="template"><![CDATA[https://mobile.cmbchina.com/MobileHtml/CreditCard/Account/am_QueryReckoningList.aspx"CreditAccNo=${CreditAccNo}&Currency=${ForeignCurrency}&ColumnOfDate=${ColumnOfDate}&Command=CMD_DETAIL&ClientNo=${ClientNo}&DeviceTAB=TabDefault]]></operation>
+				</field-extractor>
+				<field-extractor id="ForeignPageContent" field="temp" result-type="resource_string">
+					<operation type="template"><![CDATA[https://mobile.cmbchina.com/MobileHtml/CreditCard/Account/am_QueryReckoningList.aspx"CreditAccNo=${CreditAccNo}&Currency=${ForeignCurrency}&ColumnOfDate=${ColumnOfDate}&Command=&ClientNo=${ClientNo}&DeviceTAB=TabDefault]]></operation>
+				</field-extractor>
+				<field-extractor id="ForeignTotalPageCount" field="temp" source="ForeignPageContent" field-visible-type="request" result-type="string">
+					<operation type="xpath">//div/text()</operation>
+					<operation type="regex" index="1"><![CDATA[当前第\d+/(\d+)页]]></operation>
+				</field-extractor>
+				<field-extractor id="foreignPageContent1" field="pageContent" result-type="string">
+					<operation type="template"><![CDATA[${ForeignPageContent}]]></operation>
+				</field-extractor>
+				<object-segment name="pageContent" type="calculate" value="1,${ForeignTotalPageCount},1,+" result-class="string">
+					<field-extractor id="PageNo" field="temp">
+						<operation type="return"></operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+					</field-extractor>
+					<field-extractor id="pageContent" field="pageContent" result-type="resource_string">
+						<operation type="template"><![CDATA[https://mobile.cmbchina.com/MobileHtml/CreditCard/Account/am_QueryReckoningList.aspx"CreditAccNo=${CreditAccNo}&Currency=${LocalCurrency}&ColumnOfDate=${ColumnOfDate}&PageNo=${PageNo}&Command=&ClientNo=${ClientNo}&DeviceTAB=TabDefault]]></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+	</page-definition>
+
+
+	<search>
+		<search-template id="category_search-template" type="category_search" max-depth="1">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[https://mobile.cmbchina.com/MobileHtml/creditcard/account/am_queryreckoningsurvey.aspx"ClientNo=${ClientNo}&Command=&XmlReq=]]></url-template>
+				</url-templates>
+				<ref-template></ref-template>
+				<max-page>1000</max-page>
+				<no-search-results-pattern></no-search-results-pattern>
+				<block-pattern></block-pattern>
+				<last-page-pattern></last-page-pattern>
+				<re-visit-pattern><![CDATA[]]>
+				</re-visit-pattern>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="category-search-page" />
+				<page depth="1" ref="bill-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+	<plugin-definition>
+		<plugin id="cmbLoginPlugin" file-type="jar" phase="login">
+			<main-class>com.datatrees.crawler.plugin.main.CMBMobileLogin</main-class>
+		</plugin>
+	</plugin-definition>
+
+</config>

@@ -8,77 +8,64 @@ import java.util.List;
  * 运营商登陆配置文件
  * Created by zhouxinghai on 2017/6/22.
  */
-public class OperatorConfig implements Serializable{
+public class OperatorConfig implements Serializable {
 
     /**
      * 运营商类别代码
      */
-    private String           groupCode;
-
+    private String groupCode;
     /**
      * 运营商类别名称
      */
-    private String           groupName;
-
+    private String groupName;
     /**
      * 默认站点名称
      */
-    private String           websiteName;
-
+    private String websiteName;
     /**
      * 跳转url
      */
-    private String           gotoUrl;
-
+    private String gotoUrl;
     /**
      * 是否有图片验证码
      */
-    private Boolean          hasPicCode = false;
-
+    private Boolean hasPicCode = false;
     /**
      * 是否有短信验证码
      */
-    private Boolean          hasSmsCode = false;
-
+    private Boolean hasSmsCode = false;
     /**
      * 登陆页面温馨提示
      */
-    private String           loginTip;
-
+    private String loginTip;
     /**
      * 爬取过程中如果出现短信验证码框,通话详单,个人信息有
      */
-    private String           verifyTip;
-
+    private String verifyTip;
     /**
      * 忘记密码方式:SMS,TEL,WEB
      */
-    private String           resetType;
-
+    private String resetType;
     /**
      * 重置密码短信模板
      */
-    private String           smsTemplate;
-
+    private String smsTemplate;
     /**
      * 重置密码短信短信收件人或者拨号重置密码电话号码
      */
-    private String           smsReceiver;
-
+    private String smsReceiver;
     /**
      * web方式,重置密码的页面url
      */
-    private String           resetURL;
-
+    private String resetURL;
     /**
      * 点击忘记密码提示
      */
-    private String           resetTip;
-
+    private String resetTip;
     /**
      * 字段
      */
-    private List<InputField> fields     = new ArrayList<>();
+    private List<InputField> fields = new ArrayList<>();
 
     public String getGroupCode() {
         return groupCode;

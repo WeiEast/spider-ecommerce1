@@ -1,21 +1,29 @@
 dependencies {
     compile project(":rawdatacentral-common")
     compile project(":rawdatacentral-dao")
-    compile project(":rawdatacentral-share")
+    compile project(":crawler-core")
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
     compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
-    compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
-//    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
+//    compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
+
+    compile "org.springframework.data:spring-data-redis:${springDataRedisVersion}"
+    compile "redis.clients:jedis:${jedisVersion}"
+
+    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
     compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
+
+    compile "org.springframework:spring-oxm:${springVersion}"
 
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
         exclude(module: 'guava')
     }
-    compile 'commons-codec:commons-codec:1.10'
-    compile 'com.datatrees.common:common-protocol:2.1.0'
+//    compile 'com.datatrees.common:common-protocol:2.1.0'
+
+    compile("com.alibaba:dubbo:${dubboVersion}") {
+        exclude(module: 'spring')
+    }
+    compile "com.101tec:zkclient:${zkclientVersion}"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
-    testCompile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
-
 }

@@ -3,35 +3,33 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.core.model.subtask;
 
 import java.util.HashMap;
 
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年12月19日 下午4:25:02
  */
 public class SubSeed extends HashMap {
-    public final static String WEBSITE_NAME = "websiteName";
-    public final static String UNIQUE_SUFFIX = "uniqueSuffix";
-    public final static String SYNC = "sync";
-    public final static String MUTEX = "mutex";
-    public final static String TEMPLATEID = "templateId";// 包含多个“,”分割
-    public final static String SEEDURL = "seedurl";
-    public final static String WAITING = "waiting";// waiting waitingMillis or 'parentTask'
+
+    public final static String WEBSITE_NAME       = "websiteName";
+    public final static String UNIQUE_SUFFIX      = "uniqueSuffix";
+    public final static String SYNC               = "sync";
+    public final static String MUTEX              = "mutex";
+    public final static String TEMPLATEID         = "templateId";// 包含多个“,”分割
+    public final static String SEEDURL            = "seedurl";
+    public final static String WAITING            = "waiting";// waiting waitingMillis or 'parentTask'
     public final static String LOGIN_CHECK_IGNORE = "loginCheckIgnore";
-    public final static String NO_STATUS = "noStatus";
-    public final static String PROXY_SHARED = "proxyShared";// 代理共享，父子任务持续使用代理
-    public final static String PROXY = "proxy";// 代理共享，父子任务持续使用代理
-    
+    public final static String NO_STATUS          = "noStatus";
+    public final static String PROXY_SHARED       = "proxyShared";// 代理共享，父子任务持续使用代理
+    public final static String PROXY              = "proxy";// 代理共享，父子任务持续使用代理
 
     public Proxy getProxy() {
         return (Proxy) this.get(PROXY);
@@ -63,13 +61,12 @@ public class SubSeed extends HashMap {
         this.put(LOGIN_CHECK_IGNORE, loginCheckIgnore);
     }
 
+    public String getWaiting() {
+        return (String) this.get(WAITING);
+    }
 
     public void setWaiting(String waiting) {
         this.put(WAITING, waiting);
-    }
-
-    public String getWaiting() {
-        return (String) this.get(WAITING);
     }
 
     /**
@@ -85,7 +82,6 @@ public class SubSeed extends HashMap {
     public void setSeedUrl(String seedurl) {
         this.put(SEEDURL, seedurl);
     }
-
 
     /**
      * @return the url

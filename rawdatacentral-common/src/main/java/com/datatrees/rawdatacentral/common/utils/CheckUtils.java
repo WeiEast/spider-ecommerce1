@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -19,4 +20,23 @@ public class CheckUtils {
             throw new RuntimeException(errorMsg);
         }
     }
+
+    public static void checkNotBlank(String param, ErrorCode errorCode) {
+        if (StringUtils.isBlank(param)) {
+            throw new RuntimeException(errorCode.getErrorMsg());
+        }
+    }
+
+    public static void checkNotPositiveNumber(Number number, ErrorCode errorCode) {
+        if (null == number || number.longValue() <= 0) {
+            throw new RuntimeException(errorCode.getErrorMsg());
+        }
+    }
+
+    public static void checkNotPositiveNumber(Number number, String errorMsg) {
+        if (null == number || number.longValue() <= 0) {
+            throw new RuntimeException(errorMsg);
+        }
+    }
+
 }

@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-	<dubbo:application name="rawdatacentral" />
+    <dubbo:provider timeout="30000" retries="3"/>
 
-	<dubbo:monitor protocol="registry" />
-
-	<!-- 使用multicast广播注册中心暴露发现服务地址 -->
-	<dubbo:registry address="${dubbo.zookeeper.address}" />
-	<dubbo:protocol name="dubbo" port="20192" />
-
-	<dubbo:provider timeout="30000" retries="3" />
-
-	<!--注册到dubbo -->
-	<dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerService" ref="crawlerServiceImpl" />
+    <!--注册到dubbo -->
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerService" ref="crawlerServiceImpl"/>
+    <!--运营商-->
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerOperatorService"
+                   ref="crawlerOperatorServiceImpl"/>
+    <!--运营商-->
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerOperatorService"
+                   ref="crawlerOperatorServiceImpl"/>
 
 </beans>
 

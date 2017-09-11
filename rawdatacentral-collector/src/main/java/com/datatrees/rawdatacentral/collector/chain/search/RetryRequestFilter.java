@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.collector.chain.search;
 
+import java.util.List;
+
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.rawdatacentral.collector.chain.Context;
@@ -11,16 +13,13 @@ import com.datatrees.rawdatacentral.domain.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午3:19:21
  */
 public class RetryRequestFilter implements Filter {
+
     private static final Logger log = LoggerFactory.getLogger(RetryRequestFilter.class);
 
     @Override

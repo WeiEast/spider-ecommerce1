@@ -3,22 +3,19 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2016
  */
-package com.datatrees.rawdatacentral.submitter.common;
 
-import java.security.Security;
-import java.util.Properties;
+package com.datatrees.rawdatacentral.submitter.common;
 
 import javax.mail.Folder;
 import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
+import java.security.Security;
+import java.util.Properties;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年4月22日 下午4:33:47
@@ -42,7 +39,7 @@ public class IMAPMailClient {
 
         Session session = Session.getDefaultInstance(props, null);
 
-       // session.setDebug(true);
+        // session.setDebug(true);
 
         Store store = session.getStore("imap");// 郵件服務器
 

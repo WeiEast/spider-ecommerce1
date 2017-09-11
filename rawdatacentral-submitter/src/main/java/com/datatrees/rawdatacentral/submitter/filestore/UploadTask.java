@@ -1,21 +1,18 @@
 package com.datatrees.rawdatacentral.submitter.filestore;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.util.*;
+
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssService;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -25,10 +22,9 @@ import org.slf4j.LoggerFactory;
 public class UploadTask implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadTask.class);
-
-    private ExtractMessage      extractMessage;
-    private List<String>        fieldList;
-    private String              ossKey;
+    private ExtractMessage extractMessage;
+    private List<String>   fieldList;
+    private String         ossKey;
 
     UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
         this.extractMessage = extractMessage;
@@ -39,7 +35,7 @@ public class UploadTask implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.debug("start upload task! id: " + extractMessage.getTaskId());
+        LOGGER.info("start upload task! id={},taskId={}" + extractMessage.getTaskLogId());
         try {
             Map<String, SubmitFile> uploadMap = this.getSubmitFiles(extractMessage.getMessageObject());
             // after upload complete remove extractmessage object
@@ -48,12 +44,12 @@ public class UploadTask implements Runnable {
                 ZipCompressUtils.compress(baos, uploadMap);
                 OssService service = OssServiceProvider.getDefaultService();
                 service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, baos.toByteArray());
-                LOGGER.debug("upload task completed! id: " + extractMessage.getTaskId() + ",osskey:" + ossKey);
+                LOGGER.debug("upload task completed! id: " + extractMessage.getTaskLogId() + ",osskey:" + ossKey);
             } else {
                 LOGGER.info("no need to upload file for message:" + extractMessage);
             }
         } catch (Exception e) {
-            LOGGER.error("upload task run failed! taskId:" + extractMessage.getTaskId(), e);
+            LOGGER.error("upload task run failed! taskId:" + extractMessage.getTaskLogId(), e);
         }
     }
 

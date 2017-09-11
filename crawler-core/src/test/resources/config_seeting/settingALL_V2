@@ -1,0 +1,494 @@
+{
+  "idcard":{
+    "title": {
+      "text": "身份证号码",
+      "color": ""
+    },
+  "content": {
+      "text": "请输入本人18位二代身份证号码，一经提交无法修改，请仔细核对",
+      "color": "999999"
+    }
+  },
+ "photo":{
+    "title": {
+      "text": "上传照片",
+      "color": ""
+    },
+  "content": {
+      "text": "请根据拍摄框红色提示文字拍摄身份证照片，照片仅供核实信息之用，功夫贷会对信息严格保密",
+      "color": "999999"
+    }
+  },
+  "contacts":{
+    "title": {
+      "text": "添加联系人",
+      "color": ""
+    },
+  "content": {
+      "text": "请选择常用联系人电话号码，点击联系人电话号码区域即可选择添加",
+      "color": "999999"
+    }
+  },
+  "ice":{
+    "title": {
+      "text": "添加联系人",
+      "color": ""
+    },
+  "content": {
+      "text": "请选择常用联系人电话号码，点击联系人电话号码区域即可选择添加",
+      "color": "999999"
+    }
+  },
+  "email": {
+    "title": {
+      "text": "导入信用卡账单",
+      "color": "fd3d3c"
+    },
+    "subtitle": {
+      "text": "目前仅支持下列邮件服务商",
+      "color": "999999"
+    },
+    "content": {
+      "text": "请确认导入的邮箱含有您本人信用卡账单",
+      "color": "999999"
+    },
+    "list": [
+ {
+        "website": "qq.com",
+        "title": "QQ邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_qq.png",
+        "startUrl": ["https://ui.ptlogin2.qq.com/cgi-bin/login?style=9&appid=522005705&daid=4&s_url=http%3A//m.qzone.com/infocenter%3Fg_f%3D275%26g_ut%3D3&hln_css=http%3A%2F%2Fmail.qq.com%2Fzh_CN%2Fhtmledition%2Fimages%2Flogo%2Fqqmail%2Fqqmail_logo_default_200h.png","http://analy.qzone.qq.com/cgi-bin/apptrace"],
+        "endUrl": ["//h5.qzone.qq.com/","w.mail.qq.com/cgi-bin/today\\?sid="],
+        "css": [{"key":"/cgi-bin/login?","value":"#header,.web_qr_login .bottom{display:none !important;}"}],
+"js":[{"key":"qzone.qq.com/cgi-bin/apptrace","value":"function getCookie(c_name){if (document.cookie.length>0){c_start=document.cookie.indexOf(c_name + '=');if (c_start!=-1){ c_start=c_start + c_name.length+1;c_end=document.cookie.indexOf(';',c_start);if (c_end==-1){c_end=document.cookie.length;}return unescape(document.cookie.substring(c_start,c_end))} }return ''}function setCookie(c_name, value) {var exp = new Date();exp.setTime(exp.getTime() + 30*24*60*60*1000);document.cookie = c_name + '=' + escape(value) + ';domain=qq.com;expires=' + exp.toGMTString();}function getToken(skey){var hash = 5381,token = null;if (skey) {if (skey !==null) {var i = 0,l = skey.length;for (; i < l; ++i){ hash += (hash << 5) + skey.charAt(i).charCodeAt();}token = hash & 2147483647}} else {token = null;}return token}setCookie('qzone_token',getToken(getCookie('p_skey') || getCookie('skey') || ''));setCookie('qzone_p_skey',getCookie('p_skey'));setCookie('qzone_skey',getCookie('skey'));location.href='https://ui.ptlogin2.qq.com/cgi-bin/login?style=9&appid=522005705&daid=4&s_url=http%3A%2F%2Fw.mail.qq.com%2Fcgi-bin%2Flogin%3Fvt%3Dpassport%26vm%3Dwsk%26delegate_url%3D%26f%3Dxhtml%26target%3D&hln_css=http%3A%2F%2Fmail.qq.com%2Fzh_CN%2Fhtmledition%2Fimages%2Flogo%2Fqqmail%2Fqqmail_logo_default_200h.png&low_login=1&hln_autologin=%E8%AE%B0%E4%BD%8F%E7%99%BB%E5%BD%95%E7%8A%B6%E6%80%81&pt_no_onekey=1'"},{"key":"w.mail.qq.com/cgi-bin/login\\?vt=passport&ss=1","value":"location.href='https://w.mail.qq.com/cgi-bin/login?vt=passport&vm=wsk&delegate_url=&f=xhtml'"}],
+        "usePCUA": true
+      }, {
+        "website": "163.com",
+        "title": "163邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_163.png",
+        "startUrl": ["http://mail.163.com/"],
+        "endUrl": ["main.jsp\\?sid=.*"],
+        "css": [{"key":"mail.163.com","value":"#master,#apkDown,#popArea,.reg,.mod-footer{display:none !important}.page{position:absolute;width:100%;height:100%;left:0;top:0;padding:0}"}],
+        "usePCUA": false
+      }, {
+        "website": "126.com",
+        "title": "126邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_126.png",
+        "startUrl": ["http://mail.126.com/"],
+        "endUrl": ["main.jsp\\?sid=.*"],
+        "css": [{"key":"mail.126.com","value":"#master,#apkDown,#popArea,.reg,.mod-footer{display:none !important}.page{position:absolute;width:100%;height:100%;left:0;top:0;padding:0}"}],
+        "usePCUA": false
+      },{
+        "website": "sina.com",
+        "title": "新浪邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_sina.png",
+        "startUrl": ["http://mail.sina.cn/?vt=4"],
+        "endUrl": ["sina.cn/mobile/index.php"],
+        "css": [{"key":"mail.sina.cn","value":"#mailFnCover,.configSetHiden,#login-footer,#mailFnCoverAndroid,#mailFnCoveriOS{display:none !important}"}],
+        "usePCUA": false
+      },{
+        "website": "139.com",
+        "title": "139邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_139.png",
+        "startUrl": ["http://html5.mail.10086.cn/"],
+        "endUrl": ["10086.cn/html/mailList.html"],
+        "css": [{"key":"html5.mail.10086.cn","value":".adContainer,footer,#appIconTip{display:none !important;}"}],
+        "usePCUA": false
+      },{
+        "website": "outlook.com",
+        "title": "Outlook邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_outlook.png",
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/mail?key=outlook.com&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "usePCUA": false
+      },{
+        "website": "qq.com_server",
+        "title": "QQ邮箱模登",
+        "image": "http://images.91gfd.com/gfd_new_qq.png",
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/mail?key=qq.com_server&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "usePCUA": false
+      },{
+        "website": "163.com_server",
+        "title": "163邮箱模登",
+        "image": "http://images.91gfd.com/gfd_new_163.png",
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/mail?key=163.com_server&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "usePCUA": false
+      },{
+        "website": "126.com_server",
+        "title": "126邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_126.png",
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/mail/2?key=126.com_server&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "usePCUA": false
+      },{
+        "website": "sina.com_server",
+        "title": "新浪邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_sina.png",
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/mail/2?key=sina.com_server&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "usePCUA": false
+      },{
+        "website": "139.com_server",
+        "title": "139邮箱登录",
+        "image": "http://images.91gfd.com/gfd_new_139.png",
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/mail/2?key=139.com_server&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "usePCUA": false
+      }
+    ]
+  },
+  "operator": {
+    "title": {
+      "text": "运营商验证",
+      "color": ""
+    },
+    "subtitle": {
+      "text": "运营商验证说明",
+      "color": ""
+    },
+    "content": {
+      "text": "请根据手机号码归属地选择对应运营商导入本人常用的手机号码。验证过程中请根据运营商发送的短信提示进行相关操作",
+      "color": ""
+    },
+    "list": [
+      {
+        "title": "中国移动登陆",
+        "image": "http://images.91gfd.com/cmcc.png",
+        "list": [
+          {
+            "website": "gd.10086.cn_v1",
+            "title": "广东移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=gd.10086.cn_v1&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          }, {
+            "website": "zj.10086.cn_v1",
+            "title": "浙江移动",
+             "startUrl":  ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=zj.10086.cn_v1&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          }, {
+            "website": "js.10086.cn",
+            "title": "江苏移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=js.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "sd.10086.cn",
+            "title": "山东移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/jx?key=sd.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "sc.10086.cn",
+            "title": "四川移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/jx?key=sc.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "bj.10086.cn",
+            "title": "北京移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/bj?key=bj.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "hb.10086.cn",
+            "title": "湖北移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=hb.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "sh.10086.cn",
+            "title": "上海移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=sh.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "ha.10086.cn",
+            "title": "河南移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/jx?key=ha.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "cq.10086.cn",
+            "title": "重庆移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=cq.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "jx.10086.cn",
+            "title": "江西移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/jx?key=jx.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "hn.10086.cn",
+            "title": "湖南移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=hn.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "tj.10086.cn",
+            "title": "天津移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=tj.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "ah.10086.cn",
+            "title": "安徽移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=ah.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "he.10086.cn",
+            "title": "河北移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=he.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "fj.10086.cn",
+            "title": "福建移动",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=fj.10086.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          }
+        ]
+      },
+      {
+        "title": "中国电信登陆",
+        "image": "http://images.91gfd.com/cntelcomm.png",
+        "list": [
+           {
+            "website": "gd.189.cn_v1",
+            "title": "广东电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=gd.189.cn_v1&userId={userId}&token={token}"],
+            "js":[],
+            "endUrl": ["success"],
+            "usePCUA": false
+          },{
+            "website": "zj.189.cn_v1",
+            "title": "浙江电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=zj.189.cn_v1&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "js.189.cn",
+            "title": "江苏电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=js.189.cn&userId={userId}&token={token}"],
+            "js":[],
+            "endUrl": ["success"],
+            "usePCUA": false
+          },{
+            "website": "sd.189.cn",
+            "title": "山东电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=sd.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "sc.189.cn",
+            "title": "四川电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=sc.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "bj.189.cn",
+            "title": "北京电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=bj.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "hb.189.cn",
+            "title": "湖北电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=hb.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "sh.189.cn",
+            "title": "上海电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=sh.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "ha.189.cn",
+            "title": "河南电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=ha.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "cq.189.cn",
+            "title": "重庆电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=cq.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "jx.189.cn",
+            "title": "江西电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/jx?key=jx.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "hn.189.cn",
+            "title": "湖南电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=hn.189.cn&userId={userId}&token={token}"],
+            "js":[],
+            "endUrl": ["success"],
+            "usePCUA": false
+          },{
+            "website": "tj.189.cn",
+            "title": "天津电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=tj.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "ah.189.cn",
+            "title": "安徽电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=ah.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          },{
+            "website": "he.189.cn",
+            "title": "河北电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator/2?key=he.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js":[],
+            "usePCUA": false
+          },{
+            "website": "fj.189.cn",
+            "title": "福建电信",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=fj.189.cn&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "js": [],
+            "usePCUA": false
+          }
+        ]
+      },
+      {
+        "title": "中国联通登陆",
+        "image": "http://images.91gfd.com/cnunicom.png",
+        "list": [
+          {
+            "website": "10010.com",
+            "title": "中国联通登陆",
+            "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/operator?key=10010.com&userId={userId}&token={token}"],
+            "endUrl": ["success"],
+            "usePCUA": false
+          }
+        ]
+      }
+    ]
+  },
+  "ecommerce": {
+    "title": {
+      "text": "电商验证",
+      "color": ""
+    },
+    "subtitle": {
+      "text": "电商验证说明",
+      "color": ""
+    },
+    "content": {
+      "text": "请导入本人经常使用的电商帐户，以便提升您的可用额度",
+      "color": ""
+    },
+      "list": [
+       {
+        "website": "alipay.com",
+        "title": "支付宝登录",
+        "image": "http://images.91gfd.com/alipay.png",
+        "css":   [{"key":"auth.alipay.com","value":"body{background: rgba(0,0,0,.5) !important;padding-top:30px !important;}.ui-form-other{display:none !important;}#J-login{position: relative !important;margin: 0 auto !important;background:transparent;}"},{"key":"auth\\w*.alipay.com/login/homeB.htm","value":"body{background: rgba(0,0,0,.5) !important;padding-top:30px !important;}.ui-form-other{display:none !important;}#J-login{position: relative !important;margin: 0 auto !important;background:transparent;}"},{"key":"login/checkSecurity.htm","value":".authcenter-foot-container,.authcenter-body,.authcenter-body-container,.nav-container{width:auto !important}body{overflow:auto !important}#J-submit{padding-left:0 !important;text-align:center  !important;}.ui-form-item-mobile, .ui-form-item-counter, .ui-form-item-submit{padding-left:67px !important}"}],
+       "startUrl": ["https://auth.alipay.com/login/homeB.htm?loginScene=7&goto=https://auth.alipay.com/login/taobao_trust_login.htm?target=https://buyertrade.taobao.com/trade/itemlist/list_bought_items.htm"],
+        "endUrl": ["^https?://buyertrade.taobao.com/trade/itemlist/list_bought_items.htm$"],
+        "js":[],
+        "usePCUA": false
+      }, {
+        "website": "alipay.com",
+        "title": "淘宝登录",
+        "image": "http://images.91gfd.com/taobao.png",
+        "css": [],
+        "startUrl": ["https://login.m.taobao.com/login.htm"],
+        "endUrl": [".*record.(advanced|standard).*"],
+        "js":[{"key":"(h5.m.taobao.com/mlapp/mytaobao.htm|act/mobile/standrad.html)","value":"location.href='https://member1.taobao.com/member/fresh/account_management.htm'"},{"key":"member1.taobao.com/member/fresh/account_management.htm","value":"location.href='https://consumeprod.alipay.com/record/index.htm?'+KISSY.all('#main-content .ui-tipbox-explain a')[0].href.split('?')[1]"}],
+        "usePCUA": true
+      },{
+        "website": "taobao.com_server",
+        "title": "淘宝登录",
+        "image": "http://images.91gfd.com/taobao.png",
+        "css": [],
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/ecommerce?key=taobao.com_server&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "js":[],
+        "usePCUA": true
+      },
+      {
+        "website": "alipay.com_server",
+        "title": "支付宝登录",
+        "image": "http://images.91gfd.com/alipay.png",
+        "css": [],
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/ecommerce?key=alipay.com_server&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "js":[{"key": "homeB.htm","value": "jQuery('#J-qrcode-target').hide();jQuery('#J-qrcode').attr('style','display:none !important');jQuery('#J-login').attr('style','display:block !important');jQuery('<a/>').text('使用二维码登录').attr({'class':'',style:'line-height: 36px;height: 40px;display: block;text-align: center;background: #fff;margin-top: 10px;border-radius: 4px;font-size: 16px;'}).on('click',function(){jQuery('#J-qrcode').attr('style','display:block !important');jQuery('#J-login').attr('style','display:none !important');}).insertAfter('#J-login-btn');jQuery('<a id=\"qr-rec\">').text('自动识别二维码').attr('style','line-height: 36px;height: 40px;text-align: center;background: #0ae;border-radius: 4px;font-size: 16px;color: #fff;padding: 8px 15px;').insertAfter('.qrcode-footer-tips');jQuery('#qr-rec').click(function(){alert('请在本人实名认证支付宝帐户中确认登录后返回此应用继续操作');light.page.products.barcode.start();window.open('alipayqr://platformapi/startapp?saId=10000007&qrcode='+encodeURIComponent(document.body.innerHTML.match(/[^\"']+qr.alipay.com[^\"']+/)[0].replace('&amp;','&')));})"},{"key":"login/checkSecurity.htm","value":"jQuery(function(){if(jQuery('#risk_qrcode_cnt').is(':visible')){jQuery('#auto-rec').remove();jQuery('<div id=\"auto-rec\">').attr('style','text-align:center;margin-top:-12px').appendTo('.qrcode-cnt');jQuery('<a/>').attr('style','line-height: 36px;height: 40px;text-align: center;background: #0ae;border-radius: 4px;font-size: 14px;color: #fff;padding: 8px 15px;').text('自动识别图中二维码').appendTo('#auto-rec');jQuery('#auto-rec a').click(function(){alert('请在本人实名认证支付宝帐户中确认登录后返回此应用继续操作');window.open('alipayqr://platformapi/startapp?saId=10000007&qrcode='+encodeURIComponent(document.body.innerHTML.match(/[^\"']+qr.alipay.com[^\"']+/)[0].replace('&amp;','&')));})}})"}],
+        "usePCUA": true
+      }
+    ]
+  },"jingdong":{
+    "title": {
+      "text": "京东验证",
+      "color": ""
+    },
+    "subtitle": {
+      "text": "京东验证说明",
+      "color": ""
+    },
+    "content": {
+      "text": "请导入本人经常使用的京东帐户，以便提升您的可用额度",
+      "color": ""
+    },
+    "list": [{
+        "website": "jd.com",
+        "title": "京东登录",
+        "image": "http://images.91gfd.com/jd.png",
+        "startUrl": ["https://passport.jd.com/new/login.aspx"],
+        "endUrl": ["https://www.jd.com/"],
+        "js":[{"key":"passport.jd.com/new/login.aspx","value":"$('<meta name=\"viewport\" content=\"width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no\">').appendTo('head');$('.login-form').appendTo('#content');$('.w,.login-wrap,.item-fore3,.msg-wrap,.login-tab-l,.qrcode-login,.coagent').each(function(i){if(i>0){$(this).remove()}});$('.login-tab.login-tab-r').css({width:'100%',right:'auto'});$('.login-form .login-box').attr('style','padding:0;visibility:visible !important;display:block !important');$('.login-form,.login-form .login-box,.form .itxt,.form .item-fore1,.form .item-fore2,.login-form .login-box .login-btn .btn-img,.login-form .login-box .mt').css({width:'100%'});$('.login-form .login-box .mc').css({'padding':'20px'});$('.form .item-fore1, .form .item-fore2').css({'overflow':'hidden','visibility':'visible'});"}],
+        "usePCUA": false
+      },{
+        "website": "jd.com_server",
+        "title": "京东登录",
+        "image": "http://images.91gfd.com/jd.png",
+        "startUrl": ["https://www.91gfd.com.cn/h5v2/slogin/ecommerce/jd?key=jd.com_server&userId={userId}&token={token}"],
+        "endUrl": ["success"],
+        "js":[],
+        "usePCUA": false
+      }
+    ]
+  }
+}

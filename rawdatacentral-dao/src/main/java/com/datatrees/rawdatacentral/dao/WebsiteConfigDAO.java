@@ -1,9 +1,9 @@
 package com.datatrees.rawdatacentral.dao;
 
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import org.apache.ibatis.annotations.Param;
-
-import javax.annotation.Resource;
 
 /**
  * Created by zhouxinghai on 2017/6/30.
@@ -25,7 +25,6 @@ public interface WebsiteConfigDAO {
      * @param searchConfig
      * @param extractConfig
      */
-    int updateWebsiteConf(@Param("websiteId") Integer websiteId, @Param("searchConfig") String searchConfig,
-                          @Param("extractConfig") String extractConfig);
+    int updateWebsiteConf(@Param("websiteId") Integer websiteId, @Param("searchConfig") String searchConfig, @Param("extractConfig") String extractConfig);
 
 }

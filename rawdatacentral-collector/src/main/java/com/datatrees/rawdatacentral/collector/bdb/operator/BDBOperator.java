@@ -2,41 +2,30 @@ package com.datatrees.rawdatacentral.collector.bdb.operator;
 
 import java.util.LinkedList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.bdb.manger.BDBFactory;
 import com.datatrees.rawdatacentral.collector.bdb.wapper.BDBWapper;
 import com.datatrees.rawdatacentral.collector.common.LinkNodeTupleBinding;
-import com.sleepycat.je.Cursor;
-import com.sleepycat.je.CursorConfig;
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseEntry;
-import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.OperationStatus;
-import com.sleepycat.je.SecondaryCursor;
-import com.sleepycat.je.SecondaryDatabase;
+import com.sleepycat.je.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月20日 上午12:42:45
  */
 public class BDBOperator implements Operator {
 
-    private static final Logger log = LoggerFactory.getLogger(BDBOperator.class);
-    private static LinkNodeTupleBinding linkNodeBinding = new LinkNodeTupleBinding();
-
-    private Database linkDB = null;
-    private SecondaryDatabase slinkDB = null;
-    private Cursor queueFront = null;
-    private BDBWapper bdbWapper = null;
-    private String databaseName = null;
-
-    private long currentId = 1;
-    private long lastFetchId = 0;
+    private static final Logger               log             = LoggerFactory.getLogger(BDBOperator.class);
+    private static       LinkNodeTupleBinding linkNodeBinding = new LinkNodeTupleBinding();
+    private              Database             linkDB          = null;
+    private              SecondaryDatabase    slinkDB         = null;
+    private              Cursor               queueFront      = null;
+    private              BDBWapper            bdbWapper       = null;
+    private              String               databaseName    = null;
+    private              long                 currentId       = 1;
+    private              long                 lastFetchId     = 0;
 
     public BDBOperator() throws Exception {
         bdbWapper = BDBFactory.INSTANCE.createDB();
@@ -86,7 +75,6 @@ public class BDBOperator implements Operator {
         log.info("Fetch [" + newLinks.size() + "] link from link queue");
         return newLinks;
     }
-
 
     /**
      * @return the currentId
@@ -166,8 +154,7 @@ public class BDBOperator implements Operator {
                     }
                     newLinkNum++;
                     currentId = currentId + 1;
-                    log.info("url add to linkQueue, url: " + link.getUrl() + " depth : " + link.getDepth() + ", currentId " + currentId
-                            + ", lastFetchedId : " + lastFetchId);
+                    log.info("url add to linkQueue, url: " + link.getUrl() + " depth : " + link.getDepth() + ", currentId " + currentId + ", lastFetchedId : " + lastFetchId);
                 }
             } else {
                 log.debug("already exists in queue" + foundValue.getData());

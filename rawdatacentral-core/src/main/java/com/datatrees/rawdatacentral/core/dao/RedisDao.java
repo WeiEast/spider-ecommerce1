@@ -1,10 +1,11 @@
 package com.datatrees.rawdatacentral.core.dao;
 
-import org.springframework.data.redis.core.RedisTemplate;
-
 import java.util.List;
 
+import org.springframework.data.redis.core.RedisTemplate;
+
 public interface RedisDao {
+
     public boolean saveListString(final String key, final List<String> valueList);
 
     public boolean saveString2List(final String key, final String value);

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<extrator-selectors>               
+		<selector field="url" contain="busi/pkg/mainpkgchange" dis-contain="" ref="page-extractor_1">
+		</selector>
+		<selector field="url" contain="billQueryRes" dis-contain="" ref="page-extractor_2">
+		</selector>
+		<selector field="url" contain="select_type=72" dis-contain="" ref="page-extractor_3">
+		</selector>
+		<selector field="url" contain="select_type=74" dis-contain="" ref="page-extractor_4">
+		</selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<!--基本信息解析-->
+		<page-extractor id="page-extractor_1" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="personalInformation" pop-return="true">
+				<!--余额 -->
+				<field-extractor id="field-extractor_1" field="accountBalance" result-type="string">
+					<operation type="template"><![CDATA[${accountBalance}]]></operation>
+				</field-extractor>
+
+				<!--开机状态 -->
+				<field-extractor id="field-extractor_2" field="telNumStatus" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.data.userStatus]]></operation>
+				</field-extractor>
+
+				<!--身份证 -->
+				<field-extractor id="field-extractor_3" field="identityCard" result-type="string">
+					<operation type="jsonpath"><![CDATA[$.data.idCode]]></operation>
+				</field-extractor>
+
+				<!--入网时间 -->
+				<field-extractor id="field-extractor_4" field="netJoinDate" result-type="date" format="yyyyMMdd hh:mm:ss">
+					<operation type="jsonpath"><![CDATA[$.data.openTime]]></operation>
+				</field-extractor>
+
+				<!--姓名 -->
+				<field-extractor id="field-extractor_5" field="name" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${username}]]></operation>
+				</field-extractor>
+
+				<!--省份 -->
+				<field-extractor id="field-extractor_6" field="telNumProvince" result-type="string" not-empty="true">
+					<operation type="set"><![CDATA[黑龙江]]></operation>
+				</field-extractor>
+
+				<!--手机号 -->
+				<field-extractor id="field-extractor_7" field="telNum" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${phone}]]></operation>
+				</field-extractor>
+
+				<!--手机号码所处运营商-->
+				<field-extractor id="field-extractor_8" field="telNumAttribution" result-type="string" not-empty="true">
+					<operation type="set"><![CDATA[中国移动]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+		<!--月账单解析-->
+		<page-extractor id="page-extractor_2" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+
+			<object-segment name="billDetails">
+				<object-segment name="billDetails" type="jsonpath" value="$.data">
+					<!--账单月 -->
+					<field-extractor id="field-extractor_1" field="billMonth" result-type="date" format="yyyy-MM-dd">
+						<operation type="jsonpath"><![CDATA[$.begin_date]]></operation>
+					</field-extractor>
+					<!--月基本费 -->
+					<field-extractor id="field-extractor_2" field="baseFee" result-type="number">
+						<operation type="jsonpath"><![CDATA[$.fee_money[0]]]></operation>
+					</field-extractor>
+					<!--消费合计 -->
+					<field-extractor id="field-extractor_3" field="totalFee" result-type="number" not-empty="true">
+						<operation type="jsonpath"><![CDATA[$.item_money[5]]]></operation>
+					</field-extractor>
+					<!--实际应缴合计 -->
+					<field-extractor id="field-extractor_4" field="payFee" result-type="number" not-empty="true">
+						<operation type="jsonpath"><![CDATA[$.item_money[6]]]></operation>
+					</field-extractor>
+					<!--电话号码-->
+					<field-extractor id="field-extractor_5" field="telNum" result-type="string" not-empty="true">
+						<operation type="jsonpath"><![CDATA[$.phone_no]]></operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page-extractor>
+		<!--通话记录账单解析-->
+		<page-extractor id="page-extractor_3" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+				<object-segment name="callDetails" type="jsonpath" value="$.data.s1526List[*]" contains="(\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2})">				<!--通话时长-->
+            		<field-extractor id="field-extractor_1" field="callDuration" result-type="string" not-empty="true">
+                		<operation type="jsonpath"><![CDATA[$.[5]]]></operation>
+           			</field-extractor>
+					<field-extractor id="field-extractor_2" field="totalFee" result-type="number">
+						<operation type="jsonpath"><![CDATA[$.[8]]]></operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_3" field="callType" result-type="string">
+						<operation type="jsonpath"><![CDATA[$.[3]]]></operation>
+						<operation type="replace" from="主叫" to="1"></operation>
+                		<operation type="replace" from="被叫" to="2"></operation>
+                		<operation type="replace" from="呼叫转移|呼转" to="3"></operation>
+                		<operation type="regex" index="1"><![CDATA[(\d)]]></operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_4" field="otherTelNum" result-type="string" not-empty="true">
+						<operation type="jsonpath"><![CDATA[$.[4]]]></operation>
+						<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_5" field="callLocation" result-type="string">
+						<operation type="jsonpath"><![CDATA[$.[2]]]></operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_6" field="callStartDateTime" result-type="date" format="yyyy/MM/dd HH:mm:ss" not-empty="true">
+						<operation type="jsonpath"><![CDATA[$.[1]]]></operation>
+					</field-extractor>
+					<field-extractor id="field-extractor_7" field="callTypeDetail" result-type="string">
+						<operation type="jsonpath"><![CDATA[$.[6]]]></operation>
+					</field-extractor>
+			</object-segment>
+		</page-extractor>
+		<!--短信账单解析-->
+		<page-extractor id="page-extractor_4" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+				<object-segment name="shortMessageDetails" type="jsonpath" value="$.data.s1526List[*]" contains="(\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2})">
+						<field-extractor id="field-extractor_1" field="fee" result-type="number">
+							<operation type="jsonpath"><![CDATA[$.[6]]]></operation>
+						</field-extractor>
+						<field-extractor id="field-extractor_2" field="smsType" result-type="string" not-empty="true">
+							<operation type="jsonpath"><![CDATA[$.[3]]]></operation>
+							<operation type="replace" from="发送" to="1"></operation>
+							<operation type="replace" from="接收" to="2"></operation>
+                    		<operation type="regex" index="1"><![CDATA[(\d)]]></operation>
+						</field-extractor>
+						<field-extractor id="field-extractor_3" field="otherNum" result-type="string" not-empty="true">
+							<operation type="jsonpath"><![CDATA[$.[2]]]></operation>
+							<operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+						</field-extractor>
+						<field-extractor id="field-extractor_4" field="smsDateTime" result-type="date" format="yyyy/MM/dd HH:mm:ss" not-empty="true">
+							<operation type="jsonpath"><![CDATA[$.[1]]]></operation>
+						</field-extractor>
+			</object-segment>
+		</page-extractor>
+	</page-extractor-definition>
+
+</config>

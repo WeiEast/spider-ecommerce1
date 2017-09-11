@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<extrator-selectors>
+		<selector field="url" contain="waimai.taobao|wuliu.taobao|trade_item_detail.htm|orderDetail.htm" ref="page-tradeAddress_page"></selector>
+		<selector field="url" contain="detail/orderDetail.htm" ref="page-tradeAddress_tmallpage"></selector>
+		<selector field="url" contain="portal/i.htm" dis-contain="" ref="page-extractor_baseInfo"></selector>
+		<selector field="url" contain="queryTradeDetail.htm" dis-contain="" ref="page-extractor_detailInfo_containaddress"></selector>
+		<selector field="url" contain="record/.*beginDate" dis-contain="download.htm" ref="page-extractor_detailInfo"></selector>
+		<selector field="url" contain="chargeRemindInfoEntering.htm" dis-contain="" ref="page-extractor_jiaoFeiInfo"></selector>
+		<selector field="url" contain="asset/bindQuery.json" dis-contain="" ref="page-extractor_bankCardInfo"></selector>
+		<selector field="url" contain="member/fresh/deliver_address" dis-contain="" ref="page-extractor_deliverAddress"></selector>
+		<selector field="url" contain="trade/itemlist/asyncBought" dis-contain="_taoignore_address" ref="page-taobao_record"></selector>
+		<selector field="url" contain="personal/sysmsg/list.json" dis-contain="" ref="page-zmCredit"></selector>
+		<selector field="url" contain="deliveraddress/index.htm" dis-contain="" ref="page-alipay_deliverAddress"></selector>
+		<selector field="url" contain="alipay.com/record/download.htm" dis-contain="" ref="page-extractor_jsonRecord"></selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<page-extractor id="page-extractor_jsonRecord" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="trades" type="jsonpath" value="$.[*]">
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string">
+					<operation type="jsonpath">$.tradeDetailUrl</operation>
+				</field-extractor>
+				<field-extractor id="title" field="title" result-type="string" not-empty="true">
+					<operation type="jsonpath">$.title</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string">
+					<operation type="jsonpath">$.tradeNumber</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${tradeNumber}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyy-MM-dd HH:mm:ss">
+					<operation type="jsonpath">$.tradeDatetime</operation>
+				</field-extractor>
+				<field-extractor id="otherSide" field="otherSide" result-type="string">
+					<operation type="jsonpath">$.otherSide</operation>
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+				<field-extractor id="tradeType" field="tradeType" result-type="int" default-value="0">
+					<operation type="jsonpath">$.tradeType</operation>
+				</field-extractor>
+				<field-extractor id="tradeStatus" field="tradeStatus" result-type="int" default-value="-1">
+					<operation type="jsonpath">$.tradeStatus</operation>
+					<operation type="mapping" group-name="tradeStatus"></operation>
+				</field-extractor>
+				<field-extractor id="amount" field="amount" result-type="number">
+					<operation type="jsonpath">$.amount</operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+		<page-extractor id="page-alipay_deliverAddress" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+
+			<object-segment name="address" type="xpath" value="div.am-list-item">
+				<field-extractor id="pageConent" field="temp">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="pageSource" field="temp">
+					<operation type="xpath">span.J-fullname/text()</operation>
+					<operation type="triple">${this}=?${pageConent}未命名过滤:${pageConent}</operation>
+				</field-extractor>
+				<object-segment name="address" source="pageSource" dis-contains="未命名过滤">
+					<field-extractor id="receiveName" field="receiveName" result-type="string" not-empty="true">
+						<operation type="xpath">span.J-fullname/text()</operation>
+					</field-extractor>
+					<field-extractor id="region" field="region" result-type="string" not-empty="true">
+						<operation type="xpath">div.J-address</operation>
+						<operation type="xpath">//@data-prov</operation>
+					</field-extractor>
+					<field-extractor id="detailedAddress" field="detailedAddress" result-type="string" not-empty="true">
+						<operation type="xpath">div.J-address/text()</operation>
+						<operation type="trim"></operation>
+					</field-extractor>
+					<field-extractor id="postcode" field="postcode" result-type="string">
+						<operation type="xpath">span.J-post/text()</operation>
+					</field-extractor>
+					<field-extractor id="telNumber" field="telNumber" result-type="string">
+						<operation type="xpath">span.J-mobilePhone/text()</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page-extractor>
+		<page-extractor id="page-zmCredit" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="zmCredit">
+				<!-- <field-extractor id="evaluationTime" field="evaluationTime" result-type="date" format="yyyy.MM.dd">
+					<operation type="regex" index="2"><![CDATA[你现在芝麻分为(\d+)，评估时间([\d\.]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="creditScore" field="creditScore" stand-by="true" result-type="int">
+					<operation type="regex" index="1"><![CDATA[你现在芝麻分为(\d+)，评估时间]]></operation>
+				</field-extractor> -->
+				<field-extractor id="evaluationTime" field="evaluationTime" result-type="date" format="yyyy.MM.dd">
+					<operation type="datetime" base-type="firstdayofthismonth" format="yyyy.MM.dd"></operation>
+				</field-extractor>
+				<field-extractor id="creditScore" field="creditScore" result-type="int">
+					<operation type="template"><![CDATA[${creditScore}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="page-tradeAddress_tmallpage" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent">
+					<regex index="1"><![CDATA[detailData\s*=\s*(((?!</script>).)*)]]></regex>
+				</source>
+			</page-sources>
+			<object-segment name="tradeAddress">
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string">
+					<operation type="jsonpath">$.basic.lists[2].content[1].moreList[0].content[0].text</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string" not-empty="true">
+					<operation type="template">${tradeNumberInput}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" stand-by="true" format="yyyy-MM-dd HH:mm:ss">
+					<operation type="jsonpath">$.basic.lists[2].content[1].moreList[1].content[0].text</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" stand-by="true" format="yyyy-MM-dd HH:mm:ss">
+					<operation type="template">${tradeDatetime}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyyMMdd" stand-by="true" not-empty="true">
+					<operation type="template">${tradeDatetime}</operation>
+				</field-extractor>
+				<field-extractor id="title" field="title" result-type="string">
+					<operation type="template">${title}</operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true" not-empty="true">
+					<operation type="jsonpath">$.basic.lists[0].content[0].text</operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+
+		<page-extractor id="page-tradeAddress_page" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="tradeAddress">
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string">
+					<operation type="xpath">div.alipay-number span:eq(1)/text()</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string">
+					<operation type="xpath">td:contains(支付宝交易号):not(:has(td:contains(支付宝交易号))) + td/text()</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string">
+					<operation type="xpath">span:contains(支付宝交易号):not(:has(span:contains(支付宝交易号))) + span/text()</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string">
+					<operation type="xpath">dt:contains(支付宝交易号):not(:has(dt:contains(支付宝交易号))) + dd/text()</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string" not-empty="true">
+					<operation type="template">${tradeNumberInput}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyy-MM-dd HH:mm:ss">
+					<operation type="template">${tradeDatetime}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyyMMdd" stand-by="true" not-empty="true">
+					<operation type="template">${tradeDatetime}</operation>
+				</field-extractor>
+				<field-extractor id="title" field="title" result-type="string">
+					<operation type="template">${title}</operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string">
+					<operation type="xpath">div:contains(收货地址):not(:has(div)) span.address/text()</operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true">
+					<operation type="xpath">div:contains(收货地址):not(:has(div)) span:eq(1)/text()</operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true">
+					<operation type="xpath">li#receiver-info p/text()</operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true">
+					<operation type="xpath">//div[@class='addr_and_note']//dd[1]/text()</operation>
+					<operation type="replace" from="\r|\n" to=""></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true">
+					<operation type="xpath">//div[@class='logistics']/div[2]/span[2]/text()</operation>
+					<operation type="replace" from="\r|\n" to=""></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true">
+					<operation type="xpath">//table[@class='simple-list logistics-list']/tbody/tr[3]/td[2]/text()</operation>
+					<operation type="replace" from="\r|\n" to=""></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true" not-empty="true">
+					<operation type="xpath">//div[@class='address-detail']/text()</operation>
+					<operation type="replace" from="\r|\n" to=""></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="page-taobao_record" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="trades" type="jsonpath" value="$.mainOrders[*]">
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string">
+					<operation type="jsonpath">$.statusInfo.url</operation>
+					<operation type="append" index="0"><![CDATA[http:]]></operation>
+				</field-extractor>
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string" stand-by="true">
+					<operation type="jsonpath">$.statusInfo.operations.url</operation>
+					<operation type="append" index="0"><![CDATA[http:]]></operation>
+				</field-extractor>
+				<field-extractor id="title" field="title" result-type="string" not-empty="true">
+					<operation type="jsonpath">$.subOrders[0].itemInfo.title</operation>
+				</field-extractor>
+				<field-extractor id="amount" field="amount" result-type="number">
+					<operation type="jsonpath">$.payInfo.actualFee</operation>
+					<operation type="append" index="0"><![CDATA[-]]></operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string" not-empty="true">
+					<operation type="jsonpath">$.orderInfo.id</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${tradeNumber}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyy-MM-dd HH:mm:ss" not-empty="true">
+					<operation type="jsonpath">$.orderInfo.createTime</operation>
+				</field-extractor>
+				<field-extractor id="otherSide" field="otherSide" result-type="string">
+					<operation type="jsonpath">$.seller.shopName</operation>
+				</field-extractor>
+				<field-extractor id="otherSide" field="otherSide" result-type="string" stand-by="true" not-empty="true">
+					<operation type="jsonpath">$.seller.nick</operation>
+				</field-extractor>
+				<field-extractor id="otherSideName" field="otherSideName" result-type="string">
+					<operation type="jsonpath">$.seller.nick</operation>
+				</field-extractor>
+				<field-extractor id="tradeType" field="tradeType" result-type="int" default-value="0">
+					<operation type="set"><![CDATA[SHOPPINGT]]></operation>
+					<operation type="mapping" group-name="tradeType"></operation>
+				</field-extractor>
+				<field-extractor id="tradeStatus" field="tradeStatus" result-type="int" default-value="-1">
+					<operation type="jsonpath">$.statusInfo.text</operation>
+					<operation type="trim"></operation>
+					<operation type="mapping" group-name="tradeStatus"></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+
+
+		<page-extractor id="page-extractor_baseInfo" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+
+			<object-segment name="baseInfo" pop-return="true">
+				<field-extractor id="alipayAccount" field="alipayAccount" result-type="string">
+					<operation type="regex" index="1"><![CDATA[email\s*:\s*'([^']+)',]]></operation>
+				</field-extractor>
+				<field-extractor id="alipayAccount" field="alipayAccount" result-type="string" stand-by="true">
+					<operation type="xpath">div.pane-title/text()</operation>
+					<operation type="regex" index="1"><![CDATA[账户名：\s+([^\s]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="alipayAccount" field="alipayAccount" result-type="string" stand-by="true">
+					<operation type="regex" index="1"><![CDATA[email\s*:\s*"([^"]+)",]]></operation>
+				</field-extractor>
+				<field-extractor id="alipayAccount" field="alipayAccount" result-type="string" stand-by="true">
+					<operation type="xpath">div.pane-title/text()</operation>
+					<operation type="regex" index="1"><![CDATA[账户名：\s*([^\s]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="alipayAccount" field="alipayAccount" result-type="string" stand-by="true" not-empty="true">
+					<operation type="xpath">//h3[@id='global-username']/text()</operation>
+					<operation type="regex" index="1"><![CDATA[([^\s]+)]]></operation>
+				</field-extractor>
+
+				<field-extractor id="name" field="name" result-type="string">
+					<operation type="regex" index="1"><![CDATA[userName\s*:\s*'([^']+)',]]></operation>
+				</field-extractor>
+				<field-extractor id="name" field="name" result-type="string" stand-by="true">
+					<operation type="regex" index="1"><![CDATA[userName:"([^"]*)"]]></operation>
+				</field-extractor>
+				<field-extractor id="name" field="name" result-type="string" stand-by="true">
+					<operation type="xpath">.info-table/text()</operation>
+					<operation type="regex" index="1"><![CDATA[注册人姓名：\s*([^\s]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="name" field="name" result-type="string" stand-by="true" not-empty="true">
+					<operation type="regex" index="1"><![CDATA[您好，([^。]+)。]]></operation>
+				</field-extractor>
+
+				<field-extractor id="email" field="email" result-type="string">
+					<operation type="regex" index="1"><![CDATA[email\s*:\s*'([^']+)',]]></operation>
+				</field-extractor>
+				<field-extractor id="email" field="email" result-type="string" stand-by="true">
+					<operation type="regex" index="1"><![CDATA[email\s*:\s*"([^"]+)",]]></operation>
+				</field-extractor>
+				<field-extractor id="email" field="email" result-type="string" stand-by="true">
+					<operation type="xpath">.info-table/text()</operation>
+					<operation type="regex" index="1"><![CDATA[Email账户名：\s*([^\s]+)]]></operation>
+				</field-extractor>
+
+				<field-extractor id="mobile" field="mobile" result-type="string">
+					<operation type="regex" index="1"><![CDATA[mobile\s*:\s*'([^']+)',]]></operation>
+				</field-extractor>
+				<field-extractor id="mobile" field="mobile" result-type="string" stand-by="true">
+					<operation type="regex" index="1"><![CDATA[mobile\s*:\s*"([^"]+)"]]></operation>
+				</field-extractor>
+				<field-extractor id="mobile" field="mobile" result-type="string" stand-by="true">
+					<operation type="xpath">.info-table/text()</operation>
+					<operation type="regex" index="1"><![CDATA[绑定手机：\s*([^\s&]+)]]></operation>
+				</field-extractor>
+
+				<field-extractor id="alipayBalance" field="alipayBalance" result-type="number">
+					<operation type="xpath">//li[@id='J-balance']//p/text()</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+				</field-extractor>
+				<field-extractor id="alipayBalance" field="alipayBalance" result-type="number" stand-by="true">
+					<operation type="xpath">div.i-assets-balance-amount/text()</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+				</field-extractor>
+				<field-extractor id="alipayBalance" field="alipayBalance" result-type="number" not-empty="true" default-value="0" stand-by="true">
+					<operation type="xpath">//em[@class='aside-available-amount']/text()</operation>
+					<operation type="regex" index="1"><![CDATA[(.+)]]></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+
+				<field-extractor id="yuebaoBalance" field="yuebaoBalance" result-type="number">
+					<operation type="xpath" index="1">//input[@id='J-mfund-balance']/@value</operation>
+					<operation type="regex" index="1"><![CDATA[(.+)]]></operation>
+				</field-extractor>
+				<field-extractor id="yuebaoBalance" field="yuebaoBalance" result-type="number" stand-by="true">
+					<operation type="xpath" index="1">//span[@class='detail-value']//em/text()</operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="yuebaoBalance" field="yuebaoBalance" result-type="number" stand-by="true">
+					<operation type="xpath" index="1">//p[@id='J-assets-mfund-amount']/text()</operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+
+				<field-extractor id="taoBaoAccount" field="taoBaoAccount" result-type="string">
+					<operation type="regex" index="1"><![CDATA[<th>淘宝会员名</th>\s*<td>([^<]+)<]]></operation>
+				</field-extractor>
+				<field-extractor id="taoBaoAccount" field="taoBaoAccount" result-type="string" not-empty="true" stand-by="true">
+					<operation type="xpath"><![CDATA[div.personal-info dt:contains(会员名) + dd/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[\s*(.+)]]></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+
+				<field-extractor id="alipayRegistrationDatetime" field="alipayRegistrationDatetime" result-type="date" format="yyyy年MM月dd日">
+					<operation type="regex" index="1"><![CDATA[<th>注册时间</th>\s*<td>([^<]+)<]]></operation>
+				</field-extractor>
+				<field-extractor id="alipayRegistrationDatetime" field="alipayRegistrationDatetime" result-type="date" format="yyyy-MM-dd" stand-by="true">
+					<operation type="xpath"><![CDATA[th:contains(注册时间) + td/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[([\d\-]+)]]></operation>
+				</field-extractor>
+
+				<field-extractor id="isVerified" field="isVerified" result-type="string">
+					<operation type="xpath">//table[@class='table-list']//span[4]/text()</operation>
+					<operation type="replace" from="待确认" to="0"></operation>
+					<operation type="replace" from="已认证" to="1"></operation>
+					<operation type="regex" index="1">(\d)</operation>
+				</field-extractor>
+				<field-extractor id="isVerified" field="isVerified" result-type="string" not-empty="true" stand-by="true">
+					<operation type="xpath" empty-to-null="true">//td[@class='fn-middle']/text()</operation>
+					<operation type="triple" triple-type="regex">${this} matches:实名认证会员?1:0</operation>
+					<operation type="regex" index="1">.*(\d+)</operation>
+				</field-extractor>
+
+				<field-extractor id="huabeiAmount" field="huabeiAmount" result-type="number">
+					<operation type="regex" index="1"><![CDATA[消费额度：([\d\.]+)\s*元]]></operation>
+				</field-extractor>
+				<field-extractor id="huabeiBalance" field="huabeiBalance" result-type="number">
+					<operation type="regex" index="1"><![CDATA[可用额度：([\d\.]+)\s*元]]></operation>
+				</field-extractor>
+				<field-extractor id="huabeiAmount" field="huabeiAmount" stand-by="true" result-type="number">
+					<operation type="xpath"><![CDATA[div.i-assets-header:contains(蚂蚁花呗) ~ div.i-assets-body p:contains(消费额度)/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[消费额度:\s*([\d\.]+)\s*元]]></operation>
+				</field-extractor>
+				<field-extractor id="huabeiBalance" field="huabeiBalance" stand-by="true" result-type="number">
+					<operation type="xpath"><![CDATA[div.i-assets-header:contains(蚂蚁花呗) ~ div.i-assets-body p:contains(可用额度)/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[可用额度:\s*([\d\.]+)\s*元]]></operation>
+				</field-extractor>
+				<field-extractor id="huabeiAmount" field="huabeiAmount" stand-by="true" result-type="number">
+					<operation type="xpath">div.i-assets-header:contains(蚂蚁花呗) + div.i-assets-body .amount/text()</operation>
+				</field-extractor>
+				<field-extractor id="huabeiBalance" field="huabeiBalance" stand-by="true" result-type="number">
+					<operation type="xpath" empty-to-null="true" >div.i-assets-header:contains(蚂蚁花呗) + div.i-assets-body:contains(未还金额) .amount/text()</operation>
+					<operation type="set">0</operation>
+				</field-extractor>
+				<field-extractor id="huabeiBalance" field="huabeiBalance" stand-by="true" result-type="number">
+					<operation type="xpath">div.i-assets-header:contains(蚂蚁花呗) + div.i-assets-body .amount/text()</operation>
+				</field-extractor>
+
+				<field-extractor id="field-extractor_14" field="creditLevelAsBuyer" result-type="string">
+					<operation type="xpath">//h4[@class='tb-rate-ico-bg ico-buyer']//a/text()</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_15" field="creditLevelAsSeller" result-type="string">
+					<operation type="xpath">//h4[@class='tb-rate-ico-bg ico-seller']//a/text()</operation>
+				</field-extractor>
+
+				<field-extractor id="identityCard" field="identityCard" result-type="string">
+					<operation type="regex" index="1"><![CDATA[<th>真实姓名</th>[\s\S]*?<span[^>]*>([\dX\*]{15,18})</span>]]></operation>
+				</field-extractor>
+
+				<field-extractor id="ecommerceType" field="ecommerceType" result-type="string">
+					<operation type="set"><![CDATA[支付宝/淘宝]]></operation>
+				</field-extractor>
+
+				<field-extractor id="alipayAccountTemp" field="temp" field-visible-type="request">
+					<operation type="template"><![CDATA[${alipayAccount}]]></operation>
+				</field-extractor>
+				<field-extractor id="taoBaoAccountTemp" field="temp" field-visible-type="request">
+					<operation type="template"><![CDATA[${taoBaoAccount}]]></operation>
+				</field-extractor>
+			</object-segment>
+
+
+			<object-segment name="subSeed">
+				<field-extractor id="alipayAccount" field="alipayAccount">
+					<operation type="template"><![CDATA[${alipayAccountTemp}]]></operation>
+				</field-extractor>
+				<field-extractor id="taoBaoAccount" field="taoBaoAccount">
+					<operation type="template"><![CDATA[${taoBaoAccountTemp}]]></operation>
+				</field-extractor>
+				<field-extractor id="websiteName" field="websiteName" result-type="string">
+					<operation type="set"><![CDATA[alipay.com]]></operation>
+				</field-extractor>
+				<field-extractor id="tao-now-date-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" format="yyyy-MM-dd" />
+				</field-extractor>
+				<field-extractor id="tao-six-month-ago-date-literal-id" field="temp" result-type="string">
+					<operation type="datetime" base-type="now" />
+					<operation type="datetime" base-type="custom" datetime-field-type="month" offset="-6" format="yyyy-MM-dd" calibrate="true" />
+				</field-extractor>
+				<field-extractor id="subSeedUrl" field="subSeedUrl" result-type="string" stand-by="true">
+					<operation type="template"><![CDATA[https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist/BoughtQueryAction&event_submit_do_query=1&_input_charset=utf8"pageNum=1&pageSize=100&dateBegin=1438358400212&auctionTitle=&itemTitle=&sellerNick=&prePageNo=2]]></operation>
+				</field-extractor>
+				<field-extractor id="templateId" field="templateId" result-type="string">
+					<operation type="set"><![CDATA[tradeAddress-template]]></operation>
+				</field-extractor>
+				<field-extractor id="loginCheckIgnore" field="loginCheckIgnore" result-type="boolean">
+					<operation type="set"><![CDATA[true]]></operation>
+				</field-extractor>
+				<field-extractor id="waiting" field="waiting">
+					<operation type="set"><![CDATA[parentTask]]></operation>
+				</field-extractor>
+				<field-extractor id="uniqueSuffix" field="uniqueSuffix" result-type="string">
+					<operation type="template">${alipayAccount}_${tao-six-month-ago-date-literal-id}</operation>
+				</field-extractor>
+				<field-extractor id="proxyShared" field="proxyShared" result-type="boolean">
+					<operation type="set"><![CDATA[true]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="page-extractor_detailInfo" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+			<object-segment name="trades" type="xpath" value="tbody>tr.J-item">
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string">
+					<operation type="xpath">//td[@class='action']//option[1]/@data-link</operation>
+					<operation type="regex" index="1">(.+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeDetailUrl" field="tradeDetailUrl" result-type="string" stand-by="true">
+					<operation type="xpath">//li[@class='btn-group-item'][1]/@data-link</operation>
+					<operation type="replace" from="\s" to=""></operation>
+				</field-extractor>
+				<field-extractor id="title" field="title" result-type="string" not-empty="true">
+					<operation type="xpath">//p[@class='consume-title']/text()</operation>
+					<operation type="decode" decode-type="standard"></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string">
+					<operation type="regex" index="1"><![CDATA[bizInNo=([^&]+)]]></operation>
+				</field-extractor>
+				<field-extractor id="tradeNoTemp" field="temp">
+					<operation type="xpath">//a[@class='J-tradeNo-copy J-tradeNo']/@title</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string" stand-by="true" default-value="${tradeNoTemp}">
+					<operation type="template"><![CDATA[${tradeDetailUrl}]]></operation>
+					<operation type="regex" index="1">No=\s*(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string">
+					<operation type="xpath">td.tradeNo/text()</operation>
+					<operation type="regex" index="1">:(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" stand-by="true" result-type="string" not-empty="true">
+					<operation type="template"><![CDATA[${tradeDetailUrl}]]></operation>
+					<operation type="regex" index="1">.+=(\w+)</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${tradeNumber}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyy.MM.ddHH:mm">
+					<operation type="xpath">//td[@class='time']/text()</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyy-MM-ddHH:mm" stand-by="true">
+					<operation type="regex" index="1">record=\s+([\d\-: ]+)</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyy-MM-ddHH:mm;HH:mm" stand-by="true" not-empty="true">
+					<operation type="xpath">//td[@class='time']/text()</operation>
+					<operation type="replace" from="\n" to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+					<operation type="regex" index="1">([\d\-:]+)</operation>
+				</field-extractor>
+				<field-extractor id="otherSide" field="otherSide" result-type="string">
+					<operation type="xpath">//td[@class='other']//p[1]/text()</operation>
+					<operation type="regex" index="1">(.+)</operation>
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+				<field-extractor id="otherSide" field="otherSide" result-type="string" stand-by="true">
+					<operation type="xpath">td.name p.name/text()</operation>
+					<operation type="regex" index="1">(.*?)\|</operation>
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+				<field-extractor id="otherSide" field="otherSide" result-type="string" stand-by="true">
+					<operation type="xpath">//td[@class='other']//p[1]/text()</operation>
+					<operation type="regex" index="1">(.+)</operation>
+				</field-extractor>
+				<field-extractor id="otherSide" field="otherSide" result-type="string" stand-by="true">
+					<operation type="xpath">td.name p.name/text()</operation>
+					<operation type="regex" index="1">(.*?)\|</operation>
+				</field-extractor>
+				<field-extractor id="otherSideAccount" field="otherSideAccount" result-type="string">
+					<operation type="xpath">td.other p.no/text()</operation>
+					<operation type="regex" index="1">(.*?)\|</operation>
+					<operation type="replace" from="\." to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+				</field-extractor>
+				<field-extractor id="otherSideAccount" field="otherSideAccount" stand-by="true" result-type="string">
+					<operation type="xpath">td.name p.no/text()</operation>
+					<operation type="regex" index="1">(.*?)\|</operation>
+					<operation type="replace" from="\." to=""></operation>
+					<operation type="replace" from=" " to=""></operation>
+				</field-extractor>
+				<field-extractor id="otherSideName" field="otherSideName" result-type="string">
+					<operation type="xpath">td.other p.no/text()</operation>
+					<operation type="regex" index="1"><![CDATA[\|(.*)]]></operation>
+					<operation type="replace" from=" " to=""></operation>
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+				<field-extractor id="otherSideName" field="otherSideName" stand-by="true" result-type="string">
+					<operation type="xpath">td.name p.no/text()</operation>
+					<operation type="regex" index="1"><![CDATA[\|([^\|]*)]]></operation>
+					<operation type="replace" from=" " to=""></operation>
+					<operation type="decode" decode-type="standard"></operation>
+				</field-extractor>
+
+				<field-extractor id="tradeTypeSuffix" field="temp">
+					<operation type="triple" triple-type="regex">${this} matches:5rPXrBOKZh|5rPZ3T2xUb|T200P|T1600P?T:O</operation>
+				</field-extractor>
+				<field-extractor id="tradeTypeTemp" field="temp">
+					<operation type="template"><![CDATA[${url}]]></operation>
+					<operation type="regex" index="1"><![CDATA[tradeType=([^&]+)]]></operation>
+					<operation type="replace" from="SHOPPING" to="SHOPPING${tradeTypeSuffix}"></operation>
+				</field-extractor>
+				<field-extractor id="tradeType" field="tradeType" source="tradeTypeTemp" result-type="int" default-value="0">
+					<operation type="mapping" group-name="tradeType"></operation>
+				</field-extractor>
+				<field-extractor id="tradeStatus" field="tradeStatus" result-type="int" default-value="-1">
+					<operation type="xpath">//td[@class='status']//p[1]/text()</operation>
+					<operation type="trim"></operation>
+					<operation type="mapping" group-name="tradeStatus"></operation>
+				</field-extractor>
+
+				<field-extractor id="amount" field="amount" result-type="number">
+					<operation type="xpath">//td[@class='amount']/text()</operation>
+					<operation type="replace" from="\s" to=""></operation>
+					<operation type="triple" triple-type="regex">${title} matches:^充值-普通充值$|^余额宝-转出到余额$|^退款-|^退款$?${this}:-${this}</operation>
+					<operation type="replace" from="\-\+" to=""></operation>
+					<operation type="replace" from="\-\-" to="-"></operation>
+					<operation type="replace" from="\+" to=""></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="page-extractor_detailInfo_containaddress" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+
+			<object-segment name="tradeAddress">
+				<field-extractor id="address" field="address" result-type="string">
+					<operation type="xpath">//div[@class='addr_and_note']//dd[1]/text()</operation>
+					<operation type="replace" from="\r|\n" to=""></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true">
+					<operation type="xpath">//div[@class='logistics']/div[2]/span[2]/text()</operation>
+					<operation type="replace" from="\r|\n" to=""></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true">
+					<operation type="xpath">//table[@class='simple-list logistics-list']/tbody/tr[3]/td[2]/text()</operation>
+					<operation type="replace" from="\r|\n" to=""></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="address" field="address" result-type="string" stand-by="true" not-empty="true">
+					<operation type="xpath">//div[@class='address-detail']/text()</operation>
+					<operation type="replace" from="\r|\n" to=""></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="tradeNumber" field="tradeNumber" result-type="string" not-empty="true">
+					<operation type="template">${tradeNumber}</operation>
+				</field-extractor>
+				<field-extractor id="tradeDatetime" field="tradeDatetime" result-type="date" format="yyyy-MM-ddHH:mm;yyyy.MM.ddHH:mm;HH:mm" not-empty="true">
+					<operation type="template">${tradeDatetime}</operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="page-extractor_jiaoFeiInfo" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+
+			<object-segment name="paymentAccounts" type="xpath" value="//table[@class='tb-jiaofei']//tbody//tr">
+				<field-extractor id="field-extractor_1" field="category" result-type="string" not-empty="true">
+					<operation type="xpath">//td[1]/text()</operation>
+					<operation type="replace" from="\s" to=""></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="city" result-type="string" not-empty="true">
+					<operation type="xpath">//td[2]/text()</operation>
+					<operation type="replace" from="\s" to=""></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" field="organization" result-type="string" not-empty="true">
+					<operation type="xpath">//td[3]/text()</operation>
+					<operation type="replace" from="\s" to=""></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_4" field="accountName" result-type="string">
+					<operation type="xpath">//td[4]/text()</operation>
+					<operation type="replace" from="\s" to=""></operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_5" field="accountCode" result-type="string" not-empty="true">
+					<operation type="xpath">//td[5]/text()</operation>
+					<operation type="replace" from="\s" to=""></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+		<page-extractor id="page-extractor_bankCardInfo" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+
+			<object-segment name="bindedBankCards" type="jsonpath" value="$.results[*]">
+				<field-extractor id="field-extractor_1" field="bankName" result-type="string" not-empty="true">
+					<operation type="jsonpath">$.providerName</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_2" field="cardNumber" result-type="string" not-empty="true">
+					<operation type="jsonpath">$.providerUserName</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_3" field="cardType" result-type="string" not-empty="true">
+					<operation type="jsonpath">$.bankProductType</operation>
+					<operation type="replace" from="DC" to="1"></operation>
+					<operation type="replace" from="CC" to="2"></operation>
+					<operation type="regex" index="1">(\d)</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_4" field="isExpressPaymentOpened" result-type="string" default-value="0">
+					<operation type="jsonpath">$.level</operation>
+					<operation type="triple">${this}=?0:${this}</operation>
+					<operation type="replace" from="20" to="1"></operation>
+					<operation type="regex" index="1">(\d)</operation>
+				</field-extractor>
+				<field-extractor id="field-extractor_5" field="cardOwnerName" result-type="string">
+					<operation type="jsonpath">$.showUserName</operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+
+
+		<page-extractor id="page-extractor_deliverAddress" dis-alternative="true">
+			<page-sources>
+				<source field="pageContent"></source>
+			</page-sources>
+
+			<object-segment name="address" type="xpath" value="tr.thead-tbl-address">
+				<field-extractor id="pageConent" field="temp">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="pageSource" field="temp">
+					<operation type="xpath">//td[1]/text()</operation>
+					<operation type="triple">${this}=?${pageConent}未命名过滤:${pageConent}</operation>
+				</field-extractor>
+				<object-segment name="address" source="pageSource" type="xpath" value="tr" dis-contains="未命名过滤">
+					<field-extractor id="receiveName" field="receiveName" result-type="string" not-empty="true">
+						<operation type="xpath">//td[1]/text()</operation>
+					</field-extractor>
+					<field-extractor id="region" field="region" result-type="string" not-empty="true">
+						<operation type="xpath">//td[2]/text()</operation>
+					</field-extractor>
+					<field-extractor id="detailedAddress" field="detailedAddress" result-type="string" not-empty="true">
+						<operation type="xpath">//td[3]/text()</operation>
+					</field-extractor>
+					<field-extractor id="postcode" field="postcode" result-type="string">
+						<operation type="xpath">//td[4]/text()</operation>
+					</field-extractor>
+					<field-extractor id="telNumber" field="telNumber" result-type="string">
+						<operation type="xpath">//td[5]/text()</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page-extractor>
+	</page-extractor-definition>
+	<plugin-definition>
+
+	</plugin-definition>
+</config>

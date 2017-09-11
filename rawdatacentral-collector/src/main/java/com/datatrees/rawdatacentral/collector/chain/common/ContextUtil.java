@@ -12,12 +12,12 @@ import com.datatrees.rawdatacentral.collector.search.URLHandlerImpl;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午2:34:43
  */
 public class ContextUtil {
+
     public static LinkNode getCurrentLinkNode(Context context) {
         return (LinkNode) context.getAttribute(FilterConstant.CURRENT_LINK_NODE);
     }
@@ -58,7 +58,6 @@ public class ContextUtil {
         context.setAttribute(FilterConstant.FECHED_LINK_NODE, fetchLinkNode);
     }
 
-
     public static URLHandlerImpl getURLHandlerImpl(Context context) {
         return (URLHandlerImpl) context.getAttribute(FilterConstant.URL_HANDLER);
     }
@@ -82,6 +81,5 @@ public class ContextUtil {
     public static void setDuplicateChecker(Context context, DuplicateChecker handler) {
         context.setAttribute(FilterConstant.DUPLICATE_CHECKER, handler);
     }
-
 
 }

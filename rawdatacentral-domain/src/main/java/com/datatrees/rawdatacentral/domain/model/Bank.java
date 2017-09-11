@@ -3,36 +3,28 @@ package com.datatrees.rawdatacentral.domain.model;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table t_bank(Bank basic info)  */
+/** create by system from table t_bank(Bank basic info) */
 public class Bank implements Serializable {
-    /** bank Id */
-    private Integer bankId;
-
-    /** not null if bank support search */
-    private Integer websiteId;
-
-    /**  */
-    private String bankMark;
-
-    /** bank name */
-    private String bankName;
-
-    /**  */
-    private Short orderIndex;
-
-    /**  */
-    private String matchText;
-
-    /** 0:false,1:true */
-    private Boolean isenabled;
-
-    /**  */
-    private Date createdAt;
-
-    /**  */
-    private Date updatedAt;
 
     private static final long serialVersionUID = 1L;
+    /** bank Id */
+    private Integer bankId;
+    /** not null if bank support search */
+    private Integer websiteId;
+    /**  */
+    private String  bankMark;
+    /** bank name */
+    private String  bankName;
+    /**  */
+    private Short   orderIndex;
+    /**  */
+    private String  matchText;
+    /** 0:false,1:true */
+    private Boolean isenabled;
+    /**  */
+    private Date    createdAt;
+    /**  */
+    private Date    updatedAt;
 
     public Integer getBankId() {
         return bankId;

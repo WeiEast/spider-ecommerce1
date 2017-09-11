@@ -3,36 +3,14 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.rawdatacentral.submitter.common;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.james.mime4j.field.FieldName;
-import org.apache.james.mime4j.message.BodyPart;
-import org.apache.james.mime4j.message.Entity;
-import org.apache.james.mime4j.message.Multipart;
-import org.apache.james.mime4j.message.SingleBody;
-import org.apache.james.mime4j.message.TextBody;
-import org.apache.james.mime4j.parser.Field;
-import org.apache.james.mime4j.util.CharsetUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.Content;
@@ -42,18 +20,23 @@ import com.datatrees.common.util.StringUtils;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.mail.Mail;
+import org.apache.commons.io.IOUtils;
+import org.apache.james.mime4j.field.FieldName;
+import org.apache.james.mime4j.message.*;
+import org.apache.james.mime4j.parser.Field;
+import org.apache.james.mime4j.util.CharsetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月8日 下午3:07:06
  */
 public enum MailParserImpl {
     INSTANCE;
-
-    private static final Logger logger = LoggerFactory.getLogger(MailParserImpl.class);
-    private String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
+    private static final Logger logger                = LoggerFactory.getLogger(MailParserImpl.class);
+    private              String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
 
     public Mail parseMessage(String websiteName, InputStream fis, List<OssServiceTest.Replace> list) throws UnsupportedEncodingException {
         Mail mimeMsg = null;
@@ -80,9 +63,8 @@ public enum MailParserImpl {
 
     /**
      * This method classifies bodyPart as text, html or attached file
-     * 
      * @param multipart
-     * @throws IOException
+     * @exception IOException
      */
     private void parseBodyParts(Mail mimeMsg, Multipart multipart, List<OssServiceTest.Replace> list) throws IOException {
         for (BodyPart part : multipart.getBodyParts()) {
@@ -97,8 +79,7 @@ public enum MailParserImpl {
                 String html = getTxtPart(part, list);
                 mimeMsg.getHtmlBody().append(html);
             } else {
-                logger.warn(
-                        "unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + "," + part.getHeader());
+                logger.warn("unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + "," + part.getHeader());
             }
 
             // If current part contains other, parse it again by recursion
@@ -113,8 +94,7 @@ public enum MailParserImpl {
         if (StringUtils.isBlank(fileName)) {
             Field field = part.getHeader().getField(FieldName.CONTENT_DISPOSITION);
             if (field != null && field.getBody() != null) {
-                fileName = PatternUtils.group(field.getBody().toLowerCase(),
-                        PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
+                fileName = PatternUtils.group(field.getBody().toLowerCase(), PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
             }
         }
         return fileName;
@@ -150,10 +130,33 @@ public enum MailParserImpl {
         mimeMsg.getAttachments().add(fileWapper);
     }
 
+    private String getTxtPart(Entity part, List<OssServiceTest.Replace> list) {
+        ByteArrayOutputStream baos = null;
+        try {
+            // Get content from body
+            SingleBody tb = ((TextBody) part.getBody());
+            baos = new ByteArrayOutputStream();
+            tb.writeTo(baos);
+            String contentType = part.getHeader().getField(FieldName.CONTENT_TYPE) != null ? part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
+            Content content = new Content("", "", baos.toByteArray(), contentType, new Metadata());
+            part.removeBody();
+            String result = content.detectContentAsString();
+            for (OssServiceTest.Replace replace : list) {
+                result = result.replaceAll(replace.from, replace.to);
+            }
+            part.setBody(new StringTextBody(result, Charset.forName(content.getCharSet())));
+            return content.detectContentAsString();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(baos);
+        }
+        return null;
+    }
 
     class StringTextBody extends TextBody {
 
-        private final String text;
+        private final String  text;
         private final Charset charset;
 
         public StringTextBody(final String text, Charset charset) {
@@ -195,30 +198,5 @@ public enum MailParserImpl {
             return new StringTextBody(text, charset);
         }
 
-    }
-
-    private String getTxtPart(Entity part, List<OssServiceTest.Replace> list) {
-        ByteArrayOutputStream baos = null;
-        try {
-            // Get content from body
-            SingleBody tb = ((TextBody) part.getBody());
-            baos = new ByteArrayOutputStream();
-            tb.writeTo(baos);
-            String contentType =
-                    part.getHeader().getField(FieldName.CONTENT_TYPE) != null ? part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
-            Content content = new Content("", "", baos.toByteArray(), contentType, new Metadata());
-            part.removeBody();
-            String result = content.detectContentAsString();
-            for (OssServiceTest.Replace replace : list) {
-                result = result.replaceAll(replace.from, replace.to);
-            }
-            part.setBody(new StringTextBody(result, Charset.forName(content.getCharSet())));
-            return content.detectContentAsString();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(baos);
-        }
-        return null;
     }
 }

@@ -1,0 +1,149 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=gb18030" /><meta http-equiv="cache-control" content="no-cache"><meta http-equiv="expires" content="mon, 22 jul 2002 11:12:01 GMT"><meta http-equiv="pragma" content="no-cache"><title>腾讯企业邮箱</title><script type="text/javascript">
+function getTop()
+{
+var _oSelfFunc = arguments.callee;
+if (!_oSelfFunc._moTop)
+{try{_oSelfFunc._moTop=window!=parent?(parent.getTop?parent.getTop():parent.parent.getTop()):window;}catch(_oError){_oSelfFunc._moTop=window;}}
+return _oSelfFunc._moTop;
+}
+try{window.top=getTop();}catch(e){eval("var top=getTop();");}
+window != getTop() && getTop().location.replace(window.location.href);
+</script><script>
+Cookie = 
+{ 
+g : function(k) {return ((new RegExp(["(?:; )?",k,"=([^;]*);?"].join(""))).test(document.cookie)&&RegExp["$1"])||"";},
+s : function(k,v,e,d) {document.cookie = [k,"=",v, e&&e["toGMTString"]?';expires='+e.toGMTString():"",";path=/;domain=",d||".exmail.qq.com"].join("");}
+};
+</script><script>
+Cookie.g("tinfo").split("*").length == 2 ? Cookie.s("tinfo", Cookie.g("tinfo") + "*") : Cookie.s("tinfo", "", new Date(0));
+</script><script>
+var g_cgiTimeStamp = "1440819259943", g_clientTimeStamp = +new Date,
+g_sid="1m1H9g4mF8ko6HMm,7",
+g_uin="2615081147",
+g_admuin="-2484574766",
+g_encryptzero="-2484574303",
+g_encryptuin="-766146516",
+mo_path="http://rescdn.qqmail.com/bizmail/zh_CN/",
+stationery_path="http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/",
+card_path="http://rescdn.qqmail.com/zh_CN/",
+images_path="http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/images/",
+js_path="http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/js_biz/",
+swf_path="/zh_CN/htmledition/swf/",
+css_path="http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/style/",
+style_path="/cgi-bin/getcss?sid=1m1H9g4mF8ko6HMm,7&ft=",
+editor_path="http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/qqmaileditor/",
+skin_path="7",
+alevel="",
+gLogoId="0",
+gsLogoFolder = "/",
+gbBackGroundSend="0",
+bnewwin=1,
+gnRssInterval = parseInt("600"),
+gLn={
+all:"267117",linkman:"19d948",qmlinkman:"19d947",qmcamera:"19d948",qmlunar:"19d947",qmdatectrl:"19d947",qmslidebox:"19d948",xflib_xw:"19d947",editor:"1e9c94",editor_toolbar:"088286",editor_toolbar_plus:"27d0e3",qmtool:"267117",qmtranslate:"19d947",qmaddress:"1e7b2f",qmmemtree:"1b1416",qmaddrinput:"222680",qmqzoneimg:"19d947",qmtip:"19d947","plus/formatter":"088286","plus/bgmusic":"088286","plus/mo":"088286",comm:"1e0afb",rss:"087790",domain:"0ef52a",camera_photo:"0cec3b",cardaddr:"087796",qmcalendar:"19d948",qmverify:"19d947",getimgkey:"19d947",bookmail_stock:"19d947",bookscript:"19d947",libcompose:"19d947",qmantispam:"19d948",sps_tmpl:"19d947",backsend:"19d947",qmwebpush:"19d948",qmwebpushtip:"19d948",e:""
+},
+gsRssDomain = 'http://r.mail.qq.com',
+gsMailDomain = location.protocol + "//" + location.host,
+QQPlusUpdateStatus = function(){};
+
+</script><script>(function(_aow)
+{
+var _os = {}, _cache = {}, _nt = +new Date, _sm, _oResult = [], _fmt, 
+_cut = function(_asSrc)
+{
+if (!_asSrc) {return "";}
+var _cgi = /\/(\w+)\?/gi.exec(_asSrc), _t = /[?|&]t=(\w+)/gi.exec(_asSrc), _s = /[?|&]s=(\w+)/gi.exec(_asSrc);
+return "|" + [_cgi ? _cgi[1] : "", _t ? _t[1] : "",  _s ? _s[1] : ""].join("|");
+};
+
+_fmt = function(_asd, _src, _point)
+{
+if (_asd == "res")
+{
+_fmt.nResTime = +new Date - _nt;
+return;
+}
+var _type = _asd.substr(0,2), _src = _cut(_src),
+_item = [_asd, _src, _point||"", +new Date - _nt];
+(_os[_type] = _os[_type] || []).push(_cache[_asd] = _item);
+_src && _point && (_cache[_src] = _cache[_point]);
+}
+_fmt.process = function()
+{
+for (var i  in _os)
+{
+var _oArr = _os[i];
+for(var j in _oArr)
+{
+var _oItem = _oArr[j],  _ditem = _cache[_oItem[2]||_oItem[1]];
+_oResult.push( [_oItem.slice(0,2).join("") + (_ditem ? "-"+_ditem[0]: ""), 
+(_oItem[3] - ((_ditem || _oArr[j-1] || [])[3]||0)) ].join(":"));
+}
+}
+}
+_fmt.result = _oResult;
+_aow.MarkTime = _fmt;
+})(window);
+</script><script>
+var JsChecker =
+{
+isreload:false,
+check:function(_asFile)
+{
+return typeof window[(/[0-9a-fA-F]{6}$/.test(_asFile) ? _asFile.substr(0,_asFile.length - 6) : _asFile) + "_js"] == "function";
+},
+load:function(_aoFiles, _abIsReload)
+{
+for (var i = 0, _nLen = _aoFiles.length; i < _nLen; i++)
+{
+var _sFile = _aoFiles[i];
+if (_sFile && (!_abIsReload || !JsChecker.check(_sFile)))
+{
+document.write("<script", " language='javascript' src='http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/js_biz/", _sFile, ".js",
+_abIsReload ? "?" + Math.random() : "", "'></", "script>");
+_abIsReload && (JsChecker.isreload = true);
+}
+}
+}
+};
+</script><link rel="stylesheet" type="text/css" href="http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/style/comm2010269bcf.css" onload="MarkTime('res');"/><link rel="stylesheet" type="text/css" href="http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/style/treeview17b180.css" onload="MarkTime('res');"/><link rel="stylesheet" type="text/css" href="/cgi-bin/getcss?sid=1m1H9g4mF8ko6HMm,7&ft=skin"/><script>MarkTime('nm8');</script><script>JsChecker.load(["all267117", "qmtool267117"]);</script><script>MarkTime('nm10');</script><script>JsChecker.load(["all267117", "qmtool267117"], true);</script><script>!JsChecker.check("all267117") && location.replace(location.href + "&res=local");</script><script>MarkTime('nm15');</script><style type="text/css">html,body {padding:0;margin:0;height:100%;overflow:hidden;}#mainFrameContainer {height:100%;background:url(http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/images/ico_text_loading087795.gif) no-repeat 10px 10px;left:0;top:0;}#mainFrame {width:100%; height:100%;}</style></head><body  style="overflow:hidden;"><script>createActionFrame(window);</script><div id="mainFrameContainer"><iframe onload="MarkTime('nm26',S('mainFrame').src,'nm25');" src="/cgi-bin/readmail?folderid=1&amp;&amp;t=readmail&amp;mailid=ZC1429-bdbOd4~oqXeW20AVs2~8O58&amp;mode=pre&amp;maxage=3600&amp;base=10.5910&amp;ver=18967&sid=1m1H9g4mF8ko6HMm,7&newwin=true&nocheckframe=true" name="mainFrame" id="mainFrame" frameborder="no"allowTransparency="true" scrolling="auto" hidefocus></iframe></div></div><div id="qqmail_mask" class="editor_mask" style="display:none;"></div><img id="imgSpeedStat" style="display:none;width:0;height:0;" ></body><script>
+loadJsFile("http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/js_biz/qmaddress1e7b2f.js", true);
+loadJsFile("http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/js_biz/qmlinkman19d947.js", true);
+
+window.onload = function()
+{
+var _nResTime = -1,
+_nJsReady = 0;
+
+if (window.MarkTime)
+{
+MarkTime("nm99");
+MarkTime.process();
+}
+
+if (window.JsChecker)
+{
+if (JsChecker.check("all267117") && JsChecker.check("qmtool267117"))
+{
+_nJsReady = JsChecker.isreload ? 1 : 0;
+}
+else
+{
+_nJsReady = 2;
+}
+}
+
+Cookie.g("tinfo").split("*").length == 3 && ((new Image).src = ['/cgi-bin/getinvestigate?sid=1m1H9g4mF8ko6HMm,7&stat=login&flowid=20883773&ph=w&res=', _nResTime, '&jsready=', 
+_nJsReady, '&timestats=', MarkTime.result.join(";"), '&agenterr=', window.gbIsAgentErr ? 1 : 0 , '&jseval=', typeof(gnQmToolLoad)=='number' ? gnQmToolLoad : -1, '&screentype=web&screenWidth=', screen.width, '&screenHeight=', screen.height, '&ua=', decodeURIComponent(navigator.userAgent), window.QMApplet && QMApplet.isSupported && QMApplet.isSupported() && " JavaSupport" ].join("")) && Cookie.s("tinfo", Cookie.g("tinfo").split("*")[0]);
+
+
+rdVer("on",1);
+setTimeout(function()
+{
+try {loadSignature();} catch(_oError) {}
+loadJsFile("http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/js_biz/profile_tips27cc1f.js", true);
+
+}, 100
+);
+};
+</script></html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<extrator-selectors>
+		<selector field="url" contain="mbox:getMessageData" dis-contain="" ref="mime-extractor"></selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<page-extractor id="mime-extractor">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="detectResults">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${url}</operation>
+				</field-extractor>
+				<field-extractor id="billIds" field="billIds" result-type="string">
+					<operation type="template">${billIds}</operation>
+				</field-extractor>
+				<field-extractor id="mailId" field="mailId" result-type="string">
+					<operation type="template">${mailId}</operation>
+				</field-extractor>
+				<field-extractor id="mail" field="temp">
+					<operation type="mailparser"></operation>
+				</field-extractor>
+				<field-extractor id="serverIp" field="serverIp">
+					<operation type="template">${mail.mailServerIp}</operation>
+				</field-extractor>
+				<field-extractor id="serverIp" field="serverIp" stand-by="true" not-empty="true">
+					<operation type="template">${mail.x-originating-ip}</operation>
+					<operation type="regex" index="1"><![CDATA[(\d+.\d+.\d+.\d+)]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page-extractor>
+	</page-extractor-definition>
+	<plugin-definition>
+
+	</plugin-definition>
+</config>

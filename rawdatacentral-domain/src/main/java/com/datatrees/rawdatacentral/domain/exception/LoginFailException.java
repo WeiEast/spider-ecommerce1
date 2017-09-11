@@ -9,6 +9,6 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 public class LoginFailException extends TaskRuntimeException {
 
     public LoginFailException(long taskId, String errorMsg) {
-        super(taskId, ErrorCode.LOGIN_ERROR.getErrorCode(), errorMsg);
+        super(taskId, ErrorCode.LOGIN_FAIL.getErrorCode(), errorMsg);
     }
 }

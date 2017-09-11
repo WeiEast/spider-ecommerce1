@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <extrator-selectors>
+        <selector field="pageContent" contain="交通银行信用卡电子账单" dis-contain="" ref="page-extractor-1">
+        </selector>
+    </extrator-selectors>
+
+    <page-extractor-definition>
+        <page-extractor id="page-extractor-1">
+            <page-sources>
+                <source field="pageContent"></source>
+            </page-sources>
+
+            <object-segment name="bill" result-class="MAILBILL">
+
+                <!--积分变动页面 -->
+                <field-extractor id="basicString1" field="temp">
+                    <operation type="xpath"><![CDATA[//div[1]/table[2]/tbody/tr[2]/td/span/text()]]></operation>
+                    <operation from="&amp;nbsp;" to="" type="replace"></operation>
+                </field-extractor>
+
+                <field-extractor id="field-extractor_0" field="NameOnCard" result-type="string" not-empty="true">
+                    <operation type="regex" index="1"><![CDATA[尊敬的 ([^！]*)....！]]></operation>
+                    <operation type="replace" from=" " to=""></operation>
+                </field-extractor>
+                <field-extractor id="field-extractor_1" field="BillMonth" result-type="date" format="yyyy年MM" not-empty="true">
+                    <operation type="regex" index="1"><![CDATA[([\d]*年[\d]*)月份]]></operation>
+                </field-extractor>
+                <field-extractor id="field-extractor_2" field="BillStartDate" result-type="date" format="yyyy/MM/dd" not-empty="true">
+                    <operation type="xpath"><![CDATA[td:has(span:containsOwn(账单周期)) + td > span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                    <operation type="regex" index="1"><![CDATA[([\d/]*)-[\d/]*]]></operation>
+                </field-extractor>
+                <field-extractor id="field-extractor_3" field="BillDate" result-type="date" format="yyyy/MM/dd" not-empty="true">
+                    <operation type="xpath"><![CDATA[td:has(span:containsOwn(账单周期)) + td > span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                    <operation type="regex" index="1"><![CDATA[[\d/]*-([\d/]*)]]></operation>
+                </field-extractor>
+                <field-extractor id="field-extractor_4" field="PaymentDueDate" result-type="date" format="yyyy/MM/dd">
+                    <operation type="xpath"><![CDATA[td:has(span:containsOwn(到期还款日)) + td > span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                </field-extractor>
+                <!--拼接卡号 start-->
+                <!-- 扣取消费明细卡号 -->
+                <object-segment name="CardNums" type="xpath" value="span:containsOwn(卡号末四位)" result-class="string">
+                    <field-extractor id="CardNumsTemp" field="temp">
+                        <operation from="&lt;td style=&quot;border-width:0px;width:73px.*&lt;img[^&lt;]*&gt;&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;" to="" type="replace"></operation>
+                        <operation from="&amp;nbsp;" to="" type="replace"></operation>
+                    </field-extractor>
+                    <field-extractor id="field-extractor_1" source="CardNumsTemp" field="CardNums" result-type="string">
+                        <operation type="xpath"><![CDATA[/text( )]]></operation>
+                        <operation type="regex" index="1"><![CDATA[([\d]{4})]]></operation>
+                    </field-extractor>
+                </object-segment>
+                <!-- 扣取外部卡号 -->
+                <field-extractor id="field-extractor_99" field="CardNums" result-type="string">
+                    <operation type="regex" index="1"><![CDATA[卡号:[\d]*[\*]*([\d]*)]]></operation>
+                </field-extractor>
+                <!--拼接卡号 end-->
+
+                <field-extractor id="field-extractor_6" field="CreditLimit" result-type="payment" not-empty="true">
+                    <operation type="xpath"><![CDATA[td:has(span:containsOwn(信用额度)) + td > span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                    <operation type="replace" from="[&amp;nbsp; ]*" to=""></operation>
+                    <operation type="regex" index="1"><![CDATA[.*([A-Z]{3}[\d]*).*[A-Z]{3}[\d]*]]></operation>
+                </field-extractor>
+                <field-extractor id="field-extractor_26" field="FCCreditLimit" result-type="currency_payment" not-empty="true">
+                    <operation type="xpath"><![CDATA[td:has(span:containsOwn(信用额度)) + td > span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                    <operation type="replace" from="[&amp;nbsp; ]*" to=""></operation>
+                    <operation type="regex" index="1"><![CDATA[.*[A-Z]{3}[\d]*.*([A-Z]{3}[\d]*)]]></operation>
+                </field-extractor>
+
+                <field-extractor id="field-extractor_7" field="NewBalance" result-type="payment">
+                    <operation type="xpath"><![CDATA[p:containsOwn(本期账务说明)+table > tbody > tr:eq(1) > td:eq(0) > span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                </field-extractor>
+                <object-segment name="FCNewBalance" type="xpath" value="p:containsOwn(本期账务说明)~table:contains(上期账单应还款额)>tbody>tr:gt(1)" result-class="string">
+                    <field-extractor id="FCNewBalanceTemp" field="temp">
+                        <operation from="&lt;td style=&quot;border-width:0px;width:73px.*&lt;img[^&lt;]*&gt;&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;" to="" type="replace"></operation>
+                        <operation from="&amp;nbsp;" to="" type="replace"></operation>
+                    </field-extractor>
+                    <!--<field-extractor id="field-extractor_1" source="FCNewBalanceTemp" field="Currencytype" result-type="currency">-->
+                        <!--<operation type="xpath"><![CDATA[//tr/td[1]/text( )]]></operation>-->
+                    <!--</field-extractor>-->
+                    <field-extractor id="field-extractor_1" source="FCNewBalanceTemp" field="FCNewBalance" result-type="currency_payment">
+                        <operation type="xpath"><![CDATA[//tr/td[1]/text( )"//tr/td[2]/text( )]]></operation>
+                    </field-extractor>
+                </object-segment>
+
+                <field-extractor id="field-extractor_8" field="LastBalance" result-type="payment">
+                    <operation type="xpath"><![CDATA[td:has(span:containsOwn(人民币账户)) + td + td + td>span]]></operation>
+                    <operation type="xpath"><![CDATA[//span[1]/text()]]></operation>
+                </field-extractor>
+                <object-segment name="FCLastBalance" type="xpath" value="p:containsOwn(本期账务说明)~table:contains(上期账单应还款额)>tbody>tr:gt(1)" result-class="string">
+                    <field-extractor id="FCLastBalanceTemp" field="temp">
+                        <operation from="&lt;td style=&quot;border-width:0px;width:73px.*&lt;img[^&lt;]*&gt;&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;" to="" type="replace"></operation>
+                        <operation from="&amp;nbsp;" to="" type="replace"></operation>
+                    </field-extractor>
+                    <!--<field-extractor id="field-extractor_1" source="FCLastBalanceTemp" field="Currencytype" result-type="currency">-->
+                        <!--<operation type="xpath"><![CDATA[//tr/td[1]/text( )]]></operation>-->
+                    <!--</field-extractor>-->
+                    <field-extractor id="field-extractor_1" source="FCLastBalanceTemp" field="FCLastBalance" result-type="currency_payment">
+                        <operation type="xpath"><![CDATA[//tr/td[1]/text( )"//tr/td[3]/text( )]]></operation>
+                    </field-extractor>
+                </object-segment>
+
+                <field-extractor id="field-extractor_9" field="LastPayment" result-type="payment">
+                    <operation type="xpath"><![CDATA[td:has(span:containsOwn(人民币账户)) + td + td + td + td + td>span]]></operation>
+                    <operation type="xpath"><![CDATA[//span[1]/text()]]></operation>
+                </field-extractor>
+                <object-segment name="FCLastPayment" type="xpath" value="p:containsOwn(本期账务说明)~table:contains(上期账单应还款额)>tbody>tr:gt(1)" result-class="string">
+                    <field-extractor id="FCLastPaymentTemp" field="temp">
+                        <operation from="&lt;td style=&quot;border-width:0px;width:73px.*&lt;img[^&lt;]*&gt;&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;" to="" type="replace"></operation>
+                        <operation from="&amp;nbsp;" to="" type="replace"></operation>
+                    </field-extractor>
+                    <!--<field-extractor id="field-extractor_1" source="FCLastPaymentTemp" field="Currencytype" result-type="currency">-->
+                        <!--<operation type="xpath"><![CDATA[//tr/td[1]/text( )]]></operation>-->
+                    <!--</field-extractor>-->
+                    <field-extractor id="field-extractor_1" source="FCLastPaymentTemp" field="FCLastPayment" result-type="currency_payment">
+                        <operation type="xpath"><![CDATA[//tr/td[1]/text( )"//tr/td[4]/text( )]]></operation>
+                    </field-extractor>
+                </object-segment>
+
+                <field-extractor id="field-extractor_10" field="NewCharges" result-type="payment">
+                    <operation type="xpath"><![CDATA[td:has(span:containsOwn(人民币账户)) + td + td + td + td + td + td + td>span]]></operation>
+                    <operation type="xpath"><![CDATA[//span[1]/text()]]></operation>
+                </field-extractor>
+                <object-segment name="FCNewCharges" type="xpath" value="p:containsOwn(本期账务说明)~table:contains(上期账单应还款额)>tbody>tr:gt(1)" result-class="string">
+                    <field-extractor id="FCNewChargesTemp" field="temp">
+                        <operation from="&lt;td style=&quot;border-width:0px;width:73px.*&lt;img[^&lt;]*&gt;&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;" to="" type="replace"></operation>
+                        <operation from="&amp;nbsp;" to="" type="replace"></operation>
+                    </field-extractor>
+                    <!--<field-extractor id="field-extractor_1" source="FCNewChargesTemp" field="Currencytype" result-type="currency">-->
+                        <!--<operation type="xpath"><![CDATA[//tr/td[1]/text( )]]></operation>-->
+                    <!--</field-extractor>-->
+                    <field-extractor id="field-extractor_1" source="FCNewChargesTemp" field="FCNewCharges" result-type="currency_payment">
+                        <operation type="xpath"><![CDATA[//tr/td[1]/text( )"//tr/td[5]/text( )]]></operation>
+                    </field-extractor>
+                </object-segment>
+
+                <field-extractor id="field-extractor_11" field="MinPayment" result-type="payment">
+                    <operation type="xpath"><![CDATA[p:containsOwn(本期账务说明)+table > tbody > tr:eq(1) > td:eq(2)>span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                </field-extractor>
+                <field-extractor id="field-extractor_21" field="FCMinPayment" result-type="currency_payment">
+                    <operation type="xpath"><![CDATA[p:containsOwn(本期账务说明)+table > tbody > tr:eq(1) > td:eq(3)>span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                </field-extractor>
+                <field-extractor id="field-extractor_12" field="Integral" result-type="number">
+                    <operation type="xpath"><![CDATA[p:containsOwn(本期积分说明)+table > tbody > tr:eq(1) > td:eq(1)>span]]></operation>
+                    <operation type="xpath"><![CDATA[//span/text()]]></operation>
+                </field-extractor>
+
+                <object-segment name="ShoppingSheet" type="xpath" value="b:containsOwn(以下是您的还款、退货及费用返还明细) + table">
+                    <field-extractor id="field-extractor_5" field="CardNo" result-type="string">
+                        <operation type="regex" index="1"><![CDATA[卡号末四位 ([\d]*)]]></operation>
+                    </field-extractor>
+                    <object-segment name="ShoppingSheet" type="xpath" value="tbody > tr:not([style~=(background:#EDF5FF;|text-align:center;background:#1C65A9;padding:2.7pt 2.7pt 0pt 2.7pt;)])">
+                        <field-extractor id="ShoppingSheetTemp" field="temp">
+                            <operation from="&lt;td style=&quot;border-width:0px;width:73px.*&lt;img[^&lt;]*&gt;&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;" to="" type="replace"></operation>
+                            <operation from="&amp;nbsp;" to="" type="replace"></operation>
+                        </field-extractor>
+                        <!-- 通用模版 start -->
+                        <field-extractor id="field-extractor_1" source="ShoppingSheetTemp" field="TransDate" result-type="date" format="yyyy/MM/dd">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[([\d]{4}/[\d]{2}/[\d]{2})[ ]+[\d]{4}/[\d]{2}/[\d]{2}]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_2" source="ShoppingSheetTemp" field="PostDate" result-type="date" format="yyyy/MM/dd" not-empty="true">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+([\d]{4}/[\d]{2}/[\d]{2})]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_3" source="ShoppingSheetTemp" field="Description" result-type="string">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+[\d]{4}/[\d]{2}/[\d]{2}[ ]+(.*)[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_4" source="ShoppingSheetTemp" field="RMBAmount" result-type="payment" not-empty="true">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+[\d]{4}/[\d]{2}/[\d]{2}[ ]+.*[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*[ ]+[a-zA-Z]{3}[ ]+([0-9,\.]*)]]></operation>
+                            <operation type="append" index="0"><![CDATA[-]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_6" source="ShoppingSheetTemp" field="OriginalTransAmount" result-type="payment" not-empty="true">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+[\d]{4}/[\d]{2}/[\d]{2}[ ]+.*[ ]+[a-zA-Z]{3}[ ]+([0-9,\.]*)[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*]]></operation>
+                            <operation type="append" index="0"><![CDATA[-]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_7" source="ShoppingSheetTemp" field="Currencytype" result-type="currency">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+[\d]{4}/[\d]{2}/[\d]{2}[ ]+.*[ ]+([a-zA-Z]{3})[ ]+[0-9,\.]*[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*]]></operation>
+                        </field-extractor>
+                        <!-- 通用模版 end -->
+                    </object-segment>
+                </object-segment>
+
+                <object-segment name="ShoppingSheet" type="xpath" value="b:containsOwn(以下是您的消费、取现及其他费用明细) + table">
+                    <field-extractor id="field-extractor_5" field="CardNo" result-type="string">
+                        <operation type="regex" index="1"><![CDATA[卡号末四位 ([\d]*)]]></operation>
+                    </field-extractor>
+                    <object-segment name="ShoppingSheet" type="xpath" value="tbody > tr:not([style~=(background:#EDF5FF;|text-align:center;background:#1C65A9;padding:2.7pt 2.7pt 0pt 2.7pt;)])">
+                        <field-extractor id="ShoppingSheetTemp" field="temp">
+                            <operation from="&lt;td style=&quot;border-width:0px;width:73px.*&lt;img[^&lt;]*&gt;&lt;/a&gt;&lt;/span&gt;&lt;/td&gt;" to="" type="replace"></operation>
+                            <operation from="&amp;nbsp;" to="" type="replace"></operation>
+                        </field-extractor>
+                        <!-- 通用模版 start -->
+                        <field-extractor id="field-extractor_1" source="ShoppingSheetTemp" field="TransDate" result-type="date" format="yyyy/MM/dd">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[([\d]{4}/[\d]{2}/[\d]{2})[ ]+[\d]{4}/[\d]{2}/[\d]{2}]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_2" source="ShoppingSheetTemp" field="PostDate" result-type="date" format="yyyy/MM/dd" not-empty="true">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+([\d]{4}/[\d]{2}/[\d]{2})]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_3" source="ShoppingSheetTemp" field="Description" result-type="string">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+[\d]{4}/[\d]{2}/[\d]{2}[ ]+(.*)[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_4" source="ShoppingSheetTemp" field="RMBAmount" result-type="payment" not-empty="true">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+[\d]{4}/[\d]{2}/[\d]{2}[ ]+.*[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*[ ]+[a-zA-Z]{3}[ ]+([0-9,\.]*)]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_6" source="ShoppingSheetTemp" field="OriginalTransAmount" result-type="payment" not-empty="true">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+[\d]{4}/[\d]{2}/[\d]{2}[ ]+.*[ ]+[a-zA-Z]{3}[ ]+([0-9,\.]*)[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*]]></operation>
+                        </field-extractor>
+                        <field-extractor id="field-extractor_7" source="ShoppingSheetTemp" field="Currencytype" result-type="currency">
+                            <operation type="xpath"><![CDATA[//td/text( )]]></operation>
+                            <operation type="regex" index="1"><![CDATA[[\d]{4}/[\d]{2}/[\d]{2}[ ]+[\d]{4}/[\d]{2}/[\d]{2}[ ]+.*[ ]+([a-zA-Z]{3})[ ]+[0-9,\.]*[ ]+[a-zA-Z]{3}[ ]+[0-9,\.]*]]></operation>
+                        </field-extractor>
+                        <!-- 通用模版 end -->
+                    </object-segment>
+                </object-segment>
+            </object-segment>
+        </page-extractor>
+
+    </page-extractor-definition>
+    <plugin-definition>
+
+    </plugin-definition>
+</config>

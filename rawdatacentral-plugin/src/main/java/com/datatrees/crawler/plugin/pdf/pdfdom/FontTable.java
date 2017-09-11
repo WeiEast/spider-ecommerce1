@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FontTable {
-    private static Logger log = LoggerFactory.getLogger(FontTable.class);
-    private static Pattern fontFamilyRegex = Pattern.compile("([^+^-]*)[+-]([^+]*)");
 
-    private List<Entry> entries = new ArrayList<Entry>();
+    private static Logger      log             = LoggerFactory.getLogger(FontTable.class);
+    private static Pattern     fontFamilyRegex = Pattern.compile("([^+^-]*)[+-]([^+]*)");
+    private        List<Entry> entries         = new ArrayList<Entry>();
 
     public void addEntry(PDFont font) {
         Entry entry = get(font);
@@ -46,17 +46,14 @@ public class FontTable {
 
     public String getUsedName(PDFont font) {
         Entry entry = get(font);
-        if (entry == null)
-            return null;
-        else
-            return entry.usedName;
+        if (entry == null) return null;
+        else return entry.usedName;
     }
 
     protected String nextUsedName(String fontName) {
         int i = 1;
         String usedName = fontName;
-        while (isNameUsed(usedName))
-            usedName = fontName + i;
+        while (isNameUsed(usedName)) usedName = fontName + i;
         return usedName;
     }
 
@@ -76,19 +73,20 @@ public class FontTable {
         String familyName = fontName;
         Matcher familyMatcher = fontFamilyRegex.matcher(fontName);
         if (familyMatcher.find())
-        // currently tacking on weight/style too since we don't generate html for it yet
-        // and it's helpful for debugugging
+            // currently tacking on weight/style too since we don't generate html for it yet
+            // and it's helpful for debugugging
             familyName = familyMatcher.group(1) + " " + familyMatcher.group(2);
         // browsers will barf if + in family name
         return familyName.replaceAll("[+]", " ");
     }
 
     public class Entry extends HtmlResource {
-        public String fontName;
-        public String usedName;
-        public PDFontDescriptor descriptor;
-        private PDFont baseFont;
-        private byte[] cachedFontData;
+
+        public  String           fontName;
+        public  String           usedName;
+        public  PDFontDescriptor descriptor;
+        private PDFont           baseFont;
+        private byte[]           cachedFontData;
         private String mimeType = "x-font-truetype";
         private String fileEnding;
 
@@ -102,14 +100,11 @@ public class FontTable {
 
         public byte[] getData() throws IOException {
             if (cachedFontData != null) return cachedFontData;
-            if (descriptor.getFontFile2() != null && baseFont instanceof PDType0Font)
-                cachedFontData = loadType0TtfDescendantFont();
-            else if (descriptor.getFontFile2() != null)
-                cachedFontData = loadTrueTypeFont(descriptor.getFontFile2());
-            else if (descriptor.getFontFile() != null)
-                cachedFontData = loadType1Font(descriptor.getFontFile());
+            if (descriptor.getFontFile2() != null && baseFont instanceof PDType0Font) cachedFontData = loadType0TtfDescendantFont();
+            else if (descriptor.getFontFile2() != null) cachedFontData = loadTrueTypeFont(descriptor.getFontFile2());
+            else if (descriptor.getFontFile() != null) cachedFontData = loadType1Font(descriptor.getFontFile());
             else if (descriptor.getFontFile3() != null)
-            // FontFile3 docs say any font type besides TTF/OTF or Type 1..
+                // FontFile3 docs say any font type besides TTF/OTF or Type 1..
                 cachedFontData = loadOtherTypeFont(descriptor.getFontFile3());
             return cachedFontData;
         }
@@ -187,8 +182,7 @@ public class FontTable {
             // with the
             // PDFont, so might have to submit a change there to be really sure fonts are indeed the
             // same.
-            return compare.getName().equals(baseFont.getName()) && compare.getType().equals(baseFont.getType())
-                    && compare.getSubType().equals(baseFont.getSubType());
+            return compare.getName().equals(baseFont.getName()) && compare.getType().equals(baseFont.getType()) && compare.getSubType().equals(baseFont.getSubType());
         }
 
         @Override

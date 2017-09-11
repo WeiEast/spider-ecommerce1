@@ -1,5 +1,9 @@
 package com.datatrees.rawdatacentral.extractor.actor;
 
+import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.Map;
+
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
@@ -20,26 +24,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.Collection;
-import java.util.Map;
-
 /**
  * Created by wuminlang on 15/7/29.
  */
 @Service
 public class ExtractWorker {
-    private static final Logger logger = LoggerFactory.getLogger(ExtractWorker.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(ExtractWorker.class);
     @Resource
-    private ResultStorage resultStorage;
+    private ResultStorage                  resultStorage;
     @Resource
-    private SubmitProcessor submitProcessor;
+    private SubmitProcessor                submitProcessor;
     @Resource
     private DefaultProcessorContextBuilder contextBuilder;
     @Resource
-    private DefaultExtractResultBuilder resultBuilder;
-
+    private DefaultExtractResultBuilder    resultBuilder;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void doSubExtractProcess(ExtractMessage extractMessage, Object obj, int messageIndex) {
@@ -54,7 +53,7 @@ public class ExtractWorker {
                     subExtractMessage.setMessageObject(map);
                     subExtractMessage.setTask(extractMessage.getTask());
                     subExtractMessage.setResultType(extractMessage.getResultType());
-                    subExtractMessage.setTaskId(extractMessage.getTaskId());
+                    subExtractMessage.setTaskLogId(extractMessage.getTaskLogId());
                     subExtractMessage.setTypeId(extractMessage.getTypeId());
                     subExtractMessage.setWebsiteId(extractMessage.getWebsiteId());
                     subExtractMessage.setMessageIndex(messageIndex);
@@ -103,7 +102,6 @@ public class ExtractWorker {
         }
         return extractResultMap;
     }
-
 
     private SubmitMessage extractAndSubmit(ExtractMessage extractMessage, ExtractorProcessorContext context, AbstractExtractResult result) {
         SubmitMessage submitMessage = new SubmitMessage();

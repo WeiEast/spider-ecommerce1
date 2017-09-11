@@ -1,11 +1,16 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import javax.annotation.Resource;
+import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.PluginService;
-import com.datatrees.rawdatacentral.share.RedisService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,11 +20,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Created by zhouxinghai on 2017/7/6.
  */
@@ -27,21 +27,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PluginServiceImpl implements PluginService, InitializingBean {
 
     private static final Logger              logger    = LoggerFactory.getLogger(PluginServiceImpl.class);
-
-    @Resource
-    private RedisService                     redisService;
-
-    @Value("${plugin.local.store.path:/dashu/log/plugins}")
-    private String                           pluginPath;
-
     private static final Map<String, String> pluginMd5 = new ConcurrentHashMap<>();
+    @Resource
+    private RedisService redisService;
+    @Value("${plugin.local.store.path:/dashu/log/plugins}")
+    private String       pluginPath;
 
     @Override
     public String savePlugin(String fileName, byte[] bytes) {
         CheckUtils.checkNotBlank(fileName, "fileName is blank");
         String md5 = DigestUtils.md5Hex(bytes);
         redisService.saveBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName), bytes);
+        redisService.saveBytes("plugin_class_" + fileName, bytes);
         redisService.cache(RedisKeyPrefixEnum.PLUGIN_FILE_MD5, fileName, md5);
+        redisService.cache("plugin_file_md5_" + fileName, md5, RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getTimeout(), RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getTimeUnit());
         logger.info("cache plugin fileName={},md5={}", fileName, md5);
         return md5;
     }
@@ -52,13 +51,13 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         PluginUpgradeResult result = new PluginUpgradeResult();
         String md5 = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
         CheckUtils.checkNotBlank(md5, "没有从redis读取到插件:" + fileName);
-        boolean forceReload = !pluginMd5.containsKey(md5) || !StringUtils.equals(md5, pluginMd5.get(fileName));
+        boolean forceReload = !pluginMd5.containsKey(fileName) || !StringUtils.equals(md5, pluginMd5.get(fileName));
         if (forceReload) {
             byte[] bytes = redisService.getBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
             try {
                 FileUtils.writeByteArrayToFile(file, bytes, false);
                 pluginMd5.put(fileName, md5);
-                logger.info("update plugin success fileName={},pluginPath={}", fileName, pluginPath);
+                logger.info("plugin已经更新,重新加载到本地,fileName={},pluginPath={}", fileName, pluginPath);
             } catch (Exception e) {
                 logger.error("upgrade plugin error fileName={},pluginPath={}", fileName, pluginPath);
                 throw new RuntimeException("get plugin error", e);

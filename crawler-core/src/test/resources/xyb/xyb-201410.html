@@ -1,0 +1,1349 @@
+
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>邮件账单列表</title>
+		<meta charset="utf-8" />
+		<link href="css/base.css" rel="stylesheet" type="text/css">
+		<link href="css/mail.css" rel="stylesheet" type="text/css">
+		<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/userbill.js"></script>
+	</head>
+	<body>
+  		 <a href="download.do?mailId=74_6950306_331647859">附件下载</a>
+		<div class="showTable">
+			<table>
+			  <thead>
+			    <tr>
+        			<th>银行</th>
+                    <th>持卡人</th>
+                    <th>账单周期</th>
+                    <th>卡号后四位</th>
+                    <th>最后还款日</th>
+                    <th>本期应还款</th>
+                    <th>最低还款额</th>
+                    <th>信用额度/取现额度</th>
+                    <th>上期应还额</th>
+                    <th>本期积分</th>
+                    <th>新增积分</th>
+                    <th>BillID</th>
+                    <th>UBID</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  </tbody>
+			</table>
+		<div style="float:right"> <a href="javascript:void(0)" onclick="UserBill.ChangeAnalyzeState()">解析错误</a> </div>
+		</div>
+		
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=gbk">
+
+<title>兴业银行信用卡电子账单</title>
+
+</head>
+
+<body>
+
+<table width="800" style="border:solid #023F98 1pt;margin:0;border-collapse:collapse;font-size:0;" cellpadding="0" cellspacing="0" >
+
+<tr>
+
+<td>
+
+
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_top_logo.jpg" width="802" alt="兴业银行信用卡" border="0" hspace="0" vspace="0">
+
+<table width="125%" background="http://creditcard.cib.com.cn/card/customer/images/V1_nav_bg.jpg"  style="text-align:center;font-size:9pt;margin:0;" cellpadding="0" cellspacing="0">
+
+ <tr>
+
+  <td height="40">
+
+	<a href="http://creditcard.cib.com.cn" style="text-decoration:none;color:#012C6B;" target="_blank">信用卡首页</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/apply/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">信用卡申请</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/guide/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">用卡指南</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/promotion/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">缤纷优惠</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/integral/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">积分计划</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/feature/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">特色专区</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/travel/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">商旅中心</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/stage/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">分期业务</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/credit/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">信贷理财</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td>
+
+	<a href="http://creditcard.cib.com.cn/card/news/index.html" style="text-decoration:none;color:#012C6B;" target="_blank">最新资讯</a>
+
+  </td>
+
+  <td>
+
+  	‖
+
+  </td>
+
+  <td width="200">
+
+	&nbsp;	
+
+  </td>
+
+ </tr>
+
+</table>
+
+<table width="100%">
+
+ <tr>
+
+  <td width="400" height="80"></td>	
+
+  
+
+  <td valign="center">
+
+   <a href="http://creditcard.cib.com.cn/card/index.html" target="_blank"><img  src="http://creditcard.cib.com.cn/card/customer/images/0000/SE000006006.jpg" border="0"/></a>
+
+  </td>
+
+  
+
+ </tr>
+
+ <tr>
+
+  <td colspan="2" style="font-size:9pt;line-height:23px;">
+
+  	<table width="95%" align="center" style="font-size:9pt;line-height:23px;">
+
+  	<tr >
+
+  		<td>尊敬的 黄锴 先生 您好!<br>
+
+  	  </td>
+
+    </tr>
+
+    <tr> 
+
+  		<td>　　感谢您选择兴业银行信用卡，以下是您<b>厦门航空白鹭万事达双币卡金卡（卡号末四位 5115）</b>的<b>2014年10月</b>账单，请勿错过您的还款期限。
+
+  	  </td>
+
+    </tr>
+
+    <tr> 
+
+  		<td>
+
+      <font color=#0269F4><b>　　您可对已出账单申请分期付款，3、6、12、18、24期自由选择！办理请登录信用卡网上银行、手机银行（wap.cib.com.cn）或致电客服热线95561。</b></font>
+
+  	  </td>
+
+    </tr>
+
+    
+
+    <tr> 
+
+  		<td>　　您的这张兴业银行厦航白鹭联名信用卡具有每月积分自动累积厦航奖励积分的功能。如需查询厦航奖励积分累积情况,可致电厦航客户服务热线95557。航空类联名信用卡积分兑换航空奖励积分细则详见兴业银行信用卡中心网站http://creditcard.cib.com.cn
+
+  	  </td>
+
+    </tr> 
+
+    
+
+    
+
+    
+
+    
+
+  </table>
+
+
+
+  </td>
+
+ </tr>
+
+</table>
+
+<p></p>
+
+
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_acct_bar.jpg" alt="账户信息" border="0" usemap="#ins_repay" >
+
+<map name="ins_repay">
+
+	<area shape="rect" coords="577,0, 796,32" href="https://ccbank.cib.com.cn/transaction/index.jsp?funcID=BillStageExecute" target="_blank" alt="分期还款" />
+
+</map>
+
+<table width="800" style="background:#E3EEFD;border:solid #023F98 1pt;font-size:9.0pt;line-height:23px;margin:3 0 0 1;" cellpadding="6">
+
+ <tr>
+
+  <td width="2%"></td>
+
+  <td width="42%">
+
+	账单周期 <font face="Times New Roman">Statement Cycle</font> 2014/09/19-2014/10/18
+
+	<br>
+
+	信用额度(人民币) <font face="Times New Roman">Credit Limit(RMB)</font> 50,000
+
+	<br>
+
+	预借现金额度(人民币) <font face="Times New Roman">Cash Advance Limit(RMB)</font> 25,000
+
+<!--?xm_air_begin-->
+
+	<br>
+
+	本期新增航空奖励积分 <font face="Times New Roman">Point exchanged</font> 0
+
+<!--?xm_air_end-->
+
+
+
+
+
+
+
+  </td>
+
+  <td width="5%"></td>
+
+  <td>
+
+	<font color="#339900">到期还款日 <font face="Times New Roman">Payment Due Date</font><b> 2014年11月07日</b></font>
+
+	<br>
+
+	<font color="#339900">本期应还款总额 <font face="Times New Roman">New Balance</font><b> RMB 49,044.98</b></font>
+
+	<br>
+
+	本期最低还款额  <font face="Times New Roman">Minimum Payment</font> RMB 3,151.44</font>
+
+  </td>
+
+ <tr>
+
+</table>
+
+<table width="100%" style="margin:0" cellpadding="0" cellspacing="0">
+
+ <tr>
+
+  <td align="right">
+
+	<img src="http://creditcard.cib.com.cn/card/customer/images/V2_repay.jpg" alt="还款方式" border="0" usemap="#repay_link">
+
+	<map name="repay_link">
+
+		<area shape="poly" coords="5,1,134,1,134,21,19,21" href="http://creditcard.cib.com.cn/card/repay/pdebit/phone.html" target="_blank" alt="手机银行还款"/>
+
+		<area shape="poly" coords="141,1,261,1,261,21,153,21" href="https://personalbank.cib.com.cn/" target="_blank" alt="网银还款"/>
+
+		<area shape="poly" coords="267,1,397,1,397,21,281,21" href="https://www.99bill.com/ebpp/common/ebill/creditcardpay.htm?creditCardBank=109" target="_blank" alt="快钱还款"/>
+
+		<area shape="poly" coords="402,1,525,1,525,21,415,21" href="https://www.tenpay.com/v2.0/main/credit/portal_creditcard.shtml" target="_blank" alt="财付通还款"/>
+
+		<area shape="poly" coords="532,1,659,1,659,21,544,21" href="http://www.chinapay.com/" target="_blank" alt="银联还款"/>
+
+		<area shape="poly" coords="663,1,791,1,791,21,677,21" href="https://mipgw.alipay.com/ccr/bill_entering_no_login.htm" target="_blank" alt="淘宝支付宝还款"/>
+
+	</map>
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<table width="100%">
+
+ <tr>
+
+  <td width="400">
+
+	<table style="text-align:center;font-size:0;">
+
+	 <tr>
+
+	  <td>
+
+	  
+
+		<a href="http://creditcard.cib.com.cn/minisite/yhqqxhjc2013/index.html" target="_blank"><img width="390" height="180" src="http://creditcard.cib.com.cn/card/customer/images/1410/SE141007211.jpg" border="0"/></a>
+
+	  
+
+		<a href="http://creditcard.cib.com.cn/minisite/yhqqxhjc2013/index.html" target="_blank"><img width="390" height="180" src="http://creditcard.cib.com.cn/card/customer/images/1410/SE141007212.jpg" border="0"/></a>
+
+	  
+
+	  </td>
+
+	 </tr> 
+
+	</table>
+
+  </td>
+
+  <td>
+
+
+
+
+
+	<a href="http://creditcard.cib.com.cn/card/apply/products/LMseries/HKseries/xiahang.html" target="_blank" > 
+
+	<img src="http://creditcard.cib.com.cn/card/customer/images/xh0.jpg" alt="厦航" border="0">
+
+	</a>
+
+
+
+
+
+
+
+
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_dtl_bar.jpg" alt="本期账务明细" border="0">
+
+<table width="800" style="text-align:center;border-collapse:collapse;margin:3 1 0 1;" cellpadding="5">
+
+ <tr style="background:#B4CBEB;font-size:9.0pt;font-weight:bold;">
+
+  <td width="33%">
+
+  	人民币账户<br>
+
+  	RMB A/C
+
+  </td>
+
+  <td width="33%">
+
+	本期应缴余额:49,044.98元<br>
+
+	New Balance
+
+  </td>
+
+  <td width="33%">
+
+	本期最低还款额:3,151.44元<br>
+
+	Minimum Payment
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<table width="800" style="text-align:center;border:solid #023F98 1pt;margin:0 0 0 1;">
+
+ <tr style="font-size:9.0pt;">
+
+  <td width="15%">
+
+  	本期应缴余额<br>
+
+  	<font size="2" face="Times New Roman">New Balance</font><br>
+
+  	49,044.98
+
+  </td>
+
+  <td width="2%">=</td>
+
+  <td width="15%">
+
+	上期账单余额<br>
+
+	<font size="2" face="Times New Roman">Previous Balance</font><br>
+
+	46,325.79
+
+  </td>
+
+  <td width="2%">-</td>
+
+  <td width="15%">
+
+	已还金额<br>
+
+	<font size="2" face="Times New Roman">Payment & Credit</font><br>
+
+	3,100.00
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="15%">
+
+	本期账单金额<br>
+
+	<font size="2" face="Times New Roman">New Activity</font><br>
+
+	5,123.20
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="15%">
+
+	本期调整金额<br>
+
+	<font size="2" face="Times New Roman">Adjustment</font><br>
+
+	0.00
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="15%">
+
+	循环利息<br>
+
+	<font size="2" face="Times New Roman">Finance Charge</font><br>
+
+	695.99
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<table width="800" style="text-align:center;border-collapse:collapse;font-size:9.0pt;margin:3 1 0 1;" cellpadding="5">
+
+ <tr style="text-align:left;background:#B4CBEB;font-weight:bold;">
+
+  <td colspan="10">
+
+	积分账户<br>
+
+	<font size="2" face="Times New Roman">Bonus Point Account</font>
+
+  </td>
+
+ </tr>
+
+</table>
+
+<table width="800" style="text-align:center;font-size:9.0pt;border:solid #023F98 1pt;margin:0 0 0 1;" >
+
+ <tr style="font-size:9.0pt;">
+
+  <td width="17.5%">
+
+  	本期积分余额<br>
+
+  	<font size="2" face="Times New Roman">Bonus Point Balance</font><br>
+
+  	4,569
+
+  </td>
+
+  <td width="2%">=</td>
+
+  <td width="17.5%">
+
+	上期积分余额<br>
+
+	<font size="2" face="Times New Roman">Previous Bonus Point</font><br>
+
+	6
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="17.5%">
+
+	本期新增积分<br>
+
+	<font size="2" face="Times New Roman">New Bonus Point</font><br>
+
+	4,563
+
+  </td>
+
+  <td width="2%">+</td>
+
+  <td width="22%">
+
+	本期调整积分(含到期失效积分)<br>
+
+	<font size="2" face="Times New Roman">Adjusted Bonus Point</font><br>
+
+	0
+
+  </td>
+
+  <td width="2%">-</td>
+
+  <td width="22%">
+
+	本期兑换积分(含消费积分)<br>
+
+	<font size="2" face="Times New Roman">Used Bonus Point</font><br>
+
+	0
+
+  </td>
+
+ </tr>
+
+</table>
+
+<br>
+
+<!--?detail_rmb_begin-->
+
+<table width="800" style="border-collapse:collapse;font-size:9pt;margin:0 0 0 1;">
+
+ <tr style="text-align:left;background:#B4CBEB;font-weight:bold;font-size:9.0pt;">
+
+  <td width="18%" style="padding:5;">
+
+	交易日期<br>
+
+	Trans Date
+
+  </td>
+
+  <td width="12%" style="padding:5;">
+
+	记账日期<br>
+
+	Post Date
+
+  </td>
+
+  <td width="40%" style="padding:5;">
+
+	交易摘要<br>
+
+	Trans Description
+
+  </td>
+  
+  <td width="15%" align="right" style="padding:5;">
+
+  	交易地金额<br>
+
+	Trans Amount
+
+  </td>
+
+  <td width="15%" align="right" style="padding: 5 10 5 5;">
+
+  	人民币金额<br>
+
+	Amount(RMB)
+
+  </td>
+
+ </tr>
+
+<tr><td width="100%" colspan="20" style='text-align:center;font-size:10pt;'>**** 主卡交易(卡号末四位 5115) ****</td><tr>
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-02 13:06
+
+  </td>
+
+  <td>
+
+	2014-10-02
+
+  </td>
+
+  <td>
+
+	武夷山佰翔家下洲酒店有限公司
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	320.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-02 18:02
+
+  </td>
+
+  <td>
+
+	2014-10-02
+
+  </td>
+
+  <td>
+
+	预借现金-本行ATM
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	2,000.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-02 
+
+  </td>
+
+  <td>
+
+	2014-10-02
+
+  </td>
+
+  <td>
+
+	预借现金费用-本行ATM
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	40.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-05 16:22
+
+  </td>
+
+  <td>
+
+	2014-10-05
+
+  </td>
+
+  <td>
+
+	武夷山市好又多商贸有限公司
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	157.40
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-07 16:37
+
+  </td>
+
+  <td>
+
+	2014-10-07
+
+  </td>
+
+  <td>
+
+	泰宁县镇东置业华兴购物广场有限公司
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	177.80
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-09 02:18
+
+  </td>
+
+  <td>
+
+	2014-10-09
+
+  </td>
+
+  <td>
+
+	老板厨房电器店
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	398.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-08 
+
+  </td>
+
+  <td>
+
+	2014-10-09
+
+  </td>
+
+  <td>
+
+	网银转入
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	-3,100.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-10 10:47
+
+  </td>
+
+  <td>
+
+	2014-10-10
+
+  </td>
+
+  <td>
+
+	天翼电子商务有限公司广东分公司
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	300.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-13 13:55
+
+  </td>
+
+  <td>
+
+	2014-10-13
+
+  </td>
+
+  <td>
+
+	武夷山机场有限公司
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	1,510.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-13 21:14
+
+  </td>
+
+  <td>
+
+	2014-10-14
+
+  </td>
+
+  <td>
+
+	武夷山市齐唯茶业有限公司
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	220.00
+
+  </td>
+
+ </tr>
+
+
+
+ <tr>
+
+  <td>
+
+	&nbsp;2014-10-18 
+
+  </td>
+
+  <td>
+
+	2014-10-18
+
+  </td>
+
+  <td>
+
+	利息
+
+  </td>
+  
+  <td align="right">
+
+	
+
+  </td>
+
+  <td align="right" style="padding:0 10 0 0;">
+
+	695.99
+
+  </td>
+
+ </tr>
+
+
+
+</table>
+
+<p></p>
+
+<!--?detail_rmb_end-->
+
+
+
+
+
+
+
+<!-- add by cyc 2012-11-1 start -->
+
+
+
+<!-- add by cyc 2012-11-1 end -->
+
+
+
+<table width="800"  style="border-collapse:collapse;font-size:9pt;">
+
+ <tr>
+
+  <td style="padding: 0 5 0 5;">
+
+
+
+账单说明：“本期应缴余额”栏目显示为“-***”(***为金额)，是指您在还款时多缴的或您预先存放在信用卡账户内的资金，该资金可抵扣您
+
+的刷卡消费金额。<br>
+
+Statement description: If the column “New Balance” displays “-*** (where ***represents account balance), it indicates that there is a credit balance
+
+maintained in your account. No payment is required.
+
+  </td>
+
+ </tr>
+
+
+
+<tr>
+
+  <td style="padding: 0 5 0 5;font-weight : bold">
+
+     ★ 兴业银行提醒您:请注意按时还款（至少还足最低还款额），避免影响个人信用记录。如您未能按时还款，相关逾期情况会上报至金融信用信息基础数据库以及其他依法设立的征信机构。	
+
+  </td>
+
+</tr>
+
+</table>
+
+<p></p>
+
+
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_news_bar.jpg" alt="最新活动信息" border="0">
+
+<table width="800" style="border-collapse:collapse;">
+
+ <tr>
+
+  <td>
+
+  <table style="width:550px;border-collapse:collapse;font-size:9pt;padding:10 0 0 0;">
+
+    <tr>
+
+      <td colspan="2">&nbsp;</td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/news/notice/2014/20140903.html" style="text-decoration:none;" target="_blank"><font color="#000000">网络支付，关注安全</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/minisite/yhqqxhjc2013/hongkong.html" style="text-decoration:none;" target="_blank"><font color="#000000">约惠香港 刷享免费环岛跨境车票</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/minisite/yhqqxhjc2013/america.html" style="text-decoration:none;" target="_blank"><font color="#000000">美国疯狂购 返现享不停</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20130409.html" style="text-decoration:none;" target="_blank"><font color="#000000">玩转积分季——积分好礼给力5折起</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/promotion/overseas/sales/20140724.html" style="text-decoration:none;" target="_blank"><font color="#000000">【约惠全球】持兴业银行银联卡，尽享全球40大核心商圈缤纷优惠</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td width="5"></td>
+
+      <td height="33" background="http://creditcard.cib.com.cn/card/customer/images/V1_news_bg.jpg" style="padding:5px 0pt 0pt 50px;">
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20140912.html" style="text-decoration:none;" target="_blank"><font color="#000000">精彩十年服务全新升级，机票预订劲享十倍积分</font></a>
+
+      </td>
+
+    </tr>
+
+  
+
+	<tr>
+
+	  <td height="53" colspan="2" align="right">
+
+		<a href="http://creditcard.cib.com.cn/card/promotion/index.html" target="_blank"><img src="http://creditcard.cib.com.cn/card/customer/images/V1_news_more.jpg" alt="更多" border="0" ></a>
+
+	  </td>
+
+	</tr>
+
+  </table>
+
+  </td>
+
+  <td>
+
+  <table style="width:195px;border-collapse:collapse;">
+
+  
+
+    <tr>
+
+      <td>
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20140919_1.html" target="_blank"><img width="190" height="75" src="http://creditcard.cib.com.cn/card/customer/images/9999/SE999903200.jpg" border="0"/></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td>
+
+      <a href="http://creditcard.cib.com.cn/promotion/national/20140922.html" target="_blank"><img width="190" height="75" src="http://creditcard.cib.com.cn/card/customer/images/9999/SE999903199.jpg" border="0"/></a>
+
+      </td>
+
+    </tr>
+
+  
+
+    <tr>
+
+      <td>
+
+      <a href="http://creditcard.cib.com.cn/minisite/applyCard/index.html" target="_blank"><img width="190" height="75" src="http://creditcard.cib.com.cn/card/customer/images/9999/SE999903198.jpg" border="0"/></a>
+
+      </td>
+
+    </tr>
+
+  
+
+  </table>
+
+  </td>
+
+ </tr>
+
+</table>
+
+
+
+<table width="800" style="border-collapse:collapse;text-align:center;" >
+
+ <tr>
+
+  
+
+  <td>
+
+      <a href="http://creditcard.cib.com.cn/minisite/starbucks/index.html" target="_blank"><img width="390" height="180" src="http://creditcard.cib.com.cn/card/customer/images/1410/SE141004021.jpg" border="0"/></a>
+
+  </td>
+
+  
+
+  <td>
+
+      <a href="http://creditcard.cib.com.cn/Rights/sqsm/index.html" target="_blank"><img width="390" height="180" src="http://creditcard.cib.com.cn/card/customer/images/1410/SE141004025.jpg" border="0"/></a>
+
+  </td>
+
+  
+
+ </tr> 
+
+</table>
+
+<img src="http://creditcard.cib.com.cn/card/customer/images/V1_bottom.jpg" width="802" alt="版权所有" border="0" >
+
+
+
+</td>
+
+</tr>
+
+</table>
+
+</body>
+
+</html>
+
+
+
+
+		<br/>
+		<br/>
+		<br/>
+		<div>邮件头</div>
+		
+		</body>
+</html>

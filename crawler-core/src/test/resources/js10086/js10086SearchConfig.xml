@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <protocol-type-list>
+        <protocol-type>POP</protocol-type>
+        <protocol-type><![CDATA[IMAP]]></protocol-type>
+        <protocol-type><![CDATA[HTTP]]></protocol-type>
+    </protocol-type-list>
+
+    <url-filters>
+        <url-filter type="+">.10086.cn</url-filter>
+    </url-filters>
+
+    <result-tag-list>
+        <result-tag><![CDATA[operator]]></result-tag>
+    </result-tag-list>
+
+    <properties>
+        <cookie scope="user_session"></cookie>
+    </properties>
+    
+    <login login-type="plugin" plugin-ref="js10086LoginPlugin">
+        <login-check success-pattern="我的星级：">
+            <check-url><![CDATA[http://wap.js.10086.cn/WDYD.shtml]]></check-url>
+            <object-segment name="name">
+                <!-- 余额 -->
+                <field-extractor id="accountBalance" field="accountBalance" result-type="number" field-visible-type="context" not-empty="true">
+                    <operation type="xpath">tr:contains(账户余额):not(:has(tr:contains(账户余额)))/text()></operation>
+                    <operation type="replace" from="\r|\n" to=""></operation>
+                    <operation type="regex" index="1">账户余额：\s*([-\.\d]+)元</operation>
+                </field-extractor>
+                <!-- 用户等级 -->
+                <field-extractor id="telCustomerLevel" field="telCustomerLevel" result-type="string" field-visible-type="context">
+                    <operation type="xpath">tr:contains(我的星级):not(:has(tr:contains(我的星级)))/text()</operation>
+                    <operation type="replace" from="\r|\n" to=""></operation>
+                    <operation type="regex" index="1"><![CDATA[我的星级：([^ \d\[]+)]]></operation>
+                </field-extractor>
+                <!-- 入网时间 -->
+                <field-extractor id="netJoinDate" field="netJoinDate" result-type="string" field-visible-type="context">
+                    <operation type="xpath">tr:contains(入网时间):not(:has(tr:contains(入网时间)))/text()</operation>
+                    <operation type="replace" from="\r|\n" to=""></operation>
+                    <operation type="regex" index="1">(\d{4}-\d{2}-\d{2})</operation>
+                </field-extractor>
+                <!-- 手机号码 -->
+                <field-extractor id="telNum" field="telNum" result-type="string" field-visible-type="context" not-empty="true">
+                    <operation type="xpath">//div[@id='noweathertopBar']//p[@class='logined']/span/text()</operation>
+                    <operation type="replace" from="\r|\n" to=""></operation>
+                    <operation type="regex" index="1"><![CDATA[(\d+)]]></operation>
+                </field-extractor>
+            </object-segment>
+        </login-check>
+    </login>
+
+    <parser-definition>
+        <parser id="billParser">
+            <patterns>
+                <pattern>
+                    <regex><![CDATA[(\d+)]]></regex>
+                    <mappings>
+                        <map group-index="1" placeholder="queryMonth"></map>
+                    </mappings>
+                </pattern>
+            </patterns>
+            <url-template><![CDATA[http://wap.js.10086.cn/ZDCX.shtml?beginDate=${queryMonth}]]></url-template>
+        </parser>
+
+        <parser id="smsParamParser">
+            <url-template><![CDATA[http://service.js.10086.cn/my/MY_QDCX.html]]></url-template>
+        </parser>
+
+        <parser id="callDetailBillParser">
+            <patterns>
+                <pattern>
+                    <regex><![CDATA[([\d-]+):([\d-]+):([\d-]+)]]></regex>
+                    <mappings>
+                        <map group-index="1" placeholder="queryMonth"></map>
+                        <map group-index="2" placeholder="startDate"></map>
+                        <map group-index="3" placeholder="endDate"></map>
+                    </mappings>
+                </pattern>
+            </patterns>
+            <url-template><![CDATA[http://service.js.10086.cn/my/actionDispatcher.do"reqUrl=MY_QDCXQueryNew&busiNum=QDCX&queryMonth=${queryMonth}&queryItem=1&qryPages=${qryPages}&qryNo=1&operType=3&queryBeginTime=${startDate}&queryEndTime=${endDate}]]></url-template>
+        </parser>
+
+        <parser id="smsDetailBillParser">
+            <patterns>
+                <pattern>
+                    <regex><![CDATA[([\d-]+):([\d-]+):([\d-]+)]]></regex>
+                    <mappings>
+                        <map group-index="1" placeholder="queryMonth"></map>
+                        <map group-index="2" placeholder="startDate"></map>
+                        <map group-index="3" placeholder="endDate"></map>
+                    </mappings>
+                </pattern>
+            </patterns>
+            <url-template><![CDATA[http://service.js.10086.cn/my/actionDispatcher.do"reqUrl=MY_QDCXQueryNew&busiNum=QDCX&queryMonth=${queryMonth}&queryItem=6&qryPages=${qryPages}&qryNo=1&operType=3&queryBeginTime=${startDate}&queryEndTime=${endDate}]]></url-template>
+        </parser>
+    </parser-definition>
+
+    <page-definition>
+
+        <!-- basic info -->
+        <page id="basicInfo-page" path="/GRZLGL_GRZL.shtml" response-check="true">
+            <object-segment name="basicInfo" result-class="OperatorData">
+                <!-- 余额 -->
+                <field-extractor id="accountBalance" field="accountBalance" result-type="number">
+                    <operation type="template">${accountBalance}</operation>
+                </field-extractor>
+                <!-- 入网时间 -->
+                <field-extractor id="netJoinDate" field="netJoinDate" result-type="string">
+                    <operation type="template">${netJoinDate}</operation>
+                </field-extractor>
+                <!-- 用户等级 -->
+                <field-extractor id="telCustomerLevel" field="telCustomerLevel" result-type="string">
+                    <operation type="template">${telCustomerLevel}</operation>
+                </field-extractor>
+                <!-- 手机号码 -->
+                <field-extractor id="telNum" field="telNum" result-type="string">
+                    <operation type="template">${telNum}</operation>
+                </field-extractor>
+
+                <field-extractor id="url" field="url" result-type="string">
+                    <operation type="template">${current_url}</operation>
+                </field-extractor>
+                <field-extractor id="pageContent" field="pageContent" result-type="string">
+                    <operation type="return"/>
+                </field-extractor>
+            </object-segment>
+
+            <!-- 账单 -->
+            <object-segment name="linkNode" result-class="LinkNode">
+                <field-extractor id="lastMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" datetime-field-type="month" offset="-1" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="last2Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" datetime-field-type="month" offset="-2" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="last3Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" datetime-field-type="month" offset="-3" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="last4Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" datetime-field-type="month" offset="-4" format="yyyyMM" />
+                </field-extractor>
+                <field-extractor id="queryDateParam" field="temp" result-type="string">
+                    <operation type="template">${lastMonth}:${last2Month}:${last3Month}:${last4Month}</operation>
+                </field-extractor>
+                <field-extractor id="field-extractor_1" source="queryDateParam" field="url" result-type="string">
+                    <operation type="parser" ref="billParser"></operation>
+                </field-extractor>
+            </object-segment>
+
+             <!--call历史详单-->
+            <object-segment name="linkNode" result-class="LinkNode">
+                <field-extractor id="smsCodeStep" field="temp" result-type="string">
+                    <operation type="parser" ref="smsParamParser"></operation>
+                </field-extractor>
+
+                <field-extractor id="smsCode" field="smsCode" plugin-ref="js10086smsCodePlugin" field-visible-type="request" result-type="string" not-empty="true">
+                </field-extractor>
+
+                <field-extractor id="currMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" format="yyyyMM" />
+                </field-extractor>
+
+                <field-extractor id="currMonthStartDate" field="temp" result-type="string">
+                    <operation type="datetime" base-type="firstdayofthismonth" format="yyyy-MM-dd" />
+                </field-extractor>
+
+                <field-extractor id="currMonthEndDate" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" format="yyyy-MM-dd" />
+                </field-extractor>
+
+                <field-extractor id="lastMonth" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" datetime-field-type="month" offset="-1" format="yyyyMM" />
+                </field-extractor>
+
+                <field-extractor id="lastMonthStartDate" field="temp" result-type="string">
+                    <operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-1" format="yyyy-MM-dd" />
+                </field-extractor>
+
+                <field-extractor id="lastMonthEndDate" field="temp" result-type="string">
+                    <operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-1" format="yyyy-MM-dd" />
+                </field-extractor>
+
+                <field-extractor id="last2Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" datetime-field-type="month" offset="-2" format="yyyyMM" />
+                </field-extractor>
+
+                <field-extractor id="last2MonthStartDate" field="temp" result-type="string">
+                    <operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-2" format="yyyy-MM-dd" />
+                </field-extractor>
+
+                <field-extractor id="last2MonthEndDate" field="temp" result-type="string">
+                    <operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-2" format="yyyy-MM-dd" />
+                </field-extractor>
+
+                <field-extractor id="last3Month" field="temp" result-type="string">
+                    <operation type="datetime" base-type="now" datetime-field-type="month" offset="-3" format="yyyyMM" />
+                </field-extractor>
+
+                <field-extractor id="last3MonthStartDate" field="temp" result-type="string">
+                    <operation type="datetime" base-type="firstdayofthismonth" datetime-field-type="month" offset="-3" format="yyyy-MM-dd" />
+                </field-extractor>
+
+                <field-extractor id="last3MonthEndDate" field="temp" result-type="string">
+                    <operation type="datetime" base-type="lastdayofthismonth" datetime-field-type="month" offset="-3" format="yyyy-MM-dd" />
+                </field-extractor>
+
+                <field-extractor id="call-startdate-enddate" field="temp" field-visible-type="request" result-type="string">
+                    <operation type="template"><![CDATA[${currMonth}:${currMonthStartDate}:${currMonthEndDate},${lastMonth}:${lastMonthStartDate}:${lastMonthEndDate},${last2Month}:${last2MonthStartDate}:${last2MonthEndDate},${last3Month}:${last3MonthStartDate}:${last3MonthEndDate}]]></operation>
+                </field-extractor>
+
+                <field-extractor id="field-extractor_1" source="call-startdate-enddate" field="url" result-type="string">
+                    <operation type="parser" ref="callDetailBillParser"></operation>
+                </field-extractor>
+            </object-segment>
+
+             <!--sms历史详单-->
+            <object-segment name="linkNode" result-class="LinkNode">
+                <field-extractor id="field-extractor_1" source="call-startdate-enddate" field="url" result-type="string">
+                    <operation type="parser" ref="smsDetailBillParser"></operation>
+                </field-extractor>
+            </object-segment>
+        </page>
+
+        <!-- bill Info -->
+        <page id="billInfo-page" path="/ZDCX.shtml" response-check="true">
+            <object-segment name="billInfo" result-class="OperatorData">
+                <field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+                    <operation type="return"/>
+                </field-extractor>
+                <field-extractor id="url" field="url" result-type="string">
+                    <operation type="template">${current_url}</operation>
+                </field-extractor>
+            </object-segment>
+        </page>
+
+        <!-- detail Info -->
+        <page id="detailInfo-page" path="/actionDispatcher.do" response-check="true">
+            <object-segment name="detailInfo" result-class="OperatorData">
+                <field-extractor id="field-extractor_1" field="pageContent" result-type="string">
+                    <operation type="return"/>
+                </field-extractor>
+                <field-extractor id="url" field="url" result-type="string">
+                    <operation type="template">${current_url}</operation>
+                </field-extractor>
+            </object-segment>
+        </page>
+
+    </page-definition>
+
+    <search>
+        <search-template id="search-template" type="category_search" plugin-ref="" max-depth="1">
+            <request>
+                <url-templates>
+                    <url-template><![CDATA[http://wap.js.10086.cn/GRZLGL_GRZL.shtml]]></url-template>
+                </url-templates>
+                <max-page>30</max-page>
+            </request>
+            <page-sequence>
+                <page depth="0" ref="basicInfo-page"/>
+                <page depth="1" ref="billInfo-page"/>
+                <page depth="1" ref="detailInfo-page"/>
+            </page-sequence>
+        </search-template>
+    </search>
+
+    <plugin-definition>
+        <plugin id="js10086LoginPlugin" file-type="jar" phase="login">
+            <main-class>com.datatrees.crawler.plugin.main.LoginMain</main-class>
+        </plugin>
+        <plugin id="js10086smsCodePlugin" file-type="jar" phase="field">
+            <main-class>com.datatrees.crawler.plugin.main.SmsCodeMain</main-class>
+        </plugin>
+    </plugin-definition>
+
+</config>

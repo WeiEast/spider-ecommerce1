@@ -7,14 +7,12 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
  */
 public abstract class AbstractTask {
 
-    protected String  websiteName;
-
+    protected String websiteName;
     /**
      * 是否子任务
      */
     protected boolean isSubTask = false;
-
-    private boolean   isDuplicateRemoved;
+    private boolean isDuplicateRemoved;
 
     public void setErrorCode(ErrorCode errorCode) {
         this.setErrorCode(errorCode, null);
@@ -27,7 +25,7 @@ public abstract class AbstractTask {
                 if (message != null) {
                     this.setRemark(message);
                 } else {
-                    this.setRemark(errorCode.getErrorMessage());
+                    this.setRemark(errorCode.getErrorMsg());
                 }
             }
         }
@@ -35,9 +33,9 @@ public abstract class AbstractTask {
 
     public abstract void setRemark(String remark);
 
-    public abstract void setStatus(Integer status);
-
     public abstract Integer getStatus();
+
+    public abstract void setStatus(Integer status);
 
     public String getWebsiteName() {
         return websiteName;

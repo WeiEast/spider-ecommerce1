@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<extrator-selectors>
+		<selector field="pageContent" contain="上海银行\d+年\d+月信用卡电子对账单" dis-contain="" ref="page-extractor-1">
+		</selector>
+	</extrator-selectors>
+
+	<page-extractor-definition>
+		<page-extractor id="page-extractor-1">
+			<page-sources>
+				<source field="pageContent">
+				</source>
+			</page-sources>
+			<object-segment name="bankBills">
+				<field-extractor id="NameOnCard" field="NameOnCard" result-type="string" not-empty="true ">
+					<operation type="xpath"><![CDATA[table:contains(对账日期):not(:has(table:contains(对账日期)))>tbody>tr:eq(1) td:eq(1)/text()]]></operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<field-extractor id="BillMonth" field="BillMonth" result-type="date" format="yyyy年MM月" not-empty="true">
+					<operation type="xpath"><![CDATA[td:contains(对账日期) + td/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[(\d{4}年\d{2}月)\d{2}日-\d{4}年\d{2}月\d{2}日]]></operation>
+				</field-extractor>
+				<field-extractor id="BillStartDate" field="BillStartDate" result-type="date" format="yyyy年MM月dd日" not-empty="true">
+					<operation type="xpath"><![CDATA[td:contains(对账日期) + td/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[(\d{4}年\d{2}月\d{2}日)-\d{4}年\d{2}月\d{2}日]]></operation>
+				</field-extractor>
+				<field-extractor id="BillDate" field="BillDate" result-type="date" format="yyyy年MM月dd日" not-empty="true">
+					<operation type="xpath"><![CDATA[td:contains(对账日期) + td/text()]]></operation>
+					<operation type="regex" index="1"><![CDATA[\d{4}年\d{2}月\d{2}日-(\d{4}年\d{2}月\d{2}日)]]></operation>
+				</field-extractor>
+				<field-extractor id="PaymentDueDate" field="PaymentDueDate" result-type="date" format="yyyy年MM月dd日" not-empty="true">
+					<operation type="xpath"><![CDATA[td:contains(到期还款日) + td/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="CreditLimit" field="CreditLimit" result-type="currency_payment" not-empty="true">
+					<operation type="xpath"><![CDATA[td:contains(信用额度) + td/text()]]></operation>
+				</field-extractor>
+
+				<field-extractor id="basicMatcher" field="temp">
+					<operation type="xpath"><![CDATA[tr:contains(RMB):not(:has(tr)):not(:contains(人民币账户)):not(:contains(信用额度))]]></operation>
+				</field-extractor>
+				<field-extractor id="NewBalance" field="NewBalance" source="basicMatcher" result-type="currency_payment" not-empty="true">
+					<operation type="xpath"><![CDATA[ td:eq(5)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="MinPayment" field="MinPayment" source="basicMatcher" result-type="currency_payment" not-empty="true">
+					<operation type="xpath"><![CDATA[td:eq(6)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="LastBalance" field="LastBalance" source="basicMatcher" result-type="currency_payment" not-empty="true">
+					<operation type="xpath"><![CDATA[td:eq(1)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="NewChargesTemp1" field="temp" source="basicMatcher" result-type="number" not-empty="true">
+					<operation type="xpath"><![CDATA[ td:eq(2)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="NewChargesTemp2" field="temp" source="basicMatcher" result-type="number" not-empty="true">
+					<operation type="xpath"><![CDATA[ td:eq(4)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="NewCharges" field="NewCharges" result-type="currency_payment" not-empty="true">
+					<operation type="calculate"><![CDATA[ ${NewChargesTemp1}+${NewChargesTemp2}]]></operation>
+				</field-extractor>
+				<field-extractor id="LastPayment" field="LastPayment" source="basicMatcher" result-type="currency_payment" not-empty="true">
+					<operation type="xpath"><![CDATA[td:eq(3)/text()]]></operation>
+					<operation type="replace" from="-" to=""></operation>
+				</field-extractor>
+
+				<field-extractor id="IntegralBasic" field="temp">
+					<operation type="xpath"><![CDATA[tr:has(img[src=http://edm.bankofshanghai.com/stat//editor/Image/96288/20130307xykzd_79(2).jpg]) + tr ]]></operation>
+				</field-extractor>
+				<field-extractor id="Integral" field="Integral" source="IntegralBasic" result-type="number">
+					<operation type="xpath"><![CDATA[td:not(:has(td)):eq(5)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="IntegralReward" source="IntegralBasic" field="IntegralReward" result-type="number">
+					<operation type="xpath"><![CDATA[td:not(:has(td)):eq(2)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="IntegralAdd" source="IntegralBasic" field="IntegralAdd" result-type="number">
+					<operation type="xpath"><![CDATA[td:not(:has(td)):eq(1)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="IntegralAdjust" source="IntegralBasic" field="IntegralAdjust" result-type="number">
+					<operation type="xpath"><![CDATA[td:not(:has(td)):eq(3)/text()]]></operation>
+				</field-extractor>
+				<field-extractor id="IntegralUsed" source="IntegralBasic" field="IntegralUsed" result-type="number">
+					<operation type="xpath"><![CDATA[td:not(:has(td)):eq(4)/text()]]></operation>
+				</field-extractor>
+
+				<object-segment name="ShoppingSheet" type="xpath" value="tr:contains(人民币账户):not(:has(tr)) ~ tr:not(:contains(本期余额))">
+					<field-extractor id="CardNo" field="CardNo" result-type="string">
+						<operation type="xpath"><![CDATA[td:eq(4)/text()]]></operation>
+						<operation type="replace" from="\u0026nbsp;" to=""></operation>
+						<operation type="trim"></operation>
+					</field-extractor>
+					<field-extractor id="TransDate" field="TransDate" result-type="date" format="yyyy年MM月dd日">
+						<operation type="xpath"><![CDATA[td:eq(0)/text()]]></operation>
+						<operation type="trim"></operation>
+					</field-extractor>
+					<field-extractor id="PostDate" field="PostDate" result-type="date" format="yyyy年MM月dd日">
+						<operation type="xpath"><![CDATA[td:eq(1)/text()]]></operation>
+						<operation from="\u0026nbsp;" to="" type="replace"></operation>
+						<operation type="trim"></operation>
+					</field-extractor>
+					<field-extractor id="Description" field="Description" result-type="string">
+						<operation type="xpath"><![CDATA[td:eq(2)/text()]]></operation>
+
+						<operation type="trim"></operation>
+					</field-extractor>
+					<field-extractor id="AmountMoney" field="AmountMoney" result-type="currency_payment">
+						<operation type="xpath"><![CDATA[td:eq(3)/text()]]></operation>
+						<operation type="trim"></operation>
+					</field-extractor>
+
+				</object-segment>
+
+			</object-segment>
+		</page-extractor>
+
+	</page-extractor-definition>
+	<plugin-definition>
+
+	</plugin-definition>
+</config>

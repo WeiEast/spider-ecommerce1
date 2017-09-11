@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.collector.chain.search;
 
+import java.util.List;
+
 import com.datatrees.crawler.core.processor.bean.CrawlRequest;
 import com.datatrees.crawler.core.processor.bean.CrawlResponse;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
@@ -16,16 +18,13 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午2:47:10
  */
 public class AddPagingUrlLinkFilter implements Filter {
+
     private static final Logger log = LoggerFactory.getLogger(AddPagingUrlLinkFilter.class);
 
     @Override
@@ -58,12 +57,10 @@ public class AddPagingUrlLinkFilter implements Filter {
         filterChain.doFilter(context, filterChain);
     }
 
-
     private boolean needAddPagingUrl(CrawlRequest request, CrawlResponse response) {
         int responseStatus = ResponseUtil.getResponseStatus(response);
         if (responseStatus == Status.NO_SEARCH_RESULT || responseStatus == Status.LAST_PAGE || StringUtils.isEmpty(RequestUtil.getContent(request))) {
-            log.warn("isContinuousPageFlag : " + " responseStatus " + responseStatus + " pageContent is empty : "
-                    + StringUtils.isEmpty(RequestUtil.getContent(request)));
+            log.warn("isContinuousPageFlag : " + " responseStatus " + responseStatus + " pageContent is empty : " + StringUtils.isEmpty(RequestUtil.getContent(request)));
             return false;
         }
         return true;
@@ -71,15 +68,11 @@ public class AddPagingUrlLinkFilter implements Filter {
 
     private String getPageLinkUrl(int currentPageNum, SearchProcessor searchProcessor) {
         log.info("getPageLinkUrl currentPageNum:  " + currentPageNum);
-        String pageLinkUrl =
-                SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(),
-                        searchProcessor.getEncoding(), currentPageNum, true, searchProcessor.getProcessorContext().getContext());
+        String pageLinkUrl = SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(), searchProcessor.getEncoding(), currentPageNum, true, searchProcessor.getProcessorContext().getContext());
         return pageLinkUrl;
     }
 
     /**
-     * 
-     * 
      * @param current
      */
     private void copyProperties(LinkNode pageNumUrlLink, LinkNode current) {

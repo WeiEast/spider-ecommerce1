@@ -5,29 +5,28 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.collector.bdb.wapper.BDBEnvironmentWapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月19日 下午9:02:57
  */
 public class BDBEnvironmentManager implements EnvironmentManager {
-    private static final Logger log = LoggerFactory.getLogger(BDBEnvironmentManager.class);
-    // Keep only one generation object in this queue
-    private ConcurrentLinkedQueue<BDBEnvironmentWapper> newGenerationContainer = new ConcurrentLinkedQueue<BDBEnvironmentWapper>();
+
+    private static final Logger                                      log                    = LoggerFactory.getLogger(BDBEnvironmentManager.class);
+    private static       BDBEnvironmentManager                       manager                = new BDBEnvironmentManager();
     // Save the object needs to be destoryed
     // private ConcurrentLinkedQueue<BDBEnvironmentWapper> toBeDestroyedContainer = new
     // ConcurrentLinkedQueue<BDBEnvironmentWapper>();
-    private final int max_db_count = PropertiesConfiguration.getInstance().getInt("collector.bdb.max.db.count", 10);
+    private final        int                                         max_db_count           = PropertiesConfiguration.getInstance().getInt("collector.bdb.max.db.count", 10);
+    // Keep only one generation object in this queue
+    private              ConcurrentLinkedQueue<BDBEnvironmentWapper> newGenerationContainer = new ConcurrentLinkedQueue<BDBEnvironmentWapper>();
 
-    private static BDBEnvironmentManager manager = new BDBEnvironmentManager();
+    private BDBEnvironmentManager() {}
 
-    private BDBEnvironmentManager() {};
+    ;
 
     public static BDBEnvironmentManager getInstance() {
         return manager;

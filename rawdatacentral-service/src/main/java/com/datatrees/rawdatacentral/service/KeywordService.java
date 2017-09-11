@@ -1,8 +1,8 @@
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.rawdatacentral.domain.model.Keyword;
-
 import java.util.List;
+
+import com.datatrees.rawdatacentral.domain.model.Keyword;
 
 /**
  * 搜索关键字

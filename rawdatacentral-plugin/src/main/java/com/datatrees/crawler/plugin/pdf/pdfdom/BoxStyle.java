@@ -1,30 +1,30 @@
 package com.datatrees.crawler.plugin.pdf.pdfdom;
 
 public class BoxStyle {
-    public static final String defaultColor = "#000000";
+
+    public static final String defaultColor      = "#000000";
     public static final String defaultFontWeight = "normal";
-    public static final String defaultFontStyle = "normal";
-    public static final String defaultPosition = "absolute";
-    public static final String transparentColor = "rgba(0,0,0,0)";
+    public static final String defaultFontStyle  = "normal";
+    public static final String defaultPosition   = "absolute";
+    public static final String transparentColor  = "rgba(0,0,0,0)";
     private String units;
     // font
     private String fontFamily;
-    private float fontSize;
+    private float  fontSize;
     private String fontWeight;
     private String fontStyle;
-    private float lineHeight;
-    private float wordSpacing;
-    private float letterSpacing;
+    private float  lineHeight;
+    private float  wordSpacing;
+    private float  letterSpacing;
     private String color;
     private String strokeColor;
     // position
     private String position;
-    private float left;
-    private float top;
+    private float  left;
+    private float  top;
 
     /**
      * Creates a new style using the specified units for lengths.
-     * 
      * @param units Units used for lengths (e.g. 'pt')
      */
     public BoxStyle(String units) {
@@ -98,9 +98,7 @@ public class BoxStyle {
     private String createTextStrokeCss(String color) {
         // text shadow fall back for non webkit, gets disabled in default style sheet
         // since can't use @media in inline styles
-        String strokeCss =
-                "-webkit-text-stroke: %color% 1px ;" + "text-shadow:" + "-1px -1px 0 %color%, " + "1px -1px 0 %color%," + "-1px 1px 0 %color%, "
-                        + "1px 1px 0 %color%;";
+        String strokeCss = "-webkit-text-stroke: %color% 1px ;" + "text-shadow:" + "-1px -1px 0 %color%, " + "1px -1px 0 %color%," + "-1px 1px 0 %color%, " + "1px 1px 0 %color%;";
 
         return strokeCss.replaceAll("%color%", color);
     }

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<protocol-type-list>
+		<protocol-type><![CDATA[HTTP]]></protocol-type>
+	</protocol-type-list>
+	<result-tag-list>
+		<result-tag><![CDATA[bankbill]]></result-tag>
+	</result-tag-list>
+
+	<url-filters>
+		<url-filter type="+">.qq.com</url-filter>
+	</url-filters>
+
+
+	<properties>
+		<encoding>GBK</encoding>
+		<unicode-mode><![CDATA[hex]]></unicode-mode>
+	</properties>
+
+	<login login-type="app">
+		<login-check success-pattern="cgi-bin/frame_html\?">
+			<check-url><![CDATA[${endurl}]]></check-url>
+			<object-segment name="sid">
+				<field-extractor id="sid" field="sid" result-type="string" field-visible-type="context" not-empty="true">
+					<operation type="regex" index="1"><![CDATA[cgi-bin/frame_html[^"]*sid=([^&="]{6,})]]></operation>
+				</field-extractor>
+				<field-extractor id="emailAccount" field="emailAccount" field-visible-type="processor_result" not-empty="true">
+					<operation type="xpath">//p[@class='qm_footer_userInfo']/text()</operation>
+					<operation type="regex" index="1"><![CDATA[(.*) \-]]></operation>
+				</field-extractor>
+				<field-extractor id="qqAccount" field="qqAccount" field-visible-type="processor_result">
+					<operation type="xpath">//input[@id='uin']/@value</operation>
+				</field-extractor>
+				<field-extractor id="qqAccount" field="qqAccount" field-visible-type="processor_result" stand-by="true">
+					<operation type="template">${cookie.qm_username}</operation>
+				</field-extractor>
+				<field-extractor id="noNeedDetect" field="noNeedDetect" field-visible-type="processor_result" result-type="boolean">
+					<operation type="template">true</operation>
+				</field-extractor>
+			</object-segment>
+		</login-check>
+	</login>
+
+	<page-definition>
+		<page id="keyword-search-page" path="/cgi-bin/mail_list" page-num-regex="page=(\d+)">
+			<object-segment name="linkNode" type="xpath" value="div.toarea>table.i" result-class="LinkNode">
+				<field-extractor id="mailid" field="mailid" result-type="string">
+					<operation type="regex" index="1">event,'([^']*)'</operation>
+				</field-extractor>
+				<field-extractor id="conversationMode" field="temp">
+					<operation type="regex" index="2">event,'([^']*)',\d+,(\d+)</operation>
+					<operation from="3" to="t=readmail_ad_conversation" type="replace"></operation>
+					<operation from="1" to="t=readmail_conversation" type="replace"></operation>
+					<operation from="^[^=]+$" to="t=readmail_conversation" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="readMode" field="temp">
+					<operation type="template">${mailid}</operation>
+					<operation from="^C[\w\d]+" to="${conversationMode}" type="replace"></operation>
+					<operation from="^[^=]+$" to="t=readmail&amp;action=readmailmime" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${emailAccount}_${mailid}</operation>
+				</field-extractor>
+				<field-extractor id="fid" field="fid" result-type="string">
+					<operation type="regex" index="1">fid="([^"]*)"</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[http://set1.mail.qq.com/cgi-bin/readmail?folderid=${fid}&${readMode}&mailid=${mailid}&mode=pre&sid=${sid}&disptype=html]]></operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" result-type="date">
+					<operation type="xpath">//input[@name='mailid']/@totime</operation>
+				</field-extractor>
+				<field-extractor id="receiveAtTemp" field="temp">
+					<operation type="xpath">//td[@class='dt']/text()</operation>
+					<operation from=".*昨天.*" to="-1" type="replace"></operation>
+					<operation from=".*(今天|秒前|分钟前|小时前).*" to="0" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" stand-by="true" result-type="date" format="MM月dd日;yyyy/MM/dd">
+					<operation type="xpath">//td[@class='dt']/text()</operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" stand-by="true" result-type="date" not-empty="true">
+					<operation type="datetime" base-type="now" datetime-field-type="date" offset="${receiveAtTemp}" />
+				</field-extractor>
+				<field-extractor id="subject" field="subject" result-type="string">
+					<operation type="xpath">//div[@class='tf no']//u/text()</operation>
+					<operation from="&amp;nbsp;" to="" type="replace"></operation>
+					<operation from="账\s*单" to="账单" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="folder" field="folder" result-type="string">
+					<operation type="xpath">//td[@class='ts']/text()</operation>
+					<operation type="trim"></operation>
+				</field-extractor>
+				<object-segment name="sender" type="xpath" value="//nobr/span" result-class="string" pop-return="true">
+					<field-extractor id="sender" field="sender" result-type="string">
+						<operation type="xpath">//span/@e</operation>
+					</field-extractor>
+				</object-segment>
+				<field-extractor id="sys" field="sys" result-type="string" default-vaule="2">
+					<operation type="xpath">td.tl nobr</operation>
+					<operation type="xpath">//@sys</operation>
+					<operation type="append" index="-1"><![CDATA[_${folder}]]></operation>
+					<!-- 1:可信 ,2: 不可信，3:欺诈 (只正对于firsthand=1) -->
+					<operation from="^1_.*" to="1" type="replace"></operation>
+					<operation from="^0_.*@.*" to="2" type="replace"></operation>
+					<operation from="^0_.*" to="3" type="replace"></operation>
+				</field-extractor>
+			</object-segment>
+
+			<object-segment name="linkNode" type="xpath" value="//a[@id='nextpage']" result-class="LinkNode">
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="extract"></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="show-page" path="action=readmailmime" page-retry-pattern="您请求的频率太快，请稍后再试" retry-sleep-second="5" retry-mode="requeue">
+			<object-segment name="mail" result-class="MailBillData">
+				<field-extractor id="sender" field="sender" result-type="string">
+					<operation type="template">${sender}</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${uniqueSign}</operation>
+				</field-extractor>
+				<field-extractor id="mail" field="temp" field-visible-type="request">
+					<operation type="mailparser" body-parser="true"></operation>
+				</field-extractor>
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="template">${mail.pageContent}</operation>
+				</field-extractor>
+				<field-extractor id="pageContentFile" field="pageContentFile">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="subject" field="subject" result-type="string" default-value="${subject}">
+					<operation type="template">${mail.Mail_Subject}</operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" result-type="date" format="yyyy-MM-dd hh:mm:ss">
+					<operation type="template" return-object="true">${receiveAt}</operation>
+				</field-extractor>
+				<field-extractor id="receiver" field="receiver" result-type="string">
+					<operation type="template">${mail.Mail_To}</operation>
+					<operation type="regex" index="1"><![CDATA[<(\w+@[\w\.]+)>]]></operation>
+				</field-extractor>
+				<field-extractor id="receiver" field="receiver" result-type="string" stand-by="true">
+					<operation type="template">${mail.Mail_To}</operation>
+					<operation type="regex" index="1"><![CDATA[\[(\w+@[\w\.]+)\]]]></operation>
+				</field-extractor>
+				<field-extractor id="receiver" field="receiver" result-type="string" stand-by="true">
+					<operation type="template">${mail.Mail_To}</operation>
+				</field-extractor>
+				<field-extractor id="attachment" field="attachment" result-type="file">
+					<operation type="template" return-object="true">${mail.attachment}</operation>
+				</field-extractor>
+
+				<field-extractor id="mailHtmlUrl" field="temp">
+					<operation type="template">${current_url}</operation>
+					<operation from="readmailmime" to="" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="sysFlag" field="temp" field-visible-type="request">
+					<operation type="template">${sys}</operation>
+				</field-extractor>
+				<field-extractor id="sysFlag" field="temp" stand-by="true" field-visible-type="request">
+					<operation type="parser" ref="mailHtml-parser" />
+					<operation type="regex" index="1"><![CDATA["system:(\d+)\|friend]]></operation>
+					<operation type="append" index="-1"><![CDATA[_${folder}]]></operation>
+					<!-- 1:可信 ,2: 不可信，3:欺诈 (只正对于firsthand=1) -->
+					<operation from="^1_.*" to="1" type="replace"></operation>
+					<operation from="^0_.*@.*" to="2" type="replace"></operation>
+					<operation from="^0_.*" to="3" type="replace"></operation>
+				</field-extractor>
+				<object-segment name="extraInfo" pop-return="true">
+					<field-extractor id="ServerIp" field="ServerIp">
+						<operation type="template">${mail.mailServerIp}</operation>
+					</field-extractor>
+					<field-extractor id="ServerIp" field="ServerIp" stand-by="true">
+						<operation type="template">${mail.x-originating-ip}</operation>
+						<operation type="regex" index="1"><![CDATA[(\d+.\d+.\d+.\d+)]]></operation>
+					</field-extractor>
+					<field-extractor id="ModifiedAt" field="ModifiedAt" result-type="date">
+						<operation type="template" return-object="true">${mail.Mail_Date}</operation>
+					</field-extractor>
+					<field-extractor id="IsImapTemp" field="temp">
+						<operation type="template">${mail.x-qq-imap}</operation>
+					</field-extractor>
+					<field-extractor id="IsImapTemp" field="temp" stand-by="true">
+						<operation type="template">${mail.x-cuid}</operation>
+					</field-extractor>
+					<field-extractor id="IsImap" field="IsImap" source="IsImapTemp" result-type="boolean">
+						<operation type="triple" triple-type="regex">${this} matches:X-CUID|X-QQ-IMAP?true:false</operation>
+					</field-extractor>
+					<field-extractor id="sysFlag" field="sysFlag" result-type="int" default-value="2">
+						<operation type="template">${sysFlag}</operation>
+					</field-extractor>
+				</object-segment>
+			</object-segment>
+		</page>
+
+
+		<page id="show-conversation-page" path="conversation" page-retry-pattern="您请求的频率太快，请稍后再试" retry-sleep-second="5" retry-mode="requeue">
+			<object-segment name="linkNode" type="xpath" value="div[id^=submail][context]" result-class="LinkNode">
+				<field-extractor id="mailid" field="mailid" result-type="string">
+					<operation type="xpath">//div/@context</operation>
+				</field-extractor>
+				<field-extractor id="uniqueSign" field="uniqueSign" result-type="string">
+					<operation type="template">${emailAccount}_${mailid}</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+					<operation from="t=readmail_conversation" to="t=readmail&amp;action=readmailmime" type="replace"></operation>
+					<operation from="t=readmail_ad_conversation" to="t=readmail&amp;action=readmailmime" type="replace"></operation>
+					<operation from="mailid=[^&amp;]*" to="mailid=${mailid}" type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="receiveAt" field="receiveAt" default-value="${receiveAt}" result-type="date" format="MM月dd日 hh:mm;yyyy/MM/dd;MM月dd日;yyyy-MM-dd hh:mm:ss">
+					<operation type="xpath">//td[@class='txtflow'][last()]/text()</operation>
+					<operation from="&amp;nbsp;" to=" " type="replace"></operation>
+				</field-extractor>
+				<field-extractor id="subject" field="subject" result-type="string">
+					<operation type="template">${subject}</operation>
+				</field-extractor>
+				<field-extractor id="sender" field="sender" result-type="string">
+					<operation type="template">${sender}</operation>
+				</field-extractor>
+				<field-extractor id="folder" field="folder" result-type="string">
+					<operation type="template">${folder}</operation>
+				</field-extractor>
+				<field-extractor id="sys" field="sys" result-type="string">
+					<operation type="template">${sys}</operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+
+		<page id="mail-group-page" path="mail_list_group">
+			<object-segment name="mail" result-class="DefaultData">
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+				<field-extractor id="qqAccount" field="qqAccount" result-type="string">
+					<operation type="template">${qqAccount}</operation>
+				</field-extractor>
+				<field-extractor id="3gurl" field="3gurl" result-type="string">
+					<operation type="template"><![CDATA[http://info.3g.qq.com/g/s?&aid=index&g_ut=3&g_f=23789&sid=${sid}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+		<page id="qq-friends-page" path="laddr_list">
+			<object-segment name="mail" result-class="DefaultData">
+				<field-extractor id="pageContent" field="pageContent">
+					<operation type="return"></operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template">${current_url}</operation>
+				</field-extractor>
+			</object-segment>
+			<object-segment name="linkNode" type="xpath" value="//ul[@class='navlist_min navlist_qq']//span[@ui-type='groupcnt']" result-class="LinkNode">
+				<field-extractor id="groupid" field="temp">
+					<operation type="xpath">//span/@data-id</operation>
+				</field-extractor>
+				<field-extractor id="url" field="url" result-type="string">
+					<operation type="template"><![CDATA[http://set1.mail.qq.com/cgi-bin/laddr_list?sid=${sid}&operate=view&t=contact&view=qq&groupid=${groupid}]]></operation>
+				</field-extractor>
+			</object-segment>
+		</page>
+	</page-definition>
+
+
+	<search>
+		<search-template id="qq-friends-template" type="deep" max-depth="0" thread-count="3">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://set1.mail.qq.com/cgi-bin/laddr_list?sid=${sid}&operate=view&t=contact&view=qq&groupid=1000000]]></url-template>
+				</url-templates>
+				<default-header><![CDATA[{"Referer":"http://mail.qq.com/cgi-bin/frame_html"}]]></default-header>
+				<max-page>20</max-page>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="qq-friends-page" />
+			</page-sequence>
+		</search-template>
+		<search-template id="mail-group-template" type="deep" max-depth="0" thread-count="3">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://set1.mail.qq.com/cgi-bin/mail_list?sid=${sid}&folderid=8&folderkey=8&page=0&t=mail_list_group&cachemod=maillist&cacheage=7200&r=]]></url-template>
+				</url-templates>
+				<default-header><![CDATA[{"Referer":"http://mail.qq.com/cgi-bin/frame_html"}]]></default-header>
+				<max-page>1</max-page>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="mail-group-page" />
+			</page-sequence>
+		</search-template>
+		<search-template id="keyword-search-template" type="keyword_search" max-depth="1" thread-count="3">
+			<request>
+				<url-templates>
+					<url-template><![CDATA[http://set1.mail.qq.com/cgi-bin/mail_list?sid=${sid}&s=search&folderid=all&page=0&subject=${keyword}&sender=${keyword}&receiver=${keyword}&searchmode=&topmails=0&advancesearch=0&loc=frame_html,,,6]]></url-template>
+				</url-templates>
+				<default-header><![CDATA[{"Referer":"http://mail.qq.com/cgi-bin/frame_html"}]]></default-header>
+				<max-page>1000</max-page>
+				<no-search-results-pattern></no-search-results-pattern>
+				<max-retry-count><![CDATA[3]]></max-retry-count>
+			</request>
+			<page-sequence>
+				<page depth="0" ref="keyword-search-page" />
+				<page depth="1" ref="show-page" />
+				<page depth="1" ref="show-conversation-page" />
+			</page-sequence>
+		</search-template>
+	</search>
+
+
+
+	<parser-definition>
+		<parser id="mailHtml-parser">
+			<url-template><![CDATA[${mailHtmlUrl}]]></url-template>
+		</parser>
+	</parser-definition>
+</config>

@@ -1,0 +1,254 @@
+﻿
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>邮件账单列表</title>
+		<meta charset="utf-8" />
+		<link href="css/base.css" rel="stylesheet" type="text/css">
+		<link href="css/mail.css" rel="stylesheet" type="text/css">
+		<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="js/userbill.js"></script>
+	</head>
+	<body>
+  		 <a href="download.do?mailId=27_8203712_347421554">附件下载</a>
+		<div class="showTable">
+			<table>
+			  <thead>
+			    <tr>
+        			<th>银行</th>
+                    <th>持卡人</th>
+                    <th>账单周期</th>
+                    <th>卡号后四位</th>
+                    <th>最后还款日</th>
+                    <th>本期应还款</th>
+                    <th>最低还款额</th>
+                    <th>信用额度/取现额度</th>
+                    <th>上期应还额</th>
+                    <th>本期积分</th>
+                    <th>新增积分</th>
+                    <th>BillID</th>
+                    <th>UBID</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  </tbody>
+			</table>
+		<div style="float:right"> <a href="javascript:void(0)" onclick="UserBill.ChangeAnalyzeState()">解析错误</a> </div>
+		</div>
+		<style>
+
+html{word-wrap:break-word;}
+body{font-size:14px;font-family:arial,verdana,sans-serif;line-height:1.666;padding:8px 10px;margin:0;}
+pre {
+	white-space: pre-wrap; 
+	white-space: -moz-pre-wrap; 
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+}
+</style>
+
+
+
+
+<html>
+<head>
+
+</head>
+<body>
+<img src="http://creditcard.bocomcc.com/s.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236" border="0" width="0"><HTML><HEAD></HEAD><BODY><P>
+<STYLE type="text/css">
+&lt;!--
+
+body { margin: 0; padding: 0; background: #fff; font-size: 12px; color: #656565; line-height: 16px; }
+table { font-size: 13px; border: 0; font-family: "Hiragino Sans GB", "Lucida Grande", Microsoft YaHei, arial; color: #555; }
+.center { margin: 0 auto; }
+.clear { clear: both; }
+img { border: none; }
+a { color: #555; }
+.h1 { color: #01357b; font-size: 20px; }
+.h2 { color: #01357b; font-size: 17px; font-weight: bold; }
+.h2 img { vertical-align: middle; }
+.h3 { font-size: 17px; }
+.f-wb { font-weight: bold; }
+.bill-list { border-collapse: collapse; }
+.bill-list td { border: #e3e4e8 solid 1px; padding-left: 46px; }
+.bill-list th { border-left: #bdd0e1 solid 1px; border-right: #bdd0e1 solid 1px; border-top: #fff solid 1px; background-color: #e4eef8; height: 32px; line-height: 2.3; padding-left: 12px; color: #096bb4; }
+.bill-list .tt { border-top: #bdd0e1 solid 1px; }
+.bill-list .bb { border-bottom: #bdd0e1 solid 1px; }
+.bg-box { background: url(http://182.180.19.96:9080/smartedm/t_images/10/box_t2.jpg) no-repeat; }
+.u-top3 { background: url(http://182.180.19.96:9080/smartedm/t_images/10/box_t3.jpg) no-repeat; }
+.m-tb { }
+.m-tb th { color: #096bb4; padding-left: 12px; padding-top: 5px; padding-bottom: 5px; }
+.m-tb td { padding-left: 12px; }
+.m-tb2 th { color: #096bb4; padding: 10px 5px 10px 12px; text-align: left; }
+.m-tb2 td { padding: 5px 5px 5px 12px; vertical-align: top; }
+.m-tb2 tr:nth-child(2n+1) { background-color: #f9f9f9; }
+.m-tb2 .more-bar { background-color: #fff; padding: 12px 0; }
+.m-tb2-td td { padding: 10px 5px 10px 12px; }
+.u-tit { background-color: #e4eef8; height: 33px; text-align: center; }
+.u-txt { color: #096bb4; font-size: 14px; }
+.small-txt { font-size: 12px; }
+.m-c{background:url(http://182.180.19.96:9080/smartedm/t_images/10/e_edm_02.jpg) no-repeat 606px 16px;}
+--&gt;</STYLE></P>
+<TABLE align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: 'Hiragino Sans GB', 'Lucida Grande', Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="720">
+    <TBODY>
+        <TR>
+            <TD height="53">
+            <TABLE border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: 'Hiragino Sans GB', 'Lucida Grande', Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="100%">
+                <TBODY>
+                    <TR>
+                        <TD align="left" colspan="6" valign="bottom"><IMG alt="" height="88" src="http://creditcard.bocomcc.com/t_images/10/header_01.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="720">
+</TD>
+                    </TR>
+                    <TR>
+                        <TD align="left" valign="bottom"><A href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~0" style="color: #555" target="_blank"><IMG alt="" height="34" src="http://creditcard.bocomcc.com/t_images/10/header_02.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="124">
+</A>
+</TD>
+                        <TD align="left" valign="bottom"><A href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~1" style="color: #555" target="_blank"><IMG alt="" height="34" src="http://creditcard.bocomcc.com/t_images/10/header_03.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="112">
+</A>
+</TD>
+                        <TD align="left" valign="bottom"><A href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~2" style="color: #555" target="_blank"><IMG alt="" height="34" src="http://creditcard.bocomcc.com/t_images/10/header_04.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="120">
+</A>
+</TD>
+                        <TD align="left" valign="bottom"><A href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~3" style="color: #555" target="_blank"><IMG alt="" height="34" src="http://creditcard.bocomcc.com/t_images/10/header_05.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="123">
+</A>
+</TD>
+                        <TD align="left" valign="bottom"><A href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~4" style="color: #555" target="_blank"><IMG alt="" height="34" src="http://creditcard.bocomcc.com/t_images/10/header_06.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="111">
+</A>
+</TD>
+                        <TD align="left" valign="bottom"><A href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~5" style="color: #555" target="_blank"><IMG alt="" height="34" src="http://creditcard.bocomcc.com/t_images/10/header_07.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="130">
+</A>
+</TD>
+                    </TR>
+                </TBODY>
+            </TABLE>
+            </TD>
+        </TR>
+    </TBODY>
+</TABLE>
+<TABLE align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: 'Hiragino Sans GB', 'Lucida Grande', Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="720">
+    <TBODY>
+        <TR>
+            <TD><IMG alt="" height="84" src="http://creditcard.bocomcc.com/t_images/10/edm_final_01_02.jpg" style="border-bottom: 0px; border-left: 0px; border-top: 0px; border-right: 0px" width="720"></TD>
+        </TR>
+        <TR>
+            <TD><div id="cntDiv" style="width:725px; margin:0 2px;">	<div id="container">	    <div style="margin-top:20px; position:relative">		   <p style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; color:#666666; font-size:17px; margin-bottom:3px; margin-right:80px; ">&nbsp;&nbsp;&nbsp;尊敬的 郭宗涛先生您好！</p>		   <p style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;color:#666666; font-size:14px; margin-bottom:3px; margin-right:80px; ">&nbsp;&nbsp;&nbsp;&nbsp;感谢您使用交通银行信用卡，以下是您2015年08月份的信用卡电子账单。</p>		   <p style=" font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;color:#666666; font-size:14px; margin-bottom:3px;margin-right:80px; font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;交通银行维萨标准&nbsp;&nbsp;卡号:458123******2483</p>		   <p style=" font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;color:#666666; font-size:14px; margin-bottom:3px;margin-right:80px; font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;账单周期：2015/07/18-2015/08/17</p>		</div>		<div style="margin-top:20px; position:relative&gt;		    &lt;div id=" cntTitle="" style="float:left; padding-left:20px; color:#00006F;font-weight:bold; font-size:16px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/title_pic1.png) no-repeat 0 0;">             本期账务说明		    </div> 		    			<div id="titleR" style="color:#666666;  margin-right:10px;float:right;">								</div>			<div style="clear:both"></div>			<div id="billInfo1" style="border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius:8px; -moz-border-radius: 8px; margin:10px; padding:20px;font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; ">			   <table id="table1" style="border-collapse:collapse; text-align:left; margin:10px;" border="1" bordercolor="#C1BDF7">			      <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         到期还款日				     </th>					 <td colspan="2" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px;padding:5px 10px;">2015/09/11</td>					 					 <td width="150px;" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px;padding:5px 10px;">					 	<a href="https://creditcardapp.bankcomm.com/member/member/value/add/service/detail.html?prodNo=XYBZ0001&amp;cardNo=4581 **** **** 2483&amp;_channel=DX2"> 					 		<img style="cursor:pointer;" src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_sms.png" border="0"> </a> 					 	</td>				   </tr>				    <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         本期应还款额				     </th>					 <td width="150px;" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;">￥ 9345.15</td>					 <td width="150px;" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;">$ 0.00</td>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">					 	<a href="https://creditcardapp.bankcomm.com/member/member/payment/index.html?_channel=HK2">					 		<img style="cursor:pointer;" src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_pay.png" border="0">					 	</a>					 </td>				   </tr> 				   <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         最低还款额				     </th>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">￥ 934.52</td>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">$ 0.00</td>					  <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;padding:5px 10px;">					  	<a href="https://creditcardapp.bankcomm.com/member/member/qryInstallmentCNY.html?_channel= FQ2 &amp;cardNo=4581 **** **** 2483"> 					  		<img style="cursor:pointer;" src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_plan.png" border="0"> 					  	</a> 					   </td>				   </tr>				   <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         信用额度				     </th>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">￥ 22000</td>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;"> $ 3450</td>					 					 <td rowspan="2" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">					 	 <a href="java_script:void(0)">  					 	 		<img style="cursor:pointer;" src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_limit_un.png" border="0"> 					   </a>						 	 </td>				   </tr>				   <tr>				     <th style="background-color:rgb(229,238,247); color:rgb(10,108,183); font-size:14px; padding:5px 10px; border-bottom:1px solid white;">                         取现额度				     </th>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;">￥ 7000</td>					 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial;font-size:14px; padding:5px 10px;padding:5px 10px;"> $ 1090</td>				   </tr>			   </table>			</div>																	<div id="billInfo14" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;  border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius: 8px; -moz-border-radius: 8px; margin:10px; padding:20px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/tableTop.png) repeat-x;">				尊敬的客户，您的原人民币信用额度14000.00元已临时调至22000.00元，美元信用额度2190.00美元已临时调至3450.00美元，有效期为2015年06月17日至2015年09月11日。有效期结束后临时信用额度会自动恢复为原信用额度，请尽量在额度恢复前还款，以免为您带来不便。			</div>																		<div style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px; border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius: 8px; -moz-border-radius: 8px; margin:10px; padding:20px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/tableTop.png) repeat-x;">				 <table id="table4" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px; border-collapse:collapse; text-align:left; margin:10px;margin:20px 10px; ">					  <tr>					  	<th></th>						  <th style=" color:rgb(10,108,183); font-size:13px; padding:5px 15px; border-bottom:1px solid white;padding:0;">本期账单应还款额&nbsp;&nbsp;=&nbsp;</th>						  <th style=" color:rgb(10,108,183); font-size:13px; padding:5px 15px; border-bottom:1px solid white;padding:0;">上期账单应还款额&nbsp;&nbsp;-&nbsp;</th>						  <th style=" color:rgb(10,108,183); font-size:13px; padding:5px 15px; border-bottom:1px solid white;padding:0;">还款/退货/费用返还&nbsp;&nbsp;+&nbsp;&nbsp;</th>						  <th style=" color:rgb(10,108,183); font-size:13px; padding:5px 15px; border-bottom:1px solid white;padding:0;">消费/取现/其他费用</th>					  </tr>					  				  <tr>						 <td style="color:rgb(10,108,183); font-weight:bold;">人民币账户</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">9345.15</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">0.00</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">50.40 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">9395.55</td>					  </tr>					   				  <tr>						 <td style="color:rgb(10,108,183); font-weight:bold;">美元账户</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">0.00</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">0.00</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">0.00 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">0.00</td>					  </tr>					   				   </table>			</div>						   			   <div id="billInfo19" style=" font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px; border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius: 8px; -moz-border-radius: 8px; margin:10px; padding:20px; padding:0;">			     <div style=" height:50px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/tableTop.png) repeat-x;">					  <div id="floatL1" style="margin:10px;">							<div id="titleL12" style="float:left; padding-left:20px; color:#00006F;font-weight:bold; font-size:16px;background:url(https://e-creditcard.bankcomm.com/image/dzzd/title_pic1.png) no-repeat 0 0;">本期账务明细</div>					  </div>					  <div id="floatR12" style="float:right; color:#666666; font-size:14px;  margin-right:10px;">						  <a href="https://creditcardapp.bankcomm.com/member/member/value/add/service/detail.html?prodNo=YKWY0001&amp;cardNo=4581 **** **** 2483&amp;_channel=JY2">  						  	<img src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_trad.gif" border="0">						  </a> 	          </div>	         </div>	           	           																													  <div style="height:33px; line-height:33px; text-align:center; color:#0a6ab4;background:url(https://e-creditcard.bankcomm.com/image/dzzd/table_pic.png) repeat;">以下是您的还款、退货及费用返还明细</div>						 																		 			   	        <div style="margin-top:0px;">					<table id="table3" style="border-collapse:collapse; text-align:left; margin:10px;">					  <thead>					  <tr>						 <th width="11%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易日期</th>						 <th width="11%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">记账日期</th>						 <th width="38%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易说明</th>						 <th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易币种/金额</th>						 <th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">清算币种/金额</th>					   </tr>					   </thead>					 					   <tbody>					    							 <tr style="background:#EDF5FF;">							   <td width="100%" colspan="20" style="text-align:center;" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;" class="DetailDataCell"><span class="InfoData">							   	人民币账户明细							   </span></td>								 </tr>							 							 							 <tr style="background:#EDF5FF;">							   <td width="100%" colspan="20" style="text-align:center; font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;" class="DetailDataCell"><span class="InfoData">							   	主卡 卡号末四位 2483							   </span></td>								 </tr>							 					   <tr style="">						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/21 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/22</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">POS 消费退货－银联 山东省皮肤病性病防治研究所</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 50.40 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 50.40 </td>					   </tr>				   						</tbody>										</table></div>																																		 	<div style="height:33px; line-height:33px;text-align:center; color:#0a6ab4;background:url(https://e-creditcard.bankcomm.com/image/dzzd/table_pic.png) repeat;">以下是您的消费、取现及其他费用明细</div>							 												 			   	        <div style="margin-top:0px;">					<table id="table3" style="border-collapse:collapse; text-align:left; margin:10px;">					  <thead>					  <tr>						 <th width="11%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易日期</th>						 <th width="11%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">记账日期</th>						 <th width="38%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易说明</th>						 <th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">交易币种/金额</th>						 <th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">清算币种/金额</th>					   </tr>					   </thead>					 					   <tbody>					    							 <tr style="background:#EDF5FF;">							   <td width="100%" colspan="20" style="text-align:center;" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;" class="DetailDataCell"><span class="InfoData">							   	人民币账户明细							   </span></td>								 </tr>							 							 							 <tr style="background:#EDF5FF;">							   <td width="100%" colspan="20" style="text-align:center; font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;" class="DetailDataCell"><span class="InfoData">							   	主卡 卡号末四位 2483							   </span></td>								 </tr>							 					   <tr style="">						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/21 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/22</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">POS 消费－银联 山东中医药大学附属医院（山东省中医院）</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 363.49 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 363.49 </td>					   </tr>				   						</tbody>																																		 			   					   <tbody>					    							 					   <tr style="background:#F4F3F3;">						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/21 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/22</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">POS 消费－银联 山东中医药大学附属医院（山东省中医院）</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 943.06 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 943.06 </td>					   </tr>				   						</tbody>																																		 			   					   <tbody>					    							 					   <tr style="">						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/21 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/22</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">POS 消费－银联 山东省皮肤病性病防治研究所</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 100.00 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 100.00 </td>					   </tr>				   						</tbody>																																		 			   					   <tbody>					    							 					   <tr style="background:#F4F3F3;">						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/29 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">2015/07/30</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">POS 消费－银联 新益利购物广场</td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 7989.00 </td>						 <td style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">RMB 7989.00 </td>					   </tr>				   						</tbody>										</table></div>																										<p></p>					<div style="font-size:12px; width:80%; margin:10px 20px;"> 感谢您对交通银行信用卡业务的支持，我行将竭诚为您提供服务。<br></div>				</div>								<div id="billInfo20" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px; border: 2px solid #ccc;border-top: 4px solid rgb(155,194,233);border-radius: 8px;-ms-border-radius: 8px;-webkit-border-radius: 8px; -moz-border-radius: 8px; margin:10px; padding:20px; padding:0;">				   <div style="height:50px; background:url(https://e-creditcard.bankcomm.com/image/dzzd/tableTop.png);">				     <div class="floatL" style="margin:10px;">						 <div class="titleL" style="float:left; padding-left:20px; color:#00006F;font-weight:bold; font-size:16px;background:url(https://e-creditcard.bankcomm.com/image/dzzd/title_pic2.png) no-repeat 0 0;">本期积分说明</div>					  </div>					  <a style=" float:right;margin:10px; cursor:pointer;" class="floatR" href="http://club.bankcomm.com?_channel=JF2">					  	<img src="https://e-creditcard.bankcomm.com/image/dzzd/ctrl_bps.gif" border="0">					  </a>					  </div> 					  <table id="table5" style="border-collapse:collapse; text-align:left; margin:10px;">					  <tr>						<th width="20%"></th>						<th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">积分余额 </th>						<th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">2015/08/31<br>到期积分 </th>						<th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">2015/09/30<br>到期积分 </th>						<th width="20%" style="color:rgb(10,108,183); font-size:14px; padding:5px 15px; border-bottom:1px solid white;">2015/10/31<br>到期积分 </th>					  </tr>					  					  <tr>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px; color:rgb(10,108,183); font-weight:bold;">人民币账户</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">15623</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>					  </tr>					  					  <tr>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px; color:rgb(10,108,183); font-weight:bold;">美元账户</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">0</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>						 <td width="20%" style="font-family: Hiragino Sans GB, Lucida Grande, Microsoft YaHei, arial; font-size:14px;padding:5px 10px;">---</td>					  </tr>					   				   </table>				</div>				                     			</div>				</div>									</TD>
+        </TR>
+        <TR>
+            <TD><IMG alt="" border="0" height="66" src="http://creditcard.bocomcc.com/t_images/10/edm_final_01_04.jpg" style="border-bottom: 0px; border-left: 0px; border-top: 0px; border-right: 0px" width="720"></TD>
+        </TR>
+        <TR>
+            <TD><IMG alt="" border="0" height="196" src="http://creditcard.bocomcc.com/t_images/10/edm_final_01_05.jpg" style="border-bottom: 0px; border-left: 0px; border-top: 0px; border-right: 0px" usemap="#Map2" width="720"></TD>
+        </TR>
+        <TR>
+            <TD><IMG alt="" border="0" height="160" src="http://creditcard.bocomcc.com/t_images/10/edm_final_01_06.jpg" style="border-bottom: 0px; border-left: 0px; border-top: 0px; border-right: 0px" width="720"></TD>
+        </TR>
+        <TR>
+            <TD><IMG alt="" border="0" height="556" src="http://creditcard.bocomcc.com/t_images/10/e_edm_04.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" usemap="#Map" width="720"></TD>
+        </TR>
+    </TBODY>
+</TABLE>
+<TABLE align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: 'Hiragino Sans GB', 'Lucida Grande', Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="740">
+    <TBODY>
+        <TR>
+            <TD bgcolor="#cb0600" colspan="3" height="4"></TD>
+        </TR>
+        <TR>
+            <TD width="24">&nbsp;</TD>
+            <TD colspan="2" height="22"><FONT style="line-height: 18px; font-size: 12px"><STRONG>欢迎登录交通银行信用卡网站 <A href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~6" style="color: #555" target="_blank"><FONT color="#d60c1c">creditcard.bankcomm.com</FONT></A> </STRONG></FONT></TD>
+        </TR>
+        <TR>
+            <TD>&nbsp;</TD>
+            <TD colspan="2" height="50"><FONT style="line-height: 18px; font-size: 12px">交通银行无论何时都不会向您发送电子邮件询问或确认您的私人数据，包括信用卡账户号码、网上账户密码、<BR>
+            账户余额、身份证号码或护照号码等等。</FONT></TD>
+        </TR>
+    </TBODY>
+</TABLE>
+<TABLE align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: 'Hiragino Sans GB', 'Lucida Grande', Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="740">
+    <TBODY>
+        <TR>
+            <TD width="28">&nbsp;</TD>
+            <TD valign="top" width="266"><FONT style="line-height: 18px; font-size: 12px"><STRONG>客服热线：<FONT color="#d60c1c">400-800-9888</FONT></STRONG><BR>
+            </FONT></TD>
+            <TD align="right"><IMG alt="" height="66" src="http://creditcard.bocomcc.com/t_images/10/footer_01.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="228"></TD>
+            <TD align="right" valign="top"><IMG alt="" height="87" src="http://creditcard.bocomcc.com/t_images/10/footer_02.jpg" style="border-bottom: medium none; border-left: medium none; border-top: medium none; border-right: medium none" width="181"></TD>
+        </TR>
+    </TBODY>
+</TABLE>
+<TABLE align="center" border="0" cellpadding="0" cellspacing="0" style="border-bottom: 0px; border-left: 0px; font-family: 'Hiragino Sans GB', 'Lucida Grande', Microsoft YaHei, arial; color: #555; font-size: 13px; border-top: 0px; border-right: 0px" width="740">
+    <TBODY>
+        <TR>
+            <TD height="30"></TD>
+        </TR>
+        <TR>
+            <TD>&nbsp;</TD>
+        </TR>
+        <TR>
+            <TD>&nbsp;</TD>
+        </TR>
+    </TBODY>
+</TABLE>
+<P><MAP name="Map">
+<AREA coords="254,47,345,157" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~7" shape="rect" target="_blank">
+<AREA coords="370,44,459,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~2" shape="rect" target="_blank">
+<AREA coords="483,47,571,160" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~8" shape="rect" target="_blank">
+<AREA coords="596,46,685,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~9" shape="rect" target="_blank">
+<AREA coords="192,447,526,480" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~10" shape="rect" target="_blank"></MAP><MAP name="Map2">
+<AREA coords="24,4,247,183" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~11" shape="rect" target="_blank">
+<AREA coords="249,7,469,182" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~12" shape="rect" target="_blank">
+<AREA coords="477,6,697,181" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~13" shape="rect" target="_blank"></MAP></P>
+<P><MAP name="Map">
+<AREA coords="254,47,345,157" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~7" shape="rect" target="_blank">
+<AREA coords="370,44,459,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~2" shape="rect" target="_blank">
+<AREA coords="483,47,571,160" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~8" shape="rect" target="_blank">
+<AREA coords="596,46,685,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~9" shape="rect" target="_blank">
+<AREA coords="192,447,526,480" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~10" shape="rect" target="_blank"></MAP><MAP name="Map2">
+<AREA coords="24,4,247,183" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~14" shape="rect" target="_blank">
+<AREA coords="249,7,469,182" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~15" shape="rect" target="_blank">
+<AREA coords="477,6,697,181" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~16" shape="rect" target="_blank"></MAP></P>
+<P><MAP name="Map">
+<AREA coords="254,47,345,157" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~7" shape="rect" target="_blank">
+<AREA coords="370,44,459,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~2" shape="rect" target="_blank">
+<AREA coords="483,47,571,160" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~8" shape="rect" target="_blank">
+<AREA coords="596,46,685,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~9" shape="rect" target="_blank">
+<AREA coords="192,447,526,480" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~10" shape="rect" target="_blank"></MAP><MAP name="Map2">
+<AREA coords="24,4,247,183" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~17" shape="rect" target="_blank">
+<AREA coords="249,7,469,182" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~18" shape="rect" target="_blank">
+<AREA coords="477,6,697,181" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~19" shape="rect" target="_blank"></MAP></P>
+<P><MAP name="Map">
+<AREA coords="248,49,339,159" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~7" shape="rect" target="_blank">
+<AREA coords="371,49,461,161" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~2" shape="rect" target="_blank">
+<AREA coords="489,49,579,158" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~8" shape="rect" target="_blank">
+<AREA coords="610,48,700,158" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~9" shape="rect" target="_blank">
+<AREA coords="192,447,526,480" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~10" shape="rect" target="_blank"></MAP><MAP name="Map2">
+<AREA coords="24,4,247,183" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~20" shape="rect" target="_blank">
+<AREA coords="249,7,469,182" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~18" shape="rect" target="_blank">
+<AREA coords="476,6,696,181" href="http://creditcard.bocomcc.com/u.html?uid=bc&amp;stime=1439905329&amp;eid=1793159761&amp;email=ycdcgzt@163.com&amp;tlid=121236&amp;stid=524742&amp;thid=121236&amp;url=~21" shape="rect" target="_blank"></MAP></P></BODY></HTML>
+</body>
+</html>
+
+ 
+
+<script language="javascript">try{parent.JS.modules[window.name].content.setHeight();}catch(e){}</script>
+
+		<br/>
+		<br/>
+		<br/>
+		<div>邮件头</div>
+		Received:from mail.bocomcc.com (unknown [58.246.136.181])
+	by mx41 (Coremail) with SMTP id W8CowED5b0QxNtNVlNAIAg--.49049S2;
+	Tue, 18 Aug 2015 21:42:09 +0800 (CST)
+Received:from mail.bocomcc.com([182.180.47.38])
+	by mail.bocomcc.com(KBAS Gateway 2.1 2.127s39k(2009-10-15),182.180.101.171) with ESMTP id mx5354.1439905028 for <ycdcgzt@163.com>;
+	Tue, 18 Aug 2015 21:37:08 +0800 (CST)
+Received:from mail.bocomcc.com([192.168.1.105])
+	by Postfix with SMTPD id 21205
+	for <ycdcgzt@163.com>; Tue, 18 Aug 2015 21:42:09 +0800
+From:=?gbk?B?vbvNqNL40NDMq8a90fPQxdPDv6jW0NDE?= <PCCC@bocomcc.com>
+To:"=?gbk?B?eWNkY2d6dEAxNjMuY29t?=" <ycdcgzt@163.com>
+Date:Tue, 18 Aug 2015 21:41:09 +0800
+Sender:pccc.bill@bocomcc.com
+
+		</body>
+</html>

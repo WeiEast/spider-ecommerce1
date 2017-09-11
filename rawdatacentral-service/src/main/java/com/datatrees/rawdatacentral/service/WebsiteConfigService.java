@@ -1,13 +1,14 @@
 package com.datatrees.rawdatacentral.service;
 
+import java.util.List;
+
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
-import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-
-import java.util.List;
 
 /**
  * 站点配置
@@ -57,12 +58,12 @@ public interface WebsiteConfigService {
      */
     WebsiteConf getWebsiteConf(String websiteName);
 
-    /**
-     * 获取WebsiteConf
-     * @param websiteName
-     * @return
-     */
-    WebsiteConf getWebsiteConfFromCache(String websiteName);
+    ///**
+    // * 获取WebsiteConf
+    // * @param websiteName
+    // * @return
+    // */
+    //WebsiteConf getWebsiteConfFromCache(String websiteName);
 
     /**
      * 根据websiteName更新searchConfigSource,extractConfigSource
@@ -84,10 +85,36 @@ public interface WebsiteConfigService {
      */
     List<OperatorCatalogue> queryAllOperatorConfig();
 
-    SearchProcessorContext getSearchProcessorContext(String websiteName);
+    /**
+     * 获取SearchProcessorContext,taskInit使用
+     * @param taskId
+     * @return
+     */
+    SearchProcessorContext getSearchProcessorContext(Long taskId);
 
-    ExtractorProcessorContext getExtractorProcessorContext(int websiteId);
+    ExtractorProcessorContext getExtractorProcessorContext(Long taskId);
 
     ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId);
+
+    /**
+     * 将WebsiteConfig转化成Website
+     * @param websiteConfig
+     * @return
+     */
+    Website buildWebsite(WebsiteConfig websiteConfig);
+
+    /**
+     * 将WebsiteOperator转化成Website
+     * @param websiteOperator
+     * @return
+     */
+    Website buildWebsite(WebsiteOperator websiteOperator);
+
+    /**
+     * 根据taskId从缓存取Website
+     * @param taskId
+     * @return
+     */
+    Website getWebsiteFromCache(Long taskId);
 
 }

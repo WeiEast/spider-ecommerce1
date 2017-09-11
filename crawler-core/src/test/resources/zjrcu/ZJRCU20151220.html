@@ -1,0 +1,629 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=gb18030" /><meta name="renderer" content="webkit" /><title>丰收信用卡电子对账单 - QQ邮箱</title><script>
+document.domain="mail.qq.com";
+function getTop()
+{
+var f=arguments.callee,w;
+    !(f.execption) && (f.execption = "");
+if(!f.t)
+{try{w=window;f.t=w!=parent?(parent.getTop?parent.getTop():parent.parent.getTop()):w;}catch(e){f.t=reTryGetTop();f.execption=e.message;}}
+return f.t;
+}
+function reTryGetTop()
+{
+var _oWin = window,
+_oWinParent = parent;
+try
+{
+while(_oWin != _oWinParent)
+{
+_oWin = _oWinParent;
+_oWinParent = _oWinParent.parent;
+}
+}
+catch(e)
+{
+ossLogForSetFrame.getTopException = true;
+}
+return _oWin;
+};
+try{window.top=getTop();}catch(e){eval("var top=getTop();");}
+var gsUsed="134";
+var gbSupportNW=true;
+var g_uin="520322659";
+window == getTop() && document.write('<script src="https://rescdn.qqmail.com/zh_CN/htmledition/js/all2c316a.js"></'+'script>');
+(getTop().initPageEvent || function(){})(window);
+</script><script>parent.beginStatTime && parent.beginStatTime(window);</script><script>
+(function(){
+})();
+</script><link rel="stylesheet" type="text/css" href="https://rescdn.qqmail.com/zh_CN/htmledition/style/comm20102b88c9.css" /><link rel="stylesheet" type="text/css" href="https://rl.mail.qq.com/cgi-bin/getcss?sid=utnMuccxxMciTlEH&ft=skin" /><link rel="stylesheet" type="text/css" href="https://rescdn.qqmail.com/zh_CN/htmledition/style/readmail2012277e00.css" /><script>
+getTop().loadJsFileToTop([
+"https://rescdn.qqmail.com/zh_CN/htmledition/js/readmail22b568e.js",
+"https://rescdn.qqmail.com/zh_CN/htmledition/js/qmqzoneimg24e6b9.js",
+"https://rescdn.qqmail.com/zh_CN/htmledition/js/com/kits/qmeditor/qqmail/release/editor2bff8a.js",
+"https://rescdn.qqmail.com/zh_CN/htmledition/js/com/kits/qmpreviewer/js/qmpreviewer2a2601.js", "https://rescdn.qqmail.com/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js"
+]);
+
+getTop().loadJsFileToTop(["https://rescdn.qqmail.com/zh_CN/htmledition/js/qmnetdisk276205.js"]);
+</script><script> /*function SendStatusOpt(isIng, isFail)
+{
+getTop().show(getTop().S("sendstatusloading", document), isIng);
+getTop().show(getTop().S("sendstatusloadfail", document), isFail);
+}
+
+function GetSendStatusIng()
+{
+SendStatusOpt(true, false);
+}
+
+function GetSendStatusOK()
+{
+SendStatusOpt(false, false);
+}
+
+function GetSendStatusFail()
+{
+var frame = getTop().S("mailSendStatus", document);
+if (getTop().isShow("sendstatusloading") && frame.src != "")
+{
+SendStatusOpt(false, true);
+frame.src = "";
+}
+}*/
+
+_sModule = "sendstatus";
+function StatusOpt(isIng, isFail)
+{
+getTop().show(getTop().S(_sModule+"loading", document), isIng);
+getTop().show(getTop().S(_sModule+"loadfail", document), isFail);
+}
+
+function GetStatusIng()
+{
+StatusOpt(true, false);
+}
+
+function GetStatusOK()
+{
+StatusOpt(false, false);
+}
+
+function GetStatusFail()
+{
+var frame = getTop().S("mail"+_sModule, document);
+if (getTop().isShow(_sModule+"loading") && frame.src != "")
+{
+StatusOpt(false, true);
+frame.src = "";
+}
+}
+
+
+
+
+
+function checkSenderImg( _aImgObj, _aReportEmail ) 
+{
+var _isLoadGravaterOK = parseInt( _aImgObj.width ) == 40 || parseInt(_aImgObj.width) == 96;
+if ( _isLoadGravaterOK )
+{
+_aImgObj.parentNode.style.visibility='visible';
+}
+}
+
+</script><style>body {background:#fff;color:#000;font-weight:normal;font-family:"lucida Grande",Verdana,"Microsoft YaHei";padding:0 7px 6px 4px;margin:0;}.MacOS body {font-family:"lucida Grande",Verdana;}.qmbox{padding:0;}.qm_con_body_content{height:auto;min-height:100px;_height:100px;word-wrap:break-word;font-size:14px;font-family: "lucida Grande",Verdana,"Microsoft YaHei";}.MacOS .qm_con_body_content{font-family: "lucida Grande",Verdana;}body.thumb_list_readmail {padding:0;}.thumb_list_readmail #nextnewDiv,.thumb_list_readmail #nextmail_top,.thumb_list_readmail #nextmail_bt{display:none;}</style></head><body  context="ZC2620-h~S~HWN94OOVU0waRUIfN5c" module="qmReadMail" md="md" mu="mu"><div class="mailcontainer" id="qqmail_mailcontainer"><div module="qmSenderInfo" id="senderInfo" class="attbg mysidebar" style="_margin-top:2px;height:auto;*height:100%;display:none;z-index:20"><div class="bd" style="font-size:14px;font-weight:bold;border-width:0 0 2px 0;height:auto;padding:7px 2px 3px;margin:6px;clear:both;"><div  style="float:right;"><a ck="toggle" href="javascript:;" style="font-size:12px;font-weight:normal;">关闭</a></div>发件人信息</div><div style="margin:8px 6px 0 6px;"><div style="height:40px;"><div class="tcolor qm_left txtflow" style="margin:2px 0 0 2px;width:168px;"><b class="grn" style="font-size:14px;font-weight:bold;">浙江农信</b>&nbsp;</div><div class="clear" style="margin:2px 0 0 2px;width:164px;"><div class="qm_left txtflow graytext" style="width:128px"><span title="fscc@zjrcu.com.cn">fscc@zjrcu.com.cn</span></div><div style="float:right;"><a href="/cgi-bin/addr_detail?sid=utnMuccxxMciTlEH&AddrID=-1&t=addr_detail_edit&s=edit&rmqqgroup=1">编辑</a></div></div></div><div class="toolbg clear" style="padding:5px 0 4px 6px;margin-top:4px;height:auto;"><span class="txtcolor">往来邮件</span>&nbsp;</div><div id="divMails_sidebar" class="clear" style="margin:6px 0 0 0"><div style="margin:6px" class="tcolor">正在加载...</div></div><br/><br/></div></div><form id="remind_frm" name="remind_frm" method="post" target="actionFrame" action="/cgi-bin/reminder_mgr?sid=utnMuccxxMciTlEH"><input type="hidden" name="sid" value="utnMuccxxMciTlEH"/><input type="hidden" name="action" value="cancle"/><input type="hidden" name="ruleid"/><input type="hidden" name="from"/></form><div id="mainmail" style="position:relative;z-index:1;margin-bottom:12px;"><div class="toolbg toolbgline toolheight" id="toolbgline_top" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_top"><a href="javascript:;" ck="prevandnext"mailid="ZC1605-2Ltzxrgw6ulid2g~24edG61" type="normal" title="上一封(未读邮件)：胡马法,这是你的卡牛12月财报,恭喜你当月荣封“二星卡神太子”称号" class="bold" id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="ZC2819-awioJVsdzc66DxBGqO0Zd5c" type="normal"title="下一封：【广发卡12月&lt;span&gt;&lt;span&gt;账单&lt;/span&gt;&lt;/span&gt;】不止5折，年终欢乐颂来袭……" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all1" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="fscc@zjrcu.com.cn" name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="fscc@zjrcu.com.cn"name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div><div class="readmailinfo" style="position:relative;z-index:2;zoom:1;"><span id="subjectTip"></span><table style="height:24px" border="0" cellspacing="0" cellpadding="0"><tr><td height="24" valign="middle" style="word-break:break-all;padding:9px 8px 2px 14px;" class="txt_left settingtable readmail_subject"><div class="qm_left"  style="padding-bottom:3px;"><span id="subject" class="sub_title " >丰收信用卡电子对账单</span><input type="button" id="img_star" ck="starMail" class="qm_ico_flagoff" title="标为星标"  hidefocus/></div><div id="tagContainer" ck="tag" class="TagDiv TagReadmail" style="overflow:visible;margin-top:0;"></div><div class="clr"></div></td><td module="qmSenderInfo" id="senderInfo2" width="1%" nowrap  class="f_size settingtable" style="padding:5px 12px 0 0;text-align:right;"><div style="width:45px;text-align:left;visibility:hidden;"> <img id="qqiconimg" src="/cgi-bin/getqqicon?sid=utnMuccxxMciTlEH&uin=&mode=newaddr&mailaddr=fscc%40zjrcu.com.cn" style="position:absolute;margin:-14px 0 0 0;" class="qqshowbd"  onload="checkSenderImg(this)"/></td></tr></table><table border="0" cellspacing="0" cellpadding="0"><tr><td style="padding-left:14px;" class="settingtable txt_left"><span class="addrtitle">发件人：</span><span rejecthtml="rejectionhtml"  t="1" e="fscc@zjrcu.com.cn" u="" n="浙江农信" addrvip="" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC2620-h~S~HWN94OOVU0waRUIfN5c" xqs="0" fid="1" cfid="1" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="-100" isad="0"mop="1"sa="0"   addrid="-1"  se="1" ><b t="u" class="grn">浙江农信</b>&nbsp;<b class="tcolor" t="u" id="tipFromAddr_readmail" fromaddr="fscc@zjrcu.com.cn">&lt;fscc@zjrcu.com.cn&gt;</b>&nbsp;&nbsp;<input t="u" type="button" class="ico_profileTips" align="top" />&nbsp;</span>&nbsp;<script type="text/javascript">
+(function(_aoWin){
+_aoWin["_oOperPanel"] = {};
+                            1
+_aoWin["_oOperPanel"].rejectionhtml = '<a id="antispamid2" href="javascript:;" mimefrom="fscc@zjrcu.com.cn" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a>';
+_aoWin["_oOperPanel"].filinghtml = '<a id="exbookid1" href="javascript:;" ck="exbookEmlMgr" book="2" module="qmAntiSpam" name="spam" title="将此发件人的邮件归档到个人文件夹" class="pointer">自动归档</a></span>';
+_aoWin["_oOperPanel"].operhidepanel = '<span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span>';
+if(_aoWin["_oOperPanel"].rejectionhtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="rejectionhtml">' +  _aoWin["_oOperPanel"].rejectionhtml + '</span>';
+}
+if(_aoWin["_oOperPanel"].filinghtml)
+{
+_aoWin["_oOperPanel"].operhidepanel += '<span id="filinghtml">' +  _aoWin["_oOperPanel"].filinghtml + '</span>';
+}
+})(window)
+</script><span id="operhidepanel" style="display:none"><span class="hide">&nbsp;<a href="javascript:;" class="pointer" module="qmSenderInfo" ck="toggle" id="senderInfo3">查看</a>&nbsp;&nbsp;</span><span id="rejectionhtml"><a id="antispamid2" href="javascript:;" mimefrom="fscc@zjrcu.com.cn" ck="reject" module="qmAntiSpam" name="spam" title="将此发件人添加至黑名单，以后将不再收到来自该地址的邮件。" class="pointer">拒收</a></span><span id="filinghtml"><a id="exbookid1" href="javascript:;" ck="exbookEmlMgr" book="2" module="qmAntiSpam" name="spam" title="将此发件人的邮件归档到个人文件夹" class="pointer">自动归档</a></span></span><span id="latestqzone"></span>      </td><td width="1%" nowrap style="padding-right:12px;" class="settingtable"></td></tr></table><table  border="0" cellspacing="0" cellpadding="0"><tr><td style="word-break:break-all;padding:2px 12px 0 14px;line-height:19px;" width="99%" class="settingtable txt_left"><span class="addrtitle">时&nbsp;&nbsp;&nbsp;间：</span><b class="tcolor">2015年12月20日(星期天) 中午11:19</b></td><td nowrap valign="bottom" style="padding:4px 10px 2px 0;*padding:4px 10px 2px 0;text-align:right" width="1%" rowspan="2"  class="txt_right settingtable noUnderLineList"><span style="display:none;vertical-align:6px;vertical-align:4px\9;"><a  href="javascript:location.href='/cgi-bin/readmail?disptype=text&sid=utnMuccxxMciTlEH&mailid=ZC2620-h~S~HWN94OOVU0waRUIfN5c&s='+(getTop().bnewwin?'&newwin=true':'')">纯文本</a> | </span><a href="javascript:;" ck="newWinRead"><span type="button" class="qm_ico_reopen" title="新窗口读信" ></span></a><a href="javascript:;"><span id="rmd" module="qmRemark" ck="toggle" class="qm_ico_remarkoff" title="添加邮件备注" ></span></a><a href="javascript:;"><span ck="createRule" fromaddr="fscc@zjrcu.com.cn"                     class="qm_ico_addFilter" title="归档至..."></span></a><a href="javascript:;"><span class="qm_ico_print" id="mail_print" title="打印" onClick="window.open('/cgi-bin/readmail?sid=utnMuccxxMciTlEH&t=readmail_print&s=print&filterflag=true&mailid=ZC2620-h~S~HWN94OOVU0waRUIfN5c');" ></span></a><a id="aSwitchOption" onClick="getTop().switchOption(window)" style="text-decoration:none;" hidefocus><span class="qm_ico_quickdown" alt="显示更多操作" id="display_more_operator" ></span></a><span id="tipRemindEdit"></span></td></tr><tr><td style="padding:0 0 0 14px;line-height:19px;"  class="settingtable txt_left"><div><div class="addrtitle nowrap" style="position:absolute;">收件人：</div><div style="padding-left:48px;font-size:12px;overflow:hidden; zoom:1;"><span style="white-space:nowrap;height:18px;line-height:18px; " class="left" t="1" e="520322659@qq.com" u="-2783424441" n="代号 歼11" mop="1" addrvip="" rejecthtml="rejectionhtml" filinghtml="filinghtml" mailhtml="operhidepanel" mailid="ZC2620-h~S~HWN94OOVU0waRUIfN5c" xqs="0" fid="1" cfid="1" dm="qq.com" ibm="false" iba="1" bcd="0" ctd="-100" sd="0"se="0" >代号 歼11&nbsp;<b t="u" class="tcolor">&lt;520322659@qq.com&gt;</b></span></div></div></td></tr>                                                                   <tr><td style="padding:0 14px;line-height:20px;"  class="settingtable txt_left"><span id="trOption" style="display:none">                                            <span class="addrtitle">大&nbsp;&nbsp;&nbsp;小：</span>25K<br/><a  href="javascript:;" ck="optMail2" opt="print">打印</a>&nbsp;|&nbsp;<a  href="javascript:;" ck="optMail2" opt="mime" title="显示邮件的源代码">显示邮件原文</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="dleml" title="导出为邮件客户端可用的文件">导出为eml文件</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="code"                        title="改变页面编码以解决邮件乱码问题">邮件有乱码？</a>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fwgroup">转发到群邮件</a><span >&nbsp;|&nbsp;<a id="savetonotepad" href="javascript:;" ck="optMail2" opt="note">保存到记事本</a><span id="remind_add_mailid:ZC2620-h~S~HWN94OOVU0waRUIfN5c">&nbsp;<span id="addtoremind">|&nbsp;<a href="javascript:;"                                    ck="optMail2" opt="remind">添加到日历</a></span><span id="remind_edit_ZC2620-h~S~HWN94OOVU0waRUIfN5c" class="pointer"></span></span>&nbsp;|&nbsp;<a href="javascript:;" ck="optMail2" opt="fweml">作为附件转发</a><!-- |&nbsp;<a href="javascript:;" ck="optMail2" opt="translate" data-tltype="youdao">有道翻译</a>|&nbsp;<a href="javascript:;" ck="optMail2" opt="translate" data-tltype="ciba">词霸翻译</a> --></span></td></tr></table><div module="qmRemark" id="remarkcontainer" style="display:none; margin:5px 0 0;; padding:2px 0 0;"><div  class="qqshowbd" style="border-width:1px 0 0;padding:7px 14px 2px;"><div class="addrtitle qm_left" style="*margin-top:3px;">备　注：</div><div id="remarkread" style="display:none; margin-left:48px;*margin-left:45px;width:463px;*width:475px;"><div class="remarksContent" id="remarkContent" ck="modify" style="font-size:12px;min-height:42px;padding:10px;background:#fff6cf; border:1px solid #dec694;color:#733900;line-height:18px;" title="点击编辑"></div><div class="attbg" style="padding:4px 0 4px 8px;"><a href="javascript:;" ck="modify" style="margin-right:5px;"><input style="background:url(https://rescdn.qqmail.com/zh_CN/htmledition/images/newicon/mail2757b6.png) scroll -64px -142px; width:12px; height:14px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()" />编辑</a><a href="javascript:;" ck="del"><input style="background:url(https://rescdn.qqmail.com/zh_CN/htmledition/images/newicon/mail2757b6.png) scroll -80px -142px; width:13px; height:13px;cursor:pointer;border:none;margin-right:3px;vertical-align:bottom\9\0;_vertical-align:1px;" onfocus="this.blur()">删除</a></div></div><div class="remarkModify" style="display:none;margin-left:45px;" id="remarkwrite"><textarea id="remarktext" style="width:475px;*height:74px;min-height:72px;font-size:14px; overflow:hidden; margin:0 0 3px; padding:3px; color:#A0A0A0;" class="qm_txt" >请在此输入备注...</textarea><div style="margin-left:3px;*margin-left:6px;"><input type="button" class="qm_btn wd2" value="保存" ck="save" id="remarksave"/><a ck="cancel" id="remarkdel" style="*vertical-align:5px;display:inline-block;padding-left:6px;">取消</a></div></div></div></div><table border="0" cellspacing="0" cellpadding="0">        <tr><td class="onesize settingtable" style="height:5px;"></td></tr></table>            <div class="txt_left"><div class="attbg" id="starStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件。&nbsp;<a id="starStatuslink" ck="starMail" href="javascript:;">取消星标</a></div><div class="attbg" id="mailtopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件在列表中置顶。&nbsp;<a id="mailtopStatuslink" ck="topMail" href="javascript:;">取消置顶</a></div><div class="attbg" id="starTopStatus" style="_zoom:1;padding:6px 14px;display:none"><span class="addrtitle">标记：</span>已将此邮件标记为星标邮件，并在列表中置顶。&nbsp;<a ck="starMail" href="javascript:;">取消星标</a>&nbsp;<a ck="topMail" href="javascript:;">取消置顶</a></div><script>
+
+</script><div class="attbg" id="reminderContainer_mailid:ZC2620-h~S~HWN94OOVU0waRUIfN5c" style="padding:5px 14px;display:none;"></div><div id="spam" module="qmAntiSpam" name="spam" style="zoom:1;">  </div>        <div class="alert_tips_yellow">    <span>开通我的账单，轻松管理信用卡。&nbsp;&nbsp;<a href="/bill/?sid=utnMuccxxMciTlEH&from=readmail_open">我要开通</a></span><script>
+(new Image()).src = '/cgi-bin/do?sid=utnMuccxxMciTlEH&action=oss_report&group=ReadmailGuideTip';
+</script></div></div></div><!-- page end--><div id="pageEnd" style="display:none;clear:both;position:relative;z-index:2;"><div id="bgmusic" style="padding:6px 0;display:none;margin-left:12px">您的朋友 浙江农信 为这封邮件插入了背景音乐 - <a  target="_blank">下载</a>&nbsp;&nbsp;<a href="javascript:;">播放</a><a name="player"></a></div><div id="mp3player_info" style="padding:0 0 10px 0;margin-left:12px;display:none;">&nbsp;</div><div id="mp3player_container" style="padding:0 0 20px 0;margin-left:12px; margin-top:10px; display:none;">播放器加载中...</div><div module="qmQReply" id="quickreply" class="quickreply" style="margin:0;"><div class="qm_msg infobar" id="afterSendingDiv" style="margin-top:-25px;position:absolute;border:0;padding:4px 12px 4px;display:none;">正在发送...</div><div class="bd" style="border-width:0 0 1px 0;"></div><div style="padding:10px 0 0 8px;border-bottom:1px solid #fff;height:24px;display:none;" class="settingtable" id="afterSendDiv"> 此邮件已成功发送。<a ck="readyToWrite" href="javascript:;" >再回一封</a></div><div class="settingtable" id="QuickReplyPart" style="height:auto;min-height:10px;border-bottom:1px solid #fff;padding-top:10px;padding-botom:8px;overflow:hidden;z-index:1000;clear:both;"><div style="width:100%;"><div id="Senderdiv" style="margin:-10px 0 0 0;*margin:-3px 0 0 0;padding:6px 0 10px 0;*padding:0 0 7px 0;display:none;"></div><div class="qm_left" style="width:99.5%;" id="qmQuickReplyTextContainer" ><div style="width:99.5%;"><textarea id="source" md="checkBcc" class="graytext qm_txt" accesskey="q" style="height:16px;width:100%;overflow:hidden;">快捷回复给：浙江农信</textarea></div></div><div class="" style="width:99.5%;display:none;z-index:1;float:left;" id="rteContainer"><div md="stopFold" ck="jump" style="float:right;margin:3px 0 0 6px;*margin:0;" ><input type="button" class="ico_input icon_switch_compose"  style="margin-right:4px;margin-bottom:3px;*margin-bottom:0;vertical-align:middle;"/><a href="javascript:;" id="jumpToNewWin">切换到完整写信模式</a></div><div style="margin:2px 0 3px 1px;white-space:nowrap;*margin-top:0;" class="addrtitle"><span id="QMEditorToolBarPlusArea"  ></span><span id="tooBarContain"></span></div><div id="QMEditorArea" style="" tIndex="1"><script>try{document.write( outputDataLoading( true ) );}catch(e){}</script></div><div class="clr"></div></div><div style="display:none;clear:both;float:left;width:99.5%;margin-top:5px;height:40px;" id="qmQuickReplyButtonContainer"><a md="stopFold" ck="send" href="javascript:void(0);" tabIndex="2" id="sendbtn" name="sendbtn" class="left bold b_size button_green_s">&nbsp;发送&nbsp;</a><div class="clr"></div></div><div class="clr"></div></div></div></div><div id="nextnewDiv" onMouseOver="this.className='attbg mail_readmode'" onMouseOut="this.className='toolbg mail_readmode'" class="toolbg mail_readmode" style="clear:both;position:relative;z-index:2;cursor:pointer;padding:0 8px 0 7px;zoom:1;" ck="prevandnext" mailid="ZC1605-2Ltzxrgw6ulid2g~24edG61" ><div class="bd" style="padding:2px 0 6px 0;*padding:6px 0 0 0;border-width:0 0 1px 0;"><div class="qm_left" style="margin:6px 0 0 1px;">下一封未读：</div><div class="qm_left" style="margin:0x 0 0 1px;*margin:-2px 0 0 1px"><input type="button"  style="display:block;padding:0;float:left;width:18px;height:16px;margin:5px 0 0;cursor:default;border:0;" class="Ru" /></div><div style="margin:6px 0 0 0;*margin:4px 0 0 0"><span id="nextnewmail" style="color:#000;" class="bold" target="actionFrame" name="_QQMail_ReferenceGroupMail_">卡牛月报 &nbsp;&nbsp; 胡马法,这是你的卡牛12月财报,恭喜你当月荣封“二星卡神太子”称号</span></div><div class="clr"></div></div></div><div class="toolbg toolbgline toolheight" style="position:relative;z-index:2;"><div class="qm_right"  id="nextmail_bt"><a href="javascript:;" ck="prevandnext"mailid="ZC1605-2Ltzxrgw6ulid2g~24edG61" type="normal" title="上一封(未读邮件)：胡马法,这是你的卡牛12月财报,恭喜你当月荣封“二星卡神太子”称号" class="bold" id="prevmail" accessKey="b">上一封</a>&nbsp;<a href="javascript:;" ck="prevandnext"mailid="ZC2819-awioJVsdzc66DxBGqO0Zd5c" type="normal"title="下一封：【广发卡12月&lt;span&gt;&lt;span&gt;账单&lt;/span&gt;&lt;/span&gt;】不止5折，年终欢乐颂来袭……" id="nextmail" accessKey="n">下一封</a></div><div class="nowrap qm_left"><a ck="goback" class="btn_gray btn_space btn_back left" hidefocus href="javascript:;"><span style="font-family:Verdana;">&#171;</span>&nbsp;返回</a><input type="button" class="btn_sepline"/><a ck="optMail" opt="reply" accesskey="g" class="btn_gray btn_space left" hidefocus href="javascript:;">回复</a><a id="tb_reply_all2" accesskey="h" md="checkBcc" ck="optMail" opt="reply_all"  class="btn_gray btn_space left" hidefocus href="javascript:;">回复全部</a><a ck="optMail" opt="forward" accesskey="j" class="btn_gray btn_space left" hidefocus href="javascript:;">转发</a><a id="quick_del" ck="delMail" accesskey="d" class="btn_gray btn_space left" hidefocus href="javascript:;">删除</a><a id="quick_completelydel" ck="delMail" opt="1" class="btn_gray btn_space left" hidefocus href="javascript:;">彻底删除</a>                    <a module="qmAntiSpam" ck="reportSpam" mimefrom="fscc@zjrcu.com.cn" name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">举报</a><a module="qmAntiSpam" ck="reject" mimefrom="fscc@zjrcu.com.cn"name="spam" mailfrom="" class="btn_gray btn_space left" hidefocus href="javascript:;">拒收</a>  <div id="markContainer" name="markContainer" class="btn_space left"></div><div id="selmContainer" name="selmContainer" class="left"></div><div id="moreoprContainer" name="moreoprContainer" style="float:left;margin-right:4px;"></div></div></div></div><div style="position:absolute;right:0px;width:1px;height:1px;"><div id="tip74container"></div></div><div id="contentDiv" onmouseover="getTop().stopPropagation(event);" onClick="getTop().preSwapLink(event, 'html', 'ZC2620-h~S~HWN94OOVU0waRUIfN5c');" style="position:relative;font-size:14px;height:auto;padding:15px 15px 10px 15px;z-index:1;zoom:1;line-height:1.7;" class="body">    <div id="qm_con_body"><div id="mailContentContainer" class="qmbox qm_con_body_content"><style type="text/css">.qmbox td {
+	font-family: verdana;
+	font-size:12px;
+    line-height: 18px;
+}
+</style>
+<table border="0" width="780" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" align="center">
+    <tr>
+        <td height="27">
+        <img border="0" src="http://img.cupdata.com/resource/bank/uploadFiles/fck/image/20130521134051.jpg"  />
+        </td>
+    </tr>
+    <tr>
+        <td height="10"></td>
+    </tr>
+    <tr>
+        <td>
+        <table border="0" width="780" cellspacing="0" cellpadding="0" height="49">
+			<td height="49" align="right" width="50%">
+			<img border="0" src="http://trip.cupdata.com/resource/bank/uploadFiles/fck/image/20130617100207.gif" width="368" height="46"  /></td>
+			<td width="20%"></td>
+			<td align="left" width="30%">
+			<img border="0" src="http://img.cupdata.com/resource/bank/uploadFiles/fck/image/20130521134146.jpg" width="208" height="42" align="left"  /></td>
+	    </table> 
+        </td>
+    </tr>
+    <tr>
+        <td height="10"></td>
+    </tr>
+    <tr>
+        <td>
+        <table border="0" width="780" cellspacing="0" cellpadding="0">
+			<tr>
+			    <td height="77" align="left" width="388" style="padding-left:20" valign="top">
+			    <font style="font-size: 11pt; font-weight: 700">尊敬的 胡马法 先生，您好！</font><br  />
+			    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 以下是您的丰收信用卡12月电子账单，登录网上银行，更可立即查询12期以内的账单和未出帐信息。
+			    <a href="http://www.zj96596.com/">点击这里</a>打开浙江农信网站点击左上角“个人网银登录”即可登录。</td>
+			    <td height="127" width="33" rowspan="2">
+			    </td>
+			    <td height="59" align="left" valign="top" rowspan="2" style="padding-top:18;padding-right:15;">
+			    <font style="font-size: 11pt; font-weight: 700">
+			    温馨提醒您</font>：<font style="font-size: 10pt">您的最后还款日是2016年01月13日，本期需要还款的总计金额为人民币<font color="#FF0000">4,311.28元</font>，本期最低还款额为人民币<font color="#FF0000">804.92</font>元</font></td>
+			</tr>
+			<tr>
+			    <td height="50" align="left" width="388" style="padding-left:20" valign="top">
+			    <font color="#404040">
+			    温馨提示：如果本电子账单不是出现在正常收件箱内，请把我们的发信邮箱地址&quot;fscc@zjrcu.com.cn&quot;添加到您的邮箱白名单内。</font></td>
+			</tr>
+	    </table> 
+        </td>
+    </tr>
+</table>
+
+<table border="0" width="740" cellspacing="0" cellpadding="0" align="center">
+    <tr>
+        <td height="38" width="178" align="left" style="border-left-style: solid; border-left-width: 1px; border-top-style: solid; border-top-width: 2px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+        <font style="font-size: 11pt"><b>卡号</b><br  />
+		</font><font color="#404040">Card Number</font></td>
+		<td align="right" width="189" style="border-right-style: solid; border-right-width: 1px; border-top-style: solid; border-top-width: 2px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt">6222 **** **** 8147 </font></td>
+		<td width="18" rowspan="7"></td>
+		<td align="left" width="178" style="border-left-style: solid; border-left-width: 1px; border-top-style: solid; border-top-width: 2px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt"><b>账单日</b><br  />
+		</font><font color="#404040">Statement Date</font></td>
+		<td align="right" style="border-right-style: solid; border-right-width: 1px; border-top-style: solid; border-top-width: 2px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt">2015-12-19</font></td>
+    </tr>
+    <tr>
+        <td colspan="2" height="7"> </td>
+        <td colspan="2"> </td>       
+    </tr>
+    <tr>
+        <td align="left" style="border-left-style: solid; border-left-width: 1px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt" height="38"><b>到期还款日</b><br  />
+		</font><font color="#404040">Payment Due Date</font></td>
+		<td align="right" style="border-right-style: solid; border-right-width: 1px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt">2016-01-13</font></td>
+		<td align="left" style="border-left-style: solid; border-left-width: 1px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt"><b>信用额度</b><br  />
+		</font><font color="#404040">Credit Limit</font></td>
+		<td align="right" style="border-right-style: solid; border-right-width: 1px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt">10,000</font></td>
+    <tr>
+        <td colspan="2" height="7"> </td>
+        <td colspan="2"> </td>       
+    </tr>
+    <tr>
+        <td align="left" height="38" style="border-left-style: solid; border-left-width: 8px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt"><b>本期人民币应还款额</b><br  />
+		</font><font color="#404040">RMB Statement Balance</font></td>  
+		<td align="right" style="border-right-style: solid; border-right-width: 1px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font color="#FF0000" style="font-size: 11pt">4,311.28</font> 
+		<td align="left" style="border-left-style: solid; border-left-width: 1px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<b><font style="font-size: 11pt">预借现金额度</font></b><br  />
+		<font color="#404040">Cash Advance Limit</font></td>
+		<td align="right" style="border-right-style: solid; border-right-width: 1px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt">5,000</font></td>
+    </tr>        
+    <tr>
+        <td colspan="2" height="7"> </td>
+        <td colspan="2"> </td>       
+    </tr>
+    <tr>
+        <td align="left" height="38" style="border-left-style: solid; border-left-width: 8px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font style="font-size: 11pt"><b>本期人民币最低还款额</b><br  /></font>
+		<font color="#404040">RMB Minimum payment Date</font></td>  
+		<td align="right" style="border-right-style: solid; border-right-width: 1px; border-top-style: solid; border-top-width: 1px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+		<font color="#FF0000" style="font-size: 11pt">804.92</font></td> 
+		<td align="left">
+		
+		<td align="right">
+		
+    </tr>
+</table>
+<table border="0" width="740" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" align="center">
+    <tr>
+		<td colspan="11" height="33" align="center">
+		<font style="font-size: 12pt;"><b>本期账务说明及交易明细</b></font></td>
+    </tr>
+    <tr>
+        <td align="center" width="15%" height="27" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-top-style: solid; border-top-width: 4px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+        	本期账单金额
+        </td>
+		<td align="center" width="2%" height="70" rowspan="2">
+		<font style="font-size: 13pt;"><b>=</b></font></td>
+		<td align="center" width="15%" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-top-style: solid; border-top-width: 4px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+			上期账单金额
+		</td>	
+		<td align="center" width="2%" rowspan="2">
+		<font style="font-size: 13pt"><b>-</b></font></td>
+		<td align="center" width="15%" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-top-style: solid; border-top-width: 4px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+			本期已还金额
+		</td>
+		<td align="center" width="2%" rowspan="2">
+		<b><font style="font-size: 13pt">+</font></b></td>
+		<td align="center" width="15%" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-top-style: solid; border-top-width: 4px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+			本期新增金额
+		</td>
+		<td align="center" width="2%" rowspan="2">
+		<b><font style="font-size: 13pt">+</font></b></td>
+		<td align="center" width="15%" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-top-style: solid; border-top-width: 4px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+			本期调整金额
+		</td>
+		<td align="center" width="2%" rowspan="2">
+		<b><font style="font-size: 13pt">+</font></b></td>
+		<td align="center" width="15%" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-top-style: solid; border-top-width: 4px; border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+			循环利息
+		</td>
+	</tr>
+	<tr>
+	    <td height="43" align="center" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-bottom-style: solid; border-bottom-width: 4px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+		<font color="#FF0000" style="font-size: 11pt">4,311.28<br  /></font></td>
+		<td align="center" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-bottom-style: solid; border-bottom-width: 4px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+		<font style="font-size: 11pt">2,410.16</font></td>
+		<td align="center" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-bottom-style: solid; border-bottom-width: 4px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+		<font style="font-size: 11pt">1,200.00</font></td>
+		<td align="center" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-bottom-style: solid; border-bottom-width: 4px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+		<font style="font-size: 11pt">3,065.22</font></td>
+		<td align="center" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-bottom-style: solid; border-bottom-width: 4px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+	    <font style="font-size: 11pt">0.00</font></td>
+	    <td align="center" style="border-left-style: solid; border-left-width: 4px; border-right-style: solid; border-right-width: 4px;border-bottom-style: solid; border-bottom-width: 4px" bordercolor="#44A2FF" bgcolor="#D7EBFF">
+		<font style="font-size: 11pt">35.90</font></td>
+	</tr>
+</table>
+
+<table border="0" width="740" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" align="center" style="margin-top:8;margin-bottom:8;">
+    <tr>
+		<td height="34" align="center" bgcolor="#D7EBFF" width="15%"><b>交易日</b><br  />SOLD</td>
+		<td align="center" bgcolor="#D7EBFF" width="15%"><b>记账日</b><br  />POSTED</td>
+		<td align="center" bgcolor="#D7EBFF" width="35%"><b>交易摘要</b><br  />DESCRIPTION</td>
+		<td align="center" bgcolor="#D7EBFF" width="15%"><b>人民币金额</b><br  />RMB AMOUNT</td>
+		<td align="center" bgcolor="#D7EBFF" width="20%"><b>卡号末四位</b><br  />CARD NO(Last 4 digits)</td>
+	</tr>
+	
+	
+	<tr>
+		<td height="25" align="center">2015/11/24</td>
+		<td align="center">2015/11/24</td>
+		<td align="center">支付宝快捷支付&nbsp;&nbsp;&nbsp;&nbsp; </td>
+		<td align="center">1,500.00</td>
+		<td align="center">8147</td>
+	</tr>
+	
+	<tr>
+		<td height="25" align="center" bgcolor="#D7EBFF">2015/12/10</td>
+		<td align="center" bgcolor="#D7EBFF">2015/12/10</td>
+		<td align="center" bgcolor="#D7EBFF">本系统自助转入&nbsp;&nbsp;&nbsp;&nbsp; 6228580699036182440</td>
+		<td align="center" bgcolor="#D7EBFF">-1,200.00</td>
+		<td align="center" bgcolor="#D7EBFF">8147</td>
+	</tr>
+	
+	<tr>
+		<td height="25" align="center">2015/12/11</td>
+		<td align="center">2015/12/11</td>
+		<td align="center">浙江大学医学院附属第二医院&nbsp;&nbsp;&nbsp;&nbsp; </td>
+		<td align="center">885.80</td>
+		<td align="center">8147</td>
+	</tr>
+	
+	<tr>
+		<td height="25" align="center" bgcolor="#D7EBFF">2015/12/13</td>
+		<td align="center" bgcolor="#D7EBFF">2015/12/13</td>
+		<td align="center" bgcolor="#D7EBFF">支付宝快捷支付&nbsp;&nbsp;&nbsp;&nbsp; </td>
+		<td align="center" bgcolor="#D7EBFF">300.00</td>
+		<td align="center" bgcolor="#D7EBFF">8147</td>
+	</tr>
+	
+	<tr>
+		<td height="25" align="center">2015/12/19</td>
+		<td align="center">2015/12/19</td>
+		<td align="center">账单分期 （分期付款每月摊销）&nbsp;&nbsp;&nbsp;&nbsp; 第5期共24期</td>
+		<td align="center">379.42</td>
+		<td align="center">8147</td>
+	</tr>
+	
+	<tr>
+		<td height="25" align="center" bgcolor="#D7EBFF">2015/12/19</td>
+		<td align="center" bgcolor="#D7EBFF">2015/12/19</td>
+		<td align="center" bgcolor="#D7EBFF">利息交易&nbsp;&nbsp;&nbsp;&nbsp; </td>
+		<td align="center" bgcolor="#D7EBFF">35.90</td>
+		<td align="center" bgcolor="#D7EBFF">8147</td>
+	</tr>
+	
+	
+</table>
+
+<table border="0" width="740" cellspacing="0" cellpadding="0" align="center" style="margin-bottom:8">
+	<tr>
+		<td height="15" align="left" width="14">
+		<font style="font-size: 16.0pt; font-family: MS Mincho">&#9654;</font></td>
+		<td align="left">若您的人民币账户的“本期账单金额”为负数，表示本期该人民币账户中尚有存款，您无须另行还款。</td>
+	</tr>		
+	<tr>
+		<td height="15" align="left">
+		<font style="font-size: 16.0pt; font-family: MS Mincho">&#9654;</font></td>
+		<td align="left">上述交易摘要中的商户名称仅供参考，如与签购单不符，请以签购单为准。</td>
+	</tr>
+	<tr>
+		<td height="15" align="left">
+		<font style="font-size: 16.0pt; font-family: MS Mincho">&#9654;</font></td>
+		<td align="left">如您对所列交易有异议，应在到期还款日前向发卡机构提出查证要求。</td>
+	</tr>
+	<tr>
+		<td height="15" align="left">
+		<font style="font-size: 16.0pt; font-family: MS Mincho">&#9654;</font></td>
+		<td align="left">本期账单仅供您作为对账参考。</td>
+	</tr>
+</table>
+<table border="0" width="740" cellspacing="0" cellpadding="0" align="center">
+        <td style="border-left-style: solid; border-left-width: 1px; border-right-style: solid; border-right-width: 1px; border-top-style: solid; border-top-width: 1px;border-bottom-style: solid; border-bottom-width: 1px" bordercolor="#067ED7">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" height="100%">
+            <tr>
+                <td height="35" align="center" width="20%"><font style="font-size: 11pt;"><b>可用积分余额</b></font></td>
+                <td align="center" width="2%"><font style="font-size: 11pt; "><b>=</b></font></td>
+                <td align="center" width="19%"><font style="font-size: 11pt; "><b>上期可用积分余额</b></font></td>
+                <td align="center" width="2%"><font style="font-size: 11pt; "><b>+</b></font></td>
+                <td align="center" width="16%"><font style="font-size: 11pt; "><b>本期新增积分</b></font></td>
+                <td align="center" width="2%"><font style="font-size: 11pt; "><b>+</b></font></td>
+                <td align="center" width="19%"><font style="font-size: 11pt; "><b>本期调整积分</b></font></td>
+                <td align="center" width="2%"><font style="font-size: 13pt; "><b>-</b></font></td>
+                <td align="center" width="18%"><font style="font-size: 11pt; "><b>本期兑换积分总数</b></font></td>
+			</tr>
+			<tr>
+			    <td height="35" align="center"><font color="#FF0000" style="font-size: 11pt">6,804</font></td>
+			    <td></td>
+			    <td align="center"><font style="font-size: 11pt">6,804</font></td>
+			    <td></td>
+			    <td align="center"><font style="font-size: 11pt">0</font></td>
+			    <td></td>
+			    <td align="center"><font style="font-size: 11pt">0</font></td>
+			    <td></td>
+			    <td align="center"><font style="font-size: 11pt">0</font></td>
+			</tr>
+		</table>
+	    </td>
+</table>
+
+<table border="0" width="740" cellspacing="0" cellpadding="0" align="center">
+	<tr>
+		<td height="29" align="center" width="2%">
+		<font style="font-size: 16.0pt; font-family: MS Mincho">&#9654;</font></td>
+		<td align="left" width="98%">
+		<b>温馨提示</b>：由于各商户的银行入账日有所不同，您本期交易的部分积分可能在下月账单显示。</td>
+	</tr>
+    </table>
+    <table border="0" width="740" cellspacing="0" cellpadding="0" align="center">
+		<tr>
+		<td height="200" align="left" colspan="2">
+		 <a href="http://mp.weixin.qq.com/s?__biz=MzA3MTI4MzQyNA==&mid=260030693&idx=1&sn=dd223d810f48a3f8f7d30b8ef78a0d42#rd" target="_blank"><img border="0" src="http://img.cupdata.com/resource/bank/uploadFiles/fck/image/20151029150310.jpg" height="300" width="360"  /></a>        
+        </td>
+        <td height="200" align="center" colspan="2">
+        <a href="http://www.zj96596.com/yhk/zgg/552.shtml" target="_blank"><img border="0" src="http://img.cupdata.com/resource/bank/uploadFiles/fck/image/20151029150432.jpg" height="300" width="360"  /></a>
+		</td>
+	</tr>
+</table>
+
+<br  />
+
+<table border="0" width="780" cellspacing="0" cellpadding="0" height="15" align="center">
+	    <td>
+		<img border="0" src="http://img.cupdata.com/resource/bank/uploadFiles/fck/image/20130521134353.jpg" width="780" height="15"  /></td>
+</table>
+
+<style type="text/css">.qmbox style, .qmbox script, .qmbox head, .qmbox link, .qmbox meta {display: none !important;}</style></div></div><!-- --><style>#mailContentContainer .txt {height:auto;}</style>  </div><script>
+(function()
+{
+var _oImgs = getTop().GelTags("img", getTop().S("mailContentContainer",window));
+getTop().E(_oImgs, function(_aoItem){ 
+_aoItem.onerror = function()
+{
+                if(this.src && /.*mail\.qq\.com\/cgi-bin\/viewfile.*/i.test(this.src)){
+                    getTop().LogKV({sValue:'getinvestigate|readmail|readmail|imgerror'});
+                }
+if (this.src && !/.*mail.qq.com\/cgi-bin.*/.test(this.src) && /http:\/\//.test(this.src) && this.clientHeight * this.clientWidth > 0) 
+{
+this.onerror = null;
+this.src = "/cgi-bin/get_netres?url=" + encodeURIComponent(this.src) + "&sid=" + getTop().getSid(); 
+}
+}
+});
+})();
+</script></div><img id="qqmailcontent_load_finsih" width=0 height=0 style="height:0;display:none;"/></div></body></html><script>
+var _oTop = getTop();
+
+function showNetDisk(_aoContainer)
+{
+getTop().waitFor(
+function()
+{
+return getTop().QMNetDisk && getTop().QMNetDisk.getInfo()
+},
+function(_abIsOk)
+{
+if(_abIsOk)
+{
+var _oDiskInfo = getTop().QMNetDisk.getInfo(),
+_oDomAttCon = getTop().finds("div[ui-type='attCon']", _aoContainer)[0],
+_oDomList = getTop().finds("a.netdisk_hide", _oDomAttCon||_aoContainer) || [],
+_oDomAtt = _oDomList[0];
+
+for(var i = 0; i < _oDomList.length;i++)
+{
+getTop().QMNetDisk.uploadEntry(_oDomList[i]);
+}
+
+_oDomAttCon && _oDomAtt
+&& setTimeout(function()
+{
+getTop().QMNetDisk.route("tips", "readmail", _oDomAttCon, {
+offsetLeft: _oDomAtt.offsetLeft + _oDomAtt.clientWidth/2, 
+offsetTop: 80
+});
+},3000);
+}
+}
+);
+}
+showNetDisk(document);
+_oTop.waitFor(
+function()
+{
+return !!(_oTop.QMReadMail);
+},
+function(_abIsOk)
+{
+if (_abIsOk)
+{
+
+var hasExpired = [],
+hasDeleted = [];
+
+try{
+window.QMReadMail = new (_oTop.QMReadMail.qmReadMail)(
+{
+                    
+ bNeedIdentifyLocation: true,
+sLocationIdentifyUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify_worker2911e7.js',
+sLocationWorkerImportUrl: '//'+_oTop.location.hostname+'/zh_CN/htmledition/js/location_identify/location_identify25f2fd.js',
+   
+logintype: '1',
+reandfw: "",
+mailtype        : 'comm',
+xqqstyle: '0',
+noIncludeArtcle: false,
+bOpenTag : "1",
+                    
+                    hadExpiredAttachs : {hasExpired:hasExpired,hasDeleted:hasDeleted},
+
+loc: "readmail,readmail,",
+subtmpl: "",
+folderid: "1",
+folderkey: "",
+saveFrom: "520322659@qq.com",
+titlePrefix: "0",
+sendmailname: "520322659@qq.com",
+disptype: "html",
+
+bNewMail        : 0,
+
+bNeedReceipt : 0,
+
+bStar : false,
+bAddrvip : false,
+bSys : false,
+                    bAd: false,
+oSysTag : "system:1|friend:0|important:0|",
+bDft : false,
+oMatchTag : [],
+oMoveItems: [ 
+{ sId: 'fid_1', sItemValue: "收件箱" },
+{ sId: 'fid_3', sItemValue: "已发送" },
+{ sId: "fid_130", sItemValue: "QQ邮件订阅" },
+{ sId: "fid_131", sItemValue: "重要" },
+{ sId: "fid_132", sItemValue: "中国工商银行" },
+{ nHeight: 10, sItemValue: '<div style="background:#CCC; height:1px; margin-top:5px; overflow:hidden;"></div>' }, //'<hr style="color:#CCC;height:1px;"/>' },
+{ sId: "new", sItemValue : '新建文件夹...' }
+],
+oMoreOpt : ["addremark", "addstar", "addremind", "print"]
+},
+{
+from: { 
+                        name : "浙江农信", 
+                        addr : "fscc@zjrcu.com.cn",
+                        qq : ""
+                    }, 
+date: "2015年12月20日(星期天) 中午11:19",
+dateeng: "",
+
+to: [
+{
+name : "代号 歼11",
+addr : "520322659@qq.com",
+qq  : "-2783424441"
+},
+],
+
+cc: [
+],
+
+subject: "丰收信用卡电子对账单",
+
+replyTo: [
+{
+name : "浙江农信",
+addr : "fscc@zjrcu.com.cn"
+}
+],
+
+replyCc: [
+],
+
+reSubject: "丰收信用卡电子对账单"
+},
+{
+oWin : window,
+sContext : "ZC2620-h~S~HWN94OOVU0waRUIfN5c",
+sModuleName : "qmReadMail"
+}
+);
+}catch(e){alert(e.message)}
+
+var tag = [{}];
+tag.length = tag.length - 1;
+getTop().QMTag && getTop().QMTag.set(tag, "1457911324346004");
+
+}
+else
+{
+debug("读信readmail2.js加载失败");
+}
+}, 10);
+
+getTop().switchFolder('folder_1');
+</script> <script type="text/javascript" src="https://rescdn.qqmail.com/zh_CN/htmledition/js/speed-report29d207.js"></script><script type="text/javascript" src="https://rescdn.qqmail.com/zh_CN/htmledition/js/bj-report2761dc.js"></script><script type="text/javascript">
+BJ_REPORT.init({
+id   : 112,
+url    : "https://mail.qq.com/badjs",
+ignore : [/Script error/i],
+random : 0.1
+});
+var _oTop = getTop();
+_oTop.waitFor(
+function()
+{
+return _oTop.resetTopFrameError;
+},
+function(_abIsOk)
+{
+_oTop.resetTopFrameError();
+});
+
+</script><script type="text/javascript">
+setTimeout(function (){
+  xly_report.pageSpeed(78500185,window,0.01);
+},1000);
+</script><script>parent.endStatTime && parent.endStatTime(window, 
+{mailid:"ZC2620-h~S~HWN94OOVU0waRUIfN5c",folderid:"1",type:"readmail",rcgi:"readmail",rt:"readmail",rs:"",wm_flowid:"220523529"});</script>
