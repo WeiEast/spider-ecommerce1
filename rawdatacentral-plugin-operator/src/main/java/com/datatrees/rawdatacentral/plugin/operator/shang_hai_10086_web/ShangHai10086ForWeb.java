@@ -18,7 +18,6 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,16 +131,19 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
             String artifact = json.getString("artifact");
             if (StringUtils.isNotBlank(uid) && (StringUtils.contains(message, "成功") || StringUtils.isBlank(message))) {
                 String referer = "https://sh.ac.10086.cn/login";
-                templateUrl
-                        = "https://login.10086.cn/AddUID.action?channelID=00210&Artifact={}&TransactionID={}&backUrl="+ URLEncoder.encode("http://www.sh.10086.cn/sh/wsyyt/ac/jtforward.jsp?source=wysso","UTF-8")+"&uid={}&tourl="+URLEncoder.encode("http://www.sh.10086.cn/sh/service/","UTF-8");
+                templateUrl = "https://login.10086.cn/AddUID.action?channelID=00210&Artifact={}&TransactionID={}&backUrl=" +
+                        URLEncoder.encode("http://www.sh.10086.cn/sh/wsyyt/ac/jtforward.jsp?source=wysso", "UTF-8") + "&uid={}&tourl=" +
+                        URLEncoder.encode("http://www.sh.10086.cn/sh/service/", "UTF-8");
                 response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_004")
                         .setFullUrl(templateUrl, artifact, transactionID, uid).setReferer(referer).invoke();
 
                 templateUrl = PatternUtils.group(response.getPageContent(), "location\\.replace\\(\"([^\"]+)\"\\)", 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_005").setFullUrl(templateUrl).addHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8").invoke();
+                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_005").setFullUrl(templateUrl)
+                        .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8").invoke();
 
                 templateUrl = "http://www.sh.10086.cn/sh/wsyyt/action?act=my.getMusType";
-                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_006").setFullUrl(templateUrl).addHeader("X-Requested-With","XMLHttpRequest").invoke();
+                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_006").setFullUrl(templateUrl)
+                        .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
                 if (StringUtils.contains(response.getPageContent(), param.getMobile().toString()) &&
                         StringUtils.contains(response.getPageContent(), "\"code\":0")) {
                     logger.info("登陆成功,param={}", param);
