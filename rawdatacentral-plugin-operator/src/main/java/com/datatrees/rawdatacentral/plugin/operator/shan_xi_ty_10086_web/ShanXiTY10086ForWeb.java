@@ -210,7 +210,7 @@ public class ShanXiTY10086ForWeb implements OperatorPluginService {
             data = TemplateUtils.format(templateData, samLart, URLEncoder.encode(relay, "UTF-8"));
             response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_ty_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
-
+            pageContent = response.getPageContent();
             samLart = PatternUtils.group(pageContent, "'([^']+)'", 1);
             templateUrl = "http://service.sx.10086.cn/my/";
             templateData = "SAMLart={}&RelayState={}";
