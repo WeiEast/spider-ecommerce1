@@ -5,6 +5,7 @@ import java.util.Set;
 
 public enum ErrorCode {
 
+    TASK_CANCEL(-2,"用户/网关取消任务(超时约5分钟)"),
     NOT_SUPORT_METHOD(-10, "方法不支持"),
     LOGIN_FAIL(-100, "登陆失败,请重试"),
     LOGIN_UNEXPECTED_RESULT(-101, "登陆失败,请重试"),

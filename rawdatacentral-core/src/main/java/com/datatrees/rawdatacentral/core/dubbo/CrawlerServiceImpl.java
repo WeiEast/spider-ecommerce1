@@ -28,12 +28,14 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.service.MonitorService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -57,6 +59,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private ZooKeeperClient        zooKeeperClient;
     @Resource
     private CrawlerOperatorService crawlerOperatorService;
+    @Resource
+    private MonitorService         monitorService;
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -331,6 +335,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             result.setData(true);
             result.success();
         }
+        monitorService.sendTaskCompleteMsg(taskId, ErrorCode.TASK_CANCEL.getErrorCode(), ErrorCode.TASK_CANCEL.getErrorMsg());
         return result.failure();
     }
 
