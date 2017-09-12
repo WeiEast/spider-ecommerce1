@@ -45,10 +45,9 @@ public interface MessageService {
      * @param topic       订阅主题
      * @param msg         消息
      * @param charsetName JSON个时候发送编码类型
-     * @param maxRetry    失败重试次数
      * @return
      */
-    boolean sendMessage(String topic, Object msg, String charsetName, int maxRetry);
+    boolean sendMessage(String topic, Object msg, String charsetName);
 
     /**
      * 发送消息
@@ -65,10 +64,9 @@ public interface MessageService {
      * @param tags        tags
      * @param msg         消息
      * @param charsetName JSON个时候发送编码类型
-     * @param maxRetry    失败重试次数
      * @return
      */
-    boolean sendMessage(String topic, String tags, Object msg, String charsetName, int maxRetry);
+    boolean sendMessage(String topic, String tags, Object msg, String charsetName);
 
     /**
      * 发送登录成功消息
