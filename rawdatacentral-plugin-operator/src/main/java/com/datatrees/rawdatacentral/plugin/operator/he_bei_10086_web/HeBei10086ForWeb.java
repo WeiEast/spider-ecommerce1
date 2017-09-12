@@ -241,7 +241,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
             }
 
             templateUrl = "http://www.he.10086.cn/my?SAMLart={}&RelayState={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_006").setFullUrl(templateUrl, samLart, relayState).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_006").setFullUrl(templateUrl, samLart, relayState).addHeader("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0").invoke();
             pageContent = response.getPageContent();
 
             relayStateList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
