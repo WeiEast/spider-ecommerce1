@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.api;
 
+import java.util.Map;
+
 import com.datatrees.rawdatacentral.domain.model.Task;
 
 /**
@@ -13,5 +15,12 @@ public interface CrawlerTaskService {
      * @return
      */
     Task getByTaskId(Long taskId);
+
+    /**
+     * 获取任务基本信息
+     * @param taskId
+     * @return
+     */
+    Map<String, String> getTaskBaseInfo(Long taskId);
 
 }

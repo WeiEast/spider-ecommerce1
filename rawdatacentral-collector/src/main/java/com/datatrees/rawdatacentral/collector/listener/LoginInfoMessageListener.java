@@ -70,11 +70,11 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         Boolean initStatus = redisTemplate.opsForValue().setIfAbsent(key, TaskStageEnum.INIT.getStatus());
         //第一次收到启动消息
         if (initStatus) {
+            //记录运营商别名,有别名就是独立模块
+            redisService.saveString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
             BeanFactoryUtils.getBean(MonitorService.class).initTask(taskId, websiteName);
             //30不再接受重复消息
             redisTemplate.expire(key, RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeout(), RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeUnit());
-            //记录运营商别名,有别名就是独立模块
-            redisService.saveString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
             Website website = null;
             if (isNewOperator) {
                 //数据库真实websiteName
