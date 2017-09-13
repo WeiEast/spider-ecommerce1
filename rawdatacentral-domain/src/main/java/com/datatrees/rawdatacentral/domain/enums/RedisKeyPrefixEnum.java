@@ -12,6 +12,7 @@ public enum RedisKeyPrefixEnum {
     LOCK("lock", 1, TimeUnit.MINUTES, "共享锁"),
     TASK_COOKIE("task.cookie", 30, TimeUnit.MINUTES, "根据taskId共享cookie"),
     TASK_WEBSITE("task.website", 30, TimeUnit.MINUTES, "根据taskId保存website"),
+    TASK_FIRST_VISIT_WEBSITENAME("task.first.visit.websitename", 30, TimeUnit.MINUTES, "task第一次访问使用的websiteName"),
     TASK_RUN_STAGE("task.run.stage", 30, TimeUnit.MINUTES, "task运营阶段"),
     TASK_SHARE("task.share", 30, TimeUnit.MINUTES, "根据taskId共享中间属性"),
     TASK_PROXY("task.proxy", 30, TimeUnit.MINUTES, "根据taskId共享代理"),

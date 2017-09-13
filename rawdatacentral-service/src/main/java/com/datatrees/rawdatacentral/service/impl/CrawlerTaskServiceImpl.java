@@ -3,7 +3,6 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -37,21 +36,26 @@ public class CrawlerTaskServiceImpl implements CrawlerTaskService {
 
     @Override
     public Map<String, String> getTaskBaseInfo(Long taskId) {
-        String websiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId), 15, TimeUnit.SECONDS);
+        //获取第一次消息用的websiteName
+        String firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId);
+        //兼容老的
+        if (StringUtils.isBlank(firstVisitWebsiteName)) {
+            firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId);
+        }
         //是否是独立运营商
-        Boolean isNewOperator = StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
-
+        Boolean isNewOperator = StringUtils.startsWith(firstVisitWebsiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
         Map<String, String> map = new HashMap<>();
         map.put(AttributeKey.TASK_ID, taskId + "");
-        map.put(AttributeKey.WEBSITE_NAME, websiteName);
+        //使用伪装的webisteName
+        map.put(AttributeKey.WEBSITE_NAME, firstVisitWebsiteName);
         GroupEnum group = null;
         if (isNewOperator) {
-            WebsiteOperator websiteOperator = websiteOperatorService
-                    .getByWebsiteName(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName));
+            String realWebsiteName = RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(firstVisitWebsiteName);
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(realWebsiteName);
             map.put(AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
             group = GroupEnum.getByGroupCode(websiteOperator.getGroupCode());
         } else {
-            group = GroupEnum.getByWebsiteName(websiteName);
+            group = GroupEnum.getByWebsiteName(firstVisitWebsiteName);
         }
         map.put(AttributeKey.GROUP_CODE, group.getGroupCode());
         map.put(AttributeKey.GROUP_NAME, group.getGroupName());

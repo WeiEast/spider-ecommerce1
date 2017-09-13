@@ -25,7 +25,7 @@ public class MonitorServiceImpl implements MonitorService {
     private CrawlerTaskService crawlerTaskService;
 
     @Override
-    public void initTask(Long taskId, String websiteName) {
+    public void initTask(Long taskId) {
         Map<String, String> map = crawlerTaskService.getTaskBaseInfo(taskId);
         messageService.sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_INIT.getTag(), map);
     }

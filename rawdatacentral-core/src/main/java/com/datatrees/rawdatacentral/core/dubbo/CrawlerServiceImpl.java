@@ -368,9 +368,15 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     private boolean isNewOperator(Long taskId) {
-        String websiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId), 15, TimeUnit.SECONDS);
+        //获取第一次消息用的websiteName
+        String firstVisitWebsiteName = redisService
+                .getString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME.getRedisKey(taskId), 3, TimeUnit.SECONDS);
+        //兼容老的
+        if (StringUtils.isBlank(firstVisitWebsiteName)) {
+            firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId), 3, TimeUnit.SECONDS);
+        }
         //是否是独立运营商
-        Boolean isNewOperator = StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
+        Boolean isNewOperator = StringUtils.startsWith(firstVisitWebsiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
         return isNewOperator;
     }
 

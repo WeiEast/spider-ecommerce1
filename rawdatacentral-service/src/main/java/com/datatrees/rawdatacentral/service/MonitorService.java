@@ -11,9 +11,8 @@ public interface MonitorService {
     /**
      * 初始化监控信息
      * @param taskId      任务id
-     * @param websiteName 配置名称
      */
-    void initTask(Long taskId, String websiteName);
+    void initTask(Long taskId);
 
     /**
      * 发送任务完成消息
