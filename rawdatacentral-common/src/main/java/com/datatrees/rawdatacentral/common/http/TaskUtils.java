@@ -159,16 +159,6 @@ public class TaskUtils {
      * @param value
      */
     public static void addTaskShare(Long taskId, String name, String value) {
-        addTaskShare(taskId, name, value);
-    }
-
-    /**
-     * 添加共享属性
-     * @param taskId
-     * @param name
-     * @param value
-     */
-    public static void addTaskShare(Long taskId, String name, Object value) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
         redisService.lockFailThrowException(redisKey);
         Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
@@ -262,7 +252,7 @@ public class TaskUtils {
 
         redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
         redisService.unLock(redisKey);
-        logger.info("addTaskResult success taskId={},websiteName={}", taskId, websiteName);
+        logger.info("initTaskShare success taskId={},websiteName={}", taskId, websiteName);
 
         redisService.saveString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
         redisService.saveString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId, websiteName);
