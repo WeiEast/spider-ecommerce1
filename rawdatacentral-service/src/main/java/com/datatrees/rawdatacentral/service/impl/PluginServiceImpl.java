@@ -38,9 +38,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         CheckUtils.checkNotBlank(fileName, "fileName is blank");
         String md5 = DigestUtils.md5Hex(bytes);
         redisService.saveBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName), bytes);
-        redisService.saveBytes("plugin_class_" + fileName, bytes);
-        redisService.cache(RedisKeyPrefixEnum.PLUGIN_FILE_MD5, fileName, md5);
-        redisService.cache("plugin_file_md5_" + fileName, md5, RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getTimeout(), RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getTimeUnit());
+        redisService.saveString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5, fileName, md5);
         logger.info("cache plugin fileName={},md5={}", fileName, md5);
         return md5;
     }

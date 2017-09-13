@@ -117,7 +117,8 @@ public class ReidsServiceImpl implements RedisService {
             return null;
         }
         try {
-            return stringRedisTemplate.opsForValue().get(key);
+            String value = stringRedisTemplate.opsForValue().get(key);
+            return cleanJson(value);
         } catch (Exception e) {
             logger.error("getString error key={}", key, e);
             return null;
@@ -145,7 +146,7 @@ public class ReidsServiceImpl implements RedisService {
                 if (stringRedisTemplate.hasKey(key)) {
                     String value = stringRedisTemplate.opsForValue().get(key);
                     logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
-                    return value;
+                    return cleanJson(value);
                 }
             } while (System.currentTimeMillis() <= endTime);
             logger.warn("getString fail,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
@@ -348,7 +349,7 @@ public class ReidsServiceImpl implements RedisService {
 
     @Override
     public <T> T getCache(String key, TypeReference<T> typeReference) {
-        String json = getString(key);
+        String json = getStringWithNoClean(key);
         if (StringUtils.isNoneBlank(json)) {
             T result = JSON.parseObject(json, typeReference);
             logger.info("getCache success key={}", key);
@@ -376,9 +377,11 @@ public class ReidsServiceImpl implements RedisService {
             result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "locked");
             if (result) {
                 stringRedisTemplate.expire(lockKey, RedisKeyPrefixEnum.LOCK.getTimeout(), RedisKeyPrefixEnum.LOCK.getTimeUnit());
+                logger.info("lock success redisKey={}", redisKey);
                 return true;
             }
         }
+        logger.error("lock fail redisKey={}", redisKey);
         return false;
     }
 
@@ -390,9 +393,32 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public void unLock(Object postfix) {
-        String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(postfix.toString());
+    public void unLock(Object redisKey) {
+        String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(redisKey.toString());
         deleteKey(lockKey);
+        logger.info("unlock success redisKey={}", redisKey);
+    }
+
+    public String getStringWithNoClean(String key) {
+        if (!hasKey(key)) {
+            return null;
+        }
+        try {
+            return stringRedisTemplate.opsForValue().get(key);
+        } catch (Exception e) {
+            logger.error("getString error key={}", key, e);
+            return null;
+        }
+    }
+
+    public String cleanJson(String json) {
+        if (StringUtils.isBlank(json)) {
+            return json;
+        }
+        if (json.startsWith("\"") && json.endsWith("\"")) {
+            return json.substring(1, json.length() - 1);
+        }
+        return json;
     }
 
 }

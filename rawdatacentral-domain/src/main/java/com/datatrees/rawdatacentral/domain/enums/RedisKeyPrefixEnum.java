@@ -21,7 +21,7 @@ public enum RedisKeyPrefixEnum {
     TASK_PIC_CODE("task.pic.code", 30, TimeUnit.MINUTES, "根据taskId共享短信验证码"),
     TASK_RESULT("task.result", 60, TimeUnit.MINUTES, "task爬取结果"),
     TASK_REQUEST("task.request", 30, TimeUnit.MINUTES, "根据taskId共享代理"),
-    PLUGIN_CLASS("plugin.class", 24, TimeUnit.HOURS, "根据taskId共享cookie"),
+    PLUGIN_CLASS("plugin.class", 24, TimeUnit.HOURS, "根据taskId共享class"),
     PLUGIN_FILE("plugin.file", 365, TimeUnit.DAYS, "插件jar存储"),
     PLUGIN_FILE_MD5("plugin.file.md5", 365, TimeUnit.DAYS, "插件md5"),
     SEND_LOGIN_MSG_STAGE("send.login.msg.stage", 24, TimeUnit.HOURS, "发送登录成功消息阶段"),

@@ -117,7 +117,7 @@ public class TaskUtils {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
-        redisService.cache(RedisKeyPrefixEnum.TASK_COOKIE, String.valueOf(taskId), list);
+        redisService.cache(RedisKeyPrefixEnum.TASK_COOKIE, taskId, list);
     }
 
     public static BasicCookieStore getCookie(Long taskId) {
@@ -168,6 +168,7 @@ public class TaskUtils {
         map.put(name, value);
         redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
         redisService.unLock(redisKey);
+        logger.info("addTaskShare success taskId={},name={}", taskId, name);
     }
 
     /**
@@ -197,6 +198,7 @@ public class TaskUtils {
             redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
         }
         redisService.unLock(redisKey);
+        logger.info("removeTaskShare success taskId={},name={}", taskId, name);
     }
 
     /**
@@ -225,6 +227,7 @@ public class TaskUtils {
         map.put(name, value);
         redisService.cache(RedisKeyPrefixEnum.TASK_RESULT, taskId, map);
         redisService.unLock(redisKey);
+        logger.info("addTaskResult success taskId={},name={}", taskId, name);
     }
 
     /**
@@ -249,6 +252,7 @@ public class TaskUtils {
 
         redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
         redisService.unLock(redisKey);
+        logger.info("addTaskResult success taskId={},websiteName={}", taskId, websiteName);
 
         redisService.saveString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
         redisService.saveString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId, websiteName);
