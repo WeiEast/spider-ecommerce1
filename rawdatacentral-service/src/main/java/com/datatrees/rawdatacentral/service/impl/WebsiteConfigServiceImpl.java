@@ -336,10 +336,11 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             GroupEnum group = GroupEnum.getByWebsiteName(websiteConfig.getWebsiteName());
             if (null == group) {
                 logger.error("not found group code for webisteName={}", websiteConfig.getWebsiteName());
-                throw new RuntimeException("not found group code for webisteName=" + websiteConfig.getWebsiteName());
+                //throw new RuntimeException("not found group code for webisteName=" + websiteConfig.getWebsiteName());
+            }else {
+                website.setGroupCode(group.getGroupCode());
+                website.setGroupName(group.getGroupName());
             }
-            website.setGroupCode(group.getGroupCode());
-            website.setGroupName(group.getGroupName());
         } else {
             website.setGroupCode(websiteConfig.getGroupCode());
             website.setGroupName(websiteConfig.getGroupName());
