@@ -158,6 +158,16 @@ public class TaskUtils {
      * @param name
      * @param value
      */
+    public static void addTaskShare(Long taskId, String name, String value) {
+        addTaskShare(taskId, name, value);
+    }
+
+    /**
+     * 添加共享属性
+     * @param taskId
+     * @param name
+     * @param value
+     */
     public static void addTaskShare(Long taskId, String name, Object value) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
         redisService.lockFailThrowException(redisKey);

@@ -107,6 +107,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
                         Map.Entry<String, Long> entry = iterator.next();
                         if (System.currentTimeMillis() <= entry.getValue()) {
                             classCache.remove(entry.getKey());
+                            logger.info("remove class cache key={}", entry.getKey());
                             iterator.remove();
                         }
                     }
