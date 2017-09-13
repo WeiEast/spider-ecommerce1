@@ -9,6 +9,7 @@ import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.PluginService;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -48,7 +49,10 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         File file = new File(pluginPath + fileName);
         PluginUpgradeResult result = new PluginUpgradeResult();
         String md5 = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(fileName));
-        CheckUtils.checkNotBlank(md5, "没有从redis读取到插件:" + fileName);
+        if (StringUtils.isBlank(md5)) {
+            logger.error("没有从redis读取到插件md5,fileName={}", fileName);
+            throw new CommonException("没有从redis读取到插件:" + fileName);
+        }
         boolean forceReload = !pluginMd5.containsKey(fileName) || !StringUtils.equals(md5, pluginMd5.get(fileName));
         if (forceReload) {
             byte[] bytes = redisService.getBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
