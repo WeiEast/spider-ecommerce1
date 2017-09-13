@@ -4,17 +4,15 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.alibaba.fastjson.TypeReference;
+import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.Task;
-import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.service.TaskService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,28 +37,17 @@ public class CrawlerTaskServiceImpl implements CrawlerTaskService {
     public Map<String, String> getTaskBaseInfo(Long taskId) {
         Map<String, String> map = new HashMap<>();
         try {
-            //是否是独立运营商
-            Boolean isNewOperator = TaskUtils.isNewOperator(taskId);
-            //获取第一次消息用的websiteName
-            String firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId);
-            //兼容老的
-            if (StringUtils.isBlank(firstVisitWebsiteName)) {
-                firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId);
+            Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
+            if (null == website) {
+                logger.error("not found website from cache,taskId={}", taskId);
+                return map;
             }
             map.put(AttributeKey.TASK_ID, taskId + "");
-            //使用伪装的webisteName
-            map.put(AttributeKey.WEBSITE_NAME, firstVisitWebsiteName);
-            GroupEnum group = null;
-            if (isNewOperator) {
-                WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(TaskUtils.getRealWebsiteName(firstVisitWebsiteName));
-                map.put(AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
-                group = GroupEnum.getByGroupCode(websiteOperator.getGroupCode());
-            } else {
-                group = GroupEnum.getByWebsiteName(firstVisitWebsiteName);
-            }
-            map.put(AttributeKey.GROUP_CODE, group.getGroupCode());
-            map.put(AttributeKey.GROUP_NAME, group.getGroupName());
-            map.put(AttributeKey.WEBSITE_TYPE, group.getWebsiteType().getValue());
+            map.put(AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
+            map.put(AttributeKey.WEBSITE_NAME, website.getWebsiteName());
+            map.put(AttributeKey.GROUP_CODE, website.getGroupCode());
+            map.put(AttributeKey.GROUP_NAME, website.getGroupName());
+            map.put(AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
             map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis() + "");
             return map;
         } catch (Exception e) {
