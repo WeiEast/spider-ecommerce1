@@ -9,7 +9,7 @@ public enum RedisKeyPrefixEnum {
 
     WEBSITENAME_TRANSFORM_MAP("websitename.transform.map", 60, TimeUnit.MINUTES, "websitename中文转英文名称"),
     WEBSITE_CONF_WEBSITENAME("website.conf.websitename", 60, TimeUnit.MINUTES, "根据websitename查找website.conf"),
-    LOCK("lock", 1, TimeUnit.MINUTES, "共享锁"),
+    LOCK("lock", 5, TimeUnit.SECONDS, "共享锁"),
     TASK_COOKIE("task.cookie", 30, TimeUnit.MINUTES, "根据taskId共享cookie"),
     TASK_WEBSITE("task.website", 30, TimeUnit.MINUTES, "根据taskId保存website"),
     TASK_FIRST_VISIT_WEBSITENAME("task.first.visit.websitename", 30, TimeUnit.MINUTES, "task第一次访问使用的websiteName"),

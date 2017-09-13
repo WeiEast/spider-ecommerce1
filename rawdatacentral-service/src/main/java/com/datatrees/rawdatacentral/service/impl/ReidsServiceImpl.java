@@ -368,13 +368,25 @@ public class ReidsServiceImpl implements RedisService {
     }
 
     @Override
-    public Boolean lock(Object postfix) {
-        String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(postfix.toString());
-        if (stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "locked")) {
-            stringRedisTemplate.expire(lockKey, RedisKeyPrefixEnum.LOCK.getTimeout(), RedisKeyPrefixEnum.LOCK.getTimeUnit());
-            return true;
+    public Boolean lock(Object redisKey) {
+        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
+        String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(redisKey.toString());
+        boolean result = false;
+        while (!result && System.currentTimeMillis() < endTime) {
+            result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "locked");
+            if (result) {
+                stringRedisTemplate.expire(lockKey, RedisKeyPrefixEnum.LOCK.getTimeout(), RedisKeyPrefixEnum.LOCK.getTimeUnit());
+                return true;
+            }
         }
         return false;
+    }
+
+    @Override
+    public void lockFailThrowException(Object redisKey) {
+        if (!lock(redisKey)) {
+            throw new RuntimeException("lock fail redisKey=" + redisKey);
+        }
     }
 
     @Override

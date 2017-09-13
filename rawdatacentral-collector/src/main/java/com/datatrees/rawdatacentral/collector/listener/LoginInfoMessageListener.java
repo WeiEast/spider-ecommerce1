@@ -70,19 +70,14 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             Website website = null;
             //30分钟内不再接受重复消息
             redisTemplate.expire(key, RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeout(), RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeUnit());
+            //缓存task基本信息
+            TaskUtils.initTaskShare(taskId, message.getWebsiteName());
             //是否是独立运营商
-            Boolean isNewOperator = StringUtils.startsWith(message.getWebsiteName(), RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
-            TaskUtils.addTaskShare(taskId, AttributeKey.IS_NEW_OPERATOR, isNewOperator + "");
-            //保存第一次消息使用的原始websiteName,有别名就是独立模块
-            TaskUtils.addTaskShare(taskId, AttributeKey.FIRST_VISIT_WEBSITENAME, message.getWebsiteName());
+            Boolean isNewOperator = TaskUtils.isNewOperator(message.getWebsiteName());
             //获取真实websiteName
-            String realebsiteName = getRealWebsiteName(message.getWebsiteName());
-            //后面的刷新图片验证码依赖这个
-            TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, realebsiteName);
-            //保存第一次消息使用的原始websiteName,有别名就是独立模块
-            redisService.saveString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId, message.getWebsiteName());
+            String realebsiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
             //发送任务初始化消息
-            BeanFactoryUtils.getBean(MonitorService.class).initTask(taskId);
+            monitorService.initTask(taskId);
             if (isNewOperator) {
                 //从新的运营商表读取配置
                 WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(realebsiteName);
@@ -115,13 +110,8 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         } else {
             //这里电商,邮箱,老运营商不会有第二次消息,这里只处理运营商登录成功消息
             //获取第一次消息用的websiteName
-            String firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId);
-            //兼容老的
-            if (StringUtils.isBlank(firstVisitWebsiteName)) {
-                firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId);
-            }
-            //是否是独立运营商
-            Boolean isNewOperator = StringUtils.startsWith(firstVisitWebsiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
+            String firstVisitWebsiteName = TaskUtils.getFirstVisitWebsiteName(taskId);
+            Boolean isNewOperator = TaskUtils.isNewOperator(firstVisitWebsiteName);
             //非运营商或者老运营商,重复消息不处理
             if (!isNewOperator) {
                 logger.warn("重复消息,不处理,taskId={},firstVisitWebsiteName={}", taskId, firstVisitWebsiteName);
