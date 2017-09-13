@@ -7,7 +7,6 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
@@ -15,7 +14,6 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.dao.WebsiteOperatorDAO;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
@@ -88,10 +86,6 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         config.setSimulate(source.getSimulate());
         if (StringUtils.isBlank(config.getLoginConfig())) {
             config.setLoginConfig(source.getInitSetting().trim().replaceAll(" ", "").replaceAll("\\n", ""));
-        }
-        if (StringUtils.isBlank(config.getPluginClass())) {
-            String pluginClass = PropertiesConfiguration.getInstance().get(RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(config.getWebsiteName()));
-            config.setPluginClass(pluginClass);
         }
         websiteOperatorDAO.insertSelective(config);
     }
