@@ -122,7 +122,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         submitNormalizerFactory.normalize(submitMessage);
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
-            String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), entry.getKey());
+            String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(),extractMessage.getTaskLogId(), entry.getKey());
             TaskUtils.addTaskResult(extractMessage.getTaskId(), entry.getKey(), entry.getValue());
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {

@@ -11,11 +11,11 @@ public class RedisKeyUtils {
     private static final Logger log          = LoggerFactory.getLogger(RedisKeyUtils.class);
     private static       String REDIS_PREFIX = PropertiesConfiguration.getInstance().get("core.redis.redis.prefix", "raw_res_");
 
-    public static String genRedisKey(long taskId, String resultClass) {
+    public static String genRedisKey(long taskId, long taskLogId, String resultClass) {
         if (StringUtils.isEmpty(resultClass)) {
             return null;
         }
-        StringBuilder sb = new StringBuilder(resultClass).append(".").append(taskId);
+        StringBuilder sb = new StringBuilder(resultClass).append(".").append(taskLogId).append(".").append(taskId);
         String redisKey = sb.toString();
         log.debug("generate redis key " + redisKey);
         return redisKey;
