@@ -37,30 +37,35 @@ public class CrawlerTaskServiceImpl implements CrawlerTaskService {
 
     @Override
     public Map<String, String> getTaskBaseInfo(Long taskId) {
-        //是否是独立运营商
-        Boolean isNewOperator = TaskUtils.isNewOperator(taskId);
-        //获取第一次消息用的websiteName
-        String firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId);
-        //兼容老的
-        if (StringUtils.isBlank(firstVisitWebsiteName)) {
-            firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId);
-        }
         Map<String, String> map = new HashMap<>();
-        map.put(AttributeKey.TASK_ID, taskId + "");
-        //使用伪装的webisteName
-        map.put(AttributeKey.WEBSITE_NAME, firstVisitWebsiteName);
-        GroupEnum group = null;
-        if (isNewOperator) {
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(TaskUtils.getRealWebsiteName(firstVisitWebsiteName));
-            map.put(AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
-            group = GroupEnum.getByGroupCode(websiteOperator.getGroupCode());
-        } else {
-            group = GroupEnum.getByWebsiteName(firstVisitWebsiteName);
+        try {
+            //是否是独立运营商
+            Boolean isNewOperator = TaskUtils.isNewOperator(taskId);
+            //获取第一次消息用的websiteName
+            String firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId);
+            //兼容老的
+            if (StringUtils.isBlank(firstVisitWebsiteName)) {
+                firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId);
+            }
+            map.put(AttributeKey.TASK_ID, taskId + "");
+            //使用伪装的webisteName
+            map.put(AttributeKey.WEBSITE_NAME, firstVisitWebsiteName);
+            GroupEnum group = null;
+            if (isNewOperator) {
+                WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(TaskUtils.getRealWebsiteName(firstVisitWebsiteName));
+                map.put(AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
+                group = GroupEnum.getByGroupCode(websiteOperator.getGroupCode());
+            } else {
+                group = GroupEnum.getByWebsiteName(firstVisitWebsiteName);
+            }
+            map.put(AttributeKey.GROUP_CODE, group.getGroupCode());
+            map.put(AttributeKey.GROUP_NAME, group.getGroupName());
+            map.put(AttributeKey.WEBSITE_TYPE, group.getWebsiteType().getValue());
+            map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis() + "");
+            return map;
+        } catch (Exception e) {
+            logger.error("getTaskBaseInfo error taskId={}", taskId);
+            return map;
         }
-        map.put(AttributeKey.GROUP_CODE, group.getGroupCode());
-        map.put(AttributeKey.GROUP_NAME, group.getGroupName());
-        map.put(AttributeKey.WEBSITE_TYPE, group.getWebsiteType().getValue());
-        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis() + "");
-        return map;
     }
 }
