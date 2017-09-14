@@ -164,6 +164,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (null != result && result.getStatus()) {
             if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                 TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
+                TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.USERNAME, param.getMobile().toString());
                 //登录成功
                 if (StringUtils.isNoneBlank(param.getPassword())) {
                     TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());

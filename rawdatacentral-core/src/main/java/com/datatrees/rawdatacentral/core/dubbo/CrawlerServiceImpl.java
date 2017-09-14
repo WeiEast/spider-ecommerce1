@@ -22,7 +22,9 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
@@ -35,7 +37,6 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -291,6 +292,8 @@ public class CrawlerServiceImpl implements CrawlerService {
                             receiveResult.getErrorMsg(), username);
                     return result.failure(receiveResult.getData());
                 }
+                TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, username);
+                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
                 logger.info("login success taskId={},directiveId={},username={}", taskId, directiveId, username);
                 return result.success("登陆成功!");
             }
