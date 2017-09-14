@@ -38,6 +38,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
@@ -207,8 +208,9 @@ public class TaskHttpClient {
         return this;
     }
 
-    public TaskHttpClient addExtralCookie(String key, String value) {
-        request.getExtralCookie().put(key, value);
+    public TaskHttpClient addExtralCookie(
+            String name, String value) {
+        request.getExtralCookie().put(name, value);
         return this;
     }
 
@@ -218,6 +220,11 @@ public class TaskHttpClient {
         CloseableHttpResponse httpResponse = null;
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
+        if (!request.getExtralCookie().isEmpty()) {
+            for (Map.Entry<String, String> entry : request.getExtralCookie().entrySet()) {
+                cookieStore.addCookie(new BasicClientCookie(entry.getKey(), entry.getValue()));
+            }
+        }
         HttpHost proxy = null;
         if (null == request.getProxyEnable()) {
             request.setProxyEnable(ProxyUtils.getProxyEnable(request.getTaskId()));
