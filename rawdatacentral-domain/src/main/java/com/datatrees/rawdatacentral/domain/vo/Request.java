@@ -60,8 +60,18 @@ public class Request implements Serializable {
     private String  requestBodyContent;
     @JSONField(ordinal = 14)
     private Boolean proxyEnable;
+    @JSONField(ordinal = 15)
+    private Map<String, String> extralCookie = new HashMap<>();
 
     public Request() {
+    }
+
+    public Map<String, String> getExtralCookie() {
+        return extralCookie;
+    }
+
+    public void setExtralCookie(Map<String, String> extralCookie) {
+        this.extralCookie = extralCookie;
     }
 
     public Boolean getProxyEnable() {

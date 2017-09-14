@@ -207,6 +207,11 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient addExtralCookie(String key, String value) {
+        request.getExtralCookie().put(key, value);
+        return this;
+    }
+
     public Response invoke() {
         checkRequest(request);
         request.setRequestId(RequestIdUtils.createId());
