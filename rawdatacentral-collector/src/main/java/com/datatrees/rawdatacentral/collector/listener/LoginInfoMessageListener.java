@@ -26,7 +26,10 @@ import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
-import com.datatrees.rawdatacentral.service.*;
+import com.datatrees.rawdatacentral.service.ClassLoaderService;
+import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +71,9 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         Boolean initStatus = redisTemplate.opsForValue().setIfAbsent(key, TaskStageEnum.INIT.getStatus());
         //第一次收到启动消息
         if (initStatus) {
+            if (StringUtils.isNoneBlank(message.getAccountNo())) {
+                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
+            }
             Website website = null;
             //30分钟内不再接受重复消息
             redisTemplate.expire(key, RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeout(), RedisKeyPrefixEnum.TASK_RUN_STAGE.getTimeUnit());

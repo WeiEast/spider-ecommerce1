@@ -8,6 +8,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.Task;
@@ -49,6 +50,8 @@ public class CrawlerTaskServiceImpl implements CrawlerTaskService {
             map.put(AttributeKey.GROUP_NAME, website.getGroupName());
             map.put(AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
             map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis() + "");
+            String username = TaskUtils.getTaskShare(taskId, AttributeKey.USERNAME);
+            map.put(AttributeKey.USERNAME, username);
             return map;
         } catch (Exception e) {
             logger.error("getTaskBaseInfo error taskId={}", taskId);
