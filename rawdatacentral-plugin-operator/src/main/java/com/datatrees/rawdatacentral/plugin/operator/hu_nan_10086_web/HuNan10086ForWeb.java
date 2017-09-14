@@ -125,7 +125,7 @@ public class HuNan10086ForWeb implements OperatorPluginService {
 
             response = TaskHttpClient.create(param, RequestType.POST, "hu_nan_10086_web_002")
                     .setFullUrl(templateUrl, param.getMobile(), encryptPassword, param.getSmsCode(), db.setScale(16, BigDecimal.ROUND_HALF_UP))
-                    .setReferer(referer).addExtralCookie(tokenId,"0").invoke();
+                    .setReferer(referer).addExtralCookie("",tokenId,"0").invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "登陆成功") || StringUtils.contains(pageContent, "ok")) {
                 logger.info("登陆成功,param={}", param);
