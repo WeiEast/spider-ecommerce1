@@ -235,7 +235,9 @@ public class TaskHttpClient {
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
         if (!extralCookie.isEmpty()) {
-            cookieStore.addCookies((BasicClientCookie[]) extralCookie.toArray());
+            for(BasicClientCookie cookie: extralCookie){
+                cookieStore.addCookie(cookie);
+            }
         }
         HttpHost proxy = null;
         if (null == request.getProxyEnable()) {
