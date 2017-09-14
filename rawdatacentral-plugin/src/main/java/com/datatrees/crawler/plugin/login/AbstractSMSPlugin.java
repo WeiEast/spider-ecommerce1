@@ -50,7 +50,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             resultMap.putAll(paramMap);
             return resultMap;
         }
-        monitorService.sendTaskLog(taskId, "短信验证码插件启动,等待用户输入短信验证码");
+        monitorService.sendTaskLog(taskId, "短信验证码插件启动");
         //支付宝或者淘宝短信取消
         if (StringUtils.equals("alipay.com", websiteName) || StringUtils.equals("taobao.com", websiteName)) {
             logger.warn("还未破解短信,taskId={},websiteName={}", taskId, websiteName);
@@ -68,7 +68,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
         do {
             boolean flag = requestSMSCode(paramsMap);
             if (!flag) {
-                monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码-->刷新失败!");
+                monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码刷新失败!");
                 logger.error("plugin request smsCode error!taskId={},websiteName={}", taskId, websiteName);
                 TimeUnit.SECONDS.sleep(60);
                 continue;
@@ -77,7 +77,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             logger.info("plugin request smsCode success!taskId={},websiteName={}", taskId, websiteName);
             // 发送任务日志
             getMessageService().sendTaskLog(taskId, "等待用户输入短信验证码");
-            monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码-->刷新成功,等待用户输入短信验证码");
+            monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码刷新成功,等待用户输入");
             //发送MQ指令
             Map<String, String> data = new HashMap<String, String>();
             data.put(AttributeKey.REMARK, StringUtils.EMPTY);
@@ -88,12 +88,12 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             DirectiveResult<Map<String, Object>> receiveDirective = getRedisService()
                     .getDirectiveResult(directiveId, getMaxInterval(websiteName), TimeUnit.MILLISECONDS);
             if (null == receiveDirective) {
-                monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码-->用户2分钟还未输入短信验证码");
+                monitorService.sendTaskLog(taskId, "短信验证码插件-->用户2分钟还未输入短信验证码");
                 logger.error("wait user input smscode timeout,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
             if (null == receiveDirective.getData() || !receiveDirective.getData().containsKey(AttributeKey.CODE)) {
-                monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码-->用户输入的短信验证码为空!");
+                monitorService.sendTaskLog(taskId, "短信验证码插件-->用户输入的短信验证码为空!");
                 logger.error("invalid receiveDirective,taskId={},websiteName={},directiveId={},receiveDirective={}", taskId, websiteName, directiveId,
                         GsonUtils.toJson(receiveDirective));
                 continue;
@@ -107,15 +107,15 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
                 //将结果返回给插件调用的地方,作为field的值,一般返回的就是短信验证码,有的和短信验证码一起验证,有的会设置not-empty=true属性
                 resultMap.put(PluginConstants.FIELD, inputCode);
                 getMessageService().sendTaskLog(taskId, "短信验证码校验成功");
-                monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码-->校验成功!");
+                monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码校验成功!");
                 return resultMap;
             }
-            monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码-->校验失败!");
+            monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码校验失败!");
             logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputSmsCount={}", taskId, websiteName, inputCode, retry,
                     inputSmsCount);
 
         } while (System.currentTimeMillis() < maxInterval);
-        monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码-->校验失败,输入次数:" + inputSmsCount);
+        monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码校验失败,输入次数:" + inputSmsCount);
         if (hasSms) {
             getMessageService().sendTaskLog(taskId, inputSmsCount == 0 ? "短信验证码校验超时" : "短信验证码校验失败");
             throw new ResultEmptyException("get sms code error,inputSmsCount:" + inputSmsCount);
