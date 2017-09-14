@@ -4,9 +4,8 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
@@ -38,6 +37,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
@@ -72,6 +72,10 @@ public class TaskHttpClient {
     private Response    response;
     private ContentType requestContentType;
     private ContentType responseContentType;
+    /**
+     * 自定义的cookie
+     */
+    private List<BasicClientCookie> extralCookie = new ArrayList<>();
 
     private TaskHttpClient(Request request) {
         this.request = request;
@@ -207,12 +211,34 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient addExtralCookie(String domain, String name, String value) {
+        BasicClientCookie cookie = new BasicClientCookie(name, value);
+        cookie.setDomain(domain);
+        cookie.setPath("/");
+        cookie.setSecure(false);
+        cookie.setVersion(0);
+        cookie.setExpiryDate(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30)));
+        cookie.setAttribute("path", "/");
+        cookie.setAttribute("domain", domain);
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE d MMM yyyy HH:mm:ss 'GMT'", Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT")); // 设置时区为GMT
+        cookie.setAttribute("expires", sdf.format(cookie.getExpiryDate()));
+        request.getExtralCookie().put(name, value);
+        extralCookie.add(cookie);
+        return this;
+    }
+
     public Response invoke() {
         checkRequest(request);
         request.setRequestId(RequestIdUtils.createId());
         CloseableHttpResponse httpResponse = null;
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
+        if (!extralCookie.isEmpty()) {
+            for(BasicClientCookie cookie: extralCookie){
+                cookieStore.addCookie(cookie);
+            }
+        }
         HttpHost proxy = null;
         if (null == request.getProxyEnable()) {
             request.setProxyEnable(ProxyUtils.getProxyEnable(request.getTaskId()));
