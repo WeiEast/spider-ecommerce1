@@ -35,7 +35,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.MonitorService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -10,7 +10,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.MonitorService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

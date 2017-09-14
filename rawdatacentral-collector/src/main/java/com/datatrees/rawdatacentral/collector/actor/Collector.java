@@ -50,7 +50,7 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.MonitorService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.service.TaskService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
