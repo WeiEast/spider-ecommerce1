@@ -27,6 +27,7 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,7 +183,7 @@ public class AnHui10086ForWeb implements OperatorPluginService {
 
     public HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
-        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_SMS_CODE);
+        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = validatePicCode(param);
         if (!result.getStatus()) {
             return result;
@@ -229,11 +230,13 @@ public class AnHui10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
 
             templateUrl = PatternUtils.group(response.getPageContent(), "window.top.location.href=\"([^\"]+)\"", 1);
-            ;
             response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_008").setFullUrl(templateUrl).invoke();
 
+            String referer = "http://service.ah.10086.cn/index.html";
             templateUrl = "http://service.ah.10086.cn/common/pageInfoInit?kind=&f=&url=%2Findex.html&_=";
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_009").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_009").setFullUrl(templateUrl).setReferer(referer)
+                    .setRequestContentType(ContentType.APPLICATION_JSON).addHeader("X-Requested-With", "XMLHttpRequest")
+                    .addHeader("Accept", "application/json, text/javascript, */*; q=0.01").invoke();
 
             if (StringUtils.contains(response.getPageContent(), param.getMobile().toString())) {
                 logger.info("登陆成功,param={}", param);
@@ -256,9 +259,10 @@ public class AnHui10086ForWeb implements OperatorPluginService {
             String referer = "http://service.ah.10086.cn/pub-page/qry/qryDetail/billDetailIndex.html?kind=200011522&f=200011538&area=cd";
             String templateUrl = "http://service.ah.10086.cn/pub/sendSmPass?opCode=5868&phone_No=&_={}";
             response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_010").setFullUrl(templateUrl, System.currentTimeMillis())
-                    .setReferer(referer).invoke();
+                    .setReferer(referer).setRequestContentType(ContentType.APPLICATION_JSON).addHeader("X-Requested-With", "XMLHttpRequest")
+                    .addHeader("Accept", "application/json, text/javascript, */*; q=0.01").invoke();
             String pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, "retMsg\":\"OK!")) {
+            if (StringUtils.contains(pageContent, "retMsg\":\"OK")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
@@ -278,11 +282,11 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         try {
             String referer = "http://service.ah.10086.cn/pub-page/qry/qryDetail/billDetailIndex.html?kind=200011522&f=200011538&area=cd";
             String templateUrl = "http://service.ah.10086.cn/pub/chkSmPass?smPass={}&phone_No=&_={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_014")
+            response = TaskHttpClient.create(param, RequestType.GET, "he_bei_10086_web_014")
                     .setFullUrl(templateUrl, param.getSmsCode(), System.currentTimeMillis()).setReferer(referer)
-                    .addHeader("X-Requested-With", "XMLHttpRequest").setReferer(referer).invoke();
+                    .setRequestContentType(ContentType.APPLICATION_JSON).addHeader("X-Requested-With", "XMLHttpRequest").setReferer(referer).invoke();
             String pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, "retMsg\":\"OK!")) {
+            if (StringUtils.contains(pageContent, "retMsg\":\"OK")) {
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
