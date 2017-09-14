@@ -146,6 +146,10 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("fetchLoginCode invalid param taskId={},type={}", taskId, type);
             return result.failure("参数为空或者参数不完整");
         }
+        if(StringUtils.isNoneBlank(username)){
+            TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, username);
+            TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
+        }
         try {
             if (isNewOperator(taskId)) {
                 OperatorParam param = new OperatorParam();
@@ -233,6 +237,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("fetchLoginCode invalid param taskId={},username={}", taskId, username);
             return result.failure("invalid params taskId or username");
         }
+        TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, username);
+        TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
         if (StringUtils.isBlank(password)) {
             logger.warn("fetchLoginCode  empty password, taskId={},username={}", taskId, username);
             return result.failure("invalid params,empty password");
@@ -292,8 +298,6 @@ public class CrawlerServiceImpl implements CrawlerService {
                             receiveResult.getErrorMsg(), username);
                     return result.failure(receiveResult.getData());
                 }
-                TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, username);
-                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
                 logger.info("login success taskId={},directiveId={},username={}", taskId, directiveId, username);
                 return result.success("登陆成功!");
             }
