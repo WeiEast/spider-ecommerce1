@@ -16,18 +16,47 @@ public class RedisUtils {
         return jedis;
     }
 
+    /**
+     * 是否存在
+     * @param key 不能为null
+     * @return
+     */
+    public Boolean exists(String key) {
+        return jedis.exists(key);
+    }
+
+    /**
+     * 设置值
+     * @param key   不能为null
+     * @param value 不能为null
+     */
     public void set(String key, String value) {
         jedis.set(key, value);
     }
 
+    /**
+     * 设置值
+     * @param key          不能为null
+     * @param value        不能为null
+     * @param milliseconds 失效时间(单位:毫秒)
+     */
     public void set(String key, String value, long milliseconds) {
         jedis.set(key, value);
         jedis.pexpire(key, milliseconds);
     }
 
+    /**
+     * 设置值
+     * @param key      不能为null
+     * @param value    不能为null
+     * @param timeout  失效时间
+     * @param timeUnit 失效时间单位
+     */
     public void set(String key, String value, long timeout, TimeUnit timeUnit) {
-        jedis.set(key, value);
-        jedis.pexpire(key, timeUnit.toMillis(timeout));
+        set(key, value, timeUnit.toMillis(timeout));
     }
+
+
+    
 
 }
