@@ -36,13 +36,12 @@ public class RedisUtils {
 
     /**
      * 设置值
-     * @param key          不能为null
-     * @param value        不能为null
-     * @param milliseconds 失效时间(单位:毫秒)
+     * @param key    不能为null
+     * @param value  不能为null
+     * @param second 失效时间(单位:秒)
      */
-    public void set(String key, String value, long milliseconds) {
-        jedis.set(key, value);
-        jedis.pexpire(key, milliseconds);
+    public void set(String key, String value, int second) {
+        jedis.setex(key, second, value);
     }
 
     /**
@@ -53,10 +52,32 @@ public class RedisUtils {
      * @param timeUnit 失效时间单位
      */
     public void set(String key, String value, long timeout, TimeUnit timeUnit) {
-        set(key, value, timeUnit.toMillis(timeout));
+        set(key, value, (int) timeUnit.toSeconds(timeout));
     }
 
+    /**
+     * 如果不存在,设置value
+     * @param key
+     * @param value
+     * @return
+     */
+    public Boolean setIfAbsent(String key, String value) {
+        Long r = jedis.setnx(key, value);
+        return r == 1;
+    }
 
-    
-
+    /**
+     * 如果不存在,设置value
+     * @param key
+     * @param value
+     * @param second 失效时间(单位:秒)
+     * @return
+     */
+    public Boolean setIfAbsent(String key, String value, int second) {
+        boolean b = setIfAbsent(key, value);
+        if (b) {
+            jedis.expire(key, second);
+        }
+        return b;
+    }
 }
