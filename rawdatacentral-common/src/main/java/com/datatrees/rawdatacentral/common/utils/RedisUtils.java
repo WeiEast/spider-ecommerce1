@@ -5,12 +5,15 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.common.config.RedisConfig;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisUtils extends RedisConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(RedisUtils.class);
     private static JedisPool jedisPool;
 
     public static void init() {
@@ -164,6 +167,34 @@ public class RedisUtils extends RedisConfig {
 
     public static Map<String, String> hgetAll(String key) {
         return getJedis().hgetAll(key);
+    }
+
+    public static Boolean lock(Object redisKey, int second) {
+        long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(second);
+        String lockKey = "lock." + redisKey.toString();
+        boolean result = false;
+        while (!result && System.currentTimeMillis() < endTime) {
+            result = setnx(lockKey, "true", second);
+            if (result) {
+                logger.info("lock success redisKey={}", redisKey);
+                return true;
+            }
+        }
+        logger.error("lock fail redisKey={}", redisKey);
+        return false;
+    }
+
+    public static void lockFailThrowException(Object redisKey, int second) {
+        if (!lock(redisKey, second)) {
+            throw new RuntimeException("lock fail redisKey=" + redisKey);
+        }
+    }
+
+    public static Boolean unLock(Object redisKey) {
+        String lockKey = "lock." + redisKey.toString();
+        del(lockKey);
+        logger.info("unlock success redisKey={}", redisKey);
+        return true;
     }
 
 }

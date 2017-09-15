@@ -8,8 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
@@ -26,8 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TaskUtils {
 
-    private static final Logger       logger       = LoggerFactory.getLogger(TaskUtils.class);
-    private static       RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskUtils.class);
 
     public static List<Cookie> getCookies(BasicCookieStore cookieStore) {
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
@@ -118,7 +116,10 @@ public class TaskUtils {
         CheckUtils.checkNotNull(taskId, "taskId is null");
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
-        redisService.cache(RedisKeyPrefixEnum.TASK_COOKIE, taskId, list);
+        if (null != list && !list.isEmpty()) {
+            String json = JSON.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect);
+            RedisUtils.set(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId), json, RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());
+        }
     }
 
     public static BasicCookieStore getCookie(Long taskId) {
@@ -126,7 +127,10 @@ public class TaskUtils {
         BasicCookieStore cookieStore = new BasicCookieStore();
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies = null;
         String cacheKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId + "");
-        String json = redisService.getString(cacheKey);
+        String json = null;
+        if (RedisUtils.exists(cacheKey)) {
+            json = RedisUtils.get(cacheKey);
+        }
         if (StringUtils.isNoneBlank(json)) {
             cookies = JSON.parseObject(json, new TypeReference<List<Cookie>>() {});
         }
@@ -163,14 +167,14 @@ public class TaskUtils {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
         String type = RedisUtils.type(redisKey);
         if (StringUtils.equals("string", type)) {
-            redisService.lockFailThrowException(redisKey);
-            Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
+            RedisUtils.lockFailThrowException(redisKey, 5);
+            Map<String, String> map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
             if (null == map) {
                 map = new HashMap<>();
             }
             map.put(name, value);
-            redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
-            redisService.unLock(redisKey);
+            RedisUtils.set(redisKey, JSON.toJSONString(map), RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
+            RedisUtils.unLock(redisKey);
         } else {
             RedisUtils.hset(redisKey, name, value, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
         }
@@ -205,13 +209,13 @@ public class TaskUtils {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
         String type = RedisUtils.type(redisKey);
         if (StringUtils.equals("string", type)) {
-            redisService.lockFailThrowException(redisKey);
-            Map<String, String> map = redisService.getCache(redisKey, new TypeReference<Map<String, String>>() {});
+            RedisUtils.lockFailThrowException(redisKey, 5);
+            Map<String, String> map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
             if (null != map && map.containsKey(name)) {
                 map.remove(name);
-                redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
+                RedisUtils.set(redisKey, JSON.toJSONString(map), RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
             }
-            redisService.unLock(redisKey);
+            RedisUtils.unLock(redisKey);
         } else {
             RedisUtils.hdel(redisKey, name);
         }
@@ -227,7 +231,7 @@ public class TaskUtils {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
         String type = RedisUtils.type(redisKey);
         if (StringUtils.equals("string", type)) {
-            redisService.getCache(redisKey, new TypeReference<Map<String, String>>() {});
+            map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
             return map;
         } else {
             map = RedisUtils.hgetAll(redisKey);
@@ -245,14 +249,14 @@ public class TaskUtils {
         String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
         String type = RedisUtils.type(redisKey);
         if (StringUtils.equals("string", type)) {
-            redisService.lockFailThrowException(redisKey);
-            Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
+            RedisUtils.lockFailThrowException(redisKey, 5);
+            Map<String, Object> map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, Object>>() {});
             if (null == map) {
                 map = new HashMap<>();
             }
             map.put(name, value);
-            redisService.cache(RedisKeyPrefixEnum.TASK_RESULT, taskId, map);
-            redisService.unLock(redisKey);
+            RedisUtils.set(redisKey, JSON.toJSONString(map), RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            RedisUtils.unLock(redisKey);
         } else {
             if (value instanceof String) {
                 RedisUtils.hset(redisKey, name, value.toString());
@@ -273,7 +277,7 @@ public class TaskUtils {
         String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
         String type = RedisUtils.type(redisKey);
         if (StringUtils.equals("string", type)) {
-            map = redisService.getCache(redisKey, new TypeReference<Map<String, String>>() {});
+            map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, Object>>() {});
             if (null == map) {
                 map = new HashMap<>();
             }
