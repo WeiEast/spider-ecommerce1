@@ -59,6 +59,7 @@ ext {
     springVersion="4.3.9.RELEASE"
     commonsCodecVersion="1.10"
     proxyApiVersion="2.0.0-SNAPSHOT"
+    jsonPathVersion="2.3.0"
 }
 
 subprojects {

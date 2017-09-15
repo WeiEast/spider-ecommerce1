@@ -85,4 +85,9 @@ public enum RedisKeyPrefixEnum {
     public String parsePostfix(String key) {
         return key.substring(prefix.length() + separator.length());
     }
+
+    public int toSeconds() {
+        long l = timeUnit.toSeconds(timeout);
+        return l == 0 ? 1 : (int) l;
+    }
 }

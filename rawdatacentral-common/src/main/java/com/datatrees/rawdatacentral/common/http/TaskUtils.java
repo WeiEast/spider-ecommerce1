@@ -11,6 +11,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
@@ -160,14 +161,19 @@ public class TaskUtils {
      */
     public static void addTaskShare(Long taskId, String name, String value) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        redisService.lockFailThrowException(redisKey);
-        Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
-        if (null == map) {
-            map = new HashMap<>();
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals("string", type)) {
+            redisService.lockFailThrowException(redisKey);
+            Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
+            if (null == map) {
+                map = new HashMap<>();
+            }
+            map.put(name, value);
+            redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
+            redisService.unLock(redisKey);
+        } else {
+            RedisUtils.hset(redisKey, name, value, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
         }
-        map.put(name, value);
-        redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
-        redisService.unLock(redisKey);
         logger.info("addTaskShare success taskId={},name={}", taskId, name);
     }
 
@@ -177,11 +183,17 @@ public class TaskUtils {
      * @param name
      */
     public static String getTaskShare(Long taskId, String name) {
-        Map<String, String> map = getTaskShares(taskId);
-        if (null == map || map.isEmpty()) {
-            return null;
+        String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals("string", type)) {
+            Map<String, String> map = getTaskShares(taskId);
+            if (null == map || map.isEmpty()) {
+                return null;
+            }
+            return map.get(name);
+        } else {
+            return RedisUtils.getJedis().hget(redisKey, name);
         }
-        return map.get(name);
     }
 
     /**
@@ -191,13 +203,18 @@ public class TaskUtils {
      */
     public static void removeTaskShare(Long taskId, String name) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        redisService.lockFailThrowException(redisKey);
-        Map<String, String> map = redisService.getCache(redisKey, new TypeReference<Map<String, String>>() {});
-        if (null != map && map.containsKey(name)) {
-            map.remove(name);
-            redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals("string", type)) {
+            redisService.lockFailThrowException(redisKey);
+            Map<String, String> map = redisService.getCache(redisKey, new TypeReference<Map<String, String>>() {});
+            if (null != map && map.containsKey(name)) {
+                map.remove(name);
+                redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
+            }
+            redisService.unLock(redisKey);
+        } else {
+            RedisUtils.hdel(redisKey, name);
         }
-        redisService.unLock(redisKey);
         logger.info("removeTaskShare success taskId={},name={}", taskId, name);
     }
 
@@ -206,8 +223,15 @@ public class TaskUtils {
      * @param taskId
      */
     public static Map<String, String> getTaskShares(Long taskId) {
-        String cacheKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        Map<String, String> map = redisService.getCache(cacheKey, new TypeReference<Map<String, String>>() {});
+        Map<String, String> map = null;
+        String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals("string", type)) {
+            redisService.getCache(redisKey, new TypeReference<Map<String, String>>() {});
+            return map;
+        } else {
+            map = RedisUtils.hgetAll(redisKey);
+        }
         return map;
     }
 
@@ -219,15 +243,44 @@ public class TaskUtils {
      */
     public static void addTaskResult(Long taskId, String name, Object value) {
         String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
-        redisService.lockFailThrowException(redisKey);
-        Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
-        if (null == map) {
-            map = new HashMap<>();
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals("string", type)) {
+            redisService.lockFailThrowException(redisKey);
+            Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
+            if (null == map) {
+                map = new HashMap<>();
+            }
+            map.put(name, value);
+            redisService.cache(RedisKeyPrefixEnum.TASK_RESULT, taskId, map);
+            redisService.unLock(redisKey);
+        } else {
+            if (value instanceof String) {
+                RedisUtils.hset(redisKey, name, value.toString());
+            } else {
+                RedisUtils.hset(redisKey, name, JSON.toJSONString(value));
+            }
+            RedisUtils.getJedis().expire(redisKey, RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
         }
-        map.put(name, value);
-        redisService.cache(RedisKeyPrefixEnum.TASK_RESULT, taskId, map);
-        redisService.unLock(redisKey);
         logger.info("addTaskResult success taskId={},name={}", taskId, name);
+    }
+
+    /**
+     * 获取任务结果
+     * @param taskId
+     */
+    public static Map<String, String> getTaskResult(Long taskId) {
+        Map<String, String> map = null;
+        String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals("string", type)) {
+            map = redisService.getCache(redisKey, new TypeReference<Map<String, String>>() {});
+            if (null == map) {
+                map = new HashMap<>();
+            }
+        } else {
+            map = RedisUtils.getJedis().hgetAll(redisKey);
+        }
+        return map;
     }
 
     /**
@@ -237,21 +290,35 @@ public class TaskUtils {
      */
     public static void initTaskShare(Long taskId, String websiteName) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        redisService.lockFailThrowException(redisKey);
-        Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
-        if (null == map) {
-            map = new HashMap<>();
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals("string", type)) {
+            redisService.lockFailThrowException(redisKey);
+            Map<String, Object> map = redisService.getCache(redisKey, new TypeReference<Map<String, Object>>() {});
+            if (null == map) {
+                map = new HashMap<>();
+            }
+            map.put(AttributeKey.FIRST_VISIT_WEBSITENAME, websiteName);
+
+            boolean isNewOperator = isNewOperator(websiteName);
+            map.put(AttributeKey.IS_NEW_OPERATOR, isNewOperator);
+
+            String realWebsiteName = getRealWebsiteName(websiteName);
+            map.put(AttributeKey.WEBSITE_NAME, realWebsiteName);
+
+            redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
+            redisService.unLock(redisKey);
+        } else {
+            RedisUtils.hset(redisKey, AttributeKey.FIRST_VISIT_WEBSITENAME, websiteName);
+
+            boolean isNewOperator = isNewOperator(websiteName);
+            RedisUtils.hset(redisKey, AttributeKey.IS_NEW_OPERATOR, String.valueOf(isNewOperator));
+
+            String realWebsiteName = getRealWebsiteName(websiteName);
+            RedisUtils.hset(redisKey, AttributeKey.WEBSITE_NAME, realWebsiteName);
+
+            RedisUtils.getJedis().expire(redisKey, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
         }
-        map.put(AttributeKey.FIRST_VISIT_WEBSITENAME, websiteName);
 
-        boolean isNewOperator = isNewOperator(websiteName);
-        map.put(AttributeKey.IS_NEW_OPERATOR, isNewOperator);
-
-        String realWebsiteName = getRealWebsiteName(websiteName);
-        map.put(AttributeKey.WEBSITE_NAME, realWebsiteName);
-
-        redisService.cache(RedisKeyPrefixEnum.TASK_SHARE, taskId, map);
-        redisService.unLock(redisKey);
         logger.info("initTaskShare success taskId={},websiteName={}", taskId, websiteName);
 
         redisService.saveString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
