@@ -39,7 +39,7 @@ public enum GroupEnum {
     BEI_JING_10086("BEI_JING_10086", "北京移动", WebsiteType.OPERATOR, "bei_jing_10086_web"),
     BEI_JING_10000("BEI_JING_10000", "北京电信", WebsiteType.OPERATOR, "bei_jing_10000_web"),
     TIAN_JIN_10086("TIAN_JIN_10086", "天津移动", WebsiteType.OPERATOR, "tian_jin_10086_web"),
-    TIAN_JIN_10000("TIAN_JIN_10086", "天津电信", WebsiteType.OPERATOR, "tian_jin_10000_wap"),
+    TIAN_JIN_10000("TIAN_JIN_10000", "天津电信", WebsiteType.OPERATOR, "tian_jin_10000_wap"),
     SHANG_HAI_10086("SHANG_HAI_10086", "上海移动", WebsiteType.OPERATOR, "shang_hai_10086_web"),
     SHANG_HAI_10000("SHANG_HAI_10000", "上海电信", WebsiteType.OPERATOR, "shang_hai_10000_web"),
     CHONG_QING_10086("CHONG_QING_10086", "重庆移动", WebsiteType.OPERATOR, "chong_qing_10086_web"),
