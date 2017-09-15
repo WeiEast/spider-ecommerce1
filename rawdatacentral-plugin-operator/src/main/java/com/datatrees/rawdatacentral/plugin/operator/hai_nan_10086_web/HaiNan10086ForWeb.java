@@ -273,8 +273,10 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_010").setFullUrl(templateUrl).invoke();
 
             String referer = "http://www.hi.10086.cn/service/login_yzmpasswd.jsp";
-            templateUrl = "http://www.hi.10086.cn/service/user/sendvaildateSmsCode.do?mobileno={}&getsmscode=true&isrecord=";
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_011").setFullUrl(templateUrl, param.getMobile())
+            templateUrl = "http://www.hi.10086.cn/service/user/sendvaildateSmsCode.do";
+            String templateData = "mobileno={}&getsmscode=true&isrecord=";
+            String data = TemplateUtils.format(templateData, param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_011").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
@@ -296,14 +298,17 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String referer = "http://www.hi.10086.cn/service/login_yzmpasswd.jsp";
-            String templateUrl = "http://www.hi.10086.cn/service/user/vaildateCode.do?vaildateCode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_012").setFullUrl(templateUrl, param.getMobile())
+            String templateUrl = "http://www.hi.10086.cn/service/user/vaildateCode.do";
+            String templateData = "vaildateCode={}";
+            String data = TemplateUtils.format(templateData, param.getSmsCode());
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_012").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             if (StringUtils.contains(response.getPageContent(), "true")) {
-                templateUrl = "http://www.hi.10086.cn/service/user/vaildateSms" +
-                        ".do?mobileno={}&agentcode=&sso=0&INPASS=ture_aa&INSMS=ture_aa&vaildateCode={}";
-                response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_013")
-                        .setFullUrl(templateUrl, param.getMobile(), param.getSmsCode()).setReferer(referer).invoke();
+                templateUrl = "http://www.hi.10086.cn/service/user/vaildateSms.do";
+                templateData = "mobileno={}&agentcode=&sso=0&INPASS=ture_aa&INSMS=ture_aa&vaildateCode={}";
+                data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode());
+                response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_013").setFullUrl(templateUrl).setRequestBody(data)
+                        .setReferer(referer).invoke();
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
