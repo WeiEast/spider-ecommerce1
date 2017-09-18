@@ -63,7 +63,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
             //1个不使用就自动标记回收
             classUpdateTime.put(cacheKey, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
             return mainClass;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("loadPlugin error jarName={},className={}", jarName, className);
             throw new RuntimeException(TemplateUtils.format("loadPlugin error jarName={},className={}", jarName, className));
         }
@@ -90,7 +90,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
                 throw new RuntimeException("mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorPluginService");
             }
             return (OperatorPluginService) loginClass.newInstance();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("getOperatorService error websiteName={}", websiteName, e);
             throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName);
         }
