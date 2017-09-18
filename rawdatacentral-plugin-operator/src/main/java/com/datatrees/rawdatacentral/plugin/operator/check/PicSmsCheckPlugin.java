@@ -57,6 +57,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
 
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
+        TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);
         CheckUtils.checkNotBlank(fromType, "fromType is empty");

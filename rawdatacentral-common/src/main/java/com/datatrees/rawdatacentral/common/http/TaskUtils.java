@@ -222,4 +222,16 @@ public class TaskUtils {
         return map;
     }
 
+    public static void initTaskContext(Long taskId, Map<String, Object> context) {
+        redisService.cache(RedisKeyPrefixEnum.TASK_CONTEXT, taskId, context);
+    }
+
+    public static String getTaskContext(Long taskId, String name) {
+        Map<String, Object> context = redisService.getCache(RedisKeyPrefixEnum.TASK_CONTEXT, taskId, new TypeReference<Map<String, Object>>() {});
+        if (null == context || !context.containsKey(name)) {
+            return null;
+        }
+        return context.get(name).toString();
+    }
+
 }
