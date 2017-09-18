@@ -1,20 +1,19 @@
 package com.datatrees.rawdatacentral.common.utils;
 
 import org.junit.Test;
-import redis.clients.jedis.Jedis;
-
-import static org.junit.Assert.*;
 
 public class RedisUtilsTest {
 
-
     @Test
-    public void test1(){
-        Jedis jedis = RedisUtils.getJedis();
-        String key = "test.username";
-        System.out.println(jedis.exists(key));
-        jedis.set(key,"周兴海");
-        jedis.set(key,null);
+    public void test1() {
+        RedisUtils.init("192.168.5.24", 6379, null);
+        int i = 1;
+        while (i < 100000) {
+            String key = "test.username";
+            System.out.println(i++);
+            String status = RedisUtils.set(key, "周兴海");
+            System.out.println(TemplateUtils.format("i={},status={}", i++, status));
+        }
 
     }
 

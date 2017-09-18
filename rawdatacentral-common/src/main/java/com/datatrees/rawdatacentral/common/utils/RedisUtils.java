@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.common.config.RedisConfig;
@@ -47,12 +48,70 @@ public class RedisUtils extends RedisConfig {
         }
     }
 
-    public static Jedis getJedis() {
-        return jedisPool.getResource();
+    public static Boolean exists(final String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.exists(key);
+        }
     }
 
-    public static void setex(RedisKeyPrefixEnum keyEnum, Object prefix, String value) {
-        getJedis().psetex(keyEnum.getRedisKey(prefix), keyEnum.getTimeUnit().toMillis(keyEnum.getTimeout()), value);
+    public static Long expire(final String key, final int second) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.expire(key, second);
+        }
+    }
+
+    public static Boolean hexists(final String key, final String field) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hexists(key, field);
+        }
+    }
+
+    public static String type(final String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.type(key);
+        }
+    }
+
+    public static String get(final String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.get(key);
+        }
+    }
+
+    public static Map<String, String> hgetAll(final String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hgetAll(key);
+        }
+    }
+
+    public static String hget(final String key, final String field) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hget(key, field);
+        }
+    }
+
+    public static long hdel(final String key, final String field) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hdel(key, field);
+        }
+    }
+
+    public static String set(final String key, final String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.set(key, value);
+        }
+    }
+
+    public static Long hset(final String key, final String field, final String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hset(key, field, value);
+        }
+    }
+
+    public static String setex(RedisKeyPrefixEnum keyEnum, Object prefix, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.psetex(keyEnum.getRedisKey(prefix), keyEnum.getTimeUnit().toMillis(keyEnum.getTimeout()), value);
+        }
     }
 
     /**
@@ -62,8 +121,10 @@ public class RedisUtils extends RedisConfig {
      * @return
      */
     public static Boolean setnx(String key, String value) {
-        Long r = getJedis().setnx(key, value);
-        return r == 1;
+        try (Jedis jedis = jedisPool.getResource()) {
+            Long r = jedis.setnx(key, value);
+            return r == 1;
+        }
     }
 
     /**
@@ -74,11 +135,13 @@ public class RedisUtils extends RedisConfig {
      * @return
      */
     public static Boolean setnx(String key, String value, int second) {
-        boolean b = setnx(key, value);
-        if (b) {
-            getJedis().expire(key, second);
+        try (Jedis jedis = jedisPool.getResource()) {
+            boolean b = setnx(key, value);
+            if (b) {
+                jedis.expire(key, second);
+            }
+            return b;
         }
-        return b;
     }
 
     public static String get(String key, int waitSecond) {
@@ -89,12 +152,12 @@ public class RedisUtils extends RedisConfig {
         long wait = TimeUnit.SECONDS.toMillis(waitSecond);
         long endTime = startTime + wait;
         long sleeptime = wait >= 300 ? 300 : wait;
-        try {
+        try (Jedis jedis = jedisPool.getResource()) {
             logger.info("get from redis wait {}s, key={}", waitSecond, key);
             do {
                 TimeUnit.MILLISECONDS.sleep(sleeptime);
-                if (getJedis().exists(key)) {
-                    String value = getJedis().get(key);
+                if (jedis.exists(key)) {
+                    String value = jedis.get(key);
                     logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
                     return cleanJson(value);
                 }
@@ -107,13 +170,17 @@ public class RedisUtils extends RedisConfig {
     }
 
     public static void hset(String key, String name, String value, int second) {
-        getJedis().hset(key, name, value);
-        getJedis().expire(key, second);
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.hset(key, name, value);
+            jedis.expire(key, second);
+        }
     }
 
     public static void hset(String key, String name, String value, long timeout, TimeUnit unit) {
-        getJedis().hset(key, name, value);
-        getJedis().expire(key, toSeconds(timeout, unit));
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.hset(key, name, value);
+            jedis.expire(key, toSeconds(timeout, unit));
+        }
     }
 
     public static Boolean lock(Object redisKey, int second) {
@@ -138,10 +205,12 @@ public class RedisUtils extends RedisConfig {
     }
 
     public static Boolean unLock(Object redisKey) {
-        String lockKey = "lock." + redisKey.toString();
-        getJedis().del(lockKey);
-        logger.info("unlock success redisKey={}", redisKey);
-        return true;
+        try (Jedis jedis = jedisPool.getResource()) {
+            String lockKey = "lock." + redisKey.toString();
+            jedis.del(lockKey);
+            logger.info("unlock success redisKey={}", redisKey);
+            return true;
+        }
     }
 
     public static String cleanJson(String json) {
