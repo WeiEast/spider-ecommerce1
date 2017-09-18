@@ -302,7 +302,8 @@ public class TaskUtils {
      * 获取任务结果
      * @param taskId
      */
-    public static Map<String, String> getTaskResult(Long taskId) {
+    public static Map<String, Object> getTaskResult(Long taskId) {
+        Map<String, Object> json = new HashMap<>();
         Map<String, String> map = null;
         String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
         String type = RedisUtils.type(redisKey);
@@ -318,7 +319,16 @@ public class TaskUtils {
         } else {
             map = RedisUtils.hgetAll(redisKey);
         }
-        return map;
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (StringUtils.startsWith(entry.getValue(), "[")) {
+                json.put(entry.getKey(), JSON.parseArray(entry.getValue()));
+            } else if (StringUtils.startsWith(entry.getValue(), "{")) {
+                json.put(entry.getKey(), JSON.parseObject(entry.getValue()));
+            } else {
+                json.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return json;
     }
 
     /**
