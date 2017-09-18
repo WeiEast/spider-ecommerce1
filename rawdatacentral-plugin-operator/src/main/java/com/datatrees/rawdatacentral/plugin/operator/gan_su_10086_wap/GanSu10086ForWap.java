@@ -109,8 +109,7 @@ public class GanSu10086ForWap implements OperatorPluginService {
             String templateData = "mobile={}&password={}&loginType=1&icode=&fromFlag=doorPage&isHasV=false&redirectUrl=http%3A%2F%2Fwap" +
                     ".gs.10086.cn%2Findex.html&dxYzm=&timestamp={}&clickType=1";
             String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, timestamp);
-            response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_003").setFullUrl(templateUrl).setRequestBody(data)
-                    .invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
 
             if (StringUtils.contains(response.getPageContent(), "rcode:'200'")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -146,7 +145,8 @@ public class GanSu10086ForWap implements OperatorPluginService {
             String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, param.getSmsCode(), timestamp);
 
             response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_004").setFullUrl(templateUrl).setReferer(referer)
-                    .setRequestBody(data).addHeader("X-Requested-With", "XMLHttpRequest").addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0").invoke();
+                    .setRequestBody(data).addHeader("X-Requested-With", "XMLHttpRequest")
+                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0").invoke();
             if (StringUtils.isBlank(response.getPageContent())) {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
@@ -159,9 +159,8 @@ public class GanSu10086ForWap implements OperatorPluginService {
 
             referer = "http://wap.gs.10086.cn/jsbo_oauth/login?redirectURL=http://wap.gs.10086.cn/index.html";
             templateUrl = "http://wap.gs.10086.cn/index.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_005").setFullUrl(templateUrl).setReferer(referer).addHeader
-                    ("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0")
-                    .invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_005").setFullUrl(templateUrl).setReferer(referer)
+                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0").invoke();
             templateUrl = "http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=MessageInfo";
             response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_006").setFullUrl(templateUrl).invoke();
             templateUrl = "http://wap.gs.10086.cn/mycmcc_01.html";

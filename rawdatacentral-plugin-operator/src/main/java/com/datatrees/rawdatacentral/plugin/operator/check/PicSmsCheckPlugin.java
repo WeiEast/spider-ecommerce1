@@ -46,15 +46,17 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
     private long timeOut = 120;
     private AbstractProcessorContext context;
     private String                   fromType;
-    private Map<String, String> pluginResult   = new HashMap<>();
-    private MonitorService      monitorService = BeanFactoryUtils.getBean(MonitorService.class);
+    private MonitorService           monitorService;
+    private Map<String, String> pluginResult = new HashMap<>();
 
     @Override
     public String process(String... args) throws Exception {
         pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
         messageService = BeanFactoryUtils.getBean(MessageService.class);
         redisService = BeanFactoryUtils.getBean(RedisService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         context = PluginFactory.getProcessorContext();
+        pluginResult = new HashMap<>();
 
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
