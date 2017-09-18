@@ -60,7 +60,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
                 FileUtils.writeByteArrayToFile(file, bytes, false);
                 pluginMd5.put(fileName, md5);
                 logger.info("plugin已经更新,重新加载到本地,fileName={},pluginPath={}", fileName, pluginPath);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 logger.error("upgrade plugin error fileName={},pluginPath={}", fileName, pluginPath);
                 throw new RuntimeException("get plugin error", e);
             }
