@@ -201,8 +201,8 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
         try {
             String id = StringUtils.substring(String.valueOf((int) (Math.random() * 10001) + 10000), 1, 5) + "_" +
                     String.valueOf(System.currentTimeMillis());
-            String areaCode = TaskUtils.getTaskShare(param.getTaskId(), "TelNumAttribution");
-            String phoneType = TaskUtils.getTaskShare(param.getTaskId(), "ServiceType");
+            String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "TelNumAttribution");
+            String phoneType = TaskUtils.getTaskContext(param.getTaskId(), "ServiceType");
             String templateUrl = "http://gd.189.cn/dwr/exec/commonAjax.getRandomCodeOper" +
                     ".dwr?callCount=1&c0-scriptName=commonAjax&c0-methodName=getRandomCodeOper&c0-id={}&c0-param0=boolean:false&c0-param1=boolean" +
                     ":false&c0-param2=string:{}&c0-param3=string:{}&c0-param4=string:{}&xml=true";
