@@ -38,19 +38,24 @@ import org.slf4j.LoggerFactory;
  */
 public class PicSmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger                   logger         = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
-    private              CrawlerOperatorService   pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
-    private              MessageService           messageService = BeanFactoryUtils.getBean(MessageService.class);
-    private              RedisService             redisService   = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
+    private CrawlerOperatorService pluginService;
+    private MessageService         messageService;
+    private RedisService           redisService;
     //超时时间120秒
-    private              long                     timeOut        = 120;
-    private              AbstractProcessorContext context        = PluginFactory.getProcessorContext();
-    private String fromType;
+    private long timeOut = 120;
+    private AbstractProcessorContext context;
+    private String                   fromType;
     private Map<String, String> pluginResult   = new HashMap<>();
     private MonitorService      monitorService = BeanFactoryUtils.getBean(MonitorService.class);
 
     @Override
     public String process(String... args) throws Exception {
+        pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        redisService = BeanFactoryUtils.getBean(RedisService.class);
+        context = PluginFactory.getProcessorContext();
+
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});

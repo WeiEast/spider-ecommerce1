@@ -27,14 +27,16 @@ import org.slf4j.LoggerFactory;
  */
 public class DefineCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger                   logger        = LoggerFactory.getLogger(DefineCheckPlugin.class);
-    private              CrawlerOperatorService   pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
-    private              AbstractProcessorContext context       = PluginFactory.getProcessorContext();
-    private String fromType;
+    private static final Logger logger = LoggerFactory.getLogger(DefineCheckPlugin.class);
+    private CrawlerOperatorService   pluginService;
+    private AbstractProcessorContext context;
+    private String                   fromType;
     private Map<String, Object> pluginResult = new HashMap<>();
 
     @Override
     public String process(String... args) throws Exception {
+        pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+        context = PluginFactory.getProcessorContext();
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
