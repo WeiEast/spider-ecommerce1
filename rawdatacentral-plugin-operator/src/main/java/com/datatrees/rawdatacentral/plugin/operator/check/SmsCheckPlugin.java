@@ -18,7 +18,6 @@ import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -37,18 +36,23 @@ import org.slf4j.LoggerFactory;
  */
 public class SmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger                   logger         = LoggerFactory.getLogger(SmsCheckPlugin.class);
-    private              CrawlerOperatorService   pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
-    private              MessageService           messageService = BeanFactoryUtils.getBean(MessageService.class);
-    private              RedisService             redisService   = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SmsCheckPlugin.class);
+    private CrawlerOperatorService pluginService;
+    private MessageService         messageService;
+    private RedisService           redisService;
     //超时时间60秒
-    private              long                     timeOut        = 60;
-    private              AbstractProcessorContext context        = PluginFactory.getProcessorContext();
-    private String fromType;
+    private long timeOut = 60;
+    private AbstractProcessorContext context;
+    private String                   fromType;
     private Map<String, String> pluginResult = new HashMap<>();
 
     @Override
     public String process(String... args) throws Exception {
+        pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        redisService = BeanFactoryUtils.getBean(RedisService.class);
+        context = PluginFactory.getProcessorContext();
+
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         Map<String, String> map = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {});
