@@ -1,9 +1,9 @@
 package com.datatrees.rawdatacentral.common.utils;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.common.config.RedisConfig;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,61 +51,8 @@ public class RedisUtils extends RedisConfig {
         return jedisPool.getResource();
     }
 
-    /**
-     * 是否存在
-     * @param key 不能为null
-     * @return
-     */
-    public static Boolean exists(String key) {
-        return getJedis().exists(key);
-    }
-
-    /**
-     * 返回数据类型
-     * @param key
-     * @return none  string hash list set zset
-     */
-    public static String type(String key) {
-        return getJedis().type(key);
-    }
-
-    /**
-     * 删除key
-     * @param key 不能为null
-     * @return
-     */
-    public static void del(String key) {
-        getJedis().del(key);
-    }
-
-    /**
-     * 设置值
-     * @param key   不能为null
-     * @param value 不能为null
-     */
-    public static void set(String key, String value) {
-        getJedis().set(key, value);
-    }
-
-    /**
-     * 设置值
-     * @param key    不能为null
-     * @param value  不能为null
-     * @param second 失效时间(单位:秒)
-     */
-    public static void set(String key, String value, int second) {
-        getJedis().setex(key, second, value);
-    }
-
-    /**
-     * 设置值
-     * @param key      不能为null
-     * @param value    不能为null
-     * @param timeout  失效时间
-     * @param timeUnit 失效时间单位
-     */
-    public static void set(String key, String value, long timeout, TimeUnit timeUnit) {
-        set(key, value, (int) timeUnit.toSeconds(timeout));
+    public static void setex(RedisKeyPrefixEnum keyEnum, Object prefix, String value) {
+        getJedis().psetex(keyEnum.getRedisKey(prefix), keyEnum.getTimeUnit().toMillis(keyEnum.getTimeout()), value);
     }
 
     /**
@@ -134,39 +81,39 @@ public class RedisUtils extends RedisConfig {
         return b;
     }
 
-    /**
-     * 设置值
-     * @param key   不能为null
-     * @param value 不能为null
-     */
-    public static void rpush(String key, String value) {
-        getJedis().rpush(key, value);
-    }
-
-    public static String get(String key) {
-        return getJedis().get(key);
-    }
-
-    public static void hset(String key, String name, String value) {
-        getJedis().hset(key, name, value);
+    public static String get(String key, int waitSecond) {
+        if (StringUtils.isBlank(key)) {
+            return null;
+        }
+        long startTime = System.currentTimeMillis();
+        long wait = TimeUnit.SECONDS.toMillis(waitSecond);
+        long endTime = startTime + wait;
+        long sleeptime = wait >= 300 ? 300 : wait;
+        try {
+            logger.info("get from redis wait {}s, key={}", waitSecond, key);
+            do {
+                TimeUnit.MILLISECONDS.sleep(sleeptime);
+                if (getJedis().exists(key)) {
+                    String value = getJedis().get(key);
+                    logger.info("getString success,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
+                    return cleanJson(value);
+                }
+            } while (System.currentTimeMillis() <= endTime);
+            logger.warn("getString fail,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key);
+        } catch (Throwable e) {
+            logger.error("getString error,useTime={}, key={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), key, e);
+        }
+        return null;
     }
 
     public static void hset(String key, String name, String value, int second) {
-        hset(key, name, value);
+        getJedis().hset(key, name, value);
         getJedis().expire(key, second);
     }
 
     public static void hset(String key, String name, String value, long timeout, TimeUnit unit) {
-        hset(key, name, value);
-        getJedis().expire(key, (int) unit.toSeconds(timeout));
-    }
-
-    public static void hdel(String key, String... names) {
-        getJedis().hdel(key, names);
-    }
-
-    public static Map<String, String> hgetAll(String key) {
-        return getJedis().hgetAll(key);
+        getJedis().hset(key, name, value);
+        getJedis().expire(key, toSeconds(timeout, unit));
     }
 
     public static Boolean lock(Object redisKey, int second) {
@@ -192,9 +139,24 @@ public class RedisUtils extends RedisConfig {
 
     public static Boolean unLock(Object redisKey) {
         String lockKey = "lock." + redisKey.toString();
-        del(lockKey);
+        getJedis().del(lockKey);
         logger.info("unlock success redisKey={}", redisKey);
         return true;
+    }
+
+    public static String cleanJson(String json) {
+        if (StringUtils.isBlank(json)) {
+            return json;
+        }
+        if (json.startsWith("\"") && json.endsWith("\"")) {
+            return json.substring(1, json.length() - 1);
+        }
+        return json;
+    }
+
+    public static int toSeconds(long timeout, TimeUnit unit) {
+        long l = unit.toSeconds(timeout);
+        return l > 0 ? (int) l : 1;
     }
 
 }
