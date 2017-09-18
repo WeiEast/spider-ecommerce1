@@ -22,7 +22,6 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
@@ -55,8 +54,9 @@ public class PicCheckPlugin extends AbstractClientPlugin {
         context = PluginFactory.getProcessorContext();
         pluginResult = new HashMap<>();
 
-        String websiteName = context.getWebsiteName();
-        Long taskId = context.getLong(AttributeKey.TASK_ID);
+        String websiteName = this.context.getWebsiteName();
+        Long taskId = this.context.getLong(AttributeKey.TASK_ID);
+        TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);
         CheckUtils.checkNotBlank(fromType, "fromType is empty");
@@ -65,11 +65,11 @@ public class PicCheckPlugin extends AbstractClientPlugin {
         validatePicCode(taskId, websiteName);
 
         String cookieString = TaskUtils.getCookieString(taskId);
-        ProcessorContextUtil.setCookieString(context, cookieString);
+        ProcessorContextUtil.setCookieString(this.context, cookieString);
 
         Map<String, String> shares = TaskUtils.getTaskShares(taskId);
         for (Map.Entry<String, String> entry : shares.entrySet()) {
-            context.setString(entry.getKey(), entry.getValue());
+            this.context.setString(entry.getKey(), entry.getValue());
         }
 
         return JSON.toJSONString(pluginResult);

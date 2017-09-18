@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.plugin.operator.guang_dong_10000_web;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -177,11 +178,11 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
                 data = "loginRedirect=true";
                 response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_005").setFullUrl(templateUrl).setReferer(referer)
                         .setRequestBody(data).invoke();
-                if (StringUtils.contains(response.getPageContent(), "上次登录")) {
+                if (StringUtils.contains(response.getPageContent(Charset.forName("GB2312")), "上次登录")) {
                     logger.info("登陆成功,param={}", param);
                     return result.success();
                 } else {
-                    logger.error("登陆失败,param={},response={}", param, response);
+                    logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent(Charset.forName("UTF-8")));
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }
             } else {

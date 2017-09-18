@@ -411,4 +411,29 @@ public class TaskUtils {
         return firstVisitWebsiteName;
     }
 
+    public static void initTaskContext(Long taskId, Map<String, Object> context) {
+        String redisKey = RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId);
+        if (null == context && context.isEmpty()) {
+            logger.warn("initTaskContext fail,context is empty,taskId={}", taskId);
+            return;
+        }
+        for (Map.Entry<String, Object> entry : context.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                RedisUtils.hset(redisKey, entry.getKey(), entry.getValue().toString());
+            } else {
+                RedisUtils.hset(redisKey, entry.getKey(), JSON.toJSONString(entry.getValue()));
+            }
+            RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_CONTEXT.toSeconds());
+        }
+    }
+
+    public static String getTaskContext(Long taskId, String name) {
+        String redisKey = RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId);
+        Map<String, String> map = RedisUtils.hgetAll(redisKey);
+        if (null == map || !map.containsKey(name)) {
+            return null;
+        }
+        return map.get(name);
+    }
+
 }

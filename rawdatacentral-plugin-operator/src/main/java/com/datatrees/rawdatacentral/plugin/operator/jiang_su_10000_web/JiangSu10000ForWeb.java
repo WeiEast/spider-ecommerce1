@@ -33,11 +33,10 @@ public class JiangSu10000ForWeb implements OperatorPluginService {
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        Response response = null;
         try {
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化失败,param={},response={}", param, response, e);
+            logger.error("登录-->初始化失败,param={}", param, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }

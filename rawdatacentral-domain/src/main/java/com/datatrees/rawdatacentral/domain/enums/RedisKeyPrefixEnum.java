@@ -20,6 +20,7 @@ public enum RedisKeyPrefixEnum {
     TASK_SMS_CODE("task.sms.code", 30, TimeUnit.MINUTES, "根据taskId共享短信验证码"),
     TASK_PIC_CODE("task.pic.code", 30, TimeUnit.MINUTES, "根据taskId共享短信验证码"),
     TASK_RESULT("task.result", 60, TimeUnit.MINUTES, "task爬取结果"),
+    TASK_CONTEXT("task.context", 10, TimeUnit.MINUTES, "task context"),
     TASK_REQUEST("task.request", 30, TimeUnit.MINUTES, "根据taskId共享代理"),
     PLUGIN_CLASS_DATA("plugin.class.data", 24, TimeUnit.HOURS, "根据taskId共享class"),
     PLUGIN_FILE("plugin.file", 365, TimeUnit.DAYS, "插件jar存储"),
