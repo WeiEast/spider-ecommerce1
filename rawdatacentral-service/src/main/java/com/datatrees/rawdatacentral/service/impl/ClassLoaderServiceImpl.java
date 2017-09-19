@@ -44,27 +44,50 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     private String                 operatorPluginFilename;
     @Resource
     private WebsiteOperatorService websiteOperatorService;
-    private Map<String, Class> classCache      = new HashMap<>();
-    private Map<String, Long>  classUpdateTime = new ConcurrentHashMap<>();
+    /**
+     * class缓存
+     */
+    private Map<String, Class>       classCache            = new HashMap<>();
+    /**
+     * class清理
+     */
+    private Map<String, Long>        classUpdateTime       = new ConcurrentHashMap<>();
+    /**
+     * class loader
+     */
+    private Map<String, ClassLoader> classLoaderCache      = new ConcurrentHashMap<>();
+    /**
+     * class loader
+     */
+    private Map<String, Long>        classLoaderUpdateTime = new ConcurrentHashMap<>();
 
     @Override
     public Class loadPlugin(String jarName, String className) {
         CheckUtils.checkNotBlank(jarName, "jarName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
+        String pluginFile = null;
         try {
             String cacheKey = jarName + "_" + className;
             Class mainClass = classCache.get(cacheKey);
             PluginUpgradeResult plugin = pluginService.getPluginFromRedis(jarName);
+            pluginFile = plugin.getFile().getAbsolutePath();
             if (null == mainClass || plugin.getForceReload()) {
-                mainClass = ClassLoaderUtils.loadClass(plugin.getFile(), className);
-                logger.info("重新加载class,className={},jar={}", className, jarName);
+                ClassLoader classLoader = classLoaderCache.get(pluginFile);
+                if (null == classLoader) {
+                    classLoader = ClassLoaderUtils.createClassLoader(plugin.getFile());
+                    classLoaderCache.put(pluginFile, classLoader);
+                }
+                //1个不使用就自动标记回收
+                classLoaderUpdateTime.put(pluginFile, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
+                mainClass = classLoader.loadClass(className);
+                logger.info("重新加载class,className={},jar={},pluginFile={}", className, jarName, plugin.getFile().getAbsolutePath());
                 classCache.put(cacheKey, mainClass);
             }
             //1个不使用就自动标记回收
             classUpdateTime.put(cacheKey, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
             return mainClass;
         } catch (Throwable e) {
-            logger.error("loadPlugin error jarName={},className={}", jarName, className);
+            logger.error("loadPlugin error jarName={},className={}", jarName, className, e);
             throw new RuntimeException(TemplateUtils.format("loadPlugin error jarName={},className={}", jarName, className));
         }
     }
@@ -108,6 +131,15 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
                         if (System.currentTimeMillis() <= entry.getValue()) {
                             classCache.remove(entry.getKey());
                             logger.info("remove class cache key={}", entry.getKey());
+                            iterator.remove();
+                        }
+                    }
+                    Iterator<Map.Entry<String, Long>> iterator2 = classLoaderUpdateTime.entrySet().iterator();
+                    while (iterator2.hasNext()) {
+                        Map.Entry<String, Long> entry = iterator.next();
+                        if (System.currentTimeMillis() <= entry.getValue()) {
+                            classLoaderCache.remove(entry.getKey());
+                            logger.info("remove classloader cache key={}", entry.getKey());
                             iterator.remove();
                         }
                     }

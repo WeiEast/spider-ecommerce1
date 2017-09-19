@@ -28,6 +28,11 @@ public class PluginCallerTest extends BaseConfigTest {
         SearchProcessorContext context = new SearchProcessorContext(website);
         context.setPluginManager(new PluginManager() {
             @Override
+            public AbstractClientPlugin loadPlugin(String jarName, String mainClass) {
+                return null;
+            }
+
+            @Override
             public PluginWrapper getPlugin(String websiteName, AbstractPlugin pluginDesc) throws PluginException {
                 PluginWrapper wrapper = new PluginWrapper();
                 File pluginFile = new File("./src/test/resources/plugin/simpleSearch.jar");

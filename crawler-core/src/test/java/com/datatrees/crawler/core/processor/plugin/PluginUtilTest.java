@@ -51,11 +51,11 @@ public class PluginUtilTest {
         pluginWrapper.setForceReload(true);
         pluginWrapper.setPlugin(javaPlugin);
 
-        AbstractClientPlugin plugin1 = PluginUtil.loadPlugin(pluginWrapper, classLoader);
-
-        pluginWrapper.setForceReload(false);
-
-        AbstractClientPlugin plugin2 = PluginUtil.loadPlugin(pluginWrapper, classLoader);
+        //AbstractClientPlugin plugin1 = PluginUtil.loadPlugin(pluginWrapper, classLoader);
+        //
+        //pluginWrapper.setForceReload(false);
+        //
+        //AbstractClientPlugin plugin2 = PluginUtil.loadPlugin(pluginWrapper, classLoader);
 
     }
 }
