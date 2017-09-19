@@ -2,11 +2,9 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.Date;
 
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
@@ -53,7 +51,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
             throw new CommonException("没有从redis读取到插件:" + fileName);
         }
         //修改策略,文件保存到本地用${md5}.jar,这样文件变化了,classLoader就变了
-        File file = new File(TemplateUtils.format("{}{}-{}.jar", pluginPath, fileName, DateUtils.format(new Date(),"yyyyMMddHHmmss")));
+        File file = new File(TemplateUtils.format("{}{}-{}.jar", pluginPath, fileName,md5));
         boolean forceReload = !file.exists();
         //boolean forceReload = !pluginMd5.containsKey(fileName) || !StringUtils.equals(md5, pluginMd5.get(fileName));
         if (forceReload) {
