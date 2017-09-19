@@ -109,7 +109,12 @@ public class TianJin10086ForWeb implements OperatorPluginService {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
+            Thread.sleep(2000);
             String picToken = TaskUtils.getTaskShare(param.getTaskId(), "picToken");
+            if (StringUtils.isBlank(picToken)) {
+                Thread.sleep(2000);
+                picToken = TaskUtils.getTaskShare(param.getTaskId(), "picToken");
+            }
             if (StringUtils.isBlank(picToken)) {
                 logger.error("登录-->图片验证码-->刷新失败,picToken不能为空,param={},response={}", param, response);
                 return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
@@ -118,7 +123,9 @@ public class TianJin10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "tian_jin_10086_web_002")
                     .setFullUrl(templateUrl, picToken).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
-            return result.success(response.getPageContentForBase64());
+            String pageContent = response.getPageContent();
+            String imgBase64 = PatternUtils.group(pageContent,"data:image\\/png;base64,(.*)",1);
+            return result.success(imgBase64);
         } catch (Exception e) {
             logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
@@ -161,8 +168,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
                 }
             }
             response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10086_web_004").setFullUrl(templateUrl).invoke();
-            String endUrl = response.getRedirectUrl();
-            if (StringUtils.isNotEmpty(pageContent) && StringUtils.contains(endUrl, "myMobile/myMobile.html")) {
+            if (StringUtils.isNotEmpty(pageContent)) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             } else {
