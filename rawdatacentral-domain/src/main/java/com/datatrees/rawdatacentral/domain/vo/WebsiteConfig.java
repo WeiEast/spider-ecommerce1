@@ -56,9 +56,39 @@ public class WebsiteConfig {
     private String  searchConfig;
     /**  */
     private String  initSetting;
+    /** 配置标题 */
+    private String  websiteTitle;
+    /** 分组 */
+    private String  groupCode;
+    /** 分组 */
+    private String  groupName;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getWebsiteTitle() {
+        return websiteTitle;
+    }
+
+    public void setWebsiteTitle(String websiteTitle) {
+        this.websiteTitle = websiteTitle;
     }
 
     public Integer getWebsiteId() {

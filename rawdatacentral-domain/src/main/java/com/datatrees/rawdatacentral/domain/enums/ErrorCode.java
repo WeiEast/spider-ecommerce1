@@ -5,6 +5,8 @@ import java.util.Set;
 
 public enum ErrorCode {
 
+    TASK_CANCEL(-2, "用户/网关取消任务(超时约5分钟)"),
+    TASK_CHECK_FAIL(-3, "任务检查失败"),
     NOT_SUPORT_METHOD(-10, "方法不支持"),
     LOGIN_FAIL(-100, "登陆失败,请重试"),
     LOGIN_UNEXPECTED_RESULT(-101, "登陆失败,请重试"),
@@ -34,28 +36,22 @@ public enum ErrorCode {
     VALIDATE_UNEXPECTED_RESULT(-291, "校验失败,请重试"),
     VALIDATE_ERROR(-292, "校验失败,请重试"),
     TASK_INIT_ERROR(-300, "初始化失败"),
-    RESULT_SEND_ERROR(202, "Result send error!"),
-    CONFIG_ERROR(304, "Config error!"),
-    TASK_INTERRUPTED_ERROR(306, "Thread Interrupted!"),
-    LOGIN_TIMEOUT_ERROR(308, "Login Time Out!"),
-    COOKIE_INVALID(404, "Cookie invalid!"),
-    GIVE_UP_RETRY(406, "Give up retry!"),
-    MESSAGE_DROP(408, "Message drop!"),
-    INIT_QUEUE_FAILED_ERROR_CODE(502, "The LinkQueue initialization failed!"),
-    NO_ACTIVE_PROXY(503, "can't get vaild proxy"),
-    BLOCKED_ERROR_CODE(504, "Access block, the system will early quit"),
-    // Access block
-
-    TASK_TIMEOUT_ERROR_CODE(506, "The task is timeout"),
-    // Task time out
-
-    QUEUE_FULL_ERROR_CODE(508, "The link queue is full"),
-    NO_RESULT_ERROR_CODE(510, "There is no result"),
-    // NO_RESULT_ERROR_CODE
-
-    NOT_EMPTY_ERROR_CODE(512, "Field not empty"),
-    RESPONSE_EMPTY_ERROR_CODE(514, "Response not empty"),
-    UNKNOWN_REASON(520, "Unknown Reason.");
+    RESULT_SEND_ERROR(-202, "Result send error!"),
+    CONFIG_ERROR(-304, "Config error!"),
+    TASK_INTERRUPTED_ERROR(-306, "Thread Interrupted!"),
+    LOGIN_TIMEOUT_ERROR(-308, "Login Time Out!"),
+    COOKIE_INVALID(-404, "Cookie invalid!"),
+    GIVE_UP_RETRY(-406, "Give up retry!"),
+    MESSAGE_DROP(-408, "Message drop!"),
+    INIT_QUEUE_FAILED_ERROR_CODE(-502, "The LinkQueue initialization failed!"),
+    NO_ACTIVE_PROXY(-503, "can't get vaild proxy"),
+    BLOCKED_ERROR_CODE(-504, "Access block, the system will early quit"),
+    TASK_TIMEOUT_ERROR_CODE(-506, "The task is timeout"),
+    QUEUE_FULL_ERROR_CODE(-508, "The link queue is full"),
+    NO_RESULT_ERROR_CODE(-510, "There is no result"),
+    NOT_EMPTY_ERROR_CODE(-512, "Field not empty"),
+    RESPONSE_EMPTY_ERROR_CODE(-514, "Response not empty"),
+    UNKNOWN_REASON(-520, "Unknown Reason.");
     private int    errorCode;
     private String errorMessage;
 

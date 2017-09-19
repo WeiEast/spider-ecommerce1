@@ -25,4 +25,11 @@ public interface TaskService {
 
     public Date selectNow();
 
+    /**
+     * 根据taskId查询
+     * @param taskId
+     * @return
+     */
+    Task getByTaskId(Long taskId);
+
 }

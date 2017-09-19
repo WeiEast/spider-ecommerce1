@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
@@ -121,7 +122,8 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         submitNormalizerFactory.normalize(submitMessage);
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
-            String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), entry.getKey());
+            String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(),extractMessage.getTaskLogId(), entry.getKey());
+            TaskUtils.addTaskResult(extractMessage.getTaskId(), entry.getKey(), entry.getValue());
             boolean flag = false;
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();

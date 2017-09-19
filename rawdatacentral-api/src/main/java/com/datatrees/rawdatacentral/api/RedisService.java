@@ -66,10 +66,8 @@ public interface RedisService {
 
     /**
      * 获取,有超时时间
-     *
      */
     public String getString(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix);
-
 
     /**
      * 获取,有超时时间
@@ -79,7 +77,6 @@ public interface RedisService {
      * @return
      */
     public String getString(String key, long timeout, TimeUnit timeUnit);
-
 
     /**
      * 从list取最后一个值
@@ -231,15 +228,25 @@ public interface RedisService {
     public <T> T getCache(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, TypeReference<T> typeReference);
 
     /**
-     * 枷锁
-     * @param postfix
+     * 加锁
+     * 有效期5秒
+     * 5秒没有完成锁定,返回false
+     * @param redisKey
      */
-    Boolean lock(Object postfix);
+    Boolean lock(Object redisKey);
+
+    /**
+     * 加锁
+     * 有效期5秒
+     * 5秒没有完成锁定,抛出异常
+     * @param redisKey
+     */
+    void lockFailThrowException(Object redisKey);
 
     /**
      * 解锁
-     * @param postfix
+     * @param redisKey
      */
-    void unLock(Object postfix);
+    void unLock(Object redisKey);
 
 }

@@ -25,14 +25,20 @@ public class RedisPluginManager extends PluginManager {
     @Override
     public PluginWrapper getPlugin(String websiteName, AbstractPlugin pluginDesc) {
         PluginUpgradeResult plugin = null;
-        String fileName = pluginDesc.getFileName();
-        if (StringUtils.isNoneBlank(fileName)) {
-            plugin = pluginService.getPluginFromRedis(pluginDesc.getFileName());
-        } else {
-            plugin = pluginService.getPluginFromLocal(websiteName, pluginDesc);
+        try {
+            String fileName = pluginDesc.getFileName();
+            if (StringUtils.isNoneBlank(fileName)) {
+                plugin = pluginService.getPluginFromRedis(pluginDesc.getFileName());
+            } else {
+                plugin = pluginService.getPluginFromLocal(websiteName, pluginDesc);
+            }
+            PluginWrapper wrapper = new PluginWrapper(plugin.getFile(), pluginDesc);
+            wrapper.setForceReload(plugin.getForceReload());
+            return wrapper;
+        } catch (Throwable e) {
+            logger.error("getPlugin error", e);
+            return null;
         }
-        PluginWrapper wrapper = new PluginWrapper(plugin.getFile(), pluginDesc);
-        wrapper.setForceReload(plugin.getForceReload());
-        return wrapper;
+
     }
 }

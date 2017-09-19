@@ -332,6 +332,20 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         website.setWebsiteType(websiteConfig.getWebsiteType());
         website.setSearchConfigSource(websiteConfig.getSearchConfig());
         website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
+        if (StringUtils.isBlank(websiteConfig.getGroupCode())) {
+            GroupEnum group = GroupEnum.getByWebsiteName(websiteConfig.getWebsiteName());
+            if (null == group) {
+                logger.error("not found group code for webisteName={}", websiteConfig.getWebsiteName());
+                //throw new RuntimeException("not found group code for webisteName=" + websiteConfig.getWebsiteName());
+            }else {
+                website.setGroupCode(group.getGroupCode());
+                website.setGroupName(group.getGroupName());
+            }
+        } else {
+            website.setGroupCode(websiteConfig.getGroupCode());
+            website.setGroupName(websiteConfig.getGroupName());
+            website.setWebsiteTitle(websiteConfig.getWebsiteTitle());
+        }
         return website;
     }
 
@@ -386,6 +400,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         config.setSearchConfig(operator.getSearchConfig());
         config.setExtractorConfig(operator.getExtractorConfig());
         config.setSimulate(operator.getSimulate());
+        config.setWebsiteTitle(operator.getWebsiteTitle());
+        config.setGroupCode(operator.getGroupCode());
+        config.setGroupName(GroupEnum.getByGroupCode(operator.getGroupCode()).getGroupName());
         return config;
     }
 

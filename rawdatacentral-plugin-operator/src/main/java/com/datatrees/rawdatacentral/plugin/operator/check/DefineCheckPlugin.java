@@ -27,16 +27,18 @@ import org.slf4j.LoggerFactory;
  */
 public class DefineCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger                   logger        = LoggerFactory.getLogger(DefineCheckPlugin.class);
-    private              CrawlerOperatorService   pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
-    private              AbstractProcessorContext context       = PluginFactory.getProcessorContext();
+    private static final Logger logger = LoggerFactory.getLogger(DefineCheckPlugin.class);
     private String fromType;
-    private Map<String, Object> pluginResult = new HashMap<>();
 
     @Override
     public String process(String... args) throws Exception {
+        CrawlerOperatorService pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+        AbstractProcessorContext context = PluginFactory.getProcessorContext();
+        Map<String, Object> pluginResult = new HashMap<>();
+
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
+        TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);
         CheckUtils.checkNotBlank(fromType, "fromType is empty");

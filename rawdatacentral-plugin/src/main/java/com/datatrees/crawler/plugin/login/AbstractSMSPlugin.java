@@ -12,6 +12,8 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
+import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
@@ -22,7 +24,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
 
-    private Logger logger = LoggerFactory.getLogger(AbstractSMSPlugin.class);
+    private Logger         logger         = LoggerFactory.getLogger(AbstractSMSPlugin.class);
+    private MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
 
     public Map<String, String> doProcess(Map<String, String> paramMap) throws Exception {
         AbstractProcessorContext context = PluginFactory.getProcessorContext();
@@ -47,9 +50,11 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             resultMap.putAll(paramMap);
             return resultMap;
         }
+        monitorService.sendTaskLog(taskId, "短信验证码插件启动");
         //支付宝或者淘宝短信取消
-        if(StringUtils.equals("alipay.com",websiteName) || StringUtils.equals("taobao.com",websiteName)){
+        if (StringUtils.equals("alipay.com", websiteName) || StringUtils.equals("taobao.com", websiteName)) {
             logger.warn("还未破解短信,taskId={},websiteName={}", taskId, websiteName);
+            monitorService.sendTaskLog(taskId, "支付宝/淘宝目前短信还未破解,暂不支持,任务即将终止");
             throw new ResultEmptyException("爬取失败,还未破解短信");
         }
 
@@ -63,6 +68,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
         do {
             boolean flag = requestSMSCode(paramsMap);
             if (!flag) {
+                monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码刷新失败!");
                 logger.error("plugin request smsCode error!taskId={},websiteName={}", taskId, websiteName);
                 TimeUnit.SECONDS.sleep(60);
                 continue;
@@ -71,6 +77,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             logger.info("plugin request smsCode success!taskId={},websiteName={}", taskId, websiteName);
             // 发送任务日志
             getMessageService().sendTaskLog(taskId, "等待用户输入短信验证码");
+            monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码刷新成功,等待用户输入");
             //发送MQ指令
             Map<String, String> data = new HashMap<String, String>();
             data.put(AttributeKey.REMARK, StringUtils.EMPTY);
@@ -78,13 +85,17 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
             String directiveId = getMessageService().sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), GsonUtils.toJson(data));
             //保存状态到redis
             //等待APP处理完成,并通过dubbo将数据写入redis
-            DirectiveResult<Map<String, Object>> receiveDirective = getRedisService().getDirectiveResult(directiveId, getMaxInterval(websiteName), TimeUnit.MILLISECONDS);
+            DirectiveResult<Map<String, Object>> receiveDirective = getRedisService()
+                    .getDirectiveResult(directiveId, getMaxInterval(websiteName), TimeUnit.MILLISECONDS);
             if (null == receiveDirective) {
+                monitorService.sendTaskLog(taskId, "短信验证码插件-->用户2分钟还未输入短信验证码");
                 logger.error("wait user input smscode timeout,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
             if (null == receiveDirective.getData() || !receiveDirective.getData().containsKey(AttributeKey.CODE)) {
-                logger.error("invalid receiveDirective,taskId={},websiteName={},directiveId={},receiveDirective={}", taskId, websiteName, directiveId, GsonUtils.toJson(receiveDirective));
+                monitorService.sendTaskLog(taskId, "短信验证码插件-->用户输入的短信验证码为空!");
+                logger.error("invalid receiveDirective,taskId={},websiteName={},directiveId={},receiveDirective={}", taskId, websiteName, directiveId,
+                        GsonUtils.toJson(receiveDirective));
                 continue;
             }
             inputSmsCount++;
@@ -96,11 +107,15 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
                 //将结果返回给插件调用的地方,作为field的值,一般返回的就是短信验证码,有的和短信验证码一起验证,有的会设置not-empty=true属性
                 resultMap.put(PluginConstants.FIELD, inputCode);
                 getMessageService().sendTaskLog(taskId, "短信验证码校验成功");
+                monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码校验成功!");
                 return resultMap;
             }
-            logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputSmsCount={}", taskId, websiteName, inputCode, retry, inputSmsCount);
+            monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码校验失败!");
+            logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputSmsCount={}", taskId, websiteName, inputCode, retry,
+                    inputSmsCount);
 
         } while (System.currentTimeMillis() < maxInterval);
+        monitorService.sendTaskLog(taskId, "短信验证码插件-->短信验证码校验失败,输入次数:" + inputSmsCount);
         if (hasSms) {
             getMessageService().sendTaskLog(taskId, inputSmsCount == 0 ? "短信验证码校验超时" : "短信验证码校验失败");
             throw new ResultEmptyException("get sms code error,inputSmsCount:" + inputSmsCount);
@@ -143,7 +158,8 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
 
     @Override
     public String process(String... args) throws Exception {
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
         return GsonUtils.toJson(doProcess(paramMap));
     }
 

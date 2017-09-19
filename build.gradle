@@ -1,6 +1,6 @@
 allprojects {
     group = 'com.datatrees.rawdatacentral'
-    version = '3.0.9-SNAPSHOT'
+    version = '3.0.10-SNAPSHOT'
     description = "爬虫核心"
 }
 buildscript {
@@ -59,6 +59,7 @@ ext {
     springVersion="4.3.9.RELEASE"
     commonsCodecVersion="1.10"
     proxyApiVersion="2.0.0-SNAPSHOT"
+    jsonPathVersion="2.3.0"
 }
 
 subprojects {
