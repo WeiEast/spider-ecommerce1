@@ -29,6 +29,11 @@ public class SimplePluginManager extends PluginManager {
     private              String pluginCacheKeyPrefix = "plugin_local_prefix_";
 
     @Override
+    public AbstractClientPlugin loadPlugin(String jarName, String mainClass) {
+        return null;
+    }
+
+    @Override
     public PluginWrapper getPlugin(String websiteName, AbstractPlugin pluginDesc) throws PluginException {
         File plugin = new File("src/test/resources/plugin/" + websiteName + "login-plugin.jar");
         return new PluginWrapper(plugin, pluginDesc);

@@ -10,6 +10,7 @@ package com.datatrees.crawler.core.processor.common.resource;
 
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.common.exception.PluginException;
+import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 
 /**
@@ -18,6 +19,14 @@ import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
  * @since Mar 10, 2014 2:14:42 PM
  */
 public abstract class PluginManager implements Resource {
+
+    /**
+     * 从jar加载class
+     * @param jarName
+     * @param mainClass
+     * @return
+     */
+    public abstract AbstractClientPlugin loadPlugin(String jarName, String mainClass) throws PluginException, IllegalAccessException, InstantiationException;
 
     public abstract PluginWrapper getPlugin(String websiteName, AbstractPlugin pluginDesc) throws PluginException;
 

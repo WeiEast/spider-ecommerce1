@@ -51,20 +51,22 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     public Class loadPlugin(String jarName, String className) {
         CheckUtils.checkNotBlank(jarName, "jarName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
+        String pluginFile = null;
         try {
             String cacheKey = jarName + "_" + className;
             Class mainClass = classCache.get(cacheKey);
             PluginUpgradeResult plugin = pluginService.getPluginFromRedis(jarName);
             if (null == mainClass || plugin.getForceReload()) {
                 mainClass = ClassLoaderUtils.loadClass(plugin.getFile(), className);
-                logger.info("重新加载class,className={},jar={}", className, jarName);
+                logger.info("重新加载class,className={},jar={},pluginFile={}", className, jarName, plugin.getFile().getAbsolutePath());
                 classCache.put(cacheKey, mainClass);
             }
+            pluginFile = plugin.getFile().getAbsolutePath();
             //1个不使用就自动标记回收
             classUpdateTime.put(cacheKey, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
             return mainClass;
         } catch (Throwable e) {
-            logger.error("loadPlugin error jarName={},className={}", jarName, className);
+            logger.error("loadPlugin error jarName={},className={}", jarName, className, e);
             throw new RuntimeException(TemplateUtils.format("loadPlugin error jarName={},className={}", jarName, className));
         }
     }

@@ -46,7 +46,7 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
                 logger.warn("empty msg: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()));
             }
             logger.info("process message success: useTime={},msgId={},topic={},tags={},body={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("process message error: useTime={},msgId={},topic={},tags={},body={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()), e);
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;

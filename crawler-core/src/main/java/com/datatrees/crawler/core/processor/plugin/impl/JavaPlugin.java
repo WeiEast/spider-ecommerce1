@@ -13,10 +13,11 @@ import com.datatrees.common.protocol.WebClientUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.resource.PluginManager;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
-import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 
 /**
  * java plugin for
@@ -28,16 +29,21 @@ public class JavaPlugin extends Plugin {
 
     @Override
     protected Object invokePlugin(PluginWrapper plugin, String args, Request request) throws Exception {
-        AbstractClientPlugin clientPlugin = PluginUtil.loadPlugin(plugin, getClass().getClassLoader());
 
         AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
+        com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin javaPlugin
+                = (com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) plugin.getPlugin();
+
+        String mainClass = javaPlugin.getMainClass();
+        String fileName = javaPlugin.getFileName();
+        AbstractClientPlugin clientPlugin = BeanFactoryUtils.getBean(PluginManager.class).loadPlugin(fileName, mainClass);
         if (context instanceof SearchProcessorContext) {
             // add proxy if necessary
             clientPlugin.setProxyManager(((SearchProcessorContext) context).getProxyManager());
         }
         // add http client
         clientPlugin.setWebClient(WebClientUtil.getWebClient());
-        String params = ((com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) plugin.getPlugin()).getParams();
-        return clientPlugin.process(args, params);
+        //插件自定义参数
+        return clientPlugin.process(args, javaPlugin.getParams());
     }
 }
