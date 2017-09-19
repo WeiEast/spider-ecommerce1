@@ -13,13 +13,8 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
-<<<<<<< HEAD
-import com.datatrees.common.util.ThreadInterruptedUtil;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-=======
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
->>>>>>> feature/监控
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
@@ -129,13 +124,8 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
         }
 
         redisMap.put(PluginConstants.FIELD, DirectiveRedisCode.SKIP);
-<<<<<<< HEAD
-        logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId,
-            websiteName, DirectiveRedisCode.SKIP);
-=======
         logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId, websiteName,
                 DirectiveRedisCode.SKIP);
->>>>>>> feature/监控
         ThreadInterruptedUtil.setInterrupt(Thread.currentThread());
         throw new ResultEmptyException("二维码验证失败");
     }
