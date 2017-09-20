@@ -157,7 +157,7 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://zj.189.cn/bfapp/buffalo/VCodeOperation";
             String templateData = "<buffalo-call><method>SendVCodeByNbr</method><string>{}</string></buffalo-call>";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10000_web_005").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_005").setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.TEXT_XML).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "成功")) {
@@ -205,7 +205,7 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
             String data = TemplateUtils
                     .format(templateData, param.getMobile(), areaid, productid, servtype, billMonth, username, idCard, param.getSmsCode());
             response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_006").setFullUrl(templateUrl).setRequestBody(data)
-                    .invoke();
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "清单详情") || StringUtils.contains(pageContent, "ErrorNo=61010")) {
                 logger.info("详单-->校验成功,param={}", param);
