@@ -26,8 +26,8 @@ public enum GroupEnum {
     CHINA_10086("CHINA_10086", "中国移动", WebsiteType.OPERATOR, "china_10086_shop"),
     CHINA_10000("CHINA_10000", "中国电信", WebsiteType.OPERATOR, "china_10000_app"),
     CHINA_10010("CHINA_10010", "中国联通", WebsiteType.OPERATOR, "china_10010_app"),
-    ZHE_JIANG_10086("ZHE_JAING_10086", "浙江移动", WebsiteType.OPERATOR, "zhe_jiang_10086_web"),
-    ZHE_JIANG_10000("ZHE_JAING_10000", "浙江电信", WebsiteType.OPERATOR, "zhe_jiang_10000_web"),
+    ZHE_JIANG_10086("ZHE_JIANG_10086", "浙江移动", WebsiteType.OPERATOR, "zhe_jiang_10086_web"),
+    ZHE_JIANG_10000("ZHE_JIANG_10000", "浙江电信", WebsiteType.OPERATOR, "zhe_jiang_10000_web"),
     GUANG_DONG_10086("GUANG_DONG_10086", "广东移动", WebsiteType.OPERATOR, "guang_dong_10086_web"),
     GUANG_DONG_10000("GUANG_DONG_10000", "广东电信", WebsiteType.OPERATOR, "guang_dong_10000_web"),
     JIANG_SU_10086("JIANG_SU_10086", "江苏移动", WebsiteType.OPERATOR, "jiang_su_10086_wap"),
@@ -138,4 +138,14 @@ public enum GroupEnum {
     public WebsiteType getWebsiteType() {
         return websiteType;
     }
+
+    //public static void main(String[] args) {
+    //    for (GroupEnum e : GroupEnum.values()) {
+    //        if (!e.name().endsWith(e.getGroupCode())) {
+    //            System.out.println(e.groupCode);
+    //        }
+    //    }
+    //
+    //
+    //}
 }
