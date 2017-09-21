@@ -3,28 +3,27 @@ package com.datatrees.rawdatacentral.common.utils;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 public class RedisUtilsTest {
 
     @Test
-    public void test1() {
+    public void test() {
         RedisUtils.init("192.168.5.24", 6379, null);
-        int i = 1;
-        while (i < 100000) {
-            String key = "test.username";
-            System.out.println(i++);
-            String status = RedisUtils.set(key, "周兴海");
-            System.out.println(TemplateUtils.format("i={},status={}", i++, status));
+        long taskId = 93399525661634560L;
+        Map<String, String> map = null;
+        String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals("string", type)) {
+        } else {
+            map = RedisUtils.hgetAll(redisKey);
         }
-
-    }
-
-    @Test
-    public void test2() {
-        RedisUtils.init("192.168.5.24", 6379, null);
-        Map<String, Object> map = TaskUtils.getTaskResult(94495532793229312L);
-        System.out.println(map.values().toString());
+        System.out.println(map);
+        //task.share.94450026213830656
+        String mobile = TaskUtils.getTaskShare(94450026213830656L, "mobile");
+        System.out.println(mobile);
 
     }
 
