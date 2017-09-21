@@ -170,10 +170,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                     TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());
                 }
                 if (StringUtils.isNoneBlank(param.getIdCard())) {
-                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getPassword());
+                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getIdCard());
                 }
                 if (StringUtils.isNoneBlank(param.getRealName())) {
-                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getPassword());
+                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getRealName());
                 }
             } else if (StringUtils.isNoneBlank(param.getSmsCode())) {
                 TaskUtils.addTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(param.getFormType()), param.getSmsCode());

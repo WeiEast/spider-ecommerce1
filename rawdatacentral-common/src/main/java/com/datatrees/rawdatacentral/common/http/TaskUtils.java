@@ -309,7 +309,7 @@ public class TaskUtils {
         String type = RedisUtils.type(redisKey);
         if (StringUtils.equals(RedisDataType.NONE, type)) {
             logger.warn("redis key not found redisKey={}", redisKey);
-            return null;
+            return json;
         }
         if (StringUtils.equals(RedisDataType.STRING, type)) {
             map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
