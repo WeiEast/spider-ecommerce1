@@ -93,7 +93,7 @@ public class SiChuan10000ForWeb implements OperatorPluginService {
 
             String referer = "http://login.189.cn/login";
             String templateUrl = "http://login.189.cn/login";
-            String templateData = "Account={}&UType=201&ProvinceID=11&AreaCode=&CityNo=&RandomFlag=0&Password={}&Captcha=";
+            String templateData = "Account={}&UType=201&ProvinceID=23&AreaCode=&CityNo=&RandomFlag=0&Password={}&Captcha=";
             String data = TemplateUtils.format(templateData, param.getMobile(), URLEncoder.encode(encryptPassword, "UTF-8"));
             response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10000_web_001").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
