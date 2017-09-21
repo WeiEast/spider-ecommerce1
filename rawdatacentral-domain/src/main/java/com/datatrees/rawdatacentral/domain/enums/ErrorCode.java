@@ -40,6 +40,8 @@ public enum ErrorCode {
     CONFIG_ERROR(-304, "Config error!"),
     TASK_INTERRUPTED_ERROR(-306, "Thread Interrupted!"),
     LOGIN_TIMEOUT_ERROR(-308, "Login Time Out!"),
+    TASK_CHECK_EMPTY_DATA(-320, "空数据"),
+    TASK_CHECK_REGEX_FAIL(-321, "正则校验失败"),
     COOKIE_INVALID(-404, "Cookie invalid!"),
     GIVE_UP_RETRY(-406, "Give up retry!"),
     MESSAGE_DROP(-408, "Message drop!"),
