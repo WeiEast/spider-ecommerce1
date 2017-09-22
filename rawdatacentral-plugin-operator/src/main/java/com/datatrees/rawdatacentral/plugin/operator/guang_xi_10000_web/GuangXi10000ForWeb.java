@@ -253,7 +253,8 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
             String referer = "http://gx.189.cn/chaxun/iframe/user_center.jsp";
             String templateUrl = "http://gx.189.cn/public/realname/checkRealName.jsp";
             String templateData = "NUM={}&V_PASSWORD={}&CUST_NAME={}&CARD_NO={}&CARD_TYPE=1&RAND_TYPE=002";
-            String data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode(), param.getRealName(), param.getIdCard());
+            String data = TemplateUtils
+                    .format(templateData, param.getMobile(), param.getSmsCode(), URLEncoder.encode(param.getRealName(), "UTF-8"), param.getIdCard());
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10000_web_009").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
@@ -270,9 +271,10 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
                         "={}&PASSWORD={}&CUST_NAME={}&CARD_TYPE=1&CARD_NO={}";
                 data = TemplateUtils
                         .format(templateData, bureauCode, param.getMobile(), param.getMobile(), currentMonth, currentMonth, param.getSmsCode(),
-                                URLEncoder.encode(param.getRealName(),"UTF-8"), param.getIdCard());
+                                URLEncoder.encode(param.getRealName(), "UTF-8"), param.getIdCard());
                 response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10000_web_010").setFullUrl(templateUrl).setRequestBody(data)
                         .setReferer(referer).invoke();
+                pageContent = response.getPageContent();
                 if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                     logger.info("详单-->校验成功,param={}", param);
                     return result.success();
