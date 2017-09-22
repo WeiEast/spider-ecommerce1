@@ -39,7 +39,7 @@ public enum ErrorCode {
     RESULT_SEND_ERROR(-202, "Result send error!"),
     CONFIG_ERROR(-304, "Config error!"),
     TASK_INTERRUPTED_ERROR(-306, "Thread Interrupted!"),
-    LOGIN_TIMEOUT_ERROR(-308, "Login Time Out!"),
+    LOGIN_TIMEOUT_ERROR(-308, "登录超时"),
     TASK_CHECK_EMPTY_DATA(-320, "空数据"),
     TASK_CHECK_REGEX_FAIL(-321, "正则校验失败"),
     COOKIE_INVALID(-404, "Cookie invalid!"),
