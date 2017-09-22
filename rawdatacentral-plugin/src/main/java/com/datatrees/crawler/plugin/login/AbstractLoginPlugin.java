@@ -165,8 +165,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                     sendResult.fill(DirectiveRedisCode.SERVER_FAIL, errorCode);
                     getRedisService().saveDirectiveResult(directiveId, sendResult);
                     getMessageService().sendTaskLog(taskId, "登陆失败", errorCode);
-                    monitorService.sendTaskLog(taskId, "登录-->校验失败!", ErrorCode.LOGIN_UNEXPECTED_RESULT.getErrorCode(),
-                            ErrorCode.LOGIN_UNEXPECTED_RESULT.getErrorMsg(), errorCode);
+                    monitorService.sendTaskLog(taskId, "登录-->校验失败!", ErrorCode.LOGIN_UNEXPECTED_RESULT, errorCode);
                     logger.warn("login fail taskId={},websiteName={},directiveId={},errorCode={},loginCount={}", taskId, websiteName, directiveId,
                             errorCode, loginCount);
                     //清理,避免对下一次登陆产生影响

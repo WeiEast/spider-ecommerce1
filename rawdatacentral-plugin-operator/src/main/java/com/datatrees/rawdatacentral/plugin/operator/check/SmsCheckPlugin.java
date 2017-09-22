@@ -19,7 +19,9 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -62,7 +64,7 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
         Map<String, String> map = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);
         logger.info("短信校验插件启动,taskId={},websiteName={},fromType={}", taskId, websiteName, fromType);
-        monitorService.sendTaskLog(taskId, "短信校验插件启动");
+        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->短信校验启动-->成功", FormType.getName(fromType)));
         //验证失败直接抛出异常
         validateSmsCode(taskId, websiteName);
 
@@ -107,7 +109,8 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
 
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
             if (null == receiveDirective) {
-                monitorService.sendTaskLog(taskId, "用户输入短信验证码超时,任务即将失败!超时时间(单位:秒):" + timeOut);
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->等待用户输入短信验证码-->失败", FormType.getName(fromType)),
+                        ErrorCode.VALIDATE_PIC_CODE_TIMEOUT, "用户输入短信验证码超时,任务即将失败!超时时间(单位:秒):" + timeOut);
                 logger.error("等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
                 //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入短信验证码超时({}秒)", timeOut));
                 messageService.sendTaskLog(taskId, "短信验证码校验超时");
@@ -122,17 +125,16 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
                 TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(fromType), smsCode);
                 pluginResult.put(PluginConstants.FIELD, smsCode);
                 messageService.sendTaskLog(taskId, "短信验证码校验成功");
-                monitorService.sendTaskLog(taskId, "短信验证码校验成功,插件校验结束!");
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验短信-->成功", FormType.getName(fromType)));
                 return;
             }
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                monitorService.sendTaskLog(taskId, "插件终止,用户刷新/取消任务");
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->线程-->失败", FormType.getName(fromType)), ErrorCode.TASK_CANCEL);
                 logger.error("验证短信验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), taskId, websiteName);
                 throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
             }
             messageService.sendTaskLog(taskId, "短信验证码校验失败");
         } while (retry++ < maxRetry);
-        monitorService.sendTaskLog(taskId, "短信校验失败,任务即将终止!");
         //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("短信验证码校验失败,最大重试次数{}", maxRetry));
         throw new ResultEmptyException(ErrorCode.VALIDATE_SMS_TIMEOUT.getErrorMsg());
     }
