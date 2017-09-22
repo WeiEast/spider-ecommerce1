@@ -93,7 +93,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
                 //初始化监控信息
                 monitorService.initTask(taskId);
-                monitorService.sendTaskLog(taskId, "收到任务初始化消息");
+                monitorService.sendTaskLog(taskId, "登录-->初始化-->成功");
                 //设置代理
                 ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
                 //执行运营商插件初始化操作
@@ -105,7 +105,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
 
                 //运营商独立部分第一次初始化后不启动爬虫
             } else {
-                monitorService.sendTaskLog(taskId, "收到任务初始化消息");
+                monitorService.sendTaskLog(taskId, "爬虫-->启动-->成功");
                 //这里电商,邮箱,老运营商
                 website = websiteConfigService.getWebsiteByWebsiteName(message.getWebsiteName());
                 //保存taskId对应的website
@@ -129,7 +129,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             //如果是登录成功消息就启动爬虫
             String taskStage = redisService.getString(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
             if (StringUtils.equals(taskStage, TaskStageEnum.CRAWLER_START.getStatus())) {
-                monitorService.sendTaskLog(taskId, "收到运营商登录成功消息");
+                monitorService.sendTaskLog(taskId, "爬虫-->启动-->成功");
                 String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
                 //之后运行还是数据库真实websiteName
                 message.setWebsiteName(websiteName);

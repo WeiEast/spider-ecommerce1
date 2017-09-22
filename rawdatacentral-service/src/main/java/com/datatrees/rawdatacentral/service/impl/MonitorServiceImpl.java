@@ -6,11 +6,12 @@ import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.api.MonitorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,22 @@ public class MonitorServiceImpl implements MonitorService {
         } else {
             sendTaskLog(taskId, msg, result.getResponseCode(), result.getMessage(), result.getErrorDetail());
         }
+    }
+
+    @Override
+    public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.MSG, msg);
+        map.put(AttributeKey.ERROR_CODE, errorCode.getErrorCode());
+        map.put(AttributeKey.ERROR_MSG, errorCode.getErrorMsg());
+        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
+        messageService.sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), map);
+    }
+
+    @Override
+    public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode, String errorDetail) {
+        sendTaskLog(taskId, msg, errorCode.getErrorCode(), errorCode.getErrorMsg(), errorDetail);
     }
 
     @Override

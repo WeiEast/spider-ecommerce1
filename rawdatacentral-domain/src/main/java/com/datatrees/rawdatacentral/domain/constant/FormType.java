@@ -20,7 +20,10 @@ public class FormType {
     }
 
     public static String getName(String type) {
-        return allTypes.get(type);
+        if (allTypes.containsKey(type)) {
+            return allTypes.get(type);
+        }
+        return "自定义插件" + type;
     }
 
     public boolean validate(String type) {

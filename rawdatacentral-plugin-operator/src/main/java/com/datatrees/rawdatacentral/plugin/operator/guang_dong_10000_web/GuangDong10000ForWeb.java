@@ -150,7 +150,7 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             templateData = "area=&accountType=2000004&passwordType=00&loginOldUri=%2Fservice%2Fhome%2F&IFdebug=null&errorMsgType=&SSORequestXML" +
                     "={}&sysType=2&from=new&isShowLoginRand=Y&areaSel=020&accountTypeSel=2000004&account={}&mobilePassword=custPassword&password" +
                     "={}&smsCode=&loginCodeRand={}";
-            data = TemplateUtils.format(templateData,ssoRequestXML,param.getMobile(),param.getPassword(),param.getPicCode());
+            data = TemplateUtils.format(templateData, ssoRequestXML, param.getMobile(), param.getPassword(), param.getPicCode());
             response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_003").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             pageContent = response.getPageContent();
@@ -201,15 +201,15 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
         try {
             String id = StringUtils.substring(String.valueOf((int) (Math.random() * 10001) + 10000), 1, 5) + "_" +
                     String.valueOf(System.currentTimeMillis());
-            String areaCode = TaskUtils.getTaskShare(param.getTaskId(), "TelNumAttribution");
-            String phoneType = TaskUtils.getTaskShare(param.getTaskId(), "ServiceType");
-            String templateUrl = "http://gd.189.cn/dwr/exec/commonAjax.getRandomCodeOper" +
-                    ".dwr?callCount=1&c0-scriptName=commonAjax&c0-methodName=getRandomCodeOper&c0-id={}&c0-param0=boolean:false&c0-param1=boolean" +
-                    ":false&c0-param2=string:{}&c0-param3=string:{}&c0-param4=string:{}&xml=true";
+            String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "TelNumAttribution");
+            String phoneType = TaskUtils.getTaskContext(param.getTaskId(), "ServiceType");
+            String templateUrl = "http://gd.189.cn/dwr/exec/commonAjax.getRandomCodeOper.dwr";
+            String templateData = "callCount=1&c0-scriptName=commonAjax&c0-methodName=getRandomCodeOper&c0-id={}&c0-param0=boolean:false&c0-param1" +
+                    "=boolean:false&c0-param2=string:{}&c0-param3=string:{}&c0-param4=string:{}&xml=true";
+            String data = TemplateUtils.format(templateData, id, areaCode, param.getMobile(), phoneType);
             String referer = "http://gd.189.cn/service/home/query/xd_index.html";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_006")
-                    .setFullUrl(templateUrl, id, areaCode, param.getMobile(), phoneType).setRequestContentType(ContentType.TEXT_PLAIN)
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_006").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.TEXT_PLAIN).setReferer(referer).invoke();
             if (StringUtils.contains(response.getPageContent(), "DWREngine._handleResponse")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
@@ -234,10 +234,12 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             String nowMonth = nowDateTime.toString("yyyyMM");
 
             String referer = "http://gd.189.cn/service/home/query/xd_index.html";
-            String templateUrl = "http://gd.189.cn/J/J10009.j?a.c=0&a.u=user&a.p=pass&a.s=ECSS&c.n=\u7487\ue162\u7176\u5a13\u546d\u5d1f&c.t=02&c" +
-                    ".i=02-005-04&d.d01=call&d.d02={}&d.d03={}&d.d04={}&d.d05=1000000&d.d06=1&d.d07={}&d.d08=1";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_007")
-                    .setFullUrl(templateUrl, nowMonth, firstDay, nowDay, param.getSmsCode()).setReferer(referer).invoke();
+            String templateUrl = "http://gd.189.cn/J/J10009.j";
+            String templateData = "a.c=0&a.u=user&a.p=pass&a.s=ECSS&c.n=\u7487\ue162\u7176\u5a13\u546d\u5d1f&c.t=02&c.i=02-005-04&d.d01=call&d" +
+                    ".d02={}&d.d03={}&d.d04={}&d.d05=1000000&d.d06=1&d.d07={}&d.d08=1";
+            String data = TemplateUtils.format(templateData, nowMonth, firstDay, nowDay, param.getSmsCode());
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_007").setFullUrl(templateUrl).setRequestBody(data)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"msg\":\"成功") || StringUtils.contains(pageContent, "\"msg\":\"没有数据")) {
                 logger.info("详单-->校验成功,param={}", param);

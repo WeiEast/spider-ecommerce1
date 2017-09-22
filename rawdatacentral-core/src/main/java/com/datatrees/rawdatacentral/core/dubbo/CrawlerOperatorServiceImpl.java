@@ -68,9 +68,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
             logger.info("初始化运营商插件taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
         }
-        monitorService.sendTaskLog(param.getTaskId(), "运营商清理环境数据,准备登陆");
         result = getLoginService(param).init(param);
-        monitorService.sendTaskLog(param.getTaskId(), "初始化完成", result);
+        monitorService.sendTaskLog(param.getTaskId(), "登录-->初始化-->成功", result);
         return result;
     }
 
@@ -84,10 +83,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         HttpResult<String> picResult = getLoginService(param).refeshPicCode(param);
         String log = null;
         if (!picResult.getStatus()) {
-            log = TemplateUtils.format("{}-->图片验证码-->刷新失败!", FormType.getName(param.getFormType()));
+            log = TemplateUtils.format("{}-->刷新图片验证码-->失败", FormType.getName(param.getFormType()));
             result.failure(picResult.getResponseCode(), picResult.getMessage());
         } else {
-            log = TemplateUtils.format("{}-->图片验证码-->刷新成功!", FormType.getName(param.getFormType()));
+            log = TemplateUtils.format("{}-->刷新图片验证码-->成功", FormType.getName(param.getFormType()));
             Map<String, Object> map = new HashMap<>();
             map.put(AttributeKey.PIC_CODE, picResult.getData());
             result.success(map);
@@ -129,7 +128,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 messageService.sendTaskLog(param.getTaskId(), "向手机发送短信验证码");
             }
         }
-        String log = TemplateUtils.format("{}-->短信验证码-->刷新{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
+        String log = TemplateUtils.format("{}-->发送短信验证码-->{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }
@@ -148,7 +147,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return result.failure(ErrorCode.EMPTY_PIC_CODE);
         }
         result = getLoginService(param).validatePicCode(param);
-        String log = TemplateUtils.format("{}-->图片验证码-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
+        String log = TemplateUtils.format("{}-->校验图片验证码-->{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }
@@ -182,7 +181,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (!result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
             messageService.sendTaskLog(param.getTaskId(), "登陆失败");
         }
-        String log = TemplateUtils.format("{}-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
+        String log = TemplateUtils.format("{}-->校验-->{}", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), log, result);
         sendLoginSuccessMessage(result, param);
         return result;
@@ -214,7 +213,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return new HttpResult<Object>().failure(checkParams.getResponseCode(), checkParams.getMessage());
         }
         HttpResult result = getLoginService(param).defineProcess(param);
-        String log = TemplateUtils.format("自定义插件({})-->处理{}!", param.getFormType(), result.getStatus() ? "成功" : "失败");
+        String log = TemplateUtils.format("自定义插件-->{}-->{}", param.getFormType(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }

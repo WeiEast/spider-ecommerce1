@@ -15,11 +15,14 @@ import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
@@ -40,6 +43,7 @@ public class PicCheckPlugin extends AbstractClientPlugin {
     private CrawlerOperatorService pluginService;
     private MessageService         messageService;
     private RedisService           redisService;
+    private MonitorService         monitorService;
     //超时时间120秒
     private long timeOut = 120;
     private AbstractProcessorContext context;
@@ -51,6 +55,7 @@ public class PicCheckPlugin extends AbstractClientPlugin {
         pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
         messageService = BeanFactoryUtils.getBean(MessageService.class);
         redisService = BeanFactoryUtils.getBean(RedisService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         context = PluginFactory.getProcessorContext();
         pluginResult = new HashMap<>();
 
@@ -61,6 +66,8 @@ public class PicCheckPlugin extends AbstractClientPlugin {
         fromType = map.get(AttributeKey.FORM_TYPE);
         CheckUtils.checkNotBlank(fromType, "fromType is empty");
         logger.info("图片和短信校验插件启动,taskId={},websiteName={},fromType={}", taskId, websiteName, fromType);
+        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->图片校验启动-->成功", FormType.getName(fromType)));
+
         //验证失败直接抛出异常
         validatePicCode(taskId, websiteName);
 
@@ -106,6 +113,8 @@ public class PicCheckPlugin extends AbstractClientPlugin {
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
             if (null == receiveDirective) {
                 messageService.sendTaskLog(taskId, "图片验证码校验超时");
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->等待用户输入图片验证码-->失败", FormType.getName(fromType)),
+                        ErrorCode.VALIDATE_PIC_CODE_TIMEOUT, "用户输入图片验证码超时,任务即将失败!超时时间(单位:秒):" + timeOut);
                 logger.error("等待用户输入图片验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
                 //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入图片验证码超时({}秒)", timeOut));
                 throw new ResultEmptyException(ErrorCode.VALIDATE_PIC_CODE_TIMEOUT.getErrorMsg());
@@ -116,10 +125,12 @@ public class PicCheckPlugin extends AbstractClientPlugin {
             result = pluginService.validatePicCode(param);
             if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
                 messageService.sendTaskLog(taskId, "图片验证码校验成功");
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验图片验证码-->成功", FormType.getName(fromType)));
                 pluginResult.put(PluginConstants.FIELD, picCode);
                 return;
             }
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->线程-->失败", FormType.getName(fromType)), ErrorCode.TASK_CANCEL);
                 logger.error("验证图片验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), taskId, websiteName);
                 throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
             }

@@ -20,7 +20,7 @@ public class YunNan10000ForWapTest {
          $("#enPassword").val(enPassword);
          *
          */
-        //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
+        //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des_wap.js");
         //Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(inputStream, "UTF-8");
         //String mobile = "15368726413";
         //String password = "869380";

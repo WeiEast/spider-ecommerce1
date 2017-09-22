@@ -63,7 +63,7 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
         int maxRetry = 0;
         //当前重试次数
         int retry = 0;
-        monitorService.sendTaskLog(taskId, "二维码插件启动");
+        monitorService.sendTaskLog(taskId, "电商-->校验二维码启动-->成功");
         getMessageService().sendTaskLog(taskId, "等待用户扫描二维码");
         //保存交互指令到redis,让APP端轮询进入等待模式
         DirectiveResult<String> sendDirective = new DirectiveResult<>(DirectiveType.CRAWL_QR, taskId);
@@ -73,11 +73,11 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
             String qrcodeResult = refreshQRCode(paramsMap);
             logger.info("do refresh qrcode  retry={},taskId={},websiteName={}", retry, taskId, websiteName);
             if (StringUtils.isEmpty(qrcodeResult)) {
-                monitorService.sendTaskLog(taskId, "二维码插件-->二维码-->刷新失败!");
+                monitorService.sendTaskLog(taskId, "电商-->刷新二维码-->失败");
                 logger.error("request qrCode error!retry={},taskId={},websiteName={}", retry, taskId, websiteName);
                 continue;
             }
-            monitorService.sendTaskLog(taskId, "二维码插件-->二维码-->刷新成功,等待用户扫描二维码");
+            monitorService.sendTaskLog(taskId, "电商-->刷新二维码-->成功");
             directiveId = getMessageService().sendDirective(taskId, DirectiveEnum.REQUIRE_QR.getCode(), qrcodeResult);
             getRedisService().saveDirectiveResult(directiveId, sendDirective);
 
@@ -96,7 +96,7 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
                     getRedisService().saveDirectiveResult(directiveId, sendDirective);
                     logger.info("verifyQRCodeStatus taskId={},directiveId={},websiteName={},status = {}", taskId, directiveId, websiteName,
                             DirectiveRedisCode.SCANNED);
-                    monitorService.sendTaskLog(taskId, "二维码插件-->二维码-->用户已扫描,等待用户确认!");
+                    monitorService.sendTaskLog(taskId, "电商-->用户已扫描,等待确认-->成功");
                 }
                 if (QRCodeStatus.CONFIRMED == verifyResult.status) {
                     QRCodeResult confirmResult = confirmQRCodeStatus(paramsMap);
@@ -108,14 +108,14 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
                             sendDirective.fill(DirectiveRedisCode.SUCCESS, null);
                             getRedisService().saveDirectiveResult(directiveId, sendDirective);
                             getMessageService().sendTaskLog(taskId, "二维码验证成功");
-                            monitorService.sendTaskLog(taskId, "二维码插件-->二维码-->校验成功!");
+                            monitorService.sendTaskLog(taskId, "电商-->校验二维码-->成功");
                             return resultMap;
                         }
                     }
                 }
             }
         } while (retry++ < maxRetry);
-        monitorService.sendTaskLog(taskId, "二维码插件-->二维码-->校验失败,任务即将终止!");
+        monitorService.sendTaskLog(taskId, "电商-->校验二维码-->失败");
         getMessageService().sendTaskLog(taskId, "二维码验证失败");
 
         if (StringUtils.isNoneBlank(directiveId)) {

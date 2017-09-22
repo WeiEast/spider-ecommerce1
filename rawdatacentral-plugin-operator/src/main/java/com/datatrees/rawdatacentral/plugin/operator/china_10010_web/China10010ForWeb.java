@@ -76,9 +76,13 @@ public class China10010ForWeb implements OperatorPluginService {
         }
         Response response = null;
         try {
-            String templateUrl = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=http://www.10010.com&userName={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&_={}";
+            String referer = "https://uac.10010.com/portal/homeLogin";
+            String templateUrl
+                    = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=http://www.10010.com&userName={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&_={}";
             String uacverifykey = TaskUtils.getCookieValue(param.getTaskId(), "uacverifykey");
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003").setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(), param.getPicCode(), uacverifykey, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003")
+                    .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(), param.getPicCode(), uacverifykey,
+                            System.currentTimeMillis()).setReferer(referer).invoke();
             /**
              * 结果枚举:
              * 登陆成功:jQuery({resultCode:"0000",redirectURL:"http://www.10010.com"})
@@ -95,7 +99,8 @@ public class China10010ForWeb implements OperatorPluginService {
                  * 顺便验证登录是否成功
                  */
                 templateUrl = "http://iservice.10010.com/e3/static/check/checklogin/";
-                TaskHttpClient.create(param, RequestType.POST, "china_10010_web_004").setFullUrl(templateUrl).setSocketTimeout(30000).setMaxRetry(2).invoke();
+                TaskHttpClient.create(param, RequestType.POST, "china_10010_web_004").setFullUrl(templateUrl).setSocketTimeout(30000).setMaxRetry(2)
+                        .invoke();
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             }
@@ -137,7 +142,8 @@ public class China10010ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/CreateImage?t={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_001")
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -152,7 +158,8 @@ public class China10010ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://uac.10010.com/portal/Service/CtaIdyChk?callback=jQuery&verifyCode={}&verifyType=1&_={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_002").setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10010_web_002")
+                    .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).invoke();
             //结果枚举:正确{"resultCode":"true"},错误{"resultCode":"false"}
             JSONObject json = response.getPageContentForJSON();
             Boolean resultCode = json.getBoolean("resultCode");

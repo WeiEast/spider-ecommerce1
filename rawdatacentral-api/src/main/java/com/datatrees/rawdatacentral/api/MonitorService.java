@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.api;
 
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**
@@ -10,7 +11,7 @@ public interface MonitorService {
 
     /**
      * 初始化监控信息
-     * @param taskId      任务id
+     * @param taskId 任务id
      */
     void initTask(Long taskId);
 
@@ -35,6 +36,20 @@ public interface MonitorService {
      * @param result 处理结果
      */
     void sendTaskLog(Long taskId, String msg, HttpResult result);
+
+    /**
+     * 发送任务日志消息
+     * @param taskId    任务id
+     * @param errorCode 错误信息
+     */
+    void sendTaskLog(Long taskId, String msg, ErrorCode errorCode);
+
+    /**
+     * 发送任务日志消息
+     * @param taskId    任务id
+     * @param errorCode 错误信息
+     */
+    void sendTaskLog(Long taskId, String msg, ErrorCode errorCode, String errorDetail);
 
     /**
      * 发送任务日志消息

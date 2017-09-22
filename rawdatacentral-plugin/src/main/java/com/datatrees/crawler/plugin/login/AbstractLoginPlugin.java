@@ -88,7 +88,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         logger.info("start run Login plugin!taskId={},websiteName={}", taskId, websiteName);
-        monitorService.sendTaskLog(taskId, "模拟登录开始,等待指令");
+        monitorService.sendTaskLog(taskId, "模拟登录-->启动-->成功");
 
         initLoginStatus();
         Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
@@ -109,7 +109,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         long maxInterval = TimeUnit.MINUTES.toMillis(5) + System.currentTimeMillis();
         while (System.currentTimeMillis() < maxInterval) {
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                monitorService.sendTaskLog(taskId, "模拟登录因任务中断失败");
+                monitorService.sendTaskLog(taskId, "模拟登录-->任务-->失败", ErrorCode.TASK_CANCEL);
                 throw new InterruptedException(
                         "refreshCodeCount:" + refreshCodeCount + ",loginCount:" + loginCount + ",qrCodeCount:" + qrCodeCount + ",verifyCodeCount:" +
                                 verifyCodeCount);
@@ -129,7 +129,8 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                 getRedisService().saveDirectiveResult(directiveId, sendResult);
                 refreshCodeCount++;
                 getMessageService().sendTaskLog(taskId, "刷新图片验证码");
-                monitorService.sendTaskLog(taskId, "登录-->图片验证码-->刷新成功!");
+                monitorService.sendTaskLog(taskId, "登录-->刷新图片验证码-->成功");
+
                 logger.info("refresh login code,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
@@ -141,7 +142,8 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                 getRedisService().saveDirectiveResult(directiveId, sendResult);
                 refreshCodeCount++;
                 getMessageService().sendTaskLog(taskId, "向手机发送短信验证码");
-                monitorService.sendTaskLog(taskId, "登录-->短信验证码-->刷新成功!");
+                monitorService.sendTaskLog(taskId, "登录-->发送短信验证码-->成功");
+
                 logger.info("send ramdom password,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
@@ -165,8 +167,8 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                     sendResult.fill(DirectiveRedisCode.SERVER_FAIL, errorCode);
                     getRedisService().saveDirectiveResult(directiveId, sendResult);
                     getMessageService().sendTaskLog(taskId, "登陆失败", errorCode);
-                    monitorService.sendTaskLog(taskId, "登录-->校验失败!", ErrorCode.LOGIN_UNEXPECTED_RESULT.getErrorCode(),
-                            ErrorCode.LOGIN_UNEXPECTED_RESULT.getErrorMsg(), errorCode);
+                    monitorService.sendTaskLog(taskId, "登录-->校验-->失败", ErrorCode.LOGIN_UNEXPECTED_RESULT, errorCode);
+
                     logger.warn("login fail taskId={},websiteName={},directiveId={},errorCode={},loginCount={}", taskId, websiteName, directiveId,
                             errorCode, loginCount);
                     //清理,避免对下一次登陆产生影响
@@ -177,17 +179,17 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
                 sendResult.fill(DirectiveRedisCode.SERVER_SUCCESS, null);
                 getRedisService().saveDirectiveResult(directiveId, sendResult);
                 getMessageService().sendTaskLog(taskId, "登陆成功");
-                monitorService.sendTaskLog(taskId, "登录-->校验成功!");
+                monitorService.sendTaskLog(taskId, "登录-->校验-->成功");
                 logger.info("login successs taskId={},websiteName={},directiveId={},loginCount={}", taskId, websiteName, directiveId, loginCount);
                 return GsonUtils.toJson(postLogin(loginResultMap));
             }
         }
         if (loginCount == 0) {
-            monitorService.sendTaskLog(taskId, "登录-->登录超时,用户登录次数:0");
+            monitorService.sendTaskLog(taskId, "登录-->校验-->失败", ErrorCode.LOGIN_TIMEOUT_ERROR, "用户登录次数:0");
             logger.info("login timeout taskId={},websiteName={},loginCount={}", taskId, websiteName, loginCount);
             throw new com.datatrees.rawdatacentral.domain.exception.LoginTimeOutException(taskId);
         }
-        monitorService.sendTaskLog(taskId, "登录-->登录超时,用户登录次数:" + loginCount);
+        monitorService.sendTaskLog(taskId, "登录-->校验-->失败", ErrorCode.LOGIN_TIMEOUT_ERROR, "用户登录次数:" + loginCount);
         logger.info("login fail taskId={},websiteName={},loginCount={},errorCode={}", taskId, websiteName, loginCount, errorCode);
         throw new LoginFailException(taskId, errorCode);
     }
