@@ -137,6 +137,7 @@ public class HeNan10000ForWeb implements OperatorPluginService {
             pageContent = response.getPageContent();
 
             if (StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "可用余额")) {
+                TaskUtils.addTaskShare(param.getTaskId(), "telphone", String.valueOf(param.getMobile()));
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             } else {
@@ -195,11 +196,11 @@ public class HeNan10000ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha";
-            templateUrl = "http://ha.189.cn/service/bill/getRand.jsp\"PRODTYPE=" + PRODTYPE + "&RAND_TYPE=" + RAND_TYPE
+            templateUrl = "http://ha.189.cn/service/bill/getRand.jsp?PRODTYPE=" + PRODTYPE + "&RAND_TYPE=" + RAND_TYPE
                     + "&BureauCode=" + BureauCode + "&ACC_NBR=" + param.getMobile() + "&PROD_TYPE=" + PRODTYPE + "&PROD_PWD=&REFRESH_FLAG="
                     + REFRESH_FLAG + "&BEGIN_DATE=&END_DATE=&ACCT_DATE=" + ACCT_DATE + "&FIND_TYPE=1&SERV_NO=&QRY_FLAG=" + QRY_FLAG
                     + "&ValueType=" + ValueType + "&MOBILE_NAME=" + param.getMobile() + "&OPER_TYPE=" + OPER_TYPE + "&PASSWORD=";
-            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<flag>0</flag>")) {
