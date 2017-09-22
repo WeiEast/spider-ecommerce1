@@ -133,8 +133,8 @@ public class HeNan10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
 
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
-            templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_ye.jsp\"ACC_NBR=" + param.getMobile() + "&PROD_TYPE=713058010165&ACCTNBR97=";
-            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
+            templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_ye.jsp?ACC_NBR=" + param.getMobile() + "&PROD_TYPE=713058010165&ACCTNBR97=";
+            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
 
             if (StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "可用余额")) {
@@ -155,51 +155,55 @@ public class HeNan10000ForWeb implements OperatorPluginService {
     private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.MONTH, 0);
+
         try {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000354";
             String templateUrl = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha";
             response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_005").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             String pageContent = response.getPageContent();
-            String PRODTYPE = PatternUtils.group(pageContent, "doQuery\\('(\\d+)','(\\d+)',''\\)", 2);
-            TaskUtils.addTaskShare(param.getTaskId(), "PRODTYPE", PRODTYPE);
+            String param_PRODTYPE = PatternUtils.group(pageContent, "doQuery\\('(\\d+)','(\\d+)',''\\)", 2);
+
+            TaskUtils.addTaskShare(param.getTaskId(), "PRODTYPE", param_PRODTYPE);
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.MONTH, 0);
 
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha";
-            templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp\"ACC_NBR=" + param.getMobile() + "&PROD_TYPE="
-                    + PRODTYPE + "&BEGIN_DATE=&END_DATE=&SERV_NO=&ValueType=1&REFRESH_FLAG=1&FIND_TYPE=1&radioQryType=on&QRY_FLAG=1&ACCT_DATE="
+            templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp?ACC_NBR=" + param.getMobile() + "&PROD_TYPE="
+                    + param_PRODTYPE + "&BEGIN_DATE=&END_DATE=&SERV_NO=&ValueType=1&REFRESH_FLAG=1&FIND_TYPE=1&radioQryType=on&QRY_FLAG=1&ACCT_DATE="
                     + sf.format(c.getTime()) + "&ACCT_DATE_1=" + sf.format(c.getTime());
-            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_006").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_006").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             if (StringUtils.isBlank(response.getPageContent())) {
                 logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
-            String RAND_TYPE = PatternUtils.group(pageContent, "name=\"RAND_TYPE\" value=\"(\\d+)\"", 1);
-            TaskUtils.addTaskShare(param.getTaskId(), "RAND_TYPE", RAND_TYPE);
-            String BureauCode = PatternUtils.group(pageContent, "name=\"BureauCode\" value=\"(\\d+)\"", 1);
-            TaskUtils.addTaskShare(param.getTaskId(), "BureauCode", BureauCode);
-            String REFRESH_FLAG = PatternUtils.group(pageContent, "name=\"REFRESH_FLAG\" value=\"(\\d+)\"", 1);
-            TaskUtils.addTaskShare(param.getTaskId(), "REFRESH_FLAG", REFRESH_FLAG);
-            String ACCT_DATE = PatternUtils.group(pageContent, "name=\"ACCT_DATE\" value=\"(\\d+)\"", 1);
-            TaskUtils.addTaskShare(param.getTaskId(), "ACCT_DATE", ACCT_DATE);
-            String QRY_FLAG = PatternUtils.group(pageContent, "name=\"QRY_FLAG\" value=\"(\\d+)\"", 1);
-            TaskUtils.addTaskShare(param.getTaskId(), "QRY_FLAG", QRY_FLAG);
-            String ValueType = PatternUtils.group(pageContent, "name=\"ValueType\" value=\"(\\d+)\"", 1);
-            TaskUtils.addTaskShare(param.getTaskId(), "ValueType", ValueType);
-            String OPER_TYPE = PatternUtils.group(pageContent, "name=\"OPER_TYPE\" value=\"(\\w+)\"", 1);
-            TaskUtils.addTaskShare(param.getTaskId(), "OPER_TYPE", OPER_TYPE);
-            if (StringUtils.isBlank(PRODTYPE) || StringUtils.isBlank(RAND_TYPE) || StringUtils.isBlank(BureauCode)) {
+
+
+            String param_RAND_TYPE = PatternUtils.group(pageContent, "name=\"RAND_TYPE\" value=\"(\\d+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "RAND_TYPE", param_RAND_TYPE);
+            String param_BureauCode = PatternUtils.group(pageContent, "name=\"BureauCode\" value=\"(\\d+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "BureauCode", param_BureauCode);
+            String param_REFRESH_FLAG = PatternUtils.group(pageContent, "name=\"REFRESH_FLAG\" value=\"(\\d+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "REFRESH_FLAG", param_REFRESH_FLAG);
+            String param_ACCT_DATE = PatternUtils.group(pageContent, "name=\"ACCT_DATE\" value=\"(\\d+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "ACCT_DATE", param_ACCT_DATE);
+            String param_QRY_FLAG = PatternUtils.group(pageContent, "name=\"QRY_FLAG\" value=\"(\\d+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "QRY_FLAG", param_QRY_FLAG);
+            String param_ValueType = PatternUtils.group(pageContent, "name=\"ValueType\" value=\"(\\d+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "ValueType", param_ValueType);
+            String param_OPER_TYPE = PatternUtils.group(pageContent, "name=\"OPER_TYPE\" value=\"(\\w+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "OPER_TYPE", param_OPER_TYPE);
+            if (StringUtils.isBlank(param_PRODTYPE) || StringUtils.isBlank(param_RAND_TYPE) || StringUtils.isBlank(param_BureauCode)) {
                 logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, "param_PRODTYPE is null or param_RAND_TYPE is null or param_BureauCode is null");
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha";
-            templateUrl = "http://ha.189.cn/service/bill/getRand.jsp?PRODTYPE=" + PRODTYPE + "&RAND_TYPE=" + RAND_TYPE
-                    + "&BureauCode=" + BureauCode + "&ACC_NBR=" + param.getMobile() + "&PROD_TYPE=" + PRODTYPE + "&PROD_PWD=&REFRESH_FLAG="
-                    + REFRESH_FLAG + "&BEGIN_DATE=&END_DATE=&ACCT_DATE=" + ACCT_DATE + "&FIND_TYPE=1&SERV_NO=&QRY_FLAG=" + QRY_FLAG
-                    + "&ValueType=" + ValueType + "&MOBILE_NAME=" + param.getMobile() + "&OPER_TYPE=" + OPER_TYPE + "&PASSWORD=";
+            templateUrl = "http://ha.189.cn/service/bill/getRand.jsp?PRODTYPE=" + param_PRODTYPE + "&RAND_TYPE=" + param_RAND_TYPE
+                    + "&BureauCode=" + param_BureauCode + "&ACC_NBR=" + param.getMobile() + "&PROD_TYPE=" + param_PRODTYPE + "&PROD_PWD=&REFRESH_FLAG="
+                    + param_REFRESH_FLAG + "&BEGIN_DATE=&END_DATE=&ACCT_DATE=" + param_ACCT_DATE + "&FIND_TYPE=1&SERV_NO=&QRY_FLAG=" + param_QRY_FLAG
+                    + "&ValueType=" + param_ValueType + "&MOBILE_NAME=" + param.getMobile() + "&OPER_TYPE=" + param_OPER_TYPE + "&PASSWORD=";
             response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             pageContent = response.getPageContent();
@@ -230,11 +234,11 @@ public class HeNan10000ForWeb implements OperatorPluginService {
             String OPER_TYPE = TaskUtils.getTaskShare(param.getTaskId(), "OPER_TYPE");
 
             String referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha";
-            String templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp\"PRODTYPE=" + PRODTYPE + "&RAND_TYPE=" + RAND_TYPE
+            String templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp?PRODTYPE=" + PRODTYPE + "&RAND_TYPE=" + RAND_TYPE
                     + "&BureauCode=" + BureauCode + "&ACC_NBR=" + param.getMobile() + "&PROD_TYPE=" + PRODTYPE + "&PROD_PWD=&REFRESH_FLAG="
                     + REFRESH_FLAG + "&BEGIN_DATE=&END_DATE=&ACCT_DATE=" + ACCT_DATE + "&FIND_TYPE=1&SERV_NO=&QRY_FLAG=" + QRY_FLAG
                     + "&ValueType=" + ValueType + "&MOBILE_NAME=" + param.getMobile() + "&OPER_TYPE=" + OPER_TYPE + "&PASSWORD=" + param.getSmsCode();
-            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_008").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_008").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             if (StringUtils.contains(response.getPageContent(), "开始时间")) {
                 logger.info("详单-->校验成功,param={}", param);
