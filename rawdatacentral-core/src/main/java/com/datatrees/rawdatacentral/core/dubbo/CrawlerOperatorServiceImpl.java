@@ -128,7 +128,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 messageService.sendTaskLog(param.getTaskId(), "向手机发送短信验证码");
             }
         }
-        String log = TemplateUtils.format("{}-->发送短信验证码-->{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
+        String log = TemplateUtils.format("{}-->发送短信验证码-->{}", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }
@@ -147,7 +147,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return result.failure(ErrorCode.EMPTY_PIC_CODE);
         }
         result = getLoginService(param).validatePicCode(param);
-        String log = TemplateUtils.format("{}-->校验图片验证码-->{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
+        String log = TemplateUtils.format("{}-->校验图片验证码-->{}", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }
