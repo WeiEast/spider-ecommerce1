@@ -165,7 +165,7 @@ public class HeNan10000ForWeb implements OperatorPluginService {
             String param_PRODTYPE = PatternUtils.group(pageContent, "doQuery\\('(\\d+)','(\\d+)',''\\)", 2);
 
             TaskUtils.addTaskShare(param.getTaskId(), "PRODTYPE", param_PRODTYPE);
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
             Calendar c = Calendar.getInstance();
             c.add(Calendar.MONTH, 0);
 
