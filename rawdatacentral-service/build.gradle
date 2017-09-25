@@ -26,4 +26,7 @@ dependencies {
     compile "com.101tec:zkclient:${zkclientVersion}"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+
+    compile "com.alibaba.rocketmq:rocketmq-client:${rocketmqClientVersion}"
+
 }
