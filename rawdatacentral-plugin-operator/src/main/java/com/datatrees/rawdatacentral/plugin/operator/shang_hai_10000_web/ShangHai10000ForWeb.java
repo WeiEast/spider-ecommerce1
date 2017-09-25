@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -84,7 +83,7 @@ public class ShangHai10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("shang_hai_10000_web/des.js");
+            //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("shang_hai_10000_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("aesEncrypt", param.getPassword()).toString();
 
@@ -152,7 +151,7 @@ public class ShangHai10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10000_web_004").setFullUrl(templateUrl, param.getMobile())
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent,"\"result\":true")) {
+            if (StringUtils.contains(pageContent, "\"result\":true")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
