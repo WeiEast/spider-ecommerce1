@@ -104,7 +104,7 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
             DirectiveResult<Map<String, Object>> receiveDirective = getRedisService()
                     .getDirectiveResult(directiveId, getMaxInterval(websiteName), TimeUnit.MILLISECONDS);
             if (null == receiveDirective) {
-                monitorService.sendTaskLog(taskId, "详单-->等待用户输入图片验证码-->失败", ErrorCode.VALIDATE_PIC_CODE_TIMEOUT, "用户2分钟没有输入图片验证码!");
+                monitorService.sendTaskLog(taskId, "详单-->等待用户输入图片验证码-->失败", ErrorCode.VALIDATE_PIC_CODE_TIMEOUT, "用户2分钟没有输入图片验证码");
                 logger.error("wait user input piccode timeout,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
