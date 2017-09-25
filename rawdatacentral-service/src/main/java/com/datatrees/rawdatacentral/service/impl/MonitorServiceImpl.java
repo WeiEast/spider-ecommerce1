@@ -104,6 +104,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
         monitorProducer.setRetryTimesWhenSendFailed(3);
         monitorProducer.setMaxMessageSize(1024 * 1024 * 2);
         monitorProducer.start();
+        logger.info(" 启动mq,namesrvAddr={},group={}", namesrvAddr, "crawler_rawdata");
 
     }
 

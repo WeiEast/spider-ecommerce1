@@ -146,7 +146,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("fetchLoginCode invalid param taskId={},type={}", taskId, type);
             return result.failure("参数为空或者参数不完整");
         }
-        if(StringUtils.isNoneBlank(username)){
+        if (StringUtils.isNoneBlank(username)) {
             TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, username);
             TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
         }
@@ -342,7 +342,17 @@ public class CrawlerServiceImpl implements CrawlerService {
             result.setData(true);
             result.success();
         }
-        monitorService.sendTaskCompleteMsg(taskId, ErrorCode.TASK_CANCEL.getErrorCode(), ErrorCode.TASK_CANCEL.getErrorMsg());
+        String reason = null;
+        if (null != extra && extra.containsKey("reason")) {
+            reason = extra.get("reason");
+        }
+        ErrorCode errorCode = ErrorCode.TASK_CANCEL;
+        if (StringUtils.equals("timeout", reason)) {
+            errorCode = ErrorCode.TASK_CANCEL_BY_SYSTEM;
+        } else if (StringUtils.equals("user", reason)) {
+            errorCode = ErrorCode.TASK_CANCEL_BY_USER;
+        }
+        monitorService.sendTaskCompleteMsg(taskId, errorCode.getErrorCode(), errorCode.getErrorMsg());
         return result.failure();
     }
 
