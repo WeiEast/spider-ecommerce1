@@ -1,5 +1,5 @@
 #!/bin/sh
-server_ip="192.168.5.15"
+server_ip="192.168.5.25"
 server_application="/dashu/application/rawdatacentral"
 server_log_path="/dashu/log/rawdatacentral"
 

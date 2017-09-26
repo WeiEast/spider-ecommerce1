@@ -8,6 +8,8 @@
 
 package com.datatrees.rawdatacentral.collector.listener;
 
+import java.nio.charset.Charset;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
@@ -143,7 +145,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
     @Override
     public CollectorMessage messageConvert(MessageExt message) {
         CollectorMessage collectorMessage = new CollectorMessage();
-        String body = new String(message.getBody());
+        String body = new String(message.getBody(), Charset.forName("UTF-8"));
         try {
             LoginMessage loginInfo = JSON.parseObject(body, LoginMessage.class);
             if (loginInfo != null) {
@@ -169,10 +171,4 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         return collectorMessage;
     }
 
-    private String getRealWebsiteName(String websiteName) {
-        if (StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix())) {
-            return RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName);
-        }
-        return websiteName;
-    }
 }

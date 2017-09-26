@@ -24,6 +24,9 @@ import java.util.Calendar;
 import java.util.Map;
 
 /**
+ *河南电信web端
+ * 登录：手机号，服务密码
+ * 查询详单：短信验证码
  *
  * User: yand
  * Date: 2017/9/21
