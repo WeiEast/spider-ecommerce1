@@ -9,15 +9,15 @@ import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
-import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,7 +38,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
     @Override
     public void initTask(Long taskId) {
         Map<String, String> map = crawlerTaskService.getTaskBaseInfo(taskId);
-        sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_INIT.getTag(), map);
+        sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_INIT.getTag(), taskId, map);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
         map.put(AttributeKey.ERROR_CODE, errorCode);
         map.put(AttributeKey.ERROR_MSG, errorMsg);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_COMPLETE.getTag(), map);
+        sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_COMPLETE.getTag(), taskId, map);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
         map.put(AttributeKey.ERROR_CODE, errorCode);
         map.put(AttributeKey.ERROR_MSG, errorMsg);
         map.put(AttributeKey.ERROR_DETAIL, errorDetail);
-        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), map);
+        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
         map.put(AttributeKey.ERROR_CODE, errorCode.getErrorCode());
         map.put(AttributeKey.ERROR_MSG, errorCode.getErrorMsg());
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), map);
+        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
         map.put(AttributeKey.TASK_ID, taskId);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         map.put(AttributeKey.MSG, msg);
-        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), map);
+        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
 
     }
 
-    public boolean sendMessage(String topic, String tags, Object msg) {
+    public boolean sendMessage(String topic, String tags, Long taskId, Object msg) {
         if (StringUtils.isBlank(topic) || null == msg) {
             logger.error("invalid param  topic={},msg={}", topic, msg);
             return false;
@@ -118,17 +118,8 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
             Message mqMessage = new Message();
             mqMessage.setTopic(topic);
             mqMessage.setBody(content.getBytes(DEFAULT_CHARSET_NAME));
-            StringBuilder key = new StringBuilder(topic);
-            if (StringUtils.isNotBlank(tags)) {
-                key.append("_").append(tags);
-            }
-            String taskId = RegexpUtils.select(content, "taskId\":(\\d+)", 1);
-            if (StringUtils.isNotBlank(taskId)) {
-                key.append("_").append(taskId);
-            } else {
-                key.append("_").append(System.currentTimeMillis());
-            }
-            mqMessage.setKeys(key.toString());
+            String key = TemplateUtils.format("{}.{}.{}", topic, StringUtils.isNotBlank(tags) ? tags : "", taskId);
+            mqMessage.setKeys(key);
             if (StringUtils.isNotBlank(tags)) {
                 mqMessage.setTags(tags);
             }
