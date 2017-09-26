@@ -224,7 +224,6 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String length = "" + (64 + 6 * (param.getRealName().length()));
             String referer = "http://nm.189.cn/selfservice/bill/xd";
             String templateUrl = "http://nm.189.cn/selfservice/cust/checkNameAndIdentNbr";
             /**
