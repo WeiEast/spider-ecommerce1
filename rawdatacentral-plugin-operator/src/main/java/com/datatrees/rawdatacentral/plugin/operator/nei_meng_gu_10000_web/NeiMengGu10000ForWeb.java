@@ -182,28 +182,28 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_003").setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
 
-            templateUrl = "http://nm.189.cn/selfservice/bill/hfQuery";
-            /**
-             * {
-             *      "accNbr":"userName",
-             *      "accNbrType":"4",
-             *      "areaCode":"0476",
-             *      "prodSpecId":"378",
-             *      "smsCode":"",
-             *      "prodSpecName":"??"
-             * }
-             */
-            params = new HashMap<>();
-            params.put("accNbr", param.getMobile().toString());
-            params.put("accNbrType", "4");
-            params.put("areaCode", "0476");
-            params.put("prodSpecId", "378");
-            params.put("smsCode", "");
-            params.put("prodSpecName", "??");
-
-            data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_004").setFullUrl(templateUrl)
-                    .setRequestBody(data, ContentType.APPLICATION_JSON).invoke();
+            //templateUrl = "http://nm.189.cn/selfservice/bill/hfQuery";
+            ///**
+            // * {
+            // *      "accNbr":"userName",
+            // *      "accNbrType":"4",
+            // *      "areaCode":"0476",
+            // *      "prodSpecId":"378",
+            // *      "smsCode":"",
+            // *      "prodSpecName":"??"
+            // * }
+            // */
+            //params = new HashMap<>();
+            //params.put("accNbr", param.getMobile().toString());
+            //params.put("accNbrType", "4");
+            //params.put("areaCode", "0476");
+            //params.put("prodSpecId", "378");
+            //params.put("smsCode", "");
+            //params.put("prodSpecName", "??");
+            //
+            //data = JSON.toJSONString(params);
+            //response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_004").setFullUrl(templateUrl)
+            //        .setRequestBody(data, ContentType.APPLICATION_JSON).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                 areaCode = PatternUtils.group(pageContent, "areaCode\":\"(\\d+)\"", 1);
