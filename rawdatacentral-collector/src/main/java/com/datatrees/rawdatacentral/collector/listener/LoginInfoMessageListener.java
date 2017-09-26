@@ -85,8 +85,6 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             Boolean isNewOperator = TaskUtils.isNewOperator(message.getWebsiteName());
             //获取真实websiteName
             String realebsiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
-            //发送任务初始化消息
-            monitorService.initTask(taskId);
             if (isNewOperator) {
                 //从新的运营商表读取配置
                 WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(realebsiteName);
