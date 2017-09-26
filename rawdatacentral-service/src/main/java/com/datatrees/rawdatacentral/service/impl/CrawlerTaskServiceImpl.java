@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
@@ -26,8 +27,6 @@ public class CrawlerTaskServiceImpl implements CrawlerTaskService {
     private TaskService            taskService;
     @Resource
     private RedisService           redisService;
-    @Resource
-    private WebsiteOperatorService websiteOperatorService;
 
     @Override
     public Task getByTaskId(Long taskId) {
@@ -39,8 +38,12 @@ public class CrawlerTaskServiceImpl implements CrawlerTaskService {
         Map<String, String> map = new HashMap<>();
         try {
             Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
+            if(null == website){
+                TimeUnit.SECONDS.sleep(3);
+                website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
+            }
             if (null == website) {
-                logger.error("not found website from cache,taskId={}", taskId);
+                logger.error("getTaskBaseInfo not found website from cache,taskId={}", taskId);
                 return map;
             }
             map.put(AttributeKey.TASK_ID, taskId + "");
