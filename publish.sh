@@ -1,5 +1,5 @@
 #!/bin/sh
-server_ip="192.168.5.15"
+server_ip="192.168.5.25"
 server_application="/dashu/application/rawdatacentral"
 server_log_path="/dashu/log/rawdatacentral"
 
@@ -21,6 +21,7 @@ echo "find app file $file and upload"
 scp  $file root@$server_ip:$server_application/;
 
 ssh root@$server_ip << EOF
+    rm -rf /root/.dubbo
     cd $server_application;
     rm -rf rawdatacentral
     tar -xzf $file;
