@@ -54,7 +54,12 @@ public class China10010ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
-        return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshSmsCodeForLogin(param);
+            default:
+                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
@@ -67,9 +72,35 @@ public class China10010ForWeb implements OperatorPluginService {
         }
     }
 
+    private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String referer = "https://uac.10010.com/portal/homeLogin";
+            String templateUrl = "https://uac.10010.com/portal/Service/CheckNeedVerify?callback=jQuery&userName={}&pwdType=01&_={}";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis())
+                    .setReferer(referer).invoke();
+            templateUrl = "https://uac.10010.com/portal/Service/SendCkMSG?callback=jQuery&req_time={}&mobile={}&_={}";
+            response = TaskHttpClient.create(param, RequestType.GET, "")
+                    .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), System.currentTimeMillis()).setReferer(referer).invoke();
+            String pageContent = response.getPageContent();
+            if (StringUtils.contains(pageContent, "resultCode:\"0000\"")) {
+                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+            }
+        } catch (Exception e) {
+            logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_SMS_ERROR);
+        }
+    }
+
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+        CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
         HttpResult<Map<String, Object>> result = validatePicCodeForLogin(param);
         if (!result.getStatus()) {
             return result;
@@ -77,12 +108,13 @@ public class China10010ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String referer = "https://uac.10010.com/portal/homeLogin";
-            String templateUrl
-                    = "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=http://www.10010.com&userName={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&_={}";
+            String templateUrl =
+                    "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=http://www.10010.com&userName" +
+                            "={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&verifyCKCode={}&_={}";
             String uacverifykey = TaskUtils.getCookieValue(param.getTaskId(), "uacverifykey");
             response = TaskHttpClient.create(param, RequestType.GET, "china_10010_web_003")
                     .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(), param.getPicCode(), uacverifykey,
-                            System.currentTimeMillis()).setReferer(referer).invoke();
+                            param.getSmsCode(), System.currentTimeMillis()).setReferer(referer).invoke();
             /**
              * 结果枚举:
              * 登陆成功:jQuery({resultCode:"0000",redirectURL:"http://www.10010.com"})
