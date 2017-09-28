@@ -32,7 +32,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
     @Resource
     private CrawlerTaskService crawlerTaskService;
     private DefaultMQProducer  monitorProducer;
-    @Value("${saas.assistant.monitor.listener.namesrvAddr:share-mq.dashu.ds:9876}")
+    @Value("${saas.assistant.monitor.listener.namesrvAddr}")
     private String             namesrvAddr;
 
     @Override
