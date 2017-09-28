@@ -1,11 +1,26 @@
 package com.datatrees.rawdatacentral.plugin.operator.an_hui_10000_web;
 
 import javax.script.Invocable;
+import java.io.ByteArrayInputStream;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.common.pipeline.Request;
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
+import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.common.ProcessorFactory;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.plugin.PluginConstants;
+import com.datatrees.crawler.core.processor.plugin.PluginFactory;
+import com.datatrees.crawler.core.processor.service.ServiceBase;
+import com.datatrees.crawler.plugin.login.AbstractLoginPlugin;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -17,7 +32,9 @@ import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.rawdatacentral.plugin.operator.china_10086_shop.PdfUtils;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.google.gson.reflect.TypeToken;
 import com.ibm.icu.text.SimpleDateFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 安徽电信web端
  * 登录 手机号 服务密码 图片验证码
+ * 查询详单 短信验证码
  * User: yand
  * Date: 2017/9/25
  */
@@ -76,10 +94,14 @@ public class AnHui10000ForWeb implements OperatorPluginService {
     }
 
 
-
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        return null;
+        switch (param.getFormType()) {
+            case "EXPORT_PDF":
+                return processForPdf(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
@@ -95,7 +117,6 @@ public class AnHui10000ForWeb implements OperatorPluginService {
     }
 
 
-
     private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
@@ -103,9 +124,8 @@ public class AnHui10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://ah.189.cn/sso/VImage.servlet?random=" + System.currentTimeMillis();
             String referer = "http://ah.189.cn/sso/login?returnUrl=%2Fservice%2Faccount%2Finit.action";
             response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_001").setFullUrl(templateUrl).setReferer(referer).invoke();
-            String base64 = PatternUtils.group(response.getPageContent(), "data:image\\/JPEG;base64,([^']+)'\\);", 1);
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
-            return result.success(base64);
+            return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
             logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
@@ -237,7 +257,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
             templateUrl = "http://ah.189.cn/service/bill/feeDetailrecordList.action?_v="
                     +invocable.invokeFunction("aesEncrypt", data).toString();
             String referer = "http://ah.189.cn/service/bill/fee.action?type=phoneAndInternetDetail";
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             pageContent = response.getPageContent();
             if(StringUtils.contains(pageContent,"没有符合条件的记录") || StringUtils.contains(pageContent,"导出查询结果")) {
@@ -252,6 +272,42 @@ public class AnHui10000ForWeb implements OperatorPluginService {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
+    }
+
+    private HttpResult<Object> processForPdf(OperatorParam param) {
+        if (logger.isDebugEnabled()){
+            logger.debug("start run exportPdf plugin!");
+        }
+        HttpResult<Object> result = new HttpResult<>();
+        Map<String, String> resultMap = new LinkedHashMap<String, String>();
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        String templateUrl = paramMap.get("page_content");
+        Response response = null;
+        try{
+            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_008").setFullUrl(templateUrl)
+                    .invoke();
+            byte[] bytes = response.getResponse();
+            String htmlContent = org.apache.commons.lang.StringUtils.EMPTY;
+            if (org.apache.commons.lang.StringUtils.isNotBlank(new String(bytes))) {
+                htmlContent = PdfUtils.pdfToHtml(new ByteArrayInputStream(bytes));
+            } else {
+                htmlContent = "no data";
+            }
+            resultMap.put(PluginConstants.FIELD, htmlContent);
+            if (logger.isDebugEnabled()){
+                logger.debug("exportPdf plugin completed! resultMap:" + resultMap);
+                return result.success(GsonUtils.toJson(resultMap));
+            }else{
+                logger.error("详单打印失败,param={},response={}", param, htmlContent);
+                return result.failure(ErrorCode.UNKNOWN_REASON);
+            }
+
+        }catch (Exception e){
+            logger.error("详单打印失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
+        }
 
     }
+
 }
