@@ -125,15 +125,16 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
             }
             SendResult sendResult = monitorProducer.send(mqMessage);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                logger.info("send message success topic={},tags={},content={},charsetName={}", topic, tags,
-                        content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME);
+                logger.info("send message success topic={},tags={},content={},charsetName={},namesrvAddr={}", topic, tags,
+                        content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME, monitorProducer.getNamesrvAddr());
                 return true;
             }
         } catch (Exception e) {
-            logger.error("send message error topic={},content={},charsetName={},namesrvAddr={}", topic, content, DEFAULT_CHARSET_NAME,monitorProducer
-                    .getNamesrvAddr(), e);
+            logger.error("send message error topic={},content={},charsetName={},namesrvAddr={}", topic, content, DEFAULT_CHARSET_NAME,
+                    monitorProducer.getNamesrvAddr(), e);
         }
-        logger.error("send message fail topic={},content={},charsetName={}", topic, content, DEFAULT_CHARSET_NAME);
+        logger.error("send message fail topic={},content={},charsetName={},namesrvAddr={}", topic, content, DEFAULT_CHARSET_NAME,
+                monitorProducer.getNamesrvAddr());
         return false;
     }
 }
