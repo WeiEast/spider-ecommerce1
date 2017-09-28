@@ -144,17 +144,20 @@ public class AnHui10000ForWeb implements OperatorPluginService {
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        HttpResult<Map<String, Object>> result = validatePicCodeForLogin(param);
+        if (!result.getStatus()) {
+            return result;
+        }
         Response response = null;
         try {
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
-            String encryptPassword = invocable.invokeFunction("aesEncrypt", param.getPassword()).toString();
+            String encryptPassword = invocable.invokeFunction("encryptedString", param.getPassword()).toString();
 
             String templateUrl = "http://ah.189.cn/sso/LoginServlet";
             String referer = "http://ah.189.cn/sso/login?returnUrl=%2Fservice%2Faccount%2Finit.action";
             String templateData = "ssoAuth=0&returnUrl=%2Fservice%2Faccount%2Finit.action&sysId=1003&loginType=4&accountType=9&latnId=551&loginName={}"
                     + "&passType=0&passWord={}&validCode={}&csrftoken=" ;
-            String data = TemplateUtils.format(templateData, param.getMobile(), URLEncoder.encode(encryptPassword, "UTF-8"),param.getPicCode());
+            String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword,param.getPicCode());
             response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_003").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
