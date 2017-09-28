@@ -144,17 +144,20 @@ public class AnHui10000ForWeb implements OperatorPluginService {
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        HttpResult<Map<String, Object>> result = validatePicCodeForLogin(param);
+        if (!result.getStatus()) {
+            return result;
+        }
         Response response = null;
         try {
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
-            String encryptPassword = invocable.invokeFunction("aesEncrypt", param.getPassword()).toString();
+            String encryptPassword = invocable.invokeFunction("encryptedString", param.getPassword()).toString();
 
             String templateUrl = "http://ah.189.cn/sso/LoginServlet";
             String referer = "http://ah.189.cn/sso/login?returnUrl=%2Fservice%2Faccount%2Finit.action";
             String templateData = "ssoAuth=0&returnUrl=%2Fservice%2Faccount%2Finit.action&sysId=1003&loginType=4&accountType=9&latnId=551&loginName={}"
                     + "&passType=0&passWord={}&validCode={}&csrftoken=" ;
-            String data = TemplateUtils.format(templateData, param.getMobile(), URLEncoder.encode(encryptPassword, "UTF-8"),param.getPicCode());
+            String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword,param.getPicCode());
             response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_003").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
@@ -183,7 +186,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
                     .invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains("成功")) {
-                String uuid = invocable.invokeFunction("aesEncrypt", "serviceNbr=" + param.getMobile()).toString();
+                String uuid = invocable.invokeFunction("encryptedString", "serviceNbr=" + param.getMobile()).toString();
                 if (StringUtils.isBlank(uuid)) {
                     logger.error("获取uuid失败");
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
@@ -208,7 +211,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         String mobile = String.valueOf(param.getMobile());
         try{
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
-            String data = invocable.invokeFunction("aesEncrypt", "mobileNum=" + param.getMobile() + "&key=" + mobile.substring(1, 2)
+            String data = invocable.invokeFunction("encryptedString", "mobileNum=" + param.getMobile() + "&key=" + mobile.substring(1, 2)
                     + mobile.substring(3, 4) + mobile.substring(6, 7) + mobile.substring(8, 10)).toString();
             String referer = "http://ah.189.cn/service/bill/fee.action?type=ticket";
             String templateUrl = "http://ah.189.cn/service/bill/sendValidReq.action?_v="+data;
@@ -243,9 +246,9 @@ public class AnHui10000ForWeb implements OperatorPluginService {
                     + param.getSmsCode() + "&macCode=" + macCode;
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             templateUrl = "http://ah.189.cn/service/bill/feeDetailrecordList.action?_v="
-                    +invocable.invokeFunction("aesEncrypt", data).toString();
+                    +invocable.invokeFunction("encryptedString", data).toString();
             String referer = "http://ah.189.cn/service/bill/fee.action?type=phoneAndInternetDetail";
-            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_008").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             pageContent = response.getPageContent();
             if(StringUtils.contains(pageContent,"没有符合条件的记录") || StringUtils.contains(pageContent,"导出查询结果")) {
@@ -273,7 +276,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         String templateUrl = paramMap.get("page_content");
         Response response = null;
         try{
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_008").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_009").setFullUrl(templateUrl)
                     .invoke();
             byte[] bytes = response.getResponse();
             String htmlContent = org.apache.commons.lang.StringUtils.EMPTY;
