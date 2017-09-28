@@ -186,7 +186,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
                     .invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains("成功")) {
-                String uuid = invocable.invokeFunction("aesEncrypt", "serviceNbr=" + param.getMobile()).toString();
+                String uuid = invocable.invokeFunction("encryptedString", "serviceNbr=" + param.getMobile()).toString();
                 if (StringUtils.isBlank(uuid)) {
                     logger.error("获取uuid失败");
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
@@ -211,7 +211,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         String mobile = String.valueOf(param.getMobile());
         try{
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
-            String data = invocable.invokeFunction("aesEncrypt", "mobileNum=" + param.getMobile() + "&key=" + mobile.substring(1, 2)
+            String data = invocable.invokeFunction("encryptedString", "mobileNum=" + param.getMobile() + "&key=" + mobile.substring(1, 2)
                     + mobile.substring(3, 4) + mobile.substring(6, 7) + mobile.substring(8, 10)).toString();
             String referer = "http://ah.189.cn/service/bill/fee.action?type=ticket";
             String templateUrl = "http://ah.189.cn/service/bill/sendValidReq.action?_v="+data;
