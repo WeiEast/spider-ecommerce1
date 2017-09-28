@@ -67,7 +67,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         }
         result.setForceReload(forceReload);
         result.setFile(file);
-        logger.info("getPluginFromRedis success fileName={},pluginPath={}", fileName, pluginPath);
+        logger.info("getPluginFromRedis success fileName={},localJar={}", fileName, file.getName());
         return result;
     }
 
