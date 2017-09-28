@@ -130,7 +130,8 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
                 return true;
             }
         } catch (Exception e) {
-            logger.info("send message error topic={},content={},charsetName={}", topic, content, DEFAULT_CHARSET_NAME, e);
+            logger.error("send message error topic={},content={},charsetName={},namesrvAddr={}", topic, content, DEFAULT_CHARSET_NAME,monitorProducer
+                    .getNamesrvAddr(), e);
         }
         logger.error("send message fail topic={},content={},charsetName={}", topic, content, DEFAULT_CHARSET_NAME);
         return false;
