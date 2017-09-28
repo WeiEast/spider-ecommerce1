@@ -15,6 +15,7 @@ ext {
 
 dependencies {
     compile project(':rawdatacentral-api')
+    compile project(':rawdatacentral-common')
     compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocol}", changing: true)
     compile(group: "com.datatrees.common", name: "common-pipeline", version: "${commonPipeline}", changing: true)
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true)

@@ -24,11 +24,11 @@ public interface PluginService {
      */
     PluginUpgradeResult getPluginFromRedis(String fileName);
 
-    /**
-     * 获取插件
-     * @param
-     * @return
-     */
-    PluginUpgradeResult getPluginFromLocal(String websiteName, AbstractPlugin pluginDesc);
+    ///**
+    // * 获取插件
+    // * @param
+    // * @return
+    // */
+    //PluginUpgradeResult getPluginFromLocal(String websiteName, AbstractPlugin pluginDesc);
 
 }

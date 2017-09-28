@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BooleanUtils;
@@ -23,10 +24,7 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.rawdatacentral.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,6 +42,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     private RedisService           redisService;
     @Resource
     private MessageService         messageService;
+    @Resource
+    private MonitorService         monitorService;
     @Resource
     private WebsiteConfigService   websiteConfigService;
     @Resource
@@ -68,8 +68,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
             logger.info("初始化运营商插件taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
         }
-        //messageService.sendTaskLog(param.getTaskId(), "准备登陆");
-        return getLoginService(param).init(param);
+        result = getLoginService(param).init(param);
+        monitorService.sendTaskLog(param.getTaskId(), "登录-->初始化-->成功", result);
+        return result;
     }
 
     @Override
@@ -82,24 +83,18 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         HttpResult<String> picResult = getLoginService(param).refeshPicCode(param);
         String log = null;
         if (!picResult.getStatus()) {
-            log = TemplateUtils.format("{}-->图片验证码-->刷新失败!", FormType.getName(param.getFormType()));
+            log = TemplateUtils.format("{}-->刷新图片验证码-->失败", FormType.getName(param.getFormType()));
             result.failure(picResult.getResponseCode(), picResult.getMessage());
         } else {
-            log = TemplateUtils.format("{}-->图片验证码-->刷新成功!", FormType.getName(param.getFormType()));
+            log = TemplateUtils.format("{}-->刷新图片验证码-->成功", FormType.getName(param.getFormType()));
             Map<String, Object> map = new HashMap<>();
             map.put(AttributeKey.PIC_CODE, picResult.getData());
             result.success(map);
         }
-        if (result.getStatus()) {
-            switch (param.getFormType()) {
-                case FormType.LOGIN:
-                    messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
-                    break;
-                default:
-                    break;
-            }
+        if (result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+            messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
         }
-        //messageService.sendTaskLog(param.getTaskId(), log);
+        monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }
 
@@ -129,18 +124,12 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         result = getLoginService(param).refeshSmsCode(param);
         if (result.getStatus()) {
             TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.LATEST_SEND_SMS_TIME, System.currentTimeMillis() + "");
-        }
-        if (result.getStatus()) {
-            switch (param.getFormType()) {
-                case FormType.LOGIN:
-                    messageService.sendTaskLog(param.getTaskId(), "向手机发送短信验证码");
-                    break;
-                default:
-                    break;
+            if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                messageService.sendTaskLog(param.getTaskId(), "向手机发送短信验证码");
             }
         }
-        //messageService.sendTaskLog(param.getTaskId(),
-        //        TemplateUtils.format("{}-->短信验证码-->刷新{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        String log = TemplateUtils.format("{}-->发送短信验证码-->{}", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
+        monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }
 
@@ -158,17 +147,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return result.failure(ErrorCode.EMPTY_PIC_CODE);
         }
         result = getLoginService(param).validatePicCode(param);
-        if (result.getStatus()) {
-            switch (param.getFormType()) {
-                case FormType.LOGIN:
-                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE, param.getPicCode());
-                    break;
-                default:
-                    break;
-            }
-        }
-        //messageService.sendTaskLog(param.getTaskId(),
-        //        TemplateUtils.format("{}-->图片验证码-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        String log = TemplateUtils.format("{}-->校验图片验证码-->{}", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
+        monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }
 
@@ -183,37 +163,26 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (null != result && result.getStatus()) {
             if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                 TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.MOBILE, param.getMobile().toString());
+                TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.USERNAME, param.getMobile().toString());
                 //登录成功
                 if (StringUtils.isNoneBlank(param.getPassword())) {
                     TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.PASSWORD, param.getPassword());
                 }
                 if (StringUtils.isNoneBlank(param.getIdCard())) {
-                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getPassword());
+                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.ID_CARD, param.getIdCard());
                 }
                 if (StringUtils.isNoneBlank(param.getRealName())) {
-                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getPassword());
+                    TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.REAL_NAME, param.getRealName());
                 }
+            } else if (StringUtils.isNoneBlank(param.getSmsCode())) {
+                TaskUtils.addTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(param.getFormType()), param.getSmsCode());
             }
         }
-        if (result.getStatus()) {
-            switch (param.getFormType()) {
-                case FormType.LOGIN:
-                    //messageService.sendTaskLog(param.getTaskId(), "登陆成功");
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            switch (param.getFormType()) {
-                case FormType.LOGIN:
-                    messageService.sendTaskLog(param.getTaskId(), "登陆失败");
-                    break;
-                default:
-                    break;
-            }
+        if (!result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+            messageService.sendTaskLog(param.getTaskId(), "登陆失败");
         }
-        //messageService.sendTaskLog(param.getTaskId(),
-        //        TemplateUtils.format("{}-->校验{}!", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败"));
+        String log = TemplateUtils.format("{}-->校验-->{}", FormType.getName(param.getFormType()), result.getStatus() ? "成功" : "失败");
+        monitorService.sendTaskLog(param.getTaskId(), log, result);
         sendLoginSuccessMessage(result, param);
         return result;
     }
@@ -238,12 +207,15 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = checkParams(param);
-        if (!result.getStatus()) {
-            logger.warn("check param error,result={}", result);
-            return new HttpResult<Object>().failure(result.getResponseCode(), result.getMessage());
+        HttpResult<Map<String, Object>> checkParams = checkParams(param);
+        if (!checkParams.getStatus()) {
+            logger.warn("check param error,result={}", checkParams);
+            return new HttpResult<Object>().failure(checkParams.getResponseCode(), checkParams.getMessage());
         }
-        return getLoginService(param).defineProcess(param);
+        HttpResult result = getLoginService(param).defineProcess(param);
+        String log = TemplateUtils.format("自定义插件-->{}-->{}", param.getFormType(), result.getStatus() ? "成功" : "失败");
+        monitorService.sendTaskLog(param.getTaskId(), log, result);
+        return result;
     }
 
     private OperatorPluginService getLoginService(OperatorParam param) {
@@ -273,13 +245,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             if (StringUtils.isBlank(param.getRealName()) && map.containsKey(AttributeKey.REAL_NAME)) {
                 param.setRealName(map.get(AttributeKey.REAL_NAME));
             }
-            if (StringUtils.equals(FormType.LOGIN, param.getFormType()) && StringUtils.isBlank(param.getPicCode()) &&
-                    map.containsKey(AttributeKey.LOGIN_PIC_CODE)) {
-                param.setPicCode(map.get(AttributeKey.LOGIN_PIC_CODE));
-            }
+            //插件先进行图片验证码,再进行短信校验
             if (StringUtils.equals(FormType.VALIDATE_BILL_DETAIL, param.getFormType()) && StringUtils.isBlank(param.getPicCode()) &&
-                    map.containsKey(AttributeKey.BILL_DETAIL_PIC_CODE)) {
-                param.setPicCode(map.get(AttributeKey.BILL_DETAIL_PIC_CODE));
+                    map.containsKey(RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()))) {
+                param.setPicCode(map.get(RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType())));
             }
         }
     }

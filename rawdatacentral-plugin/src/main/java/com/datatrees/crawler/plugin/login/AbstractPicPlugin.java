@@ -20,8 +20,11 @@ import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
 import com.datatrees.crawler.plugin.login.AbstractLoginPlugin.ContentType;
+import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +42,7 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
 
     private Logger logger = LoggerFactory.getLogger(AbstractPicPlugin.class);
     private String tips;
+    private MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
 
     public String getTips() {
         return tips;
@@ -74,11 +78,13 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
         int inputPicCount = 0;
         // 发送任务日志
         getMessageService().sendTaskLog(taskId, "等待用户输入图片验证码");
+        monitorService.sendTaskLog(taskId, "详单-->校验图片启动-->成功");
         //5分钟超时
         long maxInterval = TimeUnit.MINUTES.toMillis(5) + System.currentTimeMillis();
         do {
             String picCode = requestPicCode(paramsMap);
             if (StringUtils.isEmpty(picCode)) {
+                monitorService.sendTaskLog(taskId, "详单-->刷新图片验证码-->失败");
                 logger.error("plugin request picCode error! taskId={},websiteName={}", taskId, websiteName);
                 TimeUnit.SECONDS.sleep(60);
                 continue;
@@ -92,15 +98,19 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
             if (StringUtils.isNotBlank(tips)) {
                 data.put(AttributeKey.TIPS, tips);
             }
+            monitorService.sendTaskLog(taskId, "详单-->刷新图片验证码-->成功");
 
             String directiveId = getMessageService().sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), GsonUtils.toJson(data));
-            DirectiveResult<Map<String, Object>> receiveDirective = getRedisService().getDirectiveResult(directiveId, getMaxInterval(websiteName), TimeUnit.MILLISECONDS);
+            DirectiveResult<Map<String, Object>> receiveDirective = getRedisService()
+                    .getDirectiveResult(directiveId, getMaxInterval(websiteName), TimeUnit.MILLISECONDS);
             if (null == receiveDirective) {
+                monitorService.sendTaskLog(taskId, "详单-->等待用户输入图片验证码-->失败", ErrorCode.VALIDATE_PIC_CODE_TIMEOUT, "用户2分钟没有输入图片验证码");
                 logger.error("wait user input piccode timeout,taskId={},websiteName={},directiveId={}", taskId, websiteName, directiveId);
                 continue;
             }
             if (null == receiveDirective.getData() || !receiveDirective.getData().containsKey(AttributeKey.CODE)) {
-                logger.error("invalid receiveDirective,taskId={},websiteName={},directiveId={},receiveDirective={}", taskId, websiteName, directiveId, GsonUtils.toJson(receiveDirective));
+                logger.error("invalid receiveDirective,taskId={},websiteName={},directiveId={},receiveDirective={}", taskId, websiteName, directiveId,
+                        GsonUtils.toJson(receiveDirective));
                 continue;
             }
             inputPicCount++;
@@ -108,13 +118,16 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
             String inputCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
             resultMessage = vaildPicCode(paramsMap, inputCode);
             if (StringUtils.isNotEmpty(resultMessage)) {
+                monitorService.sendTaskLog(taskId, "详单-->校验图片验证码-->成功");
                 logger.info("code vaild success! taskId={},websiteName={},code={},retry={}", taskId, websiteName, receiveDirective.getData(), retry);
                 //将结果返回给插件调用的地方,作为field的值,一般返回的就是图片验证码,有的和短信验证码一起验证,有的会设置not-empty=true属性
                 resultMap.put(PluginConstants.FIELD, resultMessage);
                 getMessageService().sendTaskLog(taskId, "图片验证码校验成功");
                 return resultMap;
             }
-            logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputPicCount={}", taskId, websiteName, receiveDirective.getData(), retry, inputPicCount);
+            monitorService.sendTaskLog(taskId, "详单-->校验图片验证码-->失败");
+            logger.error("code vaild failed! taskId={},websiteName={},code={},retry={},inputPicCount={}", taskId, websiteName,
+                    receiveDirective.getData(), retry, inputPicCount);
         } while (System.currentTimeMillis() < maxInterval);
         getMessageService().sendTaskLog(taskId, inputPicCount == 0 ? "图片验证码校验超时" : "图片验证码校验失败");
         throw new ResultEmptyException("get pic code error, inputPicCount:" + inputPicCount);
@@ -122,7 +135,8 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
 
     @Override
     public String process(String... args) throws Exception {
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils.fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
         return GsonUtils.toJson(doProcess(paramMap));
     }
 

@@ -7,9 +7,7 @@
 
     <!--注册到dubbo -->
     <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerService" ref="crawlerServiceImpl"/>
-    <!--运营商-->
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerOperatorService"
-                   ref="crawlerOperatorServiceImpl"/>
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerTaskService" ref="crawlerTaskServiceImpl"/>
     <!--运营商-->
     <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerOperatorService"
                    ref="crawlerOperatorServiceImpl"/>

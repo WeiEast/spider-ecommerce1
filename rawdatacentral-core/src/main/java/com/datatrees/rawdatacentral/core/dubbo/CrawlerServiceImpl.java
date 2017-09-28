@@ -22,12 +22,15 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.CrawlerService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
@@ -57,6 +60,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private ZooKeeperClient        zooKeeperClient;
     @Resource
     private CrawlerOperatorService crawlerOperatorService;
+    @Resource
+    private MonitorService         monitorService;
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -140,6 +145,10 @@ public class CrawlerServiceImpl implements CrawlerService {
         if (taskId <= 0 || type < 0) {
             logger.warn("fetchLoginCode invalid param taskId={},type={}", taskId, type);
             return result.failure("参数为空或者参数不完整");
+        }
+        if (StringUtils.isNoneBlank(username)) {
+            TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, username);
+            TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
         }
         try {
             if (isNewOperator(taskId)) {
@@ -228,6 +237,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("fetchLoginCode invalid param taskId={},username={}", taskId, username);
             return result.failure("invalid params taskId or username");
         }
+        TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, username);
+        TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
         if (StringUtils.isBlank(password)) {
             logger.warn("fetchLoginCode  empty password, taskId={},username={}", taskId, username);
             return result.failure("invalid params,empty password");
@@ -331,6 +342,17 @@ public class CrawlerServiceImpl implements CrawlerService {
             result.setData(true);
             result.success();
         }
+        String reason = null;
+        if (null != extra && extra.containsKey("reason")) {
+            reason = extra.get("reason");
+        }
+        ErrorCode errorCode = ErrorCode.TASK_CANCEL;
+        if (StringUtils.equals("timeout", reason)) {
+            errorCode = ErrorCode.TASK_CANCEL_BY_SYSTEM;
+        } else if (StringUtils.equals("user", reason)) {
+            errorCode = ErrorCode.TASK_CANCEL_BY_USER;
+        }
+        monitorService.sendTaskCompleteMsg(taskId, errorCode.getErrorCode(), errorCode.getErrorMsg());
         return result.failure();
     }
 
@@ -363,9 +385,15 @@ public class CrawlerServiceImpl implements CrawlerService {
     }
 
     private boolean isNewOperator(Long taskId) {
-        String websiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId), 15, TimeUnit.SECONDS);
+        //获取第一次消息用的websiteName
+        String firstVisitWebsiteName = redisService
+                .getString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME.getRedisKey(taskId), 3, TimeUnit.SECONDS);
+        //兼容老的
+        if (StringUtils.isBlank(firstVisitWebsiteName)) {
+            firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId), 3, TimeUnit.SECONDS);
+        }
         //是否是独立运营商
-        Boolean isNewOperator = StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
+        Boolean isNewOperator = StringUtils.startsWith(firstVisitWebsiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
         return isNewOperator;
     }
 

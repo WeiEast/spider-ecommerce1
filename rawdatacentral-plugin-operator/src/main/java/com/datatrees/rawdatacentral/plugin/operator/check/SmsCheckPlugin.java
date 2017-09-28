@@ -15,11 +15,13 @@ import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -37,23 +39,32 @@ import org.slf4j.LoggerFactory;
  */
 public class SmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger                   logger         = LoggerFactory.getLogger(SmsCheckPlugin.class);
-    private              CrawlerOperatorService   pluginService  = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
-    private              MessageService           messageService = BeanFactoryUtils.getBean(MessageService.class);
-    private              RedisService             redisService   = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SmsCheckPlugin.class);
+    private CrawlerOperatorService pluginService;
+    private MessageService         messageService;
+    private RedisService           redisService;
     //超时时间60秒
-    private              long                     timeOut        = 60;
-    private              AbstractProcessorContext context        = PluginFactory.getProcessorContext();
-    private String fromType;
+    private long timeOut = 60;
+    private AbstractProcessorContext context;
+    private String                   fromType;
     private Map<String, String> pluginResult = new HashMap<>();
+    private MonitorService monitorService;
 
     @Override
     public String process(String... args) throws Exception {
+        pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        redisService = BeanFactoryUtils.getBean(RedisService.class);
+        context = PluginFactory.getProcessorContext();
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
+
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
+        TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);
         logger.info("短信校验插件启动,taskId={},websiteName={},fromType={}", taskId, websiteName, fromType);
+        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->短信校验启动-->成功", FormType.getName(fromType)));
         //验证失败直接抛出异常
         validateSmsCode(taskId, websiteName);
 
@@ -98,6 +109,8 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
 
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
             if (null == receiveDirective) {
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->等待用户输入短信验证码-->失败", FormType.getName(fromType)),
+                        ErrorCode.VALIDATE_PIC_CODE_TIMEOUT, "用户输入短信验证码超时,任务即将失败!超时时间(单位:秒):" + timeOut);
                 logger.error("等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
                 //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入短信验证码超时({}秒)", timeOut));
                 messageService.sendTaskLog(taskId, "短信验证码校验超时");
@@ -109,12 +122,14 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
             result = pluginService.submit(param);
             if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
                 context.setString(AttributeKey.SMS_CODE, smsCode);
-                pluginResult.put(PluginConstants.FIELD, smsCode);
                 TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(fromType), smsCode);
+                pluginResult.put(PluginConstants.FIELD, smsCode);
                 messageService.sendTaskLog(taskId, "短信验证码校验成功");
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验短信-->成功", FormType.getName(fromType)));
                 return;
             }
             if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->线程-->失败", FormType.getName(fromType)), ErrorCode.TASK_CANCEL);
                 logger.error("验证短信验证码-->用户刷新/取消任务. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), taskId, websiteName);
                 throw new CommonException(ErrorCode.TASK_INTERRUPTED_ERROR);
             }

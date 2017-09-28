@@ -98,7 +98,7 @@ public class OperatorController {
     public Object mappingPluginFile(String websiteName, String fileName) throws IOException {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         CheckUtils.checkNotBlank(fileName, "fileName is empty");
-        redisService.cache(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME, websiteName, fileName);
+        redisService.saveString(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME, websiteName, fileName);
         return new HttpResult<>().success();
     }
 
@@ -123,6 +123,7 @@ public class OperatorController {
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
+        redisService.deleteKey(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId));
         return new HttpResult<>().success();
     }
 
