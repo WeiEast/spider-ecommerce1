@@ -246,9 +246,9 @@ public class AnHui10000ForWeb implements OperatorPluginService {
                     + param.getSmsCode() + "&macCode=" + macCode;
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             templateUrl = "http://ah.189.cn/service/bill/feeDetailrecordList.action?_v="
-                    +invocable.invokeFunction("aesEncrypt", data).toString();
+                    +invocable.invokeFunction("encryptedString", data).toString();
             String referer = "http://ah.189.cn/service/bill/fee.action?type=phoneAndInternetDetail";
-            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_008").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             pageContent = response.getPageContent();
             if(StringUtils.contains(pageContent,"没有符合条件的记录") || StringUtils.contains(pageContent,"导出查询结果")) {
@@ -276,7 +276,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         String templateUrl = paramMap.get("page_content");
         Response response = null;
         try{
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_008").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_009").setFullUrl(templateUrl)
                     .invoke();
             byte[] bytes = response.getResponse();
             String htmlContent = org.apache.commons.lang.StringUtils.EMPTY;
