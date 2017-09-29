@@ -54,6 +54,13 @@ public class RedisUtils extends RedisConfig {
         }
     }
 
+    public static Boolean del(final String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            Long i = jedis.del(key);
+            return i >= 1;
+        }
+    }
+
     public static Long expire(final String key, final int second) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.expire(key, second);
