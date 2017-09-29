@@ -32,7 +32,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
     @Resource
     private CrawlerTaskService crawlerTaskService;
     private DefaultMQProducer  monitorProducer;
-    @Value("${saas.assistant.monitor.listener.namesrvAddr:share-mq.dashu.ds:9876}")
+    @Value("${saas.assistant.monitor.listener.namesrvAddr}")
     private String             namesrvAddr;
 
     @Override
@@ -100,6 +100,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         monitorProducer = new DefaultMQProducer("crawler_rawdata");
+        monitorProducer.setInstanceName("crawler_rawdata");
         monitorProducer.setNamesrvAddr(namesrvAddr);
         monitorProducer.setRetryTimesWhenSendFailed(3);
         monitorProducer.setMaxMessageSize(1024 * 1024 * 2);
@@ -125,14 +126,16 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
             }
             SendResult sendResult = monitorProducer.send(mqMessage);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                logger.info("send message success topic={},tags={},content={},charsetName={}", topic, tags,
-                        content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME);
+                logger.info("send message success topic={},tags={},content={},charsetName={},namesrvAddr={}", topic, tags,
+                        content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME, monitorProducer.getNamesrvAddr());
                 return true;
             }
         } catch (Exception e) {
-            logger.info("send message error topic={},content={},charsetName={}", topic, content, DEFAULT_CHARSET_NAME, e);
+            logger.error("send message error topic={},content={},charsetName={},namesrvAddr={}", topic, content, DEFAULT_CHARSET_NAME,
+                    monitorProducer.getNamesrvAddr(), e);
         }
-        logger.error("send message fail topic={},content={},charsetName={}", topic, content, DEFAULT_CHARSET_NAME);
+        logger.error("send message fail topic={},content={},charsetName={},namesrvAddr={}", topic, content, DEFAULT_CHARSET_NAME,
+                monitorProducer.getNamesrvAddr());
         return false;
     }
 }
