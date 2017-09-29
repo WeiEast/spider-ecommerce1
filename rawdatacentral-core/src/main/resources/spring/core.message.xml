@@ -8,7 +8,7 @@
         <property name="heartbeatBrokerInterval" value="${core.mq.heartbeatBroker.host.inteval}"/>
         <property name="persistConsumerOffsetInterval" value="${core.mq.persistConsumerOffset.inteval}"/>
         <property name="producerGroup" value="${core.mq.producerGroup}"/>
-        <property name="instanceName" value="rawdatacentral"/>
+        <property name="instanceName" value="rawdatacentral_biz"/>
     </bean>
 
 

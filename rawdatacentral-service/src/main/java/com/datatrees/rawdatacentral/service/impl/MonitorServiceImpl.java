@@ -100,7 +100,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         monitorProducer = new DefaultMQProducer("crawler_rawdata");
-        monitorProducer.setInstanceName("");
+        monitorProducer.setInstanceName("rawdatacentral_monitor");
         monitorProducer.setNamesrvAddr(namesrvAddr);
         monitorProducer.setRetryTimesWhenSendFailed(3);
         monitorProducer.setMaxMessageSize(1024 * 1024 * 2);
