@@ -244,11 +244,12 @@ public class AnHui10000ForWeb implements OperatorPluginService {
             String data = "currentPage=&pageSize=10&effDate=" + format.format(new Date()) + "&expDate="
                     + format.format(new Date()) + "&serviceNbr=" + param.getMobile() + "&operListID=2&isPrepay=0&pOffrType=481&random="
                     + param.getSmsCode() + "&macCode=" + macCode;
+            logger.info("###########"+data);
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
-            templateUrl = "http://ah.189.cn/service/bill/feeDetailrecordList.action?_v="
-                    +invocable.invokeFunction("encryptedString", data).toString();
+            templateUrl = "http://ah.189.cn/service/bill/feeDetailrecordList.action?";
+            String body = "_v=" + invocable.invokeFunction("encryptedString", data).toString();
             String referer = "http://ah.189.cn/service/bill/fee.action?type=phoneAndInternetDetail";
-            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_008").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_008").setFullUrl(templateUrl).setRequestBody(body).setReferer(referer)
                     .invoke();
             pageContent = response.getPageContent();
             if(StringUtils.contains(pageContent,"没有符合条件的记录") || StringUtils.contains(pageContent,"导出查询结果")) {
@@ -270,30 +271,30 @@ public class AnHui10000ForWeb implements OperatorPluginService {
             logger.debug("start run exportPdf plugin!");
         }
         HttpResult<Object> result = new HttpResult<>();
-        Map<String, String> resultMap = new LinkedHashMap<String, String>();
         Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
                 .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
-        String templateUrl = paramMap.get("page_content");
+        String[] params = paramMap.get("page_content").split("\\\"");
         Response response = null;
         try{
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_009").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_009").setFullUrl(params[0]).setRequestBody(params[1])
                     .invoke();
             byte[] bytes = response.getResponse();
-            String htmlContent = org.apache.commons.lang.StringUtils.EMPTY;
+            String htmlContent = StringUtils.EMPTY;
             if (org.apache.commons.lang.StringUtils.isNotBlank(new String(bytes))) {
                 htmlContent = PdfUtils.pdfToHtml(new ByteArrayInputStream(bytes));
             } else {
                 htmlContent = "no data";
             }
-            resultMap.put(PluginConstants.FIELD, htmlContent);
-            if (logger.isDebugEnabled()){
-                logger.debug("exportPdf plugin completed! resultMap:" + resultMap);
-                return result.success(GsonUtils.toJson(resultMap));
-            }else{
-                logger.error("详单打印失败,param={},response={}", param, htmlContent);
-                return result.failure(ErrorCode.UNKNOWN_REASON);
-            }
-
+            //resultMap.put(PluginConstants.FIELD, htmlContent);
+            //if (logger.isDebugEnabled()){
+            //    logger.debug("exportPdf plugin completed! resultMap:" + resultMap);
+            //    return result.success(GsonUtils.toJson(resultMap));
+            //}else{
+            //    logger.error("详单打印失败,param={},response={}", param, htmlContent);
+            //    return result.failure(ErrorCode.UNKNOWN_REASON);
+            //}
+            logger.info("exportPdf plugin completed! " );
+            return result.success(htmlContent);
         }catch (Exception e){
             logger.error("详单打印失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
