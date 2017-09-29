@@ -135,7 +135,7 @@ public class DateUtils {
         }
     }
 
-    public static Date parseYmdh(String dateStr, String pattern) {
+    public static Date parse(String dateStr, String pattern) {
         try {
             return getDateFormat(pattern).parse(dateStr);
         } catch (Exception e) {
