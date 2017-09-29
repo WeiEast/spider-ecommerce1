@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by zhouxinghai on 2017/5/16.
  */
@@ -14,9 +17,10 @@ public class DateUtils {
     /**
      * 时间格式
      */
-    public static final String                                     YMDHMS = "yyyy-MM-dd HH:mm:ss";
-    public static final String                                     YMD    = "yyyy-MM-dd HH:mm:ss";
-    private static      ThreadLocal<Map<String, SimpleDateFormat>> sfs    = new ThreadLocal<Map<String, SimpleDateFormat>>() {
+    public static final  String                                     YMDHMS = "yyyy-MM-dd HH:mm:ss";
+    public static final  String                                     YMD    = "yyyy-MM-dd HH:mm:ss";
+    private static final Logger                                     logger = LoggerFactory.getLogger(DateUtils.class);
+    private static       ThreadLocal<Map<String, SimpleDateFormat>> sfs    = new ThreadLocal<Map<String, SimpleDateFormat>>() {
         @Override
         protected Map<String, SimpleDateFormat> initialValue() {
             Map<String, SimpleDateFormat> map = new HashMap<>();
@@ -35,7 +39,7 @@ public class DateUtils {
         Map<String, SimpleDateFormat> tl = sfs.get();
         SimpleDateFormat sdf = tl.get(pattern);
         if (sdf == null) {
-            System.out.println(Thread.currentThread().getName() + " put new sdf of pattern " + pattern + " to map");
+            logger.info("{} put new sdf of pattern {} to map", Thread.currentThread().getName(), pattern);
             sdf = new SimpleDateFormat(pattern);
             tl.put(pattern, sdf);
         }
@@ -47,10 +51,9 @@ public class DateUtils {
      * @param date 时间
      * @return
      */
-    public static String format(Date date,String pattern) {
+    public static String format(Date date, String pattern) {
         return getDateFormat(pattern).format(date);
     }
-
 
     /**
      * 格式化成yyyy-MM-dd HH:mm:ss
@@ -60,7 +63,6 @@ public class DateUtils {
     public static String formatYmdhms(Date date) {
         return getDateFormat(YMDHMS).format(date);
     }
-
 
     /**
      * 格式化成yyyy-MM-dd HH:mm:ss
@@ -113,6 +115,33 @@ public class DateUtils {
             sb.append(count).append("秒");
         }
         return sb.toString();
+    }
+
+    public static Date parseYmdhms(String dateStr) {
+        try {
+            return getDateFormat(YMDHMS).parse(dateStr);
+        } catch (Exception e) {
+            logger.info("parseYmdhms error dateStr={}", dateStr, e);
+            return null;
+        }
+    }
+
+    public static Date parseYmdh(String dateStr) {
+        try {
+            return getDateFormat(YMD).parse(dateStr);
+        } catch (Exception e) {
+            logger.info("parseYmdhms error dateStr={}", dateStr, e);
+            return null;
+        }
+    }
+
+    public static Date parse(String dateStr, String pattern) {
+        try {
+            return getDateFormat(pattern).parse(dateStr);
+        } catch (Exception e) {
+            logger.info("parseYmdh error dateStr={}", dateStr, e);
+            return null;
+        }
     }
 
 }
