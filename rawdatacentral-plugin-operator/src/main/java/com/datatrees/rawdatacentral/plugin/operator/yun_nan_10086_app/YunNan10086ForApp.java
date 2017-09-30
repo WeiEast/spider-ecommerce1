@@ -207,7 +207,6 @@ public class YunNan10086ForApp implements OperatorPluginService {
             params.put("dynamicURI", "/sms");
             params.put("dynamicParameter", dynamicParameter);
             params.put("dynamicDataNodeName", "smsPwdLogin");
-
             List<Object> paramsList = new ArrayList<>();
             paramsList.add(params);
 
