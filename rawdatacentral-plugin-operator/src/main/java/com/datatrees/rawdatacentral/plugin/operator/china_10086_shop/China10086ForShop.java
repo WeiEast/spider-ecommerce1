@@ -174,10 +174,12 @@ public class China10086ForShop implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            String referer = "http://shop.10086.cn/i/?f=billdetailqry&welcome=";
             String templateUrl = "http://shop.10086.cn/i/v1/res/precheck/{}?captchaVal={}&_={}";
             //结果枚举:正确{"data":null,"retCode":"000000","retMsg":"输入正确，校验成功","sOperTime":null},
             //错误{"data":null,"retCode":"999999","retMsg":"输入错误，校验失败","sOperTime":null}
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007").setFullUrl(templateUrl, param.getMobile(), param.getPicCode(), System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007").setFullUrl(templateUrl, param.getMobile(), param
+                    .getPicCode(), System.currentTimeMillis()).setReferer(referer).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
