@@ -85,7 +85,6 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("chong_qing_10000_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("aesEncrypt", param.getPassword()).toString();
 
