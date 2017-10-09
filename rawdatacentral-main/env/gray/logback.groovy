@@ -12,7 +12,7 @@ def logPath = "/dashu/log"
 // 控制台
 appender("console", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
-        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%L] %m%n"
+        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
         charset = Charset.forName(charsetName)
     }
 }
@@ -22,7 +22,7 @@ appender("sysFile", RollingFileAppender) {
     file = "${logPath}/rawdatacentral.log"
     append = true
     encoder(PatternLayoutEncoder) {
-        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%L] %m%n"
+        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
         charset = Charset.forName(charsetName)
     }
     rollingPolicy(TimeBasedRollingPolicy) {

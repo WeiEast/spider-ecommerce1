@@ -100,7 +100,7 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         monitorProducer = new DefaultMQProducer("crawler_rawdata");
-        monitorProducer.setInstanceName("crawler_rawdata");
+        monitorProducer.setInstanceName("rawdatacentral_monitor");
         monitorProducer.setNamesrvAddr(namesrvAddr);
         monitorProducer.setRetryTimesWhenSendFailed(3);
         monitorProducer.setMaxMessageSize(1024 * 1024 * 2);
@@ -126,8 +126,9 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
             }
             SendResult sendResult = monitorProducer.send(mqMessage);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                logger.info("send message success topic={},tags={},content={},charsetName={},namesrvAddr={}", topic, tags,
-                        content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME, monitorProducer.getNamesrvAddr());
+                logger.info("send message success topic={},tags={},content={},charsetName={},namesrvAddr={},msgId={}", topic, tags,
+                        content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME, monitorProducer.getNamesrvAddr(),
+                        sendResult.getMsgId());
                 return true;
             }
         } catch (Exception e) {
