@@ -110,7 +110,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        return null;
+        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
@@ -136,7 +136,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
     }
 
     private HttpResult<Map<String, Object>> validatePicCodeForLogin(OperatorParam param) {
-        return null;
+            return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
@@ -273,6 +273,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
             return result.failure(ErrorCode.LOGIN_ERROR);
         }
     }
+
 
     private HttpResult<String> refeshPicCodeForBillDetail(OperatorParam param) {
         HttpResult<String> result = new HttpResult<>();
