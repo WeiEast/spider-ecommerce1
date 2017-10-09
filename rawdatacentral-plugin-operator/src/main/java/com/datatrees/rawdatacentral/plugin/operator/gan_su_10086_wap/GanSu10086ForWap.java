@@ -99,7 +99,6 @@ public class GanSu10086ForWap implements OperatorPluginService {
             String templateUrl = "http://wap.gs.10086.cn/jsbo_oauth/getNumMsg?mobile={}";
             response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_002").setFullUrl(templateUrl, param.getMobile()).invoke();
 
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("gan_su_10086_wap/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("hex_md5", param.getPassword()).toString();
 
@@ -133,7 +132,6 @@ public class GanSu10086ForWap implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("gan_su_10086_wap/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("hex_md5", param.getPassword()).toString();
 
@@ -147,7 +145,8 @@ public class GanSu10086ForWap implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_004").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).addHeader("X-Requested-With", "XMLHttpRequest")
                     .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0").invoke();
-            if (StringUtils.isBlank(response.getPageContent())) {
+            String pageContent = response.getPageContent();
+            if (StringUtils.isBlank(pageContent)) {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
@@ -165,7 +164,7 @@ public class GanSu10086ForWap implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_006").setFullUrl(templateUrl).invoke();
             templateUrl = "http://wap.gs.10086.cn/mycmcc_01.html";
             response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_007").setFullUrl(templateUrl).invoke();
-            String pageContent = response.getPageContent();
+            pageContent = response.getPageContent();
 
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                 logger.info("登陆成功,param={}", param);

@@ -83,7 +83,6 @@ public class ShanXiXA10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("shan_xi_xa_10000_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("aesEncrypt", param.getPassword()).toString();
 

@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.domain.vo;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -20,7 +21,7 @@ public class Response implements Serializable {
     @JSONField(ordinal = 2)
     private int                 statusCode;
     @JSONField(ordinal = 3)
-    private Map<String, String> header;
+    private Map<String, String> header = new HashMap<>();
     @JSONField(ordinal = 4)
     private String              responseCookies;
     @JSONField(serialize = false)
