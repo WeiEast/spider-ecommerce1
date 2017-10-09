@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
+import com.alibaba.rocketmq.client.producer.MQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
@@ -20,20 +20,17 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MonitorServiceImpl implements MonitorService, InitializingBean {
+public class MonitorServiceImpl implements MonitorService {
 
     private static final Logger logger               = LoggerFactory.getLogger(MonitorServiceImpl.class);
     private static final String DEFAULT_CHARSET_NAME = "UTF-8";
     @Resource
     private CrawlerTaskService crawlerTaskService;
-    private DefaultMQProducer  monitorProducer;
-    @Value("${saas.assistant.monitor.listener.namesrvAddr}")
-    private String             namesrvAddr;
+    @Resource
+    private MQProducer         producer;
 
     @Override
     public void initTask(Long taskId) {
@@ -97,18 +94,6 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
         sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        monitorProducer = new DefaultMQProducer("crawler_rawdata");
-        monitorProducer.setInstanceName("rawdatacentral_monitor");
-        monitorProducer.setNamesrvAddr(namesrvAddr);
-        monitorProducer.setRetryTimesWhenSendFailed(3);
-        monitorProducer.setMaxMessageSize(1024 * 1024 * 2);
-        monitorProducer.start();
-        logger.info(" 启动mq,namesrvAddr={},group={}", namesrvAddr, "crawler_rawdata");
-
-    }
-
     public boolean sendMessage(String topic, String tags, Long taskId, Object msg) {
         if (StringUtils.isBlank(topic) || null == msg) {
             logger.error("invalid param  topic={},msg={}", topic, msg);
@@ -124,19 +109,16 @@ public class MonitorServiceImpl implements MonitorService, InitializingBean {
             if (StringUtils.isNotBlank(tags)) {
                 mqMessage.setTags(tags);
             }
-            SendResult sendResult = monitorProducer.send(mqMessage);
+            SendResult sendResult = producer.send(mqMessage);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                logger.info("send message success topic={},tags={},content={},charsetName={},namesrvAddr={},msgId={}", topic, tags,
-                        content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME, monitorProducer.getNamesrvAddr(),
-                        sendResult.getMsgId());
+                logger.info("send message success topic={},tags={},content={},charsetName={},msgId={}", topic, tags,
+                        content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME, sendResult.getMsgId());
                 return true;
             }
         } catch (Exception e) {
-            logger.error("send message error topic={},content={},charsetName={},namesrvAddr={}", topic, content, DEFAULT_CHARSET_NAME,
-                    monitorProducer.getNamesrvAddr(), e);
+            logger.error("send message error topic={},content={},charsetName={}", topic, content, DEFAULT_CHARSET_NAME, e);
         }
-        logger.error("send message fail topic={},content={},charsetName={},namesrvAddr={}", topic, content, DEFAULT_CHARSET_NAME,
-                monitorProducer.getNamesrvAddr());
+        logger.error("send message fail topic={},content={},charsetName={}", topic, content, DEFAULT_CHARSET_NAME);
         return false;
     }
 }
