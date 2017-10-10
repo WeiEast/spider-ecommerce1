@@ -21,6 +21,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -276,11 +277,11 @@ public class China10086ForShop implements OperatorPluginService {
     }
 
     private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
-        //https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13844034615?callback=jQuery183042723042018780055_1500975082967&pwdTempSerCode=NzE2MjUz&pwdTempRandCode=NDI4MTUz&captchaVal=a3xeva&_=1500975147178";
-        String templateUrl = "https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/{}?pwdTempSerCode={}&pwdTempRandCode={}&captchaVal={}&_={}";
+        //https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13687014852?callback=jQuery183007037425174627476_1507598560322&pwdTempSerCode=MjIzMTkw&pwdTempRandCode=NTQ1OTIy&captchaVal=ecmh4v&_=1507598630177;
+        String templateUrl = "https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/{}?callback=&pwdTempSerCode={}&pwdTempRandCode={}&captchaVal={}&_={}";
         String pwdTempSerCode = Base64.getEncoder().encodeToString(param.getPassword().getBytes());
         String pwdTempRandCode = Base64.getEncoder().encodeToString(param.getSmsCode().getBytes());
-        String loginName = TaskUtils.getCookieValue(param.getTaskId(), "loginName");
+        //String loginName = TaskUtils.getCookieValue(param.getTaskId(), "loginName");
 
         HttpResult<Map<String, Object>> result = validatePicCodeForBillDetail(param);
         if (!result.getStatus()) {
@@ -293,10 +294,10 @@ public class China10086ForShop implements OperatorPluginService {
              //jQuery183042723042018780055_1500975082967({"data":null,"retCode":"000000","retMsg":"认证成功!","sOperTime":null})
              */
             //没有设置referer会出现connect reset
-            String referer = "http://shop.10086.cn/i/?f=billdetailqry&welcome=";
+            String referer = "http://shop.10086.cn/i/?f=home&welcome=";
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_009")
-                    .setFullUrl(templateUrl, loginName, pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
-                    .setReferer(referer).invoke();
+                    .setFullUrl(templateUrl, param.getMobile(), pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
+                    .setReferer(referer).addHeader("Accept","*/*").invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("retCode");
             switch (code) {
