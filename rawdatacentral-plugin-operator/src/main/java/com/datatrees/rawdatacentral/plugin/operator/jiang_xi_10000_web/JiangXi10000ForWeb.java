@@ -9,7 +9,6 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.crawler.plugin.login.ErrorMessage;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -21,7 +20,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import org.apache.commons.codec.binary.Base64;
+import com.ibm.icu.text.SimpleDateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +67,6 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return refeshPicCodeForLogin(param);
-            case FormType.VALIDATE_BILL_DETAIL:
-                return refeshPicCodeForBillDetail(param);
             default:
                 return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -77,12 +74,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
-        switch (param.getFormType()) {
-            case FormType.VALIDATE_BILL_DETAIL:
-                return validatePicCodeForBillDetail(param);
-            default:
-                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
-        }
+        return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     @Override
@@ -90,6 +82,8 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return refeshSmsCodeForLogin(param);
+            case FormType.VALIDATE_BILL_DETAIL:
+                return refeshSmsCodeForBillDetail(param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -97,7 +91,6 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Map<String, Object>> submit(OperatorParam param) {
-
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return submitForLogin(param);
@@ -117,26 +110,15 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "http://jx.189.cn/public/v4/common/control/page/image.jsp?date=" + new Date();
+            String templateUrl = "http://jx.189.cn/public/v4/common/control/page/image.jsp?date=" + URLEncoder.encode("" + new Date(), "UTF-8");
             String referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
             response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
-            byte[] validCodeBytes = response.getResponse();
-            if (validCodeBytes != null) {
-                String veryCodeString = Base64.encodeBase64String(validCodeBytes);
-                logger.info("登录-->图片验证码-->刷新成功,param={}", param);
-                return result.success(veryCodeString);
-            } else {
-                logger.info("登录-->图片验证码-->刷新失败,param={}", param);
-                return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
-            }
+            logger.info("登录-->图片验证码-->刷新成功,param={}", param);
+            return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
             logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
-    }
-
-    private HttpResult<Map<String, Object>> validatePicCodeForLogin(OperatorParam param) {
-            return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
@@ -274,69 +256,52 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         }
     }
 
-
-    private HttpResult<String> refeshPicCodeForBillDetail(OperatorParam param) {
-        HttpResult<String> result = new HttpResult<>();
-        Response response = null;
-        try {
-            String templateUrl = "http://jx.189.cn/public/v4/common/control/page/image.jsp?date=" + new Date();
-            String referer = "http://jx.189.cn/service/bill/customerbill/index.jsp?bill=balance";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10000_web_011").setFullUrl(templateUrl).setReferer(referer).invoke();
-            byte[] validCodeByte = response.getResponse();
-            if (validCodeByte != null) {
-                String veryCodeString = Base64.encodeBase64String(validCodeByte);
-                logger.info("详单-->图片验证码-->刷新成功,param={}", param);
-                return result.success(veryCodeString);
-            } else {
-                logger.error("详单-->图片验证码-->刷新失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
-            }
-        } catch (Exception e) {
-            logger.error("详单-->图片验证码-->刷新失败,param={},response={}", param, response, e);
-            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
-        }
-    }
-
-    private HttpResult<Map<String, Object>> validatePicCodeForBillDetail(OperatorParam param) {
-        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+    private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String realname = TaskUtils.getTaskShare(param.getTaskId(), "realname");
-            String mobile = TaskUtils.getTaskShare(param.getTaskId(), "telphone");
-            String scriptSessionId = TaskUtils.getTaskShare(param.getTaskId(), "scriptSessionId");
-            String areaCode = TaskUtils.getTaskShare(param.getTaskId(), "areaCode");
-            String password = TaskUtils.getTaskShare(param.getTaskId(), "password");
-            if (StringUtils.isEmpty(mobile) || StringUtils.isEmpty(scriptSessionId)) {
-                logger.error("mobile or scriptSessionId is empty!mobile :" + mobile + " scriptSessionId:" + scriptSessionId);
-                return result.failure(ErrorCode.NOT_EMPTY_ERROR_CODE);
-            }
             String templateUrl = "http://jx.189.cn/dwr/call/plaincall/Service.excute.dwr";
-            String templateData = "callCount=1" + "&page=/service/bill/customerbill/index.jsp?bill=balance" + "&httpSessionId=" + "&scriptSessionId=" + scriptSessionId + "&c0-scriptName=Service" + "&c0-methodName=excute" + "&c0-id=0" + "&c0-param0=string:PRODUCT_PWD_LOGON" + "&c0-param1=boolean:false" + "&c0-e1=string:" + mobile + "&c0-e2=string:80000045" + "&c0-e3=string:" + areaCode + "&c0-e4=string:" + mobile + "&c0-e5=string:" + "&c0-e6=string:" + "&c0-e7=string:A" + "&c0-e8=string:" + realname + "&c0-e9=string:" + password + "&c0-e10=string:" + param.getPicCode() + "&c0-param2=Object_Object:{user_no:reference:c0-e1, product_id:reference:c0-e2, lan_code:reference:c0-e3, acc_nbr:reference:c0-e4, area_code:reference:c0-e5, cust_addr:reference:c0-e6, payment_mode_cd:reference:c0-e7, acct_name:reference:c0-e8, product_pwd:reference:c0-e9, vertify_pwd:reference:c0-e10}" + "&batchId=7";
-            String referer = "http://jx.189.cn/service/bill/customerbill/index.jsp?bill=balance";
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_012").setFullUrl(templateUrl).setReferer(referer).setRequestBody(templateData).invoke();
+            String templateData = "callCount=1&page=/2017/details.jsp&httpSessionId=&scriptSessionId=" + scriptSessionId + "c0-scriptName=Service&c0-methodName=excute&" + "c0-id=0&" + "c0-param0=string:DETAILS_SERVICE&" + "c0-param1=boolean:false&" + "c0-e1=string:SEND_SMS_CODE&" + "c0-param2=Object_Object:{method:reference:c0-e1}&" + "batchId=1";
+            String referer = "http://jx.189.cn/2017/details.jsp";
+            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_011").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
-            if (StringUtils.containsNone(pageContent, "flag:\"0\"")) {
-                logger.error("main page request error!");
-                return result.failure(ErrorCode.NOT_EMPTY_ERROR_CODE);
+            if (StringUtils.contains(pageContent, "CODE:\"1\"")) {
+                logger.info("详单-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
-            logger.info("详单-->图片验证码-->校验成功,param={}", param);
-            return result.success();
-
         } catch (Exception e) {
-            logger.error("详单-->图片验证码-->校验失败,param={},response={}", param, response, e);
-            return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
+            logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
 
     private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = validatePicCodeForBillDetail(param);
-        if (!result.getStatus()) {
-            return result;
-        }
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
-        logger.info("详单-->校验成功,param={}", param);
-        return result.success();
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+            String queryMonth = format.format(new Date());
+            String templateUrl = "http://jx.189.cn/dwr/call/plaincall/Service.excute.dwr";
+            String templateData = "callCount=1&page=/2017/details.jsp&httpSessionId=&scriptSessionId="+scriptSessionId+"&c0-scriptName=Service&c0-methodName=excute&c0-id=0&c0-param0=string:DETAILS_SERVICE&c0-param1=boolean:false&c0-e1=string:"+queryMonth+"&c0-e2=string:7&c0-e3=string:${smsCode}&c0-e4=string:QRY_DETAILS_BY_LOGIN_NBR&c0-param2=Object_Object:{month:reference:c0-e1, query_type:reference:c0-e2, valid_code:reference:c0-e3, method:reference:c0-e4}&batchId=2";
+            String referer = "http://jx.189.cn/2017/details.jsp";
+            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_012").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            String pageContent = response.getPageContent();
+            TaskUtils.addTaskShare(param.getTaskId(), "scriptSessionId", scriptSessionId);
+            if (StringUtils.contains(pageContent, "CODE:\"1\"")) {
+                logger.info("详单-->校验成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
+            }
+
+        } catch (Exception e) {
+            logger.error("详单-->校验失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.VALIDATE_ERROR);
+        }
     }
 
     private String getRandomNumber() {
