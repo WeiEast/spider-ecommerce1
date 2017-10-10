@@ -118,7 +118,8 @@ public class China10086ForShop implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://login.10086.cn/captchazh.htm?type=05&timestamp={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_001").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_001")
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -133,7 +134,8 @@ public class China10086ForShop implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://login.10086.cn/verifyCaptcha?inputCode={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_002").setFullUrl(templateUrl, param.getPicCode()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_002")
+                    .setFullUrl(templateUrl, param.getPicCode()).invoke();
             //结果枚举:正确{"resultCode":"0"},错误{"resultCode":"1"}
             JSONObject json = response.getPageContentForJSON();
             Integer resultCode = json.getInteger("resultCode");
@@ -159,7 +161,8 @@ public class China10086ForShop implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://shop.10086.cn/i/authImg?t={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_006").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_006")
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("详单-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -178,8 +181,8 @@ public class China10086ForShop implements OperatorPluginService {
             String templateUrl = "http://shop.10086.cn/i/v1/res/precheck/{}?captchaVal={}&_={}";
             //结果枚举:正确{"data":null,"retCode":"000000","retMsg":"输入正确，校验成功","sOperTime":null},
             //错误{"data":null,"retCode":"999999","retMsg":"输入错误，校验失败","sOperTime":null}
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007").setFullUrl(templateUrl, param.getMobile(), param
-                    .getPicCode(), System.currentTimeMillis()).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007")
+                    .setFullUrl(templateUrl, param.getMobile(), param.getPicCode(), System.currentTimeMillis()).setReferer(referer).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
@@ -205,7 +208,8 @@ public class China10086ForShop implements OperatorPluginService {
         try {
             Integer channelID = Integer.valueOf(TaskUtils.getTaskShare(param.getTaskId(), "channelID"));
             String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID={}&userName={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_003").setFullUrl(templateUrl, channelID, param.getMobile()).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_shop_003").setFullUrl(templateUrl, channelID, param.getMobile())
+                    .invoke();
             switch (response.getPageContent()) {
                 case "0":
                     logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -253,7 +257,8 @@ public class China10086ForShop implements OperatorPluginService {
             //没有referer提示403
             String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", param.getMobile());
             //用post或者参数错误提示{\"retCode\":\"400000\",\"retMsg\":\"parameter illegal!\"}
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008").setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis()).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
+                    .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis()).setReferer(referer).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
@@ -288,8 +293,10 @@ public class China10086ForShop implements OperatorPluginService {
              //jQuery183042723042018780055_1500975082967({"data":null,"retCode":"000000","retMsg":"认证成功!","sOperTime":null})
              */
             //没有设置referer会出现connect reset
-            String referer = "http://shop.10086.cn/i/?f=home&welcome={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_009").setFullUrl(templateUrl, loginName, pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis()).setReferer(referer, System.currentTimeMillis()).invoke();
+            String referer = "http://shop.10086.cn/i/?f=billdetailqry&welcome=";
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_009")
+                    .setFullUrl(templateUrl, loginName, pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
+                    .setReferer(referer).invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("retCode");
             switch (code) {
@@ -319,11 +326,14 @@ public class China10086ForShop implements OperatorPluginService {
         }
         Response response = null;
         try {
-            String templateUrl = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID={}&protocol=https:&timestamp={}";
+            String templateUrl
+                    = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID={}&protocol=https:&timestamp={}";
             //没有referer提示:Connection reset
             String referer = "https://login.10086.cn/html/login/login.html";
             String channelID = TaskUtils.getTaskShare(param.getTaskId(), "channelID");
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004").setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode(), channelID, System.currentTimeMillis()).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004")
+                    .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode(), channelID,
+                            System.currentTimeMillis()).setReferer(referer).invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"artifact":"3490872f8d114992b44dc4e60f595fa0","assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact"

@@ -213,11 +213,13 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
             String month = format.format(new Date());
-            templateUrl = "http://cq.189.cn/new-bill/bill_XDCXNR?accNbr={}&productId=208511296&month={}&callType=00&listType=300001&beginTime" +
+            templateUrl = "http://cq.189.cn/new-bill/bill_XDCXNR";
+            templateData = "accNbr={}&productId=208511296&month={}&callType=00&listType=300001&beginTime" +
                     "={}-01&endTime={}-28&rc={}&tname={}&idcard={}&zq=2";
-            response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_008")
-                    .setFullUrl(templateUrl, param.getMobile(), month, month, month, param.getSmsCode(), URLEncoder.encode(halfName, "UTF-8"),
-                            last6Id).setReferer(referer).invoke();
+            data = TemplateUtils
+                    .format(templateData, param.getMobile(), month, month, month, param.getSmsCode(), URLEncoder.encode(halfName, "UTF-8"), last6Id);
+            response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_008").setFullUrl(templateUrl).setRequestBody(data)
+                    .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "对不起，没有查到您的清单数据") || StringUtils.contains(pageContent, "费用")) {
                 logger.info("详单-->校验成功,param={}", param);
