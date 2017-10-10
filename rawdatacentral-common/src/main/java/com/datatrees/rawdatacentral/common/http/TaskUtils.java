@@ -1,21 +1,26 @@
 package com.datatrees.rawdatacentral.common.http;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.HttpCookie;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.common.constants.RedisDataType;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
+import com.datatrees.rawdatacentral.domain.vo.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
@@ -55,6 +60,43 @@ public class TaskUtils {
         return list;
     }
 
+    public static void updateBasicCookieStore(BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
+        if (null == httpResponse || null == cookieStore) {
+            return;
+        }
+        Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
+        if (null != headers && headers.length > 0) {
+            for (Header header : headers) {
+                String headerValue = header.getValue();
+                List<HttpCookie> list = HttpCookie.parse(headerValue);
+                HttpCookie httpCookie = list.get(0);
+                BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
+                cookie.setDomain(httpCookie.getDomain());
+                cookie.setPath(httpCookie.getPath());
+                cookie.setVersion(httpCookie.getVersion());
+                cookie.setAttribute("domain", httpCookie.getDomain());
+                cookie.setAttribute("path", httpCookie.getPath());
+                List<org.apache.http.cookie.Cookie> cookies = cookieStore.getCookies();
+                if (CollectionUtils.isNotEmpty(cookies)) {
+                    Iterator<org.apache.http.cookie.Cookie> iterator = cookies.iterator();
+                    while (iterator.hasNext()) {
+                        org.apache.http.cookie.Cookie b = iterator.next();
+                        if (StringUtils.equals(b.getName(), cookie.getName())) {
+                            cookie.setDomain(b.getDomain());
+                            iterator.remove();
+                            break;
+                        }
+                    }
+                }
+                cookies.add(cookie);
+                cookieStore.clear();
+                for(org.apache.http.cookie.Cookie c : cookies){
+                    cookieStore.addCookie(c);
+                }
+            }
+        }
+    }
+
     public static BasicClientCookie getBasicClientCookie(Cookie myCookie) {
         BasicClientCookie cookie = new BasicClientCookie(myCookie.getName(), myCookie.getValue());
         cookie.setDomain(myCookie.getDomain());
@@ -82,22 +124,21 @@ public class TaskUtils {
         return sb.substring(1);
     }
 
-    public static String getReceiveCookieString(String sendCookies, BasicCookieStore cookieStore) {
-        if (StringUtils.isBlank(sendCookies)) {
-            return getCookieString(cookieStore);
+    public static Map<String, String> getReceiveCookieMap(Response response, BasicCookieStore cookieStore) {
+        Map<String, String> map = getCookieMap(cookieStore);
+        if (CollectionUtils.isEmpty(map)) {
+            return map;
         }
-        StringBuilder sb = new StringBuilder();
-        if (null != cookieStore && null != cookieStore.getCookies()) {
-            for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
-                if (!sendCookies.contains(cookie.getName() + "=")) {
-                    sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
+
+        Map<String, String> sendCookies = response.getRequest().getRequestCookies();
+        if (CollectionUtils.isNotEmpty(sendCookies)) {
+            for (Map.Entry<String, String> entry : sendCookies.entrySet()) {
+                if (map.containsKey(entry.getKey())) {
+                    map.remove(entry.getKey());
                 }
             }
         }
-        if (StringUtils.isBlank(sb)) {
-            return "";
-        }
-        return sb.substring(1);
+        return map;
     }
 
     public static String getCookieString(BasicCookieStore cookieStore) {
@@ -113,11 +154,20 @@ public class TaskUtils {
         return sb.substring(1);
     }
 
-    public static void saveCookie(Long taskId, BasicCookieStore cookieStore) {
-        CheckUtils.checkNotNull(taskId, "taskId is null");
-        CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
+    public static Map<String, String> getCookieMap(BasicCookieStore cookieStore) {
+        Map<String, String> map = null;
+        if (null != cookieStore && null != cookieStore.getCookies()) {
+            map = new HashMap<>();
+            for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
+                map.put(cookie.getName(), cookie.getValue());
+            }
+        }
+        return map;
+    }
+
+    public static void saveCookie(long taskId, BasicCookieStore cookieStore) {
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
-        if (null != list && !list.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(list)) {
             String json = JSON.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect);
             RedisUtils.setex(RedisKeyPrefixEnum.TASK_COOKIE, taskId, json);
         }

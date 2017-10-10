@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.common.utils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +20,7 @@ public class DateUtils {
      */
     public static final  String                                     YMDHMS = "yyyy-MM-dd HH:mm:ss";
     public static final  String                                     YMD    = "yyyy-MM-dd HH:mm:ss";
+    public static final  String                                     GMT    = "EEE MMM ddHH:mm:ss 'GMT' yyyy";
     private static final Logger                                     logger = LoggerFactory.getLogger(DateUtils.class);
     private static       ThreadLocal<Map<String, SimpleDateFormat>> sfs    = new ThreadLocal<Map<String, SimpleDateFormat>>() {
         @Override
@@ -26,6 +28,7 @@ public class DateUtils {
             Map<String, SimpleDateFormat> map = new HashMap<>();
             map.put(YMDHMS, new SimpleDateFormat(YMDHMS));
             map.put(YMD, new SimpleDateFormat(YMD));
+            map.put(GMT, new SimpleDateFormat("EEE MMM ddHH:mm:ss 'GMT' yyyy", Locale.US));
             return map;
         }
     };
