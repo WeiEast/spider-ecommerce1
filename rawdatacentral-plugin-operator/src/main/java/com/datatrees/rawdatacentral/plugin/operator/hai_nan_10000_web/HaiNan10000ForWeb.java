@@ -156,8 +156,6 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
                 response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_006").setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
 
-                logger.info("pageContent2222: " + response);
-
                 String citycode = PatternUtils.group(pageContent, "var citycode=\"(\\d+)\"", 1);
                 String prodid = PatternUtils.group(pageContent, "value='SHOUJI\\|" + param.getMobile() + "\\|(\\d+)\\|\\d+\\|[^\\|]+\\|[^']+", 1);
                 String prodcode = PatternUtils.group(pageContent, "value='SHOUJI\\|" + param.getMobile() + "\\|\\d+\\|(\\d+)\\|[^\\|]+\\|[^']+", 1);
