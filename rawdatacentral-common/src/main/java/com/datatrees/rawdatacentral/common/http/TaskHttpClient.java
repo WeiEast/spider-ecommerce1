@@ -235,7 +235,7 @@ public class TaskHttpClient {
         BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
         request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
         if (!extralCookie.isEmpty()) {
-            for(BasicClientCookie cookie: extralCookie){
+            for (BasicClientCookie cookie : extralCookie) {
                 cookieStore.addCookie(cookie);
             }
         }
@@ -305,6 +305,12 @@ public class TaskHttpClient {
             }
             long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
             response.setTotalTime(totalTime);
+            Header[] headers = httpResponse.getAllHeaders();
+            if (null != headers) {
+                for (Header header : headers) {
+                    response.getHeader().put(header.getName(), header.getValue());
+                }
+            }
             if (statusCode != 200) {
                 client.abort();
                 logger.error("HttpClient status error, statusCode={}", statusCode);

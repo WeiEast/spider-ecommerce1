@@ -6,7 +6,7 @@
 
     <bean id="loginInfoMqConsumer" class="com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer"
           destroy-method="shutdown">
-        <property name="instanceName" value="rawdatacentral_biz" />
+        <property name="instanceName" value="rawdatacentral" />
         <property name="namesrvAddr" value="${core.mq.host}"/>
         <property name="consumerGroup" value="${core.mq.loginInfo.consumerGroup}"/>
         <property name="consumeThreadMin" value="${collector.core.instance.num}"/>
