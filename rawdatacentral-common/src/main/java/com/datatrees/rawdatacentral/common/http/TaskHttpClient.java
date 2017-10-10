@@ -231,9 +231,10 @@ public class TaskHttpClient {
 
     public Response invoke() {
         checkRequest(request);
+        Long taskId = request.getTaskId();
         request.setRequestId(RequestIdUtils.createId());
         CloseableHttpResponse httpResponse = null;
-        BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
+        BasicCookieStore cookieStore = TaskUtils.getCookie(taskId);
         request.setRequestCookies(TaskUtils.getCookieMap(cookieStore));
         if (!extralCookie.isEmpty()) {
             for (BasicClientCookie cookie : extralCookie) {
@@ -242,10 +243,10 @@ public class TaskHttpClient {
         }
         HttpHost proxy = null;
         if (null == request.getProxyEnable()) {
-            request.setProxyEnable(ProxyUtils.getProxyEnable(request.getTaskId()));
+            request.setProxyEnable(ProxyUtils.getProxyEnable(taskId));
         }
         if (request.getProxyEnable()) {
-            Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
+            Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
             if (null != proxyConfig) {
                 proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
                 request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
@@ -269,7 +270,7 @@ public class TaskHttpClient {
                 }
                 url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getCharset()));
             }
-            logger.info("pre request taskId={},url={}", request.getTaskId(), url);
+            logger.info("pre request taskId={},url={}", taskId, url);
             HttpRequestBase client = null;
             if (RequestType.GET == request.getType()) {
                 client = new HttpGet(url);
@@ -290,7 +291,7 @@ public class TaskHttpClient {
             }
             request.setRequestTimestamp(System.currentTimeMillis());
             httpResponse = httpclient.execute(client);
-            TaskUtils.updateBasicCookieStore(cookieStore, httpResponse);
+            TaskUtils.updateBasicCookieStore(taskId, cookieStore, httpResponse);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
             response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
@@ -299,7 +300,7 @@ public class TaskHttpClient {
                 client = new HttpGet(location);
                 response.setRedirectUrl(location);
                 httpResponse = httpclient.execute(client);
-                TaskUtils.updateBasicCookieStore(cookieStore, httpResponse);
+                TaskUtils.updateBasicCookieStore(taskId, cookieStore, httpResponse);
                 response.setStatusCode(statusCode);
                 response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
                 statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -330,7 +331,7 @@ public class TaskHttpClient {
                     }
                 }
             }
-            TaskUtils.saveCookie(request.getTaskId(), cookieStore);
+            TaskUtils.saveCookie(taskId, cookieStore);
             byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
             response.setResponse(data);
         } catch (SocketTimeoutException e) {

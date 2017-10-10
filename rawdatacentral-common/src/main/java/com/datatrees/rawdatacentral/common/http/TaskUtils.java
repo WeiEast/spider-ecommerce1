@@ -2,7 +2,6 @@ package com.datatrees.rawdatacentral.common.http;
 
 import java.net.HttpCookie;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -10,7 +9,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.common.constants.RedisDataType;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
@@ -60,12 +58,13 @@ public class TaskUtils {
         return list;
     }
 
-    public static void updateBasicCookieStore(BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
+    public static void updateBasicCookieStore(Long taskId, BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
         if (null == httpResponse || null == cookieStore) {
             return;
         }
         Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
         if (null != headers && headers.length > 0) {
+            List<org.apache.http.cookie.Cookie> cookies = cookieStore.getCookies();
             for (Header header : headers) {
                 String headerValue = header.getValue();
                 List<HttpCookie> list = HttpCookie.parse(headerValue);
@@ -74,25 +73,31 @@ public class TaskUtils {
                 cookie.setDomain(httpCookie.getDomain());
                 cookie.setPath(httpCookie.getPath());
                 cookie.setVersion(httpCookie.getVersion());
-                cookie.setAttribute("domain", httpCookie.getDomain());
-                cookie.setAttribute("path", httpCookie.getPath());
-                List<org.apache.http.cookie.Cookie> cookies = cookieStore.getCookies();
+                cookie.setSecure(httpCookie.getSecure());
+                boolean f = false;
                 if (CollectionUtils.isNotEmpty(cookies)) {
                     Iterator<org.apache.http.cookie.Cookie> iterator = cookies.iterator();
                     while (iterator.hasNext()) {
                         org.apache.http.cookie.Cookie b = iterator.next();
                         if (StringUtils.equals(b.getName(), cookie.getName())) {
-                            cookie.setDomain(b.getDomain());
+                            if (StringUtils.isBlank(cookie.getDomain())) {
+                                cookie.setDomain(b.getDomain());
+                            }
+                            cookie.setExpiryDate(b.getExpiryDate());
                             iterator.remove();
+                            f = true;
                             break;
                         }
                     }
                 }
+                cookie.setAttribute("domain", httpCookie.getDomain());
+                cookie.setAttribute("path", httpCookie.getPath());
                 cookies.add(cookie);
-                cookieStore.clear();
-                for(org.apache.http.cookie.Cookie c : cookies){
-                    cookieStore.addCookie(c);
-                }
+                logger.info("{} cookie taskId={},cookeName={}", f ? "update" : "add", taskId, cookie.getName());
+            }
+            cookieStore.clear();
+            for (org.apache.http.cookie.Cookie cookie : cookies) {
+                cookieStore.addCookie(cookie);
             }
         }
     }
