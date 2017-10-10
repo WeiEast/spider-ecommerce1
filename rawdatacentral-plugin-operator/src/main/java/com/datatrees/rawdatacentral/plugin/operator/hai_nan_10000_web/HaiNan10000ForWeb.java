@@ -107,7 +107,8 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://uam.ct10000.com/ct10000uam/validateImg.jsp";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hai_nan_10000_web_002").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hai_nan_10000_web_002")
+                    .setFullUrl(templateUrl).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -123,9 +124,12 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://uam.ct10000.com/ct10000uam/login?service=http://www.189.cn:80/login/uam.do&returnURL=1&register=register2.0&UserIp=";
-            String templateData = "forbidpass=null&forbidaccounts=null&authtype=c2000004&customFileld02=22&areaname=" + URLEncoder.encode("海南", "UTF-8") + "&username={}&customFileld01" + "=1&password={}&randomId={}&lt={}&_eventId=submit&open_no=1";
-            String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getPicCode(), lt);
+            String templateUrl
+                    = "https://uam.ct10000.com/ct10000uam/login?service=http://www.189.cn:80/login/uam.do&returnURL=1&register=register2.0&UserIp=";
+            String templateData = "forbidpass=null&forbidaccounts=null&authtype=c2000004&customFileld02=22&areaname=" +
+                    URLEncoder.encode("海南", "UTF-8") + "&username={}&customFileld01" + "=1&password={}&randomId={}&lt={}&_eventId=submit&open_no=1";
+            String data = TemplateUtils
+                    .format(templateData, param.getMobile(), param.getPassword(), URLEncoder.encode(param.getPicCode(), "UTF-8"), lt);
             response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
             /**
              * 结果枚举:
@@ -143,7 +147,8 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
                 /**
                  * 获取查询权限
                  */
-                templateUrl = "http://www.189.cn/login/sso/uam.do?method=linkTo&shopId=10022&toStUrl=http://hi.189.cn/service/bill/feequery.jsp?TABNAME=yecx&fastcode=02091574&cityCode=hi";
+                templateUrl
+                        = "http://www.189.cn/login/sso/uam.do?method=linkTo&shopId=10022&toStUrl=http://hi.189.cn/service/bill/feequery.jsp?TABNAME=yecx&fastcode=02091574&cityCode=hi";
                 response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_005").setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
 
@@ -151,7 +156,7 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
                 response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_006").setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
 
-                logger.info("pageContent2222: "+response);
+                logger.info("pageContent2222: " + response);
 
                 String citycode = PatternUtils.group(pageContent, "var citycode=\"(\\d+)\"", 1);
                 String prodid = PatternUtils.group(pageContent, "value='SHOUJI\\|" + param.getMobile() + "\\|(\\d+)\\|\\d+\\|[^\\|]+\\|[^']+", 1);
@@ -166,9 +171,13 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
                 TaskUtils.addTaskShare(param.getTaskId(), "userid", userid);
 
                 templateUrl = "http://www.hi.189.cn/BUFFALO/buffalo/FeeQueryAjaxV4Service";
-                templateData = "<buffalo-call><method>queryBalance</method><map><type>java.util" + ".HashMap</type><string>PRODNUM</string><string>{}</string><string>CITYCODE</string><string>{}</string><string>TYPE</string" + "><string>1</string><string>PRODID</string><string>{}</string><string>USERTYPE</string><string>SHOUJI</string></map" + "></buffalo-call>";
+                templateData = "<buffalo-call><method>queryBalance</method><map><type>java.util" +
+                        ".HashMap</type><string>PRODNUM</string><string>{}</string><string>CITYCODE</string><string>{}</string><string>TYPE</string" +
+                        "><string>1</string><string>PRODID</string><string>{}</string><string>USERTYPE</string><string>SHOUJI</string></map" +
+                        "></buffalo-call>";
                 data = TemplateUtils.format(templateData, prodnum, citycode, prodid);
-                response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_007").setFullUrl(templateUrl).setRequestBody(data, ContentType.TEXT_XML).invoke();
+                response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_007").setFullUrl(templateUrl)
+                        .setRequestBody(data, ContentType.TEXT_XML).invoke();
                 pageContent = response.getPageContent();
                 if (pageContent.contains("余额")) {
                     return result.success();
@@ -200,9 +209,11 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.hi.189.cn/BUFFALO/buffalo/CommonAjaxService";
-            String templateData = "<buffalo-call><method>getSmsCode</method><map><type>java.util" + ".HashMap</type><string>PHONENUM</string><string>{}</string><string>PRODUCTID</string><string>50</string><string>RTYPE</string><string>QD</string></map></buffalo-call>";
+            String templateData = "<buffalo-call><method>getSmsCode</method><map><type>java.util" +
+                    ".HashMap</type><string>PHONENUM</string><string>{}</string><string>PRODUCTID</string><string>50</string><string>RTYPE</string><string>QD</string></map></buffalo-call>";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_008").setFullUrl(templateUrl).setRequestBody(data, ContentType.TEXT_XML).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_008").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.TEXT_XML).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("短信随机密码已经发到您的联系电话")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -228,9 +239,13 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.hi.189.cn/BUFFALO/buffalo/FeeQueryAjaxV4Service";
-            String templateData = "<buffalo-call><method>queryDetailBill</method><map><type>java.util" + ".HashMap</type><string>PRODNUM</string><string>{}</string><string>CITYCODE</string><string>{}</string><string>QRYDATE</string" + "><string>{}</string><string>TYPE</string><string>8</string><string>PRODUCTID</string><string>{}</string><string>CODE</string" + "><string>{}</string><string>USERID</string><string>{}</string></map></buffalo-call>";
+            String templateData = "<buffalo-call><method>queryDetailBill</method><map><type>java.util" +
+                    ".HashMap</type><string>PRODNUM</string><string>{}</string><string>CITYCODE</string><string>{}</string><string>QRYDATE</string" +
+                    "><string>{}</string><string>TYPE</string><string>8</string><string>PRODUCTID</string><string>{}</string><string>CODE</string" +
+                    "><string>{}</string><string>USERID</string><string>{}</string></map></buffalo-call>";
             String data = TemplateUtils.format(templateData, prodnum, citycode, format.format(new Date()), prodid, param.getSmsCode(), userid);
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_008").setFullUrl(templateUrl).setRequestBody(data, ContentType.TEXT_XML).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_008").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.TEXT_XML).invoke();
             String pageContent = response.getPageContent();
 
             if (StringUtils.isBlank(pageContent) || pageContent.contains("短信验证码不正确")) {
