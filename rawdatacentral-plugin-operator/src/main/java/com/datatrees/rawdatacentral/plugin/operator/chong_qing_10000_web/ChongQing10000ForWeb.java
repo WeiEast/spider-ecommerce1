@@ -85,7 +85,6 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("chong_qing_10000_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("aesEncrypt", param.getPassword()).toString();
 
@@ -184,13 +183,15 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
             }
             String last6Id = StringUtils.right(param.getIdCard(), 6);
             last6Id = last6Id.toUpperCase();
-            TaskUtils.addTaskShare(param.getTaskId(),"halfName",halfName);
-            TaskUtils.addTaskShare(param.getTaskId(),"last6Id",last6Id);
+            TaskUtils.addTaskShare(param.getTaskId(), "halfName", halfName);
+            TaskUtils.addTaskShare(param.getTaskId(), "last6Id", last6Id);
 
             String referer = "http://cq.189.cn/new-bill/bill_xd?fastcode=02031273&cityCode=cq";
-            String templateUrl = "http://cq.189.cn/new-bill/bill_SMZ?tname={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_006")
-                    .setFullUrl(templateUrl, URLEncoder.encode(halfName, "UTF-8")).setReferer(referer).invoke();
+            String templateUrl = "http://cq.189.cn/new-bill/bill_SMZ";
+            String templateData = "tname={}";
+            String data = TemplateUtils.format(templateData, URLEncoder.encode(halfName, "UTF-8"));
+            response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_006").setFullUrl(templateUrl).setRequestBody(data)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "xm\":\"1\"")) {
                 logger.error("详单-->校验失败,校验姓名失败,param={},realName={},halfName={},pageContent={}", param, realName, halfName,
@@ -198,9 +199,11 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.VALIDATE_FAIL);
             }
 
-            templateUrl = "http://cq.189.cn/new-bill/bill_SMZ?idcard={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_007").setFullUrl(templateUrl, last6Id).setReferer(referer)
-                    .invoke();
+            templateUrl = "http://cq.189.cn/new-bill/bill_SMZ";
+            templateData = "idcard={}";
+            data = TemplateUtils.format(templateData, last6Id);
+            response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_007").setFullUrl(templateUrl).setRequestBody(data)
+                    .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "sfz\":\"2\"")) {
                 logger.error("详单-->校验失败,校验身份证失败,param={},idCard={},last6Id={},pageContent={}", param, param.getIdCard(), last6Id,
@@ -210,11 +213,13 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
             String month = format.format(new Date());
-            templateUrl = "http://cq.189.cn/new-bill/bill_XDCXNR?accNbr={}&productId=208511296&month={}&callType=00&listType=300001&beginTime" +
+            templateUrl = "http://cq.189.cn/new-bill/bill_XDCXNR";
+            templateData = "accNbr={}&productId=208511296&month={}&callType=00&listType=300001&beginTime" +
                     "={}-01&endTime={}-28&rc={}&tname={}&idcard={}&zq=2";
-            response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_008")
-                    .setFullUrl(templateUrl, param.getMobile(), month, month, month, param.getSmsCode(), URLEncoder.encode(halfName, "UTF-8"),
-                            last6Id).setReferer(referer).invoke();
+            data = TemplateUtils
+                    .format(templateData, param.getMobile(), month, month, month, param.getSmsCode(), URLEncoder.encode(halfName, "UTF-8"), last6Id);
+            response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_008").setFullUrl(templateUrl).setRequestBody(data)
+                    .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "对不起，没有查到您的清单数据") || StringUtils.contains(pageContent, "费用")) {
                 logger.info("详单-->校验成功,param={}", param);
