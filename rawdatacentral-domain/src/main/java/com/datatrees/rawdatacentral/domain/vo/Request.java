@@ -46,7 +46,7 @@ public class Request implements Serializable {
     @JSONField(ordinal = 11)
     private String protocol;
     @JSONField(ordinal = 12)
-    private String        contentType    = "application/x-www-form-urlencoded";
+    private String        contentType    = "application/x-www-form-urlencoded; charset=UTF-8";
     @JSONField(ordinal = 12)
     private Charset       charset        = Charset.forName("ISO-8859-1");
     @JSONField(ordinal = 13)

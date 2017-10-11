@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -253,7 +254,7 @@ public class TaskHttpClient {
             }
         }
         RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
-                .build();
+                .setCookieSpec(CookieSpecs.DEFAULT).build();
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
                 .setSSLSocketFactory(sslsf).build();
 
@@ -291,7 +292,8 @@ public class TaskHttpClient {
             }
             request.setRequestTimestamp(System.currentTimeMillis());
             httpResponse = httpclient.execute(client);
-            TaskUtils.updateBasicCookieStore(taskId, cookieStore, httpResponse);
+            String host = client.getURI().getHost();
+            TaskUtils.updateBasicCookieStore(taskId, host, cookieStore, httpResponse);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
             response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
@@ -300,7 +302,7 @@ public class TaskHttpClient {
                 client = new HttpGet(location);
                 response.setRedirectUrl(location);
                 httpResponse = httpclient.execute(client);
-                TaskUtils.updateBasicCookieStore(taskId, cookieStore, httpResponse);
+                TaskUtils.updateBasicCookieStore(taskId, host, cookieStore, httpResponse);
                 response.setStatusCode(statusCode);
                 response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
                 statusCode = httpResponse.getStatusLine().getStatusCode();

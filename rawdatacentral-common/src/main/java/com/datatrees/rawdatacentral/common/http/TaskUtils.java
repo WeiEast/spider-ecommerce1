@@ -1,7 +1,10 @@
 package com.datatrees.rawdatacentral.common.http;
 
 import java.net.HttpCookie;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -58,7 +61,7 @@ public class TaskUtils {
         return list;
     }
 
-    public static void updateBasicCookieStore(Long taskId, BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
+    public static void updateBasicCookieStore(Long taskId, String host, BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
         if (null == httpResponse || null == cookieStore) {
             return;
         }
@@ -69,35 +72,34 @@ public class TaskUtils {
                 String headerValue = header.getValue();
                 List<HttpCookie> list = HttpCookie.parse(headerValue);
                 HttpCookie httpCookie = list.get(0);
-                BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
-                cookie.setDomain(httpCookie.getDomain());
-                cookie.setPath(httpCookie.getPath());
-                cookie.setVersion(httpCookie.getVersion());
-                cookie.setSecure(httpCookie.getSecure());
-                boolean f = false;
+                String domain = httpCookie.getDomain();
+                //目前只有非.开头的才会被拒绝(甘肃移动登录时)
+                if (StringUtils.isBlank(domain) || domain.startsWith(".") || StringUtils.equals(domain, host)) {
+                    continue;
+                }
+                org.apache.http.cookie.Cookie find = null;
                 if (CollectionUtils.isNotEmpty(cookies)) {
-                    Iterator<org.apache.http.cookie.Cookie> iterator = cookies.iterator();
-                    while (iterator.hasNext()) {
-                        org.apache.http.cookie.Cookie b = iterator.next();
-                        if (StringUtils.equals(b.getName(), cookie.getName())) {
-                            if (StringUtils.isBlank(cookie.getDomain())) {
-                                cookie.setDomain(b.getDomain());
-                            }
-                            cookie.setExpiryDate(b.getExpiryDate());
-                            iterator.remove();
-                            f = true;
+                    for (org.apache.http.cookie.Cookie b : cookies) {
+                        if (StringUtils.equals(b.getName(), httpCookie.getName())) {
+                            find = b;
                             break;
                         }
                     }
+                    if (null == find) {
+                        //改变domain
+                        domain = "." + domain;
+                        //被拒绝了,.ResponseProcessCookies][processCookies][123] Cookie rejected
+                        BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
+                        cookie.setDomain(domain);
+                        cookie.setPath(httpCookie.getPath());
+                        cookie.setVersion(httpCookie.getVersion());
+                        cookie.setSecure(httpCookie.getSecure());
+                        cookie.setAttribute("domain", domain);
+                        cookie.setAttribute("path", httpCookie.getPath());
+                        cookieStore.addCookie(cookie);
+                        logger.info("add rejected ookie taskId={},cookeName={}", taskId, cookie.getName());
+                    }
                 }
-                cookie.setAttribute("domain", httpCookie.getDomain());
-                cookie.setAttribute("path", httpCookie.getPath());
-                cookies.add(cookie);
-                logger.info("{} cookie taskId={},cookeName={}", f ? "update" : "add", taskId, cookie.getName());
-            }
-            cookieStore.clear();
-            for (org.apache.http.cookie.Cookie cookie : cookies) {
-                cookieStore.addCookie(cookie);
             }
         }
     }
