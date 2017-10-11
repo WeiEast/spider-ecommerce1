@@ -184,7 +184,7 @@ public class TaskUtils {
         } else {
             if (CollectionUtils.isNotEmpty(list)) {
                 for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : list) {
-                    String name = cookie.getName() + ":" + cookie.getDomain();
+                    String name = "[" + cookie.getName() + "][" + cookie.getDomain() + "]";
                     RedisUtils.hset(redisKey, name, JSON.toJSONString(cookie, SerializerFeature.DisableCircularReferenceDetect),
                             RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());
 
