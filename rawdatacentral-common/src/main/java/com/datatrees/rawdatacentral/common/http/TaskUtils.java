@@ -344,49 +344,6 @@ public class TaskUtils {
     }
 
     /**
-     * 添加任务结果
-     * @param taskId
-     * @param name
-     * @param value
-     */
-    public static void addTaskResult(Long taskId, String name, Object value) {
-        String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
-        if (value instanceof String) {
-            RedisUtils.hset(redisKey, name, value.toString());
-        } else {
-            RedisUtils.hset(redisKey, name, JSON.toJSONString(value));
-        }
-        RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
-        logger.info("addTaskResult success taskId={},name={}", taskId, name);
-    }
-
-    /**
-     * 获取任务结果
-     * @param taskId
-     */
-    public static Map<String, Object> getTaskResult(Long taskId) {
-        Map<String, Object> json = new HashMap<>();
-        Map<String, String> map = null;
-        String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.NONE, type)) {
-            logger.warn("redis key not found redisKey={}", redisKey);
-            return json;
-        }
-        map = RedisUtils.hgetAll(redisKey);
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (StringUtils.startsWith(entry.getValue(), "[")) {
-                json.put(entry.getKey(), JSON.parseArray(entry.getValue()));
-            } else if (StringUtils.startsWith(entry.getValue(), "{")) {
-                json.put(entry.getKey(), JSON.parseObject(entry.getValue()));
-            } else {
-                json.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return json;
-    }
-
-    /**
      * 初始化共享信息
      * @param taskId
      * @param websiteName
