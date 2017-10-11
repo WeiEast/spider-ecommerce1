@@ -171,12 +171,13 @@ public class GanSu10086ForWap implements OperatorPluginService {
                     .setFullUrl("http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=MessageInfo").setReferer("http://wap.gs.10086.cn/index.html")
                     .invoke();
             json = response.getPageContentForJSON();
+            String resultMsg = json.getString("resultMsg");
 
-            if (StringUtils.contains(pageContent, param.getMobile().toString())) {
+            if (!StringUtils.contains(resultMsg, "您尚未登录或已超时，请重新登录")) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("登陆失败,param={},pageContent={}", param, pageContent);
+                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
