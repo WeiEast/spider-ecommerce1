@@ -97,7 +97,7 @@ public class TaskUtils {
                         cookie.setAttribute("domain", domain);
                         cookie.setAttribute("path", httpCookie.getPath());
                         cookieStore.addCookie(cookie);
-                        logger.info("add rejected ookie taskId={},cookeName={}", taskId, cookie.getName());
+                        logger.info("add rejected cookie taskId={},cookeName={}", taskId, cookie.getName());
                     }
                 }
             }

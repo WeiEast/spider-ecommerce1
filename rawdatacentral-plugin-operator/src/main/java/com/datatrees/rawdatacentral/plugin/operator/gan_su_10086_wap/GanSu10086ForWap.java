@@ -1,16 +1,17 @@
 package com.datatrees.rawdatacentral.plugin.operator.gan_su_10086_wap;
 
 import javax.script.Invocable;
-import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.common.util.PatternUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -35,15 +36,11 @@ public class GanSu10086ForWap implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String referer = "http://wap.gs.10086.cn/index.html";
-            String templateUrl = "http://wap.gs.10086.cn/jsbo_oauth/login?redirectURL=http://wap.gs.10086.cn/index.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_001").setFullUrl(templateUrl).setReferer(referer)
-                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0").invoke();
-            String timestamp = PatternUtils.group(response.getPageContent(), "jstimestamp\\s*=\\s*(\\d+)\\s*;", 1);
-            if (StringUtils.isBlank(timestamp)) {
-                logger.error("登录-->初始化失败,timestamp为空,param={},response={}", param, response);
-                return result.failure(ErrorCode.TASK_INIT_ERROR);
-            }
+            //获取cookie:JSESSIONID
+            String loginUrl = "http://wap.gs.10086.cn/jsbo_oauth/login?redirectURL=http://wap.gs.10086.cn/index.html";
+            String pageContent = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_001").setFullUrl(loginUrl).invoke().getPageContent();
+            //获取时间戳timestamp,这个很重要,没有的话后面刷新短信验证码不行
+            String timestamp = RegexpUtils.select(pageContent, "jstimestamp = (\\d+)", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "timestamp", timestamp);
             return result.success();
         } catch (Exception e) {
@@ -96,29 +93,39 @@ public class GanSu10086ForWap implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "http://wap.gs.10086.cn/jsbo_oauth/getNumMsg?mobile={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_002").setFullUrl(templateUrl, param.getMobile()).invoke();
+            //http://wap.gs.10086.cn/jsbo_oauth/getNumMsg?mobile={}可以省掉
 
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("hex_md5", param.getPassword()).toString();
 
+            //获取时间戳timestamp,这个很重要,不能用System.currentTimeMillis(),否则-1014
             String timestamp = TaskUtils.getTaskShare(param.getTaskId(), "timestamp");
-            String referer = "http://wap.gs.10086.cn/jsbo_oauth/login?redirectURL=http://wap.gs.10086.cn/index.html";
-            templateUrl = "http://wap.gs.10086.cn/jsbo_oauth/popDoorPopLogonNew";
-            String templateData = "mobile={}&password={}&loginType=1&icode=&fromFlag=doorPage&isHasV=false&redirectUrl=http%3A%2F%2Fwap" +
-                    ".gs.10086.cn%2Findex.html&dxYzm=&timestamp={}&clickType=1";
-            String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, timestamp);
-            response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
-
-            if (StringUtils.contains(response.getPageContent(), "rcode:'200'")) {
-                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
-                return result.success();
-            } else if (StringUtils.contains(response.getPageContent(), "rcode:'-1020'")) {
-                logger.error("登录-->短信验证码-->刷新失败,手机号码或密码错误,param={},pageContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
-            } else {
-                logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+            String loginUrl = "http://wap.gs.10086.cn/jsbo_oauth/popDoorPopLogonNew";
+            Map<String, Object> params = new HashMap<>();
+            params.put("mobile", param.getMobile());
+            params.put("password", encryptPassword);
+            params.put("loginType", 1);
+            params.put("icode", null);
+            params.put("fromFlag", "doorPage");
+            params.put("isHasV", false);
+            params.put("redirectUrl", "http://wap.gs.10086.cn/index.html");
+            params.put("dxYzm", null);
+            params.put("timestamp", timestamp);
+            params.put("clickType", 1);
+            response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_003").setUrl(loginUrl).setParams(params)
+                    .addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest").invoke();
+            JSONObject json = response.getPageContentForJSON();
+            Integer rcode = json.getInteger("rcode");
+            switch (rcode) {
+                case 200:
+                    logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                    return result.success();
+                case 1020:
+                    logger.warn("登录-->短信验证码-->刷新失败,手机号码或密码错误,param={},pageContent={}", param, response.getPageContent());
+                    return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
+                default:
+                    logger.error("登录-->短信验证码-->刷新失败,手机号码或密码错误,param={},pageContent={}", param, response);
+                    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
             logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
@@ -135,36 +142,35 @@ public class GanSu10086ForWap implements OperatorPluginService {
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("hex_md5", param.getPassword()).toString();
 
+            //获取时间戳timestamp,这个很重要,不能用System.currentTimeMillis(),否则-1014
             String timestamp = TaskUtils.getTaskShare(param.getTaskId(), "timestamp");
+            String loginUrl = "http://wap.gs.10086.cn/jsbo_oauth/popDoorPopLogonNew";
             String referer = "http://wap.gs.10086.cn/jsbo_oauth/login?redirectURL=http://wap.gs.10086.cn/index.html";
-            String templateUrl = "http://wap.gs.10086.cn/jsbo_oauth/popDoorPopLogonNew";
-            String templateData = "mobile={}&password={}&loginType=1&icode=&fromFlag=doorPage&isHasV=false&redirectUrl=http%3A%2F%2Fwap" +
-                    ".gs.10086.cn%2Findex.html&dxYzm={}&timestamp={}&clickType=2";
-            String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, param.getSmsCode(), timestamp);
+            Map<String, Object> params = new HashMap<>();
+            params.put("mobile", param.getMobile());
+            params.put("password", encryptPassword);
+            params.put("loginType", 1);
+            params.put("icode", null);
+            params.put("fromFlag", "doorPage");
+            params.put("isHasV", false);
+            params.put("redirectUrl", "http://wap.gs.10086.cn/index.html");
+            params.put("dxYzm", param.getSmsCode());
+            params.put("timestamp", timestamp);
+            params.put("clickType", 2);
 
-            response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_004").setFullUrl(templateUrl).setReferer(referer)
-                    .setRequestBody(data).addHeader("X-Requested-With", "XMLHttpRequest")
-                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0").invoke();
-            String pageContent = response.getPageContent();
-            if (StringUtils.isBlank(pageContent)) {
-                logger.error("登陆失败,param={},response={}", param, response);
+            response = TaskHttpClient.create(param, RequestType.POST, "").setUrl(loginUrl).setParams(params).setReferer(referer)
+                    .addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest").invoke();
+            JSONObject json = response.getPageContentForJSON();
+            Integer rcode = json.getInteger("rcode");
+            if (rcode != 1000) {
+                logger.error("登陆失败,param={},pageContent={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
-            String rcode = response.getPageContentForJSON().getString("rcode");
-            if (!StringUtils.equals(rcode, "1000")) {
-                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
 
-            referer = "http://wap.gs.10086.cn/jsbo_oauth/login?redirectURL=http://wap.gs.10086.cn/index.html";
-            templateUrl = "http://wap.gs.10086.cn/index.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_005").setFullUrl(templateUrl).setReferer(referer)
-                    .addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:55.0) Gecko/20100101 Firefox/55.0").invoke();
-            templateUrl = "http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=MessageInfo";
-            response = TaskHttpClient.create(param, RequestType.POST, "gan_su_10086_wap_006").setFullUrl(templateUrl).invoke();
-            templateUrl = "http://wap.gs.10086.cn/mycmcc_01.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_007").setFullUrl(templateUrl).invoke();
-            pageContent = response.getPageContent();
+            response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_006").addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest")
+                    .setFullUrl("http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=MessageInfo").setReferer("http://wap.gs.10086.cn/index.html")
+                    .invoke();
+            json = response.getPageContentForJSON();
 
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                 logger.info("登陆成功,param={}", param);
