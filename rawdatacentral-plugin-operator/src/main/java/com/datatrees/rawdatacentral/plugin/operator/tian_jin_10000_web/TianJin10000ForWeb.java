@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
@@ -205,10 +206,14 @@ public class TianJin10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://tj.189.cn/tj/service/bill/detailBillQuery.action";
             String templateUrl = "http://tj.189.cn/tj/service/bill/sendRandomSmscode.action?randomMode=2&funcType=detail&checkCode={}";
+            String picCode = param.getPicCode();
+            if (StringUtils.isBlank(picCode)) {
+                picCode = TaskUtils.getTaskShare(param.getTaskId(), "picCode");
+            }
             //String templateData = "<buffalo-call><method>SendVCodeByNbr</method><string>{}</string></buffalo-call>";
             //String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_008").setFullUrl(templateUrl, param.getPicCode())
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_008").setFullUrl(templateUrl, picCode).setReferer(referer)
+                    .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"requestFlag\":\"success\"")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
