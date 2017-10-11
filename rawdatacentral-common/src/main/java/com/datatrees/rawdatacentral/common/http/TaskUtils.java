@@ -174,29 +174,46 @@ public class TaskUtils {
 
     public static void saveCookie(long taskId, BasicCookieStore cookieStore) {
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
-        if (CollectionUtils.isNotEmpty(list)) {
-            String json = JSON.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect);
-            RedisUtils.setex(RedisKeyPrefixEnum.TASK_COOKIE, taskId, json);
+        String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals(type, RedisDataType.STRING)) {
+            if (CollectionUtils.isNotEmpty(list)) {
+                String json = JSON.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect);
+                RedisUtils.setex(RedisKeyPrefixEnum.TASK_COOKIE, taskId, json);
+            }
+        } else {
+            if (CollectionUtils.isNotEmpty(list)) {
+                for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : list) {
+                    String name = cookie.getName() + ":" + cookie.getDomain();
+                    RedisUtils.hset(redisKey, name, JSON.toJSONString(cookie, SerializerFeature.DisableCircularReferenceDetect),
+                            RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());
+
+                }
+            }
         }
     }
 
     public static BasicCookieStore getCookie(Long taskId) {
         CheckUtils.checkNotPositiveNumber(taskId, ErrorCode.EMPTY_TASK_ID);
         BasicCookieStore cookieStore = new BasicCookieStore();
-        List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies = null;
-        String cacheKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
-        String json = null;
-        if (RedisUtils.exists(cacheKey)) {
-            json = RedisUtils.get(cacheKey);
-        }
-        if (StringUtils.isNoneBlank(json)) {
-            cookies = JSON.parseObject(json, new TypeReference<List<Cookie>>() {});
-        }
-        if (null == cookies || cookies.isEmpty()) {
-            return cookieStore;
-        }
-        for (com.datatrees.rawdatacentral.domain.vo.Cookie myCookie : cookies) {
-            cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
+        String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals(type, RedisDataType.STRING)) {
+            if (RedisUtils.exists(redisKey)) {
+                String json = RedisUtils.get(redisKey);
+                List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies = JSON.parseObject(json, new TypeReference<List<Cookie>>() {});
+                for (com.datatrees.rawdatacentral.domain.vo.Cookie myCookie : cookies) {
+                    cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
+                }
+            }
+        } else {
+            Map<String, String> map = RedisUtils.hgetAll(redisKey);
+            if (CollectionUtils.isNotEmpty(map)) {
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    com.datatrees.rawdatacentral.domain.vo.Cookie myCookie = JSON.parseObject(entry.getValue(), new TypeReference<Cookie>() {});
+                    cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
+                }
+            }
         }
         return cookieStore;
     }
