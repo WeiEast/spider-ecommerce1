@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -233,6 +234,18 @@ public class RedisUtils extends RedisConfig {
     public static int toSeconds(long timeout, TimeUnit unit) {
         long l = unit.toSeconds(timeout);
         return l > 0 ? (int) l : 1;
+    }
+
+    public static long llen(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.llen(key);
+        }
+    }
+
+    public static List<String> lrange(String key, long start, long end) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.lrange(key, start, end);
+        }
     }
 
 }

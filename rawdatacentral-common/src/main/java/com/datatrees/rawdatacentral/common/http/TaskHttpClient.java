@@ -16,6 +16,7 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.domain.vo.NameValue;
 import com.datatrees.rawdatacentral.domain.vo.Request;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.treefinance.proxy.domain.Proxy;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -111,7 +113,7 @@ public class TaskHttpClient {
     }
 
     public TaskHttpClient addHeader(String name, String value) {
-        request.getHeader().put(name, value);
+        request.addHead(name, value);
         return this;
     }
 
@@ -131,18 +133,18 @@ public class TaskHttpClient {
         return this;
     }
 
-    public TaskHttpClient setParams(Map<String, String> params) {
+    public TaskHttpClient setParams(Map<String, Object> params) {
         request.setParams(params);
         return this;
     }
 
     public TaskHttpClient setReferer(String referer) {
-        request.getHeader().put(HttpHeadKey.REFERER, referer);
+        request.addHead(HttpHeadKey.REFERER, referer);
         return this;
     }
 
     public TaskHttpClient setReferer(String referer, Object... params) {
-        request.getHeader().put(HttpHeadKey.REFERER, TemplateUtils.format(referer, params));
+        request.addHead(HttpHeadKey.REFERER, TemplateUtils.format(referer, params));
         return this;
     }
 
@@ -230,28 +232,29 @@ public class TaskHttpClient {
 
     public Response invoke() {
         checkRequest(request);
+        Long taskId = request.getTaskId();
         request.setRequestId(RequestIdUtils.createId());
         CloseableHttpResponse httpResponse = null;
-        BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
-        request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
+        BasicCookieStore cookieStore = TaskUtils.getCookie(taskId);
+        request.setRequestCookies(TaskUtils.getCookieMap(cookieStore));
         if (!extralCookie.isEmpty()) {
-            for(BasicClientCookie cookie: extralCookie){
+            for (BasicClientCookie cookie : extralCookie) {
                 cookieStore.addCookie(cookie);
             }
         }
         HttpHost proxy = null;
         if (null == request.getProxyEnable()) {
-            request.setProxyEnable(ProxyUtils.getProxyEnable(request.getTaskId()));
+            request.setProxyEnable(ProxyUtils.getProxyEnable(taskId));
         }
         if (request.getProxyEnable()) {
-            Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
+            Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
             if (null != proxyConfig) {
                 proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
                 request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
             }
         }
         RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
-                .build();
+                .setCookieSpec(CookieSpecs.DEFAULT).build();
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
                 .setSSLSocketFactory(sslsf).build();
 
@@ -263,14 +266,12 @@ public class TaskHttpClient {
             } else {
                 CheckUtils.checkNotBlank(request.getUrl(), "url is blank");
                 List<NameValuePair> pairs = new ArrayList<NameValuePair>(request.getParams().size());
-                for (Map.Entry<String, String> entry : request.getParams().entrySet()) {
-                    String value = entry.getValue();
-                    if (value != null) {
-                        pairs.add(new BasicNameValuePair(entry.getKey(), value));
-                    }
+                for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
+                    pairs.add(new BasicNameValuePair(entry.getKey(), null == entry.getValue() ? "" : String.valueOf(entry.getValue())));
                 }
                 url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getCharset()));
             }
+            logger.info("pre request taskId={},url={}", taskId, url);
             HttpRequestBase client = null;
             if (RequestType.GET == request.getType()) {
                 client = new HttpGet(url);
@@ -281,30 +282,39 @@ public class TaskHttpClient {
                 }
                 client = httpPost;
             }
-            if (CollectionUtils.isNotEmpty(request.getHeader())) {
-                for (Map.Entry<String, String> entry : request.getHeader().entrySet()) {
-                    client.setHeader(entry.getKey(), entry.getValue());
-                }
-            }
             if (StringUtils.isNoneBlank(request.getContentType())) {
-                client.setHeader(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+                request.addHead(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+            }
+            if (CollectionUtils.isNotEmpty(request.getHeaders())) {
+                for (NameValue nameValue : request.getHeaders()) {
+                    client.setHeader(nameValue.getName(), String.valueOf(nameValue.getValue()));
+                }
             }
             request.setRequestTimestamp(System.currentTimeMillis());
             httpResponse = httpclient.execute(client);
+            String host = client.getURI().getHost();
+            TaskUtils.updateBasicCookieStore(taskId, host, cookieStore, httpResponse);
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
-            response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
+            response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
             if (RequestType.POST == request.getType() && 302 == statusCode) {
                 String location = httpResponse.getFirstHeader("Location").getValue();
                 client = new HttpGet(location);
                 response.setRedirectUrl(location);
                 httpResponse = httpclient.execute(client);
+                TaskUtils.updateBasicCookieStore(taskId, host, cookieStore, httpResponse);
                 response.setStatusCode(statusCode);
-                response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
+                response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
                 statusCode = httpResponse.getStatusLine().getStatusCode();
             }
             long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
             response.setTotalTime(totalTime);
+            Header[] headers = httpResponse.getAllHeaders();
+            if (null != headers) {
+                for (Header header : headers) {
+                    response.getHeaders().add(new NameValue(header.getName(), header.getValue()));
+                }
+            }
             if (statusCode != 200) {
                 client.abort();
                 logger.error("HttpClient status error, statusCode={}", statusCode);
@@ -323,8 +333,7 @@ public class TaskHttpClient {
                     }
                 }
             }
-            TaskUtils.saveCookie(request.getTaskId(), cookieStore);
-            //httpResponse.getAllHeaders()
+            TaskUtils.saveCookie(taskId, cookieStore);
             byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
             response.setResponse(data);
         } catch (SocketTimeoutException e) {
@@ -334,7 +343,7 @@ public class TaskHttpClient {
             }
             logger.error("http timout,retry={},maxRetry={}, request={}", request.getRetry(), request.getMaxRetry(), request, e);
             throw new RuntimeException("http timeout,request=" + request, e);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("http error request={}", request, e);
             throw new RuntimeException("http error request=" + request, e);
         } finally {

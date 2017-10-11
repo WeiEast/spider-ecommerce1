@@ -31,6 +31,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
 import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -50,7 +51,6 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.service.TaskService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
@@ -281,7 +281,7 @@ public class Collector {
 
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("processMessage error taskId={}", message.getTaskId(), e);
             if (null != taskMessage && null != taskMessage.getTask()) {
                 if (e instanceof LoginTimeOutException) {

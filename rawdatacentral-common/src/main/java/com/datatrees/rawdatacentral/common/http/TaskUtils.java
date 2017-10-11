@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.common.http;
 
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +11,17 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.common.constants.RedisDataType;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
+import com.datatrees.rawdatacentral.domain.vo.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
@@ -55,6 +61,49 @@ public class TaskUtils {
         return list;
     }
 
+    public static void updateBasicCookieStore(Long taskId, String host, BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
+        if (null == httpResponse || null == cookieStore) {
+            return;
+        }
+        Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
+        if (null != headers && headers.length > 0) {
+            List<org.apache.http.cookie.Cookie> cookies = cookieStore.getCookies();
+            for (Header header : headers) {
+                String headerValue = header.getValue();
+                List<HttpCookie> list = HttpCookie.parse(headerValue);
+                HttpCookie httpCookie = list.get(0);
+                String domain = httpCookie.getDomain();
+                //目前只有非.开头的才会被拒绝(甘肃移动登录时)
+                if (StringUtils.isBlank(domain) || domain.startsWith(".") || StringUtils.equals(domain, host)) {
+                    continue;
+                }
+                org.apache.http.cookie.Cookie find = null;
+                if (CollectionUtils.isNotEmpty(cookies)) {
+                    for (org.apache.http.cookie.Cookie b : cookies) {
+                        if (StringUtils.equals(b.getName(), httpCookie.getName())) {
+                            find = b;
+                            break;
+                        }
+                    }
+                    if (null == find) {
+                        //改变domain
+                        domain = "." + domain;
+                        //被拒绝了,.ResponseProcessCookies][processCookies][123] Cookie rejected
+                        BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
+                        cookie.setDomain(domain);
+                        cookie.setPath(httpCookie.getPath());
+                        cookie.setVersion(httpCookie.getVersion());
+                        cookie.setSecure(httpCookie.getSecure());
+                        cookie.setAttribute("domain", domain);
+                        cookie.setAttribute("path", httpCookie.getPath());
+                        cookieStore.addCookie(cookie);
+                        logger.info("add rejected cookie taskId={},cookeName={}", taskId, cookie.getName());
+                    }
+                }
+            }
+        }
+    }
+
     public static BasicClientCookie getBasicClientCookie(Cookie myCookie) {
         BasicClientCookie cookie = new BasicClientCookie(myCookie.getName(), myCookie.getValue());
         cookie.setDomain(myCookie.getDomain());
@@ -82,22 +131,21 @@ public class TaskUtils {
         return sb.substring(1);
     }
 
-    public static String getReceiveCookieString(String sendCookies, BasicCookieStore cookieStore) {
-        if (StringUtils.isBlank(sendCookies)) {
-            return getCookieString(cookieStore);
+    public static Map<String, String> getReceiveCookieMap(Response response, BasicCookieStore cookieStore) {
+        Map<String, String> map = getCookieMap(cookieStore);
+        if (CollectionUtils.isEmpty(map)) {
+            return map;
         }
-        StringBuilder sb = new StringBuilder();
-        if (null != cookieStore && null != cookieStore.getCookies()) {
-            for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
-                if (!sendCookies.contains(cookie.getName() + "=")) {
-                    sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
+
+        Map<String, String> sendCookies = response.getRequest().getRequestCookies();
+        if (CollectionUtils.isNotEmpty(sendCookies)) {
+            for (Map.Entry<String, String> entry : sendCookies.entrySet()) {
+                if (map.containsKey(entry.getKey())) {
+                    map.remove(entry.getKey());
                 }
             }
         }
-        if (StringUtils.isBlank(sb)) {
-            return "";
-        }
-        return sb.substring(1);
+        return map;
     }
 
     public static String getCookieString(BasicCookieStore cookieStore) {
@@ -113,33 +161,59 @@ public class TaskUtils {
         return sb.substring(1);
     }
 
-    public static void saveCookie(Long taskId, BasicCookieStore cookieStore) {
-        CheckUtils.checkNotNull(taskId, "taskId is null");
-        CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
+    public static Map<String, String> getCookieMap(BasicCookieStore cookieStore) {
+        Map<String, String> map = null;
+        if (null != cookieStore && null != cookieStore.getCookies()) {
+            map = new HashMap<>();
+            for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
+                map.put(cookie.getName(), cookie.getValue());
+            }
+        }
+        return map;
+    }
+
+    public static void saveCookie(long taskId, BasicCookieStore cookieStore) {
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
-        if (null != list && !list.isEmpty()) {
-            String json = JSON.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect);
-            RedisUtils.setex(RedisKeyPrefixEnum.TASK_COOKIE, taskId, json);
+        String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals(type, RedisDataType.STRING)) {
+            if (CollectionUtils.isNotEmpty(list)) {
+                String json = JSON.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect);
+                RedisUtils.setex(RedisKeyPrefixEnum.TASK_COOKIE, taskId, json);
+            }
+        } else {
+            if (CollectionUtils.isNotEmpty(list)) {
+                for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : list) {
+                    String name = "[" + cookie.getName() + "][" + cookie.getDomain() + "]";
+                    RedisUtils.hset(redisKey, name, JSON.toJSONString(cookie, SerializerFeature.DisableCircularReferenceDetect),
+                            RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());
+
+                }
+            }
         }
     }
 
     public static BasicCookieStore getCookie(Long taskId) {
         CheckUtils.checkNotPositiveNumber(taskId, ErrorCode.EMPTY_TASK_ID);
         BasicCookieStore cookieStore = new BasicCookieStore();
-        List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies = null;
-        String cacheKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
-        String json = null;
-        if (RedisUtils.exists(cacheKey)) {
-            json = RedisUtils.get(cacheKey);
-        }
-        if (StringUtils.isNoneBlank(json)) {
-            cookies = JSON.parseObject(json, new TypeReference<List<Cookie>>() {});
-        }
-        if (null == cookies || cookies.isEmpty()) {
-            return cookieStore;
-        }
-        for (com.datatrees.rawdatacentral.domain.vo.Cookie myCookie : cookies) {
-            cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
+        String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
+        String type = RedisUtils.type(redisKey);
+        if (StringUtils.equals(type, RedisDataType.STRING)) {
+            if (RedisUtils.exists(redisKey)) {
+                String json = RedisUtils.get(redisKey);
+                List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies = JSON.parseObject(json, new TypeReference<List<Cookie>>() {});
+                for (com.datatrees.rawdatacentral.domain.vo.Cookie myCookie : cookies) {
+                    cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
+                }
+            }
+        } else {
+            Map<String, String> map = RedisUtils.hgetAll(redisKey);
+            if (CollectionUtils.isNotEmpty(map)) {
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    com.datatrees.rawdatacentral.domain.vo.Cookie myCookie = JSON.parseObject(entry.getValue(), new TypeReference<Cookie>() {});
+                    cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
+                }
+            }
         }
         return cookieStore;
     }
@@ -267,68 +341,6 @@ public class TaskUtils {
             map = RedisUtils.hgetAll(redisKey);
         }
         return map;
-    }
-
-    /**
-     * 添加任务结果
-     * @param taskId
-     * @param name
-     * @param value
-     */
-    public static void addTaskResult(Long taskId, String name, Object value) {
-        String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            RedisUtils.lockFailThrowException(redisKey, 5);
-            Map<String, Object> map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, Object>>() {});
-            if (null == map) {
-                map = new HashMap<>();
-            }
-            map.put(name, value);
-            RedisUtils.setex(RedisKeyPrefixEnum.TASK_RESULT, taskId, JSON.toJSONString(map));
-            RedisUtils.unLock(redisKey);
-        } else {
-            if (value instanceof String) {
-                RedisUtils.hset(redisKey, name, value.toString());
-            } else {
-                RedisUtils.hset(redisKey, name, JSON.toJSONString(value));
-            }
-            RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
-        }
-        logger.info("addTaskResult success taskId={},name={}", taskId, name);
-    }
-
-    /**
-     * 获取任务结果
-     * @param taskId
-     */
-    public static Map<String, Object> getTaskResult(Long taskId) {
-        Map<String, Object> json = new HashMap<>();
-        Map<String, String> map = null;
-        String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.NONE, type)) {
-            logger.warn("redis key not found redisKey={}", redisKey);
-            return json;
-        }
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
-            if (null == map) {
-                map = new HashMap<>();
-            }
-        } else {
-            map = RedisUtils.hgetAll(redisKey);
-        }
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            if (StringUtils.startsWith(entry.getValue(), "[")) {
-                json.put(entry.getKey(), JSON.parseArray(entry.getValue()));
-            } else if (StringUtils.startsWith(entry.getValue(), "{")) {
-                json.put(entry.getKey(), JSON.parseObject(entry.getValue()));
-            } else {
-                json.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return json;
     }
 
     /**

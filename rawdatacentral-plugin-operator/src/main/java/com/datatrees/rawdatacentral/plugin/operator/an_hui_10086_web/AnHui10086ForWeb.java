@@ -47,9 +47,11 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String referer = "http://service.ah.10086.cn/index.html?t=";
+            String referer = "https://ah.ac.10086.cn/login";
             String templateUrl = "https://ah.ac.10086.cn/login";
+            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl(templateUrl).invoke();
             response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl(templateUrl).setReferer(referer).invoke();
+
             String pageContent = response.getPageContent();
 
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\);", 1);
@@ -165,8 +167,9 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            String referer = "https://ah.ac.10086.cn/login";
             String templateUrl = "https://ah.ac.10086.cn/validImageCode?r_0.8558314577439337&imageCode={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_004")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_004").setReferer(referer)
                     .setFullUrl(templateUrl, param.getPicCode()).invoke();
             if (StringUtils.contains(response.getPageContent(), "1")) {
                 logger.info("登录-->图片验证码-->校验成功,param={}", param);
