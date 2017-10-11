@@ -166,6 +166,8 @@ public class GanSu10086ForWap implements OperatorPluginService {
                 logger.error("登陆失败,param={},pageContent={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
+            //获取重要cookie:SESSION否则个人信息要访问2次才能成功
+            TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_006").setFullUrl("http://wap.gs.10086.cn/index.html").invoke();
 
             response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_006").addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest")
                     .setFullUrl("http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=MessageInfo").setReferer("http://wap.gs.10086.cn/index.html")
