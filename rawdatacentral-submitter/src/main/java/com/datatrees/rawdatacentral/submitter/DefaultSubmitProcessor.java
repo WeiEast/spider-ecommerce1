@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
@@ -20,6 +20,7 @@ import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
 import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.FileStoreService;
 import org.apache.commons.collections.MapUtils;
@@ -122,24 +123,22 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
         submitNormalizerFactory.normalize(submitMessage);
         for (Entry<String, Object> entry : extractResultMap.entrySet()) {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
-            String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(),extractMessage.getTaskLogId(), entry.getKey());
-            TaskUtils.addTaskResult(extractMessage.getTaskId(), entry.getKey(), entry.getValue());
-            boolean flag = false;
+            String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), extractMessage.getTaskLogId(), entry.getKey());
+            String backKey = "monitor.back." + redisKey;
+            RedisUtils.hset(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(extractMessage.getTaskId()), entry.getKey(), backKey,
+                    RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();
                 for (Object obj : (Collection) entry.getValue()) {
                     jsonStringList.add(GsonUtils.toJson(obj));
                 }
-                flag = redisService.saveToList(redisKey, jsonStringList, 1, TimeUnit.HOURS);
+                redisService.saveToList(redisKey, jsonStringList, 10, TimeUnit.MINUTES);
+                redisService.saveToList(backKey, jsonStringList, 10, TimeUnit.MINUTES);
             } else {
-                flag = redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 1, TimeUnit.HOURS);
+                redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 10, TimeUnit.MINUTES);
+                redisService.saveString(backKey, GsonUtils.toJson(entry.getValue()), 10, TimeUnit.MINUTES);
             }
-            if (!flag) {
-                logger.error("save to redis error! key: " + entry.getKey() + " value: " + entry.getValue());
-                return false;
-            } else {
-                submitMessage.getSubmitkeyResult().put(entry.getKey() + "Key", redisKey);
-            }
+            submitMessage.getSubmitkeyResult().put(entry.getKey() + "Key", redisKey);
         }
         return true;
     }

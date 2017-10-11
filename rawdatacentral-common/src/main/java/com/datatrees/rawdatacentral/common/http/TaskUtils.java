@@ -351,24 +351,12 @@ public class TaskUtils {
      */
     public static void addTaskResult(Long taskId, String name, Object value) {
         String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            RedisUtils.lockFailThrowException(redisKey, 5);
-            Map<String, Object> map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, Object>>() {});
-            if (null == map) {
-                map = new HashMap<>();
-            }
-            map.put(name, value);
-            RedisUtils.setex(RedisKeyPrefixEnum.TASK_RESULT, taskId, JSON.toJSONString(map));
-            RedisUtils.unLock(redisKey);
+        if (value instanceof String) {
+            RedisUtils.hset(redisKey, name, value.toString());
         } else {
-            if (value instanceof String) {
-                RedisUtils.hset(redisKey, name, value.toString());
-            } else {
-                RedisUtils.hset(redisKey, name, JSON.toJSONString(value));
-            }
-            RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            RedisUtils.hset(redisKey, name, JSON.toJSONString(value));
         }
+        RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
         logger.info("addTaskResult success taskId={},name={}", taskId, name);
     }
 
@@ -385,14 +373,7 @@ public class TaskUtils {
             logger.warn("redis key not found redisKey={}", redisKey);
             return json;
         }
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
-            if (null == map) {
-                map = new HashMap<>();
-            }
-        } else {
-            map = RedisUtils.hgetAll(redisKey);
-        }
+        map = RedisUtils.hgetAll(redisKey);
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (StringUtils.startsWith(entry.getValue(), "[")) {
                 json.put(entry.getKey(), JSON.parseArray(entry.getValue()));
