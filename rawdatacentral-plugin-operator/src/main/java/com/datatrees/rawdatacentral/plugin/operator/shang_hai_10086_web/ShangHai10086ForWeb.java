@@ -1,8 +1,7 @@
 package com.datatrees.rawdatacentral.plugin.operator.shang_hai_10086_web;
 
 import javax.script.Invocable;
-import java.io.InputStream;
-import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
@@ -36,13 +35,11 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://sh.ac.10086.cn/login").invoke();
             /**
              * 没有这条请求，会获取不了短信验证码
              */
-            String templateUrl = "https://sh.ac.10086.cn/login";
-            response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_001").setFullUrl(templateUrl).invoke();
-            templateUrl = "https://sh.ac.10086.cn/prx/000/http/localhost/login";
-            response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://sh.ac.10086.cn/prx/000/http/localhost/login").invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={},response={}", param, response, e);
@@ -121,45 +118,38 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
             String encodeMobile = invocable.invokeFunction("enString", param.getMobile().toString()).toString();
             String encodePassword = invocable.invokeFunction("enString", param.getPassword().toString()).toString();
             String encodeSmscode = invocable.invokeFunction("enString", param.getSmsCode().toString()).toString();
-            String templateUrl = "https://sh.ac.10086.cn/loginjt?act=2";
-            String templateData = "telno={}&password={}&authLevel=5&dtm={}&ctype=1&decode=1&source=wsyyt";
-            String data = TemplateUtils.format(templateData,encodeMobile, encodePassword, encodeSmscode);
-            response = TaskHttpClient.create(param, RequestType.POST, "shang_hai_10086_web_003")
-                    .setFullUrl(templateUrl).setRequestBody(data).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+            String referer = "https://sh.ac.10086.cn/login";
+            String loginUrl = "https://sh.ac.10086.cn/loginjt?act=2";
+            String data = TemplateUtils
+                    .format("telno={}&password={}&authLevel=5&dtm={}&ctype=1&decode=1&source=wsyyt", encodeMobile, encodePassword, encodeSmscode);
+            response = TaskHttpClient.create(param, RequestType.POST, "shang_hai_10086_web_003").setFullUrl(loginUrl).setRequestBody(data)
+                    .setReferer(referer).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             JSONObject json = response.getPageContentForJSON();
             String message = json.getString("message");
             String uid = json.getString("uid");
             String transactionID = json.getString("transactionID");
             String artifact = json.getString("artifact");
             if (StringUtils.isNotBlank(uid) && (StringUtils.contains(message, "成功") || StringUtils.isBlank(message))) {
-                String referer = "https://sh.ac.10086.cn/login";
-                templateUrl = "https://login.10086.cn/AddUID.action?channelID=00210&Artifact={}&TransactionID={}&backUrl=" +
-                        URLEncoder.encode("http://www.sh.10086.cn/sh/wsyyt/ac/jtforward.jsp?source=wysso", "UTF-8") + "&uid={}&tourl=" +
-                        URLEncoder.encode("http://www.sh.10086.cn/sh/service/", "UTF-8");
-                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_004")
-                        .setFullUrl(templateUrl, artifact, transactionID, uid).setReferer(referer).invoke();
-
-                templateUrl = PatternUtils.group(response.getPageContent(), "location\\.replace\\(\"([^\"]+)\"\\)", 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_005").setFullUrl(templateUrl)
-                        .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8").invoke();
-
-                templateUrl = "http://www.sh.10086.cn/sh/wsyyt/action?act=my.getMusType";
-                response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10086_web_006").setFullUrl(templateUrl)
-                        .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
-                if (StringUtils.contains(response.getPageContent(), param.getMobile().toString()) &&
-                        StringUtils.contains(response.getPageContent(), "\"code\":0")) {
-                    logger.info("登陆成功,param={}", param);
-                    return result.success();
-                } else {
-                    logger.error("登陆失败,param={},response={}", param, response);
-                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-                }
-                //logger.info("登陆成功,param={}", param);
-                //return result.success();
-            } else {
-                logger.error("登陆失败,param={},errorMsg={}", param, message);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                referer = "https://sh.ac.10086.cn/login";
+                Map<String, Object> params = new HashMap<>();
+                params.put("Artifact", artifact);
+                params.put("TransactionID", transactionID);
+                params.put("channelID", "00210");
+                String backUrl = TemplateUtils.format("http://www.sh.10086.cn/sh/wsyyt/ac/jtforward.jsp?source=wysso&uid={}&tourl=http%3A%2F%2Fwww" +
+                        ".sh.10086.cn%2Fsh%2Fservice%2F", uid);
+                params.put("backUrl", TemplateUtils.format(backUrl));
+                response = TaskHttpClient.create(param, RequestType.GET, "").setUrl("https://login.10086.cn/AddUID.action").setParams(params)
+                        .setReferer(referer).invoke();
+                referer = "http://www.sh.10086.cn/sh/service/";
+                TaskHttpClient.create(param, RequestType.GET, "").setUrl("http://www.sh.10086.cn/sh/service/").setReferer(referer).invoke();
+                TaskHttpClient.create(param, RequestType.POST, "").setUrl("http://www.sh.10086.cn/sh/wsyyt/action?act=index.get_user")
+                        .setReferer(referer).invoke();
+                TaskHttpClient.create(param, RequestType.POST, "").setUrl("http://www.sh.10086.cn/sh/wsyyt/action?act=my.getaccountinfo")
+                        .setReferer(referer).invoke();
+                logger.info("登录成功,param={}", param);
+                return result.success();
             }
+            return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
@@ -193,7 +183,6 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
         try {
             String referer = "http://www.sh.10086.cn/sh/wsyyt/ac/loginbox.jsp?al=1&telno={}";
             String templateUrl = "https://sh.ac.10086.cn/loginex?iscb=1&act=2&telno={}&password={}&authLevel=1&validcode=&t={}&decode=1";
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("shang_hai_10086_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encodeMobile = invocable.invokeFunction("enString", param.getMobile().toString()).toString();
             String encodeSmscode = invocable.invokeFunction("enString", param.getSmsCode().toString()).toString();
