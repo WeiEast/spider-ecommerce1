@@ -10,6 +10,7 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -116,14 +117,15 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("shang_hai_10086_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encodeMobile = invocable.invokeFunction("enString", param.getMobile().toString()).toString();
             String encodePassword = invocable.invokeFunction("enString", param.getPassword().toString()).toString();
             String encodeSmscode = invocable.invokeFunction("enString", param.getSmsCode().toString()).toString();
-            String templateUrl = "https://sh.ac.10086.cn/loginjt?act=2&telno={}&password={}&authLevel=5&dtm={}&ctype=1&decode=1&source=wsyyt";
+            String templateUrl = "https://sh.ac.10086.cn/loginjt?act=2";
+            String templateData = "telno={}&password={}&authLevel=5&dtm={}&ctype=1&decode=1&source=wsyyt";
+            String data = TemplateUtils.format(templateData,encodeMobile, encodePassword, encodeSmscode);
             response = TaskHttpClient.create(param, RequestType.POST, "shang_hai_10086_web_003")
-                    .setFullUrl(templateUrl, encodeMobile, encodePassword, encodeSmscode).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+                    .setFullUrl(templateUrl).setRequestBody(data).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             JSONObject json = response.getPageContentForJSON();
             String message = json.getString("message");
             String uid = json.getString("uid");
