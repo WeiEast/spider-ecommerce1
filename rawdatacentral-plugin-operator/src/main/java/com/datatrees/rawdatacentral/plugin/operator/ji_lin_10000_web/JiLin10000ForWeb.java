@@ -94,6 +94,8 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return refeshPicCodeForLogin(param);
+            case FormType.VALIDATE_USER_INFO:
+                return refeshPicCodeForUserInfo(param);
             case FormType.VALIDATE_BILL_DETAIL:
                 return refeshPicCodeForBillDetail(param);
             default:
@@ -101,11 +103,13 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         }
     }
 
+
+
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
         switch (param.getFormType()) {
-            case FormType.VALIDATE_BILL_DETAIL:
-                return validatePicCodeForBillDetail(param);
+            case FormType.VALIDATE_USER_INFO:
+                return validatePicCodeForUserInfo(param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -246,7 +250,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         }
     }
 
-    private HttpResult<String> refeshPicCodeForBillDetail(OperatorParam param) {
+    private HttpResult<String> refeshPicCodeForUserInfo(OperatorParam param) {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
@@ -275,7 +279,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> validatePicCodeForBillDetail(OperatorParam param) {
+    private HttpResult<Map<String, Object>> validatePicCodeForUserInfo(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
@@ -297,8 +301,8 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String,Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
+    private HttpResult<String> refeshPicCodeForBillDetail(OperatorParam param) {
+        HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try{
             String templateUrl = "http://jl.189.cn/service/bill/toDetailBillFra.action?cityCode=jl&fastcode=00710602";
@@ -314,16 +318,30 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             referer = "http://jl.189.cn/service/bill/toDetailBillFra.action?cityCode=jl&fastcode=00710602";
             response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_0014").setFullUrl(templateUrl).setReferer(referer).invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "secondPicCode", response.getPageContentForBase64());
+
             logger.info("详单-->第二次图片验证码-->刷新成功,param={}", param);
             return result.success();
         }catch (Exception e){
             logger.error("详单-->第二次图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
+
+    }
+
+    private HttpResult<Map<String,Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try{
+            logger.info("详单-->短信验证码-->刷新成功,param={}", param);
+            return result.success();
+        }catch (Exception e){
+            logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
     }
 
     private HttpResult<Map<String,Object>> submitForBillDetail(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = validatePicCodeForBillDetail(param);
+        HttpResult<Map<String, Object>> result = validatePicCodeForUserInfo(param);
         if (!result.getStatus()) {
             return result;
         }
