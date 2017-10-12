@@ -6,9 +6,6 @@ import java.util.Date;
 import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -182,7 +179,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
             String referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
             response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_005").setFullUrl(templateUrl).setReferer(referer).setRequestBody(templateData,ContentType.TEXT_PLAIN).invoke();
             String pageContent = response.getPageContent();
-            if (StringUtils.containsNone(pageContent, "flag:\"0\"")) {
+            if (!StringUtils.contains(pageContent, "flag:\"0\"")) {
                 logger.error("jx189 login request is error! errormessage: get user type failed");
                 return result.failure(ErrorCode.NOT_EMPTY_ERROR_CODE);
             }
@@ -196,11 +193,11 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
 
             //验证图片验证码
             templateUrl = "http://jx.189.cn/dwr/call/plaincall/Service.excute.dwr";
-            templateData = "callCount=1" + "&page=/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=" + "&httpSessionId=" + "&scriptSessionId=" + scriptSessionId + "&c0-scriptName=Service" + "&c0-methodName=excute" + "&c0-id=0" + "&c0-param0=string:WB_TEST_VALIDCODE" + "&c0-param1=boolean:false" + "&c0-e1=string:" + param.getPicCode() + "&c0-param2=Object_Object:{valid_code_input:reference:c0-e1}" + "&batchId=3";
+            templateData = "callCount=1" + "&page=/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=" + "&httpSessionId=" + "&scriptSessionId=" + scriptSessionId + "&c0-scriptName=Service" + "&c0-methodName=excute" + "&c0-id=0" + "&c0-param0=string:WB_TEST_VALIDCODE" + "&c0-param1=boolean:false" + "&c0-e1=string:" + URLEncoder.encode(param.getPicCode(),"UTF-8") + "&c0-param2=Object_Object:{valid_code_input:reference:c0-e1}" + "&batchId=3";
             referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
             response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_006").setFullUrl(templateUrl).setReferer(referer).setRequestBody(templateData,ContentType.TEXT_PLAIN).invoke();
             pageContent = response.getPageContent();
-            if (StringUtils.containsNone(pageContent, "\"OK\"")) {
+            if (!StringUtils.contains(pageContent, "\"OK\"")) {
                 logger.error("jx189 login request is error! errormessage: 图形验证码错误");
                 return result.failure(ErrorCode.NOT_EMPTY_ERROR_CODE);
             }
@@ -214,7 +211,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
             referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
             response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_007").setFullUrl(templateUrl).setReferer(referer).setRequestBody(templateData,ContentType.TEXT_PLAIN).invoke();
             pageContent = response.getPageContent();
-            if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "IS_SUCCESS':\"1")) {
+            if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "IS_SUCCESS':\"1\"")) {
                 logger.info("mobile login success!,set cookie string: " + TaskUtils.getCookieString(param.getTaskId()));
                 String cookieStr = TaskUtils.getCookieString(param.getTaskId());
 
@@ -245,7 +242,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                     logger.error("jx189 login check password failed");
                     return result.failure(ErrorCode.NOT_EMPTY_ERROR_CODE);
                 }
-                TaskUtils.addTaskShare(param.getTaskId(), PluginConstants.COOKIE, cookieStr);
+                TaskUtils.addTaskShare(param.getTaskId(), "cookie", cookieStr);
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             } else {
