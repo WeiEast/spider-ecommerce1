@@ -1,15 +1,17 @@
 package com.datatrees.rawdatacentral.plugin.operator.bei_jing_10086_web;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
+import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -30,10 +32,27 @@ public class BeiJing10086ForWeb implements OperatorPluginService {
 
     private static final Logger logger = LoggerFactory.getLogger(BeiJing10086ForWeb.class);
 
+    /**
+     * 错误信息
+     * @param errorCode
+     * @return
+     */
+    private String getErrorMsg(String errorCode) {
+        String json = "{\"PP_2_0008\":\"温馨提示：您的网站密码安全级别过低，请您修改密码后再重新登录！\",\"PP_9_0101\":\"温馨提示：您输入的手机号码格式不正确，请重新输入!\"," +
+                "\"PP_1_0807\":\"温馨提示：您已经登录本网站，请稍后再试！\",\"PP_9_0110\":\"对不起，您的账号不能在本站登录！\",\"PP_1_0806\":\"由于您一直未注册，为了您的个人信息安全请注册后再使用。\",\"PP_1_0805\":\"您一直使用随机密码方式登录但从未注册，请您注册后使用。\",\"PP_1_0803\":\"温馨提示：您输入的用户名或密码不正确！\",\"PP_1_0802\":\"温馨提示：您尚未注册，请注册后使用。\",\"PP_1_2020\":\"温馨提示：请输入正确的短信随机密码!\",\"PP_1_2021\":\"温馨提示：用户名不能为空!\",\"PP_1_0822\":\"您的账户已经进入锁定状态，如需解锁，请点击“忘记密码？”功能进行密码重置\",\"PP_1_0821\":\"累计密码错误次数已达到上限，请用找回密码功能重置密码!\",\"PP_1_0820\":\"对不起，密码输入错误三次，账号锁定!\",\"CMSSO_1_0500\":\"系统忙，请稍候再试！\",\"PP_1_2014\":\"随机密码已经发送，请注意查收！\",\"PP_1_2015\":\"温馨提示：验证码不能为空!\",\"PP_1_2016\":\"您输入的验证码不正确!\",\"PP_1_1002\":\"手机号码非北京号码,请切换至号码归属地。\",\"PP_1_2017\":\"您输入的验证码不正确!\",\"PP_1_2018\":\"温馨提示：请输入正确的短信随机密码!\",\"PP_1_2019\":\"温馨提示：请输入正确的短信随机密码!\",\"PP_0_1017\":\"对不起，您的手机号状态为停机！\",\"PP_0_1018\":\"对不起，您的手机号状态为注销！\"}\n";
+        Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
+        return map.get(errorCode);
+
+    }
+
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
+            //获取cookie:Webtrends
+            TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://bj.ac.10086.cn/login").invoke();
+            //获取cookie:JSESSIONID
+            TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://bj.ac.10086.cn/ac/cmsso/iloginnew.jsp").invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={}", param, e);
@@ -43,17 +62,32 @@ public class BeiJing10086ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<String> refeshPicCode(OperatorParam param) {
-        return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshPicCodeForLogin(param);
+            default:
+                return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
+        HttpResult<String> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "https://bj.ac.10086.cn/ac/ValidateNum?smartID={}";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+                    .setFullUrl(templateUrl, Math.ceil(Math.random() * 10000000000L)).invoke();
+            logger.info("登录-->图片验证码-->刷新成功,param={}", param);
+            return result.success(response.getPageContentForBase64());
+        } catch (Exception e) {
+            logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
     }
 
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
-        switch (param.getFormType()) {
-            case FormType.LOGIN:
-                return refeshSmsCodeForLogin(param);
-            default:
-                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
-        }
+        return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     @Override
@@ -68,7 +102,35 @@ public class BeiJing10086ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
-        return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return validatePicCodeForLogin(param);
+            default:
+                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> validatePicCodeForLogin(OperatorParam param) {
+        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String refer = "https://bj.ac.10086.cn/ac/cmsso/iloginnew.jsp";
+            String templateUrl = "https://bj.ac.10086.cn/ac/ValidateRnum?loginMethod=1&loginMode=1&phone={}&rnum={}&service=www.bj.10086.cn&user={}";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "zhe_jiang_10086_web_003")
+                    .setFullUrl(templateUrl, param.getMobile(), param.getPicCode(), param.getMobile()).setReferer(refer).invoke();
+            String pageContent = response.getPageContent();
+            if (pageContent.contains("对不起，您输入的验证码不正确")) {
+                logger.warn("登录-->图片验证码-->校验失败,param={},pageContent={}", param, pageContent);
+                return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+            } else {
+                logger.info("登录-->图片验证码-->校验成功,param={},pageContent={}", param, pageContent);
+                return result.success();
+            }
+        } catch (Exception e) {
+            logger.error("登录-->图片验证码-->校验失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
+        }
     }
 
     @Override
@@ -76,203 +138,104 @@ public class BeiJing10086ForWeb implements OperatorPluginService {
         return null;
     }
 
-    private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
+    public HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
+        CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
+        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+        HttpResult<Map<String, Object>> result = validatePicCodeForLogin(param);
+        if (!result.getStatus()) {
+            return result;
+        }
         Response response = null;
         try {
             String referer = "https://bj.ac.10086.cn/ac/CmSsoLogin";
-            String templateUrl = "https://bj.ac.10086.cn/ac/tempPwdSend?mobile={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10086_web_001").setFullUrl(templateUrl, param.getMobile())
-                    .setReferer(referer).invoke();
+            String templateUrl = "https://bj.ac.10086.cn/ac/CmSsoLogin?backurl=http%3A%2F%2Fwww" +
+                    ".bj.10086.cn%2Fmy&box=&ckCookie=on&continue=http%3A%2F%2Fwww" +
+                    ".bj.10086.cn%2Fmy&loginMethod=1&loginMode=1&loginName={}&password={}&phone={}&rnum={}&service=www" +
+                    ".bj.10086.cn&smsNum=%C3%8B%C3%A6%C2%BB%C3%BA%C3%82%C3%AB&ssoLogin=yes&style=BIZ_LOGINBOX&target=_parent&user={}";
+            String loginUrl = TemplateUtils
+                    .format(templateUrl, param.getMobile(), param.getPassword(), param.getMobile(), param.getPicCode(), param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10086_web_002").setFullUrl(loginUrl).setReferer(referer).invoke();
+            String redirectUrl = response.getRedirectUrl();
             String pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, "短信发送成功")) {
-                logger.info("详单-->短信验证码-->刷新成功,param={}", param);
+            if (StringUtils.isBlank(redirectUrl)) {
+                String errorCode = RegexpUtils.select(pageContent, "var \\$fcode = '(.{1,20})';", 1);
+                String errorMsg = getErrorMsg(errorCode);
+                if (!StringUtils.endsWith("PP_1_0807", errorCode)) {
+                    logger.warn("登录失败,param={},errorCode={},errorMsg={}", param, errorCode, errorMsg);
+                    return result.failure(ErrorCode.LOGIN_FAIL, errorMsg);
+                }
+                //已经登录
+                referer = "https://bj.ac.10086.cn/ac/CmSsoLogin";
+                String loginAgainUrl = "https://bj.ac.10086.cn/ac/loginAgain?backurl=http%3A%2F%2Fwww" +
+                        ".bj.10086.cn%2Fmy&box=&continue=http%3A%2F%2Fwww" +
+                        ".bj.10086.cn%2Fmy&hostId=4&loginMethod=1&loginMode=1&service=www.bj.10086.cn&style=BIZ_LOGINBOX&submit=&target=_self";
+                TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(loginAgainUrl).setReferer(referer).invoke();
+
+            }
+            String indexUrl = "http://www.bj.10086.cn/my";
+            TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(indexUrl).setReferer(referer).invoke();
+            //详单校验
+            templateUrl = "https://service.bj.10086.cn/poffice/package/xdcx/userYzmCheck.action?PACKAGECODE=XD&yzCheckCode={}";
+            //不小心改了密码
+            String validateCallDetailUrl = TemplateUtils.format(templateUrl, param.getMobile() == 15001285176l ? "716253" : param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(validateCallDetailUrl).setReferer(referer).invoke();
+            pageContent = response.getPageContent();
+            if (StringUtils.contains(pageContent, "RelayState")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
+            }
+            if (StringUtils.contains(pageContent, "RelayState")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
+            }
+
+            JSONObject json = JSON.parseObject(pageContent);
+            String message = json.getString("message");
+            if (StringUtils.equals("Y", message)) {
+                logger.info("登录成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("详单-->短信验证码-->刷新失败,一天最多只能发送8条短信随机码,param={},pateContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
-            }
-        } catch (Exception e) {
-            logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
-            return result.failure(ErrorCode.REFESH_SMS_ERROR);
-        }
-    }
-
-    public HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
-        CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
-        CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
-        Response response = null;
-        try {
-            String referer = "https://bj.ac.10086.cn/ac/cmsso/iloginnew.jsp";
-            String templateUrl = "https://bj.ac.10086.cn/ac/CmSsoLogin";
-            String templateData = "user={}&phone={}&backurl=http%3A%2F%2Fwww.bj.10086.cn%2Fmy&continue=http%3A%2F%2Fwww" +
-                    ".bj.10086.cn%2Fmy&style=BIZ_LOGINBOX&service=www" +
-                    ".bj.10086.cn&box=&target=_parent&ssoLogin=yes&loginMode=2&loginMethod=1&loginName={}&password=&smsNum={}&rnum=&ckCookie=on";
-            String data = TemplateUtils.format(templateData, param.getMobile(), param.getMobile(), param.getMobile(), param.getSmsCode());
-
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10086_web_002").setFullUrl(templateUrl).setRequestBody(data)
-                    .setReferer(referer).invoke();
-            String pageContent = response.getPageContent();
-            if (StringUtils.isEmpty(pageContent) || !StringUtils.contains(pageContent, "$continueUrl = 'http://www.bj.10086.cn/my'")) {
-                // need relogin
-                if (!StringUtils.contains(pageContent, "登录中")) {
-                    if (StringUtils.contains(pageContent, "您刚刚登录过并且仍未退出")) {
-                        // relogin
-                        String errorMessage = PatternUtils.group(pageContent, "var\\s*\\$fcode\\s*=\\s*'([^']+)'", 1);
-                        switch (errorMessage) {
-                            case "PP_1_2019":
-                                logger.warn("登录失败-->短信随机码不正确或已过期,param={}", param);
-                                return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
-                            case "PP_1_2020":
-                                logger.warn("登录失败-->短信随机码不正确或已过期,param={}", param);
-                                return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
-                            case "PP_1_2018":
-                                logger.warn("登录失败-->短信随机码不正确或已过期,param={}", param);
-                                return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
-                            case "CMSSO_1_0500":
-                                logger.warn("登录失败-->系统忙,param={}", param);
-                                return result.failure(ErrorCode.LOGIN_FAIL);
-                        }
-                        referer = "https://bj.ac.10086.cn/ac/CmSsoLogin";
-                        templateUrl = "https://bj.ac.10086.cn/ac/loginAgain";
-                        data = "backurl=http%3A%2F%2Fwww.bj.10086.cn%2Fmy&continue=http%3A%2F%2Fwww" +
-                                ".bj.10086.cn%2Fmy&style=BIZ_LOGINBOX&loginMethod=1&loginMode=1&service=www.bj.10086.cn&box=&target=_self&hostId=4&submit=";
-                        response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10086_web_003").setFullUrl(templateUrl)
-                                .setRequestBody(data).setReferer(referer).invoke();
-                        pageContent = response.getPageContent();
-                        if (StringUtils.isEmpty(pageContent)) {
-                            logger.error("登陆失败,param={},response={}", param, response);
-                            return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-                        }
-                    } else {
-                        // errorCode
-                        String errorMessage = PatternUtils.group(pageContent, "var\\s*\\$fcode\\s*=\\s*'([^']+)'", 1);
-                        switch (errorMessage) {
-                            case "PP_1_0803":
-                                logger.warn("登录失败-->用户名或密码不正确,param={}", param);
-                                return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
-                            case "PP_1_0820":
-                                logger.warn("登录失败-->密码输入错误三次，账号锁定,param={}", param);
-                                return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
-                            case "PP_1_0821":
-                                logger.warn("登录失败-->累计密码错误次数已达到上限,param={}", param);
-                                return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
-                            default:
-                                logger.error("登陆失败,param={},response={}", param, response);
-                                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-                        }
-                    }
-                }
+                logger.warn("详单校验失败,param={}", param);
+                return result.failure(ErrorCode.LOGIN_FAIL, "详单校验失败");
             }
 
-            templateUrl = "http://www.bj.10086.cn/my";
-            response = TaskHttpClient.create(param, RequestType.GET, "bei_jing_10086_web_004").setFullUrl(templateUrl).invoke();
-
-            referer = templateUrl;
-            templateUrl = "http://www.bj.10086.cn/www/mybusiness?cmdFlag=phone1";
-            response = TaskHttpClient.create(param, RequestType.GET, "bei_jing_10086_web_005").setFullUrl(templateUrl).setReferer(referer)
-                    .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
-
-            referer = "http://www.bj.10086.cn/service/fee/";
-            templateUrl = "http://www.bj.10086.cn/service/fee/qqtxdcx/";
-            response = TaskHttpClient.create(param, RequestType.GET, "bei_jing_10086_web_006").setFullUrl(templateUrl).setReferer(referer)
-                    .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
-
-            referer = "http://www.bj.10086.cn/service/fee/zdcx/";
-            templateUrl = "http://cmodsvr1.bj.chinamobile.com/PortalCMOD/InnerInterFaceCiisNowDetail";
-            response = TaskHttpClient.create(param, RequestType.GET, "bei_jing_10086_web_007").setFullUrl(templateUrl).setReferer(referer).invoke();
-            pageContent = response.getPageContent();
-
-            String action = StringUtils.EMPTY;
-            String sAMLRequest = StringUtils.EMPTY;
-            String relayState = StringUtils.EMPTY;
-            if (StringUtils.isNotBlank(pageContent)) {
-                List<String> actionList = XPathUtil.getXpath("//FORM/@action", pageContent);
-                List<String> sAMLRequestList = XPathUtil.getXpath("//input[@name='SAMLRequest']/@value", pageContent);
-                List<String> relayStateList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
-                if (actionList == null || actionList.size() == 0 || sAMLRequestList == null || sAMLRequestList.size() == 0) {
-                    logger.error("登陆失败,验证服务密码失败,param={},response={}", param, response);
-                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-                }
-                action = actionList.get(0);
-                // sAMLRequest =sAMLRequestList.get(0);
-                sAMLRequest = URLEncoder.encode(sAMLRequestList.get(0), "UTF-8");
-                if (relayStateList != null && relayStateList.size() > 0) {
-                    relayState = relayStateList.get(0);
-                }
-            } else {
-                logger.error("登陆失败,验证服务密码失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-            if (action.equals("") || sAMLRequest.equals("")) {
-                logger.error("登陆失败,验证服务密码失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-
-            referer = "https://cmodsvr1.bj.chinamobile.com/PortalCMOD/InnerInterFaceCiisHisBill";
-            templateUrl = action;
-            templateData = "SAMLRequest={}&RelayState={}";
-            data = TemplateUtils.format(templateData, sAMLRequest, relayState);
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10086_web_008").setFullUrl(templateUrl).setRequestBody(data)
-                    .setReferer(referer).invoke();
-            pageContent = response.getPageContent();
-
-            if (StringUtils.isNotBlank(pageContent)) {
-                List<String> actionList = XPathUtil.getXpath("//form/@action", pageContent);
-                List<String> sAMLRequestList = XPathUtil.getXpath("//input[@name='SAMLart']/@value", pageContent);
-                List<String> relayStateList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
-                if (sAMLRequestList == null || sAMLRequestList.size() == 0) {
-                    logger.error("登陆失败,验证服务密码失败,param={},response={}", param, response);
-                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-                }
-                action = actionList.get(0);
-                sAMLRequest = URLEncoder.encode(sAMLRequestList.get(0), "UTF-8");
-                if (relayStateList != null && relayStateList.size() > 0) {
-                    relayState = relayStateList.get(0);
-                }
-            } else {
-                logger.error("登陆失败,验证服务密码失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-            if (action.equals("") || sAMLRequest.equals("")) {
-                logger.error("登陆失败,验证服务密码失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-
-            referer = "https://bj.ac.10086.cn/ac/SamlCmAuthnResponse";
-            templateUrl = action;
-            templateData = "SAMLRequest={}&RelayState={}";
-            data = TemplateUtils.format(templateData, sAMLRequest, relayState);
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10086_web_009").setFullUrl(templateUrl).setRequestBody(data)
-                    .setReferer(referer).invoke();
-            pageContent = response.getPageContent();
-
-            String sessionId = PatternUtils.group(pageContent, "ssoSessionID=([^ \"'&]+)", 1);
-            if (StringUtils.isBlank(sessionId)) {
-                logger.error("登陆失败,获取sessionId失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy.MM");
-            Calendar c = Calendar.getInstance();
-            templateUrl = "https://cmodsvr1.bj.chinamobile.com/PortalCMOD/LoginSecondCheck?ssoSessionID={}";
-            templateData = "searchType=HisDetail&detailType=RC&checkMonth={}&password={}";
-            data = TemplateUtils.format(templateData, sf.format(c.getTime()), param.getPassword());
-            referer = "https://cmodsvr1.bj.chinamobile.com/PortalCMOD/LoginSecond?searchType=HisDetail&checkMonth={}&ssoSessionID={}&detailType=RC";
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10086_web_010").setFullUrl(templateUrl, sessionId)
-                    .setRequestBody(data).setReferer(referer, sf.format(c.getTime()), sessionId).invoke();
-            pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, param.getMobile().toString()) && !StringUtils.contains(pageContent, "客服密码输入不正确")) {
-                logger.info("登陆成功,param={}", param);
-                return result.success();
-            } else {
-                logger.error("登陆失败,您的账户名与密码不匹配,param={},response={}", param, response);
-                return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
-            }
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
         }
     }
+
+    /**
+     * 处理跳转服务
+     * @param pageContent
+     * @return
+     */
+    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent) {
+        String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
+        String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
+        List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "//input");
+        StringBuilder fullUrl = new StringBuilder(action);
+        if (StringUtils.contains(fullUrl, "?")) {
+            if (!StringUtils.endsWith(fullUrl, "?")) {
+                fullUrl.append("&");
+            }
+        } else {
+            fullUrl.append("?");
+        }
+        if (null != list && !list.isEmpty()) {
+            for (Map<String, String> map : list) {
+                if (map.containsKey("name") && map.containsKey("value")) {
+                    try {
+                        fullUrl.append(map.get("name")).append("=").append(URLEncoder.encode(map.get("value"), "UTF-8")).append("&");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        String url = fullUrl.substring(0, fullUrl.length() - 1);
+        RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
+        return response.getPageContent();
+    }
+
 }
+
