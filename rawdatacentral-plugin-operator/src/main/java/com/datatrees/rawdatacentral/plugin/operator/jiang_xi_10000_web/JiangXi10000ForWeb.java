@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 江西电信web端
  * 登录 手机号，服务密码，短信验证码，图片验证码
- * 详单查询 图片验证码
+ * 详单查询 短信验证码
  * User: yand
  * Date: 2017/9/28
  */
@@ -208,15 +208,15 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
             //登录
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript2);
             String encryptSmsCode = invocable.invokeFunction("encryptedString", new Object[] {modulus,param.getSmsCode()}).toString();
-            String encryptMobile = invocable.invokeFunction("encryptedString", new Object[] {modulus,param.getMobile()}).toString();
+            String encryptMobile = invocable.invokeFunction("encryptedString", new Object[] {modulus,param.getMobile().toString()}).toString();
             templateUrl = "http://jx.189.cn/dwr/call/plaincall/Service.excute.dwr";
             templateData = "callCount=1" + "&page=/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=" + "&httpSessionId=" + "&scriptSessionId=" + scriptSessionId + "&c0-scriptName=Service" + "&c0-methodName=excute" + "&c0-id=0" + "&c0-param0=string:MWB_WT_USERLOGIN" + "&c0-param1=boolean:false" + "&c0-e1=string:22" + "&c0-e2=string:80000045" + "&c0-e3=string:" + encryptSmsCode + "&c0-e4=string:" + encryptMobile + "&c0-e5=string:" + areaCode + "&c0-e6=string:1" + "&c0-param2=Object_Object:{LOGIN_TYPE:reference:c0-e1, LOGIN_PRODUCT_ID:reference:c0-e2, LOGIN_PASSWD:reference:c0-e3, LOGIN_NAME:reference:c0-e4, AREA_CODE:reference:c0-e5, MY_CHECK_FLAG:reference:c0-e6}" + "&batchId=5";
             referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
             response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_007").setFullUrl(templateUrl).setReferer(referer).setRequestBody(templateData,ContentType.TEXT_PLAIN).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "IS_SUCCESS':\"1")) {
-                logger.info("mobile login success!,set cookie string: " + ProcessorContextUtil.getCookieString(PluginFactory.getProcessorContext()));
-                String cookieStr = ProcessorContextUtil.getCookieString(PluginFactory.getProcessorContext());
+                logger.info("mobile login success!,set cookie string: " + TaskUtils.getCookieString(param.getTaskId()));
+                String cookieStr = TaskUtils.getCookieString(param.getTaskId());
 
                 templateUrl = "http://login.189.cn/";
                 referer = "http://www.189.cn/html/login/index.html";
