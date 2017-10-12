@@ -22,6 +22,7 @@ public enum RedisKeyPrefixEnum {
     TASK_RESULT("task.result", 60, TimeUnit.MINUTES, "task爬取结果"),
     TASK_CONTEXT("task.context", 10, TimeUnit.MINUTES, "task context"),
     TASK_REQUEST("task.request", 30, TimeUnit.MINUTES, "根据taskId共享代理"),
+    TASK_PAGE_CONTENT("task.page.content", 30, TimeUnit.MINUTES, "请求页面"),
     PLUGIN_CLASS_DATA("plugin.class.data", 24, TimeUnit.HOURS, "根据taskId共享class"),
     PLUGIN_FILE("plugin.file", 365, TimeUnit.DAYS, "插件jar存储"),
     PLUGIN_FILE_MD5("plugin.file.md5", 365, TimeUnit.DAYS, "插件md5"),
