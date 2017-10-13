@@ -1,10 +1,8 @@
 package com.datatrees.rawdatacentral.common.http;
 
 import java.net.HttpCookie;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -12,6 +10,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.rawdatacentral.common.constants.RedisDataType;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
@@ -73,10 +72,7 @@ public class TaskUtils {
                 List<HttpCookie> list = HttpCookie.parse(headerValue);
                 HttpCookie httpCookie = list.get(0);
                 String domain = httpCookie.getDomain();
-                //目前只有非.开头的才会被拒绝(甘肃移动登录时)
-                if (StringUtils.isBlank(domain) || domain.startsWith(".") || StringUtils.equals(domain, host)) {
-                    continue;
-                }
+                //没有都添加
                 org.apache.http.cookie.Cookie find = null;
                 if (CollectionUtils.isNotEmpty(cookies)) {
                     for (org.apache.http.cookie.Cookie b : cookies) {
@@ -85,20 +81,33 @@ public class TaskUtils {
                             break;
                         }
                     }
-                    if (null == find) {
+
+                }
+                if (null == find) {
+                    if (StringUtils.isBlank(domain)) {
+                        //安徽移动,解析不了时间 Set-Cookie: FSSBBIl1UgzbN7N443S=rIQIoJrsUJKkS7l3cm_Pj8U0fTC7PbnDjec0eirfW25MhKMrpnHYh4I.AuJMpdNR; Path=/;
+                        // expires=Mon, 11 Oct 2027 07:31:34 GMT; HttpOnly
+                        //[processCookies][130] Invalid cookie header
+                        domain = host;
+                    } else if (!StringUtils.equals(domain, host)) {
+                        //可能被拒绝了,.ResponseProcessCookies][processCookies][123] Cookie rejected
                         //改变domain
                         domain = "." + domain;
-                        //被拒绝了,.ResponseProcessCookies][processCookies][123] Cookie rejected
-                        BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
-                        cookie.setDomain(domain);
-                        cookie.setPath(httpCookie.getPath());
-                        cookie.setVersion(httpCookie.getVersion());
-                        cookie.setSecure(httpCookie.getSecure());
-                        cookie.setAttribute("domain", domain);
-                        cookie.setAttribute("path", httpCookie.getPath());
-                        cookieStore.addCookie(cookie);
-                        logger.info("add rejected cookie taskId={},cookeName={}", taskId, cookie.getName());
                     }
+                    BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
+                    cookie.setDomain(domain);
+                    cookie.setPath(httpCookie.getPath());
+                    cookie.setVersion(httpCookie.getVersion());
+                    cookie.setSecure(httpCookie.getSecure());
+                    cookie.setAttribute("domain", domain);
+                    cookie.setAttribute("path", httpCookie.getPath());
+                    long maxAge = httpCookie.getMaxAge();
+                    if (maxAge <= 0) {
+                        maxAge = TimeUnit.MINUTES.toSeconds(30);
+                    }
+                    cookie.setExpiryDate(new Date(System.currentTimeMillis() + maxAge * 1000));
+                    cookieStore.addCookie(cookie);
+                    logger.info("add rejected cookie taskId={},cookeName={}", taskId, cookie.getName());
                 }
             }
         }
@@ -458,4 +467,11 @@ public class TaskUtils {
         return map.get(name);
     }
 
+    public static void main(String[] args) {
+        String cs = "FSSBBIl1UgzbN7N443S=rIQIoJrsUJKkS7l3cm_Pj8U0fTC7PbnDjec0eirfW25MhKMrpnHYh4I.AuJMpdNR; Path=/; expires=Mon, 11 Oct 2027 " +
+                "07:31:34 GMT; HttpOnly";
+        List<HttpCookie> ll = HttpCookie.parse(cs);
+        Date d = new Date(System.currentTimeMillis() + ll.get(0).getMaxAge() * 1000);
+        System.out.println(DateUtils.formatYmdhms(d));
+    }
 }

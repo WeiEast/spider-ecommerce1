@@ -248,4 +248,10 @@ public class RedisUtils extends RedisConfig {
         }
     }
 
+    public static long rpush(String key, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.rpush(key, value);
+        }
+    }
+
 }
