@@ -338,13 +338,13 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
             String templateData = "callCount=1&page=/2017/details.jsp&httpSessionId=&scriptSessionId=" + scriptSessionId +
                     "&c0-scriptName=Service&c0-methodName=excute&c0-id=0&c0-param0=string:DETAILS_SERVICE&c0-param1=boolean:false&c0-e1=string:" +
                     queryMonth +
-                    "&c0-e2=string:7&c0-e3=string:${smsCode}&c0-e4=string:QRY_DETAILS_BY_LOGIN_NBR&c0-param2=Object_Object:{month:reference:c0-e1, query_type:reference:c0-e2, valid_code:reference:c0-e3, method:reference:c0-e4}&batchId=2";
+                    "&c0-e2=string:7&c0-e3=string:"+param.getSmsCode()+"&c0-e4=string:QRY_DETAILS_BY_LOGIN_NBR&c0-param2=Object_Object:{month:reference:c0-e1, query_type:reference:c0-e2, valid_code:reference:c0-e3, method:reference:c0-e4}&batchId=2";
             String referer = "http://jx.189.cn/2017/details.jsp";
             response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_012").setFullUrl(templateUrl)
                     .setRequestBody(templateData, ContentType.TEXT_PLAIN).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             TaskUtils.addTaskShare(param.getTaskId(), "scriptSessionId", scriptSessionId);
-            if (StringUtils.contains(pageContent, "CODE:\"1\"")) {
+            if (StringUtils.contains(pageContent, "CODE:\"0\"")) {
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
