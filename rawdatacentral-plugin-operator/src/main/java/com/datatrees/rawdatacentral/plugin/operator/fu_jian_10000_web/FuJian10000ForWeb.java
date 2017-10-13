@@ -9,12 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -168,7 +167,6 @@ public class FuJian10000ForWeb implements OperatorPluginService {
             String empoent = TaskUtils.getTaskShare(param.getTaskId(), "empoent");
             String barkUrl = TaskUtils.getTaskShare(param.getTaskId(), "barkUrl");
 
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("fu_jian_10000_web/des_wap.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript_wap);
             String encryptMobile = invocable.invokeFunction("encryptedString", modulus, param.getMobile().toString()).toString();
             String encryptPassword = invocable.invokeFunction("encryptedString", modulus, param.getPassword()).toString();
@@ -194,15 +192,14 @@ public class FuJian10000ForWeb implements OperatorPluginService {
                 TaskUtils.addTaskShare(param.getTaskId(), "joinDate", joinDate);
             } else {
                 logger.error("登陆失败,wap版登陆失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                //return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
 
-            ProcessorContextUtil.setCookieString(PluginFactory.getProcessorContext(), null);
+            RedisUtils.del("task.cookie." + param.getTaskId());
             /**
              * 登录web版
              */
 
-            inputStream = this.getClass().getClassLoader().getResourceAsStream("fu_jian_10000_web/des_web.js");
             invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript_web);
             encryptPassword = invocable.invokeFunction("aesEncrypt", param.getPassword()).toString();
 

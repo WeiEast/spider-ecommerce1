@@ -350,6 +350,8 @@ public class TaskHttpClient {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
             redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response), 1, TimeUnit.DAYS);
+            RedisUtils.hset(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), request.getRequestId() + "", response.getPageContent(),
+                    RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
         }
         return response;
     }
