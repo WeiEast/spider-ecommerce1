@@ -340,8 +340,12 @@ public class TaskHttpClient {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
             redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response), 1, TimeUnit.DAYS);
-            RedisUtils.hset(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), request.getRequestId() + "",
-                    response.getPageContent(), RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
+            StringBuilder pc = new StringBuilder("url-->").append(request.getFullUrl()).append("\nrequest_id-->").append(request.getRequestId())
+                    .append("\nstatus_code-->").append(response.getStatusCode()).append("\nreques_time-->")
+                    .append(DateUtils.formatYmdhms(new Date(request.getRequestTimestamp()))).append("\n").append(response.getPageContent());
+            RedisUtils.rpush(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), pc.toString());
+            RedisUtils
+                    .expire(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
         }
         if (statusCode == 302) {
             String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
