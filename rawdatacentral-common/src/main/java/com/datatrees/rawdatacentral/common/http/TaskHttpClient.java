@@ -112,6 +112,11 @@ public class TaskHttpClient {
         return response;
     }
 
+    public TaskHttpClient removeHeader(String name) {
+        request.getHeaders().remove(name);
+        return this;
+    }
+
     public TaskHttpClient addHeader(String name, String value) {
         request.addHead(name, value);
         return this;
@@ -319,7 +324,7 @@ public class TaskHttpClient {
                     }
                 }
             }
-            if (statusCode == 200) {
+            if (statusCode >= 200 && statusCode <= 299) {
                 byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
                 response.setResponse(data);
             } else {

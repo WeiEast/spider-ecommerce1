@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -19,6 +20,7 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -47,15 +49,21 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String referer = "https://ah.ac.10086.cn/login";
-            String templateUrl = "https://ah.ac.10086.cn/login";
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl(templateUrl).invoke();
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl(templateUrl).setReferer(referer).invoke();
+            TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://ah.ac.10086.cn/login").removeHeader(HttpHeadKey.CONTENT_TYPE)
+                    .addHeader("Upgrade-Insecure-Requests", "1").invoke();
+            String pageContent = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl("https://ah.ac.10086.cn/login")
+                    .setReferer("https://ah.ac.10086.cn/login").removeHeader(HttpHeadKey.CONTENT_TYPE).addHeader("Upgrade-Insecure-Requests", "1")
+                    .invoke().getPageContent();
+            int retry = 0;
+            while (!StringUtils.contains(pageContent, "replace") && retry++ <= 5) {
+                TimeUnit.SECONDS.sleep(3);
+                pageContent = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl("https://ah.ac.10086.cn/login")
+                        .setReferer("https://ah.ac.10086.cn/login").invoke().getPageContent();
+            }
 
-            String pageContent = response.getPageContent();
-
-            templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\);", 1);
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_002").setFullUrl(templateUrl).invoke();
+            String redirectUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\);", 1);
+            logger.info("find redirectUrl={},taskId={}", redirectUrl, param.getTaskId());
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(redirectUrl).invoke();
             pageContent = response.getPageContent();
 
             String backUrl = "http://service.ah.10086.cn/LoginSso";
@@ -168,9 +176,9 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String referer = "https://ah.ac.10086.cn/login";
-            String templateUrl = "https://ah.ac.10086.cn/validImageCode?r_0.8558314577439337&imageCode={}";
+            String templateUrl = "https://ah.ac.10086.cn/validImageCode?r_0.{}&imageCode={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_004").setReferer(referer)
-                    .setFullUrl(templateUrl, param.getPicCode()).invoke();
+                    .setFullUrl(templateUrl, System.currentTimeMillis(), param.getPicCode()).invoke();
             if (StringUtils.contains(response.getPageContent(), "1")) {
                 logger.info("登录-->图片验证码-->校验成功,param={}", param);
                 return result.success();
