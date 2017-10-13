@@ -27,6 +27,8 @@ public class Request implements Serializable {
     private Long   taskId;
     @JSONField(ordinal = 2)
     private String websiteName;
+    @JSONField(ordinal = 2)
+    private boolean isRedirect = false;//是否重定向了
     @JSONField(ordinal = 3)
     private String proxy;
     @JSONField(ordinal = 4)
@@ -244,6 +246,14 @@ public class Request implements Serializable {
 
     public void setRequestBodyContent(String requestBodyContent) {
         this.requestBodyContent = requestBodyContent;
+    }
+
+    public boolean isRedirect() {
+        return isRedirect;
+    }
+
+    public void setRedirect(boolean redirect) {
+        isRedirect = redirect;
     }
 
     public synchronized void addHead(String name, String value) {

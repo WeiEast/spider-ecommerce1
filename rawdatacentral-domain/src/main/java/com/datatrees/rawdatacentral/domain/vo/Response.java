@@ -16,21 +16,23 @@ public class Response implements Serializable {
     @JSONField(serialize = false)
     private static final String DEFAULT_CHARSET = "UTF-8";
     @JSONField(ordinal = 1)
-    private Request request;
-    @JSONField(ordinal = 1)
-    private long    totalTime;
+    private int statusCode;
     @JSONField(ordinal = 2)
-    private int     statusCode;
+    private boolean isRedirect = false;//是否重定向了
+    @JSONField(ordinal = 2)
+    private String  redirectUrl;
     @JSONField(ordinal = 3)
-    private List<NameValue> headers = new ArrayList<>();
+    private Request request;
     @JSONField(ordinal = 4)
+    private long    totalTime;
+    @JSONField(ordinal = 5)
+    private List<NameValue> headers = new ArrayList<>();
+    @JSONField(ordinal = 6)
     private Map<String, String> responseCookies;
     @JSONField(serialize = false)
     private byte[]              response;
-    @JSONField(ordinal = 6)
-    private Charset             charset;
     @JSONField(ordinal = 7)
-    private String              redirectUrl;
+    private Charset             charset;
     @JSONField(ordinal = 8)
     private String              contentType;
 
@@ -60,11 +62,22 @@ public class Response implements Serializable {
     }
 
     public String getRedirectUrl() {
+        if (null != request && request.isRedirect()) {
+            return request.getUrl();
+        }
         return redirectUrl;
     }
 
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
+    }
+
+    public boolean isRedirect() {
+        return null != request && request.isRedirect();
+    }
+
+    public void setRedirect(boolean redirect) {
+        isRedirect = redirect;
     }
 
     public Charset getCharset() {
