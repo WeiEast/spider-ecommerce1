@@ -16,6 +16,7 @@ dependencies {
     compile 'com.caucho:hessian:4.0.38'
     compile "redis.clients:jedis:${jedisVersion}"
     compile "com.jayway.jsonpath:json-path:${jsonPathVersion}"
+    compile 'net.sourceforge.htmlunit:htmlunit:2.27'
 
 
 

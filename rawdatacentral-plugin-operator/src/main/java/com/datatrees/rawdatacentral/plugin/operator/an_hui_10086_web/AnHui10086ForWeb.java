@@ -7,7 +7,6 @@ import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -49,17 +48,16 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://ah.ac.10086.cn/login").removeHeader(HttpHeadKey.CONTENT_TYPE)
-                    .addHeader("Upgrade-Insecure-Requests", "1").invoke();
-            String pageContent = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl("https://ah.ac.10086.cn/login")
+            String pageContent = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://ah.ac.10086.cn/login")
+                    .removeHeader(HttpHeadKey.CONTENT_TYPE).addHeader("Upgrade-Insecure-Requests", "1").invoke().getPageContent();
+            List<String> list = XPathUtil.getXpath("//img/@src", pageContent);
+            for (String picUrl : list) {
+                TaskHttpClient.create(param, RequestType.GET, "").setUrl(picUrl).invoke();
+            }
+
+            pageContent = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl("https://ah.ac.10086.cn/login")
                     .setReferer("https://ah.ac.10086.cn/login").removeHeader(HttpHeadKey.CONTENT_TYPE).addHeader("Upgrade-Insecure-Requests", "1")
                     .invoke().getPageContent();
-            int retry = 0;
-            while (!StringUtils.contains(pageContent, "replace") && retry++ <= 5) {
-                TimeUnit.SECONDS.sleep(3);
-                pageContent = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl("https://ah.ac.10086.cn/login")
-                        .setReferer("https://ah.ac.10086.cn/login").invoke().getPageContent();
-            }
 
             String redirectUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\);", 1);
             logger.info("find redirectUrl={},taskId={}", redirectUrl, param.getTaskId());
