@@ -177,7 +177,7 @@ public class BeiJing10086ForWeb implements OperatorPluginService {
             //详单校验
             templateUrl = "https://service.bj.10086.cn/poffice/package/xdcx/userYzmCheck.action?PACKAGECODE=XD&yzCheckCode={}";
             //不小心改了密码
-            String validateCallDetailUrl = TemplateUtils.format(templateUrl, param.getMobile() == 15001285176l ? "716253" : param.getMobile());
+            String validateCallDetailUrl = TemplateUtils.format(templateUrl, param.getMobile() == 15001285176l ? "716253" : param.getPassword());
             response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(validateCallDetailUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "RelayState")) {
