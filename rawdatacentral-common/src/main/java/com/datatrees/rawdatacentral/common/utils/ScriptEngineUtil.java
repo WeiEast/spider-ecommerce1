@@ -42,7 +42,7 @@ public class ScriptEngineUtil {
         }
         String javaScrit = new String(bytes, charsetName);
         ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
-        scriptEngine.eval(new String(Base64.getDecoder().decode(javaScrit)));
+        scriptEngine.eval(javaScrit);
         return (Invocable) scriptEngine;
     }
 
