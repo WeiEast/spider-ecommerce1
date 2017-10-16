@@ -3,10 +3,10 @@ package com.datatrees.rawdatacentral.plugin.operator.an_hui_10086_web;
 import javax.script.Invocable;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -16,16 +16,19 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
-import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.util.Cookie;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -48,50 +51,48 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String pageContent = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://ah.ac.10086.cn/login")
-                    .removeHeader(HttpHeadKey.CONTENT_TYPE).addHeader("Upgrade-Insecure-Requests", "1").invoke().getPageContent();
-            List<String> list = XPathUtil.getXpath("//img/@src", pageContent);
-            for (String picUrl : list) {
-                TaskHttpClient.create(param, RequestType.GET, "").setUrl(picUrl).invoke();
-            }
-
-            pageContent = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_001").setFullUrl("https://ah.ac.10086.cn/login")
-                    .setReferer("https://ah.ac.10086.cn/login").removeHeader(HttpHeadKey.CONTENT_TYPE).addHeader("Upgrade-Insecure-Requests", "1")
-                    .invoke().getPageContent();
-
-            String redirectUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\);", 1);
-            logger.info("find redirectUrl={},taskId={}", redirectUrl, param.getTaskId());
-            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(redirectUrl).invoke();
-            pageContent = response.getPageContent();
-
-            String backUrl = "http://service.ah.10086.cn/LoginSso";
-            String backurlflag = "https://ah.ac.10086.cn/4login/backPage.jsp";
-            String errorurl = "https://ah.ac.10086.cn/4login/errorPage.jsp";
-            String relayStateId = "type=A;backurl=http://service.ah.10086.cn/LoginSso;nl=3;loginFrom=http://service.ah.10086.cn/LoginSso";
-
-            List<String> backUrlList = XPathUtil.getXpath("//input[@name='backurl']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(backUrlList)) {
-                backUrl = backUrlList.get(0);
-            }
-            List<String> backUrlFlagList = XPathUtil.getXpath("//input[@name='backurlflag']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(backUrlFlagList)) {
-                backurlflag = backUrlFlagList.get(0);
-            }
-            List<String> errorUrlList = XPathUtil.getXpath("//input[@name='errorurl']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(errorUrlList)) {
-                errorurl = errorUrlList.get(0);
-            }
-            String spid = PatternUtils.group(pageContent, "name=\"spid\" value=\"([^\"]+)\"", 1);
-            List<String> relayStateIdList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(relayStateIdList)) {
-                relayStateId = relayStateIdList.get(0);
-            }
-
-            TaskUtils.addTaskShare(param.getTaskId(), "backUrl", backUrl);
-            TaskUtils.addTaskShare(param.getTaskId(), "backurlflag", backurlflag);
-            TaskUtils.addTaskShare(param.getTaskId(), "errorurl", errorurl);
+            WebClient webClient = new WebClient();
+            webClient.getCookieManager().setCookiesEnabled(true);
+            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setDownloadImages(false);
+            webClient.getOptions().setJavaScriptEnabled(true);
+            HtmlPage page = webClient.getPage("https://ah.ac.10086.cn/login");
+            String content = page.asXml();
+            Set<Cookie> cookies = webClient.getCookieManager().getCookies();
+            TaskUtils.saveCookie(param.getTaskId(), cookies);
+            webClient.close();
+            String spid = JsoupXpathUtils.selectFirst(content, "//form[@id='oldLogin']/input[@name='spid']/@value");
             TaskUtils.addTaskShare(param.getTaskId(), "spid", spid);
-            TaskUtils.addTaskShare(param.getTaskId(), "relayStateId", relayStateId);
+
+            //
+            //String backUrl = "http://service.ah.10086.cn/LoginSso";
+            //String backurlflag = "https://ah.ac.10086.cn/4login/backPage.jsp";
+            //String errorurl = "https://ah.ac.10086.cn/4login/errorPage.jsp";
+            //String relayStateId = "type=A;backurl=http://service.ah.10086.cn/LoginSso;nl=3;loginFrom=http://service.ah.10086.cn/LoginSso";
+            //
+            //List<String> backUrlList = XPathUtil.getXpath("//input[@name='backurl']/@value", pageContent);
+            //if (!CollectionUtils.isEmpty(backUrlList)) {
+            //    backUrl = backUrlList.get(0);
+            //}
+            //List<String> backUrlFlagList = XPathUtil.getXpath("//input[@name='backurlflag']/@value", pageContent);
+            //if (!CollectionUtils.isEmpty(backUrlFlagList)) {
+            //    backurlflag = backUrlFlagList.get(0);
+            //}
+            //List<String> errorUrlList = XPathUtil.getXpath("//input[@name='errorurl']/@value", pageContent);
+            //if (!CollectionUtils.isEmpty(errorUrlList)) {
+            //    errorurl = errorUrlList.get(0);
+            //}
+            //String spid = PatternUtils.group(pageContent, "name=\"spid\" value=\"([^\"]+)\"", 1);
+            //List<String> relayStateIdList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
+            //if (!CollectionUtils.isEmpty(relayStateIdList)) {
+            //    relayStateId = relayStateIdList.get(0);
+            //}
+            //
+            //TaskUtils.addTaskShare(param.getTaskId(), "backUrl", backUrl);
+            //TaskUtils.addTaskShare(param.getTaskId(), "backurlflag", backurlflag);
+            //TaskUtils.addTaskShare(param.getTaskId(), "errorurl", errorurl);
+            //TaskUtils.addTaskShare(param.getTaskId(), "spid", spid);
+            //TaskUtils.addTaskShare(param.getTaskId(), "relayStateId", relayStateId);
 
             return result.success();
         } catch (Exception e) {
@@ -199,24 +200,20 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         }
         Response response = null;
         try {
-            String backUrl = TaskUtils.getTaskShare(param.getTaskId(), "backUrl");
-            String backurlflag = TaskUtils.getTaskShare(param.getTaskId(), "backurlflag");
-            String errorurl = TaskUtils.getTaskShare(param.getTaskId(), "errorurl");
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
-            String relayStateId = TaskUtils.getTaskShare(param.getTaskId(), "relayStateId");
 
             String templateUrl = "https://ah.ac.10086.cn/Login";
-            String templateData = "type=B&formertype=B&backurl={}&backurlflag={}&errorurl={}&spid={}&RelayState={}&mobileNum={}&login_type_ah" +
-                    "=&login_pwd_type=2&loginBackurl=&timestamp={}&validCode_state=true&loginType=0&servicePassword={}&servicePassword_1" +
-                    "=&smsValidCode=&validCode={}";
+            String templateData = "type=B&formertype=B&backurl=http%3A%2F%2Fservice.ah.10086.cn%2FLoginSso&backurlflag=https%3A%2F%2Fah\n" +
+                    ".ac.10086.cn%2F4login%2FbackPage.jsp&errorurl=https%3A%2F%2Fah.ac.10086.cn%2F4login%2FerrorPage.jsp&spid\n" +
+                    "={}&RelayState=&mobileNum={}&login_type_ah=&login_pwd_type=2&loginBackurl\n" +
+                    "=&timestamp={}&smsValidCode=&servicePassword={}&validCode_state\n" +
+                    "=true&loginType=0&servicePassword=&servicePassword_1=&smsValidCode=&validCode={}";
 
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("an_hui_10086_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("enString", param.getPassword().toString()).toString();
 
-            String data = TemplateUtils.format(templateData, URLEncoder.encode(backUrl, "UTF-8"), URLEncoder.encode(backurlflag, "UTF-8"),
-                    URLEncoder.encode(errorurl, "UTF-8"), spid, URLEncoder.encode(relayStateId, "UTF-8"), param.getMobile(),
-                    System.currentTimeMillis(), encryptPassword, param.getPicCode());
+            String data = TemplateUtils
+                    .format(templateData, spid, param.getMobile(), System.currentTimeMillis(), encryptPassword, param.getPicCode());
             response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10086_web_005").setFullUrl(templateUrl).setRequestBody(data).invoke();
             templateUrl = PatternUtils.group(response.getPageContent(), "replace\\('([^']+)'\\);", 1);
             if (StringUtils.isBlank(templateUrl)) {
