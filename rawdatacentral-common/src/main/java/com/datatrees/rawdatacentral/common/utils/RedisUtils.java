@@ -254,4 +254,16 @@ public class RedisUtils extends RedisConfig {
         }
     }
 
+    public static String set(byte[] key, byte[] value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.set(key, value);
+        }
+    }
+
+    public static byte[] get(byte[] key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.get(key);
+        }
+    }
+
 }

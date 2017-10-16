@@ -21,6 +21,7 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.cookie.ClientCookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.slf4j.Logger;
@@ -33,29 +34,45 @@ public class TaskUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskUtils.class);
 
+    public static Cookie toCrawlerCookie(ClientCookie from) {
+        Cookie to = new Cookie();
+        to.setDomain(from.getDomain());
+        to.setPath(from.getPath());
+        to.setName(from.getName());
+        to.setValue(from.getValue());
+        to.setSecure(from.isSecure());
+        to.setVersion(from.getVersion());
+        to.setExpiryDate(from.getExpiryDate());
+        if (from.containsAttribute("domain")) {
+            to.getAttribs().put("domain", from.getAttribute("domain"));
+        }
+        if (from.containsAttribute("path")) {
+            to.getAttribs().put("path", from.getAttribute("path"));
+        }
+        if (from.containsAttribute("expires")) {
+            to.getAttribs().put("expires", from.getAttribute("expires"));
+        }
+        if (from.containsAttribute("httponly")) {
+            to.getAttribs().put("httponly", from.getAttribute("httponly"));
+        }
+        return to;
+    }
+
     public static List<Cookie> getCookies(BasicCookieStore cookieStore) {
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
         List<Cookie> list = new ArrayList<>();
         for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
-            BasicClientCookie basicClientCookie = (BasicClientCookie) cookie;
-            Cookie myCookie = new Cookie();
-            myCookie.setDomain(basicClientCookie.getDomain());
-            myCookie.setPath(basicClientCookie.getPath());
-            myCookie.setName(basicClientCookie.getName());
-            myCookie.setValue(basicClientCookie.getValue());
-            myCookie.setSecure(basicClientCookie.isSecure());
-            myCookie.setVersion(basicClientCookie.getVersion());
-            myCookie.setExpiryDate(basicClientCookie.getExpiryDate());
-            if (basicClientCookie.containsAttribute("domain")) {
-                myCookie.getAttribs().put("domain", basicClientCookie.getAttribute("domain"));
+            list.add(toCrawlerCookie((BasicClientCookie) cookie));
+        }
+        return list;
+    }
+
+    public static List<Cookie> getCookies(Set<com.gargoylesoftware.htmlunit.util.Cookie> cookies) {
+        List<Cookie> list = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(cookies)) {
+            for (com.gargoylesoftware.htmlunit.util.Cookie htmlCookie : cookies) {
+                list.add(toCrawlerCookie((ClientCookie) (htmlCookie.toHttpClient())));
             }
-            if (basicClientCookie.containsAttribute("path")) {
-                myCookie.getAttribs().put("path", basicClientCookie.getAttribute("path"));
-            }
-            if (basicClientCookie.containsAttribute("expires")) {
-                myCookie.getAttribs().put("expires", basicClientCookie.getAttribute("expires"));
-            }
-            list.add(myCookie);
         }
         return list;
     }
@@ -181,18 +198,30 @@ public class TaskUtils {
         return map;
     }
 
+    public static void saveCookie(long taskId, Set<com.gargoylesoftware.htmlunit.util.Cookie> cookies) {
+        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookies);
+        saveCookie(taskId, list);
+    }
+
     public static void saveCookie(long taskId, BasicCookieStore cookieStore) {
         List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
+        saveCookie(taskId, list);
+    }
+
+    public static void saveCookie(long taskId, List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies) {
+        if (CollectionUtils.isEmpty(cookies)) {
+            return;
+        }
         String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
         String type = RedisUtils.type(redisKey);
         if (StringUtils.equals(type, RedisDataType.STRING)) {
-            if (CollectionUtils.isNotEmpty(list)) {
-                String json = JSON.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect);
+            if (CollectionUtils.isNotEmpty(cookies)) {
+                String json = JSON.toJSONString(cookies, SerializerFeature.DisableCircularReferenceDetect);
                 RedisUtils.setex(RedisKeyPrefixEnum.TASK_COOKIE, taskId, json);
             }
         } else {
-            if (CollectionUtils.isNotEmpty(list)) {
-                for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : list) {
+            if (CollectionUtils.isNotEmpty(cookies)) {
+                for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : cookies) {
                     String name = "[" + cookie.getName() + "][" + cookie.getDomain() + "]";
                     RedisUtils.hset(redisKey, name, JSON.toJSONString(cookie, SerializerFeature.DisableCircularReferenceDetect),
                             RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());
@@ -200,6 +229,7 @@ public class TaskUtils {
                 }
             }
         }
+
     }
 
     public static BasicCookieStore getCookie(Long taskId) {
@@ -474,4 +504,5 @@ public class TaskUtils {
         Date d = new Date(System.currentTimeMillis() + ll.get(0).getMaxAge() * 1000);
         System.out.println(DateUtils.formatYmdhms(d));
     }
+
 }
