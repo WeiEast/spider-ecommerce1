@@ -5,6 +5,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.util.Base64;
 
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +15,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ScriptEngineUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(ScriptEngineUtil.class);
+    private static final Logger logger          = LoggerFactory.getLogger(ScriptEngineUtil.class);
+    private static final String DEFAULT_CHARSET = "UTF-8";
 
     /**
      * 创建js引擎
@@ -23,6 +26,21 @@ public class ScriptEngineUtil {
      */
     public static Invocable createInvocableFromBase64(String javaScrit) throws Exception {
         CheckUtils.checkNotBlank(javaScrit, "empty base64");
+        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
+        scriptEngine.eval(new String(Base64.getDecoder().decode(javaScrit)));
+        return (Invocable) scriptEngine;
+    }
+
+    public static Invocable createInvocable(String websiteName, String fileName, String charsetName) throws Exception {
+        if (StringUtils.isAnyBlank(websiteName, fileName)) {
+            return null;
+        }
+        String redisKey = RedisKeyPrefixEnum.FILE_DATA.getRedisKey(websiteName, fileName);
+        byte[] bytes = RedisUtils.get(redisKey.getBytes());
+        if (null == charsetName) {
+            charsetName = DEFAULT_CHARSET;
+        }
+        String javaScrit = new String(bytes, charsetName);
         ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
         scriptEngine.eval(new String(Base64.getDecoder().decode(javaScrit)));
         return (Invocable) scriptEngine;

@@ -232,27 +232,6 @@ public class TaskUtils {
 
     }
 
-    //public static void saveCookie(long taskId, Set<com.gargoylesoftware.htmlunit.util.Cookie> cookies) {
-    //    List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
-    //    String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
-    //    String type = RedisUtils.type(redisKey);
-    //    if (StringUtils.equals(type, RedisDataType.STRING)) {
-    //        if (CollectionUtils.isNotEmpty(list)) {
-    //            String json = JSON.toJSONString(list, SerializerFeature.DisableCircularReferenceDetect);
-    //            RedisUtils.setex(RedisKeyPrefixEnum.TASK_COOKIE, taskId, json);
-    //        }
-    //    } else {
-    //        if (CollectionUtils.isNotEmpty(list)) {
-    //            for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : list) {
-    //                String name = "[" + cookie.getName() + "][" + cookie.getDomain() + "]";
-    //                RedisUtils.hset(redisKey, name, JSON.toJSONString(cookie, SerializerFeature.DisableCircularReferenceDetect),
-    //                        RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());
-    //
-    //            }
-    //        }
-    //    }
-    //}
-
     public static BasicCookieStore getCookie(Long taskId) {
         CheckUtils.checkNotPositiveNumber(taskId, ErrorCode.EMPTY_TASK_ID);
         BasicCookieStore cookieStore = new BasicCookieStore();
@@ -525,4 +504,5 @@ public class TaskUtils {
         Date d = new Date(System.currentTimeMillis() + ll.get(0).getMaxAge() * 1000);
         System.out.println(DateUtils.formatYmdhms(d));
     }
+
 }

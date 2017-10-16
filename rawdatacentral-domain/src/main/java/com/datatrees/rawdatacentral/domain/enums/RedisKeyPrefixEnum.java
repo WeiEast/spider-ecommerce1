@@ -63,6 +63,10 @@ public enum RedisKeyPrefixEnum {
         this.timeUnit = timeUnit;
     }
 
+    public static void main(String[] args) {
+        System.out.println(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(1, 2, 3, 4, 5));
+    }
+
     public int getTimeout() {
         return timeout;
     }
@@ -73,6 +77,14 @@ public enum RedisKeyPrefixEnum {
 
     public String getRedisKey(Object postfix) {
         return prefix + separator + postfix.toString();
+    }
+
+    public String getRedisKey(Object... postfix) {
+        StringBuffer sb = new StringBuffer(prefix);
+        for (Object o : postfix) {
+            sb.append(separator).append(o.toString());
+        }
+        return sb.toString();
     }
 
     public String getPrefix() {
