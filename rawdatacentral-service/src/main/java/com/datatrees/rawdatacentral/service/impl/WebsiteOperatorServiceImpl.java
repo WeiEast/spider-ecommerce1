@@ -159,7 +159,6 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
                     websiteOperatorDAO.insertSelectiveWithPrimaryKey(config);
                 }
             }
-            websiteOperatorDAO.insertSelectiveWithPrimaryKey(config);
         } else {
             config.setWebsiteId(websiteOperatorDb.getWebsiteId());
             websiteOperatorDAO.updateByPrimaryKeySelective(config);
