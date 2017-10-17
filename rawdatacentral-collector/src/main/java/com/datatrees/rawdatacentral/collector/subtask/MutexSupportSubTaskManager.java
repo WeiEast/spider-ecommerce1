@@ -261,7 +261,7 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
                             submitCount++;
                         }
                     }
-                    logger.info("active thread count " + activeCount + ", asyncSubTask need wait sleep " + scheduleInterval + "毫秒");
+                    //logger.info("active thread count " + activeCount + ", asyncSubTask need wait sleep " + scheduleInterval + "毫秒");
                     Thread.sleep(scheduleInterval);
                 } catch (Exception e) {
                     logger.warn("AsyncSubTaskScheduleThread interrupted", e);
