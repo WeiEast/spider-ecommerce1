@@ -24,7 +24,10 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.*;
+import com.datatrees.rawdatacentral.service.ClassLoaderService;
+import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -213,7 +216,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             return new HttpResult<Object>().failure(checkParams.getResponseCode(), checkParams.getMessage());
         }
         HttpResult result = getLoginService(param).defineProcess(param);
-        String log = TemplateUtils.format("自定义插件-->{}-->{}", param.getFormType(), result.getStatus() ? "成功" : "失败");
+        String log = TemplateUtils.format("自定义插件{}-->处理-->{}", param.getFormType(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), log, result);
         return result;
     }
