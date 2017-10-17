@@ -35,7 +35,7 @@ public class MonitorServiceImpl implements MonitorService {
     @Override
     public void initTask(Long taskId) {
         Map<String, String> map = crawlerTaskService.getTaskBaseInfo(taskId);
-        sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_INIT.getTag(), taskId, map);
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_INIT.getTag(), taskId, map);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.ERROR_CODE, errorCode);
         map.put(AttributeKey.ERROR_MSG, errorMsg);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        sendMessage(TopicEnum.CRAWLER_TASK_MONITOR.getCode(), TopicTag.TASK_COMPLETE.getTag(), taskId, map);
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_COMPLETE.getTag(), taskId, map);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.ERROR_CODE, errorCode);
         map.put(AttributeKey.ERROR_MSG, errorMsg);
         map.put(AttributeKey.ERROR_DETAIL, errorDetail);
-        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.ERROR_CODE, errorCode.getErrorCode());
         map.put(AttributeKey.ERROR_MSG, errorCode.getErrorMsg());
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.TASK_ID, taskId);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         map.put(AttributeKey.MSG, msg);
-        sendMessage(TopicEnum.CRAWLER_TASK_LOG.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
     public boolean sendMessage(String topic, String tags, Long taskId, Object msg) {
