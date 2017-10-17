@@ -42,6 +42,11 @@ public class WebsiteOperatorController {
         }
     }
 
+    /**
+     * 根据websiteName更新searchConfig和extractorConfig
+     * @param operator
+     * @return
+     */
     @RequestMapping("/updateConfig")
     public HttpResult<Object> updateConfig(@RequestBody WebsiteOperator operator) {
         HttpResult<Object> result = new HttpResult<>();
