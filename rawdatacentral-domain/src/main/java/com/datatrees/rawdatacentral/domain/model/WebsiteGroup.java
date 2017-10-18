@@ -20,6 +20,9 @@ public class WebsiteGroup implements Serializable {
     /** 配置标题 */
     private String websiteTitle;
 
+    /** 是否启用(0:不启用,1:启用) */
+    private Boolean enable;
+
     /** 权重(0:不启用,权重越高,比重越大) */
     private Integer weight;
 
@@ -66,6 +69,14 @@ public class WebsiteGroup implements Serializable {
 
     public void setWebsiteTitle(String websiteTitle) {
         this.websiteTitle = websiteTitle == null ? null : websiteTitle.trim();
+    }
+
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
     }
 
     public Integer getWeight() {

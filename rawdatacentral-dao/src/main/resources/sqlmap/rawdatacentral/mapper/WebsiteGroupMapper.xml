@@ -7,6 +7,7 @@
     <result column="website_type" jdbcType="VARCHAR" property="websiteType" />
     <result column="website_name" jdbcType="VARCHAR" property="websiteName" />
     <result column="website_title" jdbcType="VARCHAR" property="websiteTitle" />
+    <result column="enable" jdbcType="BIT" property="enable" />
     <result column="weight" jdbcType="INTEGER" property="weight" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
   </resultMap>
@@ -69,7 +70,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    group_code, group_name, website_type, website_name, website_title, weight, updated_at
+    group_code, group_name, website_type, website_name, website_title, enable, weight, 
+    updated_at
   </sql>
   <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample" resultMap="BaseResultMap">
     select
@@ -112,6 +114,9 @@
       <if test="websiteTitle != null">
         website_title,
       </if>
+      <if test="enable != null">
+        enable,
+      </if>
       <if test="weight != null">
         weight,
       </if>
@@ -134,6 +139,9 @@
       </if>
       <if test="websiteTitle != null">
         #{websiteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=BIT},
       </if>
       <if test="weight != null">
         #{weight,jdbcType=INTEGER},
@@ -166,6 +174,9 @@
       </if>
       <if test="record.websiteTitle != null">
         website_title = #{record.websiteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.enable != null">
+        enable = #{record.enable,jdbcType=BIT},
       </if>
       <if test="record.weight != null">
         weight = #{record.weight,jdbcType=INTEGER},
