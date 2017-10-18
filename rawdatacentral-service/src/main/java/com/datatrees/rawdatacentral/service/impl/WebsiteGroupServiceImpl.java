@@ -104,4 +104,15 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         }
         redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
     }
+
+    @Override
+    public void updateEnable(String websiteName, Boolean enable) {
+        if(null != websiteName && null != enable){
+
+
+
+
+        }
+
+    }
 }

@@ -46,4 +46,11 @@ public interface WebsiteOperatorService {
      */
     void saveConfig(WebsiteOperator websiteOperator);
 
+    /**
+     * 启用/禁用
+     * @param websiteName
+     * @param enable
+     */
+    void updateEnable(String websiteName, Boolean enable);
+
 }

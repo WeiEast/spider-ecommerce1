@@ -164,4 +164,21 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             websiteOperatorDAO.updateByPrimaryKeySelective(config);
         }
     }
+
+    @Override
+    public void updateEnable(String websiteName, Boolean enable) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        CheckUtils.checkNotNull(enable, "enable is null");
+        WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
+        if (null == websiteOperatorDb) {
+            WebsiteOperator operatorUpdate = new WebsiteOperator();
+            operatorUpdate.setWebsiteId(websiteOperatorDb.getWebsiteId());
+            operatorUpdate.setEnable(enable);
+            websiteOperatorDAO.updateByPrimaryKeySelective(operatorUpdate);
+
+
+
+        }
+
+    }
 }
