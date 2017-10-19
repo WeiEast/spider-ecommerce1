@@ -117,7 +117,7 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
 
             templateUrl = "http://login.189.cn/web/login";
             templateData = "Account={}&UType=201&ProvinceID={}&AreaCode=&CityNo=&RandomFlag=0&Password={}&Captcha={}";
-            data = TemplateUtils.format(templateData, param.getMobile(), provinceId, URLEncoder.encode(encryptPassword, "UTF-8"), param.getPicCode());
+            data = TemplateUtils.format(templateData, param.getMobile(), provinceId, URLEncoder.encode(encryptPassword, "UTF-8"), param.getPicCode().toLowerCase());
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_web_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
             pageContent = response.getPageContent();
             String resultCode = PatternUtils.group(pageContent, "data-resultcode=\"(\\d+)\"", 1);
