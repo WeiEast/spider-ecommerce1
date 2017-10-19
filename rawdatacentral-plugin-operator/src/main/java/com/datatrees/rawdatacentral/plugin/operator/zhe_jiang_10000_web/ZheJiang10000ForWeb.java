@@ -87,7 +87,6 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("zhe_jiang_10000_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encryptPassword = invocable.invokeFunction("aesEncrypt", param.getPassword()).toString();
 

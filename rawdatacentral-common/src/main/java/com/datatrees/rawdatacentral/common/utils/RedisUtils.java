@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -51,6 +52,13 @@ public class RedisUtils extends RedisConfig {
     public static Boolean exists(final String key) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.exists(key);
+        }
+    }
+
+    public static Boolean del(final String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            Long i = jedis.del(key);
+            return i >= 1;
         }
     }
 
@@ -226,6 +234,36 @@ public class RedisUtils extends RedisConfig {
     public static int toSeconds(long timeout, TimeUnit unit) {
         long l = unit.toSeconds(timeout);
         return l > 0 ? (int) l : 1;
+    }
+
+    public static long llen(String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.llen(key);
+        }
+    }
+
+    public static List<String> lrange(String key, long start, long end) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.lrange(key, start, end);
+        }
+    }
+
+    public static long rpush(String key, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.rpush(key, value);
+        }
+    }
+
+    public static String set(byte[] key, byte[] value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.set(key, value);
+        }
+    }
+
+    public static byte[] get(byte[] key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.get(key);
+        }
     }
 
 }

@@ -2,7 +2,9 @@ package com.datatrees.rawdatacentral.domain.vo;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -14,21 +16,23 @@ public class Response implements Serializable {
     @JSONField(serialize = false)
     private static final String DEFAULT_CHARSET = "UTF-8";
     @JSONField(ordinal = 1)
-    private Request             request;
-    @JSONField(ordinal = 1)
-    private long                totalTime;
+    private int statusCode;
     @JSONField(ordinal = 2)
-    private int                 statusCode;
+    private boolean isRedirect = false;//是否重定向了
+    @JSONField(ordinal = 2)
+    private String  redirectUrl;
     @JSONField(ordinal = 3)
-    private Map<String, String> header;
+    private Request request;
     @JSONField(ordinal = 4)
-    private String              responseCookies;
+    private long    totalTime;
+    @JSONField(ordinal = 5)
+    private List<NameValue> headers = new ArrayList<>();
+    @JSONField(ordinal = 6)
+    private Map<String, String> responseCookies;
     @JSONField(serialize = false)
     private byte[]              response;
-    @JSONField(ordinal = 6)
-    private Charset             charset;
     @JSONField(ordinal = 7)
-    private String              redirectUrl;
+    private Charset             charset;
     @JSONField(ordinal = 8)
     private String              contentType;
 
@@ -58,11 +62,22 @@ public class Response implements Serializable {
     }
 
     public String getRedirectUrl() {
+        if (null != request && request.isRedirect()) {
+            return request.getUrl();
+        }
         return redirectUrl;
     }
 
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
+    }
+
+    public boolean isRedirect() {
+        return null != request && request.isRedirect();
+    }
+
+    public void setRedirect(boolean redirect) {
+        isRedirect = redirect;
     }
 
     public Charset getCharset() {
@@ -81,19 +96,19 @@ public class Response implements Serializable {
         this.request = request;
     }
 
-    public Map<String, String> getHeader() {
-        return header;
+    public List<NameValue> getHeaders() {
+        return headers;
     }
 
-    public void setHeader(Map<String, String> header) {
-        this.header = header;
+    public void setHeaders(List<NameValue> headers) {
+        this.headers = headers;
     }
 
-    public String getResponseCookies() {
+    public Map<String, String> getResponseCookies() {
         return responseCookies;
     }
 
-    public void setResponseCookies(String responseCookies) {
+    public void setResponseCookies(Map<String, String> responseCookies) {
         this.responseCookies = responseCookies;
     }
 

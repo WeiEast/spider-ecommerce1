@@ -22,12 +22,16 @@ public enum RedisKeyPrefixEnum {
     TASK_RESULT("task.result", 60, TimeUnit.MINUTES, "task爬取结果"),
     TASK_CONTEXT("task.context", 10, TimeUnit.MINUTES, "task context"),
     TASK_REQUEST("task.request", 30, TimeUnit.MINUTES, "根据taskId共享代理"),
+    TASK_PAGE_CONTENT("task.page.content", 30, TimeUnit.MINUTES, "请求页面"),
     PLUGIN_CLASS_DATA("plugin.class.data", 24, TimeUnit.HOURS, "根据taskId共享class"),
     PLUGIN_FILE("plugin.file", 365, TimeUnit.DAYS, "插件jar存储"),
     PLUGIN_FILE_MD5("plugin.file.md5", 365, TimeUnit.DAYS, "插件md5"),
     SEND_LOGIN_MSG_STAGE("send.login.msg.stage", 24, TimeUnit.HOURS, "发送登录成功消息阶段"),
+    FILE_MD5("file.md5", 365, TimeUnit.DAYS, "redis缓存文件md5"),
+    FILE_DATA("file.data", 365, TimeUnit.DAYS, "redis缓存文件内容"),
     MAX_WEIGHT_OPERATOR("max.weight.operator", 365, TimeUnit.DAYS, "最大权重运营商"),
     ALL_OPERATOR_CONFIG("all.operator.config.new", 60, TimeUnit.MINUTES, "运营商配置"),
+    WEBSITE_LAST_SEND_WARN_TIME("website.last.send.warn.time", 7, TimeUnit.DAYS, "站点上一次发送预警时间"),
     WEBSITE_PLUGIN_FILE_NAME("website.plugin.file.name", 60, TimeUnit.MINUTES, "为website制定jar"),
     WEBSITE_OPERATOR("website.operator", 1, TimeUnit.HOURS, "运营商配置"),
     WEBSITE_OPERATOR_RENAME("website.operator.rename", 365, TimeUnit.DAYS, "运营商websiteName别名,兼容方案初期用");
@@ -59,6 +63,10 @@ public enum RedisKeyPrefixEnum {
         this.timeUnit = timeUnit;
     }
 
+    public static void main(String[] args) {
+        System.out.println(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(1, 2, 3, 4, 5));
+    }
+
     public int getTimeout() {
         return timeout;
     }
@@ -69,6 +77,14 @@ public enum RedisKeyPrefixEnum {
 
     public String getRedisKey(Object postfix) {
         return prefix + separator + postfix.toString();
+    }
+
+    public String getRedisKey(Object... postfix) {
+        StringBuffer sb = new StringBuffer(prefix);
+        for (Object o : postfix) {
+            sb.append(separator).append(o.toString());
+        }
+        return sb.toString();
     }
 
     public String getPrefix() {

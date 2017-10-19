@@ -16,6 +16,7 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.domain.vo.NameValue;
 import com.datatrees.rawdatacentral.domain.vo.Request;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.treefinance.proxy.domain.Proxy;
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -72,6 +74,7 @@ public class TaskHttpClient {
     private Response    response;
     private ContentType requestContentType;
     private ContentType responseContentType;
+    private boolean                 isRedirect   = false;//是否重定向了
     /**
      * 自定义的cookie
      */
@@ -82,22 +85,21 @@ public class TaskHttpClient {
         this.response = new Response(request);
     }
 
-    public static TaskHttpClient create(Long taskId, String websiteName, RequestType requestType, String remark) {
+    public static TaskHttpClient create(Long taskId, String websiteName, RequestType requestType, String remarkId) {
+        return create(taskId, websiteName, requestType, remarkId, false);
+    }
+
+    public static TaskHttpClient create(OperatorParam operatorParam, RequestType requestType, String remarkId) {
+        return create(operatorParam.getTaskId(), operatorParam.getWebsiteName(), requestType, remarkId, false);
+    }
+
+    public static TaskHttpClient create(Long taskId, String websiteName, RequestType requestType, String remarkId, boolean isRedirect) {
         Request request = new Request();
         request.setTaskId(taskId);
         request.setWebsiteName(websiteName);
         request.setType(requestType);
-        request.setRemarkId(remark);
-        TaskHttpClient client = new TaskHttpClient(request);
-        return client;
-    }
-
-    public static TaskHttpClient create(OperatorParam operatorParam, RequestType requestType, String remark) {
-        Request request = new Request();
-        request.setTaskId(operatorParam.getTaskId());
-        request.setWebsiteName(operatorParam.getWebsiteName());
-        request.setType(requestType);
-        request.setRemarkId(remark);
+        request.setRemarkId(remarkId);
+        request.setRedirect(isRedirect);
         TaskHttpClient client = new TaskHttpClient(request);
         return client;
     }
@@ -110,19 +112,24 @@ public class TaskHttpClient {
         return response;
     }
 
+    public TaskHttpClient removeHeader(String name) {
+        request.getHeaders().remove(name);
+        return this;
+    }
+
     public TaskHttpClient addHeader(String name, String value) {
-        request.getHeader().put(name, value);
+        request.addHead(name, value);
         return this;
     }
 
     public TaskHttpClient setFullUrl(String url) {
-        request.setFullUrl(url);
+        request.setUrl(url);
         return this;
     }
 
     public TaskHttpClient setFullUrl(String templateUrl, Object... params) {
         String fullUrl = TemplateUtils.format(templateUrl, params);
-        request.setFullUrl(fullUrl);
+        request.setUrl(fullUrl);
         return this;
     }
 
@@ -131,18 +138,18 @@ public class TaskHttpClient {
         return this;
     }
 
-    public TaskHttpClient setParams(Map<String, String> params) {
+    public TaskHttpClient setParams(Map<String, Object> params) {
         request.setParams(params);
         return this;
     }
 
     public TaskHttpClient setReferer(String referer) {
-        request.getHeader().put(HttpHeadKey.REFERER, referer);
+        request.addHead(HttpHeadKey.REFERER, referer);
         return this;
     }
 
     public TaskHttpClient setReferer(String referer, Object... params) {
-        request.getHeader().put(HttpHeadKey.REFERER, TemplateUtils.format(referer, params));
+        request.addHead(HttpHeadKey.REFERER, TemplateUtils.format(referer, params));
         return this;
     }
 
@@ -230,47 +237,46 @@ public class TaskHttpClient {
 
     public Response invoke() {
         checkRequest(request);
+        Long taskId = request.getTaskId();
         request.setRequestId(RequestIdUtils.createId());
         CloseableHttpResponse httpResponse = null;
-        BasicCookieStore cookieStore = TaskUtils.getCookie(request.getTaskId());
-        request.setRequestCookies(TaskUtils.getCookieString(cookieStore));
+        BasicCookieStore cookieStore = TaskUtils.getCookie(taskId);
+        request.setRequestCookies(TaskUtils.getCookieMap(cookieStore));
         if (!extralCookie.isEmpty()) {
-            for(BasicClientCookie cookie: extralCookie){
+            for (BasicClientCookie cookie : extralCookie) {
                 cookieStore.addCookie(cookie);
             }
         }
         HttpHost proxy = null;
         if (null == request.getProxyEnable()) {
-            request.setProxyEnable(ProxyUtils.getProxyEnable(request.getTaskId()));
+            request.setProxyEnable(ProxyUtils.getProxyEnable(taskId));
         }
         if (request.getProxyEnable()) {
-            Proxy proxyConfig = ProxyUtils.getProxy(request.getTaskId(), request.getWebsiteName());
+            Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
             if (null != proxyConfig) {
                 proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
                 request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
             }
         }
-        RequestConfig config = RequestConfig.custom().setConnectTimeout(request.getConnectTimeout()).setSocketTimeout(request.getSocketTimeout())
-                .build();
+        //禁止重定向
+        RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
+                .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
                 .setSSLSocketFactory(sslsf).build();
-
+        int statusCode = 0;
         try {
             //参数处理
-            String url = null;
-            if (CollectionUtils.isEmpty(request.getParams())) {
-                url = StringUtils.isNoneBlank(request.getFullUrl()) ? request.getFullUrl() : request.getUrl();
-            } else {
+            String url = request.getUrl();
+            if (CollectionUtils.isNotEmpty(request.getParams())) {
                 CheckUtils.checkNotBlank(request.getUrl(), "url is blank");
                 List<NameValuePair> pairs = new ArrayList<NameValuePair>(request.getParams().size());
-                for (Map.Entry<String, String> entry : request.getParams().entrySet()) {
-                    String value = entry.getValue();
-                    if (value != null) {
-                        pairs.add(new BasicNameValuePair(entry.getKey(), value));
-                    }
+                for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
+                    pairs.add(new BasicNameValuePair(entry.getKey(), null == entry.getValue() ? "" : String.valueOf(entry.getValue())));
                 }
                 url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getCharset()));
             }
+            request.setFullUrl(url);
+            logger.info("pre request taskId={},url={}", taskId, url);
             HttpRequestBase client = null;
             if (RequestType.GET == request.getType()) {
                 client = new HttpGet(url);
@@ -281,34 +287,29 @@ public class TaskHttpClient {
                 }
                 client = httpPost;
             }
-            if (CollectionUtils.isNotEmpty(request.getHeader())) {
-                for (Map.Entry<String, String> entry : request.getHeader().entrySet()) {
-                    client.setHeader(entry.getKey(), entry.getValue());
-                }
-            }
             if (StringUtils.isNoneBlank(request.getContentType())) {
-                client.setHeader(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+                request.addHead(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+            }
+            if (CollectionUtils.isNotEmpty(request.getHeaders())) {
+                for (NameValue nameValue : request.getHeaders()) {
+                    client.setHeader(nameValue.getName(), String.valueOf(nameValue.getValue()));
+                }
             }
             request.setRequestTimestamp(System.currentTimeMillis());
             httpResponse = httpclient.execute(client);
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String host = client.getURI().getHost();
+            TaskUtils.updateBasicCookieStore(taskId, host, cookieStore, httpResponse);
+            TaskUtils.saveCookie(taskId, cookieStore);
+            statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
-            response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
-            if (RequestType.POST == request.getType() && 302 == statusCode) {
-                String location = httpResponse.getFirstHeader("Location").getValue();
-                client = new HttpGet(location);
-                response.setRedirectUrl(location);
-                httpResponse = httpclient.execute(client);
-                response.setStatusCode(statusCode);
-                response.setResponseCookies(TaskUtils.getReceiveCookieString(request.getRequestCookies(), cookieStore));
-                statusCode = httpResponse.getStatusLine().getStatusCode();
-            }
+            response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
             long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
             response.setTotalTime(totalTime);
-            if (statusCode != 200) {
-                client.abort();
-                logger.error("HttpClient status error, statusCode={}", statusCode);
-                return response;
+            Header[] headers = httpResponse.getAllHeaders();
+            if (null != headers) {
+                for (Header header : headers) {
+                    response.getHeaders().add(new NameValue(header.getName(), header.getValue()));
+                }
             }
             Header header = httpResponse.getFirstHeader(HttpHeadKey.CONTENT_TYPE);
             if (null != header) {
@@ -323,10 +324,13 @@ public class TaskHttpClient {
                     }
                 }
             }
-            TaskUtils.saveCookie(request.getTaskId(), cookieStore);
-            //httpResponse.getAllHeaders()
-            byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
-            response.setResponse(data);
+            if (statusCode >= 200 && statusCode <= 299) {
+                byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
+                response.setResponse(data);
+            } else {
+                client.abort();
+                logger.error("HttpClient status error, statusCode={}", statusCode);
+            }
         } catch (SocketTimeoutException e) {
             if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
                 logger.error("http timeout ,will retry request={}", request);
@@ -334,13 +338,26 @@ public class TaskHttpClient {
             }
             logger.error("http timout,retry={},maxRetry={}, request={}", request.getRetry(), request.getMaxRetry(), request, e);
             throw new RuntimeException("http timeout,request=" + request, e);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("http error request={}", request, e);
             throw new RuntimeException("http error request=" + request, e);
         } finally {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
             redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response), 1, TimeUnit.DAYS);
+            StringBuilder pc = new StringBuilder("url-->").append(request.getFullUrl()).append("\nrequest_id-->").append(request.getRequestId())
+                    .append("\nstatus_code-->").append(response.getStatusCode()).append("\nreques_time-->")
+                    .append(DateUtils.formatYmdhms(new Date(request.getRequestTimestamp()))).append("\n").append(response.getPageContent());
+            RedisUtils.rpush(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), pc.toString());
+            RedisUtils
+                    .expire(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
+        }
+        if (statusCode == 302) {
+            String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
+            logger.info("http has redirect,taskId={},websiteName={},type={},from={} to redirectUrl={}", taskId, request.getWebsiteName(),
+                    request.getType(), request.getUrl(), redirectUrl);
+            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, request.getRemarkId(), true).setUrl(redirectUrl)
+                    .invoke();
         }
         return response;
     }
@@ -349,8 +366,8 @@ public class TaskHttpClient {
         CheckUtils.checkNotNull(request, "request is null");
         CheckUtils.checkNotPositiveNumber(request.getTaskId(), ErrorCode.EMPTY_TASK_ID);
         //CheckUtils.checkNotBlank(request.getRemarkId(), "remarkId is empty");
-        if (StringUtils.isBlank(request.getUrl()) && StringUtils.isBlank(request.getFullUrl())) {
-            throw new RuntimeException("url and fullUrl is blank");
+        if (StringUtils.isBlank(request.getUrl())) {
+            throw new RuntimeException("url  is blank");
         }
     }
 
