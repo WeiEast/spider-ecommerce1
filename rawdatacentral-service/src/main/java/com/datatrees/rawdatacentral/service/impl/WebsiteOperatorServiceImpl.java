@@ -173,7 +173,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         CheckUtils.checkNotNull(enable, "enable is null");
         WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
-        if (null == websiteOperatorDb) {
+        if (null != websiteOperatorDb) {
             WebsiteOperator operatorUpdate = new WebsiteOperator();
             operatorUpdate.setWebsiteId(websiteOperatorDb.getWebsiteId());
             operatorUpdate.setEnable(enable);
