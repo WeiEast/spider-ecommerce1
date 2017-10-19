@@ -179,7 +179,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public List<OperatorCatalogue> queryAllOperatorConfig() {
         List<OperatorCatalogue> list = new ArrayList<>();
-        Map<String, List<OperatorConfig>> map = new HashMap<>();
         List<OperatorConfig> map10086 = new ArrayList<>();
         List<OperatorConfig> map10000 = new ArrayList<>();
         List<OperatorConfig> map10010 = new ArrayList<>();

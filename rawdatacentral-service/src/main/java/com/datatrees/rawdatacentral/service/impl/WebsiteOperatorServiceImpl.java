@@ -19,6 +19,7 @@ import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
+import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -40,9 +41,11 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Resource
-    private WebsiteOperatorDAO websiteOperatorDAO;
+    private WebsiteOperatorDAO  websiteOperatorDAO;
     @Resource
-    private WebsiteConfigDAO   websiteConfigDAO;
+    private WebsiteConfigDAO    websiteConfigDAO;
+    @Resource
+    private WebsiteGroupService websiteGroupService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -175,9 +178,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             operatorUpdate.setWebsiteId(websiteOperatorDb.getWebsiteId());
             operatorUpdate.setEnable(enable);
             websiteOperatorDAO.updateByPrimaryKeySelective(operatorUpdate);
-
-
-
+            websiteGroupService.updateEnable(websiteName, enable);
+            websiteGroupService.updateCache();
         }
 
     }
