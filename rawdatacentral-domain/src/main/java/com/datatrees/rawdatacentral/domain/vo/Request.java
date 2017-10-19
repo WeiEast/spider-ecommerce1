@@ -2,12 +2,15 @@ package com.datatrees.rawdatacentral.domain.vo;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 
 /**
@@ -24,6 +27,8 @@ public class Request implements Serializable {
     private Long   taskId;
     @JSONField(ordinal = 2)
     private String websiteName;
+    @JSONField(ordinal = 2)
+    private boolean isRedirect = false;//是否重定向了
     @JSONField(ordinal = 3)
     private String proxy;
     @JSONField(ordinal = 4)
@@ -31,19 +36,19 @@ public class Request implements Serializable {
     @JSONField(ordinal = 5)
     private String url;
     @JSONField(ordinal = 6)
-    private Map<String, String> params = new HashMap<>();
+    private Map<String, Object> params = new HashMap<>();
     @JSONField(ordinal = 7)
     private String remarkId;
     @JSONField(ordinal = 8)
-    private Map<String, String> header = new HashMap<>();
+    private List<NameValue> headers = new ArrayList<>();
     @JSONField(ordinal = 9)
-    private long   requestTimestamp;
+    private long requestTimestamp;
     @JSONField(ordinal = 10)
-    private String requestCookies;
+    private Map<String, String> requestCookies = new HashMap<>();
     @JSONField(ordinal = 11)
     private String protocol;
     @JSONField(ordinal = 12)
-    private String        contentType    = "application/x-www-form-urlencoded";
+    private String        contentType    = "application/x-www-form-urlencoded; charset=UTF-8";
     @JSONField(ordinal = 12)
     private Charset       charset        = Charset.forName("ISO-8859-1");
     @JSONField(ordinal = 13)
@@ -60,8 +65,19 @@ public class Request implements Serializable {
     private String  requestBodyContent;
     @JSONField(ordinal = 14)
     private Boolean proxyEnable;
+    @JSONField(ordinal = 15)
+    private Map<String, String> extralCookie = new HashMap<>();
 
     public Request() {
+        addHead(HttpHeadKey.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0");
+    }
+
+    public Map<String, String> getExtralCookie() {
+        return extralCookie;
+    }
+
+    public void setExtralCookie(Map<String, String> extralCookie) {
+        this.extralCookie = extralCookie;
     }
 
     public Boolean getProxyEnable() {
@@ -120,11 +136,11 @@ public class Request implements Serializable {
         this.url = url;
     }
 
-    public Map<String, String> getParams() {
+    public Map<String, Object> getParams() {
         return params;
     }
 
-    public void setParams(Map<String, String> params) {
+    public void setParams(Map<String, Object> params) {
         this.params = params;
     }
 
@@ -136,12 +152,12 @@ public class Request implements Serializable {
         this.remarkId = remarkId;
     }
 
-    public Map<String, String> getHeader() {
-        return header;
+    public List<NameValue> getHeaders() {
+        return headers;
     }
 
-    public void setHeader(Map<String, String> header) {
-        this.header = header;
+    public void setHeaders(List<NameValue> headers) {
+        this.headers = headers;
     }
 
     public long getRequestTimestamp() {
@@ -152,11 +168,11 @@ public class Request implements Serializable {
         this.requestTimestamp = requestTimestamp;
     }
 
-    public String getRequestCookies() {
+    public Map<String, String> getRequestCookies() {
         return requestCookies;
     }
 
-    public void setRequestCookies(String requestCookies) {
+    public void setRequestCookies(Map<String, String> requestCookies) {
         this.requestCookies = requestCookies;
     }
 
@@ -230,6 +246,36 @@ public class Request implements Serializable {
 
     public void setRequestBodyContent(String requestBodyContent) {
         this.requestBodyContent = requestBodyContent;
+    }
+
+    public boolean isRedirect() {
+        return isRedirect;
+    }
+
+    public void setRedirect(boolean redirect) {
+        isRedirect = redirect;
+    }
+
+    public synchronized void addHead(String name, String value) {
+        if (null == name || name.trim().length() == 0 || null == value) {
+            return;
+        }
+        if (name.equals("Set-Cookie")) {
+            headers.add(new NameValue(name, value));
+        } else {
+            NameValue head = null;
+            for (NameValue nameValue : headers) {
+                if (nameValue.getName().equals(name)) {
+                    head = nameValue;
+                    break;
+                }
+            }
+            if (null != head) {
+                head.setValue(value);
+            } else {
+                headers.add(new NameValue(name, value));
+            }
+        }
     }
 
     @Override

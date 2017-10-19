@@ -55,14 +55,20 @@ public final class PluginUtil {
         return result;
     }
 
-    public static AbstractClientPlugin loadPlugin(PluginWrapper plugin, ClassLoader parent) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        String mainClass = ((JavaPlugin) plugin.getPlugin()).getMainClass();
-
-        ClassLoader parentLoader = parent;
-        if (parentLoader == null) {
-            parentLoader = PluginUtil.class.getClassLoader();
-        }
-
-        return ClassLoaderUtils.loadAndInstantiate(plugin.getFile(), parentLoader, plugin.isForceReload(), mainClass, AbstractClientPlugin.class);
-    }
+    //public static AbstractClientPlugin loadPlugin(PluginWrapper plugin,
+    //        ClassLoader parent) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    //    try {
+    //        String mainClass = ((JavaPlugin) plugin.getPlugin()).getMainClass();
+    //
+    //        ClassLoader parentLoader = parent;
+    //        if (parentLoader == null) {
+    //            parentLoader = PluginUtil.class.getClassLoader();
+    //        }
+    //
+    //        return ClassLoaderUtils.loadAndInstantiate(plugin.getFile(), parentLoader, plugin.isForceReload(), mainClass, AbstractClientPlugin.class);
+    //    } catch (Throwable e) {
+    //        log.error("loadPlugin error plugin={}", plugin, e);
+    //        return null;
+    //    }
+    //}
 }

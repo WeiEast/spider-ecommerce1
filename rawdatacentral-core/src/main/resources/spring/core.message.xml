@@ -2,27 +2,28 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<bean id="mqProducer" class="com.alibaba.rocketmq.client.producer.DefaultMQProducer" init-method="start" destroy-method="shutdown">
-		<property name="namesrvAddr" value="${core.mq.host}" />
-		<property name="pollNameServerInteval" value="${core.mq.pollNameServer.inteval}" />
-		<property name="heartbeatBrokerInterval" value="${core.mq.heartbeatBroker.host.inteval}" />
-		<property name="persistConsumerOffsetInterval" value="${core.mq.persistConsumerOffset.inteval}" />
-		<property name="producerGroup" value="${core.mq.producerGroup}" />
-	</bean>
+    <bean id="mqProducer" class="com.alibaba.rocketmq.client.producer.DefaultMQProducer" init-method="start" destroy-method="shutdown">
+        <property name="namesrvAddr" value="${core.mq.host}"/>
+        <property name="pollNameServerInteval" value="${core.mq.pollNameServer.inteval}"/>
+        <property name="heartbeatBrokerInterval" value="${core.mq.heartbeatBroker.host.inteval}"/>
+        <property name="persistConsumerOffsetInterval" value="${core.mq.persistConsumerOffset.inteval}"/>
+        <property name="producerGroup" value="${core.mq.producerGroup}"/>
+        <property name="instanceName" value="rawdatacentral"/>
+    </bean>
 
 
-	<bean id="messageFactory" class="com.datatrees.rawdatacentral.core.message.MessageFactory">
-		<property name="defaultTopic" value="${core.mq.default.topic}" />
-		<property name="flag" value="${core.mq.flag}" />
-		<property name="defaultTags" value="${core.mq.default.tags}" />
-		<property name="defaultKeys" value="${core.mq.default.keys}" />
-		<property name="waitStoreMsgOK" value="${core.mq.waitStoreMsgOK}" />
-	</bean>
+    <bean id="messageFactory" class="com.datatrees.rawdatacentral.core.message.MessageFactory">
+        <property name="defaultTopic" value="${core.mq.default.topic}"/>
+        <property name="flag" value="${core.mq.flag}"/>
+        <property name="defaultTags" value="${core.mq.default.tags}"/>
+        <property name="defaultKeys" value="${core.mq.default.keys}"/>
+        <property name="waitStoreMsgOK" value="${core.mq.waitStoreMsgOK}"/>
+    </bean>
 
-	<bean id="rocketMessageSender" class="com.datatrees.rawdatacentral.core.message.RocketMessageSender">
-		<property name="producer" ref="mqProducer" />
-		<property name="factory" ref="messageFactory" />
-	</bean>
+    <bean id="rocketMessageSender" class="com.datatrees.rawdatacentral.core.message.RocketMessageSender">
+        <property name="producer" ref="mqProducer"/>
+        <property name="factory" ref="messageFactory"/>
+    </bean>
 
 </beans>
 

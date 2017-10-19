@@ -1,3 +1,5 @@
+apply from: rootProject.file('upload.gradle')
+
 dependencies {
     compile project(":rawdatacentral-domain")
     compile project(":rawdatacentral-api")
@@ -11,5 +13,11 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
     compile 'org.apache.httpcomponents:httpclient:4.5'
     compile 'cn.wanghaomiao:JsoupXpath:0.3.2'
+    compile 'com.caucho:hessian:4.0.38'
+    compile "redis.clients:jedis:${jedisVersion}"
+    compile "com.jayway.jsonpath:json-path:${jsonPathVersion}"
+    compile 'net.sourceforge.htmlunit:htmlunit:2.27'
+
+
 
 }

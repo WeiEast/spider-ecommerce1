@@ -23,6 +23,18 @@ public class ClassLoaderUtils {
             logger.error("loadClass error jarFile={},className={}", jarFile.getAbsolutePath(), className);
             throw new RuntimeException("loadClass error jarFile=" + jarFile.getAbsolutePath() + ",className=" + className);
         }
+    }
+
+    public static ClassLoader createClassLoader(File jarFile) {
+        try {
+            URL url = new URL("file", null, jarFile.getAbsolutePath());
+            URLClassLoader loader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
+            logger.info("createClassLoader success jarFile={}", jarFile.getAbsolutePath());
+            return loader;
+        } catch (Exception e) {
+            logger.error("createClassLoader error jarFile={}", jarFile.getAbsolutePath());
+            throw new RuntimeException("createClassLoader error jarFile=" + jarFile.getAbsolutePath());
+        }
 
     }
 }

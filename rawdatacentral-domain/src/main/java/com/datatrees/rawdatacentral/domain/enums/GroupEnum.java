@@ -14,11 +14,20 @@ package com.datatrees.rawdatacentral.domain.enums;
  */
 public enum GroupEnum {
 
+    MAIL_QQ("MAIL_QQ", "QQ邮箱", WebsiteType.MAIL, "qq.com"),
+    MAIL_163("MAIL_163", "163邮箱", WebsiteType.MAIL, "163.com"),
+    MAIL_126("MAIL_126", "126邮箱", WebsiteType.MAIL, "126.com"),
+    MAIL_SINA("MAIL_SINA", "新浪邮箱", WebsiteType.MAIL, "sina.com"),
+    MAIL_139("MAIL_139", "139邮箱", WebsiteType.MAIL, "139.com"),
+
+    ALIPAY_COM("ALIPAY_COM", "支付宝", WebsiteType.ECOMMERCE, "alipay.com"),
+    TAOBAO_COM("TAOBAO_COM", "淘宝", WebsiteType.ECOMMERCE, "taobao.com"),
+
     CHINA_10086("CHINA_10086", "中国移动", WebsiteType.OPERATOR, "china_10086_shop"),
     CHINA_10000("CHINA_10000", "中国电信", WebsiteType.OPERATOR, "china_10000_app"),
     CHINA_10010("CHINA_10010", "中国联通", WebsiteType.OPERATOR, "china_10010_app"),
-    ZHE_JIANG_10086("ZHE_JAING_10086", "浙江移动", WebsiteType.OPERATOR, "zhe_jiang_10086_web"),
-    ZHE_JIANG_10000("ZHE_JAING_10000", "浙江电信", WebsiteType.OPERATOR, "zhe_jiang_10000_web"),
+    ZHE_JIANG_10086("ZHE_JIANG_10086", "浙江移动", WebsiteType.OPERATOR, "zhe_jiang_10086_web"),
+    ZHE_JIANG_10000("ZHE_JIANG_10000", "浙江电信", WebsiteType.OPERATOR, "zhe_jiang_10000_web"),
     GUANG_DONG_10086("GUANG_DONG_10086", "广东移动", WebsiteType.OPERATOR, "guang_dong_10086_web"),
     GUANG_DONG_10000("GUANG_DONG_10000", "广东电信", WebsiteType.OPERATOR, "guang_dong_10000_web"),
     JIANG_SU_10086("JIANG_SU_10086", "江苏移动", WebsiteType.OPERATOR, "jiang_su_10086_wap"),
@@ -29,8 +38,8 @@ public enum GroupEnum {
     HU_NAN_10000("HU_NAN_10000", "湖南电信", WebsiteType.OPERATOR, "hu_nan_10000_wap"),
     BEI_JING_10086("BEI_JING_10086", "北京移动", WebsiteType.OPERATOR, "bei_jing_10086_web"),
     BEI_JING_10000("BEI_JING_10000", "北京电信", WebsiteType.OPERATOR, "bei_jing_10000_web"),
-    TIAN_JIN_10086("TIAN_JING_10086", "天津移动", WebsiteType.OPERATOR, "tian_jin_10086_web"),
-    TIAN_JIN_10000("TIAN_JING_10000", "天津电信", WebsiteType.OPERATOR, "tian_jin_10000_wap"),
+    TIAN_JIN_10086("TIAN_JIN_10086", "天津移动", WebsiteType.OPERATOR, "tian_jin_10086_web"),
+    TIAN_JIN_10000("TIAN_JIN_10000", "天津电信", WebsiteType.OPERATOR, "tian_jin_10000_wap"),
     SHANG_HAI_10086("SHANG_HAI_10086", "上海移动", WebsiteType.OPERATOR, "shang_hai_10086_web"),
     SHANG_HAI_10000("SHANG_HAI_10000", "上海电信", WebsiteType.OPERATOR, "shang_hai_10000_web"),
     CHONG_QING_10086("CHONG_QING_10086", "重庆移动", WebsiteType.OPERATOR, "chong_qing_10086_web"),
@@ -105,6 +114,15 @@ public enum GroupEnum {
         return null;
     }
 
+    public static GroupEnum getByWebsiteName(String websiteName) {
+        for (GroupEnum e : GroupEnum.values()) {
+            if (e.getWebsiteName().equals(websiteName)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
     public String getGroupCode() {
         return groupCode;
     }
@@ -120,4 +138,14 @@ public enum GroupEnum {
     public WebsiteType getWebsiteType() {
         return websiteType;
     }
+
+    //public static void main(String[] args) {
+    //    for (GroupEnum e : GroupEnum.values()) {
+    //        if (!e.name().endsWith(e.getGroupCode())) {
+    //            System.out.println(e.groupCode);
+    //        }
+    //    }
+    //
+    //
+    //}
 }

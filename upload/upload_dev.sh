@@ -1,5 +1,5 @@
 #!/bin/sh
-url="http://192.168.5.15:6789/website/uploadPluginJar"
+url="http://192.168.5.25:6789/website/uploadPluginJar"
 gradle clean install -x test
 list=`find rawdatacentral-plugin-operator/build/libs/rawdatacentral-plugin-operator.jar -name '*.jar' | grep -v 'sources'`
 for file in $list

@@ -1,8 +1,12 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
-import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
@@ -19,6 +23,7 @@ import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +31,7 @@ import org.springframework.stereotype.Service;
  * Created by zhouxinghai on 2017/7/14.
  */
 @Service
-public class ClassLoaderServiceImpl implements ClassLoaderService {
+public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
     @Value("${env:local}")
@@ -39,28 +44,50 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
     private String                 operatorPluginFilename;
     @Resource
     private WebsiteOperatorService websiteOperatorService;
+    /**
+     * class缓存
+     */
+    private Map<String, Class>       classCache            = new HashMap<>();
+    /**
+     * class清理
+     */
+    private Map<String, Long>        classUpdateTime       = new ConcurrentHashMap<>();
+    /**
+     * class loader
+     */
+    private Map<String, ClassLoader> classLoaderCache      = new ConcurrentHashMap<>();
+    /**
+     * class loader
+     */
+    private Map<String, Long>        classLoaderUpdateTime = new ConcurrentHashMap<>();
 
     @Override
     public Class loadPlugin(String jarName, String className) {
         CheckUtils.checkNotBlank(jarName, "jarName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
+        String pluginFile = null;
         try {
-            ////本地调试不走redis
-            //if (StringUtils.equals("local", env)) {
-            //    return Thread.currentThread().getContextClassLoader().loadClass(className);
-            //}
-            String postfix = jarName + "_" + className;
-            String cacheKey = RedisKeyPrefixEnum.PLUGIN_CLASS.getRedisKey(postfix);
-            Class mainClass = redisService.getCache(cacheKey, new TypeReference<Class>() {});
+            String cacheKey = jarName + "_" + className;
+            Class mainClass = classCache.get(cacheKey);
             PluginUpgradeResult plugin = pluginService.getPluginFromRedis(jarName);
+            pluginFile = plugin.getFile().getAbsolutePath();
             if (null == mainClass || plugin.getForceReload()) {
-                mainClass = ClassLoaderUtils.loadClass(plugin.getFile(), className);
-                logger.info("重新加载class,className={},jar={}", className, jarName);
-                redisService.cache(RedisKeyPrefixEnum.PLUGIN_CLASS, postfix, mainClass);
+                ClassLoader classLoader = classLoaderCache.get(pluginFile);
+                if (null == classLoader) {
+                    classLoader = ClassLoaderUtils.createClassLoader(plugin.getFile());
+                    classLoaderCache.put(pluginFile, classLoader);
+                }
+                //1个不使用就自动标记回收
+                classLoaderUpdateTime.put(pluginFile, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
+                mainClass = classLoader.loadClass(className);
+                logger.info("重新加载class,className={},jar={},pluginFile={}", className, jarName, plugin.getFile().getAbsolutePath());
+                classCache.put(cacheKey, mainClass);
             }
+            //1个不使用就自动标记回收
+            classUpdateTime.put(cacheKey, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
             return mainClass;
-        } catch (Exception e) {
-            logger.error("loadPlugin error jarName={},className={}", jarName, className);
+        } catch (Throwable e) {
+            logger.error("loadPlugin error jarName={},className={}", jarName, className, e);
             throw new RuntimeException(TemplateUtils.format("loadPlugin error jarName={},className={}", jarName, className));
         }
     }
@@ -86,10 +113,44 @@ public class ClassLoaderServiceImpl implements ClassLoaderService {
                 throw new RuntimeException("mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorPluginService");
             }
             return (OperatorPluginService) loginClass.newInstance();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error("getOperatorService error websiteName={}", websiteName, e);
             throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName);
         }
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    Iterator<Map.Entry<String, Long>> iterator = classUpdateTime.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Map.Entry<String, Long> entry = iterator.next();
+                        if (System.currentTimeMillis() <= entry.getValue()) {
+                            classCache.remove(entry.getKey());
+                            logger.info("remove class cache key={}", entry.getKey());
+                            iterator.remove();
+                        }
+                    }
+                    Iterator<Map.Entry<String, Long>> iterator2 = classLoaderUpdateTime.entrySet().iterator();
+                    while (iterator2.hasNext()) {
+                        Map.Entry<String, Long> entry = iterator.next();
+                        if (System.currentTimeMillis() <= entry.getValue()) {
+                            classLoaderCache.remove(entry.getKey());
+                            logger.info("remove classloader cache key={}", entry.getKey());
+                            iterator.remove();
+                        }
+                    }
+                    try {
+                        TimeUnit.MINUTES.sleep(15);
+                    } catch (InterruptedException e) {
+                        logger.error("clean class cache error", e);
+                    }
+                }
+            }
+        }).start();
+
+    }
 }

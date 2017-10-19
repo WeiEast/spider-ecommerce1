@@ -12,7 +12,7 @@ def logPath = "/dashu/log/rawdatacentral"
 // 控制台
 appender("console", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
-        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%L] %m%n"
+        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
         charset = Charset.forName(charsetName)
     }
 }
@@ -21,7 +21,7 @@ appender("console", ConsoleAppender) {
 appender("sysFile", RollingFileAppender) {
     file = "${logPath}/rawdatacentral.log"
     encoder(PatternLayoutEncoder) {
-        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%L] %m%n"
+        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
         charset = Charset.forName(charsetName)
     }
     rollingPolicy(TimeBasedRollingPolicy) {
@@ -33,6 +33,8 @@ appender("sysFile", RollingFileAppender) {
 
 
 root(INFO, ["console", "sysFile"])
+logger("org.apache.http.client.protocol.ResponseProcessCookies",DEBUG)
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
+logger("com.alibaba.dubbo.rpc.protocol.dubbo", OFF)
 logger("com.datatrees.rawdatacentral.submitter.filestore.FileStoreServiceImpl", OFF)
 

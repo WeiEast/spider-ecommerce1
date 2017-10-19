@@ -16,12 +16,10 @@ public class TemplateUtils {
             for (int i = 0; i < args.length; i++) {
                 Object arg = args[i];
                 if (null == arg) {
-                    logger.error("arg is null template={},index={}", template, i);
-                    throw new RuntimeException("format error arg is null");
+                    logger.warn("arg is null template={},index={}", template, i);
                 }
-                template = template.replaceFirst("\\{}", String.valueOf(arg));
+                template = template.replaceFirst("\\{}", null != arg ? arg.toString() : "");
             }
-            //            template = template.replaceAll("\\{}", "");
         }
         return template;
     }
