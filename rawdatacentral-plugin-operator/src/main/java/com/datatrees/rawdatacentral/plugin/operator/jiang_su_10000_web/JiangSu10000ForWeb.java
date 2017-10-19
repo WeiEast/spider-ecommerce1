@@ -66,6 +66,7 @@ public class JiangSu10000ForWeb implements OperatorPluginService {
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
+        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
