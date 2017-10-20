@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
  */
 public class SearchProcessorContext extends AbstractProcessorContext {
 
-    private static final Logger                                                            log                         = LoggerFactory.getLogger(SearchProcessorContext.class);
+    private static final Logger                                                            log                         = LoggerFactory
+            .getLogger(SearchProcessorContext.class);
     private final        Map<SearchTemplateConfig, Map<Integer, List<SearchSequenceUnit>>> depthPageMap                = new HashMap<>();
     private final        Map<SearchTemplateConfig, Map<String, SearchSequenceUnit>>        pathPageMap                 = new HashMap<>();
     private final        Map<String, SearchTemplateConfig>                                 searchTemplateConfigMap     = new HashMap<>();
@@ -153,6 +154,12 @@ public class SearchProcessorContext extends AbstractProcessorContext {
             cookieConf = website.getSearchConfig().getProperties().getCookie().clone();
         } catch (Exception e) {
             // ignore
+        }
+
+        //init proxy
+        Properties propeties = getSearchConfig().getProperties();
+        if (propeties != null) {
+            proxyConf = propeties.getProxy();
         }
 
     }
@@ -292,17 +299,13 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         if (StringUtils.isEmpty(pattern)) {
             // If not, will maintain the original logic
             needProxy = (proxyConf.getProxy() != null);
-            if (log.isDebugEnabled()) {
-                log.debug(" needProxy :  " + needProxy + "  url : " + url + "  regex : " + pattern + " proxyConf.getProxy()  : " + proxyConf.getProxy());
-            }
+            log.info(" needProxy :  " + needProxy + "  url : " + url + "  regex : " + pattern + " proxyConf.getProxy()  : " + proxyConf.getProxy());
             return needProxy;
         } else {
             try {
                 if (PatternUtils.match(pattern, url)) {
                     needProxy = true;
-                    if (log.isDebugEnabled()) {
-                        log.debug(" needProxy :  " + needProxy + "  url : " + url + "  regex : " + pattern);
-                    }
+                    log.info(" needProxy :  " + needProxy + "  url : " + url + "  regex : " + pattern);
                 }
             } catch (Exception e) {
                 // non standard URL
