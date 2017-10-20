@@ -57,6 +57,13 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Override
+    public List<WebsiteOperator> queryByGroupCode(String groupCode) {
+        WebsiteOperatorExample example = new WebsiteOperatorExample();
+        example.createCriteria().andGroupCodeEqualTo(groupCode);
+        return websiteOperatorDAO.selectByExample(example);
+    }
+
+    @Override
     public void importWebsite(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "config is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
