@@ -103,7 +103,6 @@ public class HeiLongJiangForWeb implements OperatorPluginService {
                     = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10010&toStUrl=http://hl.189.cn/service/zzfw.do?method=fycx&id=6&fastcode=00520481";
             response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_005").setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
-
             templateUrl = "http://hl.189.cn/service/zzfw.do?method=fycx&id=6&fastcode=00520481";
             response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_006").setFullUrl(templateUrl).invoke();
 

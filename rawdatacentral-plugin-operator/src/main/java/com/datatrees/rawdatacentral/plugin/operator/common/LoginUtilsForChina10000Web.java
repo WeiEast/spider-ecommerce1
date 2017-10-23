@@ -142,6 +142,7 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }
             }
+            logger.info("电信统一登录入口----登录成功！");
             return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
