@@ -99,6 +99,7 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             templateUrl = "http://hb.189.cn/hbuserCenter.action";
             referer = "http://hb.189.cn/pages/selfservice/feesquery/newBOSSQueryCustBill.action";
             response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
+            pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("hu_bei_10000_web_003请求失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.NOT_EMPTY_ERROR_CODE);
@@ -108,7 +109,7 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             TaskUtils.addTaskShare(param.getTaskId(), "cityname", cityname);
             String realname = PatternUtils.group(pageContent, "var username=\"([^\"]+)\"", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "realname", realname);
-            String acctype = PatternUtils.group(pageContent, "var acctype = \"([^\"]+)\"", 1);
+            String acctype = PatternUtils.group(pageContent, "var\\s*acctype\\s*=\\s*\"([^\"]+)\"", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "acctype", acctype);
 
             templateUrl = "http://hb.189.cn/ajaxServlet/getCityCodeAndIsLogin";
@@ -133,7 +134,7 @@ public class HuBei10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String citycode = TaskUtils.getTaskShare(param.getTaskId(), "citycode");
+            String citycode = TaskUtils.getTaskContext(param.getTaskId(), "citycode");
             String templateUrl = "http://hb.189.cn/feesquery_sentPwd.action";
             String templateData = "productNumber=" + param.getMobile() + "&cityCode=" + citycode + "&sentType=C&ip=0";
             String referer = "http://hb.189.cn/pages/selfservice/feesquery/detailListQuery.jsp";
@@ -166,20 +167,16 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_006").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("1")) {
-                if (logger.isDebugEnabled()) {
-                    logger.info("详单-->校验成功,param={}", param);
-                    return result.success();
-                }
-            } else {
-                logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
-                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+                logger.info("详单-->校验成功,param={}", param);
+                return result.success();
             }
+            logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
+            return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
-        logger.error("详单-->校验失败,param={},pateContent={}");
-        return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
     }
 }
 
