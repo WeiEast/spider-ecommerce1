@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -51,9 +50,8 @@ import org.slf4j.LoggerFactory;
 
 public class TaskHttpClient {
 
-    private static final Logger                     logger       = LoggerFactory.getLogger(TaskHttpClient.class);
-    private static       RedisService               redisService = BeanFactoryUtils.getBean(RedisService.class);
-    private static       SSLConnectionSocketFactory sslsf        = null;//海南电信,重定向要忽略证书
+    private static final Logger                     logger = LoggerFactory.getLogger(TaskHttpClient.class);
+    private static       SSLConnectionSocketFactory sslsf  = null;//海南电信,重定向要忽略证书
 
     static {
         try {
@@ -356,7 +354,10 @@ public class TaskHttpClient {
         } finally {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
-            redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response), 1, TimeUnit.DAYS);
+            //保存请求
+            RedisUtils.rpush(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response));
+            RedisUtils.expire(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_REQUEST.toSeconds());
+            //保存请求内容
             StringBuilder pc = new StringBuilder("url-->").append(request.getFullUrl()).append("\nrequest_id-->").append(request.getRequestId())
                     .append("\nstatus_code-->").append(response.getStatusCode()).append("\nreques_time-->")
                     .append(DateUtils.formatYmdhms(new Date(request.getRequestTimestamp()))).append("\n").append(response.getPageContent());
