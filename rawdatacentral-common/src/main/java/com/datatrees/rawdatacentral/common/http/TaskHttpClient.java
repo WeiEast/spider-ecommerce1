@@ -39,6 +39,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
@@ -114,8 +115,9 @@ public class TaskHttpClient {
         return response;
     }
 
-    public void setCredsProvider(CredentialsProvider credsProvider) {
+    public TaskHttpClient setCredsProvider(CredentialsProvider credsProvider) {
         this.credsProvider = credsProvider;
+        return this;
     }
 
     public TaskHttpClient removeHeader(String name) {
@@ -267,8 +269,12 @@ public class TaskHttpClient {
         //禁止重定向
         RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
                 .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
-                .setSSLSocketFactory(sslsf).build();
+        HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
+                .setDefaultCredentialsProvider(credsProvider).setSSLSocketFactory(sslsf);
+        if (null != credsProvider) {
+            httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
+        }
+        CloseableHttpClient httpclient = httpClientBuilder.build();
         int statusCode = 0;
         try {
             //参数处理
