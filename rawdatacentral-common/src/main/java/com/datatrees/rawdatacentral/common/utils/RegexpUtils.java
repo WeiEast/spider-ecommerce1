@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +19,17 @@ public class RegexpUtils {
             return matcher.group(groupIndex);
         }
         return null;
+    }
+
+    public static List<String> selectList(String source, String regex) {
+        CheckUtils.checkNotBlank(source, "source is blank");
+        CheckUtils.checkNotBlank(regex, "regex is blank");
+        Matcher matcher = Pattern.compile(regex).matcher(source);
+        List<String> list = new ArrayList<>();
+        while (matcher.find()) {
+            list.add(matcher.group());
+        }
+        return list;
     }
 
     public static String selectLast(String source, String regex, int groupIndex) {
