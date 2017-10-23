@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -74,7 +75,8 @@ public class TaskHttpClient {
     private Response    response;
     private ContentType requestContentType;
     private ContentType responseContentType;
-    private boolean                 isRedirect   = false;//是否重定向了
+    private boolean isRedirect = false;//是否重定向了
+    private CredentialsProvider credsProvider;
     /**
      * 自定义的cookie
      */
@@ -110,6 +112,10 @@ public class TaskHttpClient {
 
     public Response getResponse() {
         return response;
+    }
+
+    public void setCredsProvider(CredentialsProvider credsProvider) {
+        this.credsProvider = credsProvider;
     }
 
     public TaskHttpClient removeHeader(String name) {
