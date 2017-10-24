@@ -330,7 +330,7 @@ public class TaskHttpClient {
                 if (StringUtils.isNoneBlank(contentType) && StringUtils.contains(contentType, "charset")) {
                     String charset = RegexpUtils.select(contentType, "charset=(.+)", 1);
                     if (StringUtils.isNoneBlank(charset)) {
-                        response.setCharset(Charset.forName(charset));
+                        response.setCharset(Charset.forName(charset.replaceAll(";","").trim()));
                     }
                 }
             }
