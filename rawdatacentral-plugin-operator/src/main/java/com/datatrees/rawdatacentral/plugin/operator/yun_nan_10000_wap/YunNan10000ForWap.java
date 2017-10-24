@@ -139,7 +139,7 @@ public class YunNan10000ForWap implements OperatorPluginService {
             //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encodeMobile = invocable.invokeFunction("strEnc", param.getMobile().toString(), "wap_accnbr_2016", "", "").toString();
-            Object encodePassword = invocable.invokeFunction("strEnc", param.getPassword(), "wap_password_2016", "", "");
+            Object encodePassword = invocable.invokeFunction("strEnc", param.getSmsCode(), "wap_password_2016", "", "");
 
             String templateUrl = "http://wapyn.189.cn/loginValidate.do";
             String templateData = "loginPwdType=B&nodeId=72&mode=other&enAccNbr=" + encodeMobile + "&enPassword=" + encodePassword + "&valid=" + param.getPicCode();
