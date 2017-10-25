@@ -79,7 +79,7 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
         return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
-    private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
+    public HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
@@ -94,7 +94,7 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
+    public HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();

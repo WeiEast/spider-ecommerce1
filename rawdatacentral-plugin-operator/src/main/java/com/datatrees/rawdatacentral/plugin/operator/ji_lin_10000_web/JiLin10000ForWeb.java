@@ -101,7 +101,8 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             case FormType.LOGIN:
                 return refeshPicCodeForLogin(param);
             case "QUERY_BASEINFO":
-                return loginUtils.refeshPicCode(param);
+                loginUtils.init(param);
+                return loginUtils.refeshPicCodeForLogin(param);
             case FormType.VALIDATE_USER_INFO:
                 return refeshPicCodeForUserInfo(param);
             case FormType.VALIDATE_BILL_DETAIL:
@@ -114,6 +115,8 @@ public class JiLin10000ForWeb implements OperatorPluginService {
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
         switch (param.getFormType()) {
+            case "QUERY_BASEINFO":
+                return validatePicCodeForBaseinfo(param);
             case FormType.VALIDATE_USER_INFO:
                 return validatePicCodeForUserInfo(param);
             default:
@@ -141,8 +144,6 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return submitForLogin(param);
-            case "QUERY_BASEINFO":
-                return submitForBaseinfo(param);
             case FormType.VALIDATE_BILL_DETAIL:
                 return submitForBillDetail(param);
             default:
@@ -154,6 +155,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
+            init(param);
             String templateUrl = "http://wapjl.189.cn/authImg?" + Math.random();
             String referer = "http://wapjl.189.cn/";
             response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
@@ -216,7 +218,6 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             }
             //删除cookie
             RedisUtils.del("task.cookie." + param.getTaskId());
-            loginUtils.init(param);
             logger.info("基本信息-->校验成功,param={}", param);
             return result.success();
         } catch (Exception e) {
@@ -225,16 +226,15 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> submitForBaseinfo(OperatorParam param) {
+    private HttpResult<Map<String, Object>> validatePicCodeForBaseinfo(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
             //web端登录
-            result = loginUtils.submit(param);
+            result = loginUtils.submitForLogin(param);
             if (!result.getStatus()) {
                 return result;
             }
-
             String templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00710602";
             String referer = "http://www.189.cn/jl/";
             response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_007").setFullUrl(templateUrl).setReferer(referer).invoke();
