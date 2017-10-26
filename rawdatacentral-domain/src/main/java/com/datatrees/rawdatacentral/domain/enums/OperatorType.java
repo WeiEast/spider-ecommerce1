@@ -34,19 +34,19 @@ public enum OperatorType {
         this.name = name;
     }
 
+    public static String getName(String code) {
+        return map.get(code);
+    }
+
+    public static String getName(Integer code) {
+        return map.get(code + "");
+    }
+
     public String getCode() {
         return code;
     }
 
     public String getName() {
         return name;
-    }
-
-    public static String getName(String code) {
-        return map.get(code);
-    }
-
-    public static String getName(Long code) {
-        return map.get(code + "");
     }
 }
