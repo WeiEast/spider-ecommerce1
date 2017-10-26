@@ -15,7 +15,7 @@ public enum OperatorType {
     private static final Map<String, String> map = new HashMap<>();
 
     static {
-        for (OperationEnum e : OperationEnum.values()) {
+        for (OperatorType e : OperatorType.values()) {
             map.put(e.getCode(), e.getName());
         }
     }
