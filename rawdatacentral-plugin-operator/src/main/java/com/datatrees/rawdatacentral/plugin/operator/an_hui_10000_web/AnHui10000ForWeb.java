@@ -165,21 +165,21 @@ public class AnHui10000ForWeb implements OperatorPluginService {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
-            String ssoValue = PatternUtils.group(pageContent, "value=\"([^\"]+)", 1);
-            templateUrl = "http://uam.ah.ct10000.com/ffcs-uam/login?SSORequestXML=" + URLEncoder.encode(ssoValue, "UTF-8");
-            referer = "http://ah.189.cn/sso/LoginServlet";
-            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
-                    .invoke();
-            pageContent = response.getPageContent();
-            if(StringUtils.isBlank(pageContent)){
-                logger.error("登陆失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-            String resultMessage = PatternUtils.group(pageContent, "var returnmsg = \"([^\"]+)\"", 1);
-            if (StringUtils.isNotBlank(resultMessage)) {
-                logger.error("登陆失败,param={},response={}", param, resultMessage);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
+            //String ssoValue = PatternUtils.group(pageContent, "value=\"([^\"]+)", 1);
+            //templateUrl = "http://uam.ah.ct10000.com/ffcs-uam/login?SSORequestXML=" + URLEncoder.encode(ssoValue, "UTF-8");
+            //referer = "http://ah.189.cn/sso/LoginServlet";
+            //response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
+            //        .invoke();
+            //pageContent = response.getPageContent();
+            //if(StringUtils.isBlank(pageContent)){
+            //    logger.error("登陆失败,param={},response={}", param, response);
+            //    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            //}
+            //String resultMessage = PatternUtils.group(pageContent, "var returnmsg = \"([^\"]+)\"", 1);
+            //if (StringUtils.isNotBlank(resultMessage)) {
+            //    logger.error("登陆失败,param={},response={}", param, resultMessage);
+            //    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            //}
             templateUrl = "http://ah.189.cn/service/account/usedBalance.action?serviceNum=" + param.getMobile();
             referer = "http://ah.189.cn/service/account/init.action";
             response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_005").setFullUrl(templateUrl).setReferer(referer)
