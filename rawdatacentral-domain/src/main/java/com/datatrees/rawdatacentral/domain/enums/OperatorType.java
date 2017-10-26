@@ -42,11 +42,11 @@ public enum OperatorType {
         return name;
     }
 
-    public String getName(String code) {
+    public static String getName(String code) {
         return map.get(code);
     }
 
-    public String getName(Long code) {
+    public static String getName(Long code) {
         return map.get(code + "");
     }
 }
