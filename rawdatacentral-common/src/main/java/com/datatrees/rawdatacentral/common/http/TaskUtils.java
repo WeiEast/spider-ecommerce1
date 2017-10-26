@@ -81,6 +81,7 @@ public class TaskUtils {
         if (null == httpResponse || null == cookieStore) {
             return;
         }
+        //更新自定义cookie
         Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
         if (null != headers && headers.length > 0) {
             List<org.apache.http.cookie.Cookie> cookies = cookieStore.getCookies();
@@ -89,42 +90,57 @@ public class TaskUtils {
                 List<HttpCookie> list = HttpCookie.parse(headerValue);
                 HttpCookie httpCookie = list.get(0);
                 String domain = httpCookie.getDomain();
+
+                org.apache.http.cookie.Cookie orignCookie = null;
                 //没有都添加
-                org.apache.http.cookie.Cookie find = null;
                 if (CollectionUtils.isNotEmpty(cookies)) {
-                    for (org.apache.http.cookie.Cookie b : cookies) {
+                    Iterator<org.apache.http.cookie.Cookie> iterator = cookies.iterator();
+                    while (iterator.hasNext()) {
+                        org.apache.http.cookie.Cookie b = iterator.next();
                         if (StringUtils.equals(b.getName(), httpCookie.getName())) {
-                            find = b;
+                            //cookie可能有变更
+                            iterator.remove();
+                            orignCookie = b;
                             break;
                         }
                     }
-
                 }
-                if (null == find) {
-                    if (StringUtils.isBlank(domain)) {
-                        //安徽移动,解析不了时间 Set-Cookie: FSSBBIl1UgzbN7N443S=rIQIoJrsUJKkS7l3cm_Pj8U0fTC7PbnDjec0eirfW25MhKMrpnHYh4I.AuJMpdNR; Path=/;
-                        // expires=Mon, 11 Oct 2027 07:31:34 GMT; HttpOnly
-                        //[processCookies][130] Invalid cookie header
+                //更新cookie
+                if (StringUtils.isBlank(domain)) {
+                    //安徽移动,解析不了时间 Set-Cookie: FSSBBIl1UgzbN7N443S=rIQIoJrsUJKkS7l3cm_Pj8U0fTC7PbnDjec0eirfW25MhKMrpnHYh4I.AuJMpdNR; Path=/;
+                    // expires=Mon, 11 Oct 2027 07:31:34 GMT; HttpOnly
+                    //[processCookies][130] Invalid cookie header
+                    if (null != orignCookie) {
+                        domain = orignCookie.getDomain();
+                    } else {
                         domain = host;
-                    } else if (!StringUtils.equals(domain, host)) {
-                        //可能被拒绝了,.ResponseProcessCookies][processCookies][123] Cookie rejected
-                        //改变domain
-                        domain = "." + domain;
+                        logger.info("set default domain use host,taskId={},name={},value={},domain={}", taskId, httpCookie.getName(),
+                                httpCookie.getValue(), host);
                     }
-                    BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
-                    cookie.setDomain(domain);
-                    cookie.setPath(httpCookie.getPath());
-                    cookie.setVersion(httpCookie.getVersion());
-                    cookie.setSecure(httpCookie.getSecure());
-                    cookie.setAttribute("domain", domain);
-                    cookie.setAttribute("path", httpCookie.getPath());
-                    long maxAge = httpCookie.getMaxAge();
-                    if (maxAge <= 0) {
-                        maxAge = TimeUnit.MINUTES.toSeconds(30);
-                    }
-                    cookie.setExpiryDate(new Date(System.currentTimeMillis() + maxAge * 1000));
-                    cookieStore.addCookie(cookie);
-                    logger.info("add rejected cookie taskId={},cookeName={}", taskId, cookie.getName());
+                } else if (null == orignCookie && !StringUtils.equals(domain, host)) {
+                    //可能被拒绝了,.ResponseProcessCookies][processCookies][123] Cookie rejected
+                    //改变domain
+                    domain = "." + domain;
+                }
+                BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
+                cookie.setDomain(domain);
+                cookie.setPath(httpCookie.getPath());
+                cookie.setVersion(httpCookie.getVersion());
+                cookie.setSecure(httpCookie.getSecure());
+                cookie.setAttribute("domain", domain);
+                cookie.setAttribute("path", httpCookie.getPath());
+                long maxAge = httpCookie.getMaxAge();
+                if (maxAge <= 0) {
+                    maxAge = TimeUnit.MINUTES.toSeconds(30);
+                }
+                cookie.setExpiryDate(new Date(System.currentTimeMillis() + maxAge * 1000));
+                cookieStore.addCookie(cookie);
+                if (null == orignCookie) {
+                    logger.info("新增cookie taskId={},cookeName={},value={},domain={}", taskId, cookie.getName(), cookie.getValue(),
+                            cookie.getDomain());
+                } else if (!StringUtils.equals(orignCookie.getValue(), cookie.getValue())) {
+                    logger.info("更新cookie taskId={},cookeName={},domain={},value:{}-->{}", taskId, cookie.getName(), cookie.getDomain(),
+                            orignCookie.getValue(), cookie.getValue());
                 }
             }
         }
