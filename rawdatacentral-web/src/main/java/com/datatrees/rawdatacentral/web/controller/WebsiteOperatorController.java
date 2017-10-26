@@ -136,6 +136,10 @@ public class WebsiteOperatorController {
     public Object updateEnable(String websiteName, Boolean enable) {
         HttpResult<Object> result = new HttpResult<>();
         try {
+            WebsiteOperator websiteOperatorDb = websiteOperatorService.getByWebsiteName(websiteName);
+            if (null == websiteOperatorDb) {
+                return result.failure("websiteName不存在");
+            }
             websiteOperatorService.updateEnable(websiteName, enable);
             return result.success();
         } catch (Throwable e) {
