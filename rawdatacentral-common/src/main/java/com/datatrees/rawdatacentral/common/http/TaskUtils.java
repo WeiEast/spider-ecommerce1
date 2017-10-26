@@ -110,16 +110,22 @@ public class TaskUtils {
                     //安徽移动,解析不了时间 Set-Cookie: FSSBBIl1UgzbN7N443S=rIQIoJrsUJKkS7l3cm_Pj8U0fTC7PbnDjec0eirfW25MhKMrpnHYh4I.AuJMpdNR; Path=/;
                     // expires=Mon, 11 Oct 2027 07:31:34 GMT; HttpOnly
                     //[processCookies][130] Invalid cookie header
-                    if (null != orignCookie) {
-                        domain = orignCookie.getDomain();
-                    } else {
-                        domain = host;
-                        logger.info("set default domain use host,taskId={},name={},value={},domain={}", taskId, httpCookie.getName(),
-                                httpCookie.getValue(), host);
-                    }
+                    //if (null != orignCookie) {
+                    //    domain = orignCookie.getDomain();
+                    //    logger.info("set default domain use orign domain,taskId={},name={},value={},domain={}", taskId, httpCookie.getName(),
+                    //            httpCookie.getValue(), orignCookie.getDomain());
+                    //} else {
+                    //    domain = host;
+                    //    logger.info("set default domain use host,taskId={},name={},value={},domain={}", taskId, httpCookie.getName(),
+                    //            httpCookie.getValue(), host);
+                    //}
+                    domain = host;
+                    logger.info("set default domain use host,taskId={},name={},value={},domain={}", taskId, httpCookie.getName(),
+                            httpCookie.getValue(), host);
                 } else if (null == orignCookie && !StringUtils.equals(domain, host)) {
                     //可能被拒绝了,.ResponseProcessCookies][processCookies][123] Cookie rejected
                     //改变domain
+                    logger.info("change domain,taskId={},name={},domain:{}-->{}", taskId, httpCookie.getName(), domain, "." + domain);
                     domain = "." + domain;
                 }
                 BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
@@ -136,10 +142,10 @@ public class TaskUtils {
                 cookie.setExpiryDate(new Date(System.currentTimeMillis() + maxAge * 1000));
                 cookieStore.addCookie(cookie);
                 if (null == orignCookie) {
-                    logger.info("新增cookie taskId={},cookeName={},value={},domain={}", taskId, cookie.getName(), cookie.getValue(),
+                    logger.info("新增 rejected cookie, taskId={},cookeName={},value={},domain={}", taskId, cookie.getName(), cookie.getValue(),
                             cookie.getDomain());
                 } else if (!StringUtils.equals(orignCookie.getValue(), cookie.getValue())) {
-                    logger.info("更新cookie taskId={},cookeName={},domain={},value:{}-->{}", taskId, cookie.getName(), cookie.getDomain(),
+                    logger.info("更新cookie, taskId={},cookeName={},domain={},value:{}-->{}", taskId, cookie.getName(), cookie.getDomain(),
                             orignCookie.getValue(), cookie.getValue());
                 }
             }
