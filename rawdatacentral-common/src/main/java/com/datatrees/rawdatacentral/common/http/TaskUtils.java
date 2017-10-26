@@ -15,7 +15,7 @@ import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
-import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.rawdatacentral.domain.vo.Request;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -33,8 +33,12 @@ public class TaskUtils {
     private static final Logger logger = LoggerFactory.getLogger(TaskUtils.class);
 
     public static Cookie toCrawlerCookie(ClientCookie from) {
+        String domain = from.getDomain();
+        if (domain.startsWith(".")) {
+            domain = domain.substring(1);
+        }
         Cookie to = new Cookie();
-        to.setDomain(from.getDomain());
+        to.setDomain(domain);
         to.setPath(from.getPath());
         to.setName(from.getName());
         to.setValue(from.getValue());
@@ -42,7 +46,7 @@ public class TaskUtils {
         to.setVersion(from.getVersion());
         to.setExpiryDate(from.getExpiryDate());
         if (from.containsAttribute("domain")) {
-            to.getAttribs().put("domain", from.getAttribute("domain"));
+            to.getAttribs().put("domain", domain);
         }
         if (from.containsAttribute("path")) {
             to.getAttribs().put("path", from.getAttribute("path"));
@@ -56,11 +60,77 @@ public class TaskUtils {
         return to;
     }
 
-    public static List<Cookie> getCookies(BasicCookieStore cookieStore) {
+    public static List<Cookie> getCookies(Long taskId, String host, BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
         CheckUtils.checkNotNull(cookieStore, "cookieStore is null");
         List<Cookie> list = new ArrayList<>();
-        for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
+        List<org.apache.http.cookie.Cookie> cookies = cookieStore.getCookies();
+        for (org.apache.http.cookie.Cookie cookie : cookies) {
             list.add(toCrawlerCookie((BasicClientCookie) cookie));
+        }
+        //更新自定义cookie
+        Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
+        if (null != headers && headers.length > 0) {
+            for (Header header : headers) {
+                String headerValue = header.getValue();
+                HttpCookie httpCookie = HttpCookie.parse(headerValue).get(0);
+                Cookie orignCookie = findCookie(host, httpCookie, list);
+                if (null != orignCookie) {
+                    if (!StringUtils.equals(orignCookie.getValue(), httpCookie.getValue())) {
+                        logger.info("更新cookie,taskId={},cookeName={},domain={},update value {}-->{}", taskId, orignCookie.getName(),
+                                orignCookie.getDomain(), orignCookie.getValue(), httpCookie.getValue());
+                        orignCookie.setValue(httpCookie.getValue());
+                    }
+                } else {
+                    String domain = StringUtils.isBlank(httpCookie.getDomain()) ? host : httpCookie.getDomain();
+                    if (StringUtils.startsWith(domain, ".")) {
+                        domain = domain.substring(1);
+                    }
+                    Cookie cookie = new Cookie();
+                    cookie.setName(httpCookie.getName());
+                    cookie.setValue(httpCookie.getValue());
+                    cookie.setDomain(domain);
+                    cookie.setPath(httpCookie.getPath());
+                    cookie.setVersion(httpCookie.getVersion());
+                    cookie.setSecure(httpCookie.getSecure());
+                    cookie.getAttribs().put("domain", domain);
+                    cookie.getAttribs().put("path", httpCookie.getPath());
+                    long maxAge = httpCookie.getMaxAge();
+                    if (maxAge <= 0) {
+                        maxAge = TimeUnit.MINUTES.toSeconds(30);
+                    }
+                    cookie.setExpiryDate(new Date(System.currentTimeMillis() + maxAge * 1000));
+                    list.add(cookie);
+                    logger.info("新增 rejected cookie, taskId={},cookeName={},value={},domain={}", taskId, cookie.getName(), cookie.getValue(), domain);
+                }
+            }
+        }
+        return list;
+    }
+
+    public static List<Cookie> getCookies(Long taskId) {
+        List<Cookie> list = new ArrayList<>();
+        String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
+        Map<String, String> map = RedisUtils.hgetAll(redisKey);
+        if (CollectionUtils.isNotEmpty(map)) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                Cookie cookie = JSON.parseObject(entry.getValue(), new TypeReference<Cookie>() {});
+                list.add(cookie);
+            }
+        }
+        return list;
+    }
+
+    public static List<Cookie> getCookies(Long taskId, String host) {
+        CheckUtils.checkNotPositiveNumber(taskId, ErrorCode.EMPTY_TASK_ID);
+        List<Cookie> list = getCookies(taskId);
+        if (CollectionUtils.isNotEmpty(list)) {
+            Iterator<Cookie> iterator = list.iterator();
+            while (iterator.hasNext()) {
+                Cookie cookie = iterator.next();
+                if (!StringUtils.endsWith(host, cookie.getDomain())) {
+                    iterator.remove();
+                }
+            }
         }
         return list;
     }
@@ -75,99 +145,11 @@ public class TaskUtils {
         return list;
     }
 
-    public static void updateBasicCookieStore(Long taskId, String host, BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
-        if (null == httpResponse || null == cookieStore) {
-            return;
-        }
-        //更新自定义cookie
-        Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
-        if (null != headers && headers.length > 0) {
-            List<org.apache.http.cookie.Cookie> cookies = cookieStore.getCookies();
-            for (Header header : headers) {
-                String headerValue = header.getValue();
-                List<HttpCookie> list = HttpCookie.parse(headerValue);
-                HttpCookie httpCookie = list.get(0);
-                String domain = httpCookie.getDomain();
-
-                org.apache.http.cookie.Cookie orignCookie = null;
-                //没有都添加
-                if (CollectionUtils.isNotEmpty(cookies)) {
-                    Iterator<org.apache.http.cookie.Cookie> iterator = cookies.iterator();
-                    while (iterator.hasNext()) {
-                        org.apache.http.cookie.Cookie b = iterator.next();
-                        if (StringUtils.equals(b.getName(), httpCookie.getName())) {
-                            //cookie可能有变更
-                            iterator.remove();
-                            orignCookie = b;
-                            break;
-                        }
-                    }
-                }
-                //更新cookie
-                if (StringUtils.isBlank(domain)) {
-                    //安徽移动,解析不了时间 Set-Cookie: FSSBBIl1UgzbN7N443S=rIQIoJrsUJKkS7l3cm_Pj8U0fTC7PbnDjec0eirfW25MhKMrpnHYh4I.AuJMpdNR; Path=/;
-                    // expires=Mon, 11 Oct 2027 07:31:34 GMT; HttpOnly
-                    //[processCookies][130] Invalid cookie header
-                    //if (null != orignCookie) {
-                    //    domain = orignCookie.getDomain();
-                    //    logger.info("set default domain use orign domain,taskId={},name={},value={},domain={}", taskId, httpCookie.getName(),
-                    //            httpCookie.getValue(), orignCookie.getDomain());
-                    //} else {
-                    //    domain = host;
-                    //    logger.info("set default domain use host,taskId={},name={},value={},domain={}", taskId, httpCookie.getName(),
-                    //            httpCookie.getValue(), host);
-                    //}
-                    domain = host;
-                    logger.info("set default domain use host,taskId={},name={},value={},domain={}", taskId, httpCookie.getName(),
-                            httpCookie.getValue(), host);
-                } else if (null == orignCookie && !StringUtils.equals(domain, host)) {
-                    //可能被拒绝了,.ResponseProcessCookies][processCookies][123] Cookie rejected
-                    //改变domain
-                    logger.info("change domain,taskId={},name={},domain:{}-->{}", taskId, httpCookie.getName(), domain, "." + domain);
-                    domain = "." + domain;
-                }
-                BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
-                cookie.setDomain(domain);
-                cookie.setPath(httpCookie.getPath());
-                cookie.setVersion(httpCookie.getVersion());
-                cookie.setSecure(httpCookie.getSecure());
-                cookie.setAttribute("domain", domain);
-                cookie.setAttribute("path", httpCookie.getPath());
-                long maxAge = httpCookie.getMaxAge();
-                if (maxAge <= 0) {
-                    maxAge = TimeUnit.MINUTES.toSeconds(30);
-                }
-                cookie.setExpiryDate(new Date(System.currentTimeMillis() + maxAge * 1000));
-                cookieStore.addCookie(cookie);
-                if (null == orignCookie) {
-                    logger.info("新增 rejected cookie, taskId={},cookeName={},value={},domain={}", taskId, cookie.getName(), cookie.getValue(),
-                            cookie.getDomain());
-                } else if (!StringUtils.equals(orignCookie.getValue(), cookie.getValue())) {
-                    logger.info("更新cookie, taskId={},cookeName={},domain={},value:{}-->{}", taskId, cookie.getName(), cookie.getDomain(),
-                            orignCookie.getValue(), cookie.getValue());
-                }
-            }
-        }
-    }
-
-    public static BasicClientCookie getBasicClientCookie(Cookie myCookie) {
-        BasicClientCookie cookie = new BasicClientCookie(myCookie.getName(), myCookie.getValue());
-        cookie.setDomain(myCookie.getDomain());
-        cookie.setPath(myCookie.getPath());
-        cookie.setSecure(myCookie.isSecure());
-        cookie.setVersion(myCookie.getVersion());
-        cookie.setExpiryDate(myCookie.getExpiryDate());
-        for (Map.Entry<String, String> entry : myCookie.getAttribs().entrySet()) {
-            cookie.setAttribute(entry.getKey(), entry.getValue());
-        }
-        return cookie;
-    }
-
     public static String getCookieString(Long taskId) {
         StringBuilder sb = new StringBuilder();
-        BasicCookieStore cookieStore = getCookie(taskId);
-        if (null != cookieStore && null != cookieStore.getCookies()) {
-            for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
+        List<Cookie> list = getCookies(taskId);
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Cookie cookie : list) {
                 sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
             }
         }
@@ -177,41 +159,29 @@ public class TaskUtils {
         return sb.substring(1);
     }
 
-    public static Map<String, String> getReceiveCookieMap(Response response, BasicCookieStore cookieStore) {
-        Map<String, String> map = getCookieMap(cookieStore);
-        if (CollectionUtils.isEmpty(map)) {
-            return map;
+    public static Map<String, String> getResponseCookieMap(Long taskId, String host, Request request, CloseableHttpResponse response,
+            BasicCookieStore cookieStore) {
+        Map<String, String> requestCookies = request.getRequestCookies();
+        Map<String, String> receiveCookieMap = new HashMap<>();
+        List<Cookie> cookies = getCookies(taskId, host, cookieStore, response);
+        if (CollectionUtils.isEmpty(cookies)) {
+            return receiveCookieMap;
         }
+        if (CollectionUtils.isNotEmpty(requestCookies)) {
 
-        Map<String, String> sendCookies = response.getRequest().getRequestCookies();
-        if (CollectionUtils.isNotEmpty(sendCookies)) {
-            for (Map.Entry<String, String> entry : sendCookies.entrySet()) {
-                if (map.containsKey(entry.getKey())) {
-                    map.remove(entry.getKey());
+            for (Cookie cookie : cookies) {
+                if (!requestCookies.containsKey(cookie.getName())) {
+                    receiveCookieMap.put(cookie.getName(), cookie.getValue());
                 }
             }
         }
-        return map;
+        return receiveCookieMap;
     }
 
-    public static String getCookieString(BasicCookieStore cookieStore) {
-        StringBuilder sb = new StringBuilder();
-        if (null != cookieStore && null != cookieStore.getCookies()) {
-            for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
-                sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
-            }
-        }
-        if (StringUtils.isBlank(sb)) {
-            return "";
-        }
-        return sb.substring(1);
-    }
-
-    public static Map<String, String> getCookieMap(BasicCookieStore cookieStore) {
-        Map<String, String> map = null;
-        if (null != cookieStore && null != cookieStore.getCookies()) {
-            map = new HashMap<>();
-            for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
+    public static Map<String, String> getCookieMap(List<Cookie> cookies) {
+        Map<String, String> map = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(cookies)) {
+            for (Cookie cookie : cookies) {
                 map.put(cookie.getName(), cookie.getValue());
             }
         }
@@ -223,8 +193,8 @@ public class TaskUtils {
         saveCookie(taskId, list);
     }
 
-    public static void saveCookie(long taskId, BasicCookieStore cookieStore) {
-        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookieStore);
+    public static void saveCookie(long taskId, String host, BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
+        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
         saveCookie(taskId, list);
     }
 
@@ -241,26 +211,33 @@ public class TaskUtils {
         }
     }
 
-    public static BasicCookieStore getCookie(Long taskId) {
-        CheckUtils.checkNotPositiveNumber(taskId, ErrorCode.EMPTY_TASK_ID);
-        BasicCookieStore cookieStore = new BasicCookieStore();
-        String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
+    public static BasicClientCookie getBasicClientCookie(Cookie cookie) {
+        BasicClientCookie basicClientCookie = new BasicClientCookie(cookie.getName(), cookie.getValue());
+        basicClientCookie.setDomain(cookie.getDomain());
+        basicClientCookie.setPath(cookie.getPath());
+        basicClientCookie.setSecure(cookie.isSecure());
+        basicClientCookie.setVersion(cookie.getVersion());
+        basicClientCookie.setExpiryDate(cookie.getExpiryDate());
+        for (Map.Entry<String, String> entry : cookie.getAttribs().entrySet()) {
+            basicClientCookie.setAttribute(entry.getKey(), entry.getValue());
+        }
+        return basicClientCookie;
+    }
 
-        Map<String, String> map = RedisUtils.hgetAll(redisKey);
-        if (CollectionUtils.isNotEmpty(map)) {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                com.datatrees.rawdatacentral.domain.vo.Cookie myCookie = JSON.parseObject(entry.getValue(), new TypeReference<Cookie>() {});
-                cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
+    public static BasicCookieStore buildBasicCookieStore(List<Cookie> list) {
+        BasicCookieStore cookieStore = new BasicCookieStore();
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Cookie cookie : list) {
+                cookieStore.addCookie(TaskUtils.getBasicClientCookie(cookie));
             }
         }
         return cookieStore;
     }
 
     public static String getCookieValue(Long taskId, String cookieName) {
-
-        BasicCookieStore cookieStore = getCookie(taskId);
-        if (null != cookieStore && null != cookieStore.getCookies()) {
-            for (org.apache.http.cookie.Cookie cookie : cookieStore.getCookies()) {
+        List<Cookie> list = getCookies(taskId);
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Cookie cookie : list) {
                 if (StringUtils.equals(cookieName, cookie.getName())) {
                     return cookie.getValue();
                 }
@@ -416,6 +393,19 @@ public class TaskUtils {
             return null;
         }
         return map.get(name);
+    }
+
+    public static Cookie findCookie(String host, HttpCookie httpCookie, List<Cookie> list) {
+        String domain = StringUtils.isBlank(httpCookie.getDomain()) ? host : httpCookie.getDomain();
+        if (StringUtils.startsWith(domain, ".")) {
+            domain = domain.substring(1);
+        }
+        for (Cookie cookie : list) {
+            if (StringUtils.equals(httpCookie.getName(), cookie.getName()) && StringUtils.endsWith(domain, cookie.getDomain())) {
+                return cookie;
+            }
+        }
+        return null;
     }
 
 }
