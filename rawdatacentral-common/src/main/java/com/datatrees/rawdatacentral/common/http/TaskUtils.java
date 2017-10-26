@@ -7,10 +7,8 @@ import java.util.concurrent.TimeUnit;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.datatrees.rawdatacentral.common.constants.RedisDataType;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
@@ -235,45 +233,24 @@ public class TaskUtils {
             return;
         }
         String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(type, RedisDataType.STRING)) {
-            if (CollectionUtils.isNotEmpty(cookies)) {
-                String json = JSON.toJSONString(cookies, SerializerFeature.DisableCircularReferenceDetect);
-                RedisUtils.setex(RedisKeyPrefixEnum.TASK_COOKIE, taskId, json);
-            }
-        } else {
-            if (CollectionUtils.isNotEmpty(cookies)) {
-                for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : cookies) {
-                    String name = "[" + cookie.getName() + "][" + cookie.getDomain() + "]";
-                    RedisUtils.hset(redisKey, name, JSON.toJSONString(cookie, SerializerFeature.DisableCircularReferenceDetect),
-                            RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());
+        for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : cookies) {
+            String name = "[" + cookie.getName() + "][" + cookie.getDomain() + "]";
+            RedisUtils.hset(redisKey, name, JSON.toJSONString(cookie, SerializerFeature.DisableCircularReferenceDetect),
+                    RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());
 
-                }
-            }
         }
-
     }
 
     public static BasicCookieStore getCookie(Long taskId) {
         CheckUtils.checkNotPositiveNumber(taskId, ErrorCode.EMPTY_TASK_ID);
         BasicCookieStore cookieStore = new BasicCookieStore();
         String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(type, RedisDataType.STRING)) {
-            if (RedisUtils.exists(redisKey)) {
-                String json = RedisUtils.get(redisKey);
-                List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies = JSON.parseObject(json, new TypeReference<List<Cookie>>() {});
-                for (com.datatrees.rawdatacentral.domain.vo.Cookie myCookie : cookies) {
-                    cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
-                }
-            }
-        } else {
-            Map<String, String> map = RedisUtils.hgetAll(redisKey);
-            if (CollectionUtils.isNotEmpty(map)) {
-                for (Map.Entry<String, String> entry : map.entrySet()) {
-                    com.datatrees.rawdatacentral.domain.vo.Cookie myCookie = JSON.parseObject(entry.getValue(), new TypeReference<Cookie>() {});
-                    cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
-                }
+
+        Map<String, String> map = RedisUtils.hgetAll(redisKey);
+        if (CollectionUtils.isNotEmpty(map)) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                com.datatrees.rawdatacentral.domain.vo.Cookie myCookie = JSON.parseObject(entry.getValue(), new TypeReference<Cookie>() {});
+                cookieStore.addCookie(TaskUtils.getBasicClientCookie(myCookie));
             }
         }
         return cookieStore;
@@ -301,19 +278,7 @@ public class TaskUtils {
      */
     public static void addTaskShare(Long taskId, String name, String value) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            RedisUtils.lockFailThrowException(redisKey, 5);
-            Map<String, String> map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
-            if (null == map) {
-                map = new HashMap<>();
-            }
-            map.put(name, value);
-            RedisUtils.setex(RedisKeyPrefixEnum.TASK_SHARE, taskId, JSON.toJSONString(map));
-            RedisUtils.unLock(redisKey);
-        } else {
-            RedisUtils.hset(redisKey, name, value, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
-        }
+        RedisUtils.hset(redisKey, name, value, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
         logger.info("addTaskShare success taskId={},name={}", taskId, name);
     }
 
@@ -324,29 +289,11 @@ public class TaskUtils {
      */
     public static String getTaskShare(Long taskId, String name) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.NONE, type)) {
-            logger.warn("redis key not found redisKey={}", redisKey);
+        if (!RedisUtils.hexists(redisKey, name)) {
+            logger.warn("property not found, redisKey={},name={}", redisKey, name);
             return null;
         }
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            Map<String, String> map = getTaskShares(taskId);
-            if (null == map || map.isEmpty()) {
-                logger.warn("redis key is empty, redisKey={}", redisKey);
-                return null;
-            }
-            if (!map.containsKey(name)) {
-                logger.warn("property not found, redisKey={},name={}", redisKey, name);
-                return null;
-            }
-            return map.get(name);
-        } else {
-            if (!RedisUtils.hexists(redisKey, name)) {
-                logger.warn("property not found, redisKey={},name={}", redisKey, name);
-                return null;
-            }
-            return RedisUtils.hget(redisKey, name);
-        }
+        return RedisUtils.hget(redisKey, name);
     }
 
     /**
@@ -356,30 +303,11 @@ public class TaskUtils {
      */
     public static void removeTaskShare(Long taskId, String name) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.NONE, type)) {
-            logger.warn("redis key not found redisKey={}", redisKey);
+        if (!RedisUtils.hexists(redisKey, name)) {
+            logger.warn("property not found, redisKey={},name={}", redisKey, name);
             return;
         }
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            RedisUtils.lockFailThrowException(redisKey, 5);
-            Map<String, String> map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
-            if (null != map && map.containsKey(name)) {
-                map.remove(name);
-                RedisUtils.setex(RedisKeyPrefixEnum.TASK_SHARE, taskId, JSON.toJSONString(map));
-            }
-            if (!map.containsKey(name)) {
-                logger.warn("property not found, redisKey={},name={}", redisKey, name);
-                return;
-            }
-            RedisUtils.unLock(redisKey);
-        } else {
-            if (!RedisUtils.hexists(redisKey, name)) {
-                logger.warn("property not found, redisKey={},name={}", redisKey, name);
-                return;
-            }
-            RedisUtils.hdel(redisKey, name);
-        }
+        RedisUtils.hdel(redisKey, name);
         logger.info("removeTaskShare success taskId={},name={}", taskId, name);
     }
 
@@ -388,19 +316,8 @@ public class TaskUtils {
      * @param taskId
      */
     public static Map<String, String> getTaskShares(Long taskId) {
-        Map<String, String> map = null;
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.NONE, type)) {
-            logger.warn("redis key not found redisKey={}", redisKey);
-            return null;
-        }
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
-            return map;
-        } else {
-            map = RedisUtils.hgetAll(redisKey);
-        }
+        Map<String, String> map = RedisUtils.hgetAll(redisKey);
         return map;
     }
 
@@ -411,34 +328,16 @@ public class TaskUtils {
      */
     public static void initTaskShare(Long taskId, String websiteName) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        String type = RedisUtils.type(redisKey);
-        if (StringUtils.equals(RedisDataType.STRING, type)) {
-            RedisUtils.lockFailThrowException(redisKey, 5);
-            Map<String, String> map = JSON.parseObject(RedisUtils.get(redisKey), new TypeReference<Map<String, String>>() {});
-            if (null == map) {
-                map = new HashMap<>();
-            }
-            map.put(AttributeKey.FIRST_VISIT_WEBSITENAME, websiteName);
 
-            boolean isNewOperator = isNewOperator(websiteName);
-            map.put(AttributeKey.IS_NEW_OPERATOR, String.valueOf(isNewOperator));
+        RedisUtils.hset(redisKey, AttributeKey.FIRST_VISIT_WEBSITENAME, websiteName);
 
-            String realWebsiteName = getRealWebsiteName(websiteName);
-            map.put(AttributeKey.WEBSITE_NAME, realWebsiteName);
+        boolean isNewOperator = isNewOperator(websiteName);
+        RedisUtils.hset(redisKey, AttributeKey.IS_NEW_OPERATOR, String.valueOf(isNewOperator));
 
-            RedisUtils.setex(RedisKeyPrefixEnum.TASK_SHARE, taskId, JSON.toJSONString(map));
-            RedisUtils.unLock(redisKey);
-        } else {
-            RedisUtils.hset(redisKey, AttributeKey.FIRST_VISIT_WEBSITENAME, websiteName);
+        String realWebsiteName = getRealWebsiteName(websiteName);
+        RedisUtils.hset(redisKey, AttributeKey.WEBSITE_NAME, realWebsiteName);
 
-            boolean isNewOperator = isNewOperator(websiteName);
-            RedisUtils.hset(redisKey, AttributeKey.IS_NEW_OPERATOR, String.valueOf(isNewOperator));
-
-            String realWebsiteName = getRealWebsiteName(websiteName);
-            RedisUtils.hset(redisKey, AttributeKey.WEBSITE_NAME, realWebsiteName);
-
-            RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
-        }
+        RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
 
         logger.info("initTaskShare success taskId={},websiteName={}", taskId, websiteName);
 
@@ -517,14 +416,6 @@ public class TaskUtils {
             return null;
         }
         return map.get(name);
-    }
-
-    public static void main(String[] args) {
-        String cs = "FSSBBIl1UgzbN7N443S=rIQIoJrsUJKkS7l3cm_Pj8U0fTC7PbnDjec0eirfW25MhKMrpnHYh4I.AuJMpdNR; Path=/; expires=Mon, 11 Oct 2027 " +
-                "07:31:34 GMT; HttpOnly";
-        List<HttpCookie> ll = HttpCookie.parse(cs);
-        Date d = new Date(System.currentTimeMillis() + ll.get(0).getMaxAge() * 1000);
-        System.out.println(DateUtils.formatYmdhms(d));
     }
 
 }
