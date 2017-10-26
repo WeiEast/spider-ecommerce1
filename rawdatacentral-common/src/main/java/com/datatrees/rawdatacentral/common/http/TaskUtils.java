@@ -159,20 +159,15 @@ public class TaskUtils {
         return sb.substring(1);
     }
 
-    public static Map<String, String> getResponseCookieMap(Long taskId, String host, Request request, CloseableHttpResponse response,
-            BasicCookieStore cookieStore) {
+    public static Map<String, String> getResponseCookieMap(Request request, List<Cookie> cookies) {
         Map<String, String> requestCookies = request.getRequestCookies();
         Map<String, String> receiveCookieMap = new HashMap<>();
-        List<Cookie> cookies = getCookies(taskId, host, cookieStore, response);
         if (CollectionUtils.isEmpty(cookies)) {
             return receiveCookieMap;
         }
-        if (CollectionUtils.isNotEmpty(requestCookies)) {
-
-            for (Cookie cookie : cookies) {
-                if (!requestCookies.containsKey(cookie.getName())) {
-                    receiveCookieMap.put(cookie.getName(), cookie.getValue());
-                }
+        for (Cookie cookie : cookies) {
+            if (!requestCookies.containsKey(cookie.getName())) {
+                receiveCookieMap.put(cookie.getName(), cookie.getValue());
             }
         }
         return receiveCookieMap;

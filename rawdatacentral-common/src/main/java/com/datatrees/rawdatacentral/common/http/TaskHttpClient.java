@@ -319,7 +319,9 @@ public class TaskHttpClient {
 
             statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
-            response.setResponseCookies(TaskUtils.getResponseCookieMap(taskId, host, request, httpResponse, cookieStore));
+            cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
+            TaskUtils.saveCookie(taskId, cookies);
+            response.setResponseCookies(TaskUtils.getResponseCookieMap(request, cookies));
             long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
             TaskUtils.saveCookie(taskId, host, cookieStore, httpResponse);
             response.setTotalTime(totalTime);
