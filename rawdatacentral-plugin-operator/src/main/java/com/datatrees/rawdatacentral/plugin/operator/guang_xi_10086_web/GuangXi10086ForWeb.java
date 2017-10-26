@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.plugin.operator.guang_xi_10086_web;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +65,8 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
                     = "type=A;backurl=http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp;nl=3;loginFrom=http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
             String isValidateCode = "1";
             String imgUrl = "https://gx.ac.10086.cn/common/image.jsp";
-            String dateTimeToken = "29CDA89AF8942DFC6B57DED4510944119511D02A134839CC26FDB887C8AE48DD261AA0E11141D535B92A06E1933D2FB8E7644F61861B51ADC0013D1EBAD0B0F2";
+            String dateTimeToken
+                    = "29CDA89AF8942DFC6B57DED4510944119511D02A134839CC26FDB887C8AE48DD261AA0E11141D535B92A06E1933D2FB8E7644F61861B51ADC0013D1EBAD0B0F2";
 
             List<String> backurlList = XPathUtil.getXpath("//input[@name='backurl']/@value", pageContent);
             if (!CollectionUtils.isEmpty(backurlList)) {
@@ -228,12 +230,12 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             templateUrl = "http://www.gx.10086.cn/wodeyidong";
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_006").setFullUrl(templateUrl).invoke();
 
-            templateUrl = "http://www.gx.10086.cn/wodeyidong/public/QueryBaseBillInfoAction/refreshFee.action";
-            templateData = "ajaxType=json&_tmpDate={}&_buttonId=&_dateTimeToken={}";
-            data = TemplateUtils.format(templateData, System.currentTimeMillis(), dateTimeToken);
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            //templateUrl = "http://www.gx.10086.cn/wodeyidong/public/QueryBaseBillInfoAction/refreshFee.action";
+            //templateData = "ajaxType=json&_tmpDate={}&_buttonId=&_dateTimeToken={}";
+            //data = TemplateUtils.format(templateData, System.currentTimeMillis(), dateTimeToken);
+            //response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
             pageContent = response.getPageContent();
-            if (pageContent.contains("\"code\":\"0\"")) {
+            if (pageContent.contains("姓名")) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             } else {
@@ -305,36 +307,18 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
         String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
         String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
         List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "//input");
-        StringBuilder fullUrl = new StringBuilder(action);
-        if (StringUtils.contains(fullUrl, "?")) {
-            if (!StringUtils.endsWith(fullUrl, "?")) {
-                fullUrl.append("&");
-            }
-        } else {
-            fullUrl.append("?");
-        }
+        String url = action.replaceAll("\\?", "");
+        Map<String, Object> params = new HashMap<>();
+
         if (null != list && !list.isEmpty()) {
             for (Map<String, String> map : list) {
                 if (map.containsKey("name") && map.containsKey("value")) {
-                    try {
-                        fullUrl.append(map.get("name")).append("=").append(URLEncoder.encode(map.get("value"), "UTF-8")).append("&");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                    params.put(map.get("name"), map.get("value"));
                 }
             }
         }
-        String url = fullUrl.substring(0, fullUrl.length() - 1);
-        try {
-            url = url.replaceAll("^[\\d\\w]", URLDecoder.decode("%0D%0A", "UTF-8"));
-            url = url.replaceAll("\\n", URLDecoder.decode("%0D%0A", "UTF-8"));
-            url = url.replaceAll(" ", URLDecoder.decode("%0D%0A", "UTF-8"));
-            url = url.replace(" ", URLDecoder.decode("%0D%0A", "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
         RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
-        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setUrl(url).setParams(params).invoke();
         return response.getPageContent();
     }
 }
