@@ -38,6 +38,12 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         Proxy proxy = null;
         try {
+            if (StringUtils.equals(websiteName, "ji_lin_10000_web")) {
+                proxy = new Proxy();
+                proxy.setIp("218.93.104.207");
+                proxy.setPort("6666");
+                return proxy;
+            }
             proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId), new TypeReference<Proxy>() {});
             if (null != proxy) {
                 //ip为空不再访问dubbo接口,第一次调用没有取到proxy,中途不更换
