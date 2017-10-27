@@ -44,6 +44,7 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
                 proxy = new Proxy();
                 proxy.setIp(proxyString.split(":")[0]);
                 proxy.setPort(proxyString.split(":")[1]);
+                logger.warn("危险操作:指定的代理可能不能用,taskId={},websiteName={},proxyString={}", taskId, websiteName, proxyString);
                 return proxy;
             }
             proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId), new TypeReference<Proxy>() {});
