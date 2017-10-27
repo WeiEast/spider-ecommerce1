@@ -15,6 +15,7 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.NameValue;
 import com.datatrees.rawdatacentral.domain.vo.Request;
 import com.datatrees.rawdatacentral.domain.vo.Response;
@@ -245,34 +246,8 @@ public class TaskHttpClient {
         checkRequest(request);
         Long taskId = request.getTaskId();
         request.setRequestId(RequestIdUtils.createId());
+        CloseableHttpClient httpclient = null;
         CloseableHttpResponse httpResponse = null;
-        BasicCookieStore cookieStore = TaskUtils.getCookie(taskId);
-        request.setRequestCookies(TaskUtils.getCookieMap(cookieStore));
-        if (!extralCookie.isEmpty()) {
-            for (BasicClientCookie cookie : extralCookie) {
-                cookieStore.addCookie(cookie);
-            }
-        }
-        HttpHost proxy = null;
-        if (null == request.getProxyEnable()) {
-            request.setProxyEnable(ProxyUtils.getProxyEnable(taskId));
-        }
-        if (request.getProxyEnable()) {
-            Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
-            if (null != proxyConfig) {
-                proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
-                request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
-            }
-        }
-        //禁止重定向
-        RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
-                .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
-        HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
-                .setDefaultCredentialsProvider(credsProvider).setSSLSocketFactory(sslsf);
-        if (null != credsProvider) {
-            httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
-        }
-        CloseableHttpClient httpclient = httpClientBuilder.build();
         int statusCode = 0;
         try {
             //参数处理
@@ -287,6 +262,7 @@ public class TaskHttpClient {
             }
             request.setFullUrl(url);
             logger.info("pre request taskId={},url={}", taskId, url);
+
             HttpRequestBase client = null;
             if (RequestType.GET == request.getType()) {
                 client = new HttpGet(url);
@@ -306,14 +282,48 @@ public class TaskHttpClient {
                 }
             }
             request.setRequestTimestamp(System.currentTimeMillis());
-            httpResponse = httpclient.execute(client);
+
             String host = client.getURI().getHost();
-            TaskUtils.updateBasicCookieStore(taskId, host, cookieStore, httpResponse);
-            TaskUtils.saveCookie(taskId, cookieStore);
+
+            List<Cookie> cookies = TaskUtils.getCookies(taskId, host);
+            BasicCookieStore cookieStore = TaskUtils.buildBasicCookieStore(cookies);
+            request.setRequestCookies(TaskUtils.getCookieMap(cookies));
+            if (!extralCookie.isEmpty()) {
+                for (BasicClientCookie cookie : extralCookie) {
+                    cookieStore.addCookie(cookie);
+                }
+            }
+
+            HttpHost proxy = null;
+            if (null == request.getProxyEnable()) {
+                request.setProxyEnable(ProxyUtils.getProxyEnable(taskId));
+            }
+            if (request.getProxyEnable()) {
+                Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
+                if (null != proxyConfig) {
+                    proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
+                    request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
+                }
+            }
+
+            //禁止重定向
+            RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
+                    .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
+            HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy)
+                    .setDefaultCookieStore(cookieStore).setDefaultCredentialsProvider(credsProvider).setSSLSocketFactory(sslsf);
+            if (null != credsProvider) {
+                httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
+            }
+            httpclient = httpClientBuilder.build();
+            httpResponse = httpclient.execute(client);
+
             statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
-            response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
+            cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
+            TaskUtils.saveCookie(taskId, cookies);
+            response.setResponseCookies(TaskUtils.getResponseCookieMap(request, cookies));
             long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
+            TaskUtils.saveCookie(taskId, host, cookieStore, httpResponse);
             response.setTotalTime(totalTime);
             Header[] headers = httpResponse.getAllHeaders();
             if (null != headers) {
@@ -330,7 +340,7 @@ public class TaskHttpClient {
                 if (StringUtils.isNoneBlank(contentType) && StringUtils.contains(contentType, "charset")) {
                     String charset = RegexpUtils.select(contentType, "charset=(.+)", 1);
                     if (StringUtils.isNoneBlank(charset)) {
-                        response.setCharset(Charset.forName(charset.replaceAll(";","").trim()));
+                        response.setCharset(Charset.forName(charset.replaceAll(";", "").trim()));
                     }
                 }
             }
