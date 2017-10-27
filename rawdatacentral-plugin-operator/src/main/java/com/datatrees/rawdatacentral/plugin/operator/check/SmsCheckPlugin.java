@@ -83,10 +83,12 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
                 }
                 if (!StringUtils.equals(entry.getKey(), find.getValue())) {
                     logger.info("变更了cookie,taskId={},name={},value:{}-->{}", taskId, entry.getKey(), find.getValue(), entry.getValue());
+                    find.setValue(entry.getValue());
                     continue;
                 }
             }
         }
+        TaskUtils.saveCookie(taskId,cookies);
         
         TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {});

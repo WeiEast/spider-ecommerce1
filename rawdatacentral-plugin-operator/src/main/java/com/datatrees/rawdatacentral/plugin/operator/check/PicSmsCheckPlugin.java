@@ -83,12 +83,14 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
                     logger.info("新增了cookie,taskId={},name={},value={}", taskId, entry.getKey(), entry.getValue());
                     continue;
                 }
-                if (!StringUtils.equals(entry.getKey(), find.getValue())) {
+                if (!StringUtils.equals(entry.getValue(), find.getValue())) {
                     logger.info("变更了cookie,taskId={},name={},value:{}-->{}", taskId, entry.getKey(), find.getValue(), entry.getValue());
+                    find.setValue(entry.getValue());
                     continue;
                 }
             }
         }
+        TaskUtils.saveCookie(taskId,cookies);
 
         TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
