@@ -40,6 +40,7 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
         try {
             proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId), new TypeReference<Proxy>() {});
             if (null != proxy) {
+                //ip为空不再访问dubbo接口,第一次调用没有取到proxy,中途不更换
                 return StringUtils.isBlank(proxy.getIp()) ? null : proxy;
             }
             proxy = getProxyFromDubbo(taskId, websiteName);
@@ -74,18 +75,15 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
     }
 
     private Proxy getProxyFromDubbo(Long taskId, String websiteName) {
-        int maxRetry = 1, retry = 0;
-        do {
-            try {
-                Proxy proxy = proxyProvider.getProxy(taskId, websiteName);
-                if (null != proxy && StringUtils.isNoneBlank(proxy.getIp())) {
-                    logger.info("getProxyFromDubbo success,taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
-                    return proxy;
-                }
-            } catch (Exception e) {
-                logger.debug("getProxyFromDubbo error,taskId={},websiteName={}", taskId, websiteName);
+        try {
+            Proxy proxy = proxyProvider.getProxy(taskId, websiteName);
+            if (null != proxy && StringUtils.isNoneBlank(proxy.getIp())) {
+                logger.info("getProxyFromDubbo success,taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
+                return proxy;
             }
-        } while (retry++ < maxRetry);
+        } catch (Exception e) {
+            logger.debug("getProxyFromDubbo error,taskId={},websiteName={}", taskId, websiteName);
+        }
         logger.warn("从dubbo获取代理失败,将使用本地网络,taskId={},websiteName={}", taskId, websiteName);
         return null;
     }
