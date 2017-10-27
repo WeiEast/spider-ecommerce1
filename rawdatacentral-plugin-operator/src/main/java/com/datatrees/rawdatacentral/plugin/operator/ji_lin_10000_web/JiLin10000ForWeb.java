@@ -172,24 +172,12 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-            String templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00710602";
-            String referer = "http://www.189.cn/jl/";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_007").setFullUrl(templateUrl).setReferer(referer).invoke();
+            String templateUrl
+                    = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10030&toStUrl=http://jl.189.cn/service/bill/balanceQueryFra.action?fastcode=00710599&cityCode=jl";
+            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_008").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
-            if (StringUtils.isBlank(pageContent) || !StringUtils.contains(pageContent, "个人信息")) {
-                logger.error("jl189 login failed! errormessage:login failed");
-                return result.failure(ErrorCode.RESPONSE_EMPTY_ERROR_CODE);
-            }
-
-            templateUrl = "http://www.189.cn/login/index.do";
-            referer = "http://www.189.cn/html/login/index.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_008").setFullUrl(templateUrl).setReferer(referer).invoke();
-            pageContent = response.getPageContent();
-            if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "errorDescription\":null")) {
-                templateUrl
-                        = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10030&toStUrl=http://jl.189.cn/service/bill/balanceQueryFra.action?fastcode=00710599&cityCode=jl";
-                response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_008").setFullUrl(templateUrl).invoke();
-                TaskUtils.addTaskShare(param.getTaskId(), "balancePage", response.getPageContent());
+            if (StringUtils.contains(pageContent, "余额")) {
+                TaskUtils.addTaskShare(param.getTaskId(), "balancePage", pageContent);
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             } else {
