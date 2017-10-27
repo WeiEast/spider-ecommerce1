@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -38,10 +39,11 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         Proxy proxy = null;
         try {
-            if (StringUtils.equals(websiteName, "ji_lin_10000_web")) {
+            String proxyString = PropertiesConfiguration.getInstance().get("website.proxy." + websiteName);
+            if (StringUtils.isNotBlank(proxyString)) {
                 proxy = new Proxy();
-                proxy.setIp("218.93.104.207");
-                proxy.setPort("6666");
+                proxy.setIp(proxyString.split(":")[0]);
+                proxy.setPort(proxyString.split(":")[1]);
                 return proxy;
             }
             proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId), new TypeReference<Proxy>() {});
