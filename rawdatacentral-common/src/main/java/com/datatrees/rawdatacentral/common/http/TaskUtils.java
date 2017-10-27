@@ -410,4 +410,29 @@ public class TaskUtils {
         return null;
     }
 
+    public static void updateCookies(Long taskId, Map<String, String> newCookieMap) {
+        List<Cookie> cookies = TaskUtils.getCookies(taskId);
+        if (CollectionUtils.isNotEmpty(newCookieMap) && CollectionUtils.isNotEmpty(cookies)) {
+            for (Map.Entry<String, String> entry : newCookieMap.entrySet()) {
+                Cookie find = null;
+                for (Cookie cookie : cookies) {
+                    if (StringUtils.equals(entry.getKey(), cookie.getName())) {
+                        find = cookie;
+                        break;
+                    }
+                }
+                if (null == find) {
+                    logger.info("新增了cookie,but没有处理,taskId={},name={},value={}", taskId, entry.getKey(), entry.getValue());
+                    continue;
+                }
+                if (!StringUtils.equals(entry.getKey(), find.getValue())) {
+                    logger.info("变更了cookie,taskId={},name={},value:{}-->{}", taskId, entry.getKey(), find.getValue(), entry.getValue());
+                    find.setValue(entry.getValue());
+                    continue;
+                }
+            }
+        }
+        TaskUtils.saveCookie(taskId, cookies);
+    }
+
 }

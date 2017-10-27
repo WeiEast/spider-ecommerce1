@@ -48,30 +48,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
 
-        logger.info("比较cookie变化,taskId={}", taskId);
-        List<Cookie> cookies = TaskUtils.getCookies(taskId);
-        Map<String, String> after = ProcessorContextUtil.getCookieMap(context);
-        if (CollectionUtils.isNotEmpty(after) && CollectionUtils.isNotEmpty(cookies)) {
-            for (Map.Entry<String, String> entry : after.entrySet()) {
-                Cookie find = null;
-                for (Cookie cookie : cookies) {
-                    if (StringUtils.equals(entry.getKey(), cookie.getName())) {
-                        find = cookie;
-                        break;
-                    }
-                }
-                if (null == find) {
-                    logger.info("新增了cookie,taskId={},name={},value={}", taskId, entry.getKey(), entry.getValue());
-                    continue;
-                }
-                if (!StringUtils.equals(entry.getKey(), find.getValue())) {
-                    logger.info("变更了cookie,taskId={},name={},value:{}-->{}", taskId, entry.getKey(), find.getValue(), entry.getValue());
-                    find.setValue(entry.getValue());
-                    continue;
-                }
-            }
-        }
-        TaskUtils.saveCookie(taskId,cookies);
+        TaskUtils.updateCookies(taskId, ProcessorContextUtil.getCookieMap(context));
 
         TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
