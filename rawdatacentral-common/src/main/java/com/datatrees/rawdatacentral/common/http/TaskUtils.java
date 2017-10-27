@@ -129,6 +129,13 @@ public class TaskUtils {
                 Cookie cookie = iterator.next();
                 if (!StringUtils.endsWith(host, cookie.getDomain())) {
                     iterator.remove();
+                    continue;
+                }
+                String domain = cookie.getDomain();
+                if (domain.length() != host.length()) {
+                    domain = "." + domain;
+                    cookie.setDomain(domain);
+                    cookie.getAttribs().put("domain", domain);
                 }
             }
         }
