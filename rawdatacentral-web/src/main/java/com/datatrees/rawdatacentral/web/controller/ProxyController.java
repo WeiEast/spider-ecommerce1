@@ -9,7 +9,6 @@ import com.treefinance.proxy.domain.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,7 +29,7 @@ public class ProxyController {
             String port = strings[1];
             p.setIp(ip);
             p.setPort(port);
-            redisService.cache(RedisKeyPrefixEnum.TASK_PROXY, taskId, proxy);
+            redisService.cache(RedisKeyPrefixEnum.TASK_PROXY, taskId, p);
             logger.info("setProxy success taskId={},proxy={}", taskId, proxy);
             return result.success();
         } catch (Exception e) {
