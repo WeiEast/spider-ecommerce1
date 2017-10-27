@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.plugin.operator.check;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +20,7 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -29,6 +31,8 @@ import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.domain.vo.Cookie;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +64,30 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
 
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
+
+        logger.info("比较cookie变化,taskId={}", taskId);
+        List<Cookie> cookies = TaskUtils.getCookies(taskId);
+        Map<String, String> after = ProcessorContextUtil.getCookieMap(context);
+        if (CollectionUtils.isNotEmpty(after) && CollectionUtils.isNotEmpty(cookies)) {
+            for (Map.Entry<String, String> entry : after.entrySet()) {
+                Cookie find = null;
+                for (Cookie cookie : cookies) {
+                    if (StringUtils.equals(entry.getKey(), cookie.getName())) {
+                        find = cookie;
+                        break;
+                    }
+                }
+                if (null == find) {
+                    logger.info("新增了cookie,taskId={},name={},value={}", taskId, entry.getKey(), entry.getValue());
+                    continue;
+                }
+                if (!StringUtils.equals(entry.getKey(), find.getValue())) {
+                    logger.info("变更了cookie,taskId={},name={},value:{}-->{}", taskId, entry.getKey(), find.getValue(), entry.getValue());
+                    continue;
+                }
+            }
+        }
+        
         TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);
