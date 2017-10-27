@@ -38,8 +38,15 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         Proxy proxy = null;
         try {
+            if (StringUtils.equals(websiteName, "ji_lin_10000_web")) {
+                proxy = new Proxy();
+                proxy.setIp("218.93.104.207");
+                proxy.setPort("6666");
+                return proxy;
+            }
             proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId), new TypeReference<Proxy>() {});
             if (null != proxy) {
+                //ip为空不再访问dubbo接口,第一次调用没有取到proxy,中途不更换
                 return StringUtils.isBlank(proxy.getIp()) ? null : proxy;
             }
             proxy = getProxyFromDubbo(taskId, websiteName);
@@ -74,18 +81,15 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
     }
 
     private Proxy getProxyFromDubbo(Long taskId, String websiteName) {
-        int maxRetry = 1, retry = 0;
-        do {
-            try {
-                Proxy proxy = proxyProvider.getProxy(taskId, websiteName);
-                if (null != proxy && StringUtils.isNoneBlank(proxy.getIp())) {
-                    logger.info("getProxyFromDubbo success,taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
-                    return proxy;
-                }
-            } catch (Exception e) {
-                logger.debug("getProxyFromDubbo error,taskId={},websiteName={}", taskId, websiteName);
+        try {
+            Proxy proxy = proxyProvider.getProxy(taskId, websiteName);
+            if (null != proxy && StringUtils.isNoneBlank(proxy.getIp())) {
+                logger.info("getProxyFromDubbo success,taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
+                return proxy;
             }
-        } while (retry++ < maxRetry);
+        } catch (Exception e) {
+            logger.debug("getProxyFromDubbo error,taskId={},websiteName={}", taskId, websiteName);
+        }
         logger.warn("从dubbo获取代理失败,将使用本地网络,taskId={},websiteName={}", taskId, websiteName);
         return null;
     }

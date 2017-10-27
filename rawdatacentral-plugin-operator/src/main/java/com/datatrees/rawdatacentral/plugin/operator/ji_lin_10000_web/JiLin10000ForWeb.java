@@ -172,20 +172,9 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-            String templateUrl
-                    = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10030&toStUrl=http://jl.189.cn/service/bill/balanceQueryFra.action?fastcode=00710599&cityCode=jl";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_008").setFullUrl(templateUrl).invoke();
-            String pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, "余额")) {
-                TaskUtils.addTaskShare(param.getTaskId(), "balancePage", pageContent);
-                logger.info("登陆成功,param={}", param);
-                return result.success();
-            } else {
-                logger.error("登陆失败,param={},pageContent={}", param, pageContent);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
+            return result.success();
         } catch (Exception e) {
-            logger.error("基本信息-->校验失败,param={},response={}", param, response, e);
+            logger.error("登陆-->校验-->失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
         }
     }
