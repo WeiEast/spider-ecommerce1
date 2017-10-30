@@ -30,10 +30,7 @@ import com.datatrees.crawler.core.processor.page.PageImpl;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.processor.segment.impl.*;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.datatrees.crawler.core.processor.service.impl.DefaultService;
-import com.datatrees.crawler.core.processor.service.impl.GrabServiceImpl;
-import com.datatrees.crawler.core.processor.service.impl.PluginServiceImpl;
-import com.datatrees.crawler.core.processor.service.impl.WebRobotServiceImpl;
+import com.datatrees.crawler.core.processor.service.impl.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +91,7 @@ public class ProcessorFactory {
             registService(ServiceType.WebRobot_Service, WebRobotServiceImpl.class);
             registService(ServiceType.Plugin_Service, PluginServiceImpl.class);
             registService(ServiceType.Grab_Service, GrabServiceImpl.class);
+            registService(ServiceType.Task_Http_Service, TaskHttpServiceImpl.class);
             registService(null, DefaultService.class);
 
             // page
