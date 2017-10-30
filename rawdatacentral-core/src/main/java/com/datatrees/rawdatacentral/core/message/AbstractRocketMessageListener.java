@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.core.message;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,7 +28,8 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext arg1) {
         MessageExt message = msgs.get(0);
         long startTime = System.currentTimeMillis();
-        logger.info("receive message: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()));
+        String msg = new String(message.getBody(), Charset.forName("UTF-8"));
+        logger.info("receive message: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), msg);
         try {
             T convertResult = null;
             try {
@@ -38,16 +40,19 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
                     ((MessageInfo) convertResult).setBornTimestamp(message.getBornTimestamp());
                 }
             } catch (Exception e) {
-                logger.error("messageConvert error: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()), e);
+                logger.error("messageConvert error: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(),
+                        msg, e);
             }
             if (convertResult != null) {
                 process(convertResult);
             } else {
-                logger.warn("empty msg: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()));
+                logger.warn("empty msg: msgId={},topic={},tags={},body={}", message.getMsgId(), message.getTopic(), message.getTags(), msg);
             }
-            logger.info("process message success: useTime={},msgId={},topic={},tags={},body={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()));
+            logger.info("process message success: useTime={},msgId={},topic={},tags={},body={}",
+                    DateUtils.getUsedTime(startTime, System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(), msg);
         } catch (Throwable e) {
-            logger.error("process message error: useTime={},msgId={},topic={},tags={},body={}", DateUtils.getUsedTime(startTime, System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(), new String(message.getBody()), e);
+            logger.error("process message error: useTime={},msgId={},topic={},tags={},body={}",
+                    DateUtils.getUsedTime(startTime, System.currentTimeMillis()), message.getMsgId(), message.getTopic(), message.getTags(), msg, e);
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
