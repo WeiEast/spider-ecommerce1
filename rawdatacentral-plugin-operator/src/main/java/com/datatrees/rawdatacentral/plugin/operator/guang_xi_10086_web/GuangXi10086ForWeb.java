@@ -1,5 +1,9 @@
 package com.datatrees.rawdatacentral.plugin.operator.guang_xi_10086_web;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +12,8 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -15,13 +21,14 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 /**
- * https://gx.ac.10086.cn/login
- * Created by guimeichao on 17/9/5.LiaoNing10086ForWeb.java
+ * http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp
+ * Created by guimeichao on 17/9/5.
  */
 public class GuangXi10086ForWeb implements OperatorPluginService {
 
@@ -32,34 +39,40 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://gx.ac.10086.cn/login";
+            String templateUrl = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
             response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
-            if (pageContent.matches("replace\\('([^']+)'\\)")) {
-                templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_002").setFullUrl(templateUrl).invoke();
-                pageContent = response.getPageContent();
+            if (org.apache.commons.lang.StringUtils.isBlank(pageContent)) {
+                logger.error("登录-->初始化失败,param={},response={}", param, response);
+                return result.failure(ErrorCode.TASK_INIT_ERROR);
+            }
+            if (pageContent.contains("postartifact")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
+            }
+
+            if (pageContent.contains("postartifact")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
+            }
+
+            if (pageContent.contains("postartifact")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
             }
             //获取登录所需参数
-            String type = "B";
             String backurl = "https://gx.ac.10086.cn/4logingx/backPage.jsp";
             String errorurl = "https://gx.ac.10086.cn/4logingx/errorPage.jsp";
             String spid = "";
             String relayState
                     = "type=A;backurl=http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp;nl=3;loginFrom=http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
-            String isValidateCode = "0";
-            String myaction = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
-            String netaction = "http://www.gx.10086.cn/padhallclient/netclient/customer/businessDealing";
+            String isValidateCode = "1";
+            String imgUrl = "https://gx.ac.10086.cn/common/image.jsp";
+            String dateTimeToken
+                    = "29CDA89AF8942DFC6B57DED4510944119511D02A134839CC26FDB887C8AE48DD261AA0E11141D535B92A06E1933D2FB8E7644F61861B51ADC0013D1EBAD0B0F2";
 
-            List<String> typeList = XPathUtil.getXpath("//input[@id='loginType']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(typeList)) {
-                type = typeList.get(0);
-            }
             List<String> backurlList = XPathUtil.getXpath("//input[@name='backurl']/@value", pageContent);
             if (!CollectionUtils.isEmpty(backurlList)) {
                 backurl = backurlList.get(0);
             }
-            List<String> errorurlList = XPathUtil.getXpath("//input[@id='errorurl']/@value", pageContent);
+            List<String> errorurlList = XPathUtil.getXpath("//input[@name='errorurl']/@value", pageContent);
             if (!CollectionUtils.isEmpty(errorurlList)) {
                 errorurl = errorurlList.get(0);
             }
@@ -69,29 +82,25 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             }
             List<String> relayStateList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
             if (!CollectionUtils.isEmpty(relayStateList)) {
-                relayState = relayStateList.get(1);
+                relayState = relayStateList.get(0);
             }
-            List<String> isValidateCodeList = XPathUtil.getXpath("//input[@id='isValidateCode']/@value", pageContent);
+            List<String> isValidateCodeList = XPathUtil.getXpath("//input[@name='isValidateCode']/@value", pageContent);
             if (!CollectionUtils.isEmpty(isValidateCodeList)) {
                 isValidateCode = isValidateCodeList.get(0);
             }
-            List<String> myactionList = XPathUtil.getXpath("//input[@id='myaction']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(myactionList)) {
-                myaction = myactionList.get(0);
+            List<String> imgUrlList = XPathUtil.getXpath("//input[@name='cur_verify_img_url']/@value", pageContent);
+            if (!CollectionUtils.isEmpty(imgUrlList)) {
+                imgUrl = imgUrlList.get(0);
             }
-            List<String> netactionList = XPathUtil.getXpath("//input[@id='netaction']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(netactionList)) {
-                netaction = netactionList.get(0);
-            }
+            dateTimeToken = PatternUtils.group(pageContent, "ID\\s*var _dateTimeToken = '([^\"]+)'", 1);
 
-            TaskUtils.addTaskShare(param.getTaskId(), "type", type);
             TaskUtils.addTaskShare(param.getTaskId(), "backurl", backurl);
             TaskUtils.addTaskShare(param.getTaskId(), "errorurl", errorurl);
             TaskUtils.addTaskShare(param.getTaskId(), "relayState", relayState);
             TaskUtils.addTaskShare(param.getTaskId(), "spid", spid);
             TaskUtils.addTaskShare(param.getTaskId(), "isValidateCode", isValidateCode);
-            TaskUtils.addTaskShare(param.getTaskId(), "myaction", myaction);
-            TaskUtils.addTaskShare(param.getTaskId(), "netaction", netaction);
+            TaskUtils.addTaskShare(param.getTaskId(), "imgUrl", imgUrl);
+            TaskUtils.addTaskShare(param.getTaskId(), "dateTimeToken", dateTimeToken);
 
             return result.success();
         } catch (Exception e) {
@@ -113,6 +122,8 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
         switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshSmsCodeForLogin(param);
             case FormType.VALIDATE_BILL_DETAIL:
                 return refeshSmsCodeForBillDetail(param);
             default:
@@ -134,12 +145,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
-        switch (param.getFormType()) {
-            case FormType.LOGIN:
-                return validatePicCodeForLogin(param);
-            default:
-                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
-        }
+        return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     @Override
@@ -152,9 +158,9 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://gx.ac.10086.cn/common/image.jsp";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "guang_xi_10086_web_003")
-                    .setFullUrl(templateUrl).invoke();
+            String templateUrl = "https://gx.ac.10086.cn/common/image.jsp?_date={}";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "guang_xi_10086_web_002")
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -163,82 +169,77 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> validatePicCodeForLogin(OperatorParam param) {
-        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+    private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://gx.ac.10086.cn/validImageCode?r_{}&imageCode={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "guang_xi_10086_web_004")
-                    .setFullUrl(templateUrl, Math.random(), param.getPicCode()).invoke();
-            if (response.getPageContent().contains("1")) {
-                logger.info("登录-->图片验证码-->校验成功,param={}", param);
+            String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
+            String referer = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
+            String templateUrl = "https://gx.ac.10086.cn/SMSCodeSend?mobileNum={}&spid={}&errorurl={}";
+            response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_003").setFullUrl(templateUrl, param.getMobile(), spid,
+                    URLEncoder.encode("http://www.gx.10086.cn/wodeyidong/public/LoginAction/showSSOErr.action", "UTF-8")).setReferer(referer)
+                    .invoke();
+            if (response.getPageContent().contains("短信验证码已发送到您的手机")) {
+                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("登录-->图片验证码-->校验失败,param={}", param);
-                return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+                logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response);
+                return result.failure(ErrorCode.REFESH_SMS_FAIL);
             }
         } catch (Exception e) {
-            logger.error("登录-->图片验证码-->校验失败,param={},response={}", param, response, e);
-            return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
+            logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
-        HttpResult<Map<String, Object>> result = validatePicCodeForLogin(param);
-        if (!result.getStatus()) {
-            return result;
-        }
+        CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://gx.ac.10086.cn/Login?type={}&backurl={}&errorurl={}&spid={}&RelayState={}&mobileNum={}&servicePassword" +
-                    "={}&smsValidCode=&validCode={}&isValidateCode={}";
-            String type = TaskUtils.getTaskShare(param.getTaskId(), "type");
+
             String backurl = TaskUtils.getTaskShare(param.getTaskId(), "backurl");
             String errorurl = TaskUtils.getTaskShare(param.getTaskId(), "errorurl");
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             String relayState = TaskUtils.getTaskShare(param.getTaskId(), "relayState");
             String isValidateCode = TaskUtils.getTaskShare(param.getTaskId(), "isValidateCode");
+            String imgUrl = TaskUtils.getTaskShare(param.getTaskId(), "imgUrl");
+            String dateTimeToken = TaskUtils.getTaskShare(param.getTaskId(), "dateTimeToken");
+            relayState = relayState.replace("type=B", "type=A");
 
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_005")
-                    .setFullUrl(templateUrl, type, backurl, errorurl, spid, relayState, param.getMobile(), param.getPassword(), param.getPicCode(),
-                            isValidateCode).invoke();
+            String referer = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
+            String templateUrl = "https://gx.ac.10086.cn/Login";
+            String templateData = "type=A&backurl={}&errorurl={}&spid={}&RelayState={}&isEncrypt=true&cur_verify_img_url={}&loginType=smsPass" +
+                    "&mobileNum={}&servicePassword=&smsValidCode={}&validCode={}&isValidateCode={}";
+            String data = TemplateUtils.format(templateData, URLEncoder.encode(backurl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid,
+                    URLEncoder.encode(relayState, "UTF-8"), URLEncoder.encode(imgUrl, "UTF-8"), param.getMobile(), param.getSmsCode(),
+                    param.getPicCode(), isValidateCode);
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_005").setFullUrl(templateUrl).setRequestBody(data)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
-            if (pageContent.contains("replace\\('([^']+)'\\)")) {
-                templateUrl = PatternUtils.group(response.getPageContent(), "replace\\('([^']+)'\\)", 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_006").setFullUrl(templateUrl).invoke();
-                pageContent = response.getPageContent();
+            if (pageContent.contains("postartifact")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
             }
-            String samLart = PatternUtils.group(pageContent, "name=\"SAMLart\" value=\"([^\"]+)\"", 1);
-            String relayValue = PatternUtils.group(pageContent, "name=\"RelayState\" value=\"([^\"]+)\"", 1);
-            templateUrl = "https://gx.ac.10086.cn/4logingx/backPage.jsp?RelayState={}&SAMLart={}&displayPic=1";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_007").setFullUrl(templateUrl, relayValue, samLart).invoke();
-            pageContent = response.getPageContent();
-
-            String sAMLart = PatternUtils.group(pageContent, "callAssert\\('([^\"]+)'\\)", 1);
-            templateUrl = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp?SAMLart={}&RelayState={}&myaction={}&netaction={}";
-            String myaction = TaskUtils.getTaskShare(param.getTaskId(), "myaction");
-            String netaction = TaskUtils.getTaskShare(param.getTaskId(), "netaction");
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_008")
-                    .setFullUrl(templateUrl, sAMLart, relayState, myaction, netaction).invoke();
+            if (StringUtils.isBlank(pageContent) && !pageContent.contains("跳转中")) {
+                logger.error("gx10086 login valid phone error");
+                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            }
             templateUrl = "http://www.gx.10086.cn/wodeyidong";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_009").setFullUrl(templateUrl).invoke();
-            response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_010").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_006").setFullUrl(templateUrl).invoke();
 
-            templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryexistbusi/QueryExistBusiAction/initBusi" +
-                    ".menu?is_first_render=true&_menuId=410900003564&=&_lastCombineChild=false&_zoneId=busimain&_tmpDate=&_buttonId=";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_011").setFullUrl(templateUrl).invoke();
-
-            templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryexistbusi/QueryExistBusiAction/queryBusi" +
-                    ".menu?phoneId={}&numberType=1&selectedType=600&chooseNumType=1&is_first_render=true&_zoneId=ui-queryresult&_tmpDate=&_menuId=410900003564&_buttonId=step-1-btn";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_011").setFullUrl(templateUrl, param.getMobile()).invoke();
-            if (response.getPageContent().contains("客户信息")) {
+            //templateUrl = "http://www.gx.10086.cn/wodeyidong/public/QueryBaseBillInfoAction/refreshFee.action";
+            //templateData = "ajaxType=json&_tmpDate={}&_buttonId=&_dateTimeToken={}";
+            //data = TemplateUtils.format(templateData, System.currentTimeMillis(), dateTimeToken);
+            //response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            pageContent = response.getPageContent();
+            if (pageContent.contains("姓名")) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                logger.error("登陆失败,param={},pageContent={}", param, pageContent);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
@@ -260,14 +261,14 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
                     ".menu?ajaxType=json&_tmpDate=&_menuId=410900003558&_buttonId=";
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_012").setFullUrl(templateUrl).setReferer(referer).invoke();
             if (response.getPageContent().contains("随机短信验证码已发送成功")) {
-                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response);
+                logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.REFESH_SMS_FAIL);
             }
         } catch (Exception e) {
-            logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
@@ -281,8 +282,8 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
                     ".menu?input_random_code={}&input_svr_pass={}&is_first_render=true&_zoneId=_sign_errzone&_tmpDate=&_menuId=410900003558" +
                     "&_buttonId=other_sign_btn";
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_013")
-                    .setFullUrl(templateUrl, param.getSmsCode(), param.getPassword()).setReferer(referer).addHeader("X-Requested-With",
-                            "XMLHttpRequest").invoke();
+                    .setFullUrl(templateUrl, param.getSmsCode(), param.getPassword()).setReferer(referer)
+                    .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             logger.info(response.getPageContent());
             if (response.getPageContent().contains("短信验证码错误")) {
                 logger.warn("详单-->短信验证码错误,param={}", param);
@@ -295,5 +296,29 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
+    }
+
+    /**
+     * 处理跳转服务
+     * @param pageContent
+     * @return
+     */
+    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent) {
+        String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
+        String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
+        List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "//input");
+        String url = action.replaceAll("\\?", "");
+        Map<String, Object> params = new HashMap<>();
+
+        if (null != list && !list.isEmpty()) {
+            for (Map<String, String> map : list) {
+                if (map.containsKey("name") && map.containsKey("value")) {
+                    params.put(map.get("name"), map.get("value"));
+                }
+            }
+        }
+        RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setUrl(url).setParams(params).invoke();
+        return response.getPageContent();
     }
 }

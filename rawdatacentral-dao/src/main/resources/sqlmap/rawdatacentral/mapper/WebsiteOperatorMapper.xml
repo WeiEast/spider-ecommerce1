@@ -5,6 +5,7 @@
     <id column="website_id" jdbcType="INTEGER" property="websiteId" />
     <result column="website_name" jdbcType="VARCHAR" property="websiteName" />
     <result column="website_title" jdbcType="VARCHAR" property="websiteTitle" />
+    <result column="enable" jdbcType="BIT" property="enable" />
     <result column="proxy_enable" jdbcType="BIT" property="proxyEnable" />
     <result column="search_config" jdbcType="VARCHAR" property="searchConfig" />
     <result column="extractor_config" jdbcType="VARCHAR" property="extractorConfig" />
@@ -86,7 +87,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    website_id, website_name, website_title, proxy_enable, search_config, extractor_config, 
+    website_id, website_name, website_title, enable, proxy_enable, search_config, extractor_config, 
     group_code, operator_type, region_name, updated_at, start_stage, login_url, plugin_class, 
     login_config, sms_interval, remark, login_tip, verify_tip, reset_type, sms_template, 
     sms_receiver, reset_url, reset_tip, simulate
@@ -129,6 +130,9 @@
       </if>
       <if test="websiteTitle != null">
         website_title,
+      </if>
+      <if test="enable != null">
+        enable,
       </if>
       <if test="proxyEnable != null">
         proxy_enable,
@@ -200,6 +204,9 @@
       </if>
       <if test="websiteTitle != null">
         #{websiteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=BIT},
       </if>
       <if test="proxyEnable != null">
         #{proxyEnable,jdbcType=BIT},
@@ -284,6 +291,9 @@
       <if test="record.websiteTitle != null">
         website_title = #{record.websiteTitle,jdbcType=VARCHAR},
       </if>
+      <if test="record.enable != null">
+        enable = #{record.enable,jdbcType=BIT},
+      </if>
       <if test="record.proxyEnable != null">
         proxy_enable = #{record.proxyEnable,jdbcType=BIT},
       </if>
@@ -360,6 +370,9 @@
       </if>
       <if test="websiteTitle != null">
         website_title = #{websiteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null">
+        enable = #{enable,jdbcType=BIT},
       </if>
       <if test="proxyEnable != null">
         proxy_enable = #{proxyEnable,jdbcType=BIT},

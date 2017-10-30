@@ -19,6 +19,7 @@ import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
+import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -40,9 +41,11 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Resource
-    private WebsiteOperatorDAO websiteOperatorDAO;
+    private WebsiteOperatorDAO  websiteOperatorDAO;
     @Resource
-    private WebsiteConfigDAO   websiteConfigDAO;
+    private WebsiteConfigDAO    websiteConfigDAO;
+    @Resource
+    private WebsiteGroupService websiteGroupService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -51,6 +54,13 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         example.createCriteria().andWebsiteNameEqualTo(websiteName);
         List<WebsiteOperator> list = websiteOperatorDAO.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    @Override
+    public List<WebsiteOperator> queryByGroupCode(String groupCode) {
+        WebsiteOperatorExample example = new WebsiteOperatorExample();
+        example.createCriteria().andGroupCodeEqualTo(groupCode);
+        return websiteOperatorDAO.selectByExample(example);
     }
 
     @Override
@@ -163,5 +173,21 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             config.setWebsiteId(websiteOperatorDb.getWebsiteId());
             websiteOperatorDAO.updateByPrimaryKeySelective(config);
         }
+    }
+
+    @Override
+    public void updateEnable(String websiteName, Boolean enable) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        CheckUtils.checkNotNull(enable, "enable is null");
+        WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
+        if (null != websiteOperatorDb) {
+            WebsiteOperator operatorUpdate = new WebsiteOperator();
+            operatorUpdate.setWebsiteId(websiteOperatorDb.getWebsiteId());
+            operatorUpdate.setEnable(enable);
+            websiteOperatorDAO.updateByPrimaryKeySelective(operatorUpdate);
+            websiteGroupService.updateEnable(websiteName, enable);
+            websiteGroupService.updateCache();
+        }
+
     }
 }

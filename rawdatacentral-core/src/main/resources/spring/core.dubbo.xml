@@ -11,6 +11,8 @@
     <!--运营商-->
     <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerOperatorService"
                    ref="crawlerOperatorServiceImpl"/>
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.WebsiteOperatorServiceApi"
+                   ref="websiteOperatorServiceApiImpl"/>
 
 </beans>
 

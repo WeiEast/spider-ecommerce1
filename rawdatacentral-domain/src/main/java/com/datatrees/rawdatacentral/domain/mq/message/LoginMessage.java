@@ -32,6 +32,10 @@ public class LoginMessage implements Serializable {
      * 用户账户
      */
     private String accountNo;
+    /** 分组代码 */
+    private String groupCode;
+    /** 分组名称 */
+    private String groupName;
 
     public String getWebsiteName() {
         return websiteName;
@@ -85,6 +89,22 @@ public class LoginMessage implements Serializable {
      */
     public void setAccountNo(String accountNo) {
         this.accountNo = accountNo;
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     @Override

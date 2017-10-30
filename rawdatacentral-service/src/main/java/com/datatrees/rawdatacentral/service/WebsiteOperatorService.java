@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.service;
 
+import java.util.List;
+
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 
 /**
@@ -14,6 +16,13 @@ public interface WebsiteOperatorService {
      * @return
      */
     WebsiteOperator getByWebsiteName(String websiteName);
+
+    /**
+     * 获取运营商配置
+     * @param groupCode
+     * @return
+     */
+    List<WebsiteOperator> queryByGroupCode(String groupCode);
 
     /**
      * 从老配置导入配置信息
@@ -45,5 +54,12 @@ public interface WebsiteOperatorService {
      * 保存运营商配置
      */
     void saveConfig(WebsiteOperator websiteOperator);
+
+    /**
+     * 启用/禁用
+     * @param websiteName
+     * @param enable
+     */
+    void updateEnable(String websiteName, Boolean enable);
 
 }

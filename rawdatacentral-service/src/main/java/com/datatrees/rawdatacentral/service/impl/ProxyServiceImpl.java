@@ -11,6 +11,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.service.constants.Constants;
@@ -38,8 +39,17 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         Proxy proxy = null;
         try {
+            String proxyString = RedisUtils.get(RedisKeyPrefixEnum.WEBSITE_PROXY.getRedisKey(websiteName));
+            if (StringUtils.isNotBlank(proxyString)) {
+                proxy = new Proxy();
+                proxy.setIp(proxyString.split(":")[0]);
+                proxy.setPort(proxyString.split(":")[1]);
+                logger.warn("危险操作:指定的代理可能不能用,taskId={},websiteName={},proxyString={}", taskId, websiteName, proxyString);
+                return proxy;
+            }
             proxy = redisService.getCache(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId), new TypeReference<Proxy>() {});
             if (null != proxy) {
+                //ip为空不再访问dubbo接口,第一次调用没有取到proxy,中途不更换
                 return StringUtils.isBlank(proxy.getIp()) ? null : proxy;
             }
             proxy = getProxyFromDubbo(taskId, websiteName);
@@ -74,18 +84,15 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
     }
 
     private Proxy getProxyFromDubbo(Long taskId, String websiteName) {
-        int maxRetry = 1, retry = 0;
-        do {
-            try {
-                Proxy proxy = proxyProvider.getProxy(taskId, websiteName);
-                if (null != proxy && StringUtils.isNoneBlank(proxy.getIp())) {
-                    logger.info("getProxyFromDubbo success,taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
-                    return proxy;
-                }
-            } catch (Exception e) {
-                logger.debug("getProxyFromDubbo error,taskId={},websiteName={}", taskId, websiteName);
+        try {
+            Proxy proxy = proxyProvider.getProxy(taskId, websiteName);
+            if (null != proxy && StringUtils.isNoneBlank(proxy.getIp())) {
+                logger.info("getProxyFromDubbo success,taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
+                return proxy;
             }
-        } while (retry++ < maxRetry);
+        } catch (Exception e) {
+            logger.debug("getProxyFromDubbo error,taskId={},websiteName={}", taskId, websiteName);
+        }
         logger.warn("从dubbo获取代理失败,将使用本地网络,taskId={},websiteName={}", taskId, websiteName);
         return null;
     }

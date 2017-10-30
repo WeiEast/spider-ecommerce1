@@ -9,13 +9,13 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.NameValue;
 import com.datatrees.rawdatacentral.domain.vo.Request;
 import com.datatrees.rawdatacentral.domain.vo.Response;
@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -38,6 +39,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
@@ -49,9 +51,8 @@ import org.slf4j.LoggerFactory;
 
 public class TaskHttpClient {
 
-    private static final Logger                     logger       = LoggerFactory.getLogger(TaskHttpClient.class);
-    private static       RedisService               redisService = BeanFactoryUtils.getBean(RedisService.class);
-    private static       SSLConnectionSocketFactory sslsf        = null;//海南电信,重定向要忽略证书
+    private static final Logger                     logger = LoggerFactory.getLogger(TaskHttpClient.class);
+    private static       SSLConnectionSocketFactory sslsf  = null;//海南电信,重定向要忽略证书
 
     static {
         try {
@@ -74,7 +75,8 @@ public class TaskHttpClient {
     private Response    response;
     private ContentType requestContentType;
     private ContentType responseContentType;
-    private boolean                 isRedirect   = false;//是否重定向了
+    private boolean isRedirect = false;//是否重定向了
+    private CredentialsProvider credsProvider;
     /**
      * 自定义的cookie
      */
@@ -110,6 +112,11 @@ public class TaskHttpClient {
 
     public Response getResponse() {
         return response;
+    }
+
+    public TaskHttpClient setCredsProvider(CredentialsProvider credsProvider) {
+        this.credsProvider = credsProvider;
+        return this;
     }
 
     public TaskHttpClient removeHeader(String name) {
@@ -239,30 +246,8 @@ public class TaskHttpClient {
         checkRequest(request);
         Long taskId = request.getTaskId();
         request.setRequestId(RequestIdUtils.createId());
+        CloseableHttpClient httpclient = null;
         CloseableHttpResponse httpResponse = null;
-        BasicCookieStore cookieStore = TaskUtils.getCookie(taskId);
-        request.setRequestCookies(TaskUtils.getCookieMap(cookieStore));
-        if (!extralCookie.isEmpty()) {
-            for (BasicClientCookie cookie : extralCookie) {
-                cookieStore.addCookie(cookie);
-            }
-        }
-        HttpHost proxy = null;
-        if (null == request.getProxyEnable()) {
-            request.setProxyEnable(ProxyUtils.getProxyEnable(taskId));
-        }
-        if (request.getProxyEnable()) {
-            Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
-            if (null != proxyConfig) {
-                proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
-                request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
-            }
-        }
-        //禁止重定向
-        RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
-                .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy).setDefaultCookieStore(cookieStore)
-                .setSSLSocketFactory(sslsf).build();
         int statusCode = 0;
         try {
             //参数处理
@@ -277,6 +262,7 @@ public class TaskHttpClient {
             }
             request.setFullUrl(url);
             logger.info("pre request taskId={},url={}", taskId, url);
+
             HttpRequestBase client = null;
             if (RequestType.GET == request.getType()) {
                 client = new HttpGet(url);
@@ -296,14 +282,48 @@ public class TaskHttpClient {
                 }
             }
             request.setRequestTimestamp(System.currentTimeMillis());
-            httpResponse = httpclient.execute(client);
+
             String host = client.getURI().getHost();
-            TaskUtils.updateBasicCookieStore(taskId, host, cookieStore, httpResponse);
-            TaskUtils.saveCookie(taskId, cookieStore);
+
+            List<Cookie> cookies = TaskUtils.getCookies(taskId, host);
+            BasicCookieStore cookieStore = TaskUtils.buildBasicCookieStore(cookies);
+            request.setRequestCookies(TaskUtils.getCookieMap(cookies));
+            if (!extralCookie.isEmpty()) {
+                for (BasicClientCookie cookie : extralCookie) {
+                    cookieStore.addCookie(cookie);
+                }
+            }
+
+            HttpHost proxy = null;
+            if (null == request.getProxyEnable()) {
+                request.setProxyEnable(ProxyUtils.getProxyEnable(taskId));
+            }
+            if (request.getProxyEnable()) {
+                Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
+                if (null != proxyConfig) {
+                    proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
+                    request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
+                }
+            }
+
+            //禁止重定向
+            RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
+                    .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
+            HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy)
+                    .setDefaultCookieStore(cookieStore).setDefaultCredentialsProvider(credsProvider).setSSLSocketFactory(sslsf);
+            if (null != credsProvider) {
+                httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
+            }
+            httpclient = httpClientBuilder.build();
+            httpResponse = httpclient.execute(client);
+
             statusCode = httpResponse.getStatusLine().getStatusCode();
             response.setStatusCode(statusCode);
-            response.setResponseCookies(TaskUtils.getReceiveCookieMap(response, cookieStore));
+            cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
+            TaskUtils.saveCookie(taskId, cookies);
+            response.setResponseCookies(TaskUtils.getResponseCookieMap(request, cookies));
             long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
+            TaskUtils.saveCookie(taskId, host, cookieStore, httpResponse);
             response.setTotalTime(totalTime);
             Header[] headers = httpResponse.getAllHeaders();
             if (null != headers) {
@@ -320,7 +340,7 @@ public class TaskHttpClient {
                 if (StringUtils.isNoneBlank(contentType) && StringUtils.contains(contentType, "charset")) {
                     String charset = RegexpUtils.select(contentType, "charset=(.+)", 1);
                     if (StringUtils.isNoneBlank(charset)) {
-                        response.setCharset(Charset.forName(charset));
+                        response.setCharset(Charset.forName(charset.replaceAll(";", "").trim()));
                     }
                 }
             }
@@ -344,7 +364,10 @@ public class TaskHttpClient {
         } finally {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
-            redisService.saveToList(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response), 1, TimeUnit.DAYS);
+            //保存请求
+            RedisUtils.rpush(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response));
+            RedisUtils.expire(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_REQUEST.toSeconds());
+            //保存请求内容
             StringBuilder pc = new StringBuilder("url-->").append(request.getFullUrl()).append("\nrequest_id-->").append(request.getRequestId())
                     .append("\nstatus_code-->").append(response.getStatusCode()).append("\nreques_time-->")
                     .append(DateUtils.formatYmdhms(new Date(request.getRequestTimestamp()))).append("\n").append(response.getPageContent());

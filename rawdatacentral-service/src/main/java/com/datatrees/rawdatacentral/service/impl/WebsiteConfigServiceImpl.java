@@ -1,7 +1,9 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -179,7 +181,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public List<OperatorCatalogue> queryAllOperatorConfig() {
         List<OperatorCatalogue> list = new ArrayList<>();
-        Map<String, List<OperatorConfig>> map = new HashMap<>();
         List<OperatorConfig> map10086 = new ArrayList<>();
         List<OperatorConfig> map10000 = new ArrayList<>();
         List<OperatorConfig> map10010 = new ArrayList<>();
@@ -194,54 +195,53 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             config.setGroupCode(group.getGroupCode());
             config.setGroupName(group.getGroupName());
 
-            WebsiteConfig websiteConfig = null;
             String websiteName = redisService.getString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
             if (StringUtils.isNotBlank(websiteName)) {
                 WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-                websiteConfig = buildWebsiteConfig(websiteOperator);
+                WebsiteConfig websiteConfig = buildWebsiteConfig(websiteOperator);
                 //设置别名
                 websiteConfig.setWebsiteName(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(websiteName));
-            } else {
-                websiteName = group.getWebsiteName();
-                websiteConfig = getWebsiteConfigByWebsiteName(websiteName);
-            }
-            CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + websiteName);
-            String initSetting = websiteConfig.getInitSetting();
-            if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
-                throw new RuntimeException("initSetting is blank websiteName=" + websiteName);
-            }
-            JSONObject json = JSON.parseObject(initSetting);
-            if (!json.containsKey("fields")) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
-            }
-            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
-            if (null == fieldInitSettings) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
-            }
-            config.setWebsiteName(websiteConfig.getWebsiteName());
-            config.setLoginTip(websiteConfig.getLoginTip());
-            config.setResetTip(websiteConfig.getResetTip());
-            config.setResetType(websiteConfig.getResetType());
-            config.setResetURL(websiteConfig.getResetURL());
-            config.setSmsReceiver(websiteConfig.getSmsReceiver());
-            config.setSmsTemplate(websiteConfig.getSmsTemplate());
-            config.setVerifyTip(websiteConfig.getVerifyTip());
+                String initSetting = websiteConfig.getInitSetting();
+                if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
+                    throw new RuntimeException("initSetting is blank websiteName=" + websiteName);
+                }
+                JSONObject json = JSON.parseObject(initSetting);
+                if (!json.containsKey("fields")) {
+                    throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
+                }
+                List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
+                if (null == fieldInitSettings) {
+                    throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
+                }
+                config.setWebsiteName(websiteConfig.getWebsiteName());
+                config.setLoginTip(websiteConfig.getLoginTip());
+                config.setResetTip(websiteConfig.getResetTip());
+                config.setResetType(websiteConfig.getResetType());
+                config.setResetURL(websiteConfig.getResetURL());
+                config.setSmsReceiver(websiteConfig.getSmsReceiver());
+                config.setSmsTemplate(websiteConfig.getSmsTemplate());
+                config.setVerifyTip(websiteConfig.getVerifyTip());
 
-            for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
-                InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
-                if (null != fieldInitSetting.getDependencies()) {
-                    for (String dependency : fieldInitSetting.getDependencies()) {
-                        field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
+                for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
+                    InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
+                    if (null != fieldInitSetting.getDependencies()) {
+                        for (String dependency : fieldInitSetting.getDependencies()) {
+                            field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
+                        }
                     }
+                    if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
+                        config.setHasPicCode(true);
+                    }
+                    if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
+                        config.setHasSmsCode(true);
+                    }
+                    config.getFields().add(field);
                 }
-                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
-                    config.setHasPicCode(true);
-                }
-                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
-                    config.setHasSmsCode(true);
-                }
-                config.getFields().add(field);
+                config.setEnable(true);
+            } else {
+                config.setEnable(false);
             }
+
             if (group.getGroupName().contains("移动")) {
                 map10086.add(config);
                 continue;
@@ -337,7 +337,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             if (null == group) {
                 logger.error("not found group code for webisteName={}", websiteConfig.getWebsiteName());
                 //throw new RuntimeException("not found group code for webisteName=" + websiteConfig.getWebsiteName());
-            }else {
+            } else {
                 website.setGroupCode(group.getGroupCode());
                 website.setGroupName(group.getGroupName());
             }

@@ -5,18 +5,28 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * Created by zhouxinghai on 2017/7/19.
  */
 public class Cookie implements Serializable {
 
-    private String  domain;
-    private String  path;
-    private boolean secure;
-    private int     version;
-    private Date    expiryDate;
+    @JSONField(ordinal = 1)
     private String  name;
+    @JSONField(ordinal = 2)
     private String  value;
+    @JSONField(ordinal = 3)
+    private String  domain;
+    @JSONField(ordinal = 4)
+    private int     version;
+    @JSONField(ordinal = 5)
+    private String  path;
+    @JSONField(ordinal = 6)
+    private boolean secure;
+    @JSONField(ordinal = 7)
+    private Date    expiryDate;
+    @JSONField(ordinal = 8)
     private Map<String, String> attribs = new HashMap<>();
 
     public String getDomain() {

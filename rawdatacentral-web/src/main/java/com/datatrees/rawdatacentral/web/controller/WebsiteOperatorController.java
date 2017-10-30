@@ -129,4 +129,23 @@ public class WebsiteOperatorController {
         }
     }
 
+    /**
+     * 启用/禁用
+     */
+    @RequestMapping("/updateEnable")
+    public Object updateEnable(String websiteName, Boolean enable) {
+        HttpResult<Object> result = new HttpResult<>();
+        try {
+            WebsiteOperator websiteOperatorDb = websiteOperatorService.getByWebsiteName(websiteName);
+            if (null == websiteOperatorDb) {
+                return result.failure("websiteName不存在");
+            }
+            websiteOperatorService.updateEnable(websiteName, enable);
+            return result.success();
+        } catch (Throwable e) {
+            logger.error("updateEnable error websiteName={}", websiteName, e);
+            return result;
+        }
+    }
+
 }
