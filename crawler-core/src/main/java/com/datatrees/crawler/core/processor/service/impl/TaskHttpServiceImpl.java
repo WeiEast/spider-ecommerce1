@@ -49,13 +49,8 @@ public class TaskHttpServiceImpl extends ServiceBase {
             return;
         }
         RequestType requestType = StringUtils.contains(linkUrl, "\"") ? RequestType.POST : RequestType.GET;
-        String url = null;
-        String requestBody = null;
-
-        if (requestType == RequestType.POST) {
-            url = StringUtils.substringBefore(linkUrl, "\"");
-            requestBody = StringUtils.substringAfter(linkUrl, "\"");
-        }
+        String url = StringUtils.substringBefore(linkUrl, "\"");
+        String requestBody = StringUtils.substringAfter(linkUrl, "\"");
 
         TaskHttpClient client = TaskHttpClient.create(taskId, websiteName, requestType, "", true).setReferer(referer)
                 .addHeaders(linkNode.getHeaders()).setUrl(url);
