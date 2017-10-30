@@ -9,6 +9,7 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +71,10 @@ public class TaskHttpServiceImpl extends ServiceBase {
 
         ProcessorContextUtil.addThreadLocalLinkNode(context, linkNode);
         ProcessorContextUtil.addThreadLocalResponse(context, response);
+
+        String cookieString = TaskUtils.getCookieString(taskId);
+        ProcessorContextUtil.setCookieString(context, cookieString);
+
     }
 
 }
