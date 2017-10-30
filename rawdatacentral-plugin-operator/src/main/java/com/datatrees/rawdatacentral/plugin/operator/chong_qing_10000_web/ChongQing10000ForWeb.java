@@ -1,16 +1,13 @@
 package com.datatrees.rawdatacentral.plugin.operator.chong_qing_10000_web;
 
-import javax.script.Invocable;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -189,7 +186,8 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10000_web_008").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, "对不起，没有查到您的清单数据") || StringUtils.contains(pageContent, "费用")) {
+            if (StringUtils.contains(pageContent, "对不起，没有查到您的清单数据") || StringUtils.contains(pageContent, "费用") ||
+                    StringUtils.contains(pageContent, "\"result\":\"0\"")) {
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
