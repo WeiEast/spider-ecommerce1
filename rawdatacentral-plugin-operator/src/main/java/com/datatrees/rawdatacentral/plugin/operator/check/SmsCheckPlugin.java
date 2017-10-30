@@ -47,8 +47,8 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
     private CrawlerOperatorService pluginService;
     private MessageService         messageService;
     private RedisService           redisService;
-    //超时时间60秒
-    private long timeOut = 60;
+    //超时时间120秒
+    private long timeOut = 120;
     private AbstractProcessorContext context;
     private String                   fromType;
     private Map<String, String> pluginResult = new HashMap<>();
@@ -88,7 +88,7 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
 
     /**
      * 短信验证码最大次数5次,
-     * 用户输入短信验证码超时时间60秒
+     * 用户输入短信验证码超时时间120秒
      * @param taskId
      * @param websiteName
      */
@@ -111,7 +111,7 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
             Map<String, String> data = new HashMap<>();
             data.put(AttributeKey.REMARK, "");
             String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), JSON.toJSONString(data));
-            //等待用户输入短信验证码,等待60秒
+            //等待用户输入短信验证码,等待120秒
             messageService.sendTaskLog(taskId, "等待用户输入短信验证码");
 
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
