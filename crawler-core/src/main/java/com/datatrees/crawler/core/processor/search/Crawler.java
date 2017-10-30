@@ -13,7 +13,9 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.ProtocolStatusCodes;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
+import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.CrawlRequest;
@@ -70,6 +72,16 @@ public class Crawler {
                 AbstractService service = page.getService();
                 RequestUtil.setCurrentPage(request, page);
                 try {
+                    if (null == service) {
+                        Properties properties = context.getSearchConfig().getProperties();
+                        if (null != properties) {
+                            Boolean useTaskHttp = properties.getUseTaskHttp();
+                            if (null != useTaskHttp && useTaskHttp) {
+                                service = new TaskHttpService();
+                                service.setServiceType("task_http");
+                            }
+                        }
+                    }
                     // fetch page content
                     ServiceBase serviceProcessor = ProcessorFactory.getService(service);
                     serviceProcessor.invoke(request, response);
@@ -77,7 +89,9 @@ public class Crawler {
                     doResponseCheck(page, RequestUtil.getContent(request), url.getUrl());
                 } catch (Exception e) {
                     // response code faild
-                    if (BooleanUtils.isTrue(page.getResponseCheck()) && PatternUtils.match(StringUtils.defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$"), ResponseUtil.getResponseStatus(response).toString())) {
+                    if (BooleanUtils.isTrue(page.getResponseCheck()) && PatternUtils.match(StringUtils.defaultString(page.getFailedCodePattern(),
+                            "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$"),
+                            ResponseUtil.getResponseStatus(response).toString())) {
                         throw new ResponseCheckException("page:" + page.getId() + ",url:" + request.getUrl() + " response check failed!", e);
                     } else {
                         throw e;
@@ -112,8 +126,10 @@ public class Crawler {
 
     private static void doResponseCheck(Page page, String content, String url) throws ResponseCheckException {
         // check if response failed
-        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) || (StringUtils.isNotBlank(page.getPageFailedPattern()) && PatternUtils.match(page.getPageFailedPattern(), content)))) {
-            throw new ResponseCheckException("page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
+        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) ||
+                (StringUtils.isNotBlank(page.getPageFailedPattern()) && PatternUtils.match(page.getPageFailedPattern(), content)))) {
+            throw new ResponseCheckException(
+                    "page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
         }
     }
 
