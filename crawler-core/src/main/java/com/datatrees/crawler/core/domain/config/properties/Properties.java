@@ -24,6 +24,7 @@ public class Properties implements Serializable {
     private AbstractCookie cookie;
     private Proxy          proxy;
     private String         encoding;
+    private Boolean        useTaskHttp;
     private UnicodeMode    unicodeMode;
     private String         taskRegion;
     private Integer        maxRetryCount;
@@ -51,6 +52,16 @@ public class Properties implements Serializable {
     @Node("redirect-uri-escaped/text()")
     public void setRedirectUriEscaped(Boolean redirectUriEscaped) {
         this.redirectUriEscaped = redirectUriEscaped;
+    }
+
+    @Tag("use-task-http")
+    public Boolean getUseTaskHttp() {
+        return useTaskHttp;
+    }
+
+    @Node("use-task-http/text()")
+    public void setUseTaskHttp(Boolean useTaskHttp) {
+        this.useTaskHttp = useTaskHttp;
     }
 
     @Tag("allow-circular-redirects")

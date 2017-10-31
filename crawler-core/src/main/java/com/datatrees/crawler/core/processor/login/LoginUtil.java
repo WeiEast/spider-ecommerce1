@@ -15,6 +15,7 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.login.LoginCheckConfig;
 import com.datatrees.crawler.core.domain.config.login.LoginConfig;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
+import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
@@ -88,7 +89,8 @@ public class LoginUtil {
             RequestUtil.setConf(request, PropertiesConfiguration.getInstance());
             Response response = new Response();
             RequestUtil.setCurrentUrl(request, linkNode);
-            ServiceBase serviceProcessor = ProcessorFactory.getService(null);
+            AbstractService service = context.getDefaultService();
+            ServiceBase serviceProcessor = ProcessorFactory.getService(service);
             serviceProcessor.invoke(request, response);
             return ResponseUtil.getProtocolResponse(response);
         } catch (Exception e) {
@@ -133,7 +135,8 @@ public class LoginUtil {
         return false;
     }
 
-    private boolean checkLoginResult(ProtocolOutput out, LoginCheckConfig loginCheckConfig, SearchProcessorContext context) throws ResultEmptyException {
+    private boolean checkLoginResult(ProtocolOutput out, LoginCheckConfig loginCheckConfig,
+            SearchProcessorContext context) throws ResultEmptyException {
         if (out != null && out.getContent() != null) {
             String responseBody = out.getContent().getContentAsString();
 

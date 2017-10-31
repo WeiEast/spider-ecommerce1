@@ -12,11 +12,9 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -85,7 +83,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        return null;
+        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     @Override
@@ -105,7 +103,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             //删除cookie
-            RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
+            //RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
 
             String templateUrl = "http://wapjl.189.cn/";
             response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_001").setFullUrl(templateUrl).invoke();
@@ -155,10 +153,10 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             templateUrl = "http://wapjl.189.cn/authImg?" + Math.random();
             String referer = "http://wapjl.189.cn/";
             response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
-            logger.info("基本信息-->图片验证码-->刷新成功,param={}", param);
+            logger.info("登陆wap版-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
-            logger.error("基本信息-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            logger.error("登陆wap版-->图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
     }
@@ -172,9 +170,31 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-            return result.success();
+            String templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00710602";
+            String referer = "http://www.189.cn/jl/";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).setReferer(referer).invoke();
+            templateUrl = "http://www.189.cn/login/index.do";
+            referer = "http://www.189.cn/html/login/index.html";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).setReferer(referer).invoke();
+            if (StringUtils.contains(response.getPageContent(), "errorDescription\":null")) {
+                templateUrl
+                        = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10030&toStUrl=http://jl.189.cn/service/bill/balanceQueryFra.action?fastcode=00710599&cityCode=jl";
+                response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_008").setFullUrl(templateUrl).invoke();
+                String pageContent = response.getPageContent();
+                if (StringUtils.contains(pageContent, "余额")) {
+                    TaskUtils.addTaskShare(param.getTaskId(), "balancePage", pageContent);
+                    logger.info("登陆web版成功,param={}", param);
+                    return result.success();
+                } else {
+                    logger.error("登陆web版失败,param={},pageContent={}", param, pageContent);
+                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                }
+            } else {
+                logger.error("登陆web版失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            }
         } catch (Exception e) {
-            logger.error("登陆-->校验-->失败,param={},response={}", param, response, e);
+            logger.error("登陆web版-->校验-->失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
         }
     }
@@ -224,14 +244,14 @@ public class JiLin10000ForWeb implements OperatorPluginService {
                 String joinDate = PatternUtils.group(pageContent, "开通时间：<\\/strong>\\s*([^：]+)\\s*<\\/div>", 1);
                 TaskUtils.addTaskShare(param.getTaskId(), "joinDate", joinDate);
             } else {
-                logger.error("wapjl189 login is error! errormessage: " + msg);
-                logger.error("基本信息-->校验失败,param={},pageContent={}", param, pageContent);
+                logger.error("登陆wap版-->校验失败,错误信息: " + msg);
+                logger.error("登陆wap版-->校验失败,param={},pageContent={}", param, pageContent);
                 return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
             }
-            logger.info("基本信息-->校验成功,param={}", param);
+            logger.info("登陆wap版-->校验成功,param={}", param);
             return result.success();
         } catch (Exception e) {
-            logger.error("登陆失败,param={},response={}", param, response, e);
+            logger.error("登陆wap版失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
         }
     }
@@ -240,9 +260,14 @@ public class JiLin10000ForWeb implements OperatorPluginService {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl
+            String templateUrl = "http://www.189.cn/dqmh/my189/checkMy189Session.do";
+            String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00710599";
+            String data = "fastcode=00710602";
+            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).setReferer(referer).invoke();
+
+            templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10030&toStUrl=http://jl.189.cn/service/bill/toDetailBillFra.action?fastcode=00710602&cityCode=jl";
-            String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00710602";
+            referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00710602";
             response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_0010").setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent) || !StringUtils.contains(pageContent, "证件号码")) {
@@ -252,10 +277,10 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             templateUrl = "http://jl.189.cn/authImg";
             referer = response.getRedirectUrl();
             response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_0011").setFullUrl(templateUrl).setReferer(referer).invoke();
-            logger.info("个人信息-->图片验证码-->刷新成功,param={}", param);
+            logger.info("详单-->第一次图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
-            logger.error("个人信息-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            logger.error("详单-->第一次图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
     }
@@ -275,16 +300,15 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "ji_lin_10000_web_0012").setUrl(templateUrl).setParams(params)
                     .setRequestCharset(Charset.forName("UTF-8")).setReferer(referer).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             String pageContent = response.getPageContent();
-            logger.info("测试-->" + response.getPageContent());
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "result\":\"0")) {
-                logger.info("个人信息-->图片验证码-->校验成功,param={}", param);
+                logger.info("详单-->第一次图片验证码-->校验成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("个人信息-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPageContent());
+                logger.error("详单-->第一次图片验证码-->校验失败,param={},pageContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.VALIDATE_PIC_CODE_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
-            logger.error("个人信息-->图片验证码-->校验失败,param={},response={}", param, response, e);
+            logger.error("详单-->第一次图片验证码-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
         }
     }
