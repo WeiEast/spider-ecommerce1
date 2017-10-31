@@ -19,7 +19,6 @@
           init-method="init">
         <property name="mqConsumer" ref="loginInfoMqConsumer"/>
         <property name="collector" ref="collector"/>
-        <property name="redisTemplate" ref="stringRedisTemplate"/>
         <property name="topicJson" value="${core.message.loginInfo.topic}"/>
     </bean>
 
