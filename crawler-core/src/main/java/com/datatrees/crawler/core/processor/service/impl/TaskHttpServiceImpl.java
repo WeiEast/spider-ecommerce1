@@ -4,6 +4,7 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
@@ -52,6 +53,7 @@ public class TaskHttpServiceImpl extends ServiceBase {
 
         String content = invoke.getPageContent();
         ResponseUtil.setResponseContent(response, content);
+        ResponseUtil.setResponseStatus(response, Status.VISIT_SUCCESS);
         RequestUtil.setContent(request, content);
 
         ProcessorContextUtil.addThreadLocalLinkNode(context, linkNode);

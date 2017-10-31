@@ -117,8 +117,9 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String referer
-                    = "http://gd.189.cn/common/newLogin/newLogin.htm?SSOArea=0000&SSOAccount=null&SSOProType=null&SSORetryTimes=null&SSOError=null&SSOCustType=0&loginOldUri=&SSOOldAccount=null&SSOProTypePre=null";
-            String templateUrl = "http://gd.189.cn/dwr/exec/newLoginDwr.goLogin.dwr";
+                    = "https://gd.189.cn/common/newLogin/newLogin.htm?SSOArea=0000&SSOAccount=null&SSOProType=null&SSORetryTimes=null&SSOError=null&SSOCustType=0&loginOldUri=&SSOOldAccount=null" +
+                    "&SSOProTypePre=null";
+            String templateUrl = "https://gd.189.cn/dwr/exec/newLoginDwr.goLogin.dwr";
             String templateData = "callCount=1&c0-scriptName=newLoginDwr&c0-methodName=goLogin&c0-id={}&c0-param0=boolean:false&c0-param1=boolean" +
                     ":false&c0-param2=string:{}&c0-param3=string:&c0-param4=string:2000004&c0-param5=string:{}&c0-param6=string:00&c0-param7=string" +
                     ":{}&c0-param8=string:&c0-param9=string:&xml=true";
@@ -160,7 +161,7 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             }
 
             referer = templateUrl;
-            templateUrl = PatternUtils.group(pageContent, "location.replace\\(\"(http://gd.189.cn/receiveUATiecket.do\\?UATicket=[^\"]+)\"", 1);
+            templateUrl = PatternUtils.group(pageContent, "location.replace\\(\"(https://gd.189.cn/receiveUATiecket.do\\?UATicket=[^\"]+)\"", 1);
             if (StringUtils.isBlank(templateUrl)) {
                 List<String> errorMessageList = XPathUtil.getXpath("//form[@id='redirectForm']/input[@name='Msg']/@value/text()", pageContent);
                 if (CollectionUtils.isEmpty(errorMessageList)) {
@@ -174,7 +175,7 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.GET, "guang_dong_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
             if (StringUtils.contains(response.getPageContent(), "/service/home/")) {
                 referer = templateUrl;
-                templateUrl = "http://gd.189.cn/service/home/";
+                templateUrl = "https://gd.189.cn/service/home/";
                 data = "loginRedirect=true";
                 response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_005").setFullUrl(templateUrl).setReferer(referer)
                         .setRequestBody(data).invoke();
