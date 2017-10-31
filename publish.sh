@@ -21,7 +21,7 @@ echo "find app file $file and upload"
 scp  $file root@$server_ip:$server_application/;
 
 ssh root@$server_ip << EOF
-    rm -rf /root/.dubbo
+#    rm -rf /root/.dubbo
     cd $server_application;
     rm -rf rawdatacentral
     tar -xzf $file;

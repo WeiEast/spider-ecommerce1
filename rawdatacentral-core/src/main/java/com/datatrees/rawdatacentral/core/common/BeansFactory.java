@@ -48,7 +48,7 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
      */
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
+        BeansFactory.beanFactory = beanFactory;
     }
 
     /*

@@ -84,15 +84,22 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
             return;
         }
         WebsiteGroup maxWeight = null;
-        for (WebsiteGroup group : list) {
+        for (WebsiteGroup websiteGroup : list) {
+            if (!websiteGroup.getEnable()) {
+                logger.warn("website is 禁用 groupCode={},websiteName={},websiteTitle={}", websiteGroup.getGroupCode(), websiteGroup.getWebsiteName(),
+                        websiteGroup.getWebsiteTitle());
+                continue;
+            }
             if (null == maxWeight) {
-                maxWeight = group;
-            } else if (group.getWeight() > maxWeight.getWeight()) {
-                maxWeight = group;
+                maxWeight = websiteGroup;
+            } else if (websiteGroup.getWeight() > maxWeight.getWeight()) {
+                maxWeight = websiteGroup;
             }
         }
         if (null != maxWeight && maxWeight.getWeight() > 0) {
             redisService.saveString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR, groupCode, maxWeight.getWebsiteName());
+            logger.info("find max weight,groupCode={},groupName={},websiteName={},websiteTitle={},weight={},enable={}", maxWeight.getGroupCode(),
+                    maxWeight.getGroupName(), maxWeight.getWebsiteName(), maxWeight.getWebsiteTitle(), maxWeight.getWeight(), maxWeight.getEnable());
         }
         redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
     }
@@ -103,5 +110,12 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
             updateCacheByGroupCode(group.getGroupCode());
         }
         redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
+    }
+
+    @Override
+    public void updateEnable(String websiteName, Boolean enable) {
+        if (null != websiteName && null != enable) {
+            websiteGroupDAO.updateEnable(websiteName, enable ? 1 : 0);
+        }
     }
 }

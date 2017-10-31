@@ -9,6 +9,11 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 @Resource
 public interface WebsiteOperatorDAO extends WebsiteOperatorMapper {
 
+    /**
+     * 保存运营商和主键(不使用自增主键)
+     * @param record
+     * @return
+     */
     int insertSelectiveWithPrimaryKey(WebsiteOperator record);
 
 }

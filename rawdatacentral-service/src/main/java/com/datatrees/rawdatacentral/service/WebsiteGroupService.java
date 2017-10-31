@@ -56,4 +56,11 @@ public interface WebsiteGroupService {
      */
     void updateCache();
 
+    /**
+     * 更新配置状态
+     * @param websiteName
+     * @param enable
+     */
+    void updateEnable(String websiteName, Boolean enable);
+
 }

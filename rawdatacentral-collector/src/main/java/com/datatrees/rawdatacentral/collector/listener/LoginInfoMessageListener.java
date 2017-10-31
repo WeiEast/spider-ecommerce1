@@ -143,11 +143,11 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
     @Override
     public CollectorMessage messageConvert(MessageExt message) {
         CollectorMessage collectorMessage = new CollectorMessage();
-        String body = new String(message.getBody(), Charset.forName("UTF-8"));
+        String msg = new String(message.getBody(), Charset.forName("UTF-8"));
         try {
-            LoginMessage loginInfo = JSON.parseObject(body, LoginMessage.class);
+            LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
             if (loginInfo != null) {
-                logger.info("Init logininfo:" + loginInfo);
+                logger.info("Init logininfo:" + msg);
                 collectorMessage.setTaskId(loginInfo.getTaskId());
                 collectorMessage.setWebsiteName(loginInfo.getWebsiteName());
                 collectorMessage.setEndURL(loginInfo.getEndUrl());

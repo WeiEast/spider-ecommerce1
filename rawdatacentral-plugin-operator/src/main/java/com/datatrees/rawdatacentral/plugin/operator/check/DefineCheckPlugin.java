@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.plugin.operator.check;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -16,11 +17,14 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.domain.vo.Cookie;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +47,9 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
 
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
+
+        TaskUtils.updateCookies(taskId, ProcessorContextUtil.getCookieMap(context));
+
         TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);

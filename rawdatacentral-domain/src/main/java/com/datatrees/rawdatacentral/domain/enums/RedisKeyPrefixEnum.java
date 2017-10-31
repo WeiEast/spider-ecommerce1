@@ -34,6 +34,7 @@ public enum RedisKeyPrefixEnum {
     WEBSITE_LAST_SEND_WARN_TIME("website.last.send.warn.time", 7, TimeUnit.DAYS, "站点上一次发送预警时间"),
     WEBSITE_PLUGIN_FILE_NAME("website.plugin.file.name", 60, TimeUnit.MINUTES, "为website制定jar"),
     WEBSITE_OPERATOR("website.operator", 1, TimeUnit.HOURS, "运营商配置"),
+    WEBSITE_PROXY("website.proxy", 1, TimeUnit.HOURS, "运营商指定代理"),
     WEBSITE_OPERATOR_RENAME("website.operator.rename", 365, TimeUnit.DAYS, "运营商websiteName别名,兼容方案初期用");
     /**
      * 备注

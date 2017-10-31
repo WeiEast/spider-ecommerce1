@@ -61,4 +61,24 @@ public class JsoupXpathUtils {
         return list;
     }
 
+    public static List<Element> selectElements(String document, String xpath) {
+        CheckUtils.checkNotBlank(document, "empty doc");
+        CheckUtils.checkNotBlank(xpath, "empty xpath");
+        JXDocument jxDocument = new JXDocument(document);
+        try {
+            List<Element> list = new ArrayList<>();
+            List<Object> sels = jxDocument.sel(xpath);
+            if (CollectionUtils.isNotEmpty(sels)) {
+                for (Object o : sels) {
+                    list.add((Element) o);
+                }
+            }
+            logger.info("selectElementList size={},xpath={}", list.size(), xpath);
+            return list;
+        } catch (Throwable e) {
+            logger.error("selectElementList error document={},xpath={}", document, xpath, e);
+            return null;
+        }
+    }
+
 }

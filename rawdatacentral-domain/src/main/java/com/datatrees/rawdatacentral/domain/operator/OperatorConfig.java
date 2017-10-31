@@ -19,6 +19,10 @@ public class OperatorConfig implements Serializable {
      */
     private String groupName;
     /**
+     * 启用/停用
+     */
+    private Boolean enable = true;
+    /**
      * 默认站点名称
      */
     private String websiteName;
@@ -66,6 +70,14 @@ public class OperatorConfig implements Serializable {
      * 字段
      */
     private List<InputField> fields = new ArrayList<>();
+
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
+    }
 
     public String getGroupCode() {
         return groupCode;

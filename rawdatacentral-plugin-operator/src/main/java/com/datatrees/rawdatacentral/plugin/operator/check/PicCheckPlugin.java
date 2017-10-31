@@ -61,6 +61,7 @@ public class PicCheckPlugin extends AbstractClientPlugin {
 
         String websiteName = this.context.getWebsiteName();
         Long taskId = this.context.getLong(AttributeKey.TASK_ID);
+        TaskUtils.updateCookies(taskId, ProcessorContextUtil.getCookieMap(context));
         TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);
