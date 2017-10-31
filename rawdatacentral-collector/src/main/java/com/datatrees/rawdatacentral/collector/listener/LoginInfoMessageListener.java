@@ -14,10 +14,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
+import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
-import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
@@ -27,13 +27,9 @@ import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
-import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
-import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +47,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
     private RedisService           redisService           = BeanFactoryUtils.getBean(RedisService.class);
     private WebsiteConfigService   websiteConfigService   = BeanFactoryUtils.getBean(WebsiteConfigService.class);
     private MonitorService         monitorService         = BeanFactoryUtils.getBean(MonitorService.class);
-    private WebsiteOperatorService websiteOperatorService = BeanFactoryUtils.getBean(WebsiteOperatorService.class);
-    private ClassLoaderService     classLoaderService     = BeanFactoryUtils.getBean(ClassLoaderService.class);
+    private CrawlerOperatorService crawlerOperatorService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
 
     public Collector getCollector() {
         return collector;
@@ -69,41 +64,30 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus());
         //第一次收到启动消息
         if (initStatus) {
-            if (StringUtils.isNoneBlank(message.getAccountNo())) {
-                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
-            }
+
             Website website = null;
             //30分钟内不再接受重复消息
             RedisUtils.expire(taskStageKey, RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
-            //缓存task基本信息
-            TaskUtils.initTaskShare(taskId, message.getWebsiteName());
             //是否是独立运营商
             Boolean isOperator = WebsiteUtils.isOperator(message.getWebsiteName());
             //获取真实websiteName
             String realebsiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
             if (isOperator) {
-                //从新的运营商表读取配置
-                WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(realebsiteName);
-                //保存taskId对应的website,因为运营过程中用的是
-                website = websiteConfigService.buildWebsite(websiteOperator);
-                redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
-                //初始化监控信息
-                monitorService.initTask(taskId);
-                monitorService.sendTaskLog(taskId, "登录-->初始化-->成功");
-                //设置代理
-                ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
-                //执行运营商插件初始化操作
-                OperatorPluginService operatorPluginService = classLoaderService.getOperatorPluginService(realebsiteName);
                 OperatorParam param = new OperatorParam();
                 param.setTaskId(taskId);
+                param.setMobile(Long.valueOf(message.getAccountNo()));
                 param.setWebsiteName(realebsiteName);
-                operatorPluginService.init(param);
-                //运营商独立部分第一次初始化后不启动爬虫
-                RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus());
+                param.getExtral().put(AttributeKey.USERNAME, message.getAccountNo());
+                crawlerOperatorService.init(param);
             } else {
+                //缓存task基本信息
+                TaskUtils.initTaskShare(taskId, message.getWebsiteName());
+                if (StringUtils.isNoneBlank(message.getAccountNo())) {
+                    TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
+                }
                 monitorService.sendTaskLog(taskId, "爬虫-->启动-->成功");
                 //这里电商,邮箱,老运营商
-                website = websiteConfigService.getWebsiteByWebsiteName(message.getWebsiteName());
+                website = websiteConfigService.getWebsiteByWebsiteName(realebsiteName);
                 //保存taskId对应的website
                 redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
                 //初始化监控信息
