@@ -25,7 +25,6 @@ public enum RedisKeyPrefixEnum {
     PLUGIN_CLASS_DATA("plugin.class.data", 24, TimeUnit.HOURS, "根据taskId共享class"),
     PLUGIN_FILE("plugin.file", 365, TimeUnit.DAYS, "插件jar存储"),
     PLUGIN_FILE_MD5("plugin.file.md5", 365, TimeUnit.DAYS, "插件md5"),
-    SEND_LOGIN_MSG_STAGE("send.login.msg.stage", 24, TimeUnit.HOURS, "发送登录成功消息阶段"),
     FILE_MD5("file.md5", 365, TimeUnit.DAYS, "redis缓存文件md5"),
     FILE_DATA("file.data", 365, TimeUnit.DAYS, "redis缓存文件内容"),
     MAX_WEIGHT_OPERATOR("max.weight.operator", 365, TimeUnit.DAYS, "最大权重运营商"),
