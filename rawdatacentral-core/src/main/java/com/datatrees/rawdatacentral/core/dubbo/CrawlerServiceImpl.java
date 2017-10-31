@@ -394,7 +394,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
             int retry = 0, maxRetry = 10;
             while (StringUtils.isBlank(websiteName) && retry++ <= maxRetry) {
-                TimeUnit.MILLISECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(300);
                 websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
             }
             return WebsiteUtils.isOperator(websiteName);
@@ -408,10 +408,14 @@ public class CrawlerServiceImpl implements CrawlerService {
         try {
             String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
             String stage = RedisUtils.get(taskStageKey, 10);
-            if (StringUtils.isNotBlank(stage) && !StringUtils.equals(TaskStageEnum.INIT_SUCCESS.getStatus(), stage)) {
-                return true;
+            int retry = 0, maxRetry = 100;
+            boolean readyStatus = StringUtils.isNotBlank(stage) && !StringUtils.equals(TaskStageEnum.RECEIVE.getStatus(), stage);
+            while (!readyStatus && retry++ <= maxRetry) {
+                TimeUnit.MILLISECONDS.sleep(600);
+                stage = RedisUtils.get(taskStageKey);
+                readyStatus = StringUtils.isNotBlank(stage) && !StringUtils.equals(TaskStageEnum.RECEIVE.getStatus(), stage);
             }
-            return false;
+            return readyStatus;
         } catch (Throwable e) {
             logger.info("waitInitSuccess error taskId={}", taskId, e);
             return false;

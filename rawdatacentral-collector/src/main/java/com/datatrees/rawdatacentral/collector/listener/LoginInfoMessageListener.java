@@ -25,6 +25,7 @@ import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.message.AbstractRocketMessageListener;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
@@ -64,17 +65,16 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus());
         //第一次收到启动消息
         if (initStatus) {
-
-            Website website = null;
             //30分钟内不再接受重复消息
             RedisUtils.expire(taskStageKey, RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
             //是否是独立运营商
             Boolean isOperator = WebsiteUtils.isOperator(message.getWebsiteName());
             //获取真实websiteName
-            String realebsiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
+            String realebsiteName = TaskUtils.getRealWebsiteName(message.getWebsiteName());
             if (isOperator) {
                 OperatorParam param = new OperatorParam();
                 param.setTaskId(taskId);
+                param.setFormType(FormType.LOGIN);
                 param.setMobile(Long.valueOf(message.getAccountNo()));
                 param.setWebsiteName(realebsiteName);
                 param.getExtral().put(AttributeKey.USERNAME, message.getAccountNo());
@@ -87,7 +87,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 }
                 monitorService.sendTaskLog(taskId, "爬虫-->启动-->成功");
                 //这里电商,邮箱,老运营商
-                website = websiteConfigService.getWebsiteByWebsiteName(realebsiteName);
+                Website website = websiteConfigService.getWebsiteByWebsiteName(realebsiteName);
                 //保存taskId对应的website
                 redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
                 //初始化监控信息
@@ -95,7 +95,6 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 //启动爬虫
                 collector.processMessage(message);
             }
-            logger.info("receve login message taskId={},firstVisitWebsiteName={}", taskId, message.getWebsiteName());
         } else {
             //这里电商,邮箱,老运营商不会有第二次消息,这里只处理运营商登录成功消息
             Boolean isOperator = WebsiteUtils.isOperator(message.getWebsiteName());
@@ -113,7 +112,6 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 //之后运行还是数据库真实websiteName
                 message.setWebsiteName(websiteName);
                 collector.processMessage(message);
-                logger.info("receve login message taskId={}", message.getTaskId());
             }
         }
 
