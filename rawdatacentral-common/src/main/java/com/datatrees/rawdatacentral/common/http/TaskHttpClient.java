@@ -287,7 +287,9 @@ public class TaskHttpClient {
                 client = httpPost;
             }
             if (StringUtils.isNoneBlank(request.getContentType())) {
-                request.addHead(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+                if (!request.containHeader(HttpHeadKey.CONTENT_TYPE)) {
+                    request.addHead(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+                }
             }
             if (CollectionUtils.isNotEmpty(request.getHeaders())) {
                 for (NameValue nameValue : request.getHeaders()) {
