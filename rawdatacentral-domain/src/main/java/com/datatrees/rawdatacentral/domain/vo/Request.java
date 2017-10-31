@@ -278,6 +278,17 @@ public class Request implements Serializable {
         }
     }
 
+    public boolean containHeader(String name) {
+        if (null != headers && !headers.isEmpty()) {
+            for (NameValue header : headers) {
+                if (header.getName().endsWith(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return JSON.toJSONString(this);
