@@ -13,9 +13,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.ProtocolStatusCodes;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
-import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.CrawlRequest;
@@ -73,14 +71,7 @@ public class Crawler {
                 RequestUtil.setCurrentPage(request, page);
                 try {
                     if (null == service) {
-                        Properties properties = context.getSearchConfig().getProperties();
-                        if (null != properties) {
-                            Boolean useTaskHttp = properties.getUseTaskHttp();
-                            if (null != useTaskHttp && useTaskHttp) {
-                                service = new TaskHttpService();
-                                service.setServiceType("task_http");
-                            }
-                        }
+                        service = context.getDefaultService();
                     }
                     // fetch page content
                     ServiceBase serviceProcessor = ProcessorFactory.getService(service);

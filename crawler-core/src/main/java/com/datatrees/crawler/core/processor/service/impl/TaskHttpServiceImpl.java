@@ -20,16 +20,6 @@ public class TaskHttpServiceImpl extends ServiceBase {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskHttpServiceImpl.class);
 
-    public static void main(String[] args) {
-        String temp = "http://jl.189.cn/service/bill/queryBillInfoFra.action";
-
-        String url = StringUtils.substringBefore(temp, "\"");
-        String body = StringUtils.substringAfter(temp, "\"");
-        System.out.println(url);
-        System.out.println(body);
-
-    }
-
     @Override
     public void process(Request request, Response response) throws Exception {
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
