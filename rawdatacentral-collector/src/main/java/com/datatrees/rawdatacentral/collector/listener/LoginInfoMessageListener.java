@@ -142,7 +142,6 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
         try {
             LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
             if (loginInfo != null) {
-                logger.info("Init logininfo:" + msg);
                 collectorMessage.setTaskId(loginInfo.getTaskId());
                 collectorMessage.setWebsiteName(loginInfo.getWebsiteName());
                 collectorMessage.setEndURL(loginInfo.getEndUrl());

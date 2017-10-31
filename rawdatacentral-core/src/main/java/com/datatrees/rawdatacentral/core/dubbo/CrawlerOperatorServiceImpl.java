@@ -290,7 +290,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             WebsiteOperator operator = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
             String sendLoginStage = operator.getStartStage();
             if (StringUtils.equals(sendLoginStage, param.getFormType())) {
-                redisService.saveString(RedisKeyPrefixEnum.TASK_RUN_STAGE, param.getTaskId(), TaskStageEnum.CRAWLER_START.getStatus());
+                redisService.saveString(RedisKeyPrefixEnum.TASK_RUN_STAGE, param.getTaskId(), TaskStageEnum.LOGIN_SUCCESS.getStatus());
                 messageService.sendLoginSuccessMessage(param.getTaskId(), param.getWebsiteName());
                 logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
             }
