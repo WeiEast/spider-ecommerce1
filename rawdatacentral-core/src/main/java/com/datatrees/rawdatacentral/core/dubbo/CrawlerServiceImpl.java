@@ -25,6 +25,8 @@ import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
@@ -32,6 +34,7 @@ import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -151,7 +154,8 @@ public class CrawlerServiceImpl implements CrawlerService {
             TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
         }
         try {
-            if (isNewOperator(taskId)) {
+            if (isOperator(taskId)) {
+                waitInitSuccess(taskId);
                 OperatorParam param = new OperatorParam();
                 param.setTaskId(taskId);
                 param.setFormType(FormType.LOGIN);
@@ -246,7 +250,8 @@ public class CrawlerServiceImpl implements CrawlerService {
         long timeout = 30;
         String directiveId = null;
         try {
-            if (isNewOperator(taskId)) {
+            if (isOperator(taskId)) {
+                waitInitSuccess(taskId);
                 OperatorParam param = new OperatorParam();
                 param.setTaskId(taskId);
                 param.setFormType(FormType.LOGIN);
@@ -384,17 +389,37 @@ public class CrawlerServiceImpl implements CrawlerService {
         return crawlerOperatorService.queryAllConfig();
     }
 
-    private boolean isNewOperator(Long taskId) {
-        //获取第一次消息用的websiteName
-        String firstVisitWebsiteName = redisService
-                .getString(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME.getRedisKey(taskId), 3, TimeUnit.SECONDS);
-        //兼容老的
-        if (StringUtils.isBlank(firstVisitWebsiteName)) {
-            firstVisitWebsiteName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId), 3, TimeUnit.SECONDS);
+    private boolean isOperator(Long taskId) {
+        try {
+            String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
+            int retry = 0, maxRetry = 10;
+            while (StringUtils.isBlank(websiteName) && retry++ <= maxRetry) {
+                TimeUnit.MILLISECONDS.sleep(300);
+                websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
+            }
+            return WebsiteUtils.isOperator(websiteName);
+        } catch (Throwable e) {
+            logger.info("isOperator error taskId={}", taskId, e);
+            return false;
         }
-        //是否是独立运营商
-        Boolean isNewOperator = StringUtils.startsWith(firstVisitWebsiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
-        return isNewOperator;
+    }
+
+    private boolean waitInitSuccess(Long taskId) {
+        try {
+            String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
+            String stage = RedisUtils.get(taskStageKey, 10);
+            int retry = 0, maxRetry = 100;
+            boolean readyStatus = StringUtils.isNotBlank(stage) && !StringUtils.equals(TaskStageEnum.RECEIVE.getStatus(), stage);
+            while (!readyStatus && retry++ <= maxRetry) {
+                TimeUnit.MILLISECONDS.sleep(600);
+                stage = RedisUtils.get(taskStageKey);
+                readyStatus = StringUtils.isNotBlank(stage) && !StringUtils.equals(TaskStageEnum.RECEIVE.getStatus(), stage);
+            }
+            return readyStatus;
+        } catch (Throwable e) {
+            logger.info("waitInitSuccess error taskId={}", taskId, e);
+            return false;
+        }
     }
 
 }

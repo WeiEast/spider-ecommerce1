@@ -308,20 +308,11 @@ public class TaskUtils {
     public static void initTaskShare(Long taskId, String websiteName) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
 
-        RedisUtils.hset(redisKey, AttributeKey.FIRST_VISIT_WEBSITENAME, websiteName);
-
-        boolean isNewOperator = isNewOperator(websiteName);
-        RedisUtils.hset(redisKey, AttributeKey.IS_NEW_OPERATOR, String.valueOf(isNewOperator));
-
         String realWebsiteName = getRealWebsiteName(websiteName);
         RedisUtils.hset(redisKey, AttributeKey.WEBSITE_NAME, realWebsiteName);
 
         RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
-
         logger.info("initTaskShare success taskId={},websiteName={}", taskId, websiteName);
-
-        RedisUtils.setex(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME, taskId, websiteName);
-        RedisUtils.setex(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME, taskId, websiteName);
     }
 
     /**
@@ -334,42 +325,6 @@ public class TaskUtils {
             return RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName);
         }
         return websiteName;
-    }
-
-    /**
-     * 是否独立运营商
-     * @param websiteName
-     * @return
-     */
-    public static boolean isNewOperator(String websiteName) {
-        return StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
-    }
-
-    /**
-     * 是否独立运营商
-     * @param taskId
-     * @return
-     */
-    public static boolean isNewOperator(Long taskId) {
-        //获取第一次消息用的websiteName
-        String firstVisitWebsiteName = getFirstVisitWebsiteName(taskId);
-        //是否是独立运营商
-        Boolean isNewOperator = StringUtils.startsWith(firstVisitWebsiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix());
-        return isNewOperator;
-    }
-
-    /**
-     * 获取第一次访问websiteName
-     * @param taskId
-     * @return
-     */
-    public static String getFirstVisitWebsiteName(Long taskId) {
-        String firstVisitWebsiteName = RedisUtils.get(RedisKeyPrefixEnum.TASK_FIRST_VISIT_WEBSITENAME.getRedisKey(taskId), 3);
-        //兼容老的
-        if (StringUtils.isBlank(firstVisitWebsiteName)) {
-            firstVisitWebsiteName = RedisUtils.get(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(taskId));
-        }
-        return firstVisitWebsiteName;
     }
 
     public static void initTaskContext(Long taskId, Map<String, Object> context) {

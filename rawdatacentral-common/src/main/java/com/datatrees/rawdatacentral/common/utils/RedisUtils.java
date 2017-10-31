@@ -159,7 +159,7 @@ public class RedisUtils extends RedisConfig {
         long startTime = System.currentTimeMillis();
         long wait = TimeUnit.SECONDS.toMillis(waitSecond);
         long endTime = startTime + wait;
-        long sleeptime = wait >= 300 ? 300 : wait;
+        long sleeptime = wait >= 200 ? 200 : wait;
         try (Jedis jedis = jedisPool.getResource()) {
             logger.info("get from redis wait {}s, key={}", waitSecond, key);
             do {

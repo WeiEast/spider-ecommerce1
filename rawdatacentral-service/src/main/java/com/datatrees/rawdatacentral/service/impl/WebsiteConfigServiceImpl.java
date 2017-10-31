@@ -200,7 +200,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
                 WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
                 WebsiteConfig websiteConfig = buildWebsiteConfig(websiteOperator);
                 //设置别名
-                websiteConfig.setWebsiteName(RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getRedisKey(websiteName));
+                websiteConfig.setWebsiteName(websiteName);
                 String initSetting = websiteConfig.getInitSetting();
                 if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
                     throw new RuntimeException("initSetting is blank websiteName=" + websiteName);
