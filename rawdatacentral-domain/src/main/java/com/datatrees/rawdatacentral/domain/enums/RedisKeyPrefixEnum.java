@@ -29,7 +29,7 @@ public enum RedisKeyPrefixEnum {
     FILE_MD5("file.md5", 365, TimeUnit.DAYS, "redis缓存文件md5"),
     FILE_DATA("file.data", 365, TimeUnit.DAYS, "redis缓存文件内容"),
     MAX_WEIGHT_OPERATOR("max.weight.operator", 365, TimeUnit.DAYS, "最大权重运营商"),
-    ALL_OPERATOR_CONFIG("all.operator.config.new", 60, TimeUnit.MINUTES, "运营商配置"),
+    ALL_OPERATOR_CONFIG("all.operator.config", 60, TimeUnit.MINUTES, "运营商配置"),
     WEBSITE_LAST_SEND_WARN_TIME("website.last.send.warn.time", 7, TimeUnit.DAYS, "站点上一次发送预警时间"),
     WEBSITE_PLUGIN_FILE_NAME("website.plugin.file.name", 60, TimeUnit.MINUTES, "为website制定jar"),
     WEBSITE_OPERATOR("website.operator", 1, TimeUnit.HOURS, "运营商配置"),
