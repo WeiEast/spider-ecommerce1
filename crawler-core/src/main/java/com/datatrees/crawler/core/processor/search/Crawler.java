@@ -70,6 +70,9 @@ public class Crawler {
                 AbstractService service = page.getService();
                 RequestUtil.setCurrentPage(request, page);
                 try {
+                    if (null == service) {
+                        service = context.getDefaultService();
+                    }
                     // fetch page content
                     ServiceBase serviceProcessor = ProcessorFactory.getService(service);
                     serviceProcessor.invoke(request, response);
@@ -77,7 +80,9 @@ public class Crawler {
                     doResponseCheck(page, RequestUtil.getContent(request), url.getUrl());
                 } catch (Exception e) {
                     // response code faild
-                    if (BooleanUtils.isTrue(page.getResponseCheck()) && PatternUtils.match(StringUtils.defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$"), ResponseUtil.getResponseStatus(response).toString())) {
+                    if (BooleanUtils.isTrue(page.getResponseCheck()) && PatternUtils.match(StringUtils.defaultString(page.getFailedCodePattern(),
+                            "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$"),
+                            ResponseUtil.getResponseStatus(response).toString())) {
                         throw new ResponseCheckException("page:" + page.getId() + ",url:" + request.getUrl() + " response check failed!", e);
                     } else {
                         throw e;
@@ -112,8 +117,10 @@ public class Crawler {
 
     private static void doResponseCheck(Page page, String content, String url) throws ResponseCheckException {
         // check if response failed
-        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) || (StringUtils.isNotBlank(page.getPageFailedPattern()) && PatternUtils.match(page.getPageFailedPattern(), content)))) {
-            throw new ResponseCheckException("page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
+        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) ||
+                (StringUtils.isNotBlank(page.getPageFailedPattern()) && PatternUtils.match(page.getPageFailedPattern(), content)))) {
+            throw new ResponseCheckException(
+                    "page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
         }
     }
 

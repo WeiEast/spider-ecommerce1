@@ -12,6 +12,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.Protocol;
+import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
@@ -69,7 +70,8 @@ public abstract class AbstractClientPlugin {
         Response newResponse = new Response();
         try {
             RequestUtil.setCurrentUrl(newRequest, linkNode);
-            ServiceBase serviceProcessor = ProcessorFactory.getService(null);
+            AbstractService service = processorContext.getDefaultService();
+            ServiceBase serviceProcessor = ProcessorFactory.getService(service);
             serviceProcessor.invoke(newRequest, newResponse);
         } catch (Exception e) {
             logger.error("execute request error! " + e.getMessage(), e);
@@ -99,7 +101,8 @@ public abstract class AbstractClientPlugin {
         AbstractProcessorContext context = PluginContext.getProcessorContext();
 
         ClientDriverManager clientDriverManager = BeanResourceFactory.getInstance().getBean(ClientDriverManager.class);
-        WebRobotClientDriver driver = clientDriverManager.getWebDriver(browserType, getPorxy(url), clientName, ProcessorContextUtil.getAccountKey(context));
+        WebRobotClientDriver driver = clientDriverManager
+                .getWebDriver(browserType, getPorxy(url), clientName, ProcessorContextUtil.getAccountKey(context));
 
         if (context instanceof SearchProcessorContext) {
             ((SearchProcessorContext) context).setWebRobotClientDriver(driver);

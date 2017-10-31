@@ -34,8 +34,8 @@ appender("sysFile", RollingFileAppender) {
 
 root(INFO, ["console", "sysFile"])
 logger("org.apache.http.impl.conn.Wire",OFF)
-logger("org.apache.http",DEBUG)
-logger("org.apache.http.client.protocol.ResponseProcessCookies",DEBUG)
+logger("org.apache.http",INFO)
+logger("org.apache.http.client.protocol.ResponseProcessCookies",INFO)
 //logger("org.apache.http.client.protocol.ResponseProcessCookies",DEBUG)
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
 logger("com.alibaba.dubbo.rpc.protocol.dubbo", OFF)
