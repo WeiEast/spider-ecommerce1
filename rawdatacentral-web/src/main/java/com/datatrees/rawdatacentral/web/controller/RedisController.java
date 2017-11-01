@@ -36,8 +36,7 @@ public class RedisController {
             RedisUtils.expire(RedisKeyPrefixEnum.FILE_DATA.getRedisKey(file_name), RedisKeyPrefixEnum.FILE_DATA.toSeconds());
 
             String md5 = DigestUtils.md5Hex(file.getBytes());
-            RedisUtils.set(RedisKeyPrefixEnum.FILE_MD5.getRedisKey(file_name), md5);
-            RedisUtils.expire(RedisKeyPrefixEnum.FILE_MD5.getRedisKey(file_name), RedisKeyPrefixEnum.FILE_MD5.toSeconds());
+            RedisUtils.set(RedisKeyPrefixEnum.FILE_MD5.getRedisKey(file_name), md5, RedisKeyPrefixEnum.FILE_MD5.toSeconds());
             logger.info("uploadFile success fileName={},md5={},token={}", file_name, md5, token);
             return result.append("uploadFile success:").append(file_name).append(", md5:").append(md5).toString();
         } catch (Exception e) {

@@ -62,11 +62,9 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
     public void process(CollectorMessage message) {
         Long taskId = message.getTaskId();
         String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
-        Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus());
+        Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
         //第一次收到启动消息
         if (initStatus) {
-            //30分钟内不再接受重复消息
-            RedisUtils.expire(taskStageKey, RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
             //是否是独立运营商
             Boolean isOperator = WebsiteUtils.isOperator(message.getWebsiteName());
             //获取真实websiteName
@@ -107,7 +105,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             String taskStage = RedisUtils.get(taskStageKey);
             if (StringUtils.equals(taskStage, TaskStageEnum.LOGIN_SUCCESS.getStatus())) {
                 monitorService.sendTaskLog(taskId, message.getWebsiteName(), "爬虫-->启动-->成功");
-                RedisUtils.set(taskStageKey, TaskStageEnum.CRAWLER_START.getStatus());
+                RedisUtils.set(taskStageKey, TaskStageEnum.CRAWLER_START.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
                 String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
                 //之后运行还是数据库真实websiteName
                 message.setWebsiteName(websiteName);

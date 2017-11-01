@@ -98,22 +98,22 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             //运营商独立部分第一次初始化后不启动爬虫
             result = getPluginService(websiteName).init(param);
             if (!result.getStatus()) {
-                monitorService.sendTaskLog(taskId,websiteName, "登录-->初始化-->失败");
+                monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->失败");
                 logger.warn("登录-->初始化-->失败");
                 return result;
             }
-            RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus());
-            monitorService.sendTaskLog(taskId,websiteName, "登录-->初始化-->成功");
+            RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
+            monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->成功");
             logger.info("登录-->初始化-->成功");
             return result;
         }
         result = getPluginService(websiteName).init(param);
         if (!result.getStatus()) {
-            monitorService.sendTaskLog(taskId,websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
+            monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
             logger.warn("{}-->初始化-->失败", param.getActionName());
             return result;
         }
-        monitorService.sendTaskLog(taskId,websiteName, TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
+        monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
         logger.info("{}-->初始化-->成功", param.getActionName());
         return result;
     }
@@ -141,7 +141,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
             messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
         }
-        monitorService.sendTaskLog(taskId,websiteName, log, result);
+        monitorService.sendTaskLog(taskId, websiteName, log, result);
         return result;
     }
 
@@ -177,7 +177,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             }
         }
         String log = TemplateUtils.format("{}-->发送短信验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(taskId,param.getWebsiteName(), log, result);
+        monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
         return result;
     }
 
@@ -198,7 +198,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         String websiteName = param.getWebsiteName();
         result = getPluginService(param.getWebsiteName()).validatePicCode(param);
         String log = TemplateUtils.format("{}-->校验图片验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(taskId,websiteName, log, result);
+        monitorService.sendTaskLog(taskId, websiteName, log, result);
         return result;
     }
 
@@ -233,7 +233,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             messageService.sendTaskLog(taskId, "登陆失败");
         }
         String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(taskId,param.getWebsiteName(), log, result);
+        monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
         sendLoginSuccessMessage(result, param);
         return result;
     }
@@ -265,7 +265,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         }
         HttpResult result = getPluginService(param.getWebsiteName()).defineProcess(param);
         String log = TemplateUtils.format("自定义插件{}-->处理-->{}", param.getFormType(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(param.getTaskId(),param.getWebsiteName(), log, result);
+        monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), log, result);
         return result;
     }
 
