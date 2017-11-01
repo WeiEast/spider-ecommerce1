@@ -78,6 +78,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
             //缓存task基本信息
             TaskUtils.initTaskShare(taskId, websiteName);
+            //初始化监控信息
+            monitorService.initTask(taskId, websiteName);
             //保存mobile和websiteName
             if (null != param.getMobile()) {
                 TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
@@ -85,7 +87,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             for (Map.Entry<String, Object> entry : param.getExtral().entrySet()) {
                 TaskUtils.addTaskShare(taskId, entry.getKey(), String.valueOf(entry.getValue()));
             }
-
             //从新的运营商表读取配置
             WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
             //保存taskId对应的website,因为运营过程中用的是
@@ -96,25 +97,23 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             //执行运营商插件初始化操作
             //运营商独立部分第一次初始化后不启动爬虫
             result = getPluginService(websiteName).init(param);
-            //初始化监控信息
-            monitorService.initTask(taskId);
             if (!result.getStatus()) {
-                monitorService.sendTaskLog(taskId, "登录-->初始化-->失败");
+                monitorService.sendTaskLog(taskId,websiteName, "登录-->初始化-->失败");
                 logger.warn("登录-->初始化-->失败");
                 return result;
             }
             RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus());
-            monitorService.sendTaskLog(taskId, "登录-->初始化-->成功");
+            monitorService.sendTaskLog(taskId,websiteName, "登录-->初始化-->成功");
             logger.info("登录-->初始化-->成功");
             return result;
         }
         result = getPluginService(websiteName).init(param);
         if (!result.getStatus()) {
-            monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
+            monitorService.sendTaskLog(taskId,websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
             logger.warn("{}-->初始化-->失败", param.getActionName());
             return result;
         }
-        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
+        monitorService.sendTaskLog(taskId,websiteName, TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
         logger.info("{}-->初始化-->成功", param.getActionName());
         return result;
     }
@@ -142,7 +141,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         if (result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
             messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
         }
-        monitorService.sendTaskLog(taskId, log, result);
+        monitorService.sendTaskLog(taskId,websiteName, log, result);
         return result;
     }
 
@@ -178,7 +177,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             }
         }
         String log = TemplateUtils.format("{}-->发送短信验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(taskId, log, result);
+        monitorService.sendTaskLog(taskId,param.getWebsiteName(), log, result);
         return result;
     }
 
@@ -199,7 +198,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         String websiteName = param.getWebsiteName();
         result = getPluginService(param.getWebsiteName()).validatePicCode(param);
         String log = TemplateUtils.format("{}-->校验图片验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(taskId, log, result);
+        monitorService.sendTaskLog(taskId,websiteName, log, result);
         return result;
     }
 
@@ -234,7 +233,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             messageService.sendTaskLog(taskId, "登陆失败");
         }
         String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(taskId, log, result);
+        monitorService.sendTaskLog(taskId,param.getWebsiteName(), log, result);
         sendLoginSuccessMessage(result, param);
         return result;
     }
@@ -266,7 +265,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         }
         HttpResult result = getPluginService(param.getWebsiteName()).defineProcess(param);
         String log = TemplateUtils.format("自定义插件{}-->处理-->{}", param.getFormType(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(param.getTaskId(), log, result);
+        monitorService.sendTaskLog(param.getTaskId(),param.getWebsiteName(), log, result);
         return result;
     }
 

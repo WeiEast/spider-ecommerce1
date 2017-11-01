@@ -80,18 +80,18 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 param.getExtral().put(AttributeKey.USERNAME, message.getAccountNo());
                 crawlerOperatorService.init(param);
             } else {
+                //初始化监控信息
+                monitorService.initTask(taskId, realebsiteName);
                 //缓存task基本信息
                 TaskUtils.initTaskShare(taskId, message.getWebsiteName());
                 if (StringUtils.isNoneBlank(message.getAccountNo())) {
                     TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
                 }
-                monitorService.sendTaskLog(taskId, "爬虫-->启动-->成功");
                 //这里电商,邮箱,老运营商
                 Website website = websiteConfigService.getWebsiteByWebsiteName(realebsiteName);
                 //保存taskId对应的website
                 redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
-                //初始化监控信息
-                monitorService.initTask(taskId);
+                monitorService.sendTaskLog(taskId, realebsiteName, "爬虫-->启动-->成功");
                 //启动爬虫
                 collector.processMessage(message);
             }
@@ -106,7 +106,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             //如果是登录成功消息就启动爬虫
             String taskStage = RedisUtils.get(taskStageKey);
             if (StringUtils.equals(taskStage, TaskStageEnum.LOGIN_SUCCESS.getStatus())) {
-                monitorService.sendTaskLog(taskId, "爬虫-->启动-->成功");
+                monitorService.sendTaskLog(taskId, message.getWebsiteName(), "爬虫-->启动-->成功");
                 RedisUtils.set(taskStageKey, TaskStageEnum.CRAWLER_START.getStatus());
                 String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
                 //之后运行还是数据库真实websiteName

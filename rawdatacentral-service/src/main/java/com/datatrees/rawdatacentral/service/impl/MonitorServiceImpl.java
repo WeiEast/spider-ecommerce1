@@ -33,15 +33,16 @@ public class MonitorServiceImpl implements MonitorService {
     private MQProducer         producer;
 
     @Override
-    public void initTask(Long taskId) {
-        Map<String, String> map = crawlerTaskService.getTaskBaseInfo(taskId);
+    public void initTask(Long taskId, String websiteName) {
+        Map<String, String> map = crawlerTaskService.getTaskBaseInfo(taskId, websiteName);
         sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_INIT.getTag(), taskId, map);
     }
 
     @Override
-    public void sendTaskCompleteMsg(Long taskId, Integer errorCode, String errorMsg) {
+    public void sendTaskCompleteMsg(Long taskId, String websiteName, Integer errorCode, String errorMsg) {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
         map.put(AttributeKey.ERROR_CODE, errorCode);
         map.put(AttributeKey.ERROR_MSG, errorMsg);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
@@ -49,9 +50,10 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public void sendTaskLog(Long taskId, String msg, Integer errorCode, String errorMsg, String errorDetail) {
+    public void sendTaskLog(Long taskId, String websiteName, String msg, Integer errorCode, String errorMsg, String errorDetail) {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         map.put(AttributeKey.MSG, msg);
         map.put(AttributeKey.ERROR_CODE, errorCode);
@@ -61,18 +63,19 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public void sendTaskLog(Long taskId, String msg, HttpResult result) {
+    public void sendTaskLog(Long taskId, String websiteName, String msg, HttpResult result) {
         if (result.getStatus()) {
-            sendTaskLog(taskId, msg);
+            sendTaskLog(taskId, websiteName, msg);
         } else {
-            sendTaskLog(taskId, msg, result.getResponseCode(), result.getMessage(), result.getErrorDetail());
+            sendTaskLog(taskId, websiteName, msg, result.getResponseCode(), result.getMessage(), result.getErrorDetail());
         }
     }
 
     @Override
-    public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode) {
+    public void sendTaskLog(Long taskId, String websiteName, String msg, ErrorCode errorCode) {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
         map.put(AttributeKey.MSG, msg);
         map.put(AttributeKey.ERROR_CODE, errorCode.getErrorCode());
         map.put(AttributeKey.ERROR_MSG, errorCode.getErrorMsg());
@@ -81,17 +84,33 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode, String errorDetail) {
-        sendTaskLog(taskId, msg, errorCode.getErrorCode(), errorCode.getErrorMsg(), errorDetail);
+    public void sendTaskLog(Long taskId, String websiteName, String msg, ErrorCode errorCode, String errorDetail) {
+        sendTaskLog(taskId, websiteName, msg, errorCode.getErrorCode(), errorCode.getErrorMsg(), errorDetail);
+    }
+
+    @Override
+    public void sendTaskLog(Long taskId, String websiteName, String msg) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
+        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
+        map.put(AttributeKey.MSG, msg);
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
     @Override
     public void sendTaskLog(Long taskId, String msg) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(AttributeKey.TASK_ID, taskId);
-        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        map.put(AttributeKey.MSG, msg);
-        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
+        sendTaskLog(taskId, null, msg);
+    }
+
+    @Override
+    public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode, String errorDetail) {
+        sendTaskLog(taskId, null, msg, errorCode, errorDetail);
+    }
+
+    @Override
+    public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode) {
+        sendTaskLog(taskId, null, msg, errorCode);
     }
 
     public boolean sendMessage(String topic, String tags, Long taskId, Object msg) {

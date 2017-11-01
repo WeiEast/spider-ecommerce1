@@ -11,15 +11,16 @@ public interface MonitorService {
 
     /**
      * 初始化监控信息
-     * @param taskId 任务id
+     * @param taskId      任务id
+     * @param websiteName 配置名称
      */
-    void initTask(Long taskId);
+    void initTask(Long taskId, String websiteName);
 
     /**
      * 发送任务完成消息
      * @param taskId 任务id
      */
-    void sendTaskCompleteMsg(Long taskId, Integer errorCode, String errorMsg);
+    void sendTaskCompleteMsg(Long taskId, String websiteName, Integer errorCode, String errorMsg);
 
     /**
      * 发送任务日志消息
@@ -28,21 +29,44 @@ public interface MonitorService {
      * @param errorMsg    错误信息
      * @param errorDetail 错误详细信息
      */
-    void sendTaskLog(Long taskId, String msg, Integer errorCode, String errorMsg, String errorDetail);
+    void sendTaskLog(Long taskId, String websiteName, String msg, Integer errorCode, String errorMsg, String errorDetail);
 
     /**
      * 发送任务日志消息
      * @param taskId 任务id
      * @param result 处理结果
      */
-    void sendTaskLog(Long taskId, String msg, HttpResult result);
+    void sendTaskLog(Long taskId, String websiteName, String msg, HttpResult result);
 
     /**
      * 发送任务日志消息
      * @param taskId    任务id
      * @param errorCode 错误信息
      */
-    void sendTaskLog(Long taskId, String msg, ErrorCode errorCode);
+    void sendTaskLog(Long taskId, String websiteName, String msg, ErrorCode errorCode);
+
+    /**
+     * 发送任务日志消息
+     * @param taskId    任务id
+     * @param errorCode 错误信息
+     */
+    void sendTaskLog(Long taskId, String websiteName, String msg, ErrorCode errorCode, String errorDetail);
+
+    /**
+     * 发送任务日志消息
+     * @param taskId 任务id
+     * @param msg    操作信息
+     * @return
+     */
+    void sendTaskLog(Long taskId, String websiteName, String msg);
+
+    /**
+     * 发送任务日志消息
+     * @param taskId 任务id
+     * @param msg    操作信息
+     * @return
+     */
+    void sendTaskLog(Long taskId, String msg);
 
     /**
      * 发送任务日志消息
@@ -53,9 +77,8 @@ public interface MonitorService {
 
     /**
      * 发送任务日志消息
-     * @param taskId 任务id
-     * @param msg    操作信息
-     * @return
+     * @param taskId    任务id
+     * @param errorCode 错误信息
      */
-    void sendTaskLog(Long taskId, String msg);
+    void sendTaskLog(Long taskId, String msg, ErrorCode errorCode);
 }
