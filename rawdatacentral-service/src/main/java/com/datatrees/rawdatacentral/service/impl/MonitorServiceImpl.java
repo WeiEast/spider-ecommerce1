@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -111,6 +112,23 @@ public class MonitorServiceImpl implements MonitorService {
     @Override
     public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode) {
         sendTaskLog(taskId, null, msg, errorCode);
+    }
+
+    @Override
+    public void sendMethodUseTime(Long taskId, String websiteName, String key, String className, String methodName, List<Object> param,
+            Object result, long startTime, long endTime) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
+        map.put(AttributeKey.KEY, key);
+        map.put(AttributeKey.CLASS_NAME, className);
+        map.put(AttributeKey.METHOD_NAME, methodName);
+        map.put(AttributeKey.PARAM, param);
+        map.put(AttributeKey.RESULT, result);
+        map.put(AttributeKey.START_TIME, startTime);
+        map.put(AttributeKey.END_TIME, endTime);
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.METHOD_USE_TIME.getTag(), taskId, map);
     }
 
     public boolean sendMessage(String topic, String tags, Long taskId, Object msg) {

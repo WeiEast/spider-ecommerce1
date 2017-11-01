@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.api;
 
+import java.util.List;
+
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
@@ -81,4 +83,27 @@ public interface MonitorService {
      * @param errorCode 错误信息
      */
     void sendTaskLog(Long taskId, String msg, ErrorCode errorCode);
+
+    /**
+     * 发送接口耗时
+     * @param taskId
+     * @param methodName 接口名称
+     * @param params     参数
+     * @param startTime  开始时间
+     * @param finishTime 结束时间
+     */
+    /**
+     * 发送接口耗时
+     * @param taskId      任务id
+     * @param websiteName 配置名称
+     * @param key         关键字
+     * @param className   接口名称
+     * @param methodName  方法名称
+     * @param param       参数
+     * @param result      返回结果
+     * @param startTime   开始时间
+     * @param finishTime  结束时间
+     */
+    void sendMethodUseTime(Long taskId, String websiteName, String key, String className, String methodName, List<Object> param, Object result,
+            long startTime, long finishTime);
 }

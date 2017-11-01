@@ -52,5 +52,12 @@ public class AttributeKey implements Serializable {
     public static final String GROUP_NAME               = "groupName"; //分组名称
     public static final String WEBSITE_TYPE             = "websiteType"; //配置类型
     public static final String WEBSITE_TITLE            = "websiteTitle"; //配置类型
+    public static final String METHOD_NAME              = "methodName"; //方法名称
+    public static final String CLASS_NAME               = "className"; //类名称
+    public static final String KEY                      = "key"; //关键字
+    public static final String PARAM                    = "param"; //参数
+    public static final String RESULT                   = "result"; //结果
+    public static final String START_TIME               = "startTime"; //开始时间
+    public static final String END_TIME                 = "endTime"; //结束时间
 
 }

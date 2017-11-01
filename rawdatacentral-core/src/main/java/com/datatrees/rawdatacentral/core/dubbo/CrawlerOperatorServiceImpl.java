@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,38 +205,46 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
 
     @Override
     public HttpResult<Map<String, Object>> submit(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = checkParams(param);
-        if (!result.getStatus()) {
-            logger.warn("check param error,result={}", result);
-            return result;
-        }
-        Long taskId = param.getTaskId();
-        result = getPluginService(param.getWebsiteName()).submit(param);
-        if (null != result && result.getStatus()) {
-            if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
-                TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
-                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getMobile().toString());
-                //登录成功
-                if (StringUtils.isNoneBlank(param.getPassword())) {
-                    TaskUtils.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
-                }
-                if (StringUtils.isNoneBlank(param.getIdCard())) {
-                    TaskUtils.addTaskShare(taskId, AttributeKey.ID_CARD, param.getIdCard());
-                }
-                if (StringUtils.isNoneBlank(param.getRealName())) {
-                    TaskUtils.addTaskShare(taskId, AttributeKey.REAL_NAME, param.getRealName());
-                }
-            } else if (StringUtils.isNoneBlank(param.getSmsCode())) {
-                TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(param.getFormType()), param.getSmsCode());
+        long startTime = System.currentTimeMillis();
+        HttpResult<Map<String, Object>> result = null;
+        try {
+            result = checkParams(param);
+            if (!result.getStatus()) {
+                logger.warn("check param error,result={}", result);
+                return result;
             }
+            Long taskId = param.getTaskId();
+            result = getPluginService(param.getWebsiteName()).submit(param);
+            if (null != result && result.getStatus()) {
+                if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                    TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
+                    TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getMobile().toString());
+                    //登录成功
+                    if (StringUtils.isNoneBlank(param.getPassword())) {
+                        TaskUtils.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
+                    }
+                    if (StringUtils.isNoneBlank(param.getIdCard())) {
+                        TaskUtils.addTaskShare(taskId, AttributeKey.ID_CARD, param.getIdCard());
+                    }
+                    if (StringUtils.isNoneBlank(param.getRealName())) {
+                        TaskUtils.addTaskShare(taskId, AttributeKey.REAL_NAME, param.getRealName());
+                    }
+                } else if (StringUtils.isNoneBlank(param.getSmsCode())) {
+                    TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(param.getFormType()), param.getSmsCode());
+                }
+            }
+            if (!result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                messageService.sendTaskLog(taskId, "登陆失败");
+            }
+            String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
+            monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
+            sendLoginSuccessMessage(result, param, startTime);
+            return result;
+        } finally {
+            long endTime = System.currentTimeMillis();
+            monitorService.sendMethodUseTime(param.getTaskId(), param.getWebsiteName(), param.getFormType(), this.getClass().getName(), "submit",
+                    Arrays.asList(param), result, startTime, endTime);
         }
-        if (!result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
-            messageService.sendTaskLog(taskId, "登陆失败");
-        }
-        String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
-        monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
-        sendLoginSuccessMessage(result, param);
-        return result;
     }
 
     @Override
@@ -331,13 +340,20 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
 
     /**
      * 发送消息,启动爬虫
+     * 超过20秒不启动爬虫
      * @param param
      */
-    private void sendLoginSuccessMessage(HttpResult result, OperatorParam param) {
+    private void sendLoginSuccessMessage(HttpResult result, OperatorParam param, long startTime) {
         if (null != result && result.getStatus()) {
             WebsiteOperator operator = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
             String sendLoginStage = operator.getStartStage();
             if (StringUtils.equals(sendLoginStage, param.getFormType())) {
+                long endTime = System.currentTimeMillis();
+                long useTime = endTime - startTime;
+                if (useTime > TimeUnit.SECONDS.toMillis(20)) {
+                    logger.info("登陆时间超过20秒,不启动爬虫,param={},useTime={}", param, DateUtils.getUsedTime(startTime, endTime));
+                    return;
+                }
                 redisService.saveString(RedisKeyPrefixEnum.TASK_RUN_STAGE, param.getTaskId(), TaskStageEnum.LOGIN_SUCCESS.getStatus());
                 messageService.sendLoginSuccessMessage(param.getTaskId(), param.getWebsiteName());
                 logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
