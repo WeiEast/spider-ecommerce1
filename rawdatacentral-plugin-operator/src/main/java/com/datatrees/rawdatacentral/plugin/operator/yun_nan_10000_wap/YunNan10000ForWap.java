@@ -2,6 +2,8 @@ package com.datatrees.rawdatacentral.plugin.operator.yun_nan_10000_wap;
 
 import javax.script.Invocable;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Map;
 
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
@@ -9,6 +11,7 @@ import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.plugin.login.ErrorMessage;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
@@ -62,6 +65,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return refeshSmsCodeForLogin(param);
+            case FormType.VALIDATE_BILL_DETAIL:
+                return refeshSmsCodeForBillDetail(param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -72,6 +77,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return submitForLogin(param);
+            case FormType.VALIDATE_BILL_DETAIL:
+                return submitForBillDetail(param);
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -177,6 +184,54 @@ public class YunNan10000ForWap implements OperatorPluginService {
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String referer = "http://wapyn.189.cn/self/fee/detailQuery?nodeId=86";
+            String templateUrl = "http://wapyn.189.cn/self/fee/sendSms.do";
+            String templateData = "accNbr=";
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_005").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            String pageContent = response.getPageContent();
+            if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "\"respCode\":\"0\"")) {
+                logger.info("详单-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+            }
+        } catch (Exception e) {
+            logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_SMS_ERROR);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
+            Calendar c = Calendar.getInstance();
+            String billMonth = sf.format(c.getTime());
+
+            String referer = "http://wapyn.189.cn/self/fee/detailQuery?nodeId=86";
+            String templateUrl = "http://wapyn.189.cn/self/fee/detailRecord.do";
+            String templateData = "date=" + billMonth + "&cdrtype=10&deailsms=" + param.getSmsCode() + "&nodeId=86";
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_006").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            String pageContent = response.getPageContent();
+            if (StringUtils.isNotBlank(pageContent)) {
+                logger.info("详单-->校验成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
+            }
+        } catch (Exception e) {
+            logger.error("详单-->校验失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.VALIDATE_ERROR);
         }
     }
 
