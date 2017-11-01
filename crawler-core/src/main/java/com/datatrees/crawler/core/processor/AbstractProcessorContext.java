@@ -14,11 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.datatrees.crawler.core.domain.config.properties.Properties;
+import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.core.processor.common.resource.PluginManager;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.crawler.core.util.SynchronizedMap;
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -188,5 +192,18 @@ public abstract class AbstractProcessorContext {
         AbstractPlugin pluginDesc = getPluginDescByID(pluginId);
 
         return createPluginWrapper(pluginDesc);
+    }
+
+    public AbstractService getDefaultService() {
+        AbstractService service = null;
+        if (null != website && null != website.getSearchConfig() && null != website.getSearchConfig().getProperties()) {
+            Properties properties = website.getSearchConfig().getProperties();
+            Boolean useTaskHttp = properties.getUseTaskHttp();
+            if (BooleanUtils.isTrue(useTaskHttp)) {
+                service = new TaskHttpService();
+                service.setServiceType("task_http");
+            }
+        }
+        return service;
     }
 }

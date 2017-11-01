@@ -19,6 +19,8 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.parser.IndexMapping;
 import com.datatrees.crawler.core.domain.config.parser.Parser;
 import com.datatrees.crawler.core.domain.config.parser.ParserPattern;
+import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
@@ -246,7 +248,9 @@ public class ParserImpl extends Operation {
                 currentLinkNode.addHeaders(headersMap);
             }
             RequestUtil.setCurrentUrl(newResquest, currentLinkNode);
-            ServiceBase serviceProcessor = ProcessorFactory.getService(null);
+            AbstractProcessorContext context = RequestUtil.getProcessorContext(newResquest);
+            AbstractService service = context.getDefaultService();
+            ServiceBase serviceProcessor = ProcessorFactory.getService(service);
             serviceProcessor.invoke(newResquest, newResponse);
         } catch (Exception e) {
             log.error("execute request error! " + e.getMessage(), e);

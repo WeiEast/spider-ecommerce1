@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 
 /**
  * 运营商登陆过程中的参数
@@ -154,6 +155,10 @@ public class OperatorParam implements Serializable {
 
     public void setExtral(Map<String, Object> extral) {
         this.extral = extral;
+    }
+
+    public String getActionName() {
+        return FormType.getName(formType);
     }
 
     @Override

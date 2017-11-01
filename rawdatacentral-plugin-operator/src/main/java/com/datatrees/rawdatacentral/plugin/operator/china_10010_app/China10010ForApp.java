@@ -152,7 +152,7 @@ public class China10010ForApp implements OperatorPluginService {
              * 获取通话详单
              */
             String templateUrl = "https://m.client.10010.com/mobileService/query/getPhoneByDetailContent.htm";
-            String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=000200010005&currNum=1";
+            String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
@@ -213,7 +213,7 @@ public class China10010ForApp implements OperatorPluginService {
              * 获取短信详单
              */
             String templateUrl = "https://m.client.10010.com/mobileService/query/querySmsByDetailContent.htm";
-            String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=000200010005&currNum=1";
+            String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_006").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
@@ -257,7 +257,7 @@ public class China10010ForApp implements OperatorPluginService {
              * 获取流量详单
              */
             String templateUrl = "https://m.client.10010.com/mobileService/query/queryNetWorkDetailContent.htm";
-            String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=000200010005&currNum=1";
+            String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_008").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();

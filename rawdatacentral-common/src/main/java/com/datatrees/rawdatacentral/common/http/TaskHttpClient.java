@@ -129,6 +129,15 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient addHeaders(Map<String, String> headers) {
+        if (CollectionUtils.isNotEmpty(headers)) {
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                request.addHead(header.getKey(), header.getValue());
+            }
+        }
+        return this;
+    }
+
     public TaskHttpClient setFullUrl(String url) {
         request.setUrl(url);
         return this;
@@ -151,6 +160,10 @@ public class TaskHttpClient {
     }
 
     public TaskHttpClient setReferer(String referer) {
+        if (StringUtils.isBlank(referer)) {
+            logger.warn("referer is blank,taskId={},websiteName={}", request.getTaskId(), request.getWebsiteName());
+            return this;
+        }
         request.addHead(HttpHeadKey.REFERER, referer);
         return this;
     }
@@ -274,7 +287,9 @@ public class TaskHttpClient {
                 client = httpPost;
             }
             if (StringUtils.isNoneBlank(request.getContentType())) {
-                request.addHead(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+                if (!request.containHeader(HttpHeadKey.CONTENT_TYPE)) {
+                    request.addHead(HttpHeadKey.CONTENT_TYPE, request.getContentType());
+                }
             }
             if (CollectionUtils.isNotEmpty(request.getHeaders())) {
                 for (NameValue nameValue : request.getHeaders()) {

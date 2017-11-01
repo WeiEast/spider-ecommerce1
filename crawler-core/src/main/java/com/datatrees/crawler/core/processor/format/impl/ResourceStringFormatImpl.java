@@ -12,6 +12,8 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.util.UrlUtils;
+import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
@@ -45,7 +47,9 @@ public class ResourceStringFormatImpl extends AbstractFormat {
                 Response newResponse = new Response();
                 try {
                     RequestUtil.setCurrentUrl(newRequest, linkNode);
-                    ServiceBase serviceProcessor = ProcessorFactory.getService(null);
+                    AbstractProcessorContext processorContext = RequestUtil.getProcessorContext(req);
+                    AbstractService service = processorContext.getDefaultService();
+                    ServiceBase serviceProcessor = ProcessorFactory.getService(service);
                     serviceProcessor.invoke(newRequest, newResponse);
                 } catch (Exception e) {
                     logger.error("execute request error! " + e.getMessage(), e);

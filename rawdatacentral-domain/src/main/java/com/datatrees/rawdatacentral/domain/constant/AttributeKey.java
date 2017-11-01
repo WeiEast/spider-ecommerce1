@@ -36,8 +36,6 @@ public class AttributeKey implements Serializable {
     public static final String PROVINCE_CODE            = "provinceCode"; // 省份代码
     public static final String PROVINCE_NAME            = "provinceName"; // 省份代码
     public static final String WEBSITE_NAME             = "websiteName"; // 站点名称
-    public static final String FIRST_VISIT_WEBSITENAME  = "firstVisitWebsiteName"; // 第一次访问站点名称
-    public static final String IS_NEW_OPERATOR          = "isNewOperator"; // 是否独立运营商
     public static final String ID_CARD                  = "idCard"; // 身份证号
     public static final String REAL_NAME                = "realName"; // 姓名
     public static final String LOGIN_PIC_CODE           = "loginPicCode"; // 登录-->图片验证码
