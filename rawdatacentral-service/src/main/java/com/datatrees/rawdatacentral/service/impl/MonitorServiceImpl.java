@@ -12,6 +12,7 @@ import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -115,8 +116,8 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public void sendMethodUseTime(Long taskId, String websiteName, String key, String className, String methodName, List<Object> param,
-            Object result, long startTime, long endTime) {
+    public void sendMethodUseTime(Long taskId, String websiteName, String key, String className, String methodName, List<Object> param, Object result,
+            long startTime, long endTime) {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         map.put(AttributeKey.TASK_ID, taskId);
@@ -128,6 +129,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.RESULT, result);
         map.put(AttributeKey.START_TIME, startTime);
         map.put(AttributeKey.END_TIME, endTime);
+        map.put(AttributeKey.REMARK, DateUtils.getUsedTime(startTime, endTime));
         sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.METHOD_USE_TIME.getTag(), taskId, map);
     }
 
