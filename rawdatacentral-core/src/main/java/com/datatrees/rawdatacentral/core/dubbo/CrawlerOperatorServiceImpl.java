@@ -84,12 +84,14 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             //保存mobile和websiteName
             if (null != param.getMobile()) {
                 TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
+                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getMobile().toString());
             }
             for (Map.Entry<String, Object> entry : param.getExtral().entrySet()) {
                 TaskUtils.addTaskShare(taskId, entry.getKey(), String.valueOf(entry.getValue()));
             }
             //从新的运营商表读取配置
             WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+            TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
             //保存taskId对应的website,因为运营过程中用的是
             Website website = websiteConfigService.buildWebsite(websiteOperator);
             redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);

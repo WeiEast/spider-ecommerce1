@@ -76,15 +76,17 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 param.setMobile(Long.valueOf(message.getAccountNo()));
                 param.setWebsiteName(realebsiteName);
                 param.getExtral().put(AttributeKey.USERNAME, message.getAccountNo());
+                param.getExtral().put(AttributeKey.GROUP_CODE, message.getGroupCode());
+                param.getExtral().put(AttributeKey.GROUP_NAME, message.getGroupName());
                 crawlerOperatorService.init(param);
             } else {
                 //初始化监控信息
                 monitorService.initTask(taskId, realebsiteName, message.getAccountNo());
                 //缓存task基本信息
                 TaskUtils.initTaskShare(taskId, message.getWebsiteName());
-                if (StringUtils.isNoneBlank(message.getAccountNo())) {
-                    TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
-                }
+                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
+                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, message.getGroupCode());
+                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, message.getGroupName());
                 //这里电商,邮箱,老运营商
                 Website website = websiteConfigService.getWebsiteByWebsiteName(realebsiteName);
                 //保存taskId对应的website
@@ -127,6 +129,8 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 collectorMessage.setEndURL(loginInfo.getEndUrl());
                 collectorMessage.setCookie(loginInfo.getCookie());
                 collectorMessage.setAccountNo(loginInfo.getAccountNo());
+                collectorMessage.setGroupCode(loginInfo.getGroupCode());
+                collectorMessage.setGroupName(loginInfo.getGroupName());
                 if (setCookieFormatSwitch && StringUtils.isNotBlank(loginInfo.getSetCookie())) {
                     if (StringUtils.isBlank(loginInfo.getCookie())) {
                         collectorMessage.setCookie(loginInfo.getSetCookie());
