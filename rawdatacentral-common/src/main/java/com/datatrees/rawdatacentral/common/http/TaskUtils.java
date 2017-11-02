@@ -256,6 +256,10 @@ public class TaskUtils {
      * @param value
      */
     public static void addTaskShare(Long taskId, String name, String value) {
+        if (null == taskId || StringUtils.isBlank(name) || StringUtils.isBlank(value)) {
+            logger.error("invalid param taskId={},name={},value={}", taskId, name, value);
+            return;
+        }
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
         RedisUtils.hset(redisKey, name, value, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
         logger.info("addTaskShare success taskId={},name={}", taskId, name);

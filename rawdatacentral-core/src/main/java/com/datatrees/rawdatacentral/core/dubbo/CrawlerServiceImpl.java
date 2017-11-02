@@ -357,7 +357,7 @@ public class CrawlerServiceImpl implements CrawlerService {
         } else if (StringUtils.equals("user", reason)) {
             errorCode = ErrorCode.TASK_CANCEL_BY_USER;
         }
-        monitorService.sendTaskCompleteMsg(taskId, errorCode.getErrorCode(), errorCode.getErrorMsg());
+        monitorService.sendTaskCompleteMsg(taskId, null, errorCode.getErrorCode(), errorCode.getErrorMsg());
         return result.failure();
     }
 

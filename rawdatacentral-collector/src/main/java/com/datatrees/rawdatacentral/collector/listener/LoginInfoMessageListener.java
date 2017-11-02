@@ -62,11 +62,9 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
     public void process(CollectorMessage message) {
         Long taskId = message.getTaskId();
         String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
-        Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus());
+        Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
         //第一次收到启动消息
         if (initStatus) {
-            //30分钟内不再接受重复消息
-            RedisUtils.expire(taskStageKey, RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
             //是否是独立运营商
             Boolean isOperator = WebsiteUtils.isOperator(message.getWebsiteName());
             //获取真实websiteName
@@ -78,20 +76,22 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 param.setMobile(Long.valueOf(message.getAccountNo()));
                 param.setWebsiteName(realebsiteName);
                 param.getExtral().put(AttributeKey.USERNAME, message.getAccountNo());
+                param.getExtral().put(AttributeKey.GROUP_CODE, message.getGroupCode());
+                param.getExtral().put(AttributeKey.GROUP_NAME, message.getGroupName());
                 crawlerOperatorService.init(param);
             } else {
+                //初始化监控信息
+                monitorService.initTask(taskId, realebsiteName, message.getAccountNo());
                 //缓存task基本信息
                 TaskUtils.initTaskShare(taskId, message.getWebsiteName());
-                if (StringUtils.isNoneBlank(message.getAccountNo())) {
-                    TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
-                }
-                monitorService.sendTaskLog(taskId, "爬虫-->启动-->成功");
+                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
+                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, message.getGroupCode());
+                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, message.getGroupName());
                 //这里电商,邮箱,老运营商
                 Website website = websiteConfigService.getWebsiteByWebsiteName(realebsiteName);
                 //保存taskId对应的website
                 redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
-                //初始化监控信息
-                monitorService.initTask(taskId);
+                monitorService.sendTaskLog(taskId, realebsiteName, "爬虫-->启动-->成功");
                 //启动爬虫
                 collector.processMessage(message);
             }
@@ -106,8 +106,8 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             //如果是登录成功消息就启动爬虫
             String taskStage = RedisUtils.get(taskStageKey);
             if (StringUtils.equals(taskStage, TaskStageEnum.LOGIN_SUCCESS.getStatus())) {
-                monitorService.sendTaskLog(taskId, "爬虫-->启动-->成功");
-                RedisUtils.set(taskStageKey, TaskStageEnum.CRAWLER_START.getStatus());
+                monitorService.sendTaskLog(taskId, message.getWebsiteName(), "爬虫-->启动-->成功");
+                RedisUtils.set(taskStageKey, TaskStageEnum.CRAWLER_START.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
                 String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
                 //之后运行还是数据库真实websiteName
                 message.setWebsiteName(websiteName);
@@ -129,6 +129,8 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 collectorMessage.setEndURL(loginInfo.getEndUrl());
                 collectorMessage.setCookie(loginInfo.getCookie());
                 collectorMessage.setAccountNo(loginInfo.getAccountNo());
+                collectorMessage.setGroupCode(loginInfo.getGroupCode());
+                collectorMessage.setGroupName(loginInfo.getGroupName());
                 if (setCookieFormatSwitch && StringUtils.isNotBlank(loginInfo.getSetCookie())) {
                     if (StringUtils.isBlank(loginInfo.getCookie())) {
                         collectorMessage.setCookie(loginInfo.getSetCookie());
