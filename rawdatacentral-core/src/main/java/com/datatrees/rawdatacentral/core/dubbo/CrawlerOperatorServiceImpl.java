@@ -80,7 +80,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             //缓存task基本信息
             TaskUtils.initTaskShare(taskId, websiteName);
             //初始化监控信息
-            monitorService.initTask(taskId, websiteName);
+            monitorService.initTask(taskId, websiteName, param.getMobile());
             //保存mobile和websiteName
             if (null != param.getMobile()) {
                 TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());

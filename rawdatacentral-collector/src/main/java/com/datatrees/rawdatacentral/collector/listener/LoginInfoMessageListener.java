@@ -79,7 +79,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 crawlerOperatorService.init(param);
             } else {
                 //初始化监控信息
-                monitorService.initTask(taskId, realebsiteName);
+                monitorService.initTask(taskId, realebsiteName, message.getAccountNo());
                 //缓存task基本信息
                 TaskUtils.initTaskShare(taskId, message.getWebsiteName());
                 if (StringUtils.isNoneBlank(message.getAccountNo())) {
