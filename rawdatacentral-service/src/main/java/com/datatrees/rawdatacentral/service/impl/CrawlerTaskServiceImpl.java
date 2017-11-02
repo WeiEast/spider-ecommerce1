@@ -3,14 +3,13 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.retry.RetryHandler;
-import com.datatrees.rawdatacentral.common.utils.RetryUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -54,20 +53,8 @@ public class CrawlerTaskServiceImpl implements CrawlerTaskService {
             Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
             if (null == website) {
                 if (StringUtils.isBlank(websiteName)) {
-                    websiteName = RetryUtils.execute(new RetryHandler<String>() {
-                        private String websiteName;
-
-                        @Override
-                        public String execute() {
-                            websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
-                            return websiteName;
-                        }
-
-                        @Override
-                        public boolean check() {
-                            return StringUtils.isNotBlank(websiteName);
-                        }
-                    }, 10, 1000L);
+                    TimeUnit.SECONDS.sleep(5);
+                    websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
                 }
                 if (StringUtils.isBlank(websiteName)) {
                     website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
