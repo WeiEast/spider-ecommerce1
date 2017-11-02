@@ -110,6 +110,14 @@ public class RedisUtils extends RedisConfig {
         }
     }
 
+    public static String set(final String key, final String value, final Integer second) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String r = jedis.set(key, value);
+            expire(key, second);
+            return r;
+        }
+    }
+
     public static Long hset(final String key, final String field, final String value) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.hset(key, field, value);

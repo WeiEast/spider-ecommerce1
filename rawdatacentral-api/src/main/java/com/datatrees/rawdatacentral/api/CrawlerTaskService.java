@@ -23,4 +23,12 @@ public interface CrawlerTaskService {
      */
     Map<String, String> getTaskBaseInfo(Long taskId);
 
+    /**
+     * 获取任务基本信息
+     * @param taskId
+     * @param websiteName
+     * @return
+     */
+    Map<String, String> getTaskBaseInfo(Long taskId, String websiteName);
+
 }

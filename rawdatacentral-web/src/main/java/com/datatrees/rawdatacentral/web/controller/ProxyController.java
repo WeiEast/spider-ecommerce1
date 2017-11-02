@@ -19,8 +19,7 @@ public class ProxyController {
         HttpResult<Boolean> result = new HttpResult<>();
         try {
             String redisKey = RedisKeyPrefixEnum.WEBSITE_PROXY.getRedisKey(websiteName);
-            RedisUtils.set(redisKey, proxy);
-            RedisUtils.expire(redisKey, RedisKeyPrefixEnum.WEBSITE_PROXY.toSeconds());
+            RedisUtils.set(redisKey, proxy, RedisKeyPrefixEnum.WEBSITE_PROXY.toSeconds());
             logger.info("setProxy success websiteName={},proxy={}", websiteName, proxy);
             return result.success();
         } catch (Exception e) {
