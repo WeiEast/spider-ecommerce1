@@ -336,7 +336,7 @@ public class Collector {
         this.messageComplement(taskMessage, message);
         message.setFinish(true);
         taskService.updateTask(task);
-        monitorService.sendTaskCompleteMsg(task.getTaskId(), task.getStatus(), task.getRemark());
+        monitorService.sendTaskCompleteMsg(task.getTaskId(), task.getWebsiteName(), task.getStatus(), task.getRemark());
         return taskMessage.getContext().getProcessorResult();
     }
 

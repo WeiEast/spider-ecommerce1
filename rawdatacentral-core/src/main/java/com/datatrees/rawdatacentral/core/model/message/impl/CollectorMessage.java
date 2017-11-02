@@ -33,6 +33,10 @@ public class CollectorMessage extends MessageInfo {
     private Map<String, Object> property = new HashMap<String, Object>();
     private Map<String, Object> sendBack = new HashMap<String, Object>();
     private boolean finish;
+    /** 分组代码 */
+    private String  groupCode;
+    /** 分组名称 */
+    private String  groupName;
     /**
      * 总共运行次数
      */
@@ -195,14 +199,26 @@ public class CollectorMessage extends MessageInfo {
         this.taskId = taskId;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
     @Override
     public String toString() {
-        return "CollectorMessage [ websiteName=" + websiteName + ", taskId=" + taskId + ", serialNum=" + serialNum + ", endURL=" + endURL + ", cookie=" + cookie + "]";
+        return "CollectorMessage [ websiteName=" + websiteName + ", taskId=" + taskId + ", serialNum=" + serialNum + ", endURL=" + endURL +
+                ", cookie=" + cookie + "]";
     }
 
     /**
