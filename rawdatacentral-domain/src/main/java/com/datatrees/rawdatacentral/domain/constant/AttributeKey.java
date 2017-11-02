@@ -56,7 +56,9 @@ public class AttributeKey implements Serializable {
     public static final String CLASS_NAME               = "className"; //类名称
     public static final String KEY                      = "key"; //关键字
     public static final String PARAM                    = "param"; //参数
+    public static final String PARAM_CLASS              = "paramClass"; //参数类型
     public static final String RESULT                   = "result"; //结果
+    public static final String RESULT_CLASS             = "resultClass"; //结果类型
     public static final String START_TIME               = "startTime"; //开始时间
     public static final String END_TIME                 = "endTime"; //结束时间
 

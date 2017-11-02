@@ -130,6 +130,9 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.START_TIME, startTime);
         map.put(AttributeKey.END_TIME, endTime);
         map.put(AttributeKey.REMARK, DateUtils.getUsedTime(startTime, endTime));
+        if (null != result) {
+            map.put(AttributeKey.RESULT_CLASS, result.getClass().getName());
+        }
         sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.METHOD_USE_TIME.getTag(), taskId, map);
     }
 
