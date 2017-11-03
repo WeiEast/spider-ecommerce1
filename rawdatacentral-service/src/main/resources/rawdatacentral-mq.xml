@@ -9,5 +9,12 @@
         <property name="producerGroup" value="${core.mq.producerGroup}"/>
     </bean>
 
+    <bean id="loginInfoConsumer" class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" destroy-method="shutdown">
+        <property name="namesrvAddr" value="${core.mq.host}"/>
+        <property name="consumerGroup" value="${core.mq.producerGroup}"/>
+        <property name="consumeThreadMin" value="50"/>
+        <property name="consumeThreadMax" value="50"/>
+        <property name="adjustThreadPoolNumsThreshold" value="10"/>
+    </bean>
 
 </beans>

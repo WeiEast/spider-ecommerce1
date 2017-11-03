@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginInfoMessageListener extends AbstractMessageHandler {
+public class LoginInfoMessageHandler extends AbstractMessageHandler {
 
-    private static final Logger  logger                = LoggerFactory.getLogger(LoginInfoMessageListener.class);
+    private static final Logger  logger                = LoggerFactory.getLogger(LoginInfoMessageHandler.class);
     private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance().getBoolean("set.cookie.format.switch", false);
     @Resource
     private Collector              collector;
