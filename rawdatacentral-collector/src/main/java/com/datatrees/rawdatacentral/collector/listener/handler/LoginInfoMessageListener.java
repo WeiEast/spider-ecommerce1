@@ -1,17 +1,8 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
- */
+package com.datatrees.rawdatacentral.collector.listener.handler;
 
-package com.datatrees.rawdatacentral.collector.listener;
-
-import java.nio.charset.Charset;
+import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
@@ -19,10 +10,8 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
-import com.datatrees.rawdatacentral.core.message.AbstractRocketMessageListener;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -31,35 +20,41 @@ import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
-/**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年8月13日 下午2:27:24
- */
-public class LoginInfoMessageListener extends AbstractRocketMessageListener<CollectorMessage> {
+@Service
+public class LoginInfoMessageListener extends AbstractMessageHandler {
 
     private static final Logger  logger                = LoggerFactory.getLogger(LoginInfoMessageListener.class);
     private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance().getBoolean("set.cookie.format.switch", false);
-    private Collector collector;
-    private RedisService           redisService           = BeanFactoryUtils.getBean(RedisService.class);
-    private WebsiteConfigService   websiteConfigService   = BeanFactoryUtils.getBean(WebsiteConfigService.class);
-    private MonitorService         monitorService         = BeanFactoryUtils.getBean(MonitorService.class);
-    private CrawlerOperatorService crawlerOperatorService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+    @Resource
+    private Collector              collector;
+    @Resource
+    private RedisService           redisService;
+    @Resource
+    private WebsiteConfigService   websiteConfigService;
+    @Resource
+    private MonitorService         monitorService;
+    @Resource
+    private CrawlerOperatorService crawlerOperatorService;
 
-    public Collector getCollector() {
-        return collector;
-    }
-
-    public void setCollector(Collector collector) {
-        this.collector = collector;
+    @Override
+    public String getTag() {
+        return "login_info";
     }
 
     @Override
-    public void process(CollectorMessage message) {
+    public String getBizType() {
+        return "准备";
+    }
+
+    @Override
+    public boolean consumeMessage(String msg) {
+        CollectorMessage message = buildCollectorMessage(msg);
         Long taskId = message.getTaskId();
         String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
         Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
@@ -101,7 +96,7 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
             //非运营商或者老运营商,重复消息不处理
             if (!isOperator) {
                 logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, message.getWebsiteName());
-                return;
+                return true;
             }
             //如果是登录成功消息就启动爬虫
             String taskStage = RedisUtils.get(taskStageKey);
@@ -114,13 +109,11 @@ public class LoginInfoMessageListener extends AbstractRocketMessageListener<Coll
                 collector.processMessage(message);
             }
         }
-
+        return true;
     }
 
-    @Override
-    public CollectorMessage messageConvert(MessageExt message) {
+    public CollectorMessage buildCollectorMessage(String msg) {
         CollectorMessage collectorMessage = new CollectorMessage();
-        String msg = new String(message.getBody(), Charset.forName("UTF-8"));
         try {
             LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
             if (loginInfo != null) {

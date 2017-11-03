@@ -8,7 +8,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import akka.dispatch.Future;
-import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
@@ -33,6 +32,7 @@ import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecke
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.rocketmq.common.ThreadFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,10 +64,6 @@ public class SearchProcessor {
     private ThreadPoolExecutor crawlExecutorPool = null;
     private List<LinkNode> initLinkNodeList;
 
-    /**
-     * @param input
-     * @param website
-     */
     public SearchProcessor(TaskMessage taskMessage) {
         try {
             this.taskMessage = taskMessage;

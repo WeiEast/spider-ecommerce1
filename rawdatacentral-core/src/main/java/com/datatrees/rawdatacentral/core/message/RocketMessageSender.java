@@ -1,20 +1,22 @@
 package com.datatrees.rawdatacentral.core.message;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
-import com.alibaba.rocketmq.client.producer.MQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.message.MessageSender;
 import com.datatrees.common.util.GsonUtils;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RocketMessageSender implements MessageSender<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(RocketMessageSender.class);
-    private MQProducer     producer;
-    private MessageFactory factory;
+    @Resource
+    private DefaultMQProducer defaultMQProducer;
+    private MessageFactory    factory;
 
     public MessageFactory getFactory() {
         return factory;
@@ -24,12 +26,12 @@ public class RocketMessageSender implements MessageSender<Object> {
         this.factory = factory;
     }
 
-    public MQProducer getProducer() {
-        return producer;
+    public DefaultMQProducer getDefaultMQProducer() {
+        return defaultMQProducer;
     }
 
-    public void setProducer(MQProducer producer) {
-        this.producer = producer;
+    public void setDefaultMQProducer(DefaultMQProducer defaultMQProducer) {
+        this.defaultMQProducer = defaultMQProducer;
     }
 
     public boolean sendMessage(Object messageMap) {
@@ -40,7 +42,7 @@ public class RocketMessageSender implements MessageSender<Object> {
                 Object resultMessage = ((Map) messageMap).get("body");
                 String userId = (String) ((Map) messageMap).get("userId");
                 Message mqMessage = factory.getMessage(topic, tag, GsonUtils.toJson(resultMessage), userId);
-                SendResult sendResult = producer.send(mqMessage);
+                SendResult sendResult = defaultMQProducer.send(mqMessage);
                 logger.info("send result message:" + mqMessage + "result:" + sendResult);
                 return true;
             }
