@@ -11,6 +11,7 @@ import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class RocketMessageSender implements MessageSender<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(RocketMessageSender.class);

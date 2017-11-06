@@ -54,68 +54,63 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
 
     @Override
     public boolean consumeMessage(String msg) {
-        CollectorMessage message = buildCollectorMessage(msg);
-        Long taskId = message.getTaskId();
+        LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
+        Long taskId = loginInfo.getTaskId();
+        String websiteName = loginInfo.getWebsiteName();
         String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
         Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
         //第一次收到启动消息
         if (initStatus) {
             //是否是独立运营商
-            Boolean isOperator = WebsiteUtils.isOperator(message.getWebsiteName());
-            //获取真实websiteName
-            String realebsiteName = TaskUtils.getRealWebsiteName(message.getWebsiteName());
+            Boolean isOperator = WebsiteUtils.isOperator(loginInfo.getWebsiteName());
             if (isOperator) {
                 OperatorParam param = new OperatorParam();
                 param.setTaskId(taskId);
                 param.setFormType(FormType.LOGIN);
-                param.setMobile(Long.valueOf(message.getAccountNo()));
-                param.setWebsiteName(realebsiteName);
-                param.getExtral().put(AttributeKey.USERNAME, message.getAccountNo());
-                param.getExtral().put(AttributeKey.GROUP_CODE, message.getGroupCode());
-                param.getExtral().put(AttributeKey.GROUP_NAME, message.getGroupName());
+                param.setMobile(Long.valueOf(loginInfo.getAccountNo()));
+                param.setWebsiteName(websiteName);
+                param.getExtral().put(AttributeKey.USERNAME, loginInfo.getAccountNo());
+                param.getExtral().put(AttributeKey.GROUP_CODE, loginInfo.getGroupCode());
+                param.getExtral().put(AttributeKey.GROUP_NAME, loginInfo.getGroupName());
                 crawlerOperatorService.init(param);
             } else {
                 //初始化监控信息
-                monitorService.initTask(taskId, realebsiteName, message.getAccountNo());
+                monitorService.initTask(taskId, websiteName, loginInfo.getAccountNo());
                 //缓存task基本信息
-                TaskUtils.initTaskShare(taskId, message.getWebsiteName());
-                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, message.getAccountNo());
-                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, message.getGroupCode());
-                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, message.getGroupName());
+                TaskUtils.initTaskShare(taskId, loginInfo.getWebsiteName());
+                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, loginInfo.getAccountNo());
+                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, loginInfo.getGroupCode());
+                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, loginInfo.getGroupName());
                 //这里电商,邮箱,老运营商
-                Website website = websiteConfigService.getWebsiteByWebsiteName(realebsiteName);
+                Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
                 //保存taskId对应的website
                 redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
-                monitorService.sendTaskLog(taskId, realebsiteName, "爬虫-->启动-->成功");
+                monitorService.sendTaskLog(taskId, websiteName, "爬虫-->启动-->成功");
                 //启动爬虫
-                collector.processMessage(message);
+                collector.processMessage(buildCollectorMessage(loginInfo));
             }
         } else {
             //这里电商,邮箱,老运营商不会有第二次消息,这里只处理运营商登录成功消息
-            Boolean isOperator = WebsiteUtils.isOperator(message.getWebsiteName());
+            Boolean isOperator = WebsiteUtils.isOperator(loginInfo.getWebsiteName());
             //非运营商或者老运营商,重复消息不处理
             if (!isOperator) {
-                logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, message.getWebsiteName());
+                logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, loginInfo.getWebsiteName());
                 return true;
             }
             //如果是登录成功消息就启动爬虫
             String taskStage = RedisUtils.get(taskStageKey);
             if (StringUtils.equals(taskStage, TaskStageEnum.LOGIN_SUCCESS.getStatus())) {
-                monitorService.sendTaskLog(taskId, message.getWebsiteName(), "爬虫-->启动-->成功");
+                monitorService.sendTaskLog(taskId, loginInfo.getWebsiteName(), "爬虫-->启动-->成功");
                 RedisUtils.set(taskStageKey, TaskStageEnum.CRAWLER_START.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
-                String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
-                //之后运行还是数据库真实websiteName
-                message.setWebsiteName(websiteName);
-                collector.processMessage(message);
+                collector.processMessage(buildCollectorMessage(loginInfo));
             }
         }
         return true;
     }
 
-    public CollectorMessage buildCollectorMessage(String msg) {
+    public CollectorMessage buildCollectorMessage(LoginMessage loginInfo) {
         CollectorMessage collectorMessage = new CollectorMessage();
         try {
-            LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
             if (loginInfo != null) {
                 collectorMessage.setTaskId(loginInfo.getTaskId());
                 collectorMessage.setWebsiteName(loginInfo.getWebsiteName());
