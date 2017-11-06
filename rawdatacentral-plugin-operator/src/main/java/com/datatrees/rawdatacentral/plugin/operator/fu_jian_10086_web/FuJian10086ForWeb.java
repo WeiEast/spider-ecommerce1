@@ -156,11 +156,6 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "https://fj.ac.10086.cn/Login";
             String templateData = "type={}&backurl={}&errorurl={}&spid={}&RelayState={}&mobileNum={}&servicePassword={}&smsValidCode=&validCode" +
                     "={}&Password-type=&button=%E7%99%BB++%E5%BD%95";
-<<<<<<< HEAD
-            String data = TemplateUtils
-                    .format(templateData, loginType, URLEncoder.encode(backUrl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid,
-                            URLEncoder.encode(relayStateId, "UTF-8"), param.getMobile(), encryptPwd, param.getPicCode());
-=======
             if (StringUtils.isNotBlank(backUrl)) {
                 backUrl = URLEncoder.encode(backUrl, "UTF-8");
             }
@@ -172,7 +167,6 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             }
             String data = TemplateUtils
                     .format(templateData, loginType, backUrl, errorurl, spid, relayStateId, param.getMobile(), encryptPwd, param.getPicCode());
->>>>>>> 190483664f6203d5fb3acee68bc3cd51bcef17fa
             response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10086_web_004").setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             //TODO
@@ -186,31 +180,9 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
-<<<<<<< HEAD
-            TaskUtils.addTaskShare(param.getTaskId(),"pageContentTemp",pageContent);
+            TaskUtils.addTaskShare(param.getTaskId(), "pageContentTemp", pageContent);
             logger.info("登陆成功,param={}", param);
             return result.success();
-=======
-
-            templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_005").setFullUrl(templateUrl).invoke();
-            pageContent = response.getPageContent();
-
-            String samLart = PatternUtils.group(pageContent, "callBackurlAll\\('([^']+)'", 1);
-
-            templateUrl = "http://www.fj.10086.cn/my/?SAMLart={}&RelayState=";
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_006").setFullUrl(templateUrl, samLart).setMaxRetry(2)
-                    .invoke();
-            pageContent = response.getPageContent();
-
-            if (StringUtils.isNotBlank(pageContent) && pageContent.contains(param.getMobile().toString())) {
-                logger.info("登陆成功,param={}", param);
-                return result.success();
-            } else {
-                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
->>>>>>> 190483664f6203d5fb3acee68bc3cd51bcef17fa
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
@@ -285,7 +257,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String pageContent = TaskUtils.getTaskShare(param.getTaskId(),"pageContentTemp");
+            String pageContent = TaskUtils.getTaskShare(param.getTaskId(), "pageContentTemp");
             String templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
             response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_005").setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
