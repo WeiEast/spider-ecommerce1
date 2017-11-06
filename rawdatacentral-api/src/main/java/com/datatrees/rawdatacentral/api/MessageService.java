@@ -69,9 +69,15 @@ public interface MessageService {
     boolean sendMessage(String topic, String tags, Object msg, String charsetName);
 
     /**
-     * 发送登录成功消息
+     * 发送消息,启动爬虫
      * @return
      */
-    boolean sendLoginSuccessMessage(Long taskId, String websiteName);
+    boolean sendOperatorCrawlerStartMessage(Long taskId, String websiteName);
+
+    /**
+     * 发送消息,启动登陆后处理
+     * @return
+     */
+    boolean sendOperatorLoginPostMessage(Long taskId, String websiteName);
 
 }

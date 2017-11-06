@@ -17,6 +17,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
@@ -44,7 +45,7 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
 
     @Override
     public String getTag() {
-        return "login_info";
+        return TopicTag.LOGIN_INFO.getTag();
     }
 
     @Override

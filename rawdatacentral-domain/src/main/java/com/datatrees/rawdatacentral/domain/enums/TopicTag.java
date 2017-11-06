@@ -2,6 +2,9 @@ package com.datatrees.rawdatacentral.domain.enums;
 
 public enum TopicTag {
 
+    LOGIN_INFO("login_info", "登陆准备"),
+    OPERATOR_CRAWLER_START("operator_crawler_start", "运营商爬虫"),
+    OPERATOR_LOGIN_POST("operator_login_post", "运营商登陆后"),
     TASK_INIT("task_init", "task初始化"),
     TASK_COMPLETE("task_complete", "task完成"),
     TASK_ERROR("task_error", "task错误信息"),

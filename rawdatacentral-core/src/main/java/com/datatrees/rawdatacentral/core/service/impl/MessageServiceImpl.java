@@ -9,11 +9,10 @@ import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
-import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
+import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.SendStatus;
@@ -126,15 +125,22 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public boolean sendLoginSuccessMessage(Long taskId, String websiteName) {
-        CheckUtils.checkNotNull(taskId, "invalid taskId");
-        CheckUtils.checkNotBlank(websiteName, "blank websiteName");
-        LoginMessage loginMessage = new LoginMessage();
-        loginMessage.setTaskId(taskId);
-        loginMessage.setWebsiteName(websiteName);
+    public boolean sendOperatorCrawlerStartMessage(Long taskId, String websiteName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
         String cookieString = TaskUtils.getCookieString(taskId);
-        loginMessage.setCookie(cookieString);
-        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), "login_info", loginMessage, DEFAULT_CHARSET_NAME);
+        map.put(AttributeKey.COOKIE, cookieString);
+        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_CRAWLER_START.getTag(), map, DEFAULT_CHARSET_NAME);
+        return true;
+    }
+
+    @Override
+    public boolean sendOperatorLoginPostMessage(Long taskId, String websiteName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
+        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_LOGIN_POST.getTag(), map, DEFAULT_CHARSET_NAME);
         return true;
     }
 

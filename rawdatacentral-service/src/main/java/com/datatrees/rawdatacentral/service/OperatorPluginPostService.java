@@ -1,0 +1,20 @@
+package com.datatrees.rawdatacentral.service;
+
+import java.util.Map;
+
+import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.domain.result.HttpResult;
+
+/**
+ * 运营商登陆登陆后处理接口
+ * Created by zhouxinghai on 2017/7/13.
+ */
+public interface OperatorPluginPostService extends OperatorPluginService {
+
+    /**
+     * 登陆后处理接口
+     * @return
+     */
+    HttpResult<Map<String, Object>> loginPost(OperatorParam param);
+
+}

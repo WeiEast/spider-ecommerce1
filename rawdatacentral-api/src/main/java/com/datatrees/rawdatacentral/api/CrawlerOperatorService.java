@@ -69,4 +69,12 @@ public interface CrawlerOperatorService {
      * @return
      */
     HttpResult<Object> defineProcess(OperatorParam param);
+
+    /**
+     * 校验基本参数
+     * taskId,websiteName,mobile
+     * @param param
+     * @return
+     */
+    HttpResult<Map<String, Object>> checkParams(OperatorParam param);
 }
