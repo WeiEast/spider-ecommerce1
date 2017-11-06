@@ -40,7 +40,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://zj.ac.10086.cn/common/image.jsp";
+            String templateUrl = "https://zj.ac.10086.cn/login";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "zhe_jiang_10086_web_001")
                     .setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
