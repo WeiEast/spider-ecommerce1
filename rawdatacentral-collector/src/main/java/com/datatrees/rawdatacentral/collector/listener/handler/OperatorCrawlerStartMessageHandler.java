@@ -35,7 +35,7 @@ public class OperatorCrawlerStartMessageHandler extends AbstractMessageHandler {
 
     @Override
     public String getBizType() {
-        return "启动爬虫";
+        return "处理爬虫启动消息";
     }
 
     @Override
