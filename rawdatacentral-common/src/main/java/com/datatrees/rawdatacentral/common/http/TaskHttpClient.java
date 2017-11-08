@@ -396,9 +396,9 @@ public class TaskHttpClient {
             String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
             if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("wwww")) {
                 if (redirectUrl.startsWith("/")) {
-                    redirectUrl = request.getProtocol() + "://" + request.getHost();
+                    redirectUrl = request.getProtocol() + "://" + request.getHost() + redirectUrl;
                 } else {
-                    redirectUrl = request.getProtocol() + "://" + request.getHost() + "/";
+                    redirectUrl = request.getProtocol() + "://" + request.getHost() + "/" + redirectUrl;
                 }
 
             }
