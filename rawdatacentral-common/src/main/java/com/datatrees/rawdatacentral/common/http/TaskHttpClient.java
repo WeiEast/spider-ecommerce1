@@ -238,6 +238,13 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setDefaultResponseCharset(String defaultResponseCharset) {
+        if (StringUtils.isNotBlank(defaultResponseCharset)) {
+            request.setDefaultResponseCharset(defaultResponseCharset);
+        }
+        return this;
+    }
+
     public TaskHttpClient addExtralCookie(String domain, String name, String value) {
         BasicClientCookie cookie = new BasicClientCookie(name, value);
         cookie.setDomain(domain);

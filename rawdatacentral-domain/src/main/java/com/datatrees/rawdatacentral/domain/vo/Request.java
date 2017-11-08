@@ -69,6 +69,8 @@ public class Request implements Serializable {
     private String host;
     @JSONField(ordinal = 16)
     private String protocol;
+    @JSONField(ordinal = 16)
+    private String defaultResponseCharset = "UTF-8";
 
     public Request() {
         addHead(HttpHeadKey.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0");
@@ -297,6 +299,14 @@ public class Request implements Serializable {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getDefaultResponseCharset() {
+        return defaultResponseCharset;
+    }
+
+    public void setDefaultResponseCharset(String defaultResponseCharset) {
+        this.defaultResponseCharset = defaultResponseCharset;
     }
 
     @Override
