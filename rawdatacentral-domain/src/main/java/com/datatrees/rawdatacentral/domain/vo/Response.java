@@ -13,8 +13,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 public class Response implements Serializable {
 
-    @JSONField(serialize = false)
-    private static final String DEFAULT_CHARSET = "UTF-8";
     @JSONField(ordinal = 1)
     private int statusCode;
     @JSONField(ordinal = 2)
@@ -141,7 +139,7 @@ public class Response implements Serializable {
             if (null != charset) {
                 return new String(response, charset);
             }
-            return new String(response, DEFAULT_CHARSET);
+            return new String(response, request.getDefaultResponseCharset());
         } catch (Exception e) {
             throw new RuntimeException("getPateContent error,charsetName=UTF-8,request=" + request, e);
         }
