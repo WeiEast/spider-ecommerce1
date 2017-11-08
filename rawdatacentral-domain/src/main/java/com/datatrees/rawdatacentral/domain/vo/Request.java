@@ -45,28 +45,30 @@ public class Request implements Serializable {
     private long requestTimestamp;
     @JSONField(ordinal = 10)
     private Map<String, String> requestCookies = new HashMap<>();
-    @JSONField(ordinal = 11)
-    private String protocol;
     @JSONField(ordinal = 12)
-    private String        contentType    = "application/x-www-form-urlencoded; charset=UTF-8";
+    private String              contentType    = "application/x-www-form-urlencoded; charset=UTF-8";
     @JSONField(ordinal = 12)
-    private Charset       charset        = Charset.forName("ISO-8859-1");
+    private Charset             charset        = Charset.forName("ISO-8859-1");
     @JSONField(ordinal = 13)
-    private RequestType   type           = RequestType.GET;
+    private RequestType         type           = RequestType.GET;
     @JSONField(ordinal = 9)
-    private int           maxRetry       = 1;
+    private int                 maxRetry       = 1;
     @JSONField(ordinal = 10)
-    private AtomicInteger retry          = new AtomicInteger(0);
+    private AtomicInteger       retry          = new AtomicInteger(0);
     @JSONField(ordinal = 11)
-    private int           connectTimeout = 10000;
+    private int                 connectTimeout = 10000;
     @JSONField(ordinal = 12)
-    private int           socketTimeout  = 20000;
+    private int                 socketTimeout  = 20000;
     @JSONField(ordinal = 13)
     private String  requestBodyContent;
     @JSONField(ordinal = 14)
     private Boolean proxyEnable;
     @JSONField(ordinal = 15)
     private Map<String, String> extralCookie = new HashMap<>();
+    @JSONField(ordinal = 16)
+    private String host;
+    @JSONField(ordinal = 16)
+    private String protocol;
 
     public Request() {
         addHead(HttpHeadKey.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0");
@@ -287,6 +289,14 @@ public class Request implements Serializable {
             }
         }
         return false;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     @Override

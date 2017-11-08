@@ -299,6 +299,8 @@ public class TaskHttpClient {
             request.setRequestTimestamp(System.currentTimeMillis());
 
             String host = client.getURI().getHost();
+            request.setHost(host);
+            request.setProtocol(url.startsWith("https") ? "https" : "http");
 
             List<Cookie> cookies = TaskUtils.getCookies(taskId, host);
             BasicCookieStore cookieStore = TaskUtils.buildBasicCookieStore(cookies);
@@ -392,6 +394,14 @@ public class TaskHttpClient {
         }
         if (statusCode >= 300 && statusCode <= 399) {
             String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
+            if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("wwww")) {
+                if (redirectUrl.startsWith("/")) {
+                    redirectUrl = request.getProtocol() + "://" + request.getHost();
+                } else {
+                    redirectUrl = request.getProtocol() + "://" + request.getHost() + "/";
+                }
+
+            }
             logger.info("http has redirect,taskId={},websiteName={},type={},from={} to redirectUrl={}", taskId, request.getWebsiteName(),
                     request.getType(), request.getUrl(), redirectUrl);
             response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, request.getRemarkId(), true).setUrl(redirectUrl)
