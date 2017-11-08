@@ -59,6 +59,7 @@ public class MessageServiceImpl implements MessageService {
         msg.put(AttributeKey.DIRECTIVE_ID, directiveId);
         msg.put(AttributeKey.DIRECTIVE, directive);
         msg.put(AttributeKey.REMARK, remark);
+        msg.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         sendMessage(TopicEnum.TASK_NEXT_DIRECTIVE.getCode(), msg, DEFAULT_CHARSET_NAME);
         return directiveId;
     }
