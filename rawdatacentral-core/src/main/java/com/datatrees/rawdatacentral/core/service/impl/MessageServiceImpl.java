@@ -49,6 +49,11 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public String sendDirective(Long taskId, String directive, String remark) {
+        return sendDirective(taskId, directive, remark, null);
+    }
+
+    @Override
+    public String sendDirective(Long taskId, String directive, String remark, String formType) {
         if (null == taskId || StringUtils.isBlank(directive)) {
             logger.error("invalid param taskId={},directive={}", taskId, directive);
             return null;
@@ -59,6 +64,7 @@ public class MessageServiceImpl implements MessageService {
         msg.put(AttributeKey.DIRECTIVE_ID, directiveId);
         msg.put(AttributeKey.DIRECTIVE, directive);
         msg.put(AttributeKey.REMARK, remark);
+        msg.put(AttributeKey.FORM_TYPE, formType);
         msg.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         sendMessage(TopicEnum.TASK_NEXT_DIRECTIVE.getCode(), msg, DEFAULT_CHARSET_NAME);
         return directiveId;
