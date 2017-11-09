@@ -274,7 +274,7 @@ public class RedisUtils extends RedisConfig {
         }
     }
 
-    public static long incr(byte[] key) {
+    public static long incr(String key) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.incr(key);
         }
