@@ -192,6 +192,17 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
     }
 
     private HttpResult<Map<String, Object>> validatePicCodeForUserInfo(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        try {
+            logger.info("个人信息-->图片验证码-->校验成功,param={}", param);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("个人信息-->图片验证码-->校验失败,param={}", param, e);
+            return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> refeshSmsCodeForUserInfo(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
@@ -213,25 +224,14 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_008").setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             if (StringUtils.equals(response.getPageContent().trim(), "0")) {
-                logger.info("个人信息-->图片验证码-->校验成功,param={}", param);
+                logger.info("个人信息-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("个人信息-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.VALIDATE_PIC_CODE_UNEXPECTED_RESULT);
+                logger.error("个人信息-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.REFESH_SMS_ERROR);
             }
         } catch (Exception e) {
-            logger.error("个人信息-->图片验证码-->校验失败,param={},response={}", param, response, e);
-            return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
-        }
-    }
-
-    private HttpResult<Map<String, Object>> refeshSmsCodeForUserInfo(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
-        try {
-            logger.info("个人信息-->短信验证码-->刷新成功,param={}", param);
-            return result.success();
-        } catch (Exception e) {
-            logger.error("个人信息-->短信验证码-->刷新失败,param={}", param, e);
+            logger.error("个人信息-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
@@ -333,6 +333,17 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
     }
 
     private HttpResult<Map<String, Object>> validatePicCodeForBillDetail(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        try {
+            logger.info("详单-->图片验证码-->校验成功,param={}", param);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("详单-->图片验证码-->校验失败,param={}", param, e);
+            return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
@@ -354,25 +365,14 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_014").setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             if (StringUtils.equals(response.getPageContent().trim(), "0")) {
-                logger.info("详单-->图片验证码-->校验成功,param={}", param);
+                logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("详单-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.VALIDATE_PIC_CODE_UNEXPECTED_RESULT);
+                logger.error("详单-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.REFESH_SMS_ERROR);
             }
         } catch (Exception e) {
-            logger.error("详单-->图片验证码-->校验失败,param={},response={}", param, response, e);
-            return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
-        }
-    }
-
-    private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = new HttpResult<>();
-        try {
-            logger.info("详单-->短信验证码-->刷新成功,param={}", param);
-            return result.success();
-        } catch (Exception e) {
-            logger.error("详单-->短信验证码-->刷新失败,param={}", param, e);
+            logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
