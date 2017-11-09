@@ -2,6 +2,7 @@ package com.datatrees.crawler.core.processor.service.impl;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
@@ -26,6 +27,11 @@ public class TaskHttpServiceImpl extends ServiceBase {
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         String websiteName = context.getWebsiteName();
+        Properties properties = context.getSearchConfig().getProperties();
+        String encoding = null;
+        if (null != properties) {
+            encoding = properties.getEncoding();
+        }
 
         LinkNode linkNode = RequestUtil.getCurrentUrl(request);
         String linkUrl = linkNode.getUrl();
@@ -47,6 +53,9 @@ public class TaskHttpServiceImpl extends ServiceBase {
                 .addHeaders(linkNode.getHeaders()).setUrl(url);
         if (StringUtils.isNotBlank(requestBody)) {
             client.setRequestBody(requestBody);
+        }
+        if (StringUtils.isNotBlank(encoding)) {
+            client.setDefaultResponseCharset(encoding);
         }
         com.datatrees.rawdatacentral.domain.vo.Response invoke = client.invoke();
         logger.info("task http service do taskId={},websiteName={},linkUrl={},status={}", taskId, websiteName, linkUrl, invoke.getStatusCode());
