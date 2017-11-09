@@ -185,7 +185,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
         if (null != param && null != param.getTaskId()) {
-            TaskUtils.removeTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE);
+            TaskUtils.removeTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()));
         }
         HttpResult<Map<String, Object>> result = checkParams(param);
         if (!result.getStatus()) {
@@ -198,6 +198,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         result = getPluginService(param.getWebsiteName()).validatePicCode(param);
+        if (result.getStatus()) {
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()), param.getPicCode());
+        }
         String log = TemplateUtils.format("{}-->校验图片验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(taskId, websiteName, log, result);
         return result;
@@ -306,10 +309,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             if (StringUtils.isBlank(param.getRealName()) && map.containsKey(AttributeKey.REAL_NAME)) {
                 param.setRealName(map.get(AttributeKey.REAL_NAME));
             }
-            //插件先进行图片验证码,再进行短信校验
-            if (StringUtils.equals(FormType.VALIDATE_BILL_DETAIL, param.getFormType()) && StringUtils.isBlank(param.getPicCode()) &&
-                    map.containsKey(RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()))) {
-                param.setPicCode(map.get(RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType())));
+            if (StringUtils.isBlank(param.getPicCode())) {
+                String picCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()));
+                if (StringUtils.isNotBlank(picCode)) {
+                    param.setPicCode(picCode);
+                }
             }
         }
     }
