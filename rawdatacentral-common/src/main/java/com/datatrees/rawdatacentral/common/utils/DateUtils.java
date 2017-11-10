@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +117,9 @@ public class DateUtils {
         if (count > 0) {
             usedTime -= TimeUnit.SECONDS.toMillis(count);
             sb.append(count).append("秒");
+        }
+        if (StringUtils.isBlank(sb)) {
+            sb.append(usedTime).append("毫秒");
         }
         return sb.toString();
     }
