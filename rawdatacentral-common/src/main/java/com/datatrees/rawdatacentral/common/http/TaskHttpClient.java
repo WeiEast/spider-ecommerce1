@@ -325,7 +325,7 @@ public class TaskHttpClient {
             if (request.getProxyEnable()) {
                 Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
                 if (null != proxyConfig) {
-                    proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
+                    proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()));
                     request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
                 }
             }
@@ -401,7 +401,7 @@ public class TaskHttpClient {
         }
         if (statusCode >= 300 && statusCode <= 399) {
             String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
-            if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("wwww")) {
+            if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("www")) {
                 if (redirectUrl.startsWith("/")) {
                     redirectUrl = request.getProtocol() + "://" + request.getHost() + redirectUrl;
                 } else {
