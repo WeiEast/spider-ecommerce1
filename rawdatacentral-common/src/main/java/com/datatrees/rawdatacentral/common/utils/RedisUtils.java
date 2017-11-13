@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.common.utils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.common.config.RedisConfig;
@@ -277,6 +278,19 @@ public class RedisUtils extends RedisConfig {
     public static long incr(String key) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.incr(key);
+        }
+    }
+
+    public static void sadd(final String key, String value, int seconds) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.sadd(key, value);
+            jedis.expire(key, timeout);
+        }
+    }
+
+    public static Set<String> smembers(final String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.smembers(key);
         }
     }
 
