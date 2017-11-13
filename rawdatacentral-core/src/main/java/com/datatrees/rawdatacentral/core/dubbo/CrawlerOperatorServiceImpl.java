@@ -198,7 +198,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         result = getPluginService(param.getWebsiteName()).validatePicCode(param);
-        if (result.getStatus()) {
+        if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()), param.getPicCode());
         }
         String log = TemplateUtils.format("{}-->校验图片验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
