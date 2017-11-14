@@ -38,13 +38,10 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        Response response = null;
         try {
-            String templateUrl = "http://gd.189.cn/common/login.jsp?UATicket=-1&loginOldUri=";
-            response = TaskHttpClient.create(param, RequestType.GET, "guang_dong_10000_web_000").setFullUrl(templateUrl).invoke();
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化失败,param={},response={}", param, response, e);
+            logger.error("登录-->初始化失败,param={}", param, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
@@ -203,24 +200,24 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String id = StringUtils.substring(String.valueOf((int) (Math.random() * 10001) + 10000), 1, 5) + "_" +
-                    String.valueOf(System.currentTimeMillis());
+            //String id = StringUtils.substring(String.valueOf((int) (Math.random() * 10001) + 10000), 1, 5) + "_" +
+            //        String.valueOf(System.currentTimeMillis());
             String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "TelNumAttribution");
-            String phoneType = TaskUtils.getTaskContext(param.getTaskId(), "ServiceType");
+            //String phoneType = TaskUtils.getTaskContext(param.getTaskId(), "ServiceType");
             String templateUrl = "https://gd.189.cn/volidate/validateSendMsg.action";
             String templateData = "number="+param.getMobile()+"&latnId="+areaCode+"&typeCode=LIST_QRY";
             response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_006").setFullUrl(templateUrl)
                     .setRequestBody(templateData).invoke();
             String pageContent = response.getPageContent();
             if(StringUtils.containsNone(pageContent,"允许发送短信")){
-                    logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
-                    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+                logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
             templateUrl = "https://gd.189.cn/volidate/insertSendSmg.action";
             templateData = "validaterResult=0&resultmsg=%E5%85%81%E8%AE%B8%E5%8F%91%E9%80%81%E7%9F%AD%E4%BF%A1&YXBS=LIST_QRY&number="+param.getMobile()+"&latnId="+areaCode;
             response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_007").setFullUrl(templateUrl)
                     .setRequestBody(templateData).invoke();
-             pageContent = response.getPageContent();
+            pageContent = response.getPageContent();
             if(StringUtils.contains(pageContent,"保存信息成功")){
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
@@ -228,25 +225,35 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
                 logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
-
-            //String templateUrl = "http://gd.189.cn/dwr/exec/commonAjax.getRandomCodeOper.dwr";
-            //String templateData = "callCount=1&c0-scriptName=commonAjax&c0-methodName=getRandomCodeOper&c0-id={}&c0-param0=boolean:false&c0-param1" +
-            //        "=boolean:false&c0-param2=string:{}&c0-param3=string:{}&c0-param4=string:{}&xml=true";
-            //String data = TemplateUtils.format(templateData, id, areaCode, param.getMobile(), phoneType);
-            //String referer = "http://gd.189.cn/service/home/query/xd_index.html";
-            //response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_006").setFullUrl(templateUrl)
-            //        .setRequestBody(data, ContentType.TEXT_PLAIN).setReferer(referer).invoke();
-            //if (StringUtils.contains(response.getPageContent(), "DWREngine._handleResponse")) {
-            //    logger.info("详单-->短信验证码-->刷新成功,param={}", param);
-            //    return result.success();
-            //} else {
-            //    logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
-            //    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
-            //}
         } catch (Exception e) {
             logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
+        //HttpResult<Map<String, Object>> result = new HttpResult<>();
+        //Response response = null;
+        //try {
+        //    String id = StringUtils.substring(String.valueOf((int) (Math.random() * 10001) + 10000), 1, 5) + "_" +
+        //            String.valueOf(System.currentTimeMillis());
+        //    String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "TelNumAttribution");
+        //    String phoneType = TaskUtils.getTaskContext(param.getTaskId(), "ServiceType");
+        //    String templateUrl = "http://gd.189.cn/dwr/exec/commonAjax.getRandomCodeOper.dwr";
+        //    String templateData = "callCount=1&c0-scriptName=commonAjax&c0-methodName=getRandomCodeOper&c0-id={}&c0-param0=boolean:false&c0-param1" +
+        //            "=boolean:false&c0-param2=string:{}&c0-param3=string:{}&c0-param4=string:{}&xml=true";
+        //    String data = TemplateUtils.format(templateData, id, areaCode, param.getMobile(), phoneType);
+        //    String referer = "http://gd.189.cn/service/home/query/xd_index.html";
+        //    response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_006").setFullUrl(templateUrl)
+        //            .setRequestBody(data, ContentType.TEXT_PLAIN).setReferer(referer).invoke();
+        //    if (StringUtils.contains(response.getPageContent(), "DWREngine._handleResponse")) {
+        //        logger.info("详单-->短信验证码-->刷新成功,param={}", param);
+        //        return result.success();
+        //    } else {
+        //        logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
+        //        return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+        //    }
+        //} catch (Exception e) {
+        //    logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+        //    return result.failure(ErrorCode.REFESH_SMS_ERROR);
+        //}
     }
 
     private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
