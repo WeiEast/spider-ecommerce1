@@ -56,8 +56,8 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
         //支付宝或者淘宝短信取消
         if (StringUtils.equals("alipay.com", websiteName) || StringUtils.equals("taobao.com", websiteName)) {
             logger.warn("还未破解短信,taskId={},websiteName={}", taskId, websiteName);
-            monitorService.sendTaskLog(taskId, "支付宝/淘宝目前短信还未破解,暂不支持,任务即将终止");
-            throw new ResultEmptyException("爬取失败,还未破解短信");
+            monitorService.sendTaskLog(taskId, "支付宝/淘宝目前短信还未破解,暂不支持,忽略错误,继续跑");
+            return resultMap;
         }
 
         //当前重试次数
