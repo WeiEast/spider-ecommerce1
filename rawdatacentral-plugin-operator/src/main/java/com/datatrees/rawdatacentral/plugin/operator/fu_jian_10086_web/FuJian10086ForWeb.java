@@ -239,6 +239,16 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_010").setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
 
+            if (!StringUtils.contains(pageContent, param.getMobile().toString()) && StringUtils.contains(pageContent, "window.location.href")) {
+                templateUrl = PatternUtils.group(pageContent, "href=\"([^\"]+)\"", 1);
+                if (!StringUtils.contains(templateUrl, "http://www.fj.10086.cn")) {
+                    templateUrl = "http://www.fj.10086.cn" + templateUrl;
+                }
+                TaskUtils.addTaskShare(param.getTaskId(), "basicInfoUrl", templateUrl);
+                response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_011").setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+            }
+
             if (pageContent.contains(param.getMobile().toString())) {
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
