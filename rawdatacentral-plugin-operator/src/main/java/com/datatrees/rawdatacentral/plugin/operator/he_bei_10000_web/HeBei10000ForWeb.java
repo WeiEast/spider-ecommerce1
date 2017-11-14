@@ -1,6 +1,5 @@
 package com.datatrees.rawdatacentral.plugin.operator.he_bei_10000_web;
 
-import java.net.URLEncoder;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
@@ -140,22 +139,15 @@ public class HeBei10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "areaCode");
-            String loginType = TaskUtils.getTaskContext(param.getTaskId(), "loginType");
-            String realname = TaskUtils.getTaskContext(param.getTaskId(), "realname");
-            String identityCode = TaskUtils.getTaskContext(param.getTaskId(), "identityCode");
-            String flag_QUERYSTR = TaskUtils.getTaskContext(param.getTaskId(), "flag_QUERYSTR");
             String referer = "http://he.189.cn/service/bill/feeQuery_iframe.jsp?SERV_NO=SHQD1&fastcode=00380407&cityCode=he";
-            String templateUrl = "http://he.189.cn/public/pwValid.jsp";
-            String templateData = "_FUNC_ID_=WB_VALID_RANDPWD&CustName={}&IdentityCode={}&ACC_NBR={}&AREA_CODE={}&LOGIN_TYPE={}&MOBILE_FLAG" +
-                    "=&MOBILE_LOGON_NAME=&MOBILE_CODE={}&FLAG_QUERYSTR={}";
-            String data = TemplateUtils
-                    .format(templateData, URLEncoder.encode(realname, "UTF-8"), identityCode, param.getMobile(), areaCode, loginType,
-                            param.getSmsCode(), flag_QUERYSTR);
+            String[] urls = TaskUtils.getTaskContext(param.getTaskId(), "callUrl").split("\"");
+            String templateUrl = urls[0];
+            String data = TemplateUtils.format(urls[1], param.getSmsCode());
             response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, "<actionFlag>0</actionFlag>")) {
+            if (!StringUtils.contains(pageContent, "随机码不正确,请重新输入")) {
+                TaskUtils.addTaskShare(param.getTaskId(), "callDetails", pageContent);
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
