@@ -17,7 +17,7 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisUtils extends RedisConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisUtils.class);
-    private static JedisPool jedisPool;
+    protected static JedisPool jedisPool;
 
     public static void init() {
         try {
@@ -285,6 +285,12 @@ public class RedisUtils extends RedisConfig {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.sadd(key, value);
             jedis.expire(key, timeout);
+        }
+    }
+
+    public static void sadd(final String key, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.sadd(key, value);
         }
     }
 

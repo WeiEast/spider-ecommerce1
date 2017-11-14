@@ -62,4 +62,10 @@ public interface WebsiteOperatorService {
      */
     void updateEnable(String websiteName, Boolean enable);
 
+    /**
+     * 查询所有禁用版本
+     * @return
+     */
+    List<WebsiteOperator> queryDisable();
+
 }
