@@ -10,12 +10,10 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
-import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -224,6 +222,7 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
             loginOut(param, templateUrl);
+            loginOutForBillDetails(param, templateUrl);
             logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
@@ -298,6 +297,7 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_006").setFullUrl(templateUrl).invoke();
 
             loginOut(param, templateUrl);
+            loginOutForBillDetails(param, templateUrl);
             logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
@@ -332,7 +332,8 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
                 response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_009").setFullUrl(templateUrl).setReferer(referer)
                         .invoke();
 
-                templateUrl = "http://service.jx.10086.cn/service/showBillDetail!importExcel.action?menuid=00890201&billType=202&startDate=20171101&endDate=20171109";
+                templateUrl
+                        = "http://service.jx.10086.cn/service/showBillDetail!importExcel.action?menuid=00890201&billType=202&startDate=20171101&endDate=20171109";
                 response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_020").setFullUrl(templateUrl).invoke();
 
                 templateUrl = "http://service.jx.10086.cn/service/showBillDetail!queryIndex" +
@@ -352,11 +353,13 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
                         ".action?requestStartTime=&menuid=00890104&queryMonth=201710&s={}";
                 response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_014").setFullUrl(templateUrl, Math.random()).invoke();
                 loginOut(param, templateUrl);
+                loginOutForBillDetails(param, templateUrl);
                 logger.error("详单-->短信验证码正确,param={}", param);
                 return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
 
             } else {
                 loginOut(param, templateUrl);
+                loginOutForBillDetails(param, templateUrl);
                 logger.error("详单-->短信验证码错误,param={}", param);
                 return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
             }
@@ -369,6 +372,7 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
             //}
         } catch (Exception e) {
             loginOut(param, templateUrl);
+            loginOutForBillDetails(param, templateUrl);
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
@@ -403,9 +407,20 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
         String pageContent = response.getPageContent();
         templateUrl = "http://www.jx.10086.cn/";
         response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody("display=0").invoke();
-
-        templateUrl = "http://www1.10086.cn/service/sso/checkuserloginstatus.jsp?callback=checkuserloginstatuscallback&_={}";
-        TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+        RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
         logger.info("退出登录-->成功");
     }
+
+    private void loginOutForBillDetails(OperatorParam param, String referer) {
+        String templateUrl = "https://jx.ac.10086.cn/logout";
+        Response response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).setReferer(referer).invoke();
+        String pageContent = response.getPageContent();
+        templateUrl = "http://www.jx.10086.cn/";
+        response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody("display=0").invoke();
+        templateUrl = "http://www1.10086.cn/service/sso/logout.jsp?channelID=12027&backUrl=http%3A%2F%2Fwww.10086.cn%2Fjx%2Findex_791_791.html";
+        response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+        RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
+        logger.info("退出登录-->成功");
+    }
+
 }
