@@ -312,23 +312,10 @@ public class TaskUtils {
     public static void initTaskShare(Long taskId, String websiteName) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
 
-        String realWebsiteName = getRealWebsiteName(websiteName);
-        RedisUtils.hset(redisKey, AttributeKey.WEBSITE_NAME, realWebsiteName);
+        RedisUtils.hset(redisKey, AttributeKey.WEBSITE_NAME, websiteName);
 
         RedisUtils.expire(redisKey, RedisKeyPrefixEnum.TASK_SHARE.toSeconds());
         logger.info("initTaskShare success taskId={},websiteName={}", taskId, websiteName);
-    }
-
-    /**
-     * 获取真实的websiteName
-     * @param websiteName 可能是伪装的websiteName
-     * @return
-     */
-    public static String getRealWebsiteName(String websiteName) {
-        if (StringUtils.startsWith(websiteName, RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.getPrefix())) {
-            return RedisKeyPrefixEnum.WEBSITE_OPERATOR_RENAME.parsePostfix(websiteName);
-        }
-        return websiteName;
     }
 
     public static void initTaskContext(Long taskId, Map<String, Object> context) {

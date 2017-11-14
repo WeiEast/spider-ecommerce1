@@ -53,7 +53,7 @@ public class OperatorController {
 
     @RequestMapping("/refeshPicCode")
     public Object refeshPicCode(OperatorParam param) {
-        return crawlerOperatorService.refeshPicCode(param);
+        return crawlerOperatorService.refeshPicCode(param).getData().get("picCode");
     }
 
     @RequestMapping("/refeshPicCodeAndDisplay")

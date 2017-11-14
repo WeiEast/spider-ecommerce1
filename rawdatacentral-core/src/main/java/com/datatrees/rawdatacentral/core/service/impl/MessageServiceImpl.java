@@ -5,19 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.rocketmq.client.producer.MQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.client.producer.SendStatus;
-import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
-import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
+import com.datatrees.rawdatacentral.domain.enums.TopicTag;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -34,9 +33,9 @@ public class MessageServiceImpl implements MessageService {
      */
     private static final String DEFAULT_CHARSET_NAME = "UTF-8";
     @Resource
-    private MQProducer   producer;
+    private DefaultMQProducer defaultMQProducer;
     @Resource
-    private RedisService redisService;
+    private RedisService      redisService;
 
     @Override
     public boolean sendTaskLog(Long taskId, String msg, String errorDetail) {
@@ -50,6 +49,11 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public String sendDirective(Long taskId, String directive, String remark) {
+        return sendDirective(taskId, directive, remark, null);
+    }
+
+    @Override
+    public String sendDirective(Long taskId, String directive, String remark, String formType) {
         if (null == taskId || StringUtils.isBlank(directive)) {
             logger.error("invalid param taskId={},directive={}", taskId, directive);
             return null;
@@ -60,6 +64,8 @@ public class MessageServiceImpl implements MessageService {
         msg.put(AttributeKey.DIRECTIVE_ID, directiveId);
         msg.put(AttributeKey.DIRECTIVE, directive);
         msg.put(AttributeKey.REMARK, remark);
+        msg.put(AttributeKey.FORM_TYPE, formType);
+        msg.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         sendMessage(TopicEnum.TASK_NEXT_DIRECTIVE.getCode(), msg, DEFAULT_CHARSET_NAME);
         return directiveId;
     }
@@ -112,7 +118,7 @@ public class MessageServiceImpl implements MessageService {
             if (StringUtils.isNotBlank(tags)) {
                 mqMessage.setTags(tags);
             }
-            SendResult sendResult = producer.send(mqMessage);
+            SendResult sendResult = defaultMQProducer.send(mqMessage);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
                 logger.info("send message success topic={},tags={},content={},charsetName={},msgId={}", topic, tags,
                         content.length() > 100 ? content.substring(0, 100) : content, charsetName, sendResult.getMsgId());
@@ -126,15 +132,22 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public boolean sendLoginSuccessMessage(Long taskId, String websiteName) {
-        CheckUtils.checkNotNull(taskId, "invalid taskId");
-        CheckUtils.checkNotBlank(websiteName, "blank websiteName");
-        LoginMessage loginMessage = new LoginMessage();
-        loginMessage.setTaskId(taskId);
-        loginMessage.setWebsiteName(websiteName);
+    public boolean sendOperatorCrawlerStartMessage(Long taskId, String websiteName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
         String cookieString = TaskUtils.getCookieString(taskId);
-        loginMessage.setCookie(cookieString);
-        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), "login_info", loginMessage, DEFAULT_CHARSET_NAME);
+        map.put(AttributeKey.COOKIE, cookieString);
+        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_CRAWLER_START.getTag(), map, DEFAULT_CHARSET_NAME);
+        return true;
+    }
+
+    @Override
+    public boolean sendOperatorLoginPostMessage(Long taskId, String websiteName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
+        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_LOGIN_POST.getTag(), map, DEFAULT_CHARSET_NAME);
         return true;
     }
 

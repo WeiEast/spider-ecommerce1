@@ -49,11 +49,18 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             if (pageContent.contains("postartifact")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
             }
-
             if (pageContent.contains("postartifact")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
             }
 
+            if (pageContent.contains("replace")) {
+                templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
+                response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+            }
+            if (pageContent.contains("postartifact")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
+            }
             if (pageContent.contains("postartifact")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
             }
@@ -219,6 +226,11 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_005").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
+            if (pageContent.contains("replace")) {
+                templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
+                response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+            }
             if (pageContent.contains("postartifact")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
             }

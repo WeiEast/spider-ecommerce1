@@ -306,6 +306,8 @@ public class TaskHttpClient {
             request.setRequestTimestamp(System.currentTimeMillis());
 
             String host = client.getURI().getHost();
+            request.setHost(host);
+            request.setProtocol(url.startsWith("https") ? "https" : "http");
 
             List<Cookie> cookies = TaskUtils.getCookies(taskId, host);
             BasicCookieStore cookieStore = TaskUtils.buildBasicCookieStore(cookies);
@@ -323,7 +325,7 @@ public class TaskHttpClient {
             if (request.getProxyEnable()) {
                 Proxy proxyConfig = ProxyUtils.getProxy(taskId, request.getWebsiteName());
                 if (null != proxyConfig) {
-                    proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()), request.getProtocol());
+                    proxy = new HttpHost(proxyConfig.getIp(), Integer.parseInt(proxyConfig.getPort()));
                     request.setProxy(proxyConfig.getIp() + ":" + proxyConfig.getPort());
                 }
             }
@@ -399,6 +401,14 @@ public class TaskHttpClient {
         }
         if (statusCode >= 300 && statusCode <= 399) {
             String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
+            if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("www")) {
+                if (redirectUrl.startsWith("/")) {
+                    redirectUrl = request.getProtocol() + "://" + request.getHost() + redirectUrl;
+                } else {
+                    redirectUrl = request.getProtocol() + "://" + request.getHost() + "/" + redirectUrl;
+                }
+
+            }
             logger.info("http has redirect,taskId={},websiteName={},type={},from={} to redirectUrl={}", taskId, request.getWebsiteName(),
                     request.getType(), request.getUrl(), redirectUrl);
             response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, request.getRemarkId(), true).setUrl(redirectUrl)

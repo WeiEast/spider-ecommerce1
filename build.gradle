@@ -39,7 +39,6 @@ ext {
     springIbatisVersion = "2.0.8"
     mysqlConnectorJavaVersion = "6.0.6"
     commonsDbcpVersion = "1.4"
-    rocketmqClientVersion = "3.2.3"
     springDataRedisVersion = "1.8.6.RELEASE"
     jedisVersion = "2.9.0"
     poiVersion = "3.10.1"
@@ -60,6 +59,7 @@ ext {
     commonsCodecVersion="1.10"
     proxyApiVersion="2.0.0-SNAPSHOT"
     jsonPathVersion="2.3.0"
+    rocketmqClientVersion = "4.1.0-incubating"
 }
 
 subprojects {

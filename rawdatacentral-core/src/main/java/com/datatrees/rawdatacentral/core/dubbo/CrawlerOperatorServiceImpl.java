@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
@@ -28,10 +29,7 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.rawdatacentral.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -187,7 +185,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
         if (null != param && null != param.getTaskId()) {
-            TaskUtils.removeTaskShare(param.getTaskId(), AttributeKey.LOGIN_PIC_CODE);
+            TaskUtils.removeTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()));
         }
         HttpResult<Map<String, Object>> result = checkParams(param);
         if (!result.getStatus()) {
@@ -200,6 +198,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         result = getPluginService(param.getWebsiteName()).validatePicCode(param);
+        if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()), param.getPicCode());
+        }
         String log = TemplateUtils.format("{}-->校验图片验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(taskId, websiteName, log, result);
         return result;
@@ -216,7 +217,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 return result;
             }
             Long taskId = param.getTaskId();
-            result = getPluginService(param.getWebsiteName()).submit(param);
+            OperatorPluginService pluginService = getPluginService(param.getWebsiteName());
+            result = pluginService.submit(param);
             if (null != result && result.getStatus()) {
                 if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                     TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
@@ -240,7 +242,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             }
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
-            sendLoginSuccessMessage(result, param, startTime);
+            sendSubmitSuccessMessage(pluginService, result, param, startTime);
             return result;
         } finally {
             long endTime = System.currentTimeMillis();
@@ -307,10 +309,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             if (StringUtils.isBlank(param.getRealName()) && map.containsKey(AttributeKey.REAL_NAME)) {
                 param.setRealName(map.get(AttributeKey.REAL_NAME));
             }
-            //插件先进行图片验证码,再进行短信校验
-            if (StringUtils.equals(FormType.VALIDATE_BILL_DETAIL, param.getFormType()) && StringUtils.isBlank(param.getPicCode()) &&
-                    map.containsKey(RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()))) {
-                param.setPicCode(map.get(RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType())));
+            if (StringUtils.isBlank(param.getPicCode())) {
+                String picCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()));
+                if (StringUtils.isNotBlank(picCode)) {
+                    param.setPicCode(picCode);
+                }
             }
         }
     }
@@ -321,23 +324,28 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
      * @param param
      * @return
      */
-    private HttpResult<Map<String, Object>> checkParams(OperatorParam param) {
+    @Override
+    public HttpResult<Map<String, Object>> checkParams(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        if (null == param || BooleanUtils.isNotPositiveNumber(param.getTaskId())) {
-            return result.failure(ErrorCode.EMPTY_TASK_ID);
+        try {
+            if (null == param || BooleanUtils.isNotPositiveNumber(param.getTaskId())) {
+                return result.failure(ErrorCode.EMPTY_TASK_ID);
+            }
+            if (StringUtils.isBlank(param.getFormType())) {
+                return result.failure(ErrorCode.EMPTY_FORM_TYPE);
+            }
+            fillParamFromShares(param);
+            if (StringUtils.isBlank(param.getWebsiteName())) {
+                return result.failure(ErrorCode.EMPTY_WEBSITE_NAME);
+            }
+            if (BooleanUtils.isNotPositiveNumber(param.getMobile())) {
+                return result.failure(ErrorCode.EMPTY_MOBILE);
+            }
+            return result.success();
+        } catch (Throwable e) {
+            logger.error("checkParams error,param={}", JSON.toJSONString(param), e);
+            return result.failure();
         }
-        if (StringUtils.isBlank(param.getFormType())) {
-            return result.failure(ErrorCode.EMPTY_FORM_TYPE);
-        }
-        fillParamFromShares(param);
-        if (StringUtils.isBlank(param.getWebsiteName())) {
-            return result.failure(ErrorCode.EMPTY_WEBSITE_NAME);
-        }
-        //暂时手机号不强制
-        //if (BooleanUtils.isNotPositiveNumber(param.getMobile())) {
-        //    return result.failure(ErrorCode.EMPTY_MOBILE);
-        //}
-        return result.success();
     }
 
     /**
@@ -345,7 +353,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
      * 超过20秒不启动爬虫
      * @param param
      */
-    private void sendLoginSuccessMessage(HttpResult result, OperatorParam param, long startTime) {
+    private void sendSubmitSuccessMessage(OperatorPluginService pluginService, HttpResult result, OperatorParam param, long startTime) {
         if (null != result && result.getStatus()) {
             WebsiteOperator operator = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
             String sendLoginStage = operator.getStartStage();
@@ -357,7 +365,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                     return;
                 }
                 redisService.saveString(RedisKeyPrefixEnum.TASK_RUN_STAGE, param.getTaskId(), TaskStageEnum.LOGIN_SUCCESS.getStatus());
-                messageService.sendLoginSuccessMessage(param.getTaskId(), param.getWebsiteName());
+                if (pluginService instanceof OperatorPluginPostService) {
+                    messageService.sendOperatorLoginPostMessage(param.getTaskId(), param.getWebsiteName());
+                } else {
+                    messageService.sendOperatorCrawlerStartMessage(param.getTaskId(), param.getWebsiteName());
+                }
                 logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
             }
         }

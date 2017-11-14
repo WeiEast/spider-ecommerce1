@@ -115,7 +115,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             //发送MQ指令(要求输入图片验证码)
             Map<String, String> data = new HashMap<>();
             data.put(AttributeKey.REMARK, picCode);
-            String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), JSON.toJSONString(data));
+            String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), JSON.toJSONString(data),fromType);
             //等待用户输入图片验证码,等待120秒
             messageService.sendTaskLog(taskId, "等待用户输入图片验证码");
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
@@ -135,7 +135,6 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
                 monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验图片验证码-->成功", FormType.getName(fromType)));
                 messageService.sendTaskLog(taskId, "图片验证码校验成功,下一步校验短信验证码");
-                TaskUtils.addTaskShare(taskId, AttributeKey.PIC_CODE, picCode);
                 //图片验证码结束,进入短信验证
                 submit(taskId, websiteName);
                 return;
@@ -172,7 +171,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         //发送MQ指令(要求输入短信验证码)
         Map<String, String> data = new HashMap<>();
         data.put(AttributeKey.REMARK, "");
-        String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), JSON.toJSONString(data));
+        String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), JSON.toJSONString(data),fromType);
         messageService.sendTaskLog(taskId, "等待用户输入短信验证码");
         //等待用户输入图片验证码,等待120秒
         DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
@@ -185,9 +184,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             throw new ResultEmptyException(ErrorCode.VALIDATE_SMS_TIMEOUT.getErrorMsg());
         }
         String smsCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
-        String picCode = TaskUtils.getTaskShare(taskId, AttributeKey.PIC_CODE);
         param.setSmsCode(smsCode);
-        param.setPicCode(picCode);
         result = pluginService.submit(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验短信-->失败", FormType.getName(fromType)));

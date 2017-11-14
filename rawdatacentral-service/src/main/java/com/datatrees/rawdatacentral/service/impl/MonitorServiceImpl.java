@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.rocketmq.client.producer.MQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.client.producer.SendStatus;
-import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
@@ -20,6 +16,10 @@ import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class MonitorServiceImpl implements MonitorService {
     @Resource
     private CrawlerTaskService crawlerTaskService;
     @Resource
-    private MQProducer         producer;
+    private DefaultMQProducer  defaultMQProducer;
 
     @Override
     public void initTask(Long taskId, String websiteName, Object userName) {
@@ -154,7 +154,7 @@ public class MonitorServiceImpl implements MonitorService {
             if (StringUtils.isNotBlank(tags)) {
                 mqMessage.setTags(tags);
             }
-            SendResult sendResult = producer.send(mqMessage);
+            SendResult sendResult = defaultMQProducer.send(mqMessage);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
                 logger.info("send message success topic={},tags={},content={},charsetName={},msgId={}", topic, tags,
                         content.length() > 100 ? content.substring(0, 100) : content, DEFAULT_CHARSET_NAME, sendResult.getMsgId());

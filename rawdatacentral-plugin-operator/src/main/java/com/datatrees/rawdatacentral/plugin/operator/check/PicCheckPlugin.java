@@ -108,7 +108,7 @@ public class PicCheckPlugin extends AbstractClientPlugin {
             //发送MQ指令(要求输入图片验证码)
             Map<String, String> data = new HashMap<>();
             data.put(AttributeKey.REMARK, picCode);
-            String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), JSON.toJSONString(data));
+            String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), JSON.toJSONString(data),fromType);
             //等待用户输入图片验证码,等待120秒
             messageService.sendTaskLog(taskId, "等待用户输入图片验证码");
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);

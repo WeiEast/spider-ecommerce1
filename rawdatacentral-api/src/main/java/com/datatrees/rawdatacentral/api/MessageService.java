@@ -33,6 +33,15 @@ public interface MessageService {
     String sendDirective(Long taskId, String directive, String remark);
 
     /**
+     * 发送交互指令
+     * @param taskId    任务id
+     * @param directive 指令
+     * @param remark    指令内容
+     * @return 指令ID
+     */
+    String sendDirective(Long taskId, String directive, String remark, String formType);
+
+    /**
      * 发送消息
      * @param topic 订阅主题
      * @param msg   消息
@@ -69,9 +78,15 @@ public interface MessageService {
     boolean sendMessage(String topic, String tags, Object msg, String charsetName);
 
     /**
-     * 发送登录成功消息
+     * 发送消息,启动爬虫
      * @return
      */
-    boolean sendLoginSuccessMessage(Long taskId, String websiteName);
+    boolean sendOperatorCrawlerStartMessage(Long taskId, String websiteName);
+
+    /**
+     * 发送消息,启动登陆后处理
+     * @return
+     */
+    boolean sendOperatorLoginPostMessage(Long taskId, String websiteName);
 
 }

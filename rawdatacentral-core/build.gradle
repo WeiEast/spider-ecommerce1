@@ -5,7 +5,6 @@ dependencies {
     compile "org.springframework:spring-ibatis:${springIbatisVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
     compile "commons-dbcp:commons-dbcp:${commonsDbcpVersion}"
-    compile "com.alibaba.rocketmq:rocketmq-client:${rocketmqClientVersion}"
     compile "redis.clients:jedis:${jedisVersion}"
     compile "org.apache.poi:poi:${poiVersion}"
     compile "com.google.guava:guava:${guavaVersion}"

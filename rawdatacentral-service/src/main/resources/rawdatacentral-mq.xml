@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="defaultMQProducer" class="org.apache.rocketmq.client.producer.DefaultMQProducer" init-method="start" destroy-method="shutdown">
+        <constructor-arg name="producerGroup" value=""/>
+        <property name="namesrvAddr" value="${core.mq.host}"/>
+        <property name="producerGroup" value="${core.mq.producerGroup}"/>
+    </bean>
+
+    <bean id="loginInfoConsumer" class="org.apache.rocketmq.client.consumer.DefaultMQPushConsumer" destroy-method="shutdown">
+        <property name="namesrvAddr" value="${core.mq.host}"/>
+        <property name="consumerGroup" value="${core.mq.producerGroup}"/>
+        <property name="consumeThreadMin" value="10"/>
+        <property name="consumeThreadMax" value="50"/>
+        <property name="adjustThreadPoolNumsThreshold" value="10"/>
+    </bean>
+
+</beans>
