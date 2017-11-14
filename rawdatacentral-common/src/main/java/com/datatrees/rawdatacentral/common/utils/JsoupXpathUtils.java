@@ -19,15 +19,16 @@ public class JsoupXpathUtils {
         String result = "";
         try {
             List<Object> list = jxDocument.sel(xpath);
-            if (!list.isEmpty()) {
+            if (list.isEmpty()) {
                 logger.warn("not found content for xpath={}", xpath);
-                result = list.get(0).toString();
+                return null;
             }
             logger.info("selectFirst success xpath={},content={}", xpath, result.length() > 200 ? result.substring(0, 200) : result);
+            return list.get(0).toString();
         } catch (Exception e) {
             logger.error("selectFirst error, xpath={},content={}", xpath, result.length() > 200 ? result.substring(0, 200) + "....." : result, e);
+            return null;
         }
-        return result;
     }
 
     public static List<Map<String, String>> selectAttributes(String document, String xpath) {

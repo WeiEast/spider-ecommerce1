@@ -190,4 +190,11 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         }
 
     }
+
+    @Override
+    public List<WebsiteOperator> queryDisable() {
+        WebsiteOperatorExample example = new WebsiteOperatorExample();
+        example.createCriteria().andEnableEqualTo(false);
+        return websiteOperatorDAO.selectByExample(example);
+    }
 }

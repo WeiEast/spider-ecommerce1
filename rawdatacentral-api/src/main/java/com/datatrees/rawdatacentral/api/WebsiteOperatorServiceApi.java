@@ -1,5 +1,8 @@
 package com.datatrees.rawdatacentral.api;
 
+import java.util.List;
+
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**
@@ -13,6 +16,12 @@ public interface WebsiteOperatorServiceApi {
      * @param enable
      */
     HttpResult<Boolean> updateEnable(String websiteName, Boolean enable);
+
+    /**
+     * 查询所有禁用版本
+     * @return
+     */
+    HttpResult<List<WebsiteOperator>> queryDisable();
 
 }
 

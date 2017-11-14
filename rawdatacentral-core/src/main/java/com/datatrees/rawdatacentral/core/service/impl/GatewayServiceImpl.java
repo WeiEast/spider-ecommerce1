@@ -4,10 +4,6 @@ import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.alibaba.rocketmq.client.producer.MQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.client.producer.SendStatus;
-import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.rawdatacentral.api.MessageService;
@@ -15,6 +11,10 @@ import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
 import org.apache.commons.lang.StringUtils;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,13 +24,13 @@ public class GatewayServiceImpl implements DataResource {
 
     private static final Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
     @Resource
-    private RedisDao       redisDao;
+    private RedisDao          redisDao;
     @Resource
-    private MessageFactory messageFactory;
+    private MessageFactory    messageFactory;
     @Resource
-    private MQProducer     producer;
+    private DefaultMQProducer defaultMQProducer;
     @Resource
-    private MessageService messageService;
+    private MessageService    messageService;
 
     private String genRedisKey(Map<String, Object> parameters) {
         StringBuilder sb = new StringBuilder();
@@ -85,7 +85,7 @@ public class GatewayServiceImpl implements DataResource {
                 logger.debug("send to queue:" + GsonUtils.toJson(resultMessage));
             }
             Message mqMessage = messageFactory.getMessage("rawData_result_status", tag, GsonUtils.toJson(resultMessage), taskId);
-            SendResult sendResult = producer.send(mqMessage);
+            SendResult sendResult = defaultMQProducer.send(mqMessage);
             logger.info("send result message:" + mqMessage + "result:" + sendResult);
             if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
                 return true;

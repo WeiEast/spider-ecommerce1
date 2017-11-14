@@ -1,8 +1,10 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 import com.datatrees.rawdatacentral.api.WebsiteOperatorServiceApi;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
@@ -28,4 +30,18 @@ public class WebsiteOperatorServiceApiImpl implements WebsiteOperatorServiceApi 
             return result.failure();
         }
     }
+
+    @Override
+    public HttpResult<List<WebsiteOperator>> queryDisable() {
+        HttpResult<List<WebsiteOperator>> result = new HttpResult<>();
+        try {
+            List<WebsiteOperator> list = websiteOperatorService.queryDisable();
+            logger.info("queryDisable success size={}", list.size());
+            return result.success(list);
+        } catch (Throwable e) {
+            logger.error("queryDisable error ", e);
+            return result.failure();
+        }
+    }
+
 }

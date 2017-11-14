@@ -1,7 +1,6 @@
 package com.datatrees.rawdatacentral.plugin.operator.hei_long_jiang_10086_web;
 
 import javax.script.Invocable;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * Created by guimeichao on 17/8/24.
  */
 public class HeiLongJiang10086ForWeb implements OperatorPluginService {
-    private static final String javaScript = "ZnVuY3Rpb24gZW5jcnlwdChzdHIsa2V5KXsKICAgIHZhciBjb2RlID0nJzsKICAgIHZhciBjID0gc3RyLnNwbGl0KCcnKTsKICAgIHZhciBrID0ga2V5LnNwbGl0KCcnKTsKCiAgICBmb3IodmFyIGk9MDsgaTxjLmxlbmd0aDsgaSsrKXsKCiAgICAgICAgdmFyIGhjID0gY1tpXS5jaGFyQ29kZUF0KCk7CiAgICAgICAgdmFyIGtpID0gaTsKCiAgICAgICAgaWYoaSA+PSBrLmxlbmd0aCl7CiAgICAgICAgICAgIGtpID0gaSAlIGsubGVuZ3RoOwogICAgICAgIH0KCiAgICAgICAgdmFyIGt0ID0ga1traV0uY2hhckNvZGVBdCgpIC0gOTc7CiAgICAgICAgaWYoaGMgPj0gOTcgJiYgaGMgPD0gMTIyKXsKICAgICAgICAgICAgaGMgPSA5NyArICgoKGhjIC05NykgKyBrdCkgJSAyNik7CiAgICAgICAgfQogICAgICAgIGlmKGhjID49IDY1ICYmIGhjIDw9IDkwKXsKICAgICAgICAgICAgaGMgPSA2NSArICgoKGhjIC0gNjUpICsga3QpICUgMjYpOwogICAgICAgIH0KICAgICAgICBpZihoYyA+PTQ4ICYmIGhjPD01Nyl7CiAgICAgICAgICAgIGlmKGt0ID49IDEwKXsKICAgICAgICAgICAgICAgIGt0ID0gMTA7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgaGMgPSA0OCArICgoKGhjIC0gNDgpICsga3QpICUgMTApOwogICAgICAgIH0KICAgICAgICB2YXIgdGVtcCA9IFN0cmluZy5mcm9tQ2hhckNvZGUoaGMpOwogICAgICAgIGNvZGUgKz0gdGVtcDsKCiAgICB9CiAgICByZXR1cm4gY29kZTsKfQ==";
+
     private static final Logger logger = LoggerFactory.getLogger(HeiLongJiang10086ForWeb.class);
 
     @Override
@@ -103,7 +102,8 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://hl.10086.cn/authImg?type=0&rand={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_001").setFullUrl(templateUrl, Math.random()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_001")
+                    .setFullUrl(templateUrl, Math.random()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -119,7 +119,8 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://hl.10086.cn/common/vali/valiImage?imgCode={}&_={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_002")
-                    .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).setRequestContentType(ContentType.APPLICATION_JSON).invoke();
+                    .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).setRequestContentType(ContentType.APPLICATION_JSON)
+                    .invoke();
             /**
              * 结果枚举:
              * 正确
@@ -165,7 +166,8 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             params.put("pwdType", "01");
             params.put("clientIP", param.getPicCode());
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data).setRequestContentType(ContentType.APPLICATION_JSON).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
+                    .setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"data":"5c600ce90ad44248aefce5b7fc87160d","retCode":"000000","retMsg":"success","detail_msg":null,"user_msg":null,
@@ -245,7 +247,8 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
              * "retCode":"100004"
              */
             String templateUrl = "http://hl.10086.cn/sms/checkSmsCode?func_code=000004&sms_type=2&phone_no=&sms_code={}&_={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_007").setFullUrl(templateUrl, param.getSmsCode(), System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_007")
+                    .setFullUrl(templateUrl, param.getSmsCode(), System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
@@ -288,7 +291,8 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         try {
             String key = "abc123";
             String templateUrl = "http://hl.10086.cn/session/getPscToken/?_={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_003").setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_003")
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             if (StringUtils.isNotBlank(json.getString("data"))) {
                 key = json.getString("data");
@@ -297,8 +301,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             /**
              * 加载js加密脚本
              */
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("hei_long_jiang_10086_web/des.js");
-            Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encryptPwd = invocable.invokeFunction("encrypt", param.getPassword(), key).toString();
             return encryptPwd;
         } catch (Exception e) {

@@ -16,9 +16,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.rocketmq.client.producer.MQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
@@ -62,6 +59,9 @@ import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -87,7 +87,7 @@ public class Collector {
     @Resource
     private MessageFactory         messageFactory;
     @Resource
-    private MQProducer             producer;
+    private DefaultMQProducer      defaultMQProducer;
     @Resource
     private ZooKeeperClient        zookeeperClient;
     @Resource
@@ -425,7 +425,7 @@ public class Collector {
                 for (Message mqMessage : mqMessages) {
                     try {
                         notEmptyTag.add(mqMessage.getTags());
-                        SendResult sendResult = producer.send(mqMessage);
+                        SendResult sendResult = defaultMQProducer.send(mqMessage);
                         logger.info("send message:" + mqMessage + "result:" + sendResult);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
@@ -456,7 +456,7 @@ public class Collector {
                     try {
                         Message mqMessage = messageFactory
                                 .getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
-                        SendResult sendResult = producer.send(mqMessage);
+                        SendResult sendResult = defaultMQProducer.send(mqMessage);
                         logger.info("send result message:" + mqMessage + "result:" + sendResult);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);

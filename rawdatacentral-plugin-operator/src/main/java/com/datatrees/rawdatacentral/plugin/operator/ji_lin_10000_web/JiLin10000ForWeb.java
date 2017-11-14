@@ -170,29 +170,8 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-            String templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00710602";
-            String referer = "http://www.189.cn/jl/";
-            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).setReferer(referer).invoke();
-            templateUrl = "http://www.189.cn/login/index.do";
-            referer = "http://www.189.cn/html/login/index.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).setReferer(referer).invoke();
-            if (StringUtils.contains(response.getPageContent(), "errorDescription\":null")) {
-                templateUrl
-                        = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10030&toStUrl=http://jl.189.cn/service/bill/balanceQueryFra.action?fastcode=00710599&cityCode=jl";
-                response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_008").setFullUrl(templateUrl).invoke();
-                String pageContent = response.getPageContent();
-                if (StringUtils.contains(pageContent, "余额")) {
-                    TaskUtils.addTaskShare(param.getTaskId(), "balancePage", pageContent);
-                    logger.info("登陆web版成功,param={}", param);
-                    return result.success();
-                } else {
-                    logger.error("登陆web版失败,param={},pageContent={}", param, pageContent);
-                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-                }
-            } else {
-                logger.error("登陆web版失败,param={},pageContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
+            logger.info("登陆web版成功,param={}", param);
+            return result.success();
         } catch (Exception e) {
             logger.error("登陆web版-->校验-->失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);

@@ -86,26 +86,8 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-
-            String referer = "http://www.189.cn/zj/";
-            String templateUrl
-                    = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10012&toStUrl=http://zj.189.cn/zjpr/balancep/getBalancep.htm";
-            response = TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
-
-            templateUrl = "http://zj.189.cn/zjpr/balancep/getBalancep.htm";
-            response = TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10000_web_003").setFullUrl(templateUrl).invoke();
-
-            templateUrl = "http://zj.189.cn/shouji/{}.shtmll";
-            response = TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10000_web_004").setFullUrl(templateUrl, param.getMobile()).invoke();
-            String pageContent = response.getPageContent();
-            String checkFlag = "/shouji/" + param.getMobile();
-            if (StringUtils.contains(pageContent, checkFlag)) {
-                logger.info("登陆成功,param={}", param);
-                return result.success();
-            } else {
-                logger.error("登陆失败,param={},pageContent={}", param, pageContent);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
+            logger.info("登陆成功,param={}", param);
+            return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
