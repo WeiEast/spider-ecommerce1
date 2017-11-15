@@ -38,17 +38,14 @@ public class HuBei10000ForWap implements OperatorPluginService {
 
     @Override
     public HttpResult<String> refeshPicCode(OperatorParam param) {
-        switch (param.getFormType()) {
-            case FormType.LOGIN:
-                return refeshPicCodeForLogin(param);
-            default:
-                return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
-        }
+        return null;
     }
 
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
         switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshSmsCodeForLogin(param);
             case FormType.VALIDATE_BILL_DETAIL:
                 return refeshSmsCodeForBillDetail(param);
             default:
@@ -78,34 +75,37 @@ public class HuBei10000ForWap implements OperatorPluginService {
         return null;
     }
 
-    private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
-        HttpResult<String> result = new HttpResult<>();
+
+    private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "http://wap.hb.189.cn/VImage.servlet?{}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hu_bei_10000_wap_001")
-                    .setFullUrl(templateUrl, Math.random() * 1000).invoke();
-            logger.info("登录-->图片验证码-->刷新成功,param={}", param);
-            return result.success(response.getPageContentForBase64());
+            String templateUrl = "http://wap.hb.189.cn/login/getSmsCode.htm?phoneNumber=" + param.getMobile() + "&randomType=loginRan";
+            response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10000_wap_001").setFullUrl(templateUrl).invoke();
+            String pageContent = response.getPageContent();
+            if (pageContent.contains("\"result\":0")) {
+                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
+            }
+            logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+            return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+
         } catch (Exception e) {
-            logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
-            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+            logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
-        CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
-        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            String accountID = URLEncoder.encode(Base64.encodeBase64String(String.valueOf(param.getMobile()).getBytes()), "UTF-8");
+            String random = URLEncoder.encode(Base64.encodeBase64String(param.getSmsCode().getBytes()), "UTF-8");
             String referer = "http://wap.hb.189.cn/login/login.jsp";
             String templateUrl = "http://wap.hb.189.cn/login/doLogin.htm";
-            String templateData = "accountID={}&checkImgRandom={}&loginType=1&password={}";
-            String data = TemplateUtils.format(templateData, Base64.encodeBase64String(param.getMobile().toString().getBytes()), param.getPicCode(),
-                    Base64.encodeBase64String(param.getPassword().getBytes()));
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_wap_002").setFullUrl(templateUrl).setRequestBody(data)
-                    .setReferer(referer).invoke();
+            String templateData = "accountID=" + accountID + "&random=" + random + "&loginType=2";
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_wap_002").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "flag\":\"1\"")) {
                 logger.info("登陆成功,param={}", param);
@@ -146,9 +146,7 @@ public class HuBei10000ForWap implements OperatorPluginService {
         try {
             String templateUrl = "http://wap.hb.189.cn/billQuery/checkRan.htm";
             String templateData = "accountID={}&random={}";
-            String data = TemplateUtils
-                    .format(templateData, URLEncoder.encode(Base64.encodeBase64String(param.getMobile().toString().getBytes()), "UTF-8"),
-                            URLEncoder.encode(Base64.encodeBase64String(param.getSmsCode().getBytes()), "UTF-8"));
+            String data = TemplateUtils.format(templateData, URLEncoder.encode(Base64.encodeBase64String(param.getMobile().toString().getBytes()), "UTF-8"), URLEncoder.encode(Base64.encodeBase64String(param.getSmsCode().getBytes()), "UTF-8"));
             response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_wap_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
 
