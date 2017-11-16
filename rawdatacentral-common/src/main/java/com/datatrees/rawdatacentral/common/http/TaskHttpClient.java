@@ -64,7 +64,7 @@ public class TaskHttpClient {
                     return true;
                 }
             });
-            sslsf = new SSLConnectionSocketFactory(builder.build(), new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.2"}, null,
+            sslsf = new SSLConnectionSocketFactory(builder.build(), new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"}, null,
                     NoopHostnameVerifier.INSTANCE);
         } catch (Exception e) {
             logger.error("init SSLConnectionSocketFactory error", e);
