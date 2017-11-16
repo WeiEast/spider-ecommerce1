@@ -337,10 +337,16 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Override
     public HttpResult<Boolean> cancel(long taskId, Map<String, String> extra) {
+        HttpResult<Boolean> result = new HttpResult<Boolean>();
+        String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
+        if (StringUtils.equals(websiteName, "alipay.com") || StringUtils.equals(websiteName, "taobao.com")) {
+            logger.info("电商拒绝取消,哈哈.......taskId={},websiteName={}", taskId, websiteName);
+            return result.success();
+        }
+
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
         logger.info("cancel taskId={}", taskId);
-        HttpResult<Boolean> result = new HttpResult<Boolean>();
         result.setData(false);
         if (watcher.cancel()) {
             logger.info("cancel task success,taskId={}", taskId);
