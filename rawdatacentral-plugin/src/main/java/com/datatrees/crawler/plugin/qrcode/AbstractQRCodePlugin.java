@@ -126,8 +126,10 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
         redisMap.put(PluginConstants.FIELD, DirectiveRedisCode.SKIP);
         logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId, websiteName,
                 DirectiveRedisCode.SKIP);
-        ThreadInterruptedUtil.setInterrupt(Thread.currentThread());
-        throw new ResultEmptyException("二维码验证失败");
+        //ThreadInterruptedUtil.setInterrupt(Thread.currentThread());
+        //throw new ResultEmptyException("二维码验证失败");
+        resultMap.put(PluginConstants.FIELD, DirectiveRedisCode.SKIP);
+        return resultMap;
     }
 
     public Map<String, String> perpareParam(Map<String, String> parms) {
