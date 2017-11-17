@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
@@ -61,8 +62,6 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
         }
     }
 
-
-
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
         switch (param.getFormType()) {
@@ -86,8 +85,6 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
     }
-
-
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
@@ -162,7 +159,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
             }
             //访问主页
-            templateUrl = json.getString("$.resultObj.url");
+            templateUrl = (String) JSONPath.eval(json, "$.resultObj.url");
             referer = "http://www.sc.10086.cn/service/login.html?url=my/SC_MY_INDEX.html";
             response = TaskHttpClient.create(param, RequestType.GET, "si_chuan_10086_web_004").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
@@ -201,7 +198,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String,Object>> validatePicCodeForBillDetail(OperatorParam param) {
+    private HttpResult<Map<String, Object>> validatePicCodeForBillDetail(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
@@ -217,13 +214,13 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
             }
             logger.error("详单-->图片验证码-->校验失败,param={},pageContent={}", param, response.getPageContent());
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_UNEXPECTED_RESULT);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("详单-->图片验证码-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_ERROR);
         }
     }
 
-    private HttpResult<Map<String,Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
+    private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
@@ -242,13 +239,13 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
             }
             logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
             return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
 
-    private HttpResult<Map<String,Object>> submitForBillDetail(OperatorParam param) {
+    private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = validatePicCodeForBillDetail(param);
         if (!result.getStatus()) {
             return result;
@@ -258,7 +255,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
             Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encryptSmsWord = invocable.invokeFunction("encryptByDES", param.getSmsCode().toString()).toString();
             String templateUrl = "http://www.sc.10086.cn/service/actionDispatcher.do";
-            String templateData ="reqUrl=SC_MY_XDCXQuery&mothodQuery=smsverify&smscode=" + URLEncoder.encode(encryptSmsWord, "UTF-8");
+            String templateData = "reqUrl=SC_MY_XDCXQuery&mothodQuery=smsverify&smscode=" + URLEncoder.encode(encryptSmsWord, "UTF-8");
             response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_009").setFullUrl(templateUrl).setRequestBody(templateData).invoke();
             JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");
@@ -268,7 +265,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
             }
             logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPageContent());
             return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
