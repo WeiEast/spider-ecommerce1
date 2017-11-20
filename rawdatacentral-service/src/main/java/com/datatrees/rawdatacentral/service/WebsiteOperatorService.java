@@ -86,6 +86,6 @@ public interface WebsiteOperatorService {
      * @param auto        true:自动,false:手动
      * @return
      */
-    Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, Boolean enable, Boolean auto);
+    Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto);
 
 }

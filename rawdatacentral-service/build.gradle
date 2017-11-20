@@ -28,4 +28,6 @@ dependencies {
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 
     compile "org.apache.rocketmq:rocketmq-client:${rocketmqClientVersion}"
+    compile 'com.datatrees.common:notify-common-facade:3.5.6'
+
 }

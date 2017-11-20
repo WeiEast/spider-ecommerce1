@@ -64,5 +64,6 @@ public class AttributeKey implements Serializable {
     public static final String END_TIME                 = "endTime"; //结束时间
     public static final String FROM                     = "from";
     public static final String TO                       = "to";
+    public static final String SAAS_ENV                 = "saas.env";//项目环境
 
 }

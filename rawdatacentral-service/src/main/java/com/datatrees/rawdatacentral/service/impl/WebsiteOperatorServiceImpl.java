@@ -22,6 +22,7 @@ import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
+import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang.StringUtils;
@@ -49,6 +50,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     private WebsiteConfigDAO    websiteConfigDAO;
     @Resource
     private WebsiteGroupService websiteGroupService;
+    @Resource
+    private NotifyService       notifyService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -204,7 +207,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Override
-    public Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, Boolean enable, Boolean auto) {
+    public Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto) {
         WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
         String redisKey = RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(websiteOperatorDb.getGroupCode());
         String fromWebsiteName = RedisUtils.get(redisKey);
@@ -228,6 +231,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         Map<String, WebsiteOperator> map = new HashMap<>();
         map.put(AttributeKey.FROM, from);
         map.put(AttributeKey.TO, to);
+
+        notifyService.sendMsgForOperatorStatusUpdate(websiteOperatorDb, from, to, enable, auto);
         return map;
     }
 }
