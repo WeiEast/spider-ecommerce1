@@ -133,13 +133,13 @@ public class NotifyServiceImpl implements NotifyService {
             map.put("toWebsiteTitle", to.getWebsiteTitle());
             map.put("date", DateUtils.formatYmdhms(new Date()));
             String wechatTmpl
-                    = "【运营商状态变更】\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:{date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
+                    = "【运营商状态变更】\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
             String smsTmpl
-                    = "<运营商状态变更>\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}${env}\n操作方式:${auto}\n时间:{date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
-            String wechatMsg = FormatUtils.format(wechatTmpl, map);
+                    = "<运营商状态变更>\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
             String smsMsg = FormatUtils.format(smsTmpl, map);
             sendMonitorSms(smsMsg);
-            sendMonitorSms(wechatMsg);
+            String wechatMsg = FormatUtils.format(wechatTmpl, map);
+            sendMonitorWeChat(wechatMsg);
             return true;
         } catch (Throwable e) {
             logger.error("sendMsgForOperatorStatusUpdate ", e);
