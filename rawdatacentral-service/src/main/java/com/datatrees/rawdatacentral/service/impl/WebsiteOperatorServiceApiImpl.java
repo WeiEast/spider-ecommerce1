@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.WebsiteOperatorServiceApi;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
@@ -32,16 +33,23 @@ public class WebsiteOperatorServiceApiImpl implements WebsiteOperatorServiceApi 
     }
 
     @Override
-    public HttpResult<List<WebsiteOperator>> queryDisable() {
-        HttpResult<List<WebsiteOperator>> result = new HttpResult<>();
-        try {
-            List<WebsiteOperator> list = websiteOperatorService.queryDisable();
-            logger.info("queryDisable success size={}", list.size());
-            return result.success(list);
-        } catch (Throwable e) {
-            logger.error("queryDisable error ", e);
-            return result.failure();
-        }
+    public List<WebsiteOperator> queryDisable() {
+        return websiteOperatorService.queryDisable();
+    }
+
+    @Override
+    public WebsiteOperator getByWebsiteName(String websiteName) {
+        return websiteOperatorService.getByWebsiteName(websiteName);
+    }
+
+    @Override
+    public List<WebsiteOperator> queryAll() {
+        return websiteOperatorService.queryAll();
+    }
+
+    @Override
+    public Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, Boolean enable, Boolean auto) {
+        return websiteOperatorService.updateWebsiteStatus(websiteName, enable, auto);
     }
 
 }

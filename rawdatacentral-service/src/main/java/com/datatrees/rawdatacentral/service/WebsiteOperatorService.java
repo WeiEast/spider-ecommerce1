@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 
@@ -63,9 +64,28 @@ public interface WebsiteOperatorService {
     void updateEnable(String websiteName, Boolean enable);
 
     /**
+     * 启用/禁用
+     * @param websiteName
+     * @param enable
+     * @param auto
+     */
+    String updateEnable(String websiteName, Boolean enable, Boolean auto);
+
+    /**
      * 查询所有禁用版本
      * @return
      */
     List<WebsiteOperator> queryDisable();
+
+    List<WebsiteOperator> queryAll();
+
+    /**
+     * 启用/停用配置
+     * @param websiteName 站点
+     * @param enable      状态
+     * @param auto        true:自动,false:手动
+     * @return
+     */
+    Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, Boolean enable, Boolean auto);
 
 }
