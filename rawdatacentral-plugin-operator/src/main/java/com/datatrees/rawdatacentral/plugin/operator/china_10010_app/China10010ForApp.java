@@ -129,7 +129,8 @@ public class China10010ForApp implements OperatorPluginService {
              * 获取月账单
              */
             String templateUrl
-                    = "https://m.client.10010.com/mobileService/query/queryRealFeeHistroyDetail.htm?desmobile=&version=android@5.4&menuId=000200010005&month={}&randm=";
+                    = "https://m.client.10010.com/mobileService/query/queryRealFeeHistroyDetail" +
+                    ".htm?desmobile=&version=android@5.5&menuId=000200010005&month={}&randm=";
             response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_002").setFullUrl(templateUrl, billMonth).invoke();
             String pageContent = response.getPageContent();
             return result.success(pageContent);

@@ -119,7 +119,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        return null;
+        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {

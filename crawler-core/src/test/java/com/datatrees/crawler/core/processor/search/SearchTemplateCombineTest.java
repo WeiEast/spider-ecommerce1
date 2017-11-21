@@ -13,8 +13,7 @@ public class SearchTemplateCombineTest {
     @Test
     public void constructSearchURL() throws Exception {
         String tmp = "http://www.soku.com/search_page_${page,0,40,3+}video/q_${keyword}_orderby_2_page_${page,0,40,3+}";
-        String keyword = "tt";
-        // tmp="http://putlocker.is/search/search.php?q=${keyword}";
+        String keyword = "";
         keyword = "Nausikaja iz_Doline /vetrova";
         String result = SearchTemplateCombine.constructSearchURL(tmp, keyword, "utf-8", 1, false, new HashMap<>());
         System.out.println(result);

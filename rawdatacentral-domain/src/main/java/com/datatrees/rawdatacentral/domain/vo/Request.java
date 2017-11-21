@@ -70,7 +70,12 @@ public class Request implements Serializable {
     @JSONField(ordinal = 16)
     private String protocol;
     @JSONField(ordinal = 16)
-    private String defaultResponseCharset = "UTF-8";
+    private String  defaultResponseCharset = "UTF-8";
+    /**
+     * 自动跳转
+     */
+    @JSONField(ordinal = 16)
+    private Boolean autoRedirect           = true;
 
     public Request() {
         addHead(HttpHeadKey.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0");
@@ -307,6 +312,14 @@ public class Request implements Serializable {
 
     public void setDefaultResponseCharset(String defaultResponseCharset) {
         this.defaultResponseCharset = defaultResponseCharset;
+    }
+
+    public Boolean getAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(Boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
     }
 
     @Override
