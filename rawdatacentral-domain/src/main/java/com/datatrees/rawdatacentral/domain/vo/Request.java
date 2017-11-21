@@ -71,6 +71,10 @@ public class Request implements Serializable {
     private String protocol;
     @JSONField(ordinal = 16)
     private String  defaultResponseCharset = "UTF-8";
+    @JSONField(ordinal = 16)
+    private Integer redirectCount          = 0;
+    @JSONField(ordinal = 16)
+    private Integer maxRedirectCount       = 5;
     /**
      * 自动跳转
      */
@@ -320,6 +324,22 @@ public class Request implements Serializable {
 
     public void setAutoRedirect(Boolean autoRedirect) {
         this.autoRedirect = autoRedirect;
+    }
+
+    public Integer getRedirectCount() {
+        return redirectCount;
+    }
+
+    public void setRedirectCount(Integer redirectCount) {
+        this.redirectCount = redirectCount;
+    }
+
+    public Integer getMaxRedirectCount() {
+        return maxRedirectCount;
+    }
+
+    public void setMaxRedirectCount(Integer maxRedirectCount) {
+        this.maxRedirectCount = maxRedirectCount;
     }
 
     @Override

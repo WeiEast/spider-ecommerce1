@@ -253,6 +253,13 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setRedirectCount(Integer redirectCount) {
+        if (null != redirectCount) {
+            request.setRedirectCount(redirectCount);
+        }
+        return this;
+    }
+
     public TaskHttpClient addExtralCookie(String domain, String name, String value) {
         BasicClientCookie cookie = new BasicClientCookie(name, value);
         cookie.setDomain(domain);
@@ -413,7 +420,7 @@ public class TaskHttpClient {
             RedisUtils
                     .expire(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
         }
-        if (request.getAutoRedirect() && statusCode >= 300 && statusCode <= 399) {
+        if (request.getAutoRedirect() && statusCode >= 300 && statusCode <= 399 && request.getRedirectCount() <= request.getMaxRedirectCount()) {
             String redirectUrl = response.getRedirectUrl();
             if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("www")) {
                 if (redirectUrl.startsWith("/")) {
@@ -425,8 +432,9 @@ public class TaskHttpClient {
             }
             logger.info("http has redirect,taskId={},websiteName={},type={},from={} to redirectUrl={}", taskId, request.getWebsiteName(),
                     request.getType(), request.getUrl(), redirectUrl);
-            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, request.getRemarkId(), true).setUrl(redirectUrl)
-                    .invoke();
+            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, request.getRemarkId(), true)
+                    .setRedirectCount(request.getRedirectCount() + 1).setUrl(redirectUrl).setAutoRedirect(request.getAutoRedirect()).invoke();
+            return response;
         }
         return response;
     }

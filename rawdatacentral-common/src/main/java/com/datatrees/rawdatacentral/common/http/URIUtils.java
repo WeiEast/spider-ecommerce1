@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
-import com.sun.jndi.toolkit.url.Uri;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -32,6 +30,7 @@ public class URIUtils {
         try {
             return URI.create(fullUrl);
         } catch (Exception e) {
+            logger.warn("create url error,fullUrl={}", fullUrl, e);
             return createAndEncode(fullUrl);
         }
     }
