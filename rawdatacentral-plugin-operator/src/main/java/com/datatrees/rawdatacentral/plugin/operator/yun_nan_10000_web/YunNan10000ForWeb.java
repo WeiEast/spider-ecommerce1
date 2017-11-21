@@ -132,7 +132,7 @@ public class YunNan10000ForWeb implements OperatorPluginService {
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "<rsFlag>1</rsFlag>")) {
                 logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
-                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+                return result.failure(ErrorCode.VALIDATE_ERROR);
             }
             templateUrl = "http://yn.189.cn/public/pwValid.jsp";
             templateData = "_FUNC_ID_=WB_PAGE_PRODPASSWDQRY&NAME={}&CUSTCARDNO={}&PROD_PASS={}&MOBILE_CODE={}&ACC_NBR={}&AREA_CODE={}&LOGIN_TYPE=21&PASSWORD={}&MOBILE_FLAG=1&MOBILE_LOGON_NAME={}&MOBILE_CODE={}&PROD_NO={}";
