@@ -245,6 +245,13 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setAutoRedirect(Boolean autoRedirect) {
+        if (null != autoRedirect) {
+            request.setAutoRedirect(autoRedirect);
+        }
+        return this;
+    }
+
     public TaskHttpClient addExtralCookie(String domain, String name, String value) {
         BasicClientCookie cookie = new BasicClientCookie(name, value);
         cookie.setDomain(domain);
@@ -371,9 +378,14 @@ public class TaskHttpClient {
             if (statusCode >= 200 && statusCode <= 299) {
                 byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
                 response.setResponse(data);
+            } else if (statusCode >= 300 && statusCode <= 399) {
+                String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
+                response.setRedirectUrl(redirectUrl);
+                response.setRedirect(true);
+                logger.warn("HttpClient has redirect,taskId={},url={}, statusCode={},redirectUrl={}", taskId, url, statusCode, redirectUrl);
             } else {
                 client.abort();
-                logger.error("HttpClient status error, statusCode={}", statusCode);
+                logger.error("HttpClient status error,taskId={},url={}, statusCode={}", taskId, url, statusCode);
             }
         } catch (SocketTimeoutException e) {
             if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
@@ -399,8 +411,8 @@ public class TaskHttpClient {
             RedisUtils
                     .expire(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
         }
-        if (statusCode >= 300 && statusCode <= 399) {
-            String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
+        if (request.getAutoRedirect() && statusCode >= 300 && statusCode <= 399) {
+            String redirectUrl = response.getRedirectUrl();
             if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("www")) {
                 if (redirectUrl.startsWith("/")) {
                     redirectUrl = request.getProtocol() + "://" + request.getHost() + redirectUrl;
