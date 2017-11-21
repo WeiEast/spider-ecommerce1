@@ -428,7 +428,8 @@ public class TaskHttpClient {
                     .expire(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
         }
         if (request.getAutoRedirect() && statusCode >= 300 && statusCode <= 399 && request.getRedirectCount() <= request.getMaxRedirectCount()) {
-            String redirectUrl = response.getRedirectUrl();
+            String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
+            response.setRedirectUrl(redirectUrl);
             if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("www")) {
                 if (redirectUrl.startsWith("/")) {
                     redirectUrl = request.getProtocol() + "://" + request.getHost() + redirectUrl;
