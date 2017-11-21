@@ -38,7 +38,7 @@ public class HuBei10000ForWap implements OperatorPluginService {
 
     @Override
     public HttpResult<String> refeshPicCode(OperatorParam param) {
-        return null;
+        return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     @Override
@@ -67,12 +67,12 @@ public class HuBei10000ForWap implements OperatorPluginService {
 
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
-        return null;
+        return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        return null;
+        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
 
