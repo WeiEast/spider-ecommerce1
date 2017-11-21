@@ -161,12 +161,11 @@ public class AnHui10000ForWeb implements OperatorPluginService {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
-            //String ssoValue = PatternUtils.group(pageContent, "value=\"([^\"]+)", 1);
-            //templateUrl = "http://uam.ah.ct10000.com/ffcs-uam/login?SSORequestXML=" + URLEncoder.encode(ssoValue, "UTF-8");
-            //referer = "http://ah.189.cn/sso/LoginServlet";
-            //response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
-            //        .invoke();
-            //pageContent = response.getPageContent();
+            String errorMsg = PatternUtils.group(pageContent, "var returnmsg = \"([^。]+。)", 1);
+            if (StringUtils.isNotBlank(errorMsg)) {
+                logger.error("登陆失败,{},param={},response={}", errorMsg, param, response);
+                return result.failure(errorMsg);
+            }
             String uuid = invocable.invokeFunction("encryptedString", "serviceNbr=" + param.getMobile()).toString();
             if (StringUtils.isBlank(uuid)) {
                 logger.error("获取uuid失败");
@@ -252,7 +251,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         try {
             response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_009").setFullUrl(params[0]).setRequestBody(params[1])
                     .invoke();
-            if (StringUtils.contains(params[1],"operListId=6")){
+            if (StringUtils.contains(params[1], "operListId=6")) {
                 response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10000_web_009").setFullUrl(params[0]).setRequestBody(params[1])
                         .invoke();
             }
