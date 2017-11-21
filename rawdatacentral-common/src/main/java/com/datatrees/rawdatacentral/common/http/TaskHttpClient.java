@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.common.http;
 
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -284,10 +285,11 @@ public class TaskHttpClient {
             logger.info("pre request taskId={},url={}", taskId, url);
 
             HttpRequestBase client = null;
+            URI uri = URIUtils.create(url);
             if (RequestType.GET == request.getType()) {
-                client = new HttpGet(url);
+                client = new HttpGet(uri);
             } else {
-                HttpPost httpPost = new HttpPost(url);
+                HttpPost httpPost = new HttpPost(uri);
                 if (StringUtils.isNoneBlank(request.getRequestBodyContent())) {
                     httpPost.setEntity(new StringEntity(request.getRequestBodyContent(), requestContentType));
                 }
