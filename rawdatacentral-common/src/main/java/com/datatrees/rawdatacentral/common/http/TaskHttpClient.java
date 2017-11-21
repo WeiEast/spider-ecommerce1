@@ -260,6 +260,13 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setMaxRedirectCount(Integer maxRedirectCount) {
+        if (null != maxRedirectCount) {
+            request.setMaxRedirectCount(maxRedirectCount);
+        }
+        return this;
+    }
+
     public TaskHttpClient addExtralCookie(String domain, String name, String value) {
         BasicClientCookie cookie = new BasicClientCookie(name, value);
         cookie.setDomain(domain);
