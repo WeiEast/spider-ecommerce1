@@ -111,7 +111,7 @@ public class NotifyServiceImpl implements NotifyService {
                         JSON.toJSONString(message));
                 return false;
             }
-            logger.info("resu sms success mobile={},sms={}", smsReceiver, body);
+            logger.info("resu sms success mobile={},sms={},result={}", smsReceiver, body, JSON.toJSONString(result));
             return true;
         } catch (Throwable e) {
             logger.error("resu sms msg  error mobile={},sms={},result={}", smsReceiver, body, JSON.toJSONString(result), e);
