@@ -14,7 +14,7 @@ import java.util.*;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.rocketmq.common.message.Message;
+import com.alibaba.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
