@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.common.http;
 
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -64,7 +65,7 @@ public class TaskHttpClient {
                     return true;
                 }
             });
-            sslsf = new SSLConnectionSocketFactory(builder.build(), new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.2"}, null,
+            sslsf = new SSLConnectionSocketFactory(builder.build(), new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"}, null,
                     NoopHostnameVerifier.INSTANCE);
         } catch (Exception e) {
             logger.error("init SSLConnectionSocketFactory error", e);
@@ -245,6 +246,27 @@ public class TaskHttpClient {
         return this;
     }
 
+    public TaskHttpClient setAutoRedirect(Boolean autoRedirect) {
+        if (null != autoRedirect) {
+            request.setAutoRedirect(autoRedirect);
+        }
+        return this;
+    }
+
+    public TaskHttpClient setRedirectCount(Integer redirectCount) {
+        if (null != redirectCount) {
+            request.setRedirectCount(redirectCount);
+        }
+        return this;
+    }
+
+    public TaskHttpClient setMaxRedirectCount(Integer maxRedirectCount) {
+        if (null != maxRedirectCount) {
+            request.setMaxRedirectCount(maxRedirectCount);
+        }
+        return this;
+    }
+
     public TaskHttpClient addExtralCookie(String domain, String name, String value) {
         BasicClientCookie cookie = new BasicClientCookie(name, value);
         cookie.setDomain(domain);
@@ -284,10 +306,11 @@ public class TaskHttpClient {
             logger.info("pre request taskId={},url={}", taskId, url);
 
             HttpRequestBase client = null;
+            URI uri = URIUtils.create(url);
             if (RequestType.GET == request.getType()) {
-                client = new HttpGet(url);
+                client = new HttpGet(uri);
             } else {
-                HttpPost httpPost = new HttpPost(url);
+                HttpPost httpPost = new HttpPost(uri);
                 if (StringUtils.isNoneBlank(request.getRequestBodyContent())) {
                     httpPost.setEntity(new StringEntity(request.getRequestBodyContent(), requestContentType));
                 }
@@ -371,9 +394,14 @@ public class TaskHttpClient {
             if (statusCode >= 200 && statusCode <= 299) {
                 byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
                 response.setResponse(data);
+            } else if (statusCode >= 300 && statusCode <= 399) {
+                String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
+                response.setRedirectUrl(redirectUrl);
+                response.setRedirect(true);
+                logger.warn("HttpClient has redirect,taskId={},url={}, statusCode={},redirectUrl={}", taskId, url, statusCode, redirectUrl);
             } else {
                 client.abort();
-                logger.error("HttpClient status error, statusCode={}", statusCode);
+                logger.error("HttpClient status error,taskId={},url={}, statusCode={}", taskId, url, statusCode);
             }
         } catch (SocketTimeoutException e) {
             if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
@@ -399,8 +427,9 @@ public class TaskHttpClient {
             RedisUtils
                     .expire(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
         }
-        if (statusCode >= 300 && statusCode <= 399) {
+        if (request.getAutoRedirect() && statusCode >= 300 && statusCode <= 399 && request.getRedirectCount() <= request.getMaxRedirectCount()) {
             String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
+            response.setRedirectUrl(redirectUrl);
             if (!redirectUrl.startsWith("http") && !redirectUrl.startsWith("www")) {
                 if (redirectUrl.startsWith("/")) {
                     redirectUrl = request.getProtocol() + "://" + request.getHost() + redirectUrl;
@@ -411,8 +440,9 @@ public class TaskHttpClient {
             }
             logger.info("http has redirect,taskId={},websiteName={},type={},from={} to redirectUrl={}", taskId, request.getWebsiteName(),
                     request.getType(), request.getUrl(), redirectUrl);
-            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, request.getRemarkId(), true).setUrl(redirectUrl)
-                    .invoke();
+            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, request.getRemarkId(), true)
+                    .setRedirectCount(request.getRedirectCount() + 1).setUrl(redirectUrl).setAutoRedirect(request.getAutoRedirect()).invoke();
+            return response;
         }
         return response;
     }

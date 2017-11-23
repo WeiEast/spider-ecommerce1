@@ -146,7 +146,7 @@ public class CrawlExcutorHandler {
                         }
 
                         if (linkQueue.isFull()) {
-                            searchProcessor.getTask().setErrorCode(ErrorCode.QUEUE_FULL_ERROR_CODE);
+                            //searchProcessor.getTask().setErrorCode(ErrorCode.QUEUE_FULL_ERROR_CODE);
                         }
                         if (threadCount != null && threadCount > 1) {
                             if (crawlExecutorPool != null) {

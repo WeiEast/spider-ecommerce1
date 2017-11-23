@@ -1,6 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.operator.he_bei_10000_web;
-
-import java.util.Map;
+package com.datatrees.rawdatacentral.plugin.operator.yun_nan_10000_web;
 
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -18,13 +16,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created by guimeichao on 17/9/25.
- */
-public class HeBei10000ForWeb implements OperatorPluginService {
+import java.net.URLEncoder;
+import java.util.Map;
 
-    private static final Logger                     logger     = LoggerFactory.getLogger(HeBei10000ForWeb.class);
-    private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
+public class YunNan10000ForWeb implements OperatorPluginService {
+    private Logger logger = LoggerFactory.getLogger(YunNan10000ForWeb.class);
+
+    private LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -82,24 +80,11 @@ public class HeBei10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-
-            String templateUrl = "http://www.189.cn/login/index.do";
-            response = TaskHttpClient.create(param, RequestType.GET, "he_bei_10000_web_002").setFullUrl(templateUrl).invoke();
-            if (StringUtils.contains(response.getPageContent(), "regUrl\":null")) {
-                /**
-                 * 不访问会导致无权限获取短信
-                 */
-                String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00380407";
-                templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10006&toStUrl=http://he.189.cn/service/bill/feeQuery_iframe" +
-                        ".jsp?SERV_NO=SHQD1&fastcode=00380407&cityCode=he";
-                response = TaskHttpClient.create(param, RequestType.GET, "he_bei_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
-
-                logger.warn("登录成功,params={}", param);
-                return result.success();
-            } else {
-                logger.warn("登录失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
+            String refer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01941227";
+            String templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10025&toStUrl=http://yn.189.cn/service/jt/bill/qry_mainjt.jsp?SERV_NO=9A001&fastcode=01941226&cityCode=yn";
+            response = TaskHttpClient.create(param, RequestType.GET, "yun_nan_10000_web_001").setFullUrl(templateUrl).setReferer(refer).invoke();
+            logger.info("登录成功,params={}", param);
+            return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
@@ -111,16 +96,11 @@ public class HeBei10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "areaCode");
-            String loginType = TaskUtils.getTaskContext(param.getTaskId(), "loginType");
-            String operType = TaskUtils.getTaskContext(param.getTaskId(), "operType");
-            String randType = TaskUtils.getTaskContext(param.getTaskId(), "randType");
-
-            String referer = "http://he.189.cn/service/bill/feeQuery_iframe.jsp?SERV_NO=SHQD1&fastcode=00380407&cityCode=he";
-            String templateUrl = "http://he.189.cn/public/postValidCode.jsp";
-            String templateData = "NUM={}&AREA_CODE={}&LOGIN_TYPE={}&OPER_TYPE={}&RAND_TYPE={}";
-            String data = TemplateUtils.format(templateData, param.getMobile(), areaCode, loginType, operType, randType);
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(data)
-                    .setReferer(referer).invoke();
+            String referer = "http://yn.189.cn/service/jt/bill/qry_mainjt.jsp?SERV_NO=SHQD1&fastcode=01941229&cityCode=yn";
+            String templateUrl = "http://yn.189.cn/public/postValidCode.jsp";
+            String templateDate = "NUM={}&AREA_CODE={}&LOGIN_TYPE=21&OPER_TYPE=CR0&RAND_TYPE=004";
+            String data = TemplateUtils.format(templateDate, param.getMobile(), areaCode);
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_web_002").setFullUrl(templateUrl).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<actionFlag>0</actionFlag>")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -135,24 +115,40 @@ public class HeBei10000ForWeb implements OperatorPluginService {
         }
     }
 
+
     private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String referer = "http://he.189.cn/service/bill/feeQuery_iframe.jsp?SERV_NO=SHQD1&fastcode=00380407&cityCode=he";
-            String[] urls = TaskUtils.getTaskContext(param.getTaskId(), "callUrl").split("\"");
-            String templateUrl = urls[0];
-            String data = TemplateUtils.format(urls[1], param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(data)
-                    .setReferer(referer).invoke();
+            String proNo = TaskUtils.getTaskContext(param.getTaskId(), "proDid");
+            String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "areaCode");
+            String nameStr = TaskUtils.getTaskContext(param.getTaskId(), "name");
+            String name = URLEncoder.encode(nameStr, "utf-8");
+            String identityCard = TaskUtils.getTaskContext(param.getTaskId(), "identityCard");
+            String templateUrl = "http://yn.189.cn/public/custValid.jsp";
+            String templateData = "_FUNC_ID_=WB_PAGE_PRODPASSWDQRY&NAME={}&CUSTCARDNO={}&PROD_PASS={}&MOBILE_CODE={}&NAME={}&CUSTCARDNO={}";
+            String data = TemplateUtils.format(templateData, name, identityCard, param.getPassword(), param.getSmsCode(), name, identityCard);
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_web_002").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
-            if (!StringUtils.contains(pageContent, "随机码不正确,请重新输入")) {
-                TaskUtils.addTaskShare(param.getTaskId(), "callDetails", pageContent);
-                logger.info("详单-->校验成功,param={}", param);
-                return result.success();
-            } else {
+            if (!StringUtils.contains(pageContent, "<rsFlag>1</rsFlag>")) {
                 logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+            }
+            templateUrl = "http://yn.189.cn/public/pwValid.jsp";
+            templateData = "_FUNC_ID_=WB_PAGE_PRODPASSWDQRY&NAME={}&CUSTCARDNO={}&PROD_PASS={}&MOBILE_CODE={}&ACC_NBR={}&AREA_CODE={}&LOGIN_TYPE=21&PASSWORD={}&MOBILE_FLAG=1&MOBILE_LOGON_NAME={}&MOBILE_CODE={}&PROD_NO={}";
+            data = TemplateUtils.format(templateData, name, identityCard, param.getPassword(), param.getSmsCode(), param.getMobile(), areaCode, param.getPassword(), param.getMobile(), param.getSmsCode(), proNo);
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            pageContent = response.getPageContent();
+            if (StringUtils.contains(pageContent, "<rsFlag>2</rsFlag>")) {
+                logger.info("详单-->校验成功,param={}", param);
+                templateUrl="http://yn.189.cn/service/jt/bill/actionjt/ifr_bill_detailslist_new.jsp";
+                templateData="NUM={}&AREA_CODE={}&PROD_NO={}";
+                data=TemplateUtils.format(templateData,param.getMobile(),areaCode,proNo);
+                response=TaskHttpClient.create(param,RequestType.POST,"yun_nan_10000_web_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
+                return result.success();
+            } else {
+                logger.error("详单-->校验失败,param={},pageContent={}", param, pageContent);
+                return result.failure(ErrorCode.VALIDATE_ERROR);
             }
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);

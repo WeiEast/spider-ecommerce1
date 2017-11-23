@@ -14,6 +14,7 @@
 
     <!--代理-->
     <dubbo:reference interface="com.treefinance.proxy.api.ProxyProvider" id="proxyProvider" check="false"/>
+    <dubbo:reference interface="com.datatrees.notify.sms.newservice.SmsNewService" id="smsNewService" check="false"/>
 
 </beans>
 

@@ -9,16 +9,20 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.dao.WebsiteOperatorDAO;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
+import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +50,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     private WebsiteConfigDAO    websiteConfigDAO;
     @Resource
     private WebsiteGroupService websiteGroupService;
+    @Resource
+    private NotifyService       notifyService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -179,16 +185,12 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     public void updateEnable(String websiteName, Boolean enable) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         CheckUtils.checkNotNull(enable, "enable is null");
-        WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
-        if (null != websiteOperatorDb) {
-            WebsiteOperator operatorUpdate = new WebsiteOperator();
-            operatorUpdate.setWebsiteId(websiteOperatorDb.getWebsiteId());
-            operatorUpdate.setEnable(enable);
-            websiteOperatorDAO.updateByPrimaryKeySelective(operatorUpdate);
-            websiteGroupService.updateEnable(websiteName, enable);
-            websiteGroupService.updateCache();
-        }
+        updateEnable(websiteName, enable, false);
+    }
 
+    @Override
+    public String updateEnable(String websiteName, Boolean enable, Boolean auto) {
+        return null;
     }
 
     @Override
@@ -196,5 +198,41 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         WebsiteOperatorExample example = new WebsiteOperatorExample();
         example.createCriteria().andEnableEqualTo(false);
         return websiteOperatorDAO.selectByExample(example);
+    }
+
+    @Override
+    public List<WebsiteOperator> queryAll() {
+        WebsiteOperatorExample example = new WebsiteOperatorExample();
+        return websiteOperatorDAO.selectByExample(example);
+    }
+
+    @Override
+    public Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto) {
+        WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
+        String redisKey = RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(websiteOperatorDb.getGroupCode());
+        String fromWebsiteName = RedisUtils.get(redisKey);
+        WebsiteOperator from = websiteOperatorDb;
+        if (!org.apache.commons.lang3.StringUtils.equals(websiteName, fromWebsiteName)) {
+            from = getByWebsiteName(fromWebsiteName);
+        }
+
+        WebsiteOperator operatorUpdate = new WebsiteOperator();
+        operatorUpdate.setWebsiteId(websiteOperatorDb.getWebsiteId());
+        operatorUpdate.setEnable(enable);
+        websiteOperatorDAO.updateByPrimaryKeySelective(operatorUpdate);
+        websiteGroupService.updateEnable(websiteName, enable);
+        websiteGroupService.updateCache();
+
+        String toWebsiteName = RedisUtils.get(redisKey);
+        WebsiteOperator to = websiteOperatorDb;
+        if (!org.apache.commons.lang3.StringUtils.equals(toWebsiteName, fromWebsiteName)) {
+            to = getByWebsiteName(toWebsiteName);
+        }
+        Map<String, WebsiteOperator> map = new HashMap<>();
+        map.put(AttributeKey.FROM, from);
+        map.put(AttributeKey.TO, to);
+
+        notifyService.sendMsgForOperatorStatusUpdate(websiteOperatorDb, from, to, enable, auto);
+        return map;
     }
 }

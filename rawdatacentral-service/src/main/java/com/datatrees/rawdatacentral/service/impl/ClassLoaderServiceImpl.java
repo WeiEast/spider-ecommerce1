@@ -115,7 +115,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
             return (OperatorPluginService) loginClass.newInstance();
         } catch (Throwable e) {
             logger.error("getOperatorService error websiteName={}", websiteName, e);
-            throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName);
+            throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName, e);
         }
     }
 
