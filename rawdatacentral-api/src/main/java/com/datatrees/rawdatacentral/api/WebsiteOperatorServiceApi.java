@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.api;
 
 import java.util.List;
+import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -21,7 +22,29 @@ public interface WebsiteOperatorServiceApi {
      * 查询所有禁用版本
      * @return
      */
-    HttpResult<List<WebsiteOperator>> queryDisable();
+    List<WebsiteOperator> queryDisable();
+
+    /**
+     * 根据websiteName查找配置
+     * @param websiteName
+     * @return
+     */
+    WebsiteOperator getByWebsiteName(String websiteName);
+
+    /**
+     * 查询所有运营商站点
+     * @return
+     */
+    List<WebsiteOperator> queryAll();
+
+    /**
+     * 启用/停用配置
+     * @param websiteName 站点
+     * @param enable      状态
+     * @param auto        true:自动,false:手动
+     * @return
+     */
+    Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, Boolean enable, Boolean auto);
 
 }
 
