@@ -98,14 +98,6 @@ public class TianJin10000ForWeb implements OperatorPluginService {
                     .setReferer(referer)
                     .invoke();
 
-            //templateUrl = "http://www.189.cn/tj/";
-            //response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10000_web_003").setFullUrl(templateUrl).invoke();
-
-            //referer = "http://tj.189.cn/tj/service/bill/feeQueryIndex.action?tab=3&amp;fastcode=02251357";
-            //templateUrl = "http://tj.189.cn/tj/service/bill/feeQueryIndex.action?tab=tab3&time=";
-            //response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_004").setFullUrl(templateUrl, System.currentTimeMillis())
-            //        .setReferer(referer).invoke();
-
             templateUrl = "http://tj.189.cn/tj/service/bill/balanceQuery.action?requestFlag=asynchronism&shijian=";
             response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_005").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();

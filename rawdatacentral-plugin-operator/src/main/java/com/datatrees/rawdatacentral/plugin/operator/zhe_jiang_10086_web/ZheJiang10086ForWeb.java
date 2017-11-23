@@ -277,27 +277,26 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
 
-            //出现错误返回304
-            if (StringUtils.isNoneBlank(response.getRedirectUrl())) {
-                String redirectUrl = URLDecoder.decode(response.getRedirectUrl(), "GBK");
-                String errorMsg = RegexpUtils.select(redirectUrl, "&msg=(.+)", 1);
-                switch (errorMsg) {
-                    case "您输入的验证码不正确，请重新输入验证码":
-                        logger.warn("登录-->图片验证码--校验失败,params={}", param);
-                        return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
-                    default:
-                        logger.warn("登录失败,response not contains postartifact,params={},errorMsg={},redirectUrl={}", param, errorMsg, redirectUrl);
-                        return result.failure();
-                }
-
+            if (StringUtils.contains(response.getPageContent(),"location.replace")) {
+                templateUrl = PatternUtils.group(response.getPageContent(),"replace\\('([^']+)'\\)",1);
+                response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
             }
+            //出现错误返回304
+            //if (StringUtils.isNoneBlank(response.getRedirectUrl())) {
+            //    String redirectUrl = URLDecoder.decode(response.getRedirectUrl(), "GBK");
+            //    String errorMsg = RegexpUtils.select(redirectUrl, "&msg=(.+)", 1);
+            //    switch (errorMsg) {
+            //        case "您输入的验证码不正确，请重新输入验证码":
+            //            logger.warn("登录-->图片验证码--校验失败,params={}", param);
+            //            return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+            //        default:
+            //            logger.warn("登录失败,response not contains postartifact,params={},errorMsg={},redirectUrl={}", param, errorMsg, redirectUrl);
+            //            return result.failure();
+            //    }
+            //
+            //}
 
             String pageContent = response.getPageContent();
-            if (!StringUtils.contains(pageContent, "postartifact")) {
-                logger.warn("登录失败,response not contains postartifact ,params={}", param);
-                return result.failure();
-            }
-            pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_005", pageContent);
             String sAMLart = PatternUtils.group(pageContent, "callAssert\\('([^']+)'\\)", 1);
             templateUrl = "http://www.zj.10086.cn/my/servlet/assertion";
             templateData = "SAMLart={}&RelayState={}";

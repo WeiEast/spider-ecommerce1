@@ -105,7 +105,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             //删除cookie
             //RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
 
-            String templateUrl = "http://wapjl.189.cn/";
+            String templateUrl = "http://wapjl.189.cn/menu/treeMenu.action?cms_page_type=4&servId=-1";
             response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_001").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {

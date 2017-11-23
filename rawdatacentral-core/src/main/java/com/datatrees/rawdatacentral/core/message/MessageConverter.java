@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.core.message;
 
-import org.apache.rocketmq.common.message.Message;
+import com.alibaba.rocketmq.common.message.Message;
 
 public interface MessageConverter {
 

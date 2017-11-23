@@ -51,6 +51,10 @@ public class OperatorParam implements Serializable {
      * 身份证号码
      */
     private String idCard;
+    /** 分组代码 */
+    private String groupCode;
+    /** 分组名称 */
+    private String groupName;
     /**
      * 扩展属性
      */
@@ -159,6 +163,22 @@ public class OperatorParam implements Serializable {
 
     public String getActionName() {
         return FormType.getName(formType);
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     @Override

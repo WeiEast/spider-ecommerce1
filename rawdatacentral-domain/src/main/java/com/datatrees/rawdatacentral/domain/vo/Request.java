@@ -70,7 +70,16 @@ public class Request implements Serializable {
     @JSONField(ordinal = 16)
     private String protocol;
     @JSONField(ordinal = 16)
-    private String defaultResponseCharset = "UTF-8";
+    private String  defaultResponseCharset = "UTF-8";
+    @JSONField(ordinal = 16)
+    private Integer redirectCount          = 0;
+    @JSONField(ordinal = 16)
+    private Integer maxRedirectCount       = 5;
+    /**
+     * 自动跳转
+     */
+    @JSONField(ordinal = 16)
+    private Boolean autoRedirect           = true;
 
     public Request() {
         addHead(HttpHeadKey.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0");
@@ -307,6 +316,30 @@ public class Request implements Serializable {
 
     public void setDefaultResponseCharset(String defaultResponseCharset) {
         this.defaultResponseCharset = defaultResponseCharset;
+    }
+
+    public Boolean getAutoRedirect() {
+        return autoRedirect;
+    }
+
+    public void setAutoRedirect(Boolean autoRedirect) {
+        this.autoRedirect = autoRedirect;
+    }
+
+    public Integer getRedirectCount() {
+        return redirectCount;
+    }
+
+    public void setRedirectCount(Integer redirectCount) {
+        this.redirectCount = redirectCount;
+    }
+
+    public Integer getMaxRedirectCount() {
+        return maxRedirectCount;
+    }
+
+    public void setMaxRedirectCount(Integer maxRedirectCount) {
+        this.maxRedirectCount = maxRedirectCount;
     }
 
     @Override
