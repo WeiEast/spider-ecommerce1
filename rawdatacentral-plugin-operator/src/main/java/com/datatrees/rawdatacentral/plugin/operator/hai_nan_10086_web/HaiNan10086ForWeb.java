@@ -18,7 +18,7 @@ import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 17/9/14.
  */
-public class HaiNan10086ForWeb implements OperatorPluginService {
+public class HaiNan10086ForWeb implements OperatorPluginPostService {
 
     private static final Logger logger = LoggerFactory.getLogger(HaiNan10086ForWeb.class);
 
@@ -36,7 +36,7 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://hi.ac.10086.cn/login";
+            String templateUrl = "http://www.hi.10086.cn/service/zzzz.jsp";
             response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_001").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -44,39 +44,33 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.TASK_INIT_ERROR);
             }
 
-            String referer = templateUrl;
-            templateUrl = PatternUtils.group(pageContent, "replace\\('([^\\)]+)'\\);", 1);
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
-            pageContent = response.getPageContent();
-            if (StringUtils.isBlank(pageContent)) {
-                logger.error("登录-->初始化失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.TASK_INIT_ERROR);
-            }
-
             String backurl = "https://hi.ac.10086.cn/sso3//4login/backPage.jsp";
-            String errorurl = "https://hi.ac.10086.cn/sso3//4login/errorPage2.jsp";
+            String errorurlForLogin = "http://www.hi.10086.cn/service/login/errorPage.jsp";
+            String errorurlForSms = "http://www.hi.10086.cn/service/login/errorPage2.jsp";
             String hasdespwd = "hasdespwd";
             String spid = "8a481e862c08afe5012c0a9788590002";
 
-            List<String> backurlList = XPathUtil.getXpath("//input[@id='backurl']/@value", pageContent);
+            List<String> backurlList = XPathUtil.getXpath("//input[@name='backurl']/@value", pageContent);
             if (!CollectionUtils.isEmpty(backurlList)) {
                 backurl = backurlList.get(0);
             }
-            List<String> errorurlList = XPathUtil.getXpath("//input[@id='errorurl']/@value", pageContent);
+            List<String> errorurlList = XPathUtil.getXpath("//input[@name='errorurl']/@value", pageContent);
             if (!CollectionUtils.isEmpty(errorurlList)) {
-                errorurl = errorurlList.get(0);
+                errorurlForLogin = errorurlList.get(0);
+                errorurlForSms = errorurlList.get(1);
             }
-            List<String> hasdespwdList = XPathUtil.getXpath("//input[@id='hasdespwd']/@value", pageContent);
+            List<String> hasdespwdList = XPathUtil.getXpath("//input[@name='hasdespwd']/@value", pageContent);
             if (!CollectionUtils.isEmpty(hasdespwdList)) {
                 hasdespwd = hasdespwdList.get(0);
             }
-            List<String> spidList = XPathUtil.getXpath("//input[@id='spid']/@value", pageContent);
+            List<String> spidList = XPathUtil.getXpath("//input[@name='spid']/@value", pageContent);
             if (!CollectionUtils.isEmpty(spidList)) {
                 spid = spidList.get(0);
             }
 
             TaskUtils.addTaskShare(param.getTaskId(), "backurl", backurl);
-            TaskUtils.addTaskShare(param.getTaskId(), "errorurl", errorurl);
+            TaskUtils.addTaskShare(param.getTaskId(), "errorurlForLogin", errorurlForLogin);
+            TaskUtils.addTaskShare(param.getTaskId(), "errorurlForSms", errorurlForSms);
             TaskUtils.addTaskShare(param.getTaskId(), "hasdespwd", hasdespwd);
             TaskUtils.addTaskShare(param.getTaskId(), "spid", spid);
 
@@ -100,6 +94,8 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
         switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshSmsCodeForLogin(param);
             case FormType.VALIDATE_BILL_DETAIL:
                 return refeshSmsCodeForBillDetail(param);
             default:
@@ -134,7 +130,7 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://hi.ac.10086.cn/sso3/common/image.jsp?l=";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hai_nan_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hai_nan_10086_web_002")
                     .setFullUrl(templateUrl).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -144,14 +140,37 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
         }
     }
 
+    private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
+            String errorurlForSms = TaskUtils.getTaskShare(param.getTaskId(), "errorurlForSms");
+            String templateUrl = "https://hi.ac.10086.cn/sso3/SMSCodeSend?mobileNum={}&validCode={}&spid={}&errorurl={}";
+            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_003")
+                    .setFullUrl(templateUrl, param.getMobile(), param.getPicCode().toLowerCase(), spid, errorurlForSms).setAutoRedirect(false).invoke();
+            String code = PatternUtils.group(response.getRedirectUrl(), "code=([^&]+)&", 1);
+            if (StringUtils.equals(code, "0000")) {
+                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
+            }
+            logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+            return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+        } catch (Exception e) {
+            logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_SMS_ERROR);
+        }
+    }
+
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
+        CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
             String backurl = TaskUtils.getTaskShare(param.getTaskId(), "backurl");
-            String errorurl = TaskUtils.getTaskShare(param.getTaskId(), "errorurl");
+            String errorurlForLogin = TaskUtils.getTaskShare(param.getTaskId(), "errorurlForLogin");
             String hasdespwd = TaskUtils.getTaskShare(param.getTaskId(), "hasdespwd");
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
 
@@ -160,11 +179,11 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
 
             String referer = "https://hi.ac.10086.cn/login";
             String templateUrl = "https://hi.ac.10086.cn/sso3/Login";
-            String templateData = "backurl={}&errorurl={}&spid={}&RelayState=&hasdespwd={}&Password-type=&servicePassword={}&smsValidCode=&type=B" +
-                    "&mobileNum={}&servicePassword_show=%B7%FE%CE%F1%C3%DC%C2%EB&validCode={}&smsValidCodeShow=";
+            String templateData = "backurl={}&errorurl={}&spid={}&RelayState=&hasdespwd={}&Password-type=&type=C&mobileNum={}&servicePassword={}" +
+                    "&smsValidCode={}&servicePassword_show=%B7%FE%CE%F1%C3%DC%C2%EB&smscode1=&validCode={}";
             String data = TemplateUtils
-                    .format(templateData, URLEncoder.encode(backurl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid, hasdespwd, encryptPassword,
-                            param.getMobile(), param.getPicCode());
+                    .format(templateData, URLEncoder.encode(backurl, "UTF-8"), URLEncoder.encode(errorurlForLogin, "UTF-8"), spid, hasdespwd,
+                            param.getMobile(), encryptPassword, param.getSmsCode(), param.getPicCode());
 
             response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
@@ -173,82 +192,8 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
-            referer = "https://hi.ac.10086.cn/sso3/Login";
-            templateUrl = PatternUtils.group(pageContent, "replace\\('([^\\)]+)'\\);", 1);
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_005").setFullUrl(templateUrl).setReferer(referer).invoke();
-            pageContent = response.getPageContent();
-            if (!StringUtils.contains(pageContent, "callBackurl")) {
-                logger.error("登陆失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-            String sAMLart = PatternUtils.group(pageContent, "callBackurl\\('([^\\)]+)'\\);", 1);
-            templateUrl = "http://www.hi.10086.cn/my/";
-            templateData = "SAMLart={}&weaktype=&loginmodelparam=&RelayState=";
-            data = TemplateUtils.format(templateData, sAMLart);
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_006").setFullUrl(templateUrl).setRequestBody(data)
-                    .setReferer(referer).invoke();
-            pageContent = response.getPageContent();
-
-            String relayState = "type=null;backurl=http%3A%2F%2Fwww.hi.10086.cn%2Fservice%2FmainQuery.do;" +
-                    "nl=1;loginFrom=http%3A%2F%2Fwww.hi.10086.cn%2Fservice%2F";
-            List<String> relayStateList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(relayStateList)) {
-                relayState = relayStateList.get(0);
-            }
-            String sAMLRequest = "PHNhbWxwOkF1dGhuUmVxdWVzdCB4bWxuczpzYW1scD0idXJuOm9hc2lzOm5hbWVzOnRjOlNBT" +
-                    "Uw6Mi4wOnByb3RvY29sIiB4bWxuczpzYW1sPSJ1cm46b2FzaXM6bmFtZXM6dGM6U0FNTDoyLjA6YXNzZXJ0aW9" +
-                    "uIiBJRD0iZGViNzZmYTc5ZmI2NDczMTkwYjU4NjFjOTM3ZmYzYmEiIElzc3VlSW5zdGFudD0iMjAxNy0wMy0wMi" +
-                    "AwNTo1MTo0MCIgVmVyc2lvbj0iMi4wIj48c2FtbDpJc3N1ZXI+OGE0ODFlODYyYzA4YWZlNTAxMmMwYTk3ODg1O" +
-                    "TAwMDI8L3NhbWw6SXNzdWVyPjxzYW1scDpOYW1lSURQb2xpY3kgQWxsb3dDcmVhdGU9InRydWUiIEZvcm1hdD0id" +
-                    "XJuOm9hc2lzOm5hbWVzOnRjOlNBTUw6Mi4wOm5hbWVpZC1mb3JtYXQ6dHJhbnNpZW50Ii8+PC9zYW1scDpBdXRo" + "blJlcXVlc3Q+";
-            List<String> sAMLRequestList = XPathUtil.getXpath("//input[@name='SAMLRequest']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(sAMLRequestList)) {
-                sAMLRequest = sAMLRequestList.get(0);
-                sAMLRequest = sAMLRequest.replace(" ", "");
-                sAMLRequest = sAMLRequest.replace("[", "");
-                sAMLRequest = sAMLRequest.replace("]", "");
-            }
-
-            templateUrl = "https://hi.ac.10086.cn/sso3/POST";
-            templateData = "SAMLRequest={}&RelayState={}";
-            data = TemplateUtils.format(templateData, URLEncoder.encode(sAMLRequest, "UTF-8"), URLEncoder.encode(relayState, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
-            pageContent = response.getPageContent();
-
-            List<String> sAMLartList = XPathUtil.getXpath("//input[@name='SAMLart']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(sAMLRequestList)) {
-                sAMLart = sAMLartList.get(0);
-            }
-            String displayPic = "0";
-            List<String> displayPicList = XPathUtil.getXpath("//input[@name='displayPic']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(displayPicList)) {
-                displayPic = displayPicList.get(0);
-            }
-            String displayPics = "";
-            List<String> displayPicsList = XPathUtil.getXpath("//input[@name='displayPics']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(displayPicsList)) {
-                displayPics = displayPicsList.get(0);
-            }
-            String isEncodeMobile = "1";
-            List<String> isEncodeMobileList = XPathUtil.getXpath("//input[@name='isEncodeMobile']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(isEncodeMobileList)) {
-                isEncodeMobile = isEncodeMobileList.get(0);
-            }
-            String isEncodePassword = "2";
-            List<String> isEncodePasswordList = XPathUtil.getXpath("//input[@name='isEncodePassword']/@value", pageContent);
-            if (!CollectionUtils.isEmpty(isEncodePasswordList)) {
-                isEncodePassword = isEncodePasswordList.get(0);
-            }
-            templateUrl = "http://www.hi.10086.cn/service/mainQuery.do";
-            templateData = "SAMLart={}&isEncodePassword={}&displayPic={}&RelayState={}&isEncodeMobile={}&displayPics=";
-            data = TemplateUtils
-                    .format(templateData, sAMLart, isEncodePassword, displayPic, URLEncoder.encode(relayState, "UTF-8"), isEncodeMobile, displayPics);
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_008").setFullUrl(templateUrl).setRequestBody(data).invoke();
-
-            templateUrl = "http://www.hi.10086.cn/service/mainQuery.do";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_009").setFullUrl(templateUrl).invoke();
-            pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, param.getMobile().toString())) {
+            if (StringUtils.contains(pageContent, "replace")) {
+                TaskUtils.addTaskShare(param.getTaskId(), "pageContentTemp", pageContent);
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             } else {
@@ -314,6 +259,39 @@ public class HaiNan10086ForWeb implements OperatorPluginService {
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> loginPost(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String pageContent = TaskUtils.getTaskShare(param.getTaskId(), "pageContentTemp");
+            String referer = "https://hi.ac.10086.cn/sso3/Login";
+            String templateUrl = PatternUtils.group(pageContent, "replace\\('([^\\)]+)'\\);", 1);
+            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_005").setFullUrl(templateUrl).setReferer(referer).invoke();
+
+            templateUrl = "http://www.hi.10086.cn/service";
+            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_006").setFullUrl(templateUrl).setReferer(referer).invoke();
+
+            templateUrl = "https://login.10086.cn/SSOCheck.action?channelID=12027&backUrl=http%3A%2F%2Fwww.hi.10086.cn%2Fservice%2F";
+            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_006").setFullUrl(templateUrl).setReferer(referer).invoke();
+
+            templateUrl = "http://www1.10086.cn/service/sso/checkuserloginstatus.jsp?callback=checkuserloginstatuscallback&_={}";
+            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_006").setFullUrl(templateUrl, System.currentTimeMillis())
+                    .setReferer(referer).invoke();
+            pageContent = response.getPageContent();
+            if (StringUtils.contains(pageContent, "UserInfo\":\"true")) {
+                logger.info("登陆成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("登陆失败,param={},response={}", param, response);
+                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            }
+        } catch (Exception e) {
+            logger.error("登陆失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.LOGIN_ERROR);
         }
     }
 }
