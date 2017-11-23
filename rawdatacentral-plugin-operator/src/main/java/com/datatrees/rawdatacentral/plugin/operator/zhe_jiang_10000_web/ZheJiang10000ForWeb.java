@@ -98,10 +98,18 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String referer = "http://zj.189.cn/shouji/" + param.getMobile() + "/zhanghu/xiangdan/";
-            String templateUrl = "http://zj.189.cn/bfapp/buffalo/VCodeOperation";
+            String templateUrl = "http://zj.189.cn/zjpr/service/query/query_order.html?menuFlag=1";
+            response = TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10000_web_005").setFullUrl(templateUrl).invoke();
+
+            String referer = templateUrl;
+            templateUrl = "http://zj.189.cn/bfapp/buffalo/cdrService";
+            String data = "<buffalo-call><method>querycdrasset</method></buffalo-call>";
+            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_005").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.TEXT_XML).setReferer(referer).invoke();
+
+            templateUrl = "http://zj.189.cn/bfapp/buffalo/VCodeOperation";
             String templateData = "<buffalo-call><method>SendVCodeByNbr</method><string>{}</string></buffalo-call>";
-            String data = TemplateUtils.format(templateData, param.getMobile());
+            data = TemplateUtils.format(templateData, param.getMobile());
             response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_005").setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.TEXT_XML).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
@@ -138,12 +146,12 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
 
             SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
             Calendar c = Calendar.getInstance();
-            c.add(Calendar.MONTH, -1);
+            //c.add(Calendar.MONTH, -1);
             String billMonth = sf.format(c.getTime());
 
-            String referer = "http://zj.189.cn/shouji/" + param.getMobile().toString() + "/zhanghu/xiangdan/";
+            String referer = "http://zj.189.cn/zjpr/service/query/query_order.html?menuFlag=1";
             String templateUrl = "http://zj.189.cn/zjpr/cdr/getCdrDetail.htm";
-            String templateData = "cdrCondition.pagenum=1&cdrCondition.pagesize=100&cdrCondition.productnbr={}&cdrCondition.areaid={}&cdrCondition" +
+            String templateData = "flag=1&cdrCondition.pagenum=1&cdrCondition.pagesize=100&cdrCondition.productnbr={}&cdrCondition.areaid={}&cdrCondition" +
                     ".cdrlevel=&cdrCondition.productid={}&cdrCondition.product_servtype={}&cdrCondition" +
                     ".recievenbr=%D2%C6%B6%AF%B5%E7%BB%B0&cdrCondition.cdrmonth={}&cdrCondition.cdrtype=11&username={}&idcard={}&cdrCondition" +
                     ".randpsw={}";
