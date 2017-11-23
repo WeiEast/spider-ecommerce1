@@ -59,7 +59,7 @@ ext {
     commonsCodecVersion="1.10"
     proxyApiVersion="2.0.0-SNAPSHOT"
     jsonPathVersion="2.3.0"
-    rocketmqClientVersion = "4.1.0-incubating"
+    rocketmqClientVersion = "3.5.8"
 }
 
 subprojects {

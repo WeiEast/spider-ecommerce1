@@ -32,7 +32,7 @@ import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecke
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.rocketmq.common.ThreadFactoryImpl;
+import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
