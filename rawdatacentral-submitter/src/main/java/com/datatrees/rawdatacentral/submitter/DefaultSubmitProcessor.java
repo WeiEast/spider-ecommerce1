@@ -133,10 +133,10 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
                     jsonStringList.add(GsonUtils.toJson(obj));
                 }
                 redisService.saveToList(redisKey, jsonStringList, 30, TimeUnit.MINUTES);
-                redisService.saveToList(backKey, jsonStringList, 30, TimeUnit.MINUTES);
+                redisService.saveToList(backKey, jsonStringList, 10, TimeUnit.MINUTES);
             } else {
                 redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 30, TimeUnit.MINUTES);
-                redisService.saveString(backKey, GsonUtils.toJson(entry.getValue()), 30, TimeUnit.MINUTES);
+                redisService.saveString(backKey, GsonUtils.toJson(entry.getValue()), 10, TimeUnit.MINUTES);
             }
             submitMessage.getSubmitkeyResult().put(entry.getKey() + "Key", redisKey);
         }
