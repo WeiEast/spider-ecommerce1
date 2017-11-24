@@ -16,6 +16,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
+import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -86,6 +87,8 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
+            String templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10012&toStUrl=http://zj.189.cn/zjpr/balancep/getBalancep.htm";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
             logger.info("登陆成功,param={}", param);
             return result.success();
         } catch (Exception e) {
