@@ -6,7 +6,7 @@ import java.nio.charset.Charset
 scan("60 seconds")
 def charsetName = "UTF-8"
 def appName = "rawdatacentral"
-def serverIp = System.getProperty("server.ip");
+def serverIp = System.getProperty("server.ip","default");
 
 // 日志路径
 def logPath = "/dashu/log/${serverIp}/${appName}"
