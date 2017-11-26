@@ -6,10 +6,10 @@ import java.nio.charset.Charset
 scan("60 seconds")
 def charsetName = "UTF-8"
 def appName = "rawdatacentral"
-def serverIp = System.getProperty("server.ip","default");
+def serverIp = System.getProperty("server.ip");
 
 // 日志路径
-def logPath = "/dashu/log/${serverIp}/${appName}"
+def logPath = "/dashu/log/${appName}/${serverIp}"
 
 // 控制台
 appender("console", ConsoleAppender) {
