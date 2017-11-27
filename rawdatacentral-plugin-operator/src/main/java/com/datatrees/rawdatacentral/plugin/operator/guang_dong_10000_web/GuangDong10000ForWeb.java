@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.plugin.operator.guang_dong_10000_web;
 
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,9 +117,9 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String referer
-                    = "https://gd.189.cn/common/newLogin/newLogin.htm?SSOArea=0000&SSOAccount=null&SSOProType=null&SSORetryTimes=null&SSOError=null&SSOCustType=0&loginOldUri=&SSOOldAccount=null" +
-                    "&SSOProTypePre=null";
+            String referer =
+                    "https://gd.189.cn/common/newLogin/newLogin.htm?SSOArea=0000&SSOAccount=null&SSOProType=null&SSORetryTimes=null&SSOError=null&SSOCustType=0&loginOldUri=&SSOOldAccount=null" +
+                            "&SSOProTypePre=null";
             String templateUrl = "https://gd.189.cn/dwr/exec/newLoginDwr.goLogin.dwr";
             String templateData = "callCount=1&c0-scriptName=newLoginDwr&c0-methodName=goLogin&c0-id={}&c0-param0=boolean:false&c0-param1=boolean" +
                     ":false&c0-param2=string:{}&c0-param3=string:&c0-param4=string:2000004&c0-param5=string:{}&c0-param6=string:00&c0-param7=string" +
@@ -151,7 +152,8 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             templateData = "area=&accountType=2000004&passwordType=00&loginOldUri=%2Fservice%2Fhome%2F&IFdebug=null&errorMsgType=&SSORequestXML" +
                     "={}&sysType=2&from=new&isShowLoginRand=Y&areaSel=020&accountTypeSel=2000004&account={}&mobilePassword=custPassword&password" +
                     "={}&smsCode=&loginCodeRand={}";
-            data = TemplateUtils.format(templateData, ssoRequestXML, param.getMobile(), param.getPassword(), param.getPicCode());
+            data = TemplateUtils
+                    .format(templateData, URLEncoder.encode(ssoRequestXML, "UTF-8"), param.getMobile(), param.getPassword(), param.getPicCode());
             response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_003").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             pageContent = response.getPageContent();
@@ -205,23 +207,24 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "TelNumAttribution");
             //String phoneType = TaskUtils.getTaskContext(param.getTaskId(), "ServiceType");
             String templateUrl = "https://gd.189.cn/volidate/validateSendMsg.action";
-            String templateData = "number="+param.getMobile()+"&latnId="+areaCode+"&typeCode=LIST_QRY";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_006").setFullUrl(templateUrl)
-                    .setRequestBody(templateData).invoke();
+            String templateData = "number=" + param.getMobile() + "&latnId=" + areaCode + "&typeCode=LIST_QRY";
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_006").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .invoke();
             String pageContent = response.getPageContent();
-            if(StringUtils.containsNone(pageContent,"允许发送短信")){
+            if (StringUtils.containsNone(pageContent, "允许发送短信")) {
                 logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
             templateUrl = "https://gd.189.cn/volidate/insertSendSmg.action";
-            templateData = "validaterResult=0&resultmsg=%E5%85%81%E8%AE%B8%E5%8F%91%E9%80%81%E7%9F%AD%E4%BF%A1&YXBS=LIST_QRY&number="+param.getMobile()+"&latnId="+areaCode;
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_007").setFullUrl(templateUrl)
-                    .setRequestBody(templateData).invoke();
+            templateData = "validaterResult=0&resultmsg=%E5%85%81%E8%AE%B8%E5%8F%91%E9%80%81%E7%9F%AD%E4%BF%A1&YXBS=LIST_QRY&number=" +
+                    param.getMobile() + "&latnId=" + areaCode;
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10000_web_007").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .invoke();
             pageContent = response.getPageContent();
-            if(StringUtils.contains(pageContent,"保存信息成功")){
+            if (StringUtils.contains(pageContent, "保存信息成功")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
-            }else{
+            } else {
                 logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
