@@ -39,10 +39,13 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
         try {
+            String templateUrl = "https://gd.189.cn/common/login.jsp?UATicket=-1&loginOldUri=";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化失败,param={}", param, e);
+            logger.error("登录-->初始化失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
