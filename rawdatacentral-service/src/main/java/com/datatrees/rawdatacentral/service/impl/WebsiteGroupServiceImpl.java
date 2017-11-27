@@ -90,14 +90,18 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a.getWeight().compareTo(b.getWeight()))
-                .collect(Collectors.toList());
         WebsiteGroup maxWeight = null;
-        if (CollectionUtils.isNotEmpty(enables)) {
-            maxWeight = enables.get(0);
+        if (list.size() == 1) {
+            maxWeight = list.get(0);
         } else {
-            maxWeight = list.get(random.nextInt(list.size()));
-            logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWeight());
+            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a.getWeight().compareTo(b.getWeight()))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(enables)) {
+                maxWeight = enables.get(enables.size() - 1);
+            } else {
+                maxWeight = list.get(random.nextInt(list.size()));
+                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName());
+            }
         }
         RedisUtils.set(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(groupCode), maxWeight.getWebsiteName());
     }

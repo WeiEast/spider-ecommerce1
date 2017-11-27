@@ -25,7 +25,7 @@ import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -211,10 +211,6 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
         String redisKey = RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(websiteOperatorDb.getGroupCode());
         String fromWebsiteName = RedisUtils.get(redisKey);
-        WebsiteOperator from = websiteOperatorDb;
-        if (!org.apache.commons.lang3.StringUtils.equals(websiteName, fromWebsiteName)) {
-            from = getByWebsiteName(fromWebsiteName);
-        }
 
         WebsiteOperator operatorUpdate = new WebsiteOperator();
         operatorUpdate.setWebsiteId(websiteOperatorDb.getWebsiteId());
@@ -223,16 +219,23 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         websiteGroupService.updateEnable(websiteName, enable);
         websiteGroupService.updateCache();
 
+        WebsiteOperator from = null;
+        if (StringUtils.isNotBlank(fromWebsiteName)) {
+            from = getByWebsiteName(fromWebsiteName);
+        }
+
         String toWebsiteName = RedisUtils.get(redisKey);
-        WebsiteOperator to = websiteOperatorDb;
-        if (!org.apache.commons.lang3.StringUtils.equals(toWebsiteName, fromWebsiteName)) {
+        WebsiteOperator to = null;
+        if (StringUtils.isNotBlank(toWebsiteName)) {
             to = getByWebsiteName(toWebsiteName);
         }
         Map<String, WebsiteOperator> map = new HashMap<>();
         map.put(AttributeKey.FROM, from);
         map.put(AttributeKey.TO, to);
 
-        notifyService.sendMsgForOperatorStatusUpdate(websiteOperatorDb, from, to, enable, auto);
+        if (null != from && null != to) {
+            notifyService.sendMsgForOperatorStatusUpdate(websiteOperatorDb, from, to, enable, auto);
+        }
         return map;
     }
 }
