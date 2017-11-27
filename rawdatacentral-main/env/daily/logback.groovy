@@ -27,7 +27,7 @@ appender("sysFile", RollingFileAppender) {
     }
     rollingPolicy(TimeBasedRollingPolicy) {
         fileNamePattern = "${logPath}/rawdatacentral.log.%d{yyyy-MM-dd}"
-        maxHistory = 15 // 保留最近天数的日志
+        maxHistory = 7 // 保留最近天数的日志
     }
 }
 

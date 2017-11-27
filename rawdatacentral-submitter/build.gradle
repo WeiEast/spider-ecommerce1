@@ -6,6 +6,5 @@ dependencies {
     testCompile "junit:junit:${junitVersion}"
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
         exclude(module: 'commons-logging')
-
     }
 }
