@@ -43,6 +43,7 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "https://gd.189.cn/common/login.jsp?UATicket=-1&loginOldUri=";
             response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            logger.info("广东电信初始化成功！{}", param.getTaskId());
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={},response={}", param, response, e);
