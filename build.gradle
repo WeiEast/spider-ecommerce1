@@ -1,6 +1,6 @@
 allprojects {
     group = 'com.datatrees.rawdatacentral'
-    version = '3.0.14-SNAPSHOT'
+    version = '3.0.15-SNAPSHOT'
     description = "爬虫核心"
 }
 buildscript {
@@ -46,7 +46,7 @@ ext {
     antVersion = "1.6.5"
     mailVersion = "1.4.7"
     jeVersion = "5.0.73"
-    guavaVersion = "22.0"
+    guavaVersion = "20.0"
     junitVersion = "4.10"
     dubboVersion = "2.5.3"
     zkclientVersion = "0.5"

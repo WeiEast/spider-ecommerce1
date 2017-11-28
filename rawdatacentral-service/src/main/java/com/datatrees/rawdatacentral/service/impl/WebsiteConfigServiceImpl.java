@@ -20,6 +20,7 @@ import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -55,6 +56,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     private BankService            bankService;
     @Resource
     private RedisService           redisService;
+    @Resource
+    private WebsiteConfigService   websiteConfigService;
     @Resource
     private ProxyService           proxyService;
     private ParentConfigHandler    parentConfigHandler;
@@ -196,52 +199,51 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             config.setGroupName(group.getGroupName());
 
             String websiteName = redisService.getString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
-            if (StringUtils.isNotBlank(websiteName)) {
-                WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-                WebsiteConfig websiteConfig = buildWebsiteConfig(websiteOperator);
-                //设置别名
-                websiteConfig.setWebsiteName(websiteName);
-                String initSetting = websiteConfig.getInitSetting();
-                if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
-                    throw new RuntimeException("initSetting is blank websiteName=" + websiteName);
-                }
-                JSONObject json = JSON.parseObject(initSetting);
-                if (!json.containsKey("fields")) {
-                    throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
-                }
-                List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
-                if (null == fieldInitSettings) {
-                    throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
-                }
-                config.setWebsiteName(websiteConfig.getWebsiteName());
-                config.setLoginTip(websiteConfig.getLoginTip());
-                config.setResetTip(websiteConfig.getResetTip());
-                config.setResetType(websiteConfig.getResetType());
-                config.setResetURL(websiteConfig.getResetURL());
-                config.setSmsReceiver(websiteConfig.getSmsReceiver());
-                config.setSmsTemplate(websiteConfig.getSmsTemplate());
-                config.setVerifyTip(websiteConfig.getVerifyTip());
-
-                for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
-                    InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
-                    if (null != fieldInitSetting.getDependencies()) {
-                        for (String dependency : fieldInitSetting.getDependencies()) {
-                            field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
-                        }
-                    }
-                    if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
-                        config.setHasPicCode(true);
-                    }
-                    if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
-                        config.setHasSmsCode(true);
-                    }
-                    config.getFields().add(field);
-                }
-                config.setEnable(true);
-            } else {
-                config.setEnable(false);
+            if (StringUtils.isBlank(websiteName)) {
+                logger.error("严重错误,group没有配置,websiteName is blank,groupCode={}", group.getGroupCode());
+                continue;
             }
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+            WebsiteConfig websiteConfig = buildWebsiteConfig(websiteOperator);
+            //设置别名
+            websiteConfig.setWebsiteName(websiteName);
+            String initSetting = websiteConfig.getInitSetting();
+            if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
+                throw new RuntimeException("initSetting is blank websiteName=" + websiteName);
+            }
+            JSONObject json = JSON.parseObject(initSetting);
+            if (!json.containsKey("fields")) {
+                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
+            }
+            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
+            if (null == fieldInitSettings) {
+                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
+            }
+            config.setWebsiteName(websiteConfig.getWebsiteName());
+            config.setLoginTip(websiteConfig.getLoginTip());
+            config.setResetTip(websiteConfig.getResetTip());
+            config.setResetType(websiteConfig.getResetType());
+            config.setResetURL(websiteConfig.getResetURL());
+            config.setSmsReceiver(websiteConfig.getSmsReceiver());
+            config.setSmsTemplate(websiteConfig.getSmsTemplate());
+            config.setVerifyTip(websiteConfig.getVerifyTip());
 
+            for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
+                InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
+                if (null != fieldInitSetting.getDependencies()) {
+                    for (String dependency : fieldInitSetting.getDependencies()) {
+                        field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
+                    }
+                }
+                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
+                    config.setHasPicCode(true);
+                }
+                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
+                    config.setHasSmsCode(true);
+                }
+                config.getFields().add(field);
+            }
+            config.setEnable(true);
             if (group.getGroupName().contains("移动")) {
                 map10086.add(config);
                 continue;
@@ -266,6 +268,28 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             searchProcessorContext.setPluginManager(pluginManager);
             searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, website.getWebsiteName(), proxyService));
             searchProcessorContext.init();
+            return searchProcessorContext;
+        }
+        return null;
+    }
+
+    @Override
+    public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
+        Website website = null;
+        Boolean isOperator = WebsiteUtils.isOperator(websiteName);
+        if (isOperator) {
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+            //保存taskId对应的website,因为运营过程中用的是
+            website = buildWebsite(websiteOperator);
+        } else {
+            website = getWebsiteByWebsiteName(websiteName);
+        }
+        if (website != null) {
+            SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
+            searchProcessorContext.setPluginManager(pluginManager);
+            searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, website.getWebsiteName(), proxyService));
+            searchProcessorContext.init();
+            logger.info("getSearchProcessorContext success,taskId={},websiteName={}", taskId, websiteName);
             return searchProcessorContext;
         }
         return null;

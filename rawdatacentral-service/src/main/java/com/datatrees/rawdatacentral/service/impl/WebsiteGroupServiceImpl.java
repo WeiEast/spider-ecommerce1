@@ -3,16 +3,21 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteGroupDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
 import com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample;
+import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
@@ -29,6 +34,9 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     private WebsiteOperatorService websiteOperatorService;
     @Resource
     private RedisService           redisService;
+    @Resource
+    private WebsiteConfigService   websiteConfigService;
+    private Random random = new Random();
 
     @Override
     public List<WebsiteGroup> queryByGroupCode(String groupCode) {
@@ -78,30 +86,24 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     @Override
     public void updateCacheByGroupCode(String groupCode) {
         CheckUtils.checkNotBlank(groupCode, "groupCode is null");
-        redisService.deleteKey(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(groupCode));
         List<WebsiteGroup> list = queryByGroupCode(groupCode);
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
         WebsiteGroup maxWeight = null;
-        for (WebsiteGroup websiteGroup : list) {
-            if (!websiteGroup.getEnable()) {
-                logger.warn("website is 禁用 groupCode={},websiteName={},websiteTitle={}", websiteGroup.getGroupCode(), websiteGroup.getWebsiteName(),
-                        websiteGroup.getWebsiteTitle());
-                continue;
-            }
-            if (null == maxWeight) {
-                maxWeight = websiteGroup;
-            } else if (websiteGroup.getWeight() > maxWeight.getWeight()) {
-                maxWeight = websiteGroup;
+        if (list.size() == 1) {
+            maxWeight = list.get(0);
+        } else {
+            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a.getWeight().compareTo(b.getWeight()))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(enables)) {
+                maxWeight = enables.get(enables.size() - 1);
+            } else {
+                maxWeight = list.get(random.nextInt(list.size()));
+                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName());
             }
         }
-        if (null != maxWeight && maxWeight.getWeight() > 0) {
-            redisService.saveString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR, groupCode, maxWeight.getWebsiteName());
-            logger.info("find max weight,groupCode={},groupName={},websiteName={},websiteTitle={},weight={},enable={}", maxWeight.getGroupCode(),
-                    maxWeight.getGroupName(), maxWeight.getWebsiteName(), maxWeight.getWebsiteTitle(), maxWeight.getWeight(), maxWeight.getEnable());
-        }
-        redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
+        RedisUtils.set(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(groupCode), maxWeight.getWebsiteName());
     }
 
     @Override
@@ -109,7 +111,8 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         for (GroupEnum group : GroupEnum.values()) {
             updateCacheByGroupCode(group.getGroupCode());
         }
-        redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
+        List<OperatorCatalogue> list = websiteConfigService.queryAllOperatorConfig();
+        redisService.cache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, list);
     }
 
     @Override

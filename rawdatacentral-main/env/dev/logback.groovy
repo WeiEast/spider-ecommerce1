@@ -2,7 +2,6 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
 import java.nio.charset.Charset
 
-// 30秒扫描一次日志配置更新
 scan("60 seconds")
 def charsetName = "UTF-8"
 def appName = "rawdatacentral"
