@@ -20,6 +20,7 @@ import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -55,6 +56,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     private BankService            bankService;
     @Resource
     private RedisService           redisService;
+    @Resource
+    private WebsiteConfigService   websiteConfigService;
     @Resource
     private ProxyService           proxyService;
     private ParentConfigHandler    parentConfigHandler;
@@ -265,6 +268,28 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             searchProcessorContext.setPluginManager(pluginManager);
             searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, website.getWebsiteName(), proxyService));
             searchProcessorContext.init();
+            return searchProcessorContext;
+        }
+        return null;
+    }
+
+    @Override
+    public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
+        Website website = null;
+        Boolean isOperator = WebsiteUtils.isOperator(websiteName);
+        if (isOperator) {
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+            //保存taskId对应的website,因为运营过程中用的是
+            website = buildWebsite(websiteOperator);
+        } else {
+            website = getWebsiteByWebsiteName(websiteName);
+        }
+        if (website != null) {
+            SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
+            searchProcessorContext.setPluginManager(pluginManager);
+            searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, website.getWebsiteName(), proxyService));
+            searchProcessorContext.init();
+            logger.info("getSearchProcessorContext success,taskId={},websiteName={}", taskId, websiteName);
             return searchProcessorContext;
         }
         return null;

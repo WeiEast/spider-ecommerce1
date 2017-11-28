@@ -16,6 +16,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
@@ -59,9 +62,6 @@ import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -113,7 +113,7 @@ public class Collector {
         task.setNetworkTraffic(new AtomicLong(0));
         task.setStatus(0);
 
-        SearchProcessorContext context = websiteConfigService.getSearchProcessorContext(message.getTaskId());
+        SearchProcessorContext context = websiteConfigService.getSearchProcessorContext(message.getTaskId(), message.getWebsiteName());
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
