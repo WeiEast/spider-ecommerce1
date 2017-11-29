@@ -190,8 +190,13 @@ public class HaiNan10000ForWeb implements OperatorPluginService {
                 logger.warn("登录失败-->账户名与密码不匹配,param={}", param);
                 return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
             } else if (status.contains("验证码输入错误")) {
-                logger.warn("登录失败-->图片随机码不正确,param={}", param);
-                return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+                if (param.getPicCode().length() > 4) {
+                    logger.warn("登录失败-->请输入图片中的汉字,param={}", param);
+                    return result.failure("请输入图片中的汉字");
+                } else {
+                    logger.warn("登录失败-->图片随机码不正确,param={}", param);
+                    return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+                }
             } else {
                 logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
