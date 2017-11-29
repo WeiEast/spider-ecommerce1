@@ -14,8 +14,10 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.Request;
+import com.datatrees.rawdatacentral.domain.vo.Step;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -379,6 +381,24 @@ public class TaskUtils {
             }
         }
         TaskUtils.saveCookie(taskId, cookies);
+    }
+
+    /**
+     * 记录任务阶段
+     * @param taskId
+     * @param stepEnum
+     */
+    public static void addStep(Long taskId, StepEnum stepEnum) {
+        addTaskShare(taskId, AttributeKey.STEP_CODE, stepEnum.getStepCode() + "");
+        addTaskShare(taskId, AttributeKey.STEP_NAME, stepEnum.getStepName() + "");
+
+        Step step = new Step();
+        step.setStepCode(stepEnum.getStepCode());
+        step.setStepName(stepEnum.getStepName());
+        step.setTimestamp(System.currentTimeMillis());
+        String rediskey = RedisKeyPrefixEnum.STEP.getRedisKey(taskId);
+        RedisUtils.rpush(rediskey, JSON.toJSONString(step));
+        RedisUtils.expire(rediskey, RedisKeyPrefixEnum.STEP.toSeconds());
     }
 
 }

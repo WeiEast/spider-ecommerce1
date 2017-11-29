@@ -36,6 +36,8 @@ public enum RedisKeyPrefixEnum {
     WEBSITE_PROXY("website.proxy", 1, TimeUnit.HOURS, "运营商指定代理"),
     START_TIMESTAMP("start.timestamp", 1, TimeUnit.HOURS, " 开始时间"),
     FINISH_TIMESTAMP("finish.timestamp", 1, TimeUnit.HOURS, " 完成时间"),
+    STATUS("status", 15, TimeUnit.MINUTES, "状态"),
+    STEP("step", 15, TimeUnit.MINUTES, "阶段"),
     WEBSITE_OPERATOR_RENAME("website.operator.rename", 365, TimeUnit.DAYS, "运营商websiteName别名,兼容方案初期用");
     /**
      * 备注

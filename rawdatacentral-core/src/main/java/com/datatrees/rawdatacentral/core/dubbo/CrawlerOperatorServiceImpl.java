@@ -24,6 +24,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
@@ -77,8 +78,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
             //缓存task基本信息
             TaskUtils.initTaskShare(taskId, websiteName);
+            TaskUtils.addStep(taskId, StepEnum.INIT);
             //记录登陆开始时间
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
+            TaskUtils.addTaskShare(taskId, AttributeKey.STEP, param.getFormType());
             //初始化监控信息
             monitorService.initTask(taskId, websiteName, param.getMobile());
             //保存mobile和websiteName
@@ -100,12 +103,15 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             //执行运营商插件初始化操作
             //运营商独立部分第一次初始化后不启动爬虫
             result = getPluginService(websiteName).init(param);
+            //爬虫状态
             if (!result.getStatus()) {
                 monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->失败");
                 logger.warn("登录-->初始化-->失败");
+                TaskUtils.addStep(taskId, StepEnum.INIT_FAIL);
                 return result;
             }
             RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
+            TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
             monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->成功");
             logger.info("登录-->初始化-->成功");
             return result;
@@ -123,6 +129,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
 
     @Override
     public HttpResult<Map<String, Object>> refeshPicCode(OperatorParam param) {
+        TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.STEP, param.getFormType());
         HttpResult<Map<String, Object>> result = checkParams(param);
         if (!result.getStatus()) {
             logger.warn("check param error,result={}", result);
@@ -243,6 +250,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             if (!result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                 messageService.sendTaskLog(taskId, "登陆失败");
             }
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.STATUS.getRedisKey(param.getFormType()), result.getStatus() + "");
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
             sendSubmitSuccessMessage(pluginService, result, param, startTime);
