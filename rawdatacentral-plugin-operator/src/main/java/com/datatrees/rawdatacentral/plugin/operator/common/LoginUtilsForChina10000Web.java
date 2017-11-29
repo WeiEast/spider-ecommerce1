@@ -127,16 +127,19 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
                     return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
                 } else if (resultCode.equals("8105")) {
                     logger.error("登陆失败,密码过于简单,请重置,param={},response={}", param, response);
-                    return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
+                    return result.failure("密码过于简单,请重置");
                 } else if (resultCode.equals("9111")) {
                     logger.error("登陆失败,登录失败过多，帐号已被锁定,param={},response={}", param, response);
-                    return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
+                    return result.failure("登录失败过多，帐号已被锁定");
                 } else if (resultCode.equals("9100")) {
                     logger.error("登陆失败,该账户不存在,param={},response={}", param, response);
-                    return result.failure(ErrorCode.VALIDATE_PHONE_FAIL);
+                    return result.failure("该账户不存在");
                 } else if (resultCode.equals("6113")) {
                     logger.error("登陆失败,系统繁忙，稍后重试,param={},response={}", param, response);
-                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                    return result.failure("系统繁忙，稍后重试");
+                } else if (resultCode.equals("9115")) {
+                    logger.error("登陆失败,验证码不正确,param={},response={}", param, response);
+                    return result.failure("验证码不正确");
                 } else if (StringUtils.isNotBlank(resultCode)) {
                     logger.error("登陆失败,param={},response={}", param, response);
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
