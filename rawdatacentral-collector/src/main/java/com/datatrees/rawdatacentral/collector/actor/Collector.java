@@ -48,6 +48,7 @@ import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -336,6 +337,8 @@ public class Collector {
         this.messageComplement(taskMessage, message);
         message.setFinish(true);
         taskService.updateTask(task);
+        TaskUtils.addTaskShare(task.getTaskId(), RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(AttributeKey.CRAWLER),
+                System.currentTimeMillis() + "");
         monitorService.sendTaskCompleteMsg(task.getTaskId(), task.getWebsiteName(), task.getStatus(), task.getRemark());
         return taskMessage.getContext().getProcessorResult();
     }

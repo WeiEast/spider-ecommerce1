@@ -77,6 +77,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             redisService.deleteKey(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
             //缓存task基本信息
             TaskUtils.initTaskShare(taskId, websiteName);
+            //记录登陆开始时间
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
             //初始化监控信息
             monitorService.initTask(taskId, websiteName, param.getMobile());
             //保存mobile和websiteName
@@ -219,6 +221,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             Long taskId = param.getTaskId();
             OperatorPluginService pluginService = getPluginService(param.getWebsiteName());
             result = pluginService.submit(param);
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
             if (null != result && result.getStatus()) {
                 if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                     TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
