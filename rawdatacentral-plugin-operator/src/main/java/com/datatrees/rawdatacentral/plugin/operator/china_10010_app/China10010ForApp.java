@@ -173,7 +173,10 @@ public class China10010ForApp implements OperatorPluginService {
                         totalRaw = str;
                     }
                 }
-                logger.info("当月通话详单总条数： " + totalRaw);
+                logger.info("当月通话详单总条数：{},taskId={}", totalRaw, param.getTaskId());
+                if (Integer.parseInt(totalRaw) == 0) {
+                    logger.info("无通话记录，原始页面为：{},taskId={}", pageContent, param.getTaskId());
+                }
                 int pages = Integer.parseInt(totalRaw) / 40;
                 list = new ArrayList<>();
                 for (int i = 0; i <= pages; i++) {
