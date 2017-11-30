@@ -5,7 +5,8 @@ public class RedisConfig {
     //Redis服务器IP
     protected static String host;
     //Redis的端口号
-    protected static int port = 6379;
+    protected static int port     = 6379;
+    protected static int database = 0;
     //访问密码
     protected static String password;
     //可用连接实例的最大数目，默认值为8；

@@ -8,7 +8,9 @@ import java.util.Map;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.utils.BackRedisUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -116,14 +118,12 @@ public class OperatorController {
         }
     }
 
-
-
     @RequestMapping("/deleteRedisResult")
     public Object deleteRedisResult(Long taskId) throws IOException {
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId));
+        BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
+        RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
+        RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
+        BackRedisUtils.del(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId));
         return new HttpResult<>().success();
     }
 
