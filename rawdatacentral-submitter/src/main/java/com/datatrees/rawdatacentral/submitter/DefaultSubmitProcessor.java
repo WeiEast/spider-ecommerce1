@@ -126,20 +126,36 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
             String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), extractMessage.getTaskLogId(), entry.getKey());
             String backKey = "monitor.back." + redisKey;
-            BackRedisUtils.hset(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(extractMessage.getTaskId()), entry.getKey(), backKey,
-                    RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            try {
+                BackRedisUtils.hset(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(extractMessage.getTaskId()), entry.getKey(), backKey,
+                        RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            } catch (Throwable e) {
+                logger.error("save to back redis error ", e);
+            }
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();
                 for (Object obj : (Collection) entry.getValue()) {
                     jsonStringList.add(GsonUtils.toJson(obj));
                 }
                 redisService.saveToList(redisKey, jsonStringList, 30, TimeUnit.MINUTES);
-                BackRedisUtils.rpush(backKey, (String[]) jsonStringList.toArray());
+                try {
+                    BackRedisUtils.rpush(backKey, jsonStringList.toArray(new String[jsonStringList.size()]));
+                } catch (Throwable e) {
+                    logger.error("save to back redis error ", e);
+                }
             } else {
                 redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 30, TimeUnit.MINUTES);
-                BackRedisUtils.set(backKey, JSON.toJSONString(entry.getValue()));
+                try {
+                    BackRedisUtils.set(backKey, JSON.toJSONString(entry.getValue()));
+                } catch (Throwable e) {
+                    logger.error("save to back redis error ", e);
+                }
             }
-            BackRedisUtils.expire(backKey, RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            try {
+                BackRedisUtils.expire(backKey, RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            } catch (Throwable e) {
+                logger.error("save to back redis error ", e);
+            }
             submitMessage.getSubmitkeyResult().put(entry.getKey() + "Key", redisKey);
         }
         return true;

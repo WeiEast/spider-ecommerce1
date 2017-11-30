@@ -68,8 +68,12 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
             RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
             RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
-            BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
-            BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
+            try {
+                BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
+                BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
+            } catch (Throwable e) {
+                logger.error("save to back redis error taskId={}", taskId, e);
+            }
             RedisUtils.del(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
             RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
             RedisUtils.del(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
