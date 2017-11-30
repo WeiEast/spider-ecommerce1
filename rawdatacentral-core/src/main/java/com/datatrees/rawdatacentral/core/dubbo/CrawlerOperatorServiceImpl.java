@@ -16,10 +16,7 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.BooleanUtils;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -67,15 +64,19 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
         if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
             //清理共享信息
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
+            try {
+                BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
+                BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
+            } catch (Throwable e) {
+                logger.error("save to back redis error taskId={}", taskId, e);
+            }
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
             //缓存task基本信息
             TaskUtils.initTaskShare(taskId, websiteName);
             TaskUtils.addStep(taskId, StepEnum.INIT);

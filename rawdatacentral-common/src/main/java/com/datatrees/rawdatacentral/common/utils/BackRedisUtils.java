@@ -14,9 +14,9 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-public class RedisUtils extends RedisConfig {
+public class BackRedisUtils extends RedisConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(RedisUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(BackRedisUtils.class);
     protected static JedisPool jedisPool;
 
     public static void init() {
@@ -258,9 +258,9 @@ public class RedisUtils extends RedisConfig {
         }
     }
 
-    public static long rpush(String key, String value) {
+    public static long rpush(String key, String... values) {
         try (Jedis jedis = jedisPool.getResource()) {
-            return jedis.rpush(key, value);
+            return jedis.rpush(key, values);
         }
     }
 

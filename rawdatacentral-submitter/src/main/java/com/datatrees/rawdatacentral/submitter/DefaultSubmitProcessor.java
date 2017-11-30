@@ -8,10 +8,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.rawdatacentral.common.utils.BackRedisUtils;
 import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
@@ -125,18 +126,35 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
             if ("subSeed".equals(entry.getKey())) continue;// no need to save subSeed to redis
             String redisKey = RedisKeyUtils.genRedisKey(extractMessage.getTaskId(), extractMessage.getTaskLogId(), entry.getKey());
             String backKey = "monitor.back." + redisKey;
-            RedisUtils.hset(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(extractMessage.getTaskId()), entry.getKey(), backKey,
-                    RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            try {
+                BackRedisUtils.hset(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(extractMessage.getTaskId()), entry.getKey(), backKey,
+                        RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            } catch (Throwable e) {
+                logger.error("save to back redis error ", e);
+            }
             if (entry.getValue() instanceof Collection) {
                 List<String> jsonStringList = new ArrayList<String>();
                 for (Object obj : (Collection) entry.getValue()) {
                     jsonStringList.add(GsonUtils.toJson(obj));
                 }
                 redisService.saveToList(redisKey, jsonStringList, 30, TimeUnit.MINUTES);
-                redisService.saveToList(backKey, jsonStringList, 10, TimeUnit.MINUTES);
+                try {
+                    BackRedisUtils.rpush(backKey, jsonStringList.toArray(new String[jsonStringList.size()]));
+                } catch (Throwable e) {
+                    logger.error("save to back redis error ", e);
+                }
             } else {
                 redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 30, TimeUnit.MINUTES);
-                redisService.saveString(backKey, GsonUtils.toJson(entry.getValue()), 10, TimeUnit.MINUTES);
+                try {
+                    BackRedisUtils.set(backKey, JSON.toJSONString(entry.getValue()));
+                } catch (Throwable e) {
+                    logger.error("save to back redis error ", e);
+                }
+            }
+            try {
+                BackRedisUtils.expire(backKey, RedisKeyPrefixEnum.TASK_RESULT.toSeconds());
+            } catch (Throwable e) {
+                logger.error("save to back redis error ", e);
             }
             submitMessage.getSubmitkeyResult().put(entry.getKey() + "Key", redisKey);
         }
