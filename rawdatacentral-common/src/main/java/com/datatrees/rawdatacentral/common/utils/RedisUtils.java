@@ -31,7 +31,7 @@ public class RedisUtils extends RedisConfig {
                 if (StringUtils.equals("", password)) {
                     password = null;
                 }
-                jedisPool = new JedisPool(config, host, port, timeout, password);
+                jedisPool = new JedisPool(config, host, port, timeout, password, database);
             }
 
         } catch (Exception e) {
@@ -39,11 +39,12 @@ public class RedisUtils extends RedisConfig {
         }
     }
 
-    public static void init(String host, int port, String password) {
+    public static void init(String host, int port, String password, int datebase) {
         try {
             RedisConfig.host = host;
             RedisConfig.port = port;
             RedisConfig.password = password;
+            RedisConfig.database = datebase;
             init();
         } catch (Exception e) {
             throw new RuntimeException("redis init error ");

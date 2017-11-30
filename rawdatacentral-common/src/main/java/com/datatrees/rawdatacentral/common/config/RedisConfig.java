@@ -28,6 +28,10 @@ public class RedisConfig {
         RedisConfig.port = port;
     }
 
+    public void setDatabase(int database) {
+        RedisConfig.database = database;
+    }
+
     public void setPassword(String password) {
         RedisConfig.password = password;
     }
