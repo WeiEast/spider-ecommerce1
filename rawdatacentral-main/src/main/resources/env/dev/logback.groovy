@@ -1,3 +1,5 @@
+package env.dev
+
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
 import java.nio.charset.Charset
@@ -5,7 +7,7 @@ import java.nio.charset.Charset
 scan("60 seconds")
 def charsetName = "UTF-8"
 def appName = "rawdatacentral"
-def serverIp = System.getProperty("server.ip","default");
+def serverIp = System.getProperty("server.ip", "default");
 
 // 日志路径
 def logPath = "/dashu/log/${serverIp}/${appName}"
@@ -25,18 +27,19 @@ appender("sysFile", RollingFileAppender) {
         pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
         charset = Charset.forName(charsetName)
     }
-    rollingPolicy(TimeBasedRollingPolicy) {
-        fileNamePattern = "${logPath}/${appName}.log.%d{yyyy-MM-dd}"
-        maxHistory = 3 // 保留最近天数的日志
+    rollingPolicy(SizeAndTimeBasedRollingPolicy) {
+        fileNamePattern = "${logPath}/${appName}.log.%d{yyyy-MM-dd}.%i"
+        maxFileSize = "100MB"
+        maxHistory = 7 // 保留最近天数的日志
     }
 }
 
 
 
 root(INFO, ["console", "sysFile"])
-logger("org.apache.http.impl.conn.Wire",OFF)
-logger("org.apache.http",INFO)
-logger("org.apache.http.client.protocol.ResponseProcessCookies",INFO)
+logger("org.apache.http.impl.conn.Wire", OFF)
+logger("org.apache.http", INFO)
+logger("org.apache.http.client.protocol.ResponseProcessCookies", INFO)
 //logger("org.apache.http.client.protocol.ResponseProcessCookies",DEBUG)
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
 logger("com.alibaba.dubbo.rpc.protocol.dubbo", OFF)

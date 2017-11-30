@@ -9,7 +9,7 @@ dependencies {
 
 def env = System.getProperty("env") ?: "dev";
 processResources {
-    from "env/$env"
+    from "src/main/resources/env/$env"
     into "build/resources/main"
 }
 
