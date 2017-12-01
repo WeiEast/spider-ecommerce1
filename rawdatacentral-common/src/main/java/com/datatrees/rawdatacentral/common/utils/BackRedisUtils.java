@@ -14,24 +14,26 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-public class BackRedisUtils extends RedisConfig {
+public class BackRedisUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(BackRedisUtils.class);
-    protected static JedisPool jedisPool;
+    private static JedisPool jedisPool;
+    private static RedisConfig redisConfig = new RedisConfig();
 
     public static void init() {
         try {
             if (null == jedisPool) {
                 JedisPoolConfig config = new JedisPoolConfig();
-                config.setMaxTotal(maxTotal);
-                config.setMaxIdle(maxIdle);
-                config.setMinIdle(minIdle);
-                config.setMaxWaitMillis(maxWait);
+                config.setMaxTotal(redisConfig.getMaxTotal());
+                config.setMaxIdle(redisConfig.getMaxIdle());
+                config.setMinIdle(redisConfig.getMinIdle());
+                config.setMaxWaitMillis(redisConfig.getMaxWait());
                 config.setTestOnBorrow(true);
-                if (StringUtils.equals("", password)) {
-                    password = null;
+                if (StringUtils.equals("", redisConfig.getPassword())) {
+                    redisConfig.setPassword(null);
                 }
-                jedisPool = new JedisPool(config, host, port, timeout, password, database);
+                jedisPool = new JedisPool(config, redisConfig.getHost(), redisConfig.getPort(), redisConfig.getTimeout(), redisConfig.getPassword(),
+                        redisConfig.getDatabase());
             }
 
         } catch (Exception e) {
@@ -41,10 +43,10 @@ public class BackRedisUtils extends RedisConfig {
 
     public static void init(String host, int port, String password, int datebase) {
         try {
-            RedisConfig.host = host;
-            RedisConfig.port = port;
-            RedisConfig.password = password;
-            RedisConfig.database = datebase;
+            redisConfig.setHost(host);
+            redisConfig.setPort(port);
+            redisConfig.setPassword(password);
+            redisConfig.setDatabase(datebase);
             init();
         } catch (Exception e) {
             throw new RuntimeException("redis init error ");
@@ -285,7 +287,7 @@ public class BackRedisUtils extends RedisConfig {
     public static void sadd(final String key, String value, int seconds) {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.sadd(key, value);
-            jedis.expire(key, timeout);
+            jedis.expire(key, seconds);
         }
     }
 
