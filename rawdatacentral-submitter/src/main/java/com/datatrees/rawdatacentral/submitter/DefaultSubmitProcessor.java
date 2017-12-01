@@ -139,7 +139,9 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
                 }
                 redisService.saveToList(redisKey, jsonStringList, 30, TimeUnit.MINUTES);
                 try {
-                    BackRedisUtils.rpush(backKey, jsonStringList.toArray(new String[jsonStringList.size()]));
+                    if (!jsonStringList.isEmpty()) {
+                        BackRedisUtils.rpush(backKey, jsonStringList.toArray(new String[jsonStringList.size()]));
+                    }
                 } catch (Throwable e) {
                     logger.error("save to back redis error ", e);
                 }

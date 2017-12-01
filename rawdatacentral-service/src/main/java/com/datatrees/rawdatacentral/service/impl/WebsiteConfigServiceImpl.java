@@ -296,12 +296,22 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public ExtractorProcessorContext getExtractorProcessorContext(Long taskId) {
-        Website website = getWebsiteFromCache(taskId);
+    public ExtractorProcessorContext getExtractorProcessorContext(Long taskId, String websiteName) {
+        logger.info("getExtractorProcessorContext start,taskId={},websiteName={}", taskId, websiteName);
+        Website website = null;
+        Boolean isOperator = WebsiteUtils.isOperator(websiteName);
+        if (isOperator) {
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+            //保存taskId对应的website,因为运营过程中用的是
+            website = buildWebsite(websiteOperator);
+        } else {
+            website = getWebsiteByWebsiteName(websiteName);
+        }
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website);
             extractorProcessorContext.setPluginManager(pluginManager);
             extractorProcessorContext.init();
+            logger.info("getExtractorProcessorContext success,taskId={},websiteName={}", taskId, websiteName);
             return extractorProcessorContext;
         }
         return null;

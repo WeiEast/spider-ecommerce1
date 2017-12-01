@@ -28,6 +28,10 @@ public class TaskMessage {
     private String                 uniqueSuffix;
     private Boolean                statusSend;
 
+    private Long taskId;
+
+    private String websiteName;
+
     /**
      * @param task
      * @param context
@@ -159,11 +163,23 @@ public class TaskMessage {
         this.statusSend = statusSend;
     }
 
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
+
+    public void setWebsiteName(String websiteName) {
+        this.websiteName = websiteName;
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+         * (non-Javadoc)
+         *
+         * @see java.lang.Object#toString()
+         */
     @Override
     public String toString() {
         return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" + parentTaskID + "]";
