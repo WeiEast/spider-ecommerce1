@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
 import com.google.gson.reflect.TypeToken;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 17/8/30.
  */
-public class HuBei10086ForWeb implements OperatorPluginService {
+public class HuBei10086ForWeb implements OperatorPluginPostService {
 
     private static final Logger logger = LoggerFactory.getLogger(HuBei10086ForWeb.class);
 
@@ -132,42 +132,24 @@ public class HuBei10086ForWeb implements OperatorPluginService {
                     "&continue=http://www.hb.10086.cn/servicenew/index.action&submitMode=login&guestIP=";
             response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_002")
                     .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getPicCode()).setReferer(referer).invoke();
-            String pageContent = processSSOLogin(param, response.getPageContent());
+            String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
-            templateUrl = PatternUtils.group(pageContent, "window\\.parent\\.location\\.href='([^']+)'", 1);
-            if (StringUtils.isNotEmpty(templateUrl)) {
-                response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10086_web_004").setFullUrl(templateUrl).invoke();
+            String errorMsg = StringUtils.EMPTY;
+            List<String> errorMsgList = XPathUtil.getXpath("//input[@id='login_title']/@value", pageContent);
+            if (!errorMsgList.isEmpty()) {
+                errorMsg = errorMsgList.get(0);
             }
-            logger.info("登陆成功,param={}", param);
-
-            String rsaModule
-                    = "8a4928b7e4ce5943230539120cb6ee7a64000034b11b923a91faf8c381dd09b4a9a9a6fa02ca0bd3b90576ac1498983f7c78d8f8f5126a24a30f75eac86815c3430fe3e77f81a326d0d2f7ffbfe285bb368175d66c29777ec031c0c75f64da92aa43866fdfa2597cfb4ce614f450e95670be7cc27e4b05b7a48ca876305e5d51";
-            String rsaEmpoent = "10001";
-            templateUrl = "http://www.hb.10086.cn/my/index.action";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10086_web_007").setFullUrl(templateUrl).invoke();
-            pageContent = response.getPageContent();
-            if (StringUtils.isNotBlank(pageContent)) {
-                List<String> rsaModuleList = XPathUtil.getXpath("//input[@id='rsaModule']/@value", pageContent);
-                for (String string : rsaModuleList) {
-                    if (StringUtils.isNotBlank(string)) {
-                        rsaModule = string;
-                    }
-                }
-                List<String> rsaEmpoentList = XPathUtil.getXpath("//input[@id='rsaEmpoent']/@value", pageContent);
-                for (String string : rsaEmpoentList) {
-                    if (StringUtils.isNotBlank(string)) {
-                        rsaEmpoent = string;
-                    }
-                }
+            if (StringUtils.isBlank(errorMsg)) {
+                TaskUtils.addTaskShare(param.getTaskId(), "pageContentLogin", pageContent);
+                logger.info("登陆成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("登陆失败,{},param={},response={}", errorMsg, param, response);
+                return result.failure(errorMsg);
             }
-            TaskUtils.addTaskShare(param.getTaskId(), "rsaModule", rsaModule);
-            TaskUtils.addTaskShare(param.getTaskId(), "rsaEmpoent", rsaEmpoent);
-            TaskUtils.addTaskShare(param.getTaskId(), "sendSmsCount", "0");
-
-            return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
@@ -375,5 +357,47 @@ public class HuBei10086ForWeb implements OperatorPluginService {
             if (inputStream != null) inputStream.close();
         }
         return null;
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> loginPost(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String pageContent = TaskUtils.getTaskShare(param.getTaskId(), "pageContentLogin");
+            pageContent = processSSOLogin(param, pageContent);
+            String templateUrl = PatternUtils.group(pageContent, "window\\.parent\\.location\\.href='([^']+)'", 1);
+            if (StringUtils.isNotEmpty(templateUrl)) {
+                response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10086_web_004").setFullUrl(templateUrl).invoke();
+            }
+            String rsaModule
+                    = "8a4928b7e4ce5943230539120cb6ee7a64000034b11b923a91faf8c381dd09b4a9a9a6fa02ca0bd3b90576ac1498983f7c78d8f8f5126a24a30f75eac86815c3430fe3e77f81a326d0d2f7ffbfe285bb368175d66c29777ec031c0c75f64da92aa43866fdfa2597cfb4ce614f450e95670be7cc27e4b05b7a48ca876305e5d51";
+            String rsaEmpoent = "10001";
+            templateUrl = "http://www.hb.10086.cn/my/index.action";
+            response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10086_web_007").setFullUrl(templateUrl).invoke();
+            pageContent = response.getPageContent();
+            if (StringUtils.isNotBlank(pageContent)) {
+                List<String> rsaModuleList = XPathUtil.getXpath("//input[@id='rsaModule']/@value", pageContent);
+                for (String string : rsaModuleList) {
+                    if (StringUtils.isNotBlank(string)) {
+                        rsaModule = string;
+                    }
+                }
+                List<String> rsaEmpoentList = XPathUtil.getXpath("//input[@id='rsaEmpoent']/@value", pageContent);
+                for (String string : rsaEmpoentList) {
+                    if (StringUtils.isNotBlank(string)) {
+                        rsaEmpoent = string;
+                    }
+                }
+            }
+            TaskUtils.addTaskShare(param.getTaskId(), "rsaModule", rsaModule);
+            TaskUtils.addTaskShare(param.getTaskId(), "rsaEmpoent", rsaEmpoent);
+            TaskUtils.addTaskShare(param.getTaskId(), "sendSmsCount", "0");
+            logger.info("登陆成功,param={}", param);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("登陆失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.LOGIN_ERROR);
+        }
     }
 }

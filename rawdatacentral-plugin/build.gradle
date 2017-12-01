@@ -16,6 +16,7 @@ dependencies {
     compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessage}", changing: true) {
         exclude(module: 'spring-amqp')
         exclude(module: 'spring-rabbit')
+        exclude(module: "guava")
     }
     compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: 'spring')
@@ -28,9 +29,13 @@ dependencies {
     compile "com.datatrees.loan:loan-provider-api:${loanProviderApi}"
     compile "com.treefinance:risk-service-api:${riskServiceApi}"
     compile "net.sourceforge.jexcelapi:jxl:${jxl}"
-    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
+    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true){
+        exclude module: 'guava'
+    }
     compile ("com.sun.mail:javax.mail:${javaxMailVersion}")
-    compile ("com.datatrees.crawler.plugin:plugin-utils:${pluginUtilsVersion}")
+    compile ("com.datatrees.crawler.plugin:plugin-utils:${pluginUtilsVersion}"){
+        exclude module: 'guava'
+    }
 
     compile ("net.sourceforge.htmlunit:htmlunit:${htmlunitVersion}")
     compile ("ant:ant:${antVersion}")

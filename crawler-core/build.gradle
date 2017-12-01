@@ -16,10 +16,19 @@ ext {
 dependencies {
     compile project(':rawdatacentral-api')
     compile project(':rawdatacentral-common')
-    compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocol}", changing: true)
-    compile(group: "com.datatrees.common", name: "common-pipeline", version: "${commonPipeline}", changing: true)
-    compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true)
-    compile("it.unimi.dsi:dsiutils:${dsiutils}")
+    compile "com.google.guava:guava:${guavaVersion}"
+    compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocol}", changing: true) {
+        exclude module: 'guava'
+    }
+    compile(group: "com.datatrees.common", name: "common-pipeline", version: "${commonPipeline}", changing: true) {
+        exclude module: 'guava'
+    }
+    compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true) {
+        exclude module: 'guava'
+    }
+    compile("it.unimi.dsi:dsiutils:${dsiutils}"){
+        exclude module: 'guava'
+    }
     compile "org.slf4j:log4j-over-slf4j:1.7.25"
     compile "org.slf4j:jcl-over-slf4j:1.7.25"
     compile "net.sourceforge.htmlcleaner:htmlcleaner:${htmlcleaner}"
@@ -30,7 +39,9 @@ dependencies {
     compile "org.apache.commons:commons-exec:${commonsExec}"
     compile "joda-time:joda-time:${jodaTime}"
     compile "org.apache.james:apache-mime4j:${apacheMime4j}"
-    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true)
+    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true) {
+        exclude module: 'guava'
+    }
     compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: "spring")
         exclude(module: "netty")
@@ -40,3 +51,4 @@ dependencies {
     testCompile "junit:junit:${junitVersion}"
     testCompile "javax.mail:mail:${mailVersion}"
 }
+

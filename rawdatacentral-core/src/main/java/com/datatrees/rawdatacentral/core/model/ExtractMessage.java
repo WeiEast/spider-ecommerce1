@@ -34,6 +34,7 @@ public class ExtractMessage {
     private ParentTask           task;
     private List<ExtractMessage> subExtractMessageList;
     private Integer              messageIndex;
+    private String               websiteName;
 
     public Long getTaskId() {
         return taskId;
@@ -188,11 +189,19 @@ public class ExtractMessage {
         subExtractMessageList.add(subExtractMessage);
     }
 
+    public String getWebsiteName() {
+        return websiteName;
+    }
+
+    public void setWebsiteName(String websiteName) {
+        this.websiteName = websiteName;
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+         * (non-Javadoc)
+         *
+         * @see java.lang.Object#toString()
+         */
     @Override
     public String toString() {
         return "ExtractMessage [taskLogId=" + taskLogId + ",taskId=" + taskId + ", ResultType=" + ResultType + ", typeId=" + typeId + "]";

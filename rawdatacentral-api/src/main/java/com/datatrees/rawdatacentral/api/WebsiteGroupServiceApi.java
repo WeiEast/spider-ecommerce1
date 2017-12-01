@@ -20,4 +20,11 @@ public interface WebsiteGroupServiceApi {
      * @return
      */
     List<WebsiteGroup> queryEnable(String groupCode);
+
+    /**
+     * 查询不可用版本
+     * @param groupCode
+     * @return
+     */
+    List<WebsiteGroup> queryDisable(String groupCode);
 }
