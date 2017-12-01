@@ -65,6 +65,7 @@ public class ResultDataHandler {
             message.setTaskId(task.getTaskId());
             message.setWebsiteId(task.getWebsiteId());
             message.setTask(parentTask);
+            message.setWebsiteName(taskMessage.getWebsiteName());
             try {
                 boolean result = collectNormalizerFactory.normalize(message);
                 if (result) {

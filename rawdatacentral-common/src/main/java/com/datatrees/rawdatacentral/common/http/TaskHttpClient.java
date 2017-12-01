@@ -431,7 +431,7 @@ public class TaskHttpClient {
                     BackRedisUtils.rpush(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()), pc.toString());
                     BackRedisUtils.expire(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(request.getTaskId()),
                             RedisKeyPrefixEnum.TASK_PAGE_CONTENT.toSeconds());
-                    
+
                 }
             } catch (Throwable e) {
                 logger.error("save to back redis error taskId={}", taskId, e);

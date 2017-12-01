@@ -310,6 +310,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website);
             extractorProcessorContext.setPluginManager(pluginManager);
             extractorProcessorContext.init();
+            logger.info("getExtractorProcessorContext success,taskId={},websiteName={}", taskId, websiteName);
             return extractorProcessorContext;
         }
         return null;
