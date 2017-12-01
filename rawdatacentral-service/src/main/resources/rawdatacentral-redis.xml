@@ -31,16 +31,25 @@
         <property name="connectionFactory" ref="jedisConnFactory"/>
     </bean>
 
-    <bean class="com.datatrees.rawdatacentral.common.utils.RedisUtils" init-method="init">
+    <bean id="defaultRedisConfig" class="com.datatrees.rawdatacentral.common.config.RedisConfig">
         <property name="host" value="${core.redis.hostName}"/>
         <property name="password" value="${core.redis.password:}"/>
         <property name="database" value="${core.redis.database:0}"/>
     </bean>
 
-    <bean class="com.datatrees.rawdatacentral.common.utils.BackRedisUtils" init-method="init">
+    <bean id="backRedisConfig" class="com.datatrees.rawdatacentral.common.config.RedisConfig">
         <property name="host" value="${core.redis.back.hostName}"/>
         <property name="password" value="${core.redis.back.password:}"/>
         <property name="database" value="${core.redis.back.database:0}"/>
     </bean>
+
+    <bean class="com.datatrees.rawdatacentral.common.utils.RedisUtils" init-method="init">
+        <property name="redisConfig" ref="defaultRedisConfig"/>
+    </bean>
+
+    <bean class="com.datatrees.rawdatacentral.common.utils.BackRedisUtils" init-method="init">
+        <property name="redisConfig" ref="backRedisConfig"/>
+    </bean>
+
 
 </beans>
