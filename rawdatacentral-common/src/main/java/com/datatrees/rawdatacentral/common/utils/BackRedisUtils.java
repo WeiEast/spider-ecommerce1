@@ -303,4 +303,8 @@ public class BackRedisUtils {
         }
     }
 
+    public void setRedisConfig(RedisConfig redisConfig) {
+        BackRedisUtils.redisConfig = redisConfig;
+    }
+
 }
