@@ -34,4 +34,13 @@ public class WebsiteGroupServiceApiImpl implements WebsiteGroupServiceApi {
         example.setOrderByClause("weight desc");
         return websiteGroupDAO.selectByExample(example);
     }
+
+    @Override
+    public List<WebsiteGroup> queryDisable(String groupCode) {
+        WebsiteGroupExample example = new WebsiteGroupExample();
+        WebsiteGroupExample.Criteria criteria = example.createCriteria();
+        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(false);
+        example.setOrderByClause("weight desc");
+        return websiteGroupDAO.selectByExample(example);
+    }
 }

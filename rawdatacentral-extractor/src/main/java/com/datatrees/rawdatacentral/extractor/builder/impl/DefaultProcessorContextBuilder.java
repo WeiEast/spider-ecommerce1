@@ -49,12 +49,14 @@ public class DefaultProcessorContextBuilder {
                 case MAILBILL:
                     String websiteIdStr = Integer.valueOf(extractMessage.getWebsiteId()).toString();
                     if (extractorUseDefaultWebsiteIdsSet.contains(websiteIdStr)) {
-                        context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId());
-                    } else { context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId());}
+                        context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId(), extractMessage.getWebsiteName());
+                    } else {
+                        context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId());
+                    }
                     break;
                 default:
                     // use the same website config to extract
-                    context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId());
+                    context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId(), extractMessage.getWebsiteName());
                     break;
             }
         } catch (Exception e) {

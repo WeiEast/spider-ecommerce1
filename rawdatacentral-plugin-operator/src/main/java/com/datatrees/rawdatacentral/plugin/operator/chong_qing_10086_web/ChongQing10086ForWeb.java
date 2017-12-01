@@ -123,7 +123,7 @@ public class ChongQing10086ForWeb implements OperatorPluginService {
 
             String referer = "https://service.cq.10086.cn/httpsFiles/pageLogin.html";
             String templateUrl = "https://service" +
-                    ".cq.10086.cn/ics?service=ajaxDirect/1/login/login/javascript/&pagename=login&eventname=SSOSendSMS&&cond_SERIAL_NUMBER" +
+                    ".cq.10086.cn/ics?service=ajaxDirect/1/login/login/javascript/&pagename=login&eventname=interfaceSendSMS&cond_SERIAL_NUMBER" +
                     "={}&ajaxSubmitType=post&ajax_randomcode={}";
             response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10086_web_003")
                     .setFullUrl(templateUrl, param.getMobile(), date, random.substring(1, 19)).setReferer(referer).invoke();
@@ -154,7 +154,7 @@ public class ChongQing10086ForWeb implements OperatorPluginService {
 
             String referer = "https://service.cq.10086.cn/httpsFiles/pageLogin.html";
             String templateUrl =
-                    "https://service.cq.10086.cn/ics?service=ajaxDirect/1/login/login/javascript/&pagename=login&eventname=SSOlogin&cond_REMEMBER_TAG" +
+                    "https://service.cq.10086.cn/ics?service=ajaxDirect/1/login/login/javascript/&pagename=login&eventname=interfaceLogin&cond_REMEMBER_TAG" +
                             "=true&cond_LOGIN_TYPE=0&cond_SERIAL_NUMBER={}&cond_USER_PASSWD=&cond_USER_PASSSMS={}&cond_VALIDATE_CODE={}&ajaxSubmitType=post" +
                             "&ajax_randomcode={}";
             response = TaskHttpClient.create(param, RequestType.POST, "chong_qing_10086_web_004")
@@ -169,7 +169,7 @@ public class ChongQing10086ForWeb implements OperatorPluginService {
             } else {
                 List<String> list = XPathUtil.getXpath("//DATASETDATA/text()", pageContent);
                 if (list != null && list.size() > 0) {
-                    Matcher matcher = PatternUtils.matcher("<!\\[CDATA\\[\\[(.*)\\]\\]>", list.get(0));
+                    Matcher matcher = PatternUtils.matcher("<!\\[CDATA\\[\\[(.*)\\]\\]\\]>", list.get(0));
                     if (matcher.find()) {
                         for (int i = 0; i <= matcher.groupCount(); i++) {
                             resultMsg = matcher.group(i);
@@ -180,31 +180,28 @@ public class ChongQing10086ForWeb implements OperatorPluginService {
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }
             }
-            if (resultMsg.equals("")) {
-                logger.error("登陆失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
+            resultMsg = JsonPathUtil.readAsString(resultMsg, "$.RESULTINFO");
 
             // get next url params
-            if (!StringUtils.contains(resultMsg, "url")) {
-                logger.error("登陆失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-            templateUrl = JsonPathUtil.readAsList(resultMsg, "$.url").get(0);
-            if (StringUtils.isBlank(templateUrl)) {
+            //if (!StringUtils.contains(resultMsg, "url")) {
+            //    logger.error("登陆失败,param={},response={}", param, response);
+            //    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            //}
+            //templateUrl = JsonPathUtil.readAsList(resultMsg, "$.url").get(0);
+            //if (StringUtils.isBlank(templateUrl)) {
+            //    logger.error("登陆失败,param={},response={}", param, response);
+            //    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            //}
+            //
+            //response = TaskHttpClient.create(param, RequestType.GET, "chong_qing_10086_web_005").setFullUrl(templateUrl).invoke();
+            //pageContent = response.getPageContent();
+
+            if (StringUtils.isBlank(resultMsg)) {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
 
-            response = TaskHttpClient.create(param, RequestType.GET, "chong_qing_10086_web_005").setFullUrl(templateUrl).invoke();
-            pageContent = response.getPageContent();
-
-            if (StringUtils.isBlank(pageContent)) {
-                logger.error("登陆失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
-
-            if (StringUtils.contains(pageContent, "mobile")) {
+            if (StringUtils.contains(resultMsg, "登陆成功")) {
                 logger.info("登陆成功,param={}", param);
 
                 String base64Pwd = Base64.encodeBase64String(param.getPassword().getBytes());
@@ -212,8 +209,8 @@ public class ChongQing10086ForWeb implements OperatorPluginService {
 
                 return result.success();
             } else {
-                logger.error("登陆失败,param={},response={}", param, response);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                logger.error("登陆失败,{},param={},response={}", resultMsg, param, response);
+                return result.failure(resultMsg);
             }
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);

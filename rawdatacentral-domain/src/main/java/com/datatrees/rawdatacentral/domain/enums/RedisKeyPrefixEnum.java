@@ -30,9 +30,14 @@ public enum RedisKeyPrefixEnum {
     MAX_WEIGHT_OPERATOR("max.weight.operator", 30, TimeUnit.DAYS, "最大权重运营商"),
     ALL_OPERATOR_CONFIG("all.operator.config", 60, TimeUnit.MINUTES, "运营商配置"),
     WEBSITE_LAST_SEND_WARN_TIME("website.last.send.warn.time", 30, TimeUnit.DAYS, "站点上一次发送预警时间"),
+    WEBSITE_LAST_FAIL_TIMESTAMP("website.last.fail.timestamp", 30, TimeUnit.DAYS, "站点上一次任务失败时间"),
     WEBSITE_PLUGIN_FILE_NAME("website.plugin.file.name", 60, TimeUnit.MINUTES, "为website制定jar"),
     WEBSITE_OPERATOR("website.operator", 1, TimeUnit.HOURS, "运营商配置"),
     WEBSITE_PROXY("website.proxy", 1, TimeUnit.HOURS, "运营商指定代理"),
+    START_TIMESTAMP("start.timestamp", 1, TimeUnit.HOURS, " 开始时间"),
+    FINISH_TIMESTAMP("finish.timestamp", 1, TimeUnit.HOURS, " 完成时间"),
+    STATUS("status", 15, TimeUnit.MINUTES, "状态"),
+    STEP("step", 15, TimeUnit.MINUTES, "阶段"),
     WEBSITE_OPERATOR_RENAME("website.operator.rename", 365, TimeUnit.DAYS, "运营商websiteName别名,兼容方案初期用");
     /**
      * 备注
