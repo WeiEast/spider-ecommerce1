@@ -297,6 +297,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public ExtractorProcessorContext getExtractorProcessorContext(Long taskId, String websiteName) {
+        logger.info("getExtractorProcessorContext start,taskId={},websiteName={}", taskId, websiteName);
         Website website = null;
         Boolean isOperator = WebsiteUtils.isOperator(websiteName);
         if (isOperator) {
