@@ -12,6 +12,7 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import org.apache.commons.lang3.StringUtils;
@@ -49,8 +50,13 @@ public class TaskHttpServiceImpl extends ServiceBase {
         String url = StringUtils.substringBefore(linkUrl, "\"");
         String requestBody = StringUtils.substringAfter(linkUrl, "\"");
 
-        TaskHttpClient client = TaskHttpClient.create(taskId, websiteName, requestType, "", true).setReferer(referer).addHeaders(linkNode.getHeaders())
-                .addHeaders(linkNode.getHeaders()).setUrl(url);
+        TaskHttpClient client = TaskHttpClient.create(taskId, websiteName, requestType, "", true).setReferer(referer).setUrl(url);
+        if (CollectionUtils.isNotEmpty(context.getDefaultHeader())) {
+            client.addHeaders(context.getDefaultHeader());
+        }
+        if (CollectionUtils.isNotEmpty(linkNode.getHeaders())) {
+            client.addHeaders(linkNode.getHeaders());
+        }
         if (StringUtils.isNotBlank(requestBody)) {
             client.setRequestBody(requestBody);
         }
