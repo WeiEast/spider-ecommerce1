@@ -21,6 +21,7 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.retry.RetryHandler;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -70,7 +71,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             @Override
             public void run() {
                 try {
-                    HttpResult<Map<String, Object>> result = new HttpResult<>();
                     Long taskId = param.getTaskId();
                     String websiteName = param.getWebsiteName();
                     String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
@@ -116,7 +116,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
                         //执行运营商插件初始化操作
                         //运营商独立部分第一次初始化后不启动爬虫
-                        result = getPluginService(websiteName).init(param);
+                        HttpResult<Map<String, Object>> result = getPluginService(websiteName).init(param);
                         //爬虫状态
                         if (!result.getStatus()) {
                             monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->失败");
@@ -130,7 +130,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         logger.info("登录-->初始化-->成功");
                         return;
                     }
-                    result = getPluginService(websiteName).init(param);
+                    HttpResult<Map<String, Object>> result = getPluginService(websiteName).init(param);
                     if (!result.getStatus()) {
                         monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
                         logger.warn("{}-->初始化-->失败", param.getActionName());
@@ -155,6 +155,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         if (!result.getStatus()) {
             logger.warn("check param error,result={}", result);
             return result;
+        }
+        if (!waitInitSuccess(param.getTaskId())) {
+            logger.warn("task is not init ,param=[}", param.toString());
+            return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
@@ -182,6 +186,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         if (!result.getStatus()) {
             logger.warn("check param error,result={}", result);
             return result;
+        }
+        if (!waitInitSuccess(param.getTaskId())) {
+            logger.warn("task is not init ,param=[}", param.toString());
+            return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
         WebsiteOperator website = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
         //刷新短信间隔时间
@@ -426,5 +434,28 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                     }
                 });
 
+    }
+
+    private boolean waitInitSuccess(Long taskId) {
+        try {
+            String stepCode = RetryUtils.execute(new RetryHandler<String>() {
+                private String stepCode;
+
+                @Override
+                public String execute() {
+                    stepCode = TaskUtils.getTaskShare(taskId, AttributeKey.STEP_CODE);
+                    return stepCode;
+                }
+
+                @Override
+                public boolean check() {
+                    return StringUtils.isNotBlank(stepCode) && Integer.valueOf(stepCode) >= StepEnum.INIT_SUCCESS.getStepCode();
+                }
+            }, 6, 500L);
+            return StringUtils.isNotBlank(stepCode);
+        } catch (Throwable e) {
+            logger.info("waitInitSuccess error taskId={}", taskId, e);
+            return false;
+        }
     }
 }
