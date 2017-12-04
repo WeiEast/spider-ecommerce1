@@ -14,6 +14,8 @@
                    ref="crawlerOperatorServiceImpl"/>
     <dubbo:service interface="com.datatrees.rawdatacentral.api.WebsiteOperatorServiceApi"
                    ref="websiteOperatorServiceApiImpl"/>
+    <!--学信网-->
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.RpcEducationService" ref="rpcEducationServiceImpl"/>
 
 </beans>
 

@@ -80,7 +80,9 @@ public enum GroupEnum {
     HAI_NAN_10000("HAI_NAN_10000", "海南电信", WebsiteType.OPERATOR, ""),
     GUI_ZHOU_10086("GUI_ZHOU_10086", "贵州移动", WebsiteType.OPERATOR, ""),
     QING_HAI_10086("QING_HAI_10086", "青海移动", WebsiteType.OPERATOR, ""),
-    NING_XIA_10086("NING_XIA_10086", "宁夏移动", WebsiteType.OPERATOR, "");
+    NING_XIA_10086("NING_XIA_10086", "宁夏移动", WebsiteType.OPERATOR, ""),
+    EDUCATION("EDUCATION","学信网",WebsiteType.EDUCATION,"chsi.com.cn");
+
     /**
      * 分组代码
      */

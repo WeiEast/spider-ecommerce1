@@ -1,0 +1,208 @@
+package com.datatrees.rawdatacentral.service.impl;
+
+import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.domain.education.EducationParam;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.RequestType;
+import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.rawdatacentral.service.EducationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Created by zhangyanjia on 2017/11/30.
+ */
+@Service
+public class EducationServiceImpl implements EducationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EducationServiceImpl.class);
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+    @Override
+    public HttpResult<Map<String, Object>> loginInit(EducationParam param) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null) {
+            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
+        }
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
+            String pageContent = response.getPageContent();
+            String select = "//input[@name='lt']/@value";
+            List<String> list = XPathUtil.getXpath(select, pageContent);
+            String lt = list.get(0);
+            StringBuilder ltKey = new StringBuilder("lt_" + param.getTaskId());
+            RedisUtils.set(ltKey.toString(),lt,300);
+            String str="//form[@id='fm1']/@action";
+            List<String> listStr = XPathUtil.getXpath(str, pageContent);
+            String jsessionId=listStr.get(0);
+            StringBuilder jsKey = new StringBuilder("jsessionId_" + param.getTaskId());
+            RedisUtils.set(jsKey.toString(),jsessionId,300);
+//            redisTemplate.opsForValue().set(ltKey, lt, 300, TimeUnit.SECONDS);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("登录-->初始化-->失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.TASK_INIT_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> loginSubmit(EducationParam param) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getPassword() == null) {
+            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
+        }
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
+            RedisUtils.del(redisKey);
+ //           redisTemplate.delete(redisKey);
+            StringBuilder ltKey = new StringBuilder("lt_" + param.getTaskId());
+            String lt = RedisUtils.get(ltKey.toString());
+            StringBuilder jsKey=new StringBuilder("jsessionId_"+param.getTaskId());
+            String js=RedisUtils.get(jsKey.toString());
+            String url = "https://account.chsi.com.cn"+js;
+            String templateData = "username={}&password={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
+            String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), lt);
+            String referer="https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
+            RedisUtils.del(ltKey.toString());
+            RedisUtils.del(jsKey.toString());
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
+            String pageContent = response.getPageContent();
+            if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
+                logger.error("登录-->失败，param={},response={}", param, response);
+                return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
+            }
+            return result.success();
+        } catch (Exception e) {
+            logger.error("登录-->失败，param={},response={}", param, response, e);
+            return result.failure(ErrorCode.LOGIN_FAIL);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> registerInit(EducationParam param) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null) {
+            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
+        }
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        try {
+            return result.success();
+        } catch (Exception e) {
+            logger.error("注册-->初始化失败,param={}", param, e);
+            return result.failure(ErrorCode.TASK_INIT_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> registerRefeshPicCode(EducationParam param) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null||param.getMobile()==null) {
+            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
+        }
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            long time = System.currentTimeMillis();
+            String url = "https://account.chsi.com.cn/account/captchimagecreateaction.action?time=" + time;
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_03").setFullUrl(url).invoke();
+            Map<String, Object> map = new HashMap<>();
+            String cookies= TaskUtils.getCookieString(param.getTaskId());
+            map.put("100", response.getPageContent());
+            return result.success(map);
+        } catch (Exception e) {
+            logger.error("注册-->获取图片验证码失败，param={},response={},", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null||param.getMobile()==null) {
+            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
+        }
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String url = "https://account.chsi.com.cn/account/getmphonpincode.action";
+            String templateDate = "captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
+            String date = TemplateUtils.format(templateDate, param.getPicCode(), param.getMobile());
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_04").setFullUrl(url).setRequestBody(date).invoke();
+            String pageContent = response.getPageContent();
+            String str="学信网已向 "+param.getMobile()+" 发送校验码，请查收";
+            if (pageContent.contains(str)) {
+                logger.info("注册-->发送短信验证码成功,param={},response={}", param, response);
+                Map<String, Object> map = new HashMap<>();
+                map.put("100", response.getPageContentForBase64());
+                return result.success(map);
+            }
+            if(pageContent.contains("手机号码受限，短信发送次数已达到上限，请24小时后再试")){
+                logger.error("注册-->短信次数已达上限,param={},response={}", param, response);
+                return result.failure("手机号码受限，短信发送次数已达到上限，请24小时后再试");
+            }
+            logger.error("注册-->验证码不正确，param={},response={}", param, response);
+            return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
+        } catch (Exception e) {
+            logger.error("注册-->校验验证码或者发送短信异常，param={},response={}", param, response, e);
+            return result.failure("校验验证码异常");
+        }
+    }
+
+
+    @Override
+    public HttpResult<Map<String, Object>> registerSubmit(EducationParam param) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null || param.getPwd() == null
+                || param.getSurePwd() == null || param.getRealName() == null || param.getIdCard() == null || param.getIdCardType() == null) {
+            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
+        }
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
+            String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
+            String date = TemplateUtils.format(templateDate, param.getMobile(), param.getMobile());
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_05").setFullUrl(url).setRequestBody(date).invoke();
+            String pageContent = response.getPageContent();
+            if (pageContent.contains("false")) {
+                logger.error("此手机号已被注册，mobile={}", param.getMobile());
+                return result.failure("手机号已被注册");
+            }
+            String name = URLEncoder.encode(param.getRealName(), "utf-8");
+            url = "https://account.chsi.com.cn/account/registerprocess.action";
+            templateDate = "from=&mphone={}&vcode={}&password={}&password1={}&xm={}&credentialtype={}&sfzh={}&from=&email=&pwdreq1=&pwdanswer1=&pwdreq2=&pwdanswer2=&pwdreq3=&pwdanswer3=&continueurl=&serviceId=&serviceNote=1&serviceNote_res=0";
+            date = TemplateUtils.format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name, param.getIdCardType(), param.getIdCard());
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_06").setFullUrl(url).setRequestBody(date).invoke();
+            pageContent = response.getPageContent();
+            Map<String, Object> map = new HashMap<>();
+            if (pageContent.contains("校验码有误")) {
+                logger.error("注册失败，param={},response={}", param, response);
+                return result.failure("校验码有误,注册失败");
+            }
+            if (pageContent.contains("账号注册成功")) {
+                logger.info("注册成功，param={},response={}", param, response);
+                return result.success();
+            }
+            return result.failure("注册失败");
+        } catch (Exception e) {
+            logger.error("注册异常 param={},response={}", param, response);
+            return result.failure("注册失败，请稍后重试");
+        }
+    }
+}
