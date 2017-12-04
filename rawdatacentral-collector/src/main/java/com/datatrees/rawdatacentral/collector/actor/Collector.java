@@ -118,7 +118,7 @@ public class Collector {
         context.setLoginCheckIgnore(message.isLoginCheckIgnore());
         context.set(AttributeKey.TASK_ID, message.getTaskId());
         context.set(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
-        context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo());
+        //context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo());
 
         task.setWebsiteId(context.getWebsite().getId());
         task.setStartedAt(UnifiedSysTime.INSTANCE.getSystemTime());

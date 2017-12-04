@@ -107,7 +107,7 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
                 collectorMessage.setWebsiteName(loginInfo.getWebsiteName());
                 collectorMessage.setEndURL(loginInfo.getEndUrl());
                 collectorMessage.setCookie(loginInfo.getCookie());
-                collectorMessage.setAccountNo(loginInfo.getAccountNo());
+                //collectorMessage.setAccountNo(loginInfo.getAccountNo());
                 collectorMessage.setGroupCode(loginInfo.getGroupCode());
                 collectorMessage.setGroupName(loginInfo.getGroupName());
                 if (setCookieFormatSwitch && StringUtils.isNotBlank(loginInfo.getSetCookie())) {

@@ -26,6 +26,9 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
 
     @Override
     public int insertMailExtractResult(MailExtractResult mailExtractResult) {
+        if(null != mailExtractResult){
+            mailExtractResult.setReceiver(null);
+        }
         return mailExtractResultDao.insert(mailExtractResult);
     }
 
