@@ -254,6 +254,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                 logger.warn("check param error,result={}", result);
                 return result;
             }
+            if (!waitInitSuccess(param.getTaskId())) {
+                logger.warn("task is not init ,param=[}", param.toString());
+                return result.failure(ErrorCode.TASK_INIT_ERROR);
+            }
             Long taskId = param.getTaskId();
             OperatorPluginService pluginService = getPluginService(param.getWebsiteName());
             result = pluginService.submit(param);
