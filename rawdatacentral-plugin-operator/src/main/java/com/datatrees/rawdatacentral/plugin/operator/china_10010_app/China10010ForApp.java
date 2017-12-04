@@ -108,6 +108,10 @@ public class China10010ForApp implements OperatorPluginService {
                 TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
                 logger.info("登陆成功,param={}", param);
                 return result.success();
+            } else if (StringUtils.isNotBlank(code)) {
+                String errorMessage = json.getString("dsc");
+                logger.error("登陆失败,{},param={}", errorMessage, param);
+                return result.failure(errorMessage);
             } else {
                 logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
@@ -128,8 +132,7 @@ public class China10010ForApp implements OperatorPluginService {
             /**
              * 获取月账单
              */
-            String templateUrl
-                    = "https://m.client.10010.com/mobileService/query/queryRealFeeHistroyDetail" +
+            String templateUrl = "https://m.client.10010.com/mobileService/query/queryRealFeeHistroyDetail" +
                     ".htm?desmobile=&version=android@5.5&menuId=000200010005&month={}&randm=";
             response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_002").setFullUrl(templateUrl, billMonth).invoke();
             String pageContent = response.getPageContent();
@@ -170,7 +173,10 @@ public class China10010ForApp implements OperatorPluginService {
                         totalRaw = str;
                     }
                 }
-                logger.info("当月通话详单总条数： " + totalRaw);
+                logger.info("当月通话详单总条数：{},taskId={}", totalRaw, param.getTaskId());
+                if (Integer.parseInt(totalRaw) == 0) {
+                    logger.info("无通话记录，原始页面为：{},taskId={}", pageContent, param.getTaskId());
+                }
                 int pages = Integer.parseInt(totalRaw) / 40;
                 list = new ArrayList<>();
                 for (int i = 0; i <= pages; i++) {
