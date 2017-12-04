@@ -181,6 +181,20 @@ public class OperatorParam implements Serializable {
         this.groupName = groupName;
     }
 
+    public void setUsername(String username) {
+        if (null != username && username.trim().length() > 0) {
+            this.mobile = Long.valueOf(username);
+        }
+    }
+
+    public void setRandomPassword(String randomPassword) {
+        this.smsCode = randomPassword;
+    }
+
+    public void setCode(String code) {
+        this.picCode = code;
+    }
+
     @Override
     public String toString() {
         return JSON.toJSONString(this);

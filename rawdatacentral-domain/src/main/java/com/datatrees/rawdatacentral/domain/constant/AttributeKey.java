@@ -65,5 +65,9 @@ public class AttributeKey implements Serializable {
     public static final String FROM                     = "from";
     public static final String TO                       = "to";
     public static final String SAAS_ENV                 = "saas.env";//项目环境
+    public static final String CRAWLER                  = "crawler";//爬虫
+    public static final String STEP                     = "step";//阶段
+    public static final String STEP_CODE                = "stepCode";//阶段
+    public static final String STEP_NAME                = "stepName";//阶段
 
 }

@@ -16,6 +16,7 @@ import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
@@ -62,6 +63,7 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
         Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
         //第一次收到启动消息
         if (initStatus) {
+            TaskUtils.addStep(taskId, StepEnum.REC_INIT_MSG);
             //是否是独立运营商
             Boolean isOperator = WebsiteUtils.isOperator(loginInfo.getWebsiteName());
             if (isOperator) {
@@ -86,6 +88,7 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
                 Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
                 //保存taskId对应的website
                 redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
+                TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
                 monitorService.sendTaskLog(taskId, websiteName, "爬虫-->启动-->成功");
                 //启动爬虫
                 collector.processMessage(buildCollectorMessage(loginInfo));
