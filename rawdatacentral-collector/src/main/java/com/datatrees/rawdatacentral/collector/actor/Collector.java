@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
@@ -36,6 +35,7 @@ import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.IpUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
@@ -356,7 +356,7 @@ public class Collector {
                 message.setCookie(ProcessorContextUtil.getCookieString(taskMessage.getContext()));
             }
             Map<String, Object> map = new HashMap<>();
-            map.put("resultMsg", JSON.parseObject(taskMessage.getTask().getResultMessage(), new TypeReference<Map<String, Object>>() {}));
+            map.put("resultMsg", RedisUtils.hgetAll(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskMessage.getTaskId())));
             map.put("startMsg", message);
 
             String startMsgJson = GsonUtils.toJson(message);
