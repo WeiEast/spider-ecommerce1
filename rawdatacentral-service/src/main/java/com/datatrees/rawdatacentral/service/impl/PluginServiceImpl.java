@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 public class PluginServiceImpl implements PluginService, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(PluginServiceImpl.class);
-    //private static final Map<String, String> pluginMd5 = new ConcurrentHashMap<>();
     @Resource
     private RedisService redisService;
     @Value("${plugin.local.store.path:/dashu/log/plugins/}")
@@ -53,12 +52,10 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         //修改策略,文件保存到本地用${md5}.jar,这样文件变化了,classLoader就变了
         File file = new File(TemplateUtils.format("{}{}-{}.jar", pluginPath, fileName,md5));
         boolean forceReload = !file.exists();
-        //boolean forceReload = !pluginMd5.containsKey(fileName) || !StringUtils.equals(md5, pluginMd5.get(fileName));
         if (forceReload) {
             byte[] bytes = redisService.getBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName));
             try {
                 FileUtils.writeByteArrayToFile(file, bytes, false);
-                //pluginMd5.put(fileName, md5);
                 logger.info("plugin已经更新,重新加载到本地,fileName={},pluginPath={},md5={}", fileName, pluginPath, md5);
             } catch (Throwable e) {
                 logger.error("upgrade plugin error fileName={},pluginPath={},md5={}", fileName, pluginPath, md5, e);
@@ -71,20 +68,6 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         return result;
     }
 
-    //@Override
-    //public PluginUpgradeResult getPluginFromLocal(String websiteName, AbstractPlugin pluginDesc) {
-    //    String filePath = pluginPath + websiteName + "/" + pluginDesc.getId() + "." + pluginDesc.getType();
-    //    File file = new File(filePath);
-    //    if (!file.exists()) {
-    //        logger.error("local plugin not found filePath={}", filePath);
-    //        throw new RuntimeException("local plugin not found filePath=" + filePath);
-    //    }
-    //    PluginUpgradeResult result = new PluginUpgradeResult();
-    //    result.setFile(file);
-    //    result.setForceReload(false);
-    //    logger.info("getPluginFromLocal success filePath={}", filePath);
-    //    return result;
-    //}
 
     @Override
     public void afterPropertiesSet() throws Exception {
