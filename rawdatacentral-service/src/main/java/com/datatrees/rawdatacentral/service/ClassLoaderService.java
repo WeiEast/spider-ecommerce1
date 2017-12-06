@@ -15,14 +15,6 @@ public interface ClassLoaderService {
     Class loadPlugin(String pluginName, String className);
 
     /**
-     * 重新加载插件
-     * @param pluginName
-     * @param className
-     * @return
-     */
-    Class reloadClass(String pluginName, String className);
-
-    /**
      * 加载运营商插件
      * @param websiteName
      * @return

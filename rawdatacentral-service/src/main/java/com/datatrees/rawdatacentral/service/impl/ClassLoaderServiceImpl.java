@@ -14,7 +14,6 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
-import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.PluginService;
@@ -34,10 +33,8 @@ import org.springframework.stereotype.Service;
 public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
-    private static LoadingCache<String, ClassLoader> classLoacerCache1;
-    private static LoadingCache<String, Class>       classCache1;
-    @Value("${env:local}")
-    private        String                            env;
+    private static LoadingCache<String, ClassLoader> classLoacerCache;
+    private static LoadingCache<String, Class>       classCache;
     @Resource
     private        PluginService                     pluginService;
     @Resource
@@ -57,22 +54,6 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
             return mainClass;
         } catch (Throwable e) {
             logger.error("loadPlugin error pluginName={},className={}", pluginName, className, e);
-            throw new RuntimeException(TemplateUtils.format("loadPlugin error pluginName={},className={}", pluginName, className));
-        }
-    }
-
-    @Override
-    public Class reloadClass(String pluginName, String className) {
-        CheckUtils.checkNotBlank(pluginName, "pluginName is blank");
-        CheckUtils.checkNotBlank(className, "className is blank");
-        try {
-            PluginUpgradeResult plugin = pluginService.getPluginFromRedis(pluginName);
-            ClassLoader classLoader = ClassLoaderUtils.createClassLoader(plugin.getFile());
-            Class mainClass = classLoader.loadClass(className);
-            logger.info("reload class success,className={},pluginFile={}", className, plugin.getFile().getAbsolutePath());
-            return mainClass;
-        } catch (Throwable e) {
-            logger.error("reload class error pluginName={},className={}", pluginName, className, e);
             throw new RuntimeException(TemplateUtils.format("loadPlugin error pluginName={},className={}", pluginName, className));
         }
     }
@@ -106,13 +87,13 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
 
     private Class getClassFromCache(String pluginName, String version, String className) throws ExecutionException {
         String key = buildCacheKeyForClass(pluginName, version, className);
-        logger.info("get class from cache key:{}",key);
-        return classCache1.get(key);
+        logger.info("get class from cache key:{}", key);
+        return classCache.get(key);
     }
 
     private ClassLoader getClassLoaderFromCache(String pluginName, String version) throws ExecutionException {
         String key = buildCacheKeyForClassLoader(pluginName, version);
-        return classLoacerCache1.get(key);
+        return classLoacerCache.get(key);
     }
 
     private String buildCacheKeyForClassLoader(String pluginName, String version) {
@@ -128,7 +109,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
         //默认1小时更新缓存
         int classloader_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.classloader.upgrade.interval", 3600);
         logger.info("cache config classloader_upgrade_interval={}", classloader_upgrade_interval);
-        classLoacerCache1 = CacheBuilder.newBuilder().expireAfterWrite(classloader_upgrade_interval, TimeUnit.SECONDS)
+        classLoacerCache = CacheBuilder.newBuilder().expireAfterWrite(classloader_upgrade_interval, TimeUnit.SECONDS)
                 .removalListener(new RemovalListener<Object, Object>() {
                     @Override
                     public void onRemoval(RemovalNotification<Object, Object> notification) {
@@ -149,7 +130,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
         //默认1小时更新缓存
         int class_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.class.upgrade.interval", 3600);
         logger.info("cache config class_upgrade_interval={}", class_upgrade_interval);
-        classCache1 = CacheBuilder.newBuilder().expireAfterWrite(class_upgrade_interval, TimeUnit.SECONDS)
+        classCache = CacheBuilder.newBuilder().expireAfterWrite(class_upgrade_interval, TimeUnit.SECONDS)
                 .removalListener(new RemovalListener<Object, Object>() {
                     @Override
                     public void onRemoval(RemovalNotification<Object, Object> notification) {
