@@ -106,6 +106,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
 
     private Class getClassFromCache(String pluginName, String version, String className) throws ExecutionException {
         String key = buildCacheKeyForClass(pluginName, version, className);
+        logger.info("get class from cache key:{}",key);
         return classCache1.get(key);
     }
 

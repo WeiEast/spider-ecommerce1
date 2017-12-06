@@ -46,7 +46,7 @@ public class PluginController {
             }
             version = pluginService.savePlugin(sassEnv, fileName, jar.getBytes(), version);
             logger.info("uploadPlugin success fileName={},version={},sassEnv={}", fileName, version, sassEnv);
-            return result.append("\nuuploadJavaPlugin success:").append(fileName).append(", version:").append(version).toString();
+            return result.append("uuploadJavaPlugin success:").append(fileName).append(", version:").append(version).append("\n").toString();
         } catch (Exception e) {
             logger.error("uploadPlugin error fileName={},version={},sassEnv={}", fileName, version, sassEnv, e);
             return "上传失败";
