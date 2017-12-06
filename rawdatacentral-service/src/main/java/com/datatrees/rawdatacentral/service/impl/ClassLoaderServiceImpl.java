@@ -34,8 +34,8 @@ import org.springframework.stereotype.Service;
 public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
-    private static LoadingCache<String, ClassLoader> classLoacerCache;
-    private static LoadingCache<String, Class>       classCache;
+    private static LoadingCache<String, ClassLoader> classLoacerCache1;
+    private static LoadingCache<String, Class>       classCache1;
     @Value("${env:local}")
     private        String                            env;
     @Resource
@@ -106,12 +106,12 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
 
     private Class getClassFromCache(String pluginName, String version, String className) throws ExecutionException {
         String key = buildCacheKeyForClass(pluginName, version, className);
-        return classCache.get(key);
+        return classCache1.get(key);
     }
 
     private ClassLoader getClassLoaderFromCache(String pluginName, String version) throws ExecutionException {
         String key = buildCacheKeyForClassLoader(pluginName, version);
-        return classLoacerCache.get(key);
+        return classLoacerCache1.get(key);
     }
 
     private String buildCacheKeyForClassLoader(String pluginName, String version) {
@@ -124,17 +124,17 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        RemovalListener removalListener = new RemovalListener<Object, Object>() {
-            @Override
-            public void onRemoval(RemovalNotification<Object, Object> notification) {
-                Object key = notification.getKey();
-                logger.info("cache remove key:{}", key.toString());
-            }
-        };
         //默认1小时更新缓存
         int classloader_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.classloader.upgrade.interval", 3600);
-        classLoacerCache = CacheBuilder.newBuilder().expireAfterAccess(classloader_upgrade_interval, TimeUnit.SECONDS)
-                .removalListener(removalListener).build(new CacheLoader<String, ClassLoader>() {
+        logger.info("cache config classloader_upgrade_interval={}", classloader_upgrade_interval);
+        classLoacerCache1 = CacheBuilder.newBuilder().expireAfterWrite(classloader_upgrade_interval, TimeUnit.SECONDS)
+                .removalListener(new RemovalListener<Object, Object>() {
+                    @Override
+                    public void onRemoval(RemovalNotification<Object, Object> notification) {
+                        Object key = notification.getKey();
+                        logger.info("cache remove key:{}", key.toString());
+                    }
+                }).build(new CacheLoader<String, ClassLoader>() {
                     @Override
                     public ClassLoader load(String key) throws Exception {
                         String[] split = key.split(":");
@@ -147,8 +147,15 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
 
         //默认1小时更新缓存
         int class_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.class.upgrade.interval", 3600);
-        classCache = CacheBuilder.newBuilder().expireAfterAccess(class_upgrade_interval, TimeUnit.SECONDS).removalListener(removalListener)
-                .build(new CacheLoader<String, Class>() {
+        logger.info("cache config class_upgrade_interval={}", class_upgrade_interval);
+        classCache1 = CacheBuilder.newBuilder().expireAfterWrite(class_upgrade_interval, TimeUnit.SECONDS)
+                .removalListener(new RemovalListener<Object, Object>() {
+                    @Override
+                    public void onRemoval(RemovalNotification<Object, Object> notification) {
+                        Object key = notification.getKey();
+                        logger.info("cache remove key:{}", key.toString());
+                    }
+                }).build(new CacheLoader<String, Class>() {
                     @Override
                     public Class load(String key) throws Exception {
                         String[] split = key.split(":");

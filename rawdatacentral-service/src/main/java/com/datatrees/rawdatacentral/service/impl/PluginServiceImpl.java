@@ -136,17 +136,17 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
         }
         logger.info("初始化plugin目录,清理所有jar,pluginPath={}", pluginPath);
 
-        RemovalListener removalListener = new RemovalListener<Object, Object>() {
-            @Override
-            public void onRemoval(RemovalNotification<Object, Object> notification) {
-                Object key = notification.getKey();
-                logger.info("cache remove' key:{}", key.toString());
-            }
-        };
         //默认5秒更新缓存
-        int interval = PropertiesConfiguration.getInstance().getInt("plugin.file.upgrade.interval", 10);
-        fileVersionCache = CacheBuilder.newBuilder().expireAfterAccess(interval, TimeUnit.SECONDS).removalListener(removalListener)
-                .build(new CacheLoader<String, String>() {
+        int file_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.file.upgrade.interval", 10);
+        logger.info("cache config class_upgrade_interval={}", file_upgrade_interval);
+        fileVersionCache = CacheBuilder.newBuilder().expireAfterWrite(file_upgrade_interval, TimeUnit.SECONDS)
+                .removalListener(new RemovalListener<Object, Object>() {
+                    @Override
+                    public void onRemoval(RemovalNotification<Object, Object> notification) {
+                        Object key = notification.getKey();
+                        logger.info("cache remove key:{}", key.toString());
+                    }
+                }).build(new CacheLoader<String, String>() {
                     @Override
                     public String load(String key) throws Exception {
                         PluginUpgradeResult upgradeResult = getPluginFromRedis(key);
