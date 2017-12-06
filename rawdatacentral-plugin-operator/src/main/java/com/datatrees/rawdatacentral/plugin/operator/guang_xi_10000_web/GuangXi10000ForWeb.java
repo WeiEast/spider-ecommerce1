@@ -56,7 +56,12 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<String> refeshPicCode(OperatorParam param) {
-        return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshPicCodeForLogin(param);
+            default:
+                return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
@@ -95,8 +100,24 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
         return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
+    private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
+        HttpResult<String> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "http://gx.189.cn/public/image.jsp?date={}";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            logger.info("登录-->图片验证码-->刷新成功,param={}", param);
+            return result.success(response.getPageContentForBase64());
+        } catch (Exception e) {
+            logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
+    }
+
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
+        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
@@ -113,9 +134,8 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
 
             String referer = "http://gx.189.cn/chaxun/iframe/user_center.jsp";
             String templateUrl = "http://gx.189.cn/public/login.jsp";
-            String templateData = "LOGIN_TYPE=21&RAND_TYPE=001&AREA_CODE=&logon_name={}&password_type_ra=1&logon_passwd={}&logon_valid=%E8%AF%B7%E8" +
-                    "%BE%93%E5%85%A5%E9%AA%8C%E8%AF%81%E7%A0%81";
-            String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword);
+            String templateData = "LOGIN_TYPE=21&RAND_TYPE=001&AREA_CODE=&logon_name={}&password_type_ra=1&logon_passwd={}&logon_valid={}";
+            String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, param.getPicCode());
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10000_web_001").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
