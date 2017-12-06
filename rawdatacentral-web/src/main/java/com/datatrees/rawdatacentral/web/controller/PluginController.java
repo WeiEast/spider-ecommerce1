@@ -2,7 +2,6 @@ package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.service.PluginService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,9 +44,9 @@ public class PluginController {
             if (StringUtils.isBlank(fileName)) {
                 fileName = uploadFileName + "." + uploadFileSuffix;
             }
-            pluginService.savePlugin(sassEnv, fileName, jar.getBytes(), version);
+            version = pluginService.savePlugin(sassEnv, fileName, jar.getBytes(), version);
             logger.info("uploadPlugin success fileName={},version={},sassEnv={}", fileName, version, sassEnv);
-            return result.append("uuploadJavaPlugin success:").append(fileName).append(", version:").append(version).toString();
+            return result.append("\nuuploadJavaPlugin success:").append(fileName).append(", version:").append(version).toString();
         } catch (Exception e) {
             logger.error("uploadPlugin error fileName={},version={},sassEnv={}", fileName, version, sassEnv, e);
             return "上传失败";
