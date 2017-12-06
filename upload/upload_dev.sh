@@ -2,7 +2,7 @@
 host="192.168.5.25:6789"
 
 
-url="http://$host/plugin/uploadPlugin"
+url="http://$host/plugin/uploadPlugin?sassEnv=dev"
 gradle clean install -x test
 list=`find rawdatacentral-plugin-operator/build/libs/rawdatacentral-plugin-operator.jar -name '*.jar' | grep -v 'sources'`
 for file in $list
