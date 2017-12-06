@@ -90,6 +90,12 @@ public class RedisUtils {
         }
     }
 
+    public static byte[] getForByte(final String key) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.get(key.getBytes());
+        }
+    }
+
     public static Map<String, String> hgetAll(final String key) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.hgetAll(key);
@@ -99,6 +105,12 @@ public class RedisUtils {
     public static String hget(final String key, final String field) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.hget(key, field);
+        }
+    }
+
+    public static byte[] hgetForByte(final String key, final String field) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hget(key.getBytes(), field.getBytes());
         }
     }
 
@@ -193,6 +205,12 @@ public class RedisUtils {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.hset(key, name, value);
             jedis.expire(key, second);
+        }
+    }
+
+    public static void hset(String key, String name, byte[] value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.hset(key.getBytes(), name.getBytes(), value);
         }
     }
 

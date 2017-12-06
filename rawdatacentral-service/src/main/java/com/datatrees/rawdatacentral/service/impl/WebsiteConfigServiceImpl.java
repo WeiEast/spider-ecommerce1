@@ -204,6 +204,10 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
                 continue;
             }
             WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+            if (null == websiteOperator) {
+                logger.error("website not found ,webisteName={}", websiteName);
+                continue;
+            }
             WebsiteConfig websiteConfig = buildWebsiteConfig(websiteOperator);
             //设置别名
             websiteConfig.setWebsiteName(websiteName);
