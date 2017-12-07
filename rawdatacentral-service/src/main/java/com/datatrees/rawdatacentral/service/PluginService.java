@@ -13,15 +13,6 @@ import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 public interface PluginService {
 
     /**
-     * 保存插件
-     * 返回md5
-     * @param fileName
-     * @param bytes
-     */
-    @Deprecated
-    String savePlugin(String fileName, byte[] bytes);
-
-    /**
      * 环境变量
      * @param sassEnv
      * @param fileName
