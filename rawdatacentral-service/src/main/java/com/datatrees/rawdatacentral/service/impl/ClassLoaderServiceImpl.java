@@ -109,9 +109,10 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     public void afterPropertiesSet() throws Exception {
         //默认1小时更新缓存
         int classloader_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.classloader.upgrade.interval", 3600);
-        logger.info("cache config classloader_upgrade_interval={}", classloader_upgrade_interval);
-        classLoacerCache = CacheBuilder.newBuilder().expireAfterWrite(classloader_upgrade_interval, TimeUnit.SECONDS).maximumSize(30)
-                .removalListener(new RemovalListener<Object, Object>() {
+        int classloader_upgrade_max = PropertiesConfiguration.getInstance().getInt("plugin.file.upgrade.max", 30);
+        logger.info("cache config classloader_upgrade_interval={},classloader_upgrade_max={}", classloader_upgrade_interval, classloader_upgrade_max);
+        classLoacerCache = CacheBuilder.newBuilder().expireAfterWrite(classloader_upgrade_interval, TimeUnit.SECONDS)
+                .maximumSize(classloader_upgrade_max).removalListener(new RemovalListener<Object, Object>() {
                     @Override
                     public void onRemoval(RemovalNotification<Object, Object> notification) {
                         Object key = notification.getKey();
@@ -130,8 +131,9 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
 
         //默认1小时更新缓存
         int class_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.class.upgrade.interval", 3600);
-        logger.info("cache config class_upgrade_interval={}", class_upgrade_interval);
-        classCache = CacheBuilder.newBuilder().expireAfterWrite(class_upgrade_interval, TimeUnit.SECONDS).maximumSize(200)
+        int class_upgrade_max = PropertiesConfiguration.getInstance().getInt("plugin.class.upgrade.max", 200);
+        logger.info("cache config class_upgrade_interval={},class_upgrade_max={}", class_upgrade_interval, class_upgrade_max);
+        classCache = CacheBuilder.newBuilder().expireAfterWrite(class_upgrade_interval, TimeUnit.SECONDS).maximumSize(class_upgrade_max)
                 .removalListener(new RemovalListener<Object, Object>() {
                     @Override
                     public void onRemoval(RemovalNotification<Object, Object> notification) {
