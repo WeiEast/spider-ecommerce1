@@ -37,7 +37,11 @@ public class JavaPlugin extends Plugin {
 
         String mainClass = javaPlugin.getMainClass();
         String fileName = javaPlugin.getFileName();
-        Long taskId = context.getLong(AttributeKey.TASK_ID);
+        Long taskId = null;
+        if (null != context) {
+            taskId = context.getLong(AttributeKey.TASK_ID);
+        }
+
         AbstractClientPlugin clientPlugin = BeanFactoryUtils.getBean(PluginManager.class).loadPlugin(fileName, mainClass, taskId);
         if (context instanceof SearchProcessorContext) {
             // add proxy if necessary
