@@ -5,6 +5,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.util.Base64;
 
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,8 +36,16 @@ public class ScriptEngineUtil {
         if (StringUtils.isAnyBlank(websiteName, fileName)) {
             return null;
         }
-        String redisKey = RedisKeyPrefixEnum.FILE_DATA.getRedisKey(websiteName, fileName);
-        byte[] bytes = RedisUtils.get(redisKey.getBytes());
+        byte[] bytes = null;
+        String sassEnv = TaskUtils.getSassEnv();
+        String version = RedisUtils.hget(RedisKeyPrefixEnum.PLUGIN_VERSION.getRedisKey(sassEnv), fileName);
+        if (StringUtils.isNotBlank(version)) {
+            bytes = RedisUtils.hgetForByte(RedisKeyPrefixEnum.PLUGIN_DATA.getRedisKey(sassEnv), fileName);
+        } else {
+            String redisKey = RedisKeyPrefixEnum.FILE_DATA.getRedisKey(websiteName, fileName);
+            bytes = RedisUtils.get(redisKey.getBytes());
+        }
+        logger.info("load plugin sassEnv:{},fileName:{},version:{}", sassEnv, fileName, version);
         if (null == charsetName) {
             charsetName = DEFAULT_CHARSET;
         }

@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.common.utils.*;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -418,7 +417,7 @@ public class TaskHttpClient {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
             try {
-                String sassEnv = System.getProperty(AttributeKey.SAAS_ENV, "none");
+                String sassEnv = TaskUtils.getSassEnv();
                 if (StringUtils.equals(sassEnv, "dev") || StringUtils.equals(sassEnv, "test")) {
                     //保存请求
                     BackRedisUtils.rpush(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response));

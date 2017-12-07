@@ -1,12 +1,11 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.File;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
@@ -15,11 +14,11 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
-import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.google.common.cache.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,61 +33,28 @@ import org.springframework.stereotype.Service;
 public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
-    @Value("${env:local}")
-    private String                 env;
+    private static LoadingCache<String, ClassLoader> classLoacerCache;
+    private static LoadingCache<String, Class>       classCache;
     @Resource
-    private PluginService          pluginService;
+    private        PluginService                     pluginService;
     @Resource
-    private RedisService           redisService;
+    private        RedisService                      redisService;
     @Value("${operator.plugin.filename}")
-    private String                 operatorPluginFilename;
+    private        String                            operatorPluginFilename;
     @Resource
-    private WebsiteOperatorService websiteOperatorService;
-    /**
-     * class缓存
-     */
-    private Map<String, Class>       classCache            = new HashMap<>();
-    /**
-     * class清理
-     */
-    private Map<String, Long>        classUpdateTime       = new ConcurrentHashMap<>();
-    /**
-     * class loader
-     */
-    private Map<String, ClassLoader> classLoaderCache      = new ConcurrentHashMap<>();
-    /**
-     * class loader
-     */
-    private Map<String, Long>        classLoaderUpdateTime = new ConcurrentHashMap<>();
+    private        WebsiteOperatorService            websiteOperatorService;
 
     @Override
-    public Class loadPlugin(String jarName, String className) {
-        CheckUtils.checkNotBlank(jarName, "jarName is blank");
+    public Class loadPlugin(String pluginName, String className) {
+        CheckUtils.checkNotBlank(pluginName, "pluginName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
-        String pluginFile = null;
         try {
-            String cacheKey = jarName + "_" + className;
-            Class mainClass = classCache.get(cacheKey);
-            PluginUpgradeResult plugin = pluginService.getPluginFromRedis(jarName);
-            pluginFile = plugin.getFile().getAbsolutePath();
-            if (null == mainClass || plugin.getForceReload()) {
-                ClassLoader classLoader = classLoaderCache.get(pluginFile);
-                if (null == classLoader) {
-                    classLoader = ClassLoaderUtils.createClassLoader(plugin.getFile());
-                    classLoaderCache.put(pluginFile, classLoader);
-                }
-                //1个不使用就自动标记回收
-                classLoaderUpdateTime.put(pluginFile, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
-                mainClass = classLoader.loadClass(className);
-                logger.info("重新加载class,className={},jar={},pluginFile={}", className, jarName, plugin.getFile().getAbsolutePath());
-                classCache.put(cacheKey, mainClass);
-            }
-            //1个不使用就自动标记回收
-            classUpdateTime.put(cacheKey, System.currentTimeMillis() + TimeUnit.HOURS.toMillis(1));
+            String version = pluginService.getPluginVersionFromCache(pluginName);
+            Class mainClass = getClassFromCache(pluginName, version, className);
             return mainClass;
         } catch (Throwable e) {
-            logger.error("loadPlugin error jarName={},className={}", jarName, className, e);
-            throw new RuntimeException(TemplateUtils.format("loadPlugin error jarName={},className={}", jarName, className));
+            logger.error("loadPlugin error pluginName={},className={}", pluginName, className, e);
+            throw new RuntimeException(TemplateUtils.format("loadPlugin error pluginName={},className={}", pluginName, className));
         }
     }
 
@@ -119,38 +85,69 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
         }
     }
 
+    private Class getClassFromCache(String pluginName, String version, String className) throws ExecutionException {
+        String key = buildCacheKeyForClass(pluginName, version, className);
+        logger.info("get class from cache key:{}", key);
+        return classCache.get(key);
+    }
+
+    private ClassLoader getClassLoaderFromCache(String pluginName, String version) throws ExecutionException {
+        String key = buildCacheKeyForClassLoader(pluginName, version);
+        return classLoacerCache.get(key);
+    }
+
+    private String buildCacheKeyForClassLoader(String pluginName, String version) {
+        return new StringBuilder(pluginName).append(":").append(version).toString();
+    }
+
+    private String buildCacheKeyForClass(String pluginName, String version, String className) {
+        return new StringBuilder(pluginName).append(":").append(version).append(":").append(className).toString();
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    Iterator<Map.Entry<String, Long>> iterator = classUpdateTime.entrySet().iterator();
-                    while (iterator.hasNext()) {
-                        Map.Entry<String, Long> entry = iterator.next();
-                        if (System.currentTimeMillis() <= entry.getValue()) {
-                            classCache.remove(entry.getKey());
-                            logger.info("remove class cache key={}", entry.getKey());
-                            iterator.remove();
-                        }
+        //默认1小时更新缓存
+        int classloader_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.classloader.upgrade.interval", 3600);
+        logger.info("cache config classloader_upgrade_interval={}", classloader_upgrade_interval);
+        classLoacerCache = CacheBuilder.newBuilder().expireAfterWrite(classloader_upgrade_interval, TimeUnit.SECONDS)
+                .removalListener(new RemovalListener<Object, Object>() {
+                    @Override
+                    public void onRemoval(RemovalNotification<Object, Object> notification) {
+                        Object key = notification.getKey();
+                        logger.info("cache remove key:{}", key.toString());
                     }
-                    Iterator<Map.Entry<String, Long>> iterator2 = classLoaderUpdateTime.entrySet().iterator();
-                    while (iterator2.hasNext()) {
-                        Map.Entry<String, Long> entry = iterator.next();
-                        if (System.currentTimeMillis() <= entry.getValue()) {
-                            classLoaderCache.remove(entry.getKey());
-                            logger.info("remove classloader cache key={}", entry.getKey());
-                            iterator.remove();
-                        }
+                }).build(new CacheLoader<String, ClassLoader>() {
+                    @Override
+                    public ClassLoader load(String key) throws Exception {
+                        String[] split = key.split(":");
+                        String pluginName = split[0];
+                        String version = split[1];
+                        File pluginFile = pluginService.getPluginFile(pluginName, version);
+                        return ClassLoaderUtils.createClassLoader(pluginFile);
                     }
-                    try {
-                        TimeUnit.MINUTES.sleep(15);
-                    } catch (InterruptedException e) {
-                        logger.error("clean class cache error", e);
-                    }
-                }
-            }
-        }).start();
+                });
 
+        //默认1小时更新缓存
+        int class_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.class.upgrade.interval", 3600);
+        logger.info("cache config class_upgrade_interval={}", class_upgrade_interval);
+        classCache = CacheBuilder.newBuilder().expireAfterWrite(class_upgrade_interval, TimeUnit.SECONDS)
+                .removalListener(new RemovalListener<Object, Object>() {
+                    @Override
+                    public void onRemoval(RemovalNotification<Object, Object> notification) {
+                        Object key = notification.getKey();
+                        logger.info("cache remove key:{}", key.toString());
+                    }
+                }).build(new CacheLoader<String, Class>() {
+                    @Override
+                    public Class load(String key) throws Exception {
+                        String[] split = key.split(":");
+                        String pluginName = split[0];
+                        String version = split[1];
+                        String className = split[2];
+                        ClassLoader classLoader = getClassLoaderFromCache(pluginName, version);
+                        return classLoader.loadClass(className);
+                    }
+                });
     }
+
 }

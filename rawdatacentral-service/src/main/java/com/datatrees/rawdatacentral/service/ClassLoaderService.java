@@ -8,11 +8,11 @@ public interface ClassLoaderService {
 
     /**
      * 加载插件
-     * @param jarName
+     * @param pluginName
      * @param className
      * @return
      */
-    Class loadPlugin(String jarName, String className);
+    Class loadPlugin(String pluginName, String className);
 
     /**
      * 加载运营商插件
