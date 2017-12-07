@@ -153,4 +153,11 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
                 });
     }
 
+    public static LoadingCache<String, ClassLoader> getClassLoacerCache() {
+        return classLoacerCache;
+    }
+
+    public static LoadingCache<String, Class> getClassCache() {
+        return classCache;
+    }
 }
