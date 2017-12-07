@@ -28,14 +28,5 @@ public class StatusController {
         return map;
     }
 
-    @RequestMapping("/status2")
-    public Object status2() throws InterruptedException {
-        while (true) {
-            String websiteName = "zhe_jiang_10086_web";
-            OperatorPluginService pluginService = classLoaderService.getOperatorPluginService(websiteName);
-            TimeUnit.SECONDS.sleep(1);
-
-        }
-    }
 
 }

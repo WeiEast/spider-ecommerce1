@@ -93,22 +93,9 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
                 //启动爬虫
                 collector.processMessage(buildCollectorMessage(loginInfo));
             }
-        } else {
-            //这里电商,邮箱,老运营商不会有第二次消息,这里只处理运营商登录成功消息
-            Boolean isOperator = WebsiteUtils.isOperator(loginInfo.getWebsiteName());
-            //非运营商或者老运营商,重复消息不处理
-            if (!isOperator) {
-                logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, loginInfo.getWebsiteName());
-                return true;
-            }
-            //如果是登录成功消息就启动爬虫
-            String taskStage = RedisUtils.get(taskStageKey);
-            if (StringUtils.equals(taskStage, TaskStageEnum.LOGIN_SUCCESS.getStatus())) {
-                monitorService.sendTaskLog(taskId, loginInfo.getWebsiteName(), "爬虫-->启动-->成功");
-                RedisUtils.set(taskStageKey, TaskStageEnum.CRAWLER_START.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
-                collector.processMessage(buildCollectorMessage(loginInfo));
-            }
+            return true;
         }
+        logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, loginInfo.getWebsiteName());
         return true;
     }
 
@@ -120,7 +107,7 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
                 collectorMessage.setWebsiteName(loginInfo.getWebsiteName());
                 collectorMessage.setEndURL(loginInfo.getEndUrl());
                 collectorMessage.setCookie(loginInfo.getCookie());
-                collectorMessage.setAccountNo(loginInfo.getAccountNo());
+                //collectorMessage.setAccountNo(loginInfo.getAccountNo());
                 collectorMessage.setGroupCode(loginInfo.getGroupCode());
                 collectorMessage.setGroupName(loginInfo.getGroupName());
                 if (setCookieFormatSwitch && StringUtils.isNotBlank(loginInfo.getSetCookie())) {
