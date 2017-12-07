@@ -18,6 +18,7 @@ import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 
 /**
  * java plugin for
@@ -36,7 +37,8 @@ public class JavaPlugin extends Plugin {
 
         String mainClass = javaPlugin.getMainClass();
         String fileName = javaPlugin.getFileName();
-        AbstractClientPlugin clientPlugin = BeanFactoryUtils.getBean(PluginManager.class).loadPlugin(fileName, mainClass);
+        Long taskId = context.getLong(AttributeKey.TASK_ID);
+        AbstractClientPlugin clientPlugin = BeanFactoryUtils.getBean(PluginManager.class).loadPlugin(fileName, mainClass, taskId);
         if (context instanceof SearchProcessorContext) {
             // add proxy if necessary
             clientPlugin.setProxyManager(((SearchProcessorContext) context).getProxyManager());
