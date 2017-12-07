@@ -380,6 +380,9 @@ public class China10086ForShop implements OperatorPluginService {
                 case "3013":
                     logger.warn("登录失败-->接口参数不对(可能性比较大)/系统繁忙,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
+                case "2046":
+                    logger.warn("登录失败-->密码输入超过次数账号已锁定，详情垂询10086,param={}", param);
+                    return result.failure("密码输入超过次数账号已锁定，详情垂询10086");
                 default:
                     logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);

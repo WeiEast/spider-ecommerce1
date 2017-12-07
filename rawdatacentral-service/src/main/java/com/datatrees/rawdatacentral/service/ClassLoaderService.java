@@ -8,17 +8,17 @@ public interface ClassLoaderService {
 
     /**
      * 加载插件
-     * @param jarName
+     * @param pluginName
      * @param className
      * @return
      */
-    Class loadPlugin(String jarName, String className);
+    Class loadPlugin(String pluginName, String className, Long taskId);
 
     /**
      * 加载运营商插件
      * @param websiteName
      * @return
      */
-    OperatorPluginService getOperatorPluginService(String websiteName);
+    OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
 
 }

@@ -16,6 +16,10 @@ public class PluginUpgradeResult {
      * 是否需要重新加载
      */
     private Boolean forceReload;
+    /**
+     * 文件版本
+     */
+    private String  version;
 
     public File getFile() {
         return file;
@@ -31,5 +35,13 @@ public class PluginUpgradeResult {
 
     public void setForceReload(Boolean forceReload) {
         this.forceReload = forceReload;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

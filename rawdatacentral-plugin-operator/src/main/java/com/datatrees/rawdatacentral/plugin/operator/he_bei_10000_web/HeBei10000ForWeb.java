@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.plugin.operator.he_bei_10000_web;
 
 import java.util.Map;
 
+import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -147,7 +148,8 @@ public class HeBei10000ForWeb implements OperatorPluginService {
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "随机码不正确,请重新输入")) {
-                TaskUtils.addTaskShare(param.getTaskId(), "callDetails", pageContent);
+                //TaskUtils.addTaskShare(param.getTaskId(), "callDetails", pageContent);
+                PluginFactory.getProcessorContext().getContext().put("callDetails", pageContent);
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {

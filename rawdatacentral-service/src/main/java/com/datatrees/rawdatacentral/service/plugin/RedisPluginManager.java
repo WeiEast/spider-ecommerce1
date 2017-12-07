@@ -25,9 +25,10 @@ public class RedisPluginManager extends PluginManager {
     private ClassLoaderService classLoaderService;
 
     @Override
-    public AbstractClientPlugin loadPlugin(String jarName, String mainClass) throws PluginException, IllegalAccessException, InstantiationException {
+    public AbstractClientPlugin loadPlugin(String jarName, String mainClass,
+            Long taskId) throws PluginException, IllegalAccessException, InstantiationException {
         try {
-            Class pluginClass = classLoaderService.loadPlugin(jarName, mainClass);
+            Class pluginClass = classLoaderService.loadPlugin(jarName, mainClass, taskId);
             if (null == pluginClass) {
                 logger.error("plugin class load fail,jarName={},mainClass={}", jarName, mainClass);
                 throw new PluginException(TemplateUtils.format("plugin class load fail,jarName={},mainClass={}", jarName, mainClass));

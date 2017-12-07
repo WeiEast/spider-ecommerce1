@@ -16,6 +16,7 @@ import com.datatrees.notify.async.util.BeanUtil;
 import com.datatrees.notify.sms.bean.SmsResult;
 import com.datatrees.notify.sms.newservice.SmsNewService;
 import com.datatrees.notify.sms.newservice.entity.message.SmsMessage;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.FormatUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
@@ -122,7 +123,7 @@ public class NotifyServiceImpl implements NotifyService {
     @Override
     public Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, WebsiteOperator from, WebsiteOperator to, Boolean enable, Boolean auto) {
         try {
-            String saasEnv = System.getProperty(AttributeKey.SAAS_ENV, "none");
+            String saasEnv = TaskUtils.getSassEnv();
             Map<String, Object> map = new HashMap<>();
             map.put("changeWebsiteName", change.getWebsiteName());
             map.put("changeWebsiteTitle", change.getWebsiteTitle());
