@@ -138,7 +138,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
 
         //默认5秒更新缓存
         int file_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.file.upgrade.interval", 10);
-        logger.info("cache config class_upgrade_interval={}", file_upgrade_interval);
+        logger.info("cache config file_upgrade_interval={}", file_upgrade_interval);
         fileVersionCache = CacheBuilder.newBuilder().expireAfterWrite(file_upgrade_interval, TimeUnit.SECONDS)
                 .removalListener(new RemovalListener<Object, Object>() {
                     @Override
