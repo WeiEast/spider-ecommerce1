@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClassLoaderServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger("plugin_log");
     private static LoadingCache<String, ClassLoader> classLoacerCache;
     private static LoadingCache<String, Class>       classCache;
     @Resource

@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PluginServiceImpl implements PluginService, InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(PluginServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger("plugin_log");
     /**
      * 文件版本号缓存
      */

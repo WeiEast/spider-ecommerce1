@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @RequestMapping("/plugin")
 public class PluginController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PluginController.class);
+    private static final Logger logger = LoggerFactory.getLogger("plugin_log");
     @Resource
     private PluginService pluginService;
 
