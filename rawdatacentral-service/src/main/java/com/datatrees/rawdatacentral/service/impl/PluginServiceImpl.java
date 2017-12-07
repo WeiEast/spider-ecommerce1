@@ -9,14 +9,12 @@ import java.util.concurrent.TimeUnit;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.google.common.cache.*;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -40,16 +38,6 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
     private        RedisService                 redisService;
     @Value("${plugin.local.store.path}")
     private        String                       pluginPath;
-
-    @Override
-    public String savePlugin(String fileName, byte[] bytes) {
-        CheckUtils.checkNotBlank(fileName, "fileName is blank");
-        String md5 = DigestUtils.md5Hex(bytes);
-        redisService.saveBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(fileName), bytes);
-        redisService.saveString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5, fileName, md5);
-        logger.info("cache plugin fileName={},md5={}", fileName, md5);
-        return md5;
-    }
 
     @Override
     public String savePlugin(String sassEnv, String fileName, byte[] bytes, String version) {
@@ -138,7 +126,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
 
         //默认5秒更新缓存
         int file_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.file.upgrade.interval", 10);
-        logger.info("cache config class_upgrade_interval={}", file_upgrade_interval);
+        logger.info("cache config file_upgrade_interval={}", file_upgrade_interval);
         fileVersionCache = CacheBuilder.newBuilder().expireAfterWrite(file_upgrade_interval, TimeUnit.SECONDS)
                 .removalListener(new RemovalListener<Object, Object>() {
                     @Override
