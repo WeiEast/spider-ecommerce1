@@ -45,12 +45,12 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     private        WebsiteOperatorService            websiteOperatorService;
 
     @Override
-    public Class loadPlugin(String pluginName, String className) {
+    public Class loadPlugin(String pluginName, String className, Long taskId) {
         CheckUtils.checkNotBlank(pluginName, "pluginName is blank");
         CheckUtils.checkNotBlank(className, "className is blank");
         try {
             String version = pluginService.getPluginVersionFromCache(pluginName);
-            Class mainClass = getClassFromCache(pluginName, version, className);
+            Class mainClass = getClassFromCache(pluginName, version, className, taskId);
             return mainClass;
         } catch (Throwable e) {
             logger.error("loadPlugin error pluginName={},className={}", pluginName, className, e);
@@ -59,7 +59,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     }
 
     @Override
-    public OperatorPluginService getOperatorPluginService(String websiteName) {
+    public OperatorPluginService getOperatorPluginService(String websiteName, Long taskId) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
         if (null == websiteOperator) {
@@ -74,7 +74,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
             pluginFileName = operatorPluginFilename;
         }
         try {
-            Class loginClass = loadPlugin(pluginFileName, mainLoginClass);
+            Class loginClass = loadPlugin(pluginFileName, mainLoginClass, taskId);
             if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
                 throw new RuntimeException("mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorPluginService");
             }
@@ -85,9 +85,9 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
         }
     }
 
-    private Class getClassFromCache(String pluginName, String version, String className) throws ExecutionException {
+    private Class getClassFromCache(String pluginName, String version, String className, Long taskId) throws ExecutionException {
         String key = buildCacheKeyForClass(pluginName, version, className);
-        logger.info("get class from cache key:{}", key);
+        logger.info("get class from cache key:{},taskId:{}", key, taskId);
         return classCache.get(key);
     }
 

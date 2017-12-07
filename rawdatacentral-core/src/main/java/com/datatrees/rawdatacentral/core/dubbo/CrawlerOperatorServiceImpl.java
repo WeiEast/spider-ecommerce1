@@ -116,7 +116,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
                         //执行运营商插件初始化操作
                         //运营商独立部分第一次初始化后不启动爬虫
-                        HttpResult<Map<String, Object>> result = getPluginService(websiteName).init(param);
+                        HttpResult<Map<String, Object>> result = getPluginService(websiteName, taskId).init(param);
                         //爬虫状态
                         if (!result.getStatus()) {
                             monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->失败");
@@ -130,7 +130,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         logger.info("登录-->初始化-->成功");
                         return;
                     }
-                    HttpResult<Map<String, Object>> result = getPluginService(websiteName).init(param);
+                    HttpResult<Map<String, Object>> result = getPluginService(websiteName, taskId).init(param);
                     if (!result.getStatus()) {
                         monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
                         logger.warn("{}-->初始化-->失败", param.getActionName());
@@ -162,7 +162,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
-        HttpResult<String> picResult = getPluginService(websiteName).refeshPicCode(param);
+        HttpResult<String> picResult = getPluginService(websiteName, taskId).refeshPicCode(param);
         String log = null;
         if (!picResult.getStatus()) {
             log = TemplateUtils.format("{}-->刷新图片验证码-->失败", param.getActionName());
@@ -208,7 +208,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                 }
             }
         }
-        result = getPluginService(param.getWebsiteName()).refeshSmsCode(param);
+        result = getPluginService(param.getWebsiteName(), taskId).refeshSmsCode(param);
         if (result.getStatus()) {
             TaskUtils.addTaskShare(taskId, AttributeKey.LATEST_SEND_SMS_TIME, System.currentTimeMillis() + "");
             if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
@@ -235,7 +235,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
-        result = getPluginService(param.getWebsiteName()).validatePicCode(param);
+        result = getPluginService(param.getWebsiteName(), taskId).validatePicCode(param);
         if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()), param.getPicCode());
         }
@@ -259,7 +259,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                 return result.failure(ErrorCode.TASK_INIT_ERROR);
             }
             Long taskId = param.getTaskId();
-            OperatorPluginService pluginService = getPluginService(param.getWebsiteName());
+            OperatorPluginService pluginService = getPluginService(param.getWebsiteName(), taskId);
             result = pluginService.submit(param);
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
             if (null != result && result.getStatus()) {
@@ -320,14 +320,14 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             logger.warn("check param error,result={}", checkParams);
             return new HttpResult<Object>().failure(checkParams.getResponseCode(), checkParams.getMessage());
         }
-        HttpResult result = getPluginService(param.getWebsiteName()).defineProcess(param);
+        HttpResult result = getPluginService(param.getWebsiteName(), param.getTaskId()).defineProcess(param);
         String log = TemplateUtils.format("自定义插件{}-->处理-->{}", param.getFormType(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), log, result);
         return result;
     }
 
-    private OperatorPluginService getPluginService(String websiteName) {
-        return classLoaderService.getOperatorPluginService(websiteName);
+    private OperatorPluginService getPluginService(String websiteName, Long taskId) {
+        return classLoaderService.getOperatorPluginService(websiteName, taskId);
     }
 
     /**

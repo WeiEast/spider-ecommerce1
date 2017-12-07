@@ -26,7 +26,8 @@ public abstract class PluginManager implements Resource {
      * @param mainClass
      * @return
      */
-    public abstract AbstractClientPlugin loadPlugin(String jarName, String mainClass) throws PluginException, IllegalAccessException, InstantiationException;
+    public abstract AbstractClientPlugin loadPlugin(String jarName, String mainClass,Long taskId) throws PluginException, IllegalAccessException,
+            InstantiationException;
 
     public abstract PluginWrapper getPlugin(String websiteName, AbstractPlugin pluginDesc) throws PluginException;
 

@@ -70,7 +70,7 @@ public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
             return true;
         }
         try {
-            OperatorPluginService pluginService = classLoaderService.getOperatorPluginService(websiteName);
+            OperatorPluginService pluginService = classLoaderService.getOperatorPluginService(websiteName, taskId);
             OperatorPluginPostService postService = (OperatorPluginPostService) pluginService;
             result = postService.loginPost(param);
             if (null != result && result.getStatus()) {
