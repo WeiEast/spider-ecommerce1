@@ -109,7 +109,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     public void afterPropertiesSet() throws Exception {
         //默认1小时更新缓存
         int classloader_upgrade_interval = PropertiesConfiguration.getInstance().getInt("plugin.classloader.upgrade.interval", 3600);
-        int classloader_upgrade_max = PropertiesConfiguration.getInstance().getInt("plugin.file.upgrade.max", 30);
+        int classloader_upgrade_max = PropertiesConfiguration.getInstance().getInt("plugin.classloader.upgrade.max", 30);
         logger.info("cache config classloader_upgrade_interval={},classloader_upgrade_max={}", classloader_upgrade_interval, classloader_upgrade_max);
         classLoacerCache = CacheBuilder.newBuilder().expireAfterWrite(classloader_upgrade_interval, TimeUnit.SECONDS)
                 .maximumSize(classloader_upgrade_max).removalListener(new RemovalListener<Object, Object>() {
