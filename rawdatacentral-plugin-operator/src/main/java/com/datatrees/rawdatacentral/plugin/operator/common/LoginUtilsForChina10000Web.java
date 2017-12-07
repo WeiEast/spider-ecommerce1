@@ -117,26 +117,30 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
 
             templateUrl = "http://login.189.cn/web/login";
             templateData = "Account={}&UType=201&ProvinceID={}&AreaCode=&CityNo=&RandomFlag=0&Password={}&Captcha={}";
-            data = TemplateUtils.format(templateData, param.getMobile(), provinceId, URLEncoder.encode(encryptPassword, "UTF-8"), param.getPicCode().toLowerCase());
+            data = TemplateUtils.format(templateData, param.getMobile(), provinceId, URLEncoder.encode(encryptPassword, "UTF-8"),
+                    param.getPicCode().toLowerCase());
             response = TaskHttpClient.create(param, RequestType.POST, "china_10000_web_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
             pageContent = response.getPageContent();
             String resultCode = PatternUtils.group(pageContent, "data-resultcode=\"(\\d+)\"", 1);
             if (resultCode != null) {
                 if (resultCode.equals("9103") || resultCode.equals("9999")) {
-                    logger.error("登陆失败,账户名与密码不匹配,param={},response={}", param, response);
+                    logger.error("登陆失败,账户名与密码不匹配,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
                 } else if (resultCode.equals("8105")) {
-                    logger.error("登陆失败,密码过于简单,请重置,param={},response={}", param, response);
-                    return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
+                    logger.error("登陆失败,密码过于简单,请重置,param={}", param);
+                    return result.failure("密码过于简单,请重置");
                 } else if (resultCode.equals("9111")) {
-                    logger.error("登陆失败,登录失败过多，帐号已被锁定,param={},response={}", param, response);
-                    return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
+                    logger.error("登陆失败,登录失败过多，帐号已被锁定,param={}", param);
+                    return result.failure("登录失败过多，帐号已被锁定");
                 } else if (resultCode.equals("9100")) {
-                    logger.error("登陆失败,该账户不存在,param={},response={}", param, response);
-                    return result.failure(ErrorCode.VALIDATE_PHONE_FAIL);
+                    logger.error("登陆失败,该账户不存在,param={}", param);
+                    return result.failure("该账户不存在");
                 } else if (resultCode.equals("6113")) {
-                    logger.error("登陆失败,系统繁忙，稍后重试,param={},response={}", param, response);
-                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                    logger.error("登陆失败,系统繁忙，稍后重试,param={}", param);
+                    return result.failure("系统繁忙，稍后重试");
+                } else if (resultCode.equals("9115")) {
+                    logger.error("登陆失败,验证码不正确,param={}", param);
+                    return result.failure("验证码不正确");
                 } else if (StringUtils.isNotBlank(resultCode)) {
                     logger.error("登陆失败,param={},response={}", param, response);
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);

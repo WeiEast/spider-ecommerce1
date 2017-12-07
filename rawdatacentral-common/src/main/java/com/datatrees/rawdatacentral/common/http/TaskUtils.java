@@ -401,4 +401,12 @@ public class TaskUtils {
         RedisUtils.expire(rediskey, RedisKeyPrefixEnum.STEP.toSeconds());
     }
 
+    /**
+     * 获取环境变量
+     * @return
+     */
+    public static String getSassEnv() {
+        return System.getProperty(AttributeKey.SAAS_ENV, "none");
+    }
+
 }

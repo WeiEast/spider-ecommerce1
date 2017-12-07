@@ -5,10 +5,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
@@ -16,6 +21,7 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.retry.RetryHandler;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -30,13 +36,14 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by zhouxinghai on 2017/7/17.
  */
 @Service
-public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
+public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
     @Resource
@@ -51,81 +58,94 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
     private WebsiteConfigService   websiteConfigService;
     @Resource
     private WebsiteOperatorService websiteOperatorService;
+    private ThreadPoolExecutor     initExecutor;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
-        HttpResult<Map<String, Object>> result = checkParams(param);
-        if (!result.getStatus()) {
-            logger.warn("check param error,result={}", result);
-            return result;
+        HttpResult<Map<String, Object>> httpResult = checkParams(param);
+        if (!httpResult.getStatus()) {
+            logger.warn("check param error,result={}", httpResult);
+            return httpResult;
         }
-        Long taskId = param.getTaskId();
-        String websiteName = param.getWebsiteName();
-        String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
-        if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
-            //清理共享信息
-            RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
-            RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
-            RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
-            RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
-            try {
-                BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
-                BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
-            } catch (Throwable e) {
-                logger.error("save to back redis error taskId={}", taskId, e);
+        initExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Long taskId = param.getTaskId();
+                    String websiteName = param.getWebsiteName();
+                    String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
+                    if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                        //清理共享信息
+                        RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
+                        RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
+                        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
+                        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
+                        try {
+                            BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
+                            BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
+                        } catch (Throwable e) {
+                            logger.error("save to back redis error taskId={}", taskId, e);
+                        }
+                        RedisUtils.del(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
+                        RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
+                        RedisUtils.del(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
+                        //缓存task基本信息
+                        TaskUtils.initTaskShare(taskId, websiteName);
+                        TaskUtils.addStep(taskId, StepEnum.INIT);
+                        //记录登陆开始时间
+                        TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()),
+                                System.currentTimeMillis() + "");
+                        TaskUtils.addTaskShare(taskId, AttributeKey.STEP, param.getFormType());
+                        //初始化监控信息
+                        monitorService.initTask(taskId, websiteName, param.getMobile());
+                        //保存mobile和websiteName
+                        if (null != param.getMobile()) {
+                            TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
+                            TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getMobile().toString());
+                        }
+                        for (Map.Entry<String, Object> entry : param.getExtral().entrySet()) {
+                            TaskUtils.addTaskShare(taskId, entry.getKey(), String.valueOf(entry.getValue()));
+                        }
+                        //从新的运营商表读取配置
+                        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+                        TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
+                        //保存taskId对应的website,因为运营过程中用的是
+                        Website website = websiteConfigService.buildWebsite(websiteOperator);
+                        redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
+                        //设置代理
+                        ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
+                        //执行运营商插件初始化操作
+                        //运营商独立部分第一次初始化后不启动爬虫
+                        HttpResult<Map<String, Object>> result = getPluginService(websiteName, taskId).init(param);
+                        //爬虫状态
+                        if (!result.getStatus()) {
+                            monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->失败");
+                            logger.warn("登录-->初始化-->失败");
+                            TaskUtils.addStep(taskId, StepEnum.INIT_FAIL);
+                            return;
+                        }
+                        RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
+                        TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
+                        monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->成功");
+                        logger.info("登录-->初始化-->成功");
+                        return;
+                    }
+                    HttpResult<Map<String, Object>> result = getPluginService(websiteName, taskId).init(param);
+                    if (!result.getStatus()) {
+                        monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
+                        logger.warn("{}-->初始化-->失败", param.getActionName());
+                        return;
+                    }
+                    monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
+                    logger.info("{}-->初始化-->成功", param.getActionName());
+                } catch (Throwable e) {
+                    logger.error("operator init fail,param:{}", param.toString(), e);
+                }
+
             }
-            RedisUtils.del(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
-            RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
-            RedisUtils.del(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
-            //缓存task基本信息
-            TaskUtils.initTaskShare(taskId, websiteName);
-            TaskUtils.addStep(taskId, StepEnum.INIT);
-            //记录登陆开始时间
-            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
-            TaskUtils.addTaskShare(taskId, AttributeKey.STEP, param.getFormType());
-            //初始化监控信息
-            monitorService.initTask(taskId, websiteName, param.getMobile());
-            //保存mobile和websiteName
-            if (null != param.getMobile()) {
-                TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
-                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getMobile().toString());
-            }
-            for (Map.Entry<String, Object> entry : param.getExtral().entrySet()) {
-                TaskUtils.addTaskShare(taskId, entry.getKey(), String.valueOf(entry.getValue()));
-            }
-            //从新的运营商表读取配置
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-            TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
-            //保存taskId对应的website,因为运营过程中用的是
-            Website website = websiteConfigService.buildWebsite(websiteOperator);
-            redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
-            //设置代理
-            ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
-            //执行运营商插件初始化操作
-            //运营商独立部分第一次初始化后不启动爬虫
-            result = getPluginService(websiteName).init(param);
-            //爬虫状态
-            if (!result.getStatus()) {
-                monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->失败");
-                logger.warn("登录-->初始化-->失败");
-                TaskUtils.addStep(taskId, StepEnum.INIT_FAIL);
-                return result;
-            }
-            RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
-            TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
-            monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->成功");
-            logger.info("登录-->初始化-->成功");
-            return result;
-        }
-        result = getPluginService(websiteName).init(param);
-        if (!result.getStatus()) {
-            monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
-            logger.warn("{}-->初始化-->失败", param.getActionName());
-            return result;
-        }
-        monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
-        logger.info("{}-->初始化-->成功", param.getActionName());
-        return result;
+        });
+        logger.info("revice operator init reques,param:{}", param.toString());
+        return httpResult.success();
     }
 
     @Override
@@ -136,9 +156,13 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", result);
             return result;
         }
+        if (!waitInitSuccess(param.getTaskId())) {
+            logger.warn("task is not init ,param=[}", param.toString());
+            return result.failure(ErrorCode.TASK_INIT_ERROR);
+        }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
-        HttpResult<String> picResult = getPluginService(websiteName).refeshPicCode(param);
+        HttpResult<String> picResult = getPluginService(websiteName, taskId).refeshPicCode(param);
         String log = null;
         if (!picResult.getStatus()) {
             log = TemplateUtils.format("{}-->刷新图片验证码-->失败", param.getActionName());
@@ -163,6 +187,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", result);
             return result;
         }
+        if (!waitInitSuccess(param.getTaskId())) {
+            logger.warn("task is not init ,param=[}", param.toString());
+            return result.failure(ErrorCode.TASK_INIT_ERROR);
+        }
         WebsiteOperator website = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
         //刷新短信间隔时间
         int sendSmsInterval = website.getSmsInterval();
@@ -180,7 +208,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 }
             }
         }
-        result = getPluginService(param.getWebsiteName()).refeshSmsCode(param);
+        result = getPluginService(param.getWebsiteName(), taskId).refeshSmsCode(param);
         if (result.getStatus()) {
             TaskUtils.addTaskShare(taskId, AttributeKey.LATEST_SEND_SMS_TIME, System.currentTimeMillis() + "");
             if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
@@ -207,7 +235,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
-        result = getPluginService(param.getWebsiteName()).validatePicCode(param);
+        result = getPluginService(param.getWebsiteName(), taskId).validatePicCode(param);
         if (result.getStatus() || result.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode()) {
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_PIC_CODE.getRedisKey(param.getFormType()), param.getPicCode());
         }
@@ -226,8 +254,12 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
                 logger.warn("check param error,result={}", result);
                 return result;
             }
+            if (!waitInitSuccess(param.getTaskId())) {
+                logger.warn("task is not init ,param=[}", param.toString());
+                return result.failure(ErrorCode.TASK_INIT_ERROR);
+            }
             Long taskId = param.getTaskId();
-            OperatorPluginService pluginService = getPluginService(param.getWebsiteName());
+            OperatorPluginService pluginService = getPluginService(param.getWebsiteName(), taskId);
             result = pluginService.submit(param);
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
             if (null != result && result.getStatus()) {
@@ -288,14 +320,14 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             logger.warn("check param error,result={}", checkParams);
             return new HttpResult<Object>().failure(checkParams.getResponseCode(), checkParams.getMessage());
         }
-        HttpResult result = getPluginService(param.getWebsiteName()).defineProcess(param);
+        HttpResult result = getPluginService(param.getWebsiteName(), param.getTaskId()).defineProcess(param);
         String log = TemplateUtils.format("自定义插件{}-->处理-->{}", param.getFormType(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), log, result);
         return result;
     }
 
-    private OperatorPluginService getPluginService(String websiteName) {
-        return classLoaderService.getOperatorPluginService(websiteName);
+    private OperatorPluginService getPluginService(String websiteName, Long taskId) {
+        return classLoaderService.getOperatorPluginService(websiteName, taskId);
     }
 
     /**
@@ -386,5 +418,48 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService {
             }
         }
 
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        int corePoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.min", 10);
+        int maximumPoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.max", 100);
+        initExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(300),
+                new ThreadFactory() {
+                    private AtomicInteger count = new AtomicInteger(0);
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        Thread t = new Thread(r);
+                        String threadName = "operator_init_thread_" + count.addAndGet(1);
+                        t.setName(threadName);
+                        logger.info("create operator init thread :{}", threadName);
+                        return t;
+                    }
+                });
+
+    }
+
+    private boolean waitInitSuccess(Long taskId) {
+        try {
+            String stepCode = RetryUtils.execute(new RetryHandler<String>() {
+                private String stepCode;
+
+                @Override
+                public String execute() {
+                    stepCode = TaskUtils.getTaskShare(taskId, AttributeKey.STEP_CODE);
+                    return stepCode;
+                }
+
+                @Override
+                public boolean check() {
+                    return StringUtils.isNotBlank(stepCode) && Integer.valueOf(stepCode) >= StepEnum.INIT_SUCCESS.getStepCode();
+                }
+            }, 6, 500L);
+            return StringUtils.isNotBlank(stepCode);
+        } catch (Throwable e) {
+            logger.info("waitInitSuccess error taskId={}", taskId, e);
+            return false;
+        }
     }
 }

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 17/9/19.
  */
-public class ZheJiang10000ForWeb implements OperatorPluginService {
+public class ZheJiang10000ForWeb implements OperatorPluginPostService {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(ZheJiang10000ForWeb.class);
     private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
@@ -87,8 +87,6 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-            String templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10012&toStUrl=http://zj.189.cn/zjpr/balancep/getBalancep.htm";
-            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
             logger.info("登陆成功,param={}", param);
             return result.success();
         } catch (Exception e) {
@@ -149,19 +147,19 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
 
             SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
             Calendar c = Calendar.getInstance();
-            //c.add(Calendar.MONTH, -1);
+            c.add(Calendar.MONTH, -1);
             String billMonth = sf.format(c.getTime());
 
             String referer = "http://zj.189.cn/zjpr/service/query/query_order.html?menuFlag=1";
             String templateUrl = "http://zj.189.cn/zjpr/cdr/getCdrDetail.htm";
             String templateData = "flag=1&cdrCondition.pagenum=1&cdrCondition.pagesize=100&cdrCondition.productnbr={}&cdrCondition.areaid={}&cdrCondition" +
                     ".cdrlevel=&cdrCondition.productid={}&cdrCondition.product_servtype={}&cdrCondition" +
-                    ".recievenbr=%D2%C6%B6%AF%B5%E7%BB%B0&cdrCondition.cdrmonth={}&cdrCondition.cdrtype=11&username={}&idcard={}&cdrCondition" +
+                    ".recievenbr=%D2%C6%B6%AF%B5%E7%BB%B0&cdrCondition.cdrmonth={}&cdrCondition.cdrtype=11&cdrCondition.usernameyanzheng={}&cdrCondition.idyanzheng={}&cdrCondition" +
                     ".randpsw={}";
             String data = TemplateUtils
                     .format(templateData, param.getMobile(), areaid, productid, servtype, billMonth, username, idCard, param.getSmsCode());
             response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_006").setFullUrl(templateUrl).setRequestBody(data)
-                    .setReferer(referer).invoke();
+                    .setReferer(referer).setSocketTimeout(30000).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "清单详情") || StringUtils.contains(pageContent, "ErrorNo=61010")) {
                 logger.info("详单-->校验成功,param={}", param);
@@ -173,6 +171,21 @@ public class ZheJiang10000ForWeb implements OperatorPluginService {
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> loginPost(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10012&toStUrl=http://zj.189.cn/zjpr/balancep/getBalancep.htm";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            logger.info("登陆成功,param={}", param);
+            return result.success();
+        } catch (Exception e) {
+            logger.error("登陆失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.LOGIN_ERROR);
         }
     }
 }

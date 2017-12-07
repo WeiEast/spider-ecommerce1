@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.plugin.operator.guang_xi_10000_web;
 
+import javax.script.Invocable;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,6 +12,7 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -34,7 +36,17 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
         try {
+            String templateUrl = "http://gx.189.cn/chaxun/iframe/user_center.jsp";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            String pageContent = response.getPageContent();
+            String key1 = PatternUtils.group(pageContent, "var key1='([^']+)'", 1);
+            String key2 = PatternUtils.group(pageContent, "var key2='([^']+)'", 1);
+            String key3 = PatternUtils.group(pageContent, "var key3='([^']+)'", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "key1", key1);
+            TaskUtils.addTaskShare(param.getTaskId(), "key2", key2);
+            TaskUtils.addTaskShare(param.getTaskId(), "key3", key3);
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={}", param, e);
@@ -44,7 +56,12 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<String> refeshPicCode(OperatorParam param) {
-        return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshPicCodeForLogin(param);
+            default:
+                return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
@@ -83,8 +100,24 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
         return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
+    private HttpResult<String> refeshPicCodeForLogin(OperatorParam param) {
+        HttpResult<String> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "http://gx.189.cn/public/image.jsp?date={}";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
+            logger.info("登录-->图片验证码-->刷新成功,param={}", param);
+            return result.success(response.getPageContentForBase64());
+        } catch (Exception e) {
+            logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
+    }
+
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
+        CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
@@ -92,12 +125,17 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
                 logger.error("登陆失败,信息不完整,姓名或身份证缺失,param={}", param);
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
+            String key1 = TaskUtils.getTaskShare(param.getTaskId(), "key1");
+            String key2 = TaskUtils.getTaskShare(param.getTaskId(), "key2");
+            String key3 = TaskUtils.getTaskShare(param.getTaskId(), "key3");
+
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
+            String encryptPassword = "__" + invocable.invokeFunction("strEnc", param.getPassword(), key1, key2, key3).toString();
 
             String referer = "http://gx.189.cn/chaxun/iframe/user_center.jsp";
             String templateUrl = "http://gx.189.cn/public/login.jsp";
-            String templateData = "LOGIN_TYPE=21&RAND_TYPE=001&AREA_CODE=&logon_name={}&password_type_ra=1&logon_passwd={}&logon_valid=%E8%AF%B7%E8" +
-                    "%BE%93%E5%85%A5%E9%AA%8C%E8%AF%81%E7%A0%81";
-            String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword());
+            String templateData = "LOGIN_TYPE=21&RAND_TYPE=001&AREA_CODE=&logon_name={}&password_type_ra=1&logon_passwd={}&logon_valid={}";
+            String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, param.getPicCode());
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10000_web_001").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             String pageContent = response.getPageContent();

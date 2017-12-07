@@ -16,5 +16,8 @@
     <job:simple id="operatorConfigCacheJob" class="com.datatrees.rawdatacentral.service.job.OperatorConfigCacheJob" registry-center-ref="regCenter"
                 cron="${job.cron.operator.config.update}" sharding-total-count="1"
                 overwrite="true"/>
+    <job:simple id="puginCacheCleanJob" class="com.datatrees.rawdatacentral.service.job.PuginCacheCleanJob" registry-center-ref="regCenter"
+                cron="${job.cron.plugin.cache.clean}" sharding-total-count="1"
+                overwrite="true"/>
 
 </beans>
