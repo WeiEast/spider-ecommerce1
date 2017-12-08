@@ -1,18 +1,10 @@
 
 
 /*********************************rawdatacentral*******************************************/
-配置中心:
-core.redis.back.hostName=redis.dashu.ds
-core.redis.back.password=
-core.redis.back.database=0
+缓存时间
+线上开接口
 
-#预警微信用户姓名全称
-monitor.wechat.receiver=zhouxinghai,guimeichao,yandi,liliangjie,guoying,zhangjin,zhangke
-#预警短信手机号
-monitor.sms.receiver=13735874566,18806513166,13026171249,18367154602,13429181586,13968043083,18955973249
 
-备用:
-job.cron.operator.config.update=0/5 * * * * ?
 /********************************************************************************************/
 
 

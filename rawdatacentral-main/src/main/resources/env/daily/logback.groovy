@@ -10,10 +10,10 @@ def appName = "rawdatacentral"
 def serverIp = System.getProperty("server.ip","default");
 
 // 日志路径
-def logPath = "/dashu/log/${serverIp}/${appName}"
+def logPath = "/dashu/log"
 
 // 控制台
-appender("console", ConsoleAppender) {
+appender("consoleAppender", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
         pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
         charset = Charset.forName(charsetName)
@@ -21,14 +21,28 @@ appender("console", ConsoleAppender) {
 }
 
 // 业务日志
-appender("sysFile", RollingFileAppender) {
-    file = "${logPath}/${appName}.log"
+appender("sysAppender", RollingFileAppender) {
+    file = "${logPath}/${appName}.${serverIp}.log"
     encoder(PatternLayoutEncoder) {
         pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
         charset = Charset.forName(charsetName)
     }
     rollingPolicy(SizeAndTimeBasedRollingPolicy) {
-        fileNamePattern = "${logPath}/${appName}.log.%d{yyyy-MM-dd}.%i"
+        fileNamePattern = "${logPath}/${appName}.${serverIp}.log.%d{yyyy-MM-dd}.%i"
+        maxFileSize = "1GB"
+        maxHistory = 7 // 保留最近天数的日志
+    }
+}
+
+// plugin日志
+appender("pluginAppender", RollingFileAppender) {
+    file = "${logPath}/plugin.${serverIp}.log"
+    encoder(PatternLayoutEncoder) {
+        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
+        charset = Charset.forName(charsetName)
+    }
+    rollingPolicy(SizeAndTimeBasedRollingPolicy) {
+        fileNamePattern = "${logPath}/plugin.${serverIp}.log.%d{yyyy-MM-dd}.%i"
         maxFileSize = "1GB"
         maxHistory = 7 // 保留最近天数的日志
     }
@@ -36,6 +50,10 @@ appender("sysFile", RollingFileAppender) {
 
 
 
-root(INFO, ["console", "sysFile"])
+
+
+
+root(INFO, ["consoleAppender", "sysAppender"])
+logger("plugin_log", INFO, ["pluginAppender"], false)
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
 
