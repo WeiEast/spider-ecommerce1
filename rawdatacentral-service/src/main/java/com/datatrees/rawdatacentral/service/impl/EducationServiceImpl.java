@@ -118,8 +118,17 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
+            String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
+            String date = TemplateUtils.format(templateDate, param.getMobile(), param.getMobile());
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_05").setFullUrl(url).setRequestBody(date).invoke();
+            String pageContent = response.getPageContent();
+            if (pageContent.contains("false")) {
+                logger.error("此手机号已被注册，mobile={}", param.getMobile());
+                return result.failure("手机号已被注册");
+            }
             long time = System.currentTimeMillis();
-            String url = "https://account.chsi.com.cn/account/captchimagecreateaction.action?time=" + time;
+            url = "https://account.chsi.com.cn/account/captchimagecreateaction.action?time=" + time;
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_03").setFullUrl(url).invoke();
             Map<String, Object> map = new HashMap<>();
             String cookies = TaskUtils.getCookieString(param.getTaskId());

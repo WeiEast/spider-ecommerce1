@@ -34,11 +34,11 @@ public class XPathUtilTest extends BaseConfigTest {
     @Test
     public void testText() {
 
-        String select = "p:contains(联系地址):not(:has(p))/text()";
+        String select = "//form[@id='fm1']/@action";
         // String select = tr:contains(Min.Payment):contains(Post
         // Date):not(:has(table:contains(Tran Date):contains(Post Date)))
         // "p:contains(费用返还明细):not(:has(p)) + table tr:not(:has(tr)):matches([\\d/]{8,})";
-        String content = getContent("xpath/table.html");
+        String content = getContent("xpath/zyj.html");
         //   System.out.println(content);
         // "tr:has(tbody div[id~=groupHeader]:contains(5491)) + tr div[id=fixBand7]>table>tbody>tr";
         // String select =
