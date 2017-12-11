@@ -21,7 +21,6 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,6 +259,21 @@ public class China10086ForShop implements OperatorPluginService {
             //用post或者参数错误提示{\"retCode\":\"400000\",\"retMsg\":\"parameter illegal!\"}
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
                     .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis()).setReferer(referer).invoke();
+            if (response.getStatusCode() == 403) {
+                logger.error("中国移动-->使用代理获取详单短信-->失败,将使用本地重试一次,taskId={},proxy={},statusCode={}", param.getTaskId(), response.getRequest().getProxy(),
+                        response.getStatusCode());
+                response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
+                        .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis()).setProxyEnable(false)
+                        .setReferer(referer).invoke();
+                if (response.getStatusCode() == 200) {
+                    logger.info("中国移动-->使用本地获取详单短信-->成功,taskId={},proxy={},statusCode={}", param.getTaskId(), response.getRequest().getProxy(),
+                            response.getStatusCode());
+                } else {
+                    logger.error("中国移动-->使用本地获取详单短信-->失败,taskId={},proxy={},statusCode={}", param.getTaskId(), response.getRequest().getProxy(),
+                            response.getStatusCode());
+                }
+
+            }
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
@@ -278,7 +292,8 @@ public class China10086ForShop implements OperatorPluginService {
 
     private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
         //https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/13687014852?callback=jQuery183007037425174627476_1507598560322&pwdTempSerCode=MjIzMTkw&pwdTempRandCode=NTQ1OTIy&captchaVal=ecmh4v&_=1507598630177;
-        String templateUrl = "https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/{}?callback=&pwdTempSerCode={}&pwdTempRandCode={}&captchaVal={}&_={}";
+        String templateUrl
+                = "https://shop.10086.cn/i/v1/fee/detailbilltempidentjsonp/{}?callback=&pwdTempSerCode={}&pwdTempRandCode={}&captchaVal={}&_={}";
         String pwdTempSerCode = Base64.getEncoder().encodeToString(param.getPassword().getBytes());
         String pwdTempRandCode = Base64.getEncoder().encodeToString(param.getSmsCode().getBytes());
         //String loginName = TaskUtils.getCookieValue(param.getTaskId(), "loginName");
@@ -297,7 +312,7 @@ public class China10086ForShop implements OperatorPluginService {
             String referer = "http://shop.10086.cn/i/?f=home&welcome=";
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_009")
                     .setFullUrl(templateUrl, param.getMobile(), pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
-                    .setReferer(referer).addHeader("Accept","*/*").invoke();
+                    .setReferer(referer).addHeader("Accept", "*/*").invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("retCode");
             switch (code) {
