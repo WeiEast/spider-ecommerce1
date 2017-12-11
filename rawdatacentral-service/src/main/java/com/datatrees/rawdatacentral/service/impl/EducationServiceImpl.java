@@ -125,7 +125,7 @@ public class EducationServiceImpl implements EducationService {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_03").setFullUrl(url).invoke();
             Map<String, Object> map = new HashMap<>();
             String cookies = TaskUtils.getCookieString(param.getTaskId());
-            map.put("100", response.getPageContent());
+            map.put("picCode", response.getPageContent());
             return result.success(map);
         } catch (Exception e) {
             logger.error("注册-->获取图片验证码失败，param={},response={},", param, response, e);
@@ -150,7 +150,7 @@ public class EducationServiceImpl implements EducationService {
             if (pageContent.contains(str)) {
                 logger.info("注册-->发送短信验证码成功,param={},response={}", param, response);
                 Map<String, Object> map = new HashMap<>();
-                map.put("100", response.getPageContentForBase64());
+                map.put("100", response.getPageContent());
                 return result.success(map);
             }
             if (pageContent.contains("手机号码受限，短信发送次数已达到上限，请24小时后再试")) {
