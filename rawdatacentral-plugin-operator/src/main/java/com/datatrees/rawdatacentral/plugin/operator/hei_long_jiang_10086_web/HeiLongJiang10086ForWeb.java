@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 黑龙江移动--web
- * 登陆地址:http://hl.10086.cn/resource/pub-page/login/unifylogin.html
+ * 登陆地址:http://hl.10086.cn/apps/login/ssoLoginBox.html
  * 登陆方式:服务密码登陆
  * 图片验证码:支持
  * 验证图片验证码:支持
@@ -58,8 +58,10 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
         switch (param.getFormType()) {
+            case FormType.VALIDATE_USER_INFO:
+                return refeshSmsCodeForBillDetail(param, "000015");
             case FormType.VALIDATE_BILL_DETAIL:
-                return refeshSmsCodeForBillDetail(param);
+                return refeshSmsCodeForBillDetail(param, "000004");
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -70,8 +72,10 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return submitForLogin(param);
+            case FormType.VALIDATE_USER_INFO:
+                return submitForBillDetail(param, "000015");
             case FormType.VALIDATE_BILL_DETAIL:
-                return submitForBillDetail(param);
+                return submitForBillDetail(param, "000004");
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -101,7 +105,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "http://hl.10086.cn/authImg?type=0&rand={}";
+            String templateUrl = "http://hl.10086.cn/rest/authImg?type=0&rand={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_001")
                     .setFullUrl(templateUrl, Math.random()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
@@ -117,7 +121,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "http://hl.10086.cn/common/vali/valiImage?imgCode={}&_={}";
+            String templateUrl = "http://hl.10086.cn/rest/common/vali/valiImage?imgCode={}&_={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_002")
                     .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).setRequestContentType(ContentType.APPLICATION_JSON)
                     .invoke();
@@ -158,7 +162,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         }
         Response response = null;
         try {
-            String templateUrl = "http://hl.10086.cn/login/sso/doUnifyLogin/";
+            String templateUrl = "http://hl.10086.cn/rest/login/sso/doUnifyLogin/";
             //{"userName":"{}","passWord":"{}","pwdType":"01","clientIP":"{}"}
             Map<String, Object> params = new HashMap<>();
             params.put("userName", param.getMobile());
@@ -183,7 +187,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             if (StringUtils.equals("000000", retCode)) {
                 //获取权限信息
                 data = json.getString("data");
-                templateUrl = "http://hl.10086.cn/login/unified/callBack/?artifact={}&backUrl=";
+                templateUrl = "http://hl.10086.cn/rest/login/unified/callBack/?artifact={}&backUrl=";
                 TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_005").setFullUrl(templateUrl, data).invoke();
                 logger.info("登陆成功,param={}", param);
                 return result.success();
@@ -205,14 +209,14 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
+    private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param, String funcCode) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "http://hl.10086.cn/sms/sendSmsMsg";
+            String templateUrl = "http://hl.10086.cn/rest/sms/sendSmsMsg";
             //{"func_code":"000004","sms_type":"2","phone_no":"","sms_params":""}
             Map<String, Object> params = new HashMap<>();
-            params.put("func_code", "000004");
+            params.put("func_code", funcCode);
             params.put("sms_type", "2");
             params.put("phone_no", "");
             params.put("sms_params", "");
@@ -235,7 +239,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
+    private HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param, String funcCode) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
@@ -246,9 +250,9 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
              * 随机短信验证码输入错误
              * "retCode":"100004"
              */
-            String templateUrl = "http://hl.10086.cn/sms/checkSmsCode?func_code=000004&sms_type=2&phone_no=&sms_code={}&_={}";
+            String templateUrl = "http://hl.10086.cn/rest/sms/checkSmsCode?func_code={}&sms_type=2&phone_no=&sms_code={}&_={}";
             response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_007")
-                    .setFullUrl(templateUrl, param.getSmsCode(), System.currentTimeMillis()).invoke();
+                    .setFullUrl(templateUrl, funcCode, param.getSmsCode(), System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
             switch (retCode) {
@@ -290,7 +294,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String key = "abc123";
-            String templateUrl = "http://hl.10086.cn/session/getPscToken/?_={}";
+            String templateUrl = "http://hl.10086.cn/rest/session/getPscToken/?_={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_003")
                     .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
