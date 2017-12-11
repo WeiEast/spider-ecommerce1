@@ -89,9 +89,7 @@ public class EducationServiceImpl implements EducationService {
                 logger.error("登录-->失败，param={},response={}", param, response);
                 return result.failure("您输入的用户名或密码有误");
             }
-            Map<String, Object> resultMap = new HashMap<>();
-            resultMap.put("100", "登录成功");
-            return result.success(resultMap);
+            return result.success();
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
@@ -150,7 +148,7 @@ public class EducationServiceImpl implements EducationService {
             if (pageContent.contains(str)) {
                 logger.info("注册-->发送短信验证码成功,param={},response={}", param, response);
                 Map<String, Object> map = new HashMap<>();
-                map.put("100", response.getPageContent());
+                map.put("msg", response.getPageContent());
                 return result.success(map);
             }
             if (pageContent.contains("手机号码受限，短信发送次数已达到上限，请24小时后再试")) {
@@ -197,9 +195,7 @@ public class EducationServiceImpl implements EducationService {
             }
             if (pageContent.contains("账号注册成功")) {
                 logger.info("注册成功，param={},response={}", param, response);
-                Map<String, Object> resultMap = new HashMap<>();
-                resultMap.put("100", "注册成功");
-                return result.success(resultMap);
+                return result.success();
             }
             return result.failure("注册失败");
         } catch (Exception e) {
