@@ -7,11 +7,11 @@ import java.io.Serializable;
 /**
  * Created by zhangyanjia on 2017/11/30.
  */
-public class EducationParam implements Serializable{
+public class EducationParam implements Serializable {
     /**
      * 任务id 必填
      */
-    private Long   taskId;
+    private Long taskId;
     /**
      * website name 必填
      */
@@ -19,7 +19,13 @@ public class EducationParam implements Serializable{
     /**
      * 手机号
      */
-    private Long   mobile;
+    private Long mobile;
+
+    /**
+     * 登录用户名参数
+     */
+
+    private String loginName;
     /**
      * 登陆密码
      */
@@ -47,12 +53,12 @@ public class EducationParam implements Serializable{
     private String idCardType;
 
     /**
-     *注册输入密码
+     * 注册输入密码
      */
     private String pwd;
 
     /**
-     *注册确认密码
+     * 注册确认密码
      */
     private String surePwd;
 
@@ -142,5 +148,13 @@ public class EducationParam implements Serializable{
 
     public void setSurePwd(String surePwd) {
         this.surePwd = surePwd;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
     }
 }

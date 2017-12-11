@@ -66,7 +66,7 @@ public class EducationServiceImpl implements EducationService {
 
     @Override
     public HttpResult<Map<String, Object>> loginSubmit(EducationParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getPassword() == null) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getLoginName() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         HttpResult<Map<String, Object>> result = new HttpResult<>();
@@ -81,7 +81,7 @@ public class EducationServiceImpl implements EducationService {
             String js = RedisUtils.get(jsKey.toString());
             String url = "https://account.chsi.com.cn" + js;
             String templateData = "username={}&password={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
-            String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), lt);
+            String data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt);
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
@@ -89,8 +89,8 @@ public class EducationServiceImpl implements EducationService {
                 logger.error("登录-->失败，param={},response={}", param, response);
                 return result.failure("您输入的用户名或密码有误");
             }
-            Map<String,Object> resultMap=new HashMap<>();
-            resultMap.put("100","登录成功");
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("100", "登录成功");
             return result.success(resultMap);
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={}", param, response, e);
@@ -197,8 +197,8 @@ public class EducationServiceImpl implements EducationService {
             }
             if (pageContent.contains("账号注册成功")) {
                 logger.info("注册成功，param={},response={}", param, response);
-                Map<String,Object> resultMap=new HashMap<>();
-                resultMap.put("100","注册成功");
+                Map<String, Object> resultMap = new HashMap<>();
+                resultMap.put("100", "注册成功");
                 return result.success(resultMap);
             }
             return result.failure("注册失败");

@@ -59,7 +59,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
 
     @Override
     public HttpResult<Map<String, Object>> loginSubmit(EducationParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getPassword() == null) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getLoginName() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         Long taskId = param.getTaskId();
@@ -74,7 +74,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.TASK_ID, taskId);
         map.put(AttributeKey.WEBSITE_NAME, websiteName);
-        String cookies=TaskUtils.getCookieString(taskId);
+        String cookies = TaskUtils.getCookieString(taskId);
         map.put(AttributeKey.COOKIE, cookies);
         messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map, DEFAULT_CHARSET_NAME);
         logger.info("学信网，启动爬虫成功");
@@ -83,7 +83,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
 
     @Override
     public HttpResult<Map<String, Object>> registerRefeshPicCode(EducationParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null||param.getMobile()==null) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
 
@@ -100,7 +100,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
 
     @Override
     public HttpResult<Map<String, Object>> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null||param.getMobile()==null) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         HttpResult<Map<String, Object>> result = educationService.registerValidatePicCodeAndSendSmsCode(param);
