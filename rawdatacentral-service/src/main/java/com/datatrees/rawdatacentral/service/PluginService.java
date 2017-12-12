@@ -23,13 +23,6 @@ public interface PluginService {
     String savePlugin(String sassEnv, String fileName, byte[] bytes, String version);
 
     /**
-     * 获取插件
-     * @param pluginName
-     * @return
-     */
-    PluginUpgradeResult getPluginFromRedis(String pluginName) throws IOException;
-
-    /**
      * 新的从redis获取配置
      * @param pluginName
      * @return

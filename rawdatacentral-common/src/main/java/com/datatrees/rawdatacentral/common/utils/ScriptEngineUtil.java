@@ -36,16 +36,10 @@ public class ScriptEngineUtil {
         if (StringUtils.isAnyBlank(websiteName, fileName)) {
             return null;
         }
-        byte[] bytes = null;
         String sassEnv = TaskUtils.getSassEnv();
         String pluginName = websiteName + "." + fileName;
         String version = RedisUtils.hget(RedisKeyPrefixEnum.PLUGIN_VERSION.getRedisKey(sassEnv), pluginName);
-        if (StringUtils.isNotBlank(version)) {
-            bytes = RedisUtils.hgetForByte(RedisKeyPrefixEnum.PLUGIN_DATA.getRedisKey(sassEnv), pluginName);
-        } else {
-            String redisKey = RedisKeyPrefixEnum.FILE_DATA.getRedisKey(pluginName);
-            bytes = RedisUtils.get(redisKey.getBytes());
-        }
+        byte[] bytes = RedisUtils.hgetForByte(RedisKeyPrefixEnum.PLUGIN_DATA.getRedisKey(sassEnv), pluginName);
         logger.info("load plugin sassEnv:{},pluginName:{},version:{}", sassEnv, pluginName, version);
         if (null == charsetName) {
             charsetName = DEFAULT_CHARSET;
