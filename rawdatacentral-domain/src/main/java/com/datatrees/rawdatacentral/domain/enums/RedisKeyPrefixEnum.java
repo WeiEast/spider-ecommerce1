@@ -22,12 +22,6 @@ public enum RedisKeyPrefixEnum {
     TASK_CONTEXT("task.context", 10, TimeUnit.MINUTES, "task context"),
     TASK_REQUEST("task.request", 10, TimeUnit.MINUTES, "根据taskId共享代理"),
     TASK_PAGE_CONTENT("task.page.content", 10, TimeUnit.MINUTES, "请求页面"),
-    @Deprecated
-    PLUGIN_CLASS_DATA("plugin.class.data", 24, TimeUnit.HOURS, "根据taskId共享class"),
-    @Deprecated PLUGIN_FILE("plugin.file", 30, TimeUnit.DAYS, "插件jar存储"),
-    @Deprecated PLUGIN_FILE_MD5("plugin.file.md5", 30, TimeUnit.DAYS, "插件md5"),
-    @Deprecated FILE_MD5("file.md5", 30, TimeUnit.DAYS, "redis缓存文件md5"),
-    @Deprecated FILE_DATA("file.data", 30, TimeUnit.DAYS, "redis缓存文件内容"),
     MAX_WEIGHT_OPERATOR("max.weight.operator", 30, TimeUnit.DAYS, "最大权重运营商"),
     ALL_OPERATOR_CONFIG("all.operator.config", 60, TimeUnit.MINUTES, "运营商配置"),
     WEBSITE_LAST_SEND_WARN_TIME("website.last.send.warn.time", 30, TimeUnit.DAYS, "站点上一次发送预警时间"),
@@ -40,9 +34,7 @@ public enum RedisKeyPrefixEnum {
     STATUS("status", 15, TimeUnit.MINUTES, "状态"),
     STEP("step", 15, TimeUnit.MINUTES, "阶段"),
     PLUGIN_VERSION("plugin.version", 365, TimeUnit.DAYS, "插件版本"),
-    PLUGIN_DATA("plugin.data", 365, TimeUnit.DAYS, "插件版本"),
-    @Deprecated
-    WEBSITE_OPERATOR_RENAME("website.operator.rename", 365, TimeUnit.DAYS, "运营商websiteName别名,兼容方案初期用");
+    PLUGIN_DATA("plugin.data", 365, TimeUnit.DAYS, "插件版本"),;
     /**
      * 备注
      */
