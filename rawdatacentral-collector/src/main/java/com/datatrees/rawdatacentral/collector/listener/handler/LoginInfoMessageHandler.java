@@ -11,16 +11,13 @@ import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
-import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -65,34 +62,21 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
         if (initStatus) {
             TaskUtils.addStep(taskId, StepEnum.REC_INIT_MSG);
             //是否是独立运营商
-            Boolean isOperator = WebsiteUtils.isOperator(loginInfo.getWebsiteName());
-            if (isOperator) {
-                OperatorParam param = new OperatorParam();
-                param.setTaskId(taskId);
-                param.setFormType(FormType.LOGIN);
-                param.setMobile(Long.valueOf(loginInfo.getAccountNo()));
-                param.setWebsiteName(websiteName);
-                param.getExtral().put(AttributeKey.USERNAME, loginInfo.getAccountNo());
-                param.getExtral().put(AttributeKey.GROUP_CODE, loginInfo.getGroupCode());
-                param.getExtral().put(AttributeKey.GROUP_NAME, loginInfo.getGroupName());
-                crawlerOperatorService.init(param);
-            } else {
-                //初始化监控信息
-                monitorService.initTask(taskId, websiteName, loginInfo.getAccountNo());
-                //缓存task基本信息
-                TaskUtils.initTaskShare(taskId, loginInfo.getWebsiteName());
-                TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, loginInfo.getAccountNo());
-                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, loginInfo.getGroupCode());
-                TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, loginInfo.getGroupName());
-                //这里电商,邮箱,老运营商
-                Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
-                //保存taskId对应的website
-                redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
-                TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
-                monitorService.sendTaskLog(taskId, websiteName, "爬虫-->启动-->成功");
-                //启动爬虫
-                collector.processMessage(buildCollectorMessage(loginInfo));
-            }
+            //初始化监控信息
+            monitorService.initTask(taskId, websiteName, loginInfo.getAccountNo());
+            //缓存task基本信息
+            TaskUtils.initTaskShare(taskId, loginInfo.getWebsiteName());
+            TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, loginInfo.getAccountNo());
+            TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, loginInfo.getGroupCode());
+            TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, loginInfo.getGroupName());
+            //这里电商,邮箱,老运营商
+            Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
+            //保存taskId对应的website
+            redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
+            TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
+            monitorService.sendTaskLog(taskId, websiteName, "爬虫-->启动-->成功");
+            //启动爬虫
+            collector.processMessage(buildCollectorMessage(loginInfo));
             return true;
         }
         logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, loginInfo.getWebsiteName());
