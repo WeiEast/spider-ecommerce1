@@ -423,11 +423,12 @@ public class TaskHttpClient {
             IOUtils.closeQuietly(httpResponse);
             try {
                 String sassEnv = TaskUtils.getSassEnv();
+
+                //保存请求
+                BackRedisUtils.rpush(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response));
+                BackRedisUtils.expire(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_REQUEST.toSeconds());
+                //测试或者开发环境保存
                 if (StringUtils.equals(sassEnv, "dev") || StringUtils.equals(sassEnv, "test")) {
-                    //保存请求
-                    BackRedisUtils.rpush(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response));
-                    BackRedisUtils
-                            .expire(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_REQUEST.toSeconds());
                     //保存请求内容
                     StringBuilder pc = new StringBuilder("url-->").append(request.getFullUrl()).append("\nrequest_id-->")
                             .append(request.getRequestId()).append("\nstatus_code-->").append(response.getStatusCode()).append("\nreques_time-->")
