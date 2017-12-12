@@ -71,6 +71,9 @@ public class EducationParam implements Serializable {
     }
 
     public String getWebsiteName() {
+        if (websiteName == null) {
+            websiteName = "chsi.com.cn";
+        }
         return websiteName;
     }
 
