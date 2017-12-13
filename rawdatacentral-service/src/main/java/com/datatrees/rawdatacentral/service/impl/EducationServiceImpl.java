@@ -88,8 +88,16 @@ public class EducationServiceImpl implements EducationService {
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 logger.error("登录-->失败，param={},response={}", param, response);
                 return result.failure("您输入的用户名或密码有误");
+            } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
+                logger.error("登录-->失败，param={},response={}", param, response);
+                return result.failure("为保障您的账号安全，请输入验证码后重新登录");
+            } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
+                logger.error("登录-->失败，param={},response={}", param, response);
+                return result.failure("手机校验码获取过于频繁,操作被禁止");
+            } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
+                return result.success();
             }
-            return result.success();
+            return result.failure("登录失败");
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
@@ -148,6 +156,8 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
+            RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/account/getmphonpincode.action";
             String templateDate = "captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
             String date = TemplateUtils.format(templateDate, param.getPicCode(), param.getMobile());

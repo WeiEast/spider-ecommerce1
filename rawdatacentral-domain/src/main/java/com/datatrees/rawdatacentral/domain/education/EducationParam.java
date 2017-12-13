@@ -62,6 +62,8 @@ public class EducationParam implements Serializable {
      */
     private String surePwd;
 
+    private String picUrl;
+
     public Long getTaskId() {
         return taskId;
     }
@@ -159,5 +161,13 @@ public class EducationParam implements Serializable {
 
     public void setLoginName(String loginName) {
         this.loginName = loginName;
+    }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
     }
 }
