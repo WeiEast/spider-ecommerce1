@@ -259,7 +259,7 @@ public class China10086ForShop implements OperatorPluginService {
             //用post或者参数错误提示{\"retCode\":\"400000\",\"retMsg\":\"parameter illegal!\"}
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
                     .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis()).setReferer(referer).invoke();
-            if (response.getStatusCode() == 403) {
+            if (response.getStatusCode() == 403 || response.getStatusCode() == 555) {
                 logger.error("中国移动-->使用代理获取详单短信-->失败,将使用本地重试一次,taskId={},proxy={},statusCode={}", param.getTaskId(), response.getRequest().getProxy(),
                         response.getStatusCode());
                 response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
