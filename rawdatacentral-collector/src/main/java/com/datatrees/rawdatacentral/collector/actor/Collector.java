@@ -303,22 +303,13 @@ public class Collector {
             }
             if (null != task) {
                 if (!task.isSubTask()) {
-                    String redisKey = "run_count_" + task.getTaskId();
-                    long totalRun = 0;
-                    if (redisDao.getRedisTemplate().hasKey(redisKey)) {
-                        totalRun = Long.valueOf(redisDao.getRedisTemplate().opsForValue().get(redisKey));
-                    }
-                    boolean isRepeatTask = totalRun > message.getTotalRun();
-                    logger.info("ready complete task taskId={},newTotalRun={},oldTotalRun={},isRepeatTask={}", task.getTaskId(), totalRun,
-                            message.getTotalRun(), isRepeatTask);
-
                     String logMsg = null;
                     switch (taskMessage.getTask().getStatus()) {
                         case 0:
                             logMsg = "抓取成功";
                             break;
                         case 306:
-                            logMsg = isRepeatTask ? "用户刷新任务或者重试,抓取中断" : "抓取中断";
+                            logMsg = "抓取中断";
                             break;
                         case 308:
                             logMsg = "登陆超时";
@@ -328,7 +319,7 @@ public class Collector {
                             break;
                     }
                     messageService.sendTaskLog(task.getTaskId(), logMsg, task.getRemark());
-                    if (task.getStatus() != 0 && !isRepeatTask) {
+                    if (task.getStatus() != 0) {
                         messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), null);
                     }
                 }

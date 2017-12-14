@@ -142,9 +142,13 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
 
             if (StringUtils.contains(pageContent, "<rs_up_num></rs_up_num>")) {
                 String userNo = PatternUtils.group(pageContent, "<user_no>([^<]+)</user_no>", 1);
+                String msg = PatternUtils.group(pageContent, "<msg>([^<]+)</msg>", 1);
+                if (StringUtils.isEmpty(msg)) {
+                    msg = ErrorCode.LOGIN_UNEXPECTED_RESULT.getErrorMsg();
+                }
                 if (StringUtils.isBlank(userNo)) {
-                    logger.error("登陆失败,userNo为空,param={},pageContent={}", param, response.getPageContent());
-                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                    logger.error("登陆失败,userNo为空,param={},msg={}", param, msg);
+                    return result.failure(msg);
                 }
                 referer = "http://gx.189.cn/chaxun/iframe/user_center.jsp";
                 templateUrl = "http://gx.189.cn/public/user_protocol.jsp";

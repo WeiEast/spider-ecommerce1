@@ -291,9 +291,9 @@ public class TaskHttpClient {
         CloseableHttpClient httpclient = null;
         CloseableHttpResponse httpResponse = null;
         int statusCode = 0;
+        String url = request.getUrl();
         try {
             //参数处理
-            String url = request.getUrl();
             if (CollectionUtils.isNotEmpty(request.getParams())) {
                 CheckUtils.checkNotBlank(request.getUrl(), "url is blank");
                 List<NameValuePair> pairs = new ArrayList<NameValuePair>(request.getParams().size());
@@ -303,7 +303,6 @@ public class TaskHttpClient {
                 url = request.getUrl() + "?" + EntityUtils.toString(new UrlEncodedFormEntity(pairs, request.getCharset()));
             }
             request.setFullUrl(url);
-            logger.info("pre request taskId={},url={}", taskId, url);
 
             HttpRequestBase client = null;
             URI uri = URIUtils.create(url);
@@ -353,6 +352,7 @@ public class TaskHttpClient {
                 }
             }
 
+            logger.info("pre request taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(), request.getProxy(), url);
             //禁止重定向
             RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
                     .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
@@ -398,31 +398,37 @@ public class TaskHttpClient {
                 String redirectUrl = httpResponse.getFirstHeader(HttpHeadKey.LOCATION).getValue();
                 response.setRedirectUrl(redirectUrl);
                 response.setRedirect(true);
-                logger.warn("HttpClient has redirect,taskId={},url={}, statusCode={},redirectUrl={}", taskId, url, statusCode, redirectUrl);
+                logger.warn("HttpClient has redirect,taskId={},websiteName={},proxy={},url={},statusCode={},redirectUrl={}", taskId,
+                        request.getWebsiteName(), request.getProxy(), url, statusCode, redirectUrl);
             } else {
                 client.abort();
-                logger.error("HttpClient status error,taskId={},url={}, statusCode={}", taskId, url, statusCode);
+                logger.error("HttpClient status error,taskId={},websiteName={},proxy={},url={},statusCode={}", taskId, request.getWebsiteName(),
+                        request.getProxy(), url, statusCode);
             }
         } catch (SocketTimeoutException e) {
             if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
-                logger.error("http timeout ,will retry request={}", request);
+                logger.error("http timeout ,will retry ,taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(),
+                        request.getProxy(), url);
                 return invoke();
             }
-            logger.error("http timout,retry={},maxRetry={}, request={}", request.getRetry(), request.getMaxRetry(), request, e);
+            logger.error("http timout,retry={},maxRetry={},taskId={},websiteName={},proxy={},url={}", request.getRetry(), request.getMaxRetry(),
+                    taskId, request.getWebsiteName(), request.getProxy(), url, e);
             throw new RuntimeException("http timeout,request=" + request, e);
         } catch (Throwable e) {
-            logger.error("http error request={}", request, e);
+            logger.error("http error ,retry={},maxRetry={},taskId={},websiteName={},proxy={},url={}", request.getRetry(), request.getMaxRetry(),
+                    taskId, request.getWebsiteName(), request.getProxy(), url, e);
             throw new RuntimeException("http error request=" + request, e);
         } finally {
             IOUtils.closeQuietly(httpclient);
             IOUtils.closeQuietly(httpResponse);
             try {
                 String sassEnv = TaskUtils.getSassEnv();
+
+                //保存请求
+                BackRedisUtils.rpush(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response));
+                BackRedisUtils.expire(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_REQUEST.toSeconds());
+                //测试或者开发环境保存
                 if (StringUtils.equals(sassEnv, "dev") || StringUtils.equals(sassEnv, "test")) {
-                    //保存请求
-                    BackRedisUtils.rpush(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), JSON.toJSONString(response));
-                    BackRedisUtils
-                            .expire(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(request.getTaskId()), RedisKeyPrefixEnum.TASK_REQUEST.toSeconds());
                     //保存请求内容
                     StringBuilder pc = new StringBuilder("url-->").append(request.getFullUrl()).append("\nrequest_id-->")
                             .append(request.getRequestId()).append("\nstatus_code-->").append(response.getStatusCode()).append("\nreques_time-->")
@@ -459,7 +465,6 @@ public class TaskHttpClient {
     private void checkRequest(Request request) {
         CheckUtils.checkNotNull(request, "request is null");
         CheckUtils.checkNotPositiveNumber(request.getTaskId(), ErrorCode.EMPTY_TASK_ID);
-        //CheckUtils.checkNotBlank(request.getRemarkId(), "remarkId is empty");
         if (StringUtils.isBlank(request.getUrl())) {
             throw new RuntimeException("url  is blank");
         }

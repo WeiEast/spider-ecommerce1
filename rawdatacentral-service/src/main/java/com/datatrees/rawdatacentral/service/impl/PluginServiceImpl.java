@@ -56,34 +56,6 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
     }
 
     @Override
-    public PluginUpgradeResult getPluginFromRedis(String pluginName) throws IOException {
-        String sassEnv = TaskUtils.getSassEnv();
-        String version = RedisUtils.hget(RedisKeyPrefixEnum.PLUGIN_VERSION.getRedisKey(sassEnv), pluginName);
-        if (StringUtils.isNotBlank(version)) {
-            return getPluginFromRedisNew(pluginName);
-        }
-        PluginUpgradeResult result = new PluginUpgradeResult();
-        version = redisService.getString(RedisKeyPrefixEnum.PLUGIN_FILE_MD5.getRedisKey(pluginName));
-        if (StringUtils.isBlank(version)) {
-            logger.error("没有从redis读取到插件md5,pluginName={}", pluginName);
-            throw new IOException("没有从redis读取到插件:" + pluginName);
-        }
-        //修改策略,文件保存到本地用${md5}.jar,这样文件变化了,classLoader就变了
-        File file = getPluginFile(pluginName, version);
-        boolean forceReload = !file.exists();
-        if (forceReload) {
-            byte[] bytes = redisService.getBytes(RedisKeyPrefixEnum.PLUGIN_FILE.getRedisKey(pluginName));
-            FileUtils.writeByteArrayToFile(file, bytes, false);
-            logger.info("plugin已经更新,重新加载到本地,pluginName={},pluginPath={},md5={}", pluginName, pluginPath, version);
-        }
-        result.setForceReload(forceReload);
-        result.setFile(file);
-        result.setVersion(version);
-        logger.info("getPluginFromRedis success pluginName={},localJar={}", pluginName, file.getName());
-        return result;
-    }
-
-    @Override
     public PluginUpgradeResult getPluginFromRedisNew(String pluginName) throws IOException {
         String sassEnv = TaskUtils.getSassEnv();
         String version = RedisUtils.hget(RedisKeyPrefixEnum.PLUGIN_VERSION.getRedisKey(sassEnv), pluginName);
@@ -137,7 +109,7 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
                 }).build(new CacheLoader<String, String>() {
                     @Override
                     public String load(String key) throws Exception {
-                        PluginUpgradeResult upgradeResult = getPluginFromRedis(key);
+                        PluginUpgradeResult upgradeResult = getPluginFromRedisNew(key);
                         return upgradeResult.getVersion();
                     }
                 });
