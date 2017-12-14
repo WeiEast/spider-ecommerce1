@@ -22,6 +22,8 @@ public enum RedisKeyPrefixEnum {
     TASK_CONTEXT("task.context", 10, TimeUnit.MINUTES, "task context"),
     TASK_REQUEST("task.request", 10, TimeUnit.MINUTES, "根据taskId共享代理"),
     TASK_PAGE_CONTENT("task.page.content", 10, TimeUnit.MINUTES, "请求页面"),
+    TASK_LOG("task.log", 15, TimeUnit.MINUTES, "任务日志"),
+    TASK_METHOD_USE_TIME("task.method.use.time", 15, TimeUnit.MINUTES, "任务接口耗时"),
     MAX_WEIGHT_OPERATOR("max.weight.operator", 30, TimeUnit.DAYS, "最大权重运营商"),
     ALL_OPERATOR_CONFIG("all.operator.config", 60, TimeUnit.MINUTES, "运营商配置"),
     WEBSITE_LAST_SEND_WARN_TIME("website.last.send.warn.time", 30, TimeUnit.DAYS, "站点上一次发送预警时间"),

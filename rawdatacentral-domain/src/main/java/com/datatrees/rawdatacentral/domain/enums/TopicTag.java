@@ -7,10 +7,7 @@ public enum TopicTag {
     OPERATOR_LOGIN_POST("operator_login_post", "运营商登陆后"),
     TASK_INIT("task_init", "task初始化"),
     TASK_COMPLETE("task_complete", "task完成"),
-    TASK_ERROR("task_error", "task错误信息"),
-    METHOD_USE_TIME("method_monitor", "接口耗时"),
-    CALLBACK_INFO("callback_info", "回调信息"),
-    TASK_LOG("task_log", "task日志"),;
+    CALLBACK_INFO("callback_info", "回调信息"),;
     private String tag;
     private String remark;
 

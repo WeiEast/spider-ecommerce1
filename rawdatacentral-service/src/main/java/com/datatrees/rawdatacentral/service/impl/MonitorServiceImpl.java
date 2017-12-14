@@ -6,20 +6,22 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.api.CrawlerTaskService;
-import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
-import com.datatrees.rawdatacentral.domain.enums.TopicTag;
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import org.apache.commons.lang3.StringUtils;
 import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
+import com.datatrees.rawdatacentral.api.CrawlerTaskService;
+import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicTag;
+import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -64,7 +66,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.ERROR_CODE, errorCode);
         map.put(AttributeKey.ERROR_MSG, errorMsg);
         map.put(AttributeKey.ERROR_DETAIL, errorDetail);
-        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
+        saveTaskLog(taskId, map);
     }
 
     @Override
@@ -85,7 +87,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.ERROR_CODE, errorCode.getErrorCode());
         map.put(AttributeKey.ERROR_MSG, errorCode.getErrorMsg());
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
+        saveTaskLog(taskId, map);
     }
 
     @Override
@@ -100,7 +102,7 @@ public class MonitorServiceImpl implements MonitorService {
         map.put(AttributeKey.WEBSITE_NAME, websiteName);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         map.put(AttributeKey.MSG, msg);
-        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
+        saveTaskLog(taskId, map);
     }
 
     @Override
@@ -136,7 +138,8 @@ public class MonitorServiceImpl implements MonitorService {
         if (null != result) {
             map.put(AttributeKey.RESULT_CLASS, result.getClass().getName());
         }
-        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.METHOD_USE_TIME.getTag(), taskId, map);
+        String redisKey = RedisKeyPrefixEnum.TASK_METHOD_USE_TIME.getRedisKey(taskId);
+        RedisUtils.hset(redisKey, String.valueOf(System.currentTimeMillis()), JSON.toJSONString(map), RedisKeyPrefixEnum.TASK_LOG.toSeconds());
     }
 
     public boolean sendMessage(String topic, String tags, Long taskId, Object msg) {
@@ -165,5 +168,13 @@ public class MonitorServiceImpl implements MonitorService {
         }
         logger.error("send message fail topic={},content={},charsetName={}", topic, content, DEFAULT_CHARSET_NAME);
         return false;
+    }
+
+    private void saveTaskLog(Long taskId, Map<String, Object> map) {
+        if (null == taskId || null == map || map.isEmpty()) {
+            return;
+        }
+        String key = RedisKeyPrefixEnum.TASK_LOG.getRedisKey(taskId);
+        RedisUtils.hset(key, String.valueOf(System.currentTimeMillis()), JSON.toJSONString(map), RedisKeyPrefixEnum.TASK_LOG.toSeconds());
     }
 }
