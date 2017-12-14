@@ -142,6 +142,29 @@ public class MonitorServiceImpl implements MonitorService {
         RedisUtils.hset(redisKey, String.valueOf(System.currentTimeMillis()), JSON.toJSONString(map), RedisKeyPrefixEnum.TASK_LOG.toSeconds());
     }
 
+    @Override
+    public boolean sendTaskTimeOutMsg(Long taskId, int level) {
+        Message mqMessage = new Message();
+        mqMessage.setTopic(TopicEnum.CRAWLER_MONITOR.getCode());
+        mqMessage.setTags(TopicTag.TASK_TIME_OUT.getTag());
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
+        map.put(AttributeKey.TASK_ID, taskId);
+        try {
+            mqMessage.setBody(JSON.toJSONString(map).getBytes(DEFAULT_CHARSET_NAME));
+            mqMessage.setDelayTimeLevel(level);
+            SendResult sendResult = defaultMQProducer.send(mqMessage);
+            if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
+                logger.info("send timeout message success msgId={},taskId={},level={}", sendResult.getMsgId(), taskId, level);
+                return true;
+            }
+        } catch (Exception e) {
+            logger.error("send timeout message error taskId={},level={}", taskId, level, e);
+        }
+        logger.error("end timeout message taskId={},level={}", taskId, level);
+        return false;
+    }
+
     public boolean sendMessage(String topic, String tags, Long taskId, Object msg) {
         if (StringUtils.isBlank(topic) || null == msg) {
             logger.error("invalid param  topic={},msg={}", topic, msg);

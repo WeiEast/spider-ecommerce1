@@ -41,6 +41,8 @@ public class OperatorCrawlerStartMessageHandler extends AbstractMessageHandler {
         Long taskId = loginInfo.getTaskId();
         //如果是登录成功消息就启动爬虫
         monitorService.sendTaskLog(taskId, loginInfo.getWebsiteName(), "爬虫-->启动-->成功");
+        //任务10分钟超时
+        //monitorService.sendTaskTimeOutMsg(taskId, 14);
         collector.processMessage(buildCollectorMessage(loginInfo));
         return true;
     }
