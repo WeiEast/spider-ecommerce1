@@ -6,10 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
@@ -42,15 +39,9 @@ public class OperatorCrawlerStartMessageHandler extends AbstractMessageHandler {
     public boolean consumeMessage(String msg) {
         LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
         Long taskId = loginInfo.getTaskId();
-        String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
         //如果是登录成功消息就启动爬虫
-        String taskStage = RedisUtils.get(taskStageKey);
-        if (StringUtils.equals(taskStage, TaskStageEnum.LOGIN_SUCCESS.getStatus()) ||
-                StringUtils.equals(taskStage, TaskStageEnum.LOGIN_POST_SUCCESS.getStatus())) {
-            monitorService.sendTaskLog(taskId, loginInfo.getWebsiteName(), "爬虫-->启动-->成功");
-            RedisUtils.set(taskStageKey, TaskStageEnum.CRAWLER_START.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
-            collector.processMessage(buildCollectorMessage(loginInfo));
-        }
+        monitorService.sendTaskLog(taskId, loginInfo.getWebsiteName(), "爬虫-->启动-->成功");
+        collector.processMessage(buildCollectorMessage(loginInfo));
         return true;
     }
 

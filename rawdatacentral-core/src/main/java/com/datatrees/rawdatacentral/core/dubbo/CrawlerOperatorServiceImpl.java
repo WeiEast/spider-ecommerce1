@@ -28,7 +28,6 @@ import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
-import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -73,7 +72,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                 try {
                     Long taskId = param.getTaskId();
                     String websiteName = param.getWebsiteName();
-                    String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
                     if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                         //清理共享信息
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
@@ -88,7 +86,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         }
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
-                        RedisUtils.del(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
                         //缓存task基本信息
                         TaskUtils.initTaskShare(taskId, websiteName);
                         TaskUtils.addStep(taskId, StepEnum.INIT);
@@ -113,7 +110,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                             TaskUtils.addTaskShare(taskId, entry.getKey(), String.valueOf(entry.getValue()));
                         }
 
-
                         //从新的运营商表读取配置
                         WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
                         TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
@@ -132,7 +128,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                             TaskUtils.addStep(taskId, StepEnum.INIT_FAIL);
                             return;
                         }
-                        RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
                         TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
                         monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->成功");
                         logger.info("登录-->初始化-->成功");
@@ -416,7 +411,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                     logger.info("登陆时间超过20秒,不启动爬虫,param={},useTime={}", param, DateUtils.getUsedTime(startTime, endTime));
                     return;
                 }
-                redisService.saveString(RedisKeyPrefixEnum.TASK_RUN_STAGE, param.getTaskId(), TaskStageEnum.LOGIN_SUCCESS.getStatus());
+                TaskUtils.addStep(param.getTaskId(), StepEnum.LOGIN_SUCCESS);
                 if (pluginService instanceof OperatorPluginPostService) {
                     messageService.sendOperatorLoginPostMessage(param.getTaskId(), param.getWebsiteName());
                 } else {

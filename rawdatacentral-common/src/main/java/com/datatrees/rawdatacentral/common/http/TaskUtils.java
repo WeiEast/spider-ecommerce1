@@ -409,4 +409,9 @@ public class TaskUtils {
         return System.getProperty(AttributeKey.SAAS_ENV, "none");
     }
 
+    public static boolean stepCheck(Long taskId, StepEnum stepEnum) {
+        String stepCode = TaskUtils.getTaskShare(taskId, AttributeKey.STEP_CODE);
+        return StringUtils.equals(stepCode, stepEnum.getStepCode() + "");
+    }
+
 }

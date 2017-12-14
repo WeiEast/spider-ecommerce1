@@ -15,7 +15,6 @@ import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
-import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
@@ -56,8 +55,8 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
         LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
         Long taskId = loginInfo.getTaskId();
         String websiteName = loginInfo.getWebsiteName();
-        String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
-        Boolean initStatus = RedisUtils.setnx(taskStageKey, TaskStageEnum.RECEIVE.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
+        Boolean initStatus = RedisUtils
+                .setnx(RedisKeyPrefixEnum.TASK_RUN_COUNT.getRedisKey(taskId), "0", RedisKeyPrefixEnum.TASK_RUN_COUNT.toSeconds());
         //第一次收到启动消息
         if (initStatus) {
             TaskUtils.addStep(taskId, StepEnum.REC_INIT_MSG);
