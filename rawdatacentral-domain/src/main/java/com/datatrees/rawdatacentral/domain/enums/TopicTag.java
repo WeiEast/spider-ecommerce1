@@ -9,6 +9,7 @@ public enum TopicTag {
     TASK_COMPLETE("task_complete", "task完成"),
     METHOD_USE_TIME("method_monitor", "接口耗时"),
     CALLBACK_INFO("callback_info", "回调信息"),
+    TASK_CHECK_RESULT("task_check_result", "检查数据"),
     TASK_LOG("task_log", "task日志"),;
     private String tag;
     private String remark;

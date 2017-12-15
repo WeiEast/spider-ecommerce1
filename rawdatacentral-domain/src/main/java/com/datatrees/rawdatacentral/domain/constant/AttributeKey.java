@@ -51,6 +51,8 @@ public class AttributeKey implements Serializable {
     public static final String FORM_TYPE                = "formType"; // 表单类型
     public static final String GROUP_CODE               = "groupCode"; //分组代码
     public static final String GROUP_NAME               = "groupName"; //分组名称
+    public static final String NICK_GROUP_CODE          = "nickGroupCode"; //代表分组代码
+    public static final String NICK_GROUP_NAME          = "nickGroupName"; //代表分组名称
     public static final String WEBSITE_TYPE             = "websiteType"; //配置类型
     public static final String WEBSITE_TITLE            = "websiteTitle"; //配置类型
     public static final String METHOD_NAME              = "methodName"; //方法名称

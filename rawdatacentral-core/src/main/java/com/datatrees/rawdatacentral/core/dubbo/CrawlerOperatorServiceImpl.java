@@ -100,8 +100,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
                         TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, website.getGroupCode());
                         TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, website.getGroupName());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.NICK_GROUP_CODE, param.getGroupCode());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.NICK_GROUP_NAME, param.getGroupName());
                         TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
                         TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
+
                         //设置代理
                         ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
 
