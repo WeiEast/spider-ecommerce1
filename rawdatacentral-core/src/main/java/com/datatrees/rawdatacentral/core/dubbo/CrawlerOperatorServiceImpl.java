@@ -288,7 +288,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             if (!result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                 messageService.sendTaskLog(taskId, "登陆失败");
             }
-            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.STATUS.getRedisKey(param.getFormType()), result.getStatus() + "");
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.SUBMIT_RESULT.getRedisKey(param.getFormType()), JSON.toJSONString(result));
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
             sendSubmitSuccessMessage(pluginService, result, param, startTime);

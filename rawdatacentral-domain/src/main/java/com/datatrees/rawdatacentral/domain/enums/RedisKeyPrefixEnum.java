@@ -33,7 +33,7 @@ public enum RedisKeyPrefixEnum {
     WEBSITE_PROXY("website.proxy", 1, TimeUnit.HOURS, "运营商指定代理"),
     START_TIMESTAMP("start.timestamp", 1, TimeUnit.HOURS, " 开始时间"),
     FINISH_TIMESTAMP("finish.timestamp", 1, TimeUnit.HOURS, " 完成时间"),
-    STATUS("status", 15, TimeUnit.MINUTES, "状态"),
+    SUBMIT_RESULT("submit.result", 15, TimeUnit.MINUTES, "校验结果"),
     PLUGIN_VERSION("plugin.version", 365, TimeUnit.DAYS, "插件版本"),
     PLUGIN_DATA("plugin.data", 365, TimeUnit.DAYS, "插件版本"),;
     /**
