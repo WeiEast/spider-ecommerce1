@@ -5,7 +5,6 @@ import javax.annotation.Resource;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
@@ -30,15 +29,13 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
     private static final Logger  logger                = LoggerFactory.getLogger(LoginInfoMessageHandler.class);
     private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance().getBoolean("set.cookie.format.switch", false);
     @Resource
-    private Collector              collector;
+    private Collector            collector;
     @Resource
-    private RedisService           redisService;
+    private RedisService         redisService;
     @Resource
-    private WebsiteConfigService   websiteConfigService;
+    private WebsiteConfigService websiteConfigService;
     @Resource
-    private MonitorService         monitorService;
-    @Resource
-    private CrawlerOperatorService crawlerOperatorService;
+    private MonitorService       monitorService;
 
     @Override
     public String getTag() {
@@ -54,24 +51,24 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
     public boolean consumeMessage(String msg) {
         LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
         Long taskId = loginInfo.getTaskId();
+        TaskUtils.addStep(taskId, StepEnum.REC_INIT_MSG);
         String websiteName = loginInfo.getWebsiteName();
         Boolean initStatus = RedisUtils
                 .setnx(RedisKeyPrefixEnum.TASK_RUN_COUNT.getRedisKey(taskId), "0", RedisKeyPrefixEnum.TASK_RUN_COUNT.toSeconds());
         //第一次收到启动消息
         if (initStatus) {
-            TaskUtils.addStep(taskId, StepEnum.REC_INIT_MSG);
-            //是否是独立运营商
-            //初始化监控信息
-            monitorService.initTask(taskId, websiteName, loginInfo.getAccountNo());
+            TaskUtils.addStep(taskId, StepEnum.INIT);
+            //这里电商,邮箱,老运营商
+            Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
+            redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
             //缓存task基本信息
             TaskUtils.initTaskShare(taskId, loginInfo.getWebsiteName());
             TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, loginInfo.getAccountNo());
-            TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, loginInfo.getGroupCode());
-            TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, loginInfo.getGroupName());
-            //这里电商,邮箱,老运营商
-            Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
-            //保存taskId对应的website
-            redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
+            TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, website.getGroupCode());
+            TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, website.getGroupName());
+            TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
+            //初始化监控信息
+            monitorService.initTask(taskId, websiteName, loginInfo.getAccountNo());
             TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
             monitorService.sendTaskLog(taskId, websiteName, "爬虫-->启动-->成功");
             //启动爬虫

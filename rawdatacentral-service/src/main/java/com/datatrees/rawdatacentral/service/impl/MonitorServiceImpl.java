@@ -12,6 +12,7 @@ import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
@@ -60,34 +61,36 @@ public class MonitorServiceImpl implements MonitorService {
     public void sendTaskLog(Long taskId, String websiteName, String msg, Integer errorCode, String errorMsg, String errorDetail) {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.TASK_ID, taskId);
+        if (StringUtils.isBlank(websiteName)) {
+            websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
+        }
         map.put(AttributeKey.WEBSITE_NAME, websiteName);
         map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
         map.put(AttributeKey.MSG, msg);
-        map.put(AttributeKey.ERROR_CODE, errorCode);
-        map.put(AttributeKey.ERROR_MSG, errorMsg);
-        map.put(AttributeKey.ERROR_DETAIL, errorDetail);
-        saveTaskLog(taskId, map);
+        String websiteTitle = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_TITLE);
+        String username = TaskUtils.getTaskShare(taskId, AttributeKey.USERNAME);
+        map.put(AttributeKey.WEBSITE_TITLE, websiteTitle);
+        map.put(AttributeKey.USERNAME, username);
+        if (null != errorCode) {
+            map.put(AttributeKey.ERROR_CODE, errorCode);
+        }
+        if (StringUtils.isNotBlank(errorMsg)) {
+            map.put(AttributeKey.ERROR_MSG, errorMsg);
+        }
+        if (StringUtils.isNotBlank(errorDetail)) {
+            map.put(AttributeKey.ERROR_DETAIL, errorDetail);
+        }
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_LOG.getTag(), taskId, map);
     }
 
     @Override
     public void sendTaskLog(Long taskId, String websiteName, String msg, HttpResult result) {
-        if (result.getStatus()) {
-            sendTaskLog(taskId, websiteName, msg);
-        } else {
-            sendTaskLog(taskId, websiteName, msg, result.getResponseCode(), result.getMessage(), result.getErrorDetail());
-        }
+        sendTaskLog(taskId, websiteName, msg, result.getResponseCode(), result.getMessage(), result.getErrorDetail());
     }
 
     @Override
     public void sendTaskLog(Long taskId, String websiteName, String msg, ErrorCode errorCode) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(AttributeKey.TASK_ID, taskId);
-        map.put(AttributeKey.WEBSITE_NAME, websiteName);
-        map.put(AttributeKey.MSG, msg);
-        map.put(AttributeKey.ERROR_CODE, errorCode.getErrorCode());
-        map.put(AttributeKey.ERROR_MSG, errorCode.getErrorMsg());
-        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        saveTaskLog(taskId, map);
+        sendTaskLog(taskId, websiteName, msg, errorCode.getErrorCode(), errorCode.getErrorMsg(), null);
     }
 
     @Override
@@ -97,27 +100,22 @@ public class MonitorServiceImpl implements MonitorService {
 
     @Override
     public void sendTaskLog(Long taskId, String websiteName, String msg) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(AttributeKey.TASK_ID, taskId);
-        map.put(AttributeKey.WEBSITE_NAME, websiteName);
-        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        map.put(AttributeKey.MSG, msg);
-        saveTaskLog(taskId, map);
+        sendTaskLog(taskId, websiteName, msg, null, null, null);
     }
 
     @Override
     public void sendTaskLog(Long taskId, String msg) {
-        sendTaskLog(taskId, null, msg);
+        sendTaskLog(taskId, null, msg, null, null, null);
     }
 
     @Override
     public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode, String errorDetail) {
-        sendTaskLog(taskId, null, msg, errorCode, errorDetail);
+        sendTaskLog(taskId, null, msg, errorCode.getErrorCode(), errorCode.getErrorMsg(), errorDetail);
     }
 
     @Override
     public void sendTaskLog(Long taskId, String msg, ErrorCode errorCode) {
-        sendTaskLog(taskId, null, msg, errorCode);
+        sendTaskLog(taskId, null, msg, errorCode.getErrorCode(), errorCode.getErrorMsg(), null);
     }
 
     @Override
@@ -138,31 +136,7 @@ public class MonitorServiceImpl implements MonitorService {
         if (null != result) {
             map.put(AttributeKey.RESULT_CLASS, result.getClass().getName());
         }
-        String redisKey = RedisKeyPrefixEnum.TASK_METHOD_USE_TIME.getRedisKey(taskId);
-        RedisUtils.hset(redisKey, String.valueOf(System.currentTimeMillis()), JSON.toJSONString(map), RedisKeyPrefixEnum.TASK_LOG.toSeconds());
-    }
-
-    @Override
-    public boolean sendTaskTimeOutMsg(Long taskId, int level) {
-        Message mqMessage = new Message();
-        mqMessage.setTopic(TopicEnum.CRAWLER_MONITOR.getCode());
-        mqMessage.setTags(TopicTag.TASK_TIME_OUT.getTag());
-        Map<String, Object> map = new HashMap<>();
-        map.put(AttributeKey.TIMESTAMP, System.currentTimeMillis());
-        map.put(AttributeKey.TASK_ID, taskId);
-        try {
-            mqMessage.setBody(JSON.toJSONString(map).getBytes(DEFAULT_CHARSET_NAME));
-            mqMessage.setDelayTimeLevel(level);
-            SendResult sendResult = defaultMQProducer.send(mqMessage);
-            if (sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus())) {
-                logger.info("send timeout message success msgId={},taskId={},level={}", sendResult.getMsgId(), taskId, level);
-                return true;
-            }
-        } catch (Exception e) {
-            logger.error("send timeout message error taskId={},level={}", taskId, level, e);
-        }
-        logger.error("end timeout message taskId={},level={}", taskId, level);
-        return false;
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.METHOD_USE_TIME.getTag(), taskId, map);
     }
 
     public boolean sendMessage(String topic, String tags, Long taskId, Object msg) {

@@ -378,6 +378,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             } else {
                 website.setGroupCode(group.getGroupCode());
                 website.setGroupName(group.getGroupName());
+                website.setWebsiteTitle(group.getGroupName());
             }
         } else {
             website.setGroupCode(websiteConfig.getGroupCode());

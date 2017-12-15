@@ -34,7 +34,6 @@ public enum RedisKeyPrefixEnum {
     START_TIMESTAMP("start.timestamp", 1, TimeUnit.HOURS, " 开始时间"),
     FINISH_TIMESTAMP("finish.timestamp", 1, TimeUnit.HOURS, " 完成时间"),
     STATUS("status", 15, TimeUnit.MINUTES, "状态"),
-    STEP("step", 15, TimeUnit.MINUTES, "阶段"),
     PLUGIN_VERSION("plugin.version", 365, TimeUnit.DAYS, "插件版本"),
     PLUGIN_DATA("plugin.data", 365, TimeUnit.DAYS, "插件版本"),;
     /**
