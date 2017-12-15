@@ -1,6 +1,8 @@
 package com.datatrees.rawdatacentral.plugin.education;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.common.conf.Configuration;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by zhangyanjia on 2017/12/13.
@@ -32,11 +35,19 @@ public class EducationPlugin extends AbstractClientPlugin {
     private MonitorService monitorService;
     private AbstractProcessorContext context;
     private final static String TX_GENERAL_URL = "http://recognition.image.myqcloud.com/ocr/general";
-    private final static Long APPID = 1253319346L;
-    private final static String BUCKET = "test3513";
-    private final static String SECRETID = "AKIDJWIuNgdvOjtrdHoESBpMpBOPErIaIskV";
-    private final static String SECRETKEY = "hCXihaN8lCYpunU1LdonaDzc3KOGAzxn";
+    private final static String appid ;
+    private final static String bucket;
+    private final static String secretid;
+    private final static String secretkey;
     private final static String HOST = "recognition.image.myqcloud.com";
+
+    static {
+        Configuration configuration = PropertiesConfiguration.getInstance();
+        secretid = configuration.get("education_secretid");
+        secretkey=configuration.get("education_secretkey");
+        bucket=configuration.get("education_bucket");
+        appid= configuration.get("education_appid");
+    }
 
     private final static Logger logger= LoggerFactory.getLogger(EducationPlugin.class);
 
@@ -66,22 +77,24 @@ public class EducationPlugin extends AbstractClientPlugin {
 
             response = TaskHttpClient.create(taskId, websiteName, RequestType.GET, "chsi_com_cn_pic").setFullUrl(url).invoke();
             byte[] pageContent = response.getResponse();
-//            String path="education/"+websiteName+"/"+taskId;
+//            int i=(int)(Math.random()*100000);
+//            String path="education/"+websiteName+"/"+taskId+"/"+i;
 //            OssServiceProvider.getDefaultService()
 //                    .putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), pageContent);
 //            logger.info("学信网图片上传oss成功！path={}",path);
             Map<String, String> map = new HashMap<>();
             String authorization = RedisUtils.get("authorization");
             if (authorization == null) {
+                Long appId=Long.parseLong(appid);
                 //authorization的有效期为81天
-                authorization = Sign.appSign(APPID, SECRETID, SECRETKEY, BUCKET, 69984000L);
+                authorization = Sign.appSign(appId, secretid, secretkey, bucket, 6998400L);
                 //存redis存80天
-                RedisUtils.set("authorization", authorization, 69120000);
+                RedisUtils.set("authorization", authorization, 6912000);
             }
             map.put("Authorization", authorization);
             map.put("Host", HOST);
             String fileName = taskId + ".jpg";
-            String imageResult = HttpUtils.doPostForImage(TX_GENERAL_URL, map, APPID.toString(), BUCKET, pageContent, fileName);
+            String imageResult = HttpUtils.doPostForImage(TX_GENERAL_URL, map, appid, bucket, pageContent, fileName);
             if (imageResult != null) {
                 return imageResult;
             }
