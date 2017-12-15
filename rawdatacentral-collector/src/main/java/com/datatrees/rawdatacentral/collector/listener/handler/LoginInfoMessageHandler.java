@@ -67,6 +67,8 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
             TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, website.getGroupCode());
             TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, website.getGroupName());
             TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
+            TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
+
             //初始化监控信息
             monitorService.initTask(taskId, websiteName, loginInfo.getAccountNo());
             TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);

@@ -101,6 +101,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, website.getGroupCode());
                         TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, website.getGroupName());
                         TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
                         //设置代理
                         ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
 
@@ -115,7 +116,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                                 TaskUtils.addTaskShare(taskId, entry.getKey(), String.valueOf(entry.getValue()));
                             }
                         }
-
 
                         //执行运营商插件初始化操作
                         //运营商独立部分第一次初始化后不启动爬虫
