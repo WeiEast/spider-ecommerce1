@@ -19,9 +19,9 @@ import com.datatrees.rawdatacentral.common.utils.Sign;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
-import com.datatrees.rawdatacentral.submitter.filestore.oss.OssServiceProvider;
-import com.datatrees.rawdatacentral.submitter.filestore.oss.OssUtils;
+//import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
+//import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
+//import com.datatrees.rawdatacentral.core.oss.OssUtils;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,11 +79,11 @@ public class EducationPlugin extends AbstractClientPlugin {
 
             response = TaskHttpClient.create(taskId, websiteName, RequestType.GET, "chsi_com_cn_pic").setFullUrl(url).invoke();
             byte[] pageContent = response.getResponse();
-            int i=(int)(Math.random()*100000);
-            String path="education/"+websiteName+"/"+taskId+"/"+i;
-            OssServiceProvider.getDefaultService()
-                    .putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), pageContent);
-            logger.info("学信网图片上传oss成功！path={}",path);
+//            int i=(int)(Math.random()*100000);
+//            String path="education/"+websiteName+"/"+taskId+"/"+i;
+//            OssServiceProvider.getDefaultService()
+//                    .putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), pageContent);
+//            logger.info("学信网图片上传oss成功！path={}",path);
             Map<String, String> map = new HashMap<>();
             String authorization = RedisUtils.get("authorization");
             if (authorization == null) {

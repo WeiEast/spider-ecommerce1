@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.submitter.common;
+package com.datatrees.rawdatacentral.core.common;
 
 import java.io.*;
 
