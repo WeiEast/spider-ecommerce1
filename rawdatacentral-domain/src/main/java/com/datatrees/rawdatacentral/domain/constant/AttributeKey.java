@@ -71,5 +71,13 @@ public class AttributeKey implements Serializable {
     public static final String STEP                     = "step";//阶段
     public static final String STEP_CODE                = "stepCode";//阶段
     public static final String STEP_NAME                = "stepName";//阶段
+    public static final String SUCCESS_TIMESTAMP        = "successTimestamp";//成功时间戳
+    public static final String SUCCESS_TASK_ID          = "successTaskId";//成功任务ID
+    public static final String SUCCESS_USER_COUNT       = "successUserCount";//成功用户数量
+    public static final String FAIL_TIMESTAMP           = "failTimestamp";//失败时间戳
+    public static final String FAIL_TASK_ID             = "failTaskId";//失败任务ID
+    public static final String WARN_TIMESTAMP           = "warnTimestamp";//预警时间戳
+    public static final String FAIL_USER_COUNT          = "failUserCount";//失败用户数量
+    public static final String STATISTICS_TIMESTAMP     = "statisticsTimestamp";//上一次统计时间
 
 }

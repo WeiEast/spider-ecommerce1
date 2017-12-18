@@ -390,7 +390,6 @@ public class TaskUtils {
     public static void addStep(Long taskId, StepEnum stepEnum) {
         addTaskShare(taskId, AttributeKey.STEP_CODE, stepEnum.getStepCode() + "");
         addTaskShare(taskId, AttributeKey.STEP_NAME, stepEnum.getStepName() + "");
-
     }
 
     /**
@@ -401,9 +400,21 @@ public class TaskUtils {
         return System.getProperty(AttributeKey.SAAS_ENV, "none");
     }
 
+    public static String getSassEnv(String postfix) {
+        return new StringBuilder(TaskUtils.getSassEnv()).append(".").append(postfix).toString();
+    }
+
     public static boolean stepCheck(Long taskId, StepEnum stepEnum) {
         String stepCode = TaskUtils.getTaskShare(taskId, AttributeKey.STEP_CODE);
         return StringUtils.equals(stepCode, stepEnum.getStepCode() + "");
+    }
+
+    public static boolean isSuccess(int crawlerStatus, String checkStatus) {
+        return crawlerStatus == 100 && StringUtils.equalsAny(checkStatus, "正常", "没有配置检查项目");
+    }
+
+    public static boolean isFail(int crawlerStatus, String checkStatus) {
+        return crawlerStatus < 0 || StringUtils.equals(checkStatus, "严重");
     }
 
 }

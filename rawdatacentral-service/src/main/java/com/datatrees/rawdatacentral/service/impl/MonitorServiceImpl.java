@@ -14,11 +14,9 @@ import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -164,11 +162,4 @@ public class MonitorServiceImpl implements MonitorService {
         return false;
     }
 
-    private void saveTaskLog(Long taskId, Map<String, Object> map) {
-        if (null == taskId || null == map || map.isEmpty()) {
-            return;
-        }
-        String key = RedisKeyPrefixEnum.TASK_LOG.getRedisKey(taskId);
-        RedisUtils.hset(key, String.valueOf(System.currentTimeMillis()), JSON.toJSONString(map), RedisKeyPrefixEnum.TASK_LOG.toSeconds());
-    }
 }
