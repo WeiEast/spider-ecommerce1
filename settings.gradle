@@ -15,5 +15,4 @@ include ':rawdatacentral-biz'
 include ':rawdatacentral-plugin'
 include ':rawdatacentral-plugin-operator'
 include 'crawler-core'
-include 'rawdatacentral-plugin-education'
 
