@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.datatrees.rawdatacentral.common.utils.BackRedisUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
@@ -417,4 +418,21 @@ public class TaskUtils {
         return crawlerStatus < 0 || StringUtils.equals(checkStatus, "严重");
     }
 
+    public static long getCoreSize(long taskId) {
+        String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
+        Map<String, String> map = BackRedisUtils.hgetAll(redisKey);
+        String coreRedisKey = null;
+        if (map.containsKey("callDetails")) {
+            coreRedisKey = map.get("callDetails");
+        } else if (map.containsKey("trades")) {
+            coreRedisKey = map.get("trades");
+        } else if (map.containsKey("bankBills")) {
+            coreRedisKey = map.get("bankBills");
+        }
+        if (StringUtils.isNotBlank(coreRedisKey)) {
+            return BackRedisUtils.llen(coreRedisKey);
+        }
+        return 0;
+
+    }
 }

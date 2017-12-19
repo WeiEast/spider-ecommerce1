@@ -37,6 +37,7 @@ public class WebsiteUtils {
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TASK_ID, String.valueOf(taskId));
             long successUserCount = RedisUtils.hincrBy(redisKey, AttributeKey.SUCCESS_USER_COUNT, 1);
             RedisUtils.hset(redisKey, AttributeKey.FAIL_USER_COUNT, "0");
+            updateWebsiteDayList(websiteName, taskId, timestamp);
             logger.info("upate website last info with task success,websiteName={},taskId={},timestamp={},successUserCount={}", websiteName, taskId,
                     DateUtils.formatYmdhms(timestamp), successUserCount);
         }
@@ -52,6 +53,7 @@ public class WebsiteUtils {
             RedisUtils.hset(redisKey, AttributeKey.FAIL_TASK_ID, String.valueOf(taskId));
             long failUserCount = RedisUtils.hincrBy(redisKey, AttributeKey.FAIL_USER_COUNT, 1);
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_USER_COUNT, "0");
+            updateWebsiteDayList(websiteName, taskId, timestamp);
             logger.info("upate website last info with task fail,websiteName={},taskId={},timestamp={},failUserCount={}", websiteName, taskId,
                     DateUtils.formatYmdhms(timestamp), failUserCount);
         }
@@ -99,24 +101,38 @@ public class WebsiteUtils {
         return Integer.valueOf(value);
     }
 
-    public static int getStatisticsTimestamp(String websiteName) {
+    public static long getStatisticsTimestamp(String websiteName) {
         Preconditions.checkNotNull(websiteName);
         String redisKey = getRedisKey(websiteName);
         String value = RedisUtils.hget(redisKey, AttributeKey.STATISTICS_TIMESTAMP);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Integer.valueOf(value);
+        return Long.valueOf(value);
     }
 
-    public static Long getWebisteMonitorId(String websiteName, Long taskId, Date orderDate) {
-        String postfix = TaskUtils.getSassEnv(websiteName + "." + DateUtils.formatYmd(orderDate));
+    public static long getSuccessTimestamp(String websiteName) {
+        Preconditions.checkNotNull(websiteName);
+        String redisKey = getRedisKey(websiteName);
+        String value = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
+        if (StringUtils.isBlank(value)) {
+            return 0;
+        }
+        return Long.valueOf(value);
+    }
+
+    public static Long getWebisteMonitorId(String websiteName, Long preId, Date orderDate) {
+        return getWebisteMonitorId(websiteName, preId, DateUtils.formatYmd(orderDate));
+    }
+
+    public static Long getWebisteMonitorId(String websiteName, Long preId, String monitorDay) {
+        String postfix = TaskUtils.getSassEnv(websiteName + "." + monitorDay);
         String redisKey = RedisKeyPrefixEnum.WEBSITE_MONITOR_ID.getRedisKey(postfix);
         String id = RedisUtils.get(redisKey);
         if (StringUtils.isNotBlank(id)) {
             return Long.valueOf(id);
-        } else if (RedisUtils.setnx(redisKey, taskId.toString(), RedisKeyPrefixEnum.WEBSITE_MONITOR_ID.toSeconds())) {
-            return taskId;
+        } else if (RedisUtils.setnx(redisKey, preId.toString(), RedisKeyPrefixEnum.WEBSITE_MONITOR_ID.toSeconds())) {
+            return preId;
         } else {
             try {
                 TimeUnit.SECONDS.sleep(3);
@@ -126,6 +142,12 @@ public class WebsiteUtils {
             }
             return Long.valueOf(RedisUtils.get(redisKey));
         }
+    }
+
+    public static void updateWebsiteDayList(String websiteName, Long taskId, long timestamp) {
+        String postfix = TaskUtils.getSassEnv(DateUtils.formatYmd(new Date(timestamp)));
+        String redisKey = RedisKeyPrefixEnum.WEBSITE_DAY_LIST.getRedisKey(postfix);
+        RedisUtils.hset(redisKey, websiteName, taskId.toString());
     }
 
     private static String getRedisKey(String websiteName) {
