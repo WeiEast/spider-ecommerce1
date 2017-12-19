@@ -35,6 +35,7 @@ public enum RedisKeyPrefixEnum {
     FINISH_TIMESTAMP("finish.timestamp", 1, TimeUnit.HOURS, " 完成时间"),
     SUBMIT_RESULT("submit.result", 15, TimeUnit.MINUTES, "校验结果"),
     PLUGIN_VERSION("plugin.version", 365, TimeUnit.DAYS, "插件版本"),
+    GROUP_LAST_INFO("group.last.info", 365, TimeUnit.DAYS, "分组信息"),
     PLUGIN_DATA("plugin.data", 365, TimeUnit.DAYS, "插件版本"),;
     /**
      * 备注

@@ -150,6 +150,29 @@ public class WebsiteUtils {
         RedisUtils.hset(redisKey, websiteName, taskId.toString());
     }
 
+    public static void updateWithGroupSuccess(String groupCode, long taskId, long timestamp) {
+        Preconditions.checkNotNull(groupCode);
+        String redisKey = RedisKeyPrefixEnum.GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(groupCode));
+        String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        if (update) {
+            RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TIMESTAMP, String.valueOf(timestamp));
+            RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TASK_ID, String.valueOf(taskId));
+            logger.info("upate group last info with task success,groupCode={},taskId={},timestamp={}", groupCode, taskId,
+                    DateUtils.formatYmdhms(timestamp));
+        }
+    }
+
+    public static long getGroupSuccessTimestamp(String groupCode) {
+        Preconditions.checkNotNull(groupCode);
+        String redisKey = RedisKeyPrefixEnum.GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(groupCode));
+        String value = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
+        if (StringUtils.isBlank(value)) {
+            return 0;
+        }
+        return Long.valueOf(value);
+    }
+
     private static String getRedisKey(String websiteName) {
         return RedisKeyPrefixEnum.WEBSITE_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(websiteName));
     }
