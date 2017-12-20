@@ -90,7 +90,7 @@ public class EducationServiceImpl implements EducationService {
                 return result.failure("您输入的用户名或密码有误");
             } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
                 logger.error("登录-->失败，param={},response={}", param, response);
-                return result.failure("为保障您的账号安全，请输入验证码后重新登录");
+                return result.failure("登录失败");
             } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
                 logger.error("登录-->失败，param={},response={}", param, response);
                 return result.failure("手机校验码获取过于频繁,操作被禁止");
