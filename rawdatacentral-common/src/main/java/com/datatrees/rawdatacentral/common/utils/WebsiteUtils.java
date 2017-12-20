@@ -29,7 +29,7 @@ public class WebsiteUtils {
 
     public static void updateWithTaskSuccess(String websiteName, long taskId, long timestamp) {
         Preconditions.checkNotNull(websiteName);
-        String redisKey = getRedisKey(websiteName);
+        String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
         boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
         if (update) {
@@ -45,7 +45,7 @@ public class WebsiteUtils {
 
     public static void updateWithTaskFail(String websiteName, long taskId, long timestamp) {
         Preconditions.checkNotNull(websiteName);
-        String redisKey = getRedisKey(websiteName);
+        String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.FAIL_TIMESTAMP);
         boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
         if (update) {
@@ -59,21 +59,21 @@ public class WebsiteUtils {
         }
     }
 
-    public static void updateWarnTime(String websiteName, long taskId, long timestamp) {
+    public static void updateWarnTime(String websiteName, long timestamp) {
         Preconditions.checkNotNull(websiteName);
-        String redisKey = getRedisKey(websiteName);
+        String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.WARN_TIMESTAMP);
         boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.WARN_TIMESTAMP, String.valueOf(timestamp));
-            logger.info("upate website last info with warnTimestamp,websiteName={},taskId={},timestamp={}", websiteName, taskId,
+            logger.info("upate website last info with warnTimestamp,websiteName={},taskId={},timestamp={}", websiteName,
                     DateUtils.formatYmdhms(timestamp));
         }
     }
 
     public static long getWarnTimestamp(String websiteName) {
         Preconditions.checkNotNull(websiteName);
-        String redisKey = getRedisKey(websiteName);
+        String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String value = RedisUtils.hget(redisKey, AttributeKey.WARN_TIMESTAMP);
         if (StringUtils.isBlank(value)) {
             return 0L;
@@ -83,7 +83,7 @@ public class WebsiteUtils {
 
     public static int getSuccessUserCount(String websiteName) {
         Preconditions.checkNotNull(websiteName);
-        String redisKey = getRedisKey(websiteName);
+        String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String value = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_USER_COUNT);
         if (StringUtils.isBlank(value)) {
             return 0;
@@ -93,7 +93,7 @@ public class WebsiteUtils {
 
     public static int getFailUserCount(String websiteName) {
         Preconditions.checkNotNull(websiteName);
-        String redisKey = getRedisKey(websiteName);
+        String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String value = RedisUtils.hget(redisKey, AttributeKey.FAIL_USER_COUNT);
         if (StringUtils.isBlank(value)) {
             return 0;
@@ -103,7 +103,7 @@ public class WebsiteUtils {
 
     public static long getStatisticsTimestamp(String websiteName) {
         Preconditions.checkNotNull(websiteName);
-        String redisKey = getRedisKey(websiteName);
+        String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String value = RedisUtils.hget(redisKey, AttributeKey.STATISTICS_TIMESTAMP);
         if (StringUtils.isBlank(value)) {
             return 0;
@@ -113,7 +113,7 @@ public class WebsiteUtils {
 
     public static long getSuccessTimestamp(String websiteName) {
         Preconditions.checkNotNull(websiteName);
-        String redisKey = getRedisKey(websiteName);
+        String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String value = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
         if (StringUtils.isBlank(value)) {
             return 0;
@@ -173,7 +173,7 @@ public class WebsiteUtils {
         return Long.valueOf(value);
     }
 
-    private static String getRedisKey(String websiteName) {
+    public static String getRedisKeyForWebsiteLastInfo(String websiteName) {
         return RedisKeyPrefixEnum.WEBSITE_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(websiteName));
     }
 
