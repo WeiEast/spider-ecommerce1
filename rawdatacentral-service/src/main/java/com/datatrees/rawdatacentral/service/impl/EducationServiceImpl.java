@@ -87,7 +87,7 @@ public class EducationServiceImpl implements EducationService {
         Response response = null;
         try {
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
-//            RedisUtils.del(redisKey);
+            RedisUtils.del(redisKey);
             //           redisTemplate.delete(redisKey);
             StringBuilder ltKey = new StringBuilder("lt_" + param.getTaskId());
             String lt = RedisUtils.get(ltKey.toString());
@@ -98,7 +98,7 @@ public class EducationServiceImpl implements EducationService {
             String data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt);
             logger.info("学信网请求登录参数url={},loginName={},password={},lt={}",url,param.getLoginName(),param.getPassword(),lt);
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02",true).setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
