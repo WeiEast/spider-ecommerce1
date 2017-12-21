@@ -133,4 +133,7 @@ public class Website implements Serializable {
         this.taskRegion = taskRegion;
     }
 
+    public boolean needProxy(){
+        return searchConfig != null && searchConfig.getProperties()!= null&& searchConfig.getProperties().getProxy() != null;
+    }
 }
