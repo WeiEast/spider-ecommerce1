@@ -366,7 +366,7 @@ public class TaskHttpClient {
             httpclient = httpClientBuilder.build();
             httpResponse = httpclient.execute(client);
             statusCode = httpResponse.getStatusLine().getStatusCode();
-            logger.info("status: {}, responseBody: {}", statusCode, EntityUtils.toString(httpResponse.getEntity()));
+            logger.info("status: {}", statusCode);
             response.setStatusCode(statusCode);
             cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
             TaskUtils.saveCookie(taskId, cookies);
