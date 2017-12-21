@@ -91,11 +91,11 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Map<String, Object>> result = educationService.registerRefeshPicCode(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->刷新图片验证码-->失败");
-            logger.error("学信网注册-->刷新图片验证码-->失败");
+            logger.error("学信网注册-->刷新图片验证码-->失败,param={}",JSON.toJSONString(param));
             return result;
         }
         monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->刷新图片验证码-->成功");
-        logger.info("学信网注册-->刷新图片验证码-->成功");
+        logger.info("学信网注册-->刷新图片验证码-->成功,param={}",JSON.toJSONString(param));
         return result;
     }
 
