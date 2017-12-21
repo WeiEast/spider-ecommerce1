@@ -52,7 +52,7 @@ public class EducationServiceImpl implements EducationService {
         try {
             //设置代理
             Website website = websiteConfigService.getWebsiteByWebsiteName(param.getWebsiteName());
-            logger.info("学信网尝试获取代理时，website={}",JSON.toJSONString(website));
+            logger.info("学信网尝试获取代理时，website={},-------website.needProxy()={}",JSON.toJSONString(website),website.needProxy());
             if(website.needProxy()){
                 logger.info("获取代理时taskId={}",param.getTaskId());
                 ProxyUtils.setProxyEnable(param.getTaskId(), true);
