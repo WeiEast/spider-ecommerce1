@@ -50,11 +50,11 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Map<String, Object>> result = educationService.loginInit(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->失败");
-            logger.error("学信网登录-->初始化-->失败,param={}",JSON.toJSONString(param));
+            logger.error("学信网登录-->初始化-->失败 param={}", JSON.toJSONString(param));
             return result;
         }
         monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->成功");
-        logger.info("学信网登录-->初始化-->成功,param={}", JSON.toJSONString(param));
+        logger.info("学信网登录-->初始化-->成功 param={}",JSON.toJSONString(param));
         return result;
     }
 
@@ -68,7 +68,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Map<String, Object>> result = educationService.loginSubmit(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(taskId, websiteName, "学信网登陆-->校验-->失败");
-            logger.error("学信网登陆-->校验-->失败,param={}",JSON.toJSONString(param));
+            logger.error("学信网登陆-->校验-->失败 param={}",JSON.toJSONString(param));
             return result;
         }
 

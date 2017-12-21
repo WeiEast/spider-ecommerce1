@@ -136,5 +136,4 @@ public class Website implements Serializable {
     public boolean needProxy(){
         return searchConfig != null && searchConfig.getProperties()!= null&& searchConfig.getProperties().getProxy() != null;
     }
-
 }
