@@ -1,3 +1,15 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.9.RELEASE'
+}
+bootRepackage {
+    mainClass = 'com.datatrees.rawdatacentral.web.Application'
+}
+
+processResources {
+    from "src/main/resources/env/$env"
+    into "src/main/resources"
+}
+
 dependencies {
     compile project(':rawdatacentral-core')
     compile project(':rawdatacentral-extractor')
@@ -7,11 +19,4 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
 }
 
-def env = System.getProperty("env") ?: "dev";
-processResources {
-    from "src/main/resources/env/$env"
-    into "build/resources/main"
-}
-
-apply from: rootProject.file('install.gradle')
 

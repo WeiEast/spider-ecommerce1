@@ -330,9 +330,11 @@ public class Collector {
         this.messageComplement(taskMessage, message);
         message.setFinish(true);
         taskService.updateTask(task);
-        TaskUtils.addTaskShare(task.getTaskId(), RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(AttributeKey.CRAWLER),
-                System.currentTimeMillis() + "");
-        monitorService.sendTaskCompleteMsg(task.getTaskId(), task.getWebsiteName(), task.getStatus(), task.getRemark());
+        if (null != task && !task.isSubTask()) {
+            TaskUtils.addTaskShare(task.getTaskId(), RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(AttributeKey.CRAWLER),
+                    System.currentTimeMillis() + "");
+            monitorService.sendTaskCompleteMsg(task.getTaskId(), task.getWebsiteName(), task.getStatus(), task.getRemark());
+        }
         return taskMessage.getContext().getProcessorResult();
     }
 
