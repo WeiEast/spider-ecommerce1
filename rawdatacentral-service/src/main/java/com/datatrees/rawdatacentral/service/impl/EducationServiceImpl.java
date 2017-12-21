@@ -82,6 +82,7 @@ public class EducationServiceImpl implements EducationService {
             String url = "https://account.chsi.com.cn" + js;
             String templateData = "username={}&password={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
             String data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt);
+            logger.info("学信网请求登录参数url={},loginName={},password={},lt={}",url,param.getLoginName(),param.getPassword(),lt);
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
