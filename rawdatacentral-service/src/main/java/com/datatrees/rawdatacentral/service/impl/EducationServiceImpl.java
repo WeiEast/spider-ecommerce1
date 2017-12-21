@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
@@ -50,8 +51,10 @@ public class EducationServiceImpl implements EducationService {
         Response response = null;
         try {
             //设置代理
-            Website context = websiteConfigService.getWebsiteFromCache(param.getTaskId());
-            if(context.needProxy()){
+            Website website = websiteConfigService.getWebsiteByWebsiteName(param.getWebsiteName());
+            logger.info("学信网尝试获取代理时，website={},-------website.needProxy()={}",JSON.toJSONString(website),website.needProxy());
+            if(website.needProxy()){
+                logger.info("获取代理时taskId={}",param.getTaskId());
                 ProxyUtils.setProxyEnable(param.getTaskId(), true);
             }
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
@@ -97,20 +100,20 @@ public class EducationServiceImpl implements EducationService {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
-                logger.error("登录-->失败，param={},response={}", param, response);
+                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("您输入的用户名或密码有误");
             } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
-                logger.error("登录-->失败，param={},response={}", param, response);
+                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("登录失败");
             } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
-                logger.error("登录-->失败，param={},response={}", param, response);
+                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("手机校验码获取过于频繁,操作被禁止");
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
                 return result.success();
             }
             return result.failure("登录失败");
         } catch (Exception e) {
-            logger.error("登录-->失败，param={},response={}", param, response, e);
+            logger.error("登录-->失败，param={},response={},e={}", JSON.toJSONString(param), response,e);
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
     }
