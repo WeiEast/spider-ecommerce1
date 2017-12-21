@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
@@ -51,6 +52,7 @@ public class EducationServiceImpl implements EducationService {
         try {
             //设置代理
             Website website = websiteConfigService.getWebsiteByWebsiteName(param.getWebsiteName());
+            logger.info("学信网尝试获取代理时，website={}",JSON.toJSONString(website));
             if(website.needProxy()){
                 logger.info("获取代理时taskId={}",param.getTaskId());
                 ProxyUtils.setProxyEnable(param.getTaskId(), true);
@@ -112,7 +114,7 @@ public class EducationServiceImpl implements EducationService {
             }
             return result.failure("登录失败");
         } catch (Exception e) {
-            logger.error("登录-->失败，param={},response={}", param, response, e);
+            logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
     }
