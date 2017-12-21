@@ -352,6 +352,7 @@ public class TaskHttpClient {
                 }
             }
 
+            logger.info("禁止重定向前 request={}",JSON.toJSONString(request));
             logger.info("pre request taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(), request.getProxy(), url);
             //禁止重定向
             RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
