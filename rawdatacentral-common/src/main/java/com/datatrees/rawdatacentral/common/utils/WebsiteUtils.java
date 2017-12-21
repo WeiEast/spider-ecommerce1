@@ -128,20 +128,21 @@ public class WebsiteUtils {
     public static Long getWebisteMonitorId(String websiteName, Long preId, String monitorDay) {
         String postfix = TaskUtils.getSassEnv(websiteName + "." + monitorDay);
         String redisKey = RedisKeyPrefixEnum.WEBSITE_MONITOR_ID.getRedisKey(postfix);
-        String id = RedisUtils.get(redisKey);
-        if (StringUtils.isNotBlank(id)) {
+        if (RedisUtils.exists(redisKey)) {
+            String id = RedisUtils.get(redisKey);
+            logger.info("get website_monitor_id success websiteName={},preId={},id={}", websiteName, preId, id);
             return Long.valueOf(id);
-        } else if (RedisUtils.setnx(redisKey, preId.toString(), RedisKeyPrefixEnum.WEBSITE_MONITOR_ID.toSeconds())) {
-            return preId;
-        } else {
-            try {
-                TimeUnit.SECONDS.sleep(3);
-            } catch (InterruptedException e) {
-                logger.error("getWebisteMonitorId error redisKey={}", redisKey, e);
-                return Long.valueOf(RedisUtils.get(redisKey));
-            }
-            return Long.valueOf(RedisUtils.get(redisKey));
         }
+        boolean b = RedisUtils.setnx(redisKey, preId.toString(), RedisKeyPrefixEnum.WEBSITE_MONITOR_ID.toSeconds());
+        logger.info("pre set website_monitor_id websiteName={},preId={},b={}", websiteName, preId, b);
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            logger.error("getWebisteMonitorId error redisKey={}", redisKey, e);
+        }
+        String id = RedisUtils.get(redisKey);
+        logger.info("get website_monitor_id success websiteName={},preId={},id={}", websiteName, preId, id);
+        return Long.valueOf(id);
     }
 
     public static void updateWebsiteDayList(String websiteName, Long taskId, long timestamp) {
