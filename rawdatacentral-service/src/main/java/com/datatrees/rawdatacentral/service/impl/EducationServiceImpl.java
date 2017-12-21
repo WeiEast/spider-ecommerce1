@@ -87,7 +87,7 @@ public class EducationServiceImpl implements EducationService {
         Response response = null;
         try {
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
-//            RedisUtils.del(redisKey);
+            RedisUtils.del(redisKey);
             //           redisTemplate.delete(redisKey);
             StringBuilder ltKey = new StringBuilder("lt_" + param.getTaskId());
             String lt = RedisUtils.get(ltKey.toString());
