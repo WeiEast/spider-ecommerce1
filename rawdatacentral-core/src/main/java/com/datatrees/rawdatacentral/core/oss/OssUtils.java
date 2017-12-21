@@ -1,6 +1,6 @@
-package com.datatrees.rawdatacentral.submitter.filestore.oss;
+package com.datatrees.rawdatacentral.core.oss;
 
-import static com.datatrees.rawdatacentral.submitter.common.SubmitConstant.ALIYUN_OSS_OBJECT_PATH_ROOT;
+import static com.datatrees.rawdatacentral.core.common.SubmitConstant.ALIYUN_OSS_OBJECT_PATH_ROOT;
 
 /**
  * @author Jerry

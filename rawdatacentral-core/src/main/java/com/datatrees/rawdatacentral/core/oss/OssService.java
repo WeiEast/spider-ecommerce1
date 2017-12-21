@@ -1,12 +1,12 @@
-package com.datatrees.rawdatacentral.submitter.filestore.oss;
+package com.datatrees.rawdatacentral.core.oss;
 
 import java.io.*;
 import java.util.List;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.*;
-import com.datatrees.rawdatacentral.submitter.common.StreamUtils;
-import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
+import com.datatrees.rawdatacentral.core.common.StreamUtils;
+import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import org.apache.commons.lang.StringUtils;
 
 public class OssService {
