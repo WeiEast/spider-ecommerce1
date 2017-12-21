@@ -110,6 +110,7 @@ public class EducationServiceImpl implements EducationService {
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("手机校验码获取过于频繁,操作被禁止");
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
+                logger.info("登录-->成功，param={},response={}", JSON.toJSONString(param), response);
                 return result.success();
             }
             return result.failure("登录失败");
