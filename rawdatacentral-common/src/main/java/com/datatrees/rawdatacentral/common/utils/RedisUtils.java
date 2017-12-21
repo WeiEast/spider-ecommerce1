@@ -208,6 +208,12 @@ public class RedisUtils {
         }
     }
 
+    public static long hincrBy(String key, String name, long value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.hincrBy(key, name, value);
+        }
+    }
+
     public static void hset(String key, String name, byte[] value) {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.hset(key.getBytes(), name.getBytes(), value);

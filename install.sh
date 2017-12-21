@@ -1,5 +1,6 @@
 #!/bin/sh
-gradle clean build installApp -x test --refresh-dependencies -Denv=dev
+sh clean.sh
+gradle  rawdatacentral-main:bootRepackage -x test --refresh-dependencies -Denv=dev
 
 
 

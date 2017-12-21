@@ -51,6 +51,8 @@ public class AttributeKey implements Serializable {
     public static final String FORM_TYPE                = "formType"; // 表单类型
     public static final String GROUP_CODE               = "groupCode"; //分组代码
     public static final String GROUP_NAME               = "groupName"; //分组名称
+    public static final String NICK_GROUP_CODE          = "nickGroupCode"; //代表分组代码
+    public static final String NICK_GROUP_NAME          = "nickGroupName"; //代表分组名称
     public static final String WEBSITE_TYPE             = "websiteType"; //配置类型
     public static final String WEBSITE_TITLE            = "websiteTitle"; //配置类型
     public static final String METHOD_NAME              = "methodName"; //方法名称
@@ -69,5 +71,13 @@ public class AttributeKey implements Serializable {
     public static final String STEP                     = "step";//阶段
     public static final String STEP_CODE                = "stepCode";//阶段
     public static final String STEP_NAME                = "stepName";//阶段
+    public static final String SUCCESS_TIMESTAMP        = "successTimestamp";//成功时间戳
+    public static final String SUCCESS_TASK_ID          = "successTaskId";//成功任务ID
+    public static final String SUCCESS_USER_COUNT       = "successUserCount";//成功用户数量
+    public static final String FAIL_TIMESTAMP           = "failTimestamp";//失败时间戳
+    public static final String FAIL_TASK_ID             = "failTaskId";//失败任务ID
+    public static final String WARN_TIMESTAMP           = "warnTimestamp";//预警时间戳
+    public static final String FAIL_USER_COUNT          = "failUserCount";//失败用户数量
+    public static final String STATISTICS_TIMESTAMP     = "statisticsTimestamp";//上一次统计时间
 
 }

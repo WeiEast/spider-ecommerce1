@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.datatrees.rawdatacentral.common.utils.BackRedisUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
@@ -17,7 +18,6 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.Request;
-import com.datatrees.rawdatacentral.domain.vo.Step;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -391,14 +391,6 @@ public class TaskUtils {
     public static void addStep(Long taskId, StepEnum stepEnum) {
         addTaskShare(taskId, AttributeKey.STEP_CODE, stepEnum.getStepCode() + "");
         addTaskShare(taskId, AttributeKey.STEP_NAME, stepEnum.getStepName() + "");
-
-        Step step = new Step();
-        step.setStepCode(stepEnum.getStepCode());
-        step.setStepName(stepEnum.getStepName());
-        step.setTimestamp(System.currentTimeMillis());
-        String rediskey = RedisKeyPrefixEnum.STEP.getRedisKey(taskId);
-        RedisUtils.rpush(rediskey, JSON.toJSONString(step));
-        RedisUtils.expire(rediskey, RedisKeyPrefixEnum.STEP.toSeconds());
     }
 
     /**
@@ -409,4 +401,38 @@ public class TaskUtils {
         return System.getProperty(AttributeKey.SAAS_ENV, "none");
     }
 
+    public static String getSassEnv(String postfix) {
+        return new StringBuilder(TaskUtils.getSassEnv()).append(".").append(postfix).toString();
+    }
+
+    public static boolean stepCheck(Long taskId, StepEnum stepEnum) {
+        String stepCode = TaskUtils.getTaskShare(taskId, AttributeKey.STEP_CODE);
+        return StringUtils.equals(stepCode, stepEnum.getStepCode() + "");
+    }
+
+    public static boolean isSuccess(int crawlerStatus, String checkStatus) {
+        return crawlerStatus == 100 && StringUtils.equalsAny(checkStatus, "正常", "没有配置检查项目");
+    }
+
+    public static boolean isFail(int crawlerStatus, String checkStatus) {
+        return crawlerStatus < 0 || StringUtils.equals(checkStatus, "严重");
+    }
+
+    public static long getCoreSize(long taskId) {
+        String redisKey = RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskId);
+        Map<String, String> map = BackRedisUtils.hgetAll(redisKey);
+        String coreRedisKey = null;
+        if (map.containsKey("callDetails")) {
+            coreRedisKey = map.get("callDetails");
+        } else if (map.containsKey("trades")) {
+            coreRedisKey = map.get("trades");
+        } else if (map.containsKey("bankBills")) {
+            coreRedisKey = map.get("bankBills");
+        }
+        if (StringUtils.isNotBlank(coreRedisKey)) {
+            return BackRedisUtils.llen(coreRedisKey);
+        }
+        return 0;
+
+    }
 }
