@@ -2,7 +2,6 @@
 
 
 function restartApp(){
-    echo 重启`date "+%Y-%m-%d %H:%M:%S"` >>../start.log
 	if test -n "$PID" ;then
 		echo -e "\033[31mfind app is runing PID=$PID,APP_NAME=$APP_NAME ,kill $PID\033[0m"
 		kill $PID
@@ -47,8 +46,8 @@ echo "APP_HOME=$APP_HOME"
 echo "APP_NAME=$APP_NAME"
 PID=`jps -l | grep $APP_NAME | awk '{print $1}'`
 
-. bin/jvm.conf
-. bin/service.conf
+. jvm.conf
+. service.conf
 
 
 

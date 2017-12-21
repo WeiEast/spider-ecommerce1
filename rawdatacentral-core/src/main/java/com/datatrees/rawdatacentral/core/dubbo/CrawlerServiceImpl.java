@@ -25,19 +25,15 @@ import com.datatrees.rawdatacentral.api.CrawlerService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
-import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
-import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
@@ -154,79 +150,48 @@ public class CrawlerServiceImpl implements CrawlerService {
             TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
         }
         try {
-            if (isOperator(taskId)) {
-                waitInitSuccess(taskId);
-                OperatorParam param = new OperatorParam();
-                param.setTaskId(taskId);
-                param.setFormType(FormType.LOGIN);
-                if (StringUtils.isNoneBlank(username)) {
-                    param.setMobile(Long.valueOf(username));
-                }
-                param.setPassword(password);
-                if (0 == type) {
-                    HttpResult<Map<String, Object>> pluginResult = crawlerOperatorService.refeshSmsCode(param);
-                    if (!pluginResult.getStatus()) {
-                        logger.warn("fetchLoginCode error pluginResult={}", pluginResult);
-                        return result.failure(pluginResult.getResponseCode(), pluginResult.getMessage());
-                    }
-                    logger.info("fetchLoginCode for smsCode success,taskId={}", taskId);
-                    return result.success();
-                }
-                if (1 == type) {
-                    HttpResult<Map<String, Object>> pluginResult = crawlerOperatorService.refeshPicCode(param);
-                    if (!pluginResult.getStatus()) {
-                        logger.warn("fetchLoginCode error pluginResult={}", pluginResult);
-                        return result.failure(pluginResult.getResponseCode(), pluginResult.getMessage());
-                    }
-                    logger.info("fetchLoginCode for picCode success,taskId={}", taskId);
-                    return result.success(pluginResult.getData().get(AttributeKey.PIC_CODE).toString());
-                }
-                logger.info("fetchLoginCode fail,invalid taskId={},type={}", taskId, type);
-                return result.failure();
-            } else {
-                long timeout = 30;
-                if (null == extra) {
-                    extra = new HashMap<>();
-                }
-                DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN, taskId);
-                String status = null;
-                switch (type) {
-                    case 0:
-                        status = DirectiveRedisCode.REFRESH_LOGIN_RANDOMPASSWORD;
-                        break;
-                    case 1:
-                        status = DirectiveRedisCode.REFRESH_LOGIN_CODE;
-                        break;
-                    case 2:
-                        status = DirectiveRedisCode.REFRESH_LOGIN_QR_CODE;
-                        break;
-                    default:
-                        logger.warn("fetchLoginCode invalid param taskId={},type={},username={},extra={}", taskId, type, username,
-                                JSON.toJSONString(extra));
-                        return result.failure("未知参数type");
-                }
-                if (StringUtils.isNoneBlank(username)) {
-                    extra.put(AttributeKey.USERNAME, username);
-                }
-                if (StringUtils.isNoneBlank(password)) {
-                    extra.put(AttributeKey.PASSWORD, password);
-                }
-
-                //保存交互指令到redis
-                sendDirective.fill(status, extra);
-
-                //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
-                String directiveId = redisService.saveDirectiveResult(sendDirective);
-
-                DirectiveResult<String> receiveResult = redisService.getDirectiveResult(directiveId, timeout, TimeUnit.SECONDS);
-                if (null == receiveResult) {
-                    logger.warn("fetchLoginCode get result timeout taskId={},directiveId={},timeout={},timeUnit={}", taskId, directiveId, timeout,
-                            TimeUnit.SECONDS);
-                    return result.failure("get data from plugin timeout");
-                }
-                logger.info("fetchLoginCode success taskId={},directiveId={},status={}", taskId, directiveId, status);
-                return result.success(receiveResult.getData());
+            long timeout = 30;
+            if (null == extra) {
+                extra = new HashMap<>();
             }
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN, taskId);
+            String status = null;
+            switch (type) {
+                case 0:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_RANDOMPASSWORD;
+                    break;
+                case 1:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_CODE;
+                    break;
+                case 2:
+                    status = DirectiveRedisCode.REFRESH_LOGIN_QR_CODE;
+                    break;
+                default:
+                    logger.warn("fetchLoginCode invalid param taskId={},type={},username={},extra={}", taskId, type, username,
+                            JSON.toJSONString(extra));
+                    return result.failure("未知参数type");
+            }
+            if (StringUtils.isNoneBlank(username)) {
+                extra.put(AttributeKey.USERNAME, username);
+            }
+            if (StringUtils.isNoneBlank(password)) {
+                extra.put(AttributeKey.PASSWORD, password);
+            }
+
+            //保存交互指令到redis
+            sendDirective.fill(status, extra);
+
+            //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
+            String directiveId = redisService.saveDirectiveResult(sendDirective);
+
+            DirectiveResult<String> receiveResult = redisService.getDirectiveResult(directiveId, timeout, TimeUnit.SECONDS);
+            if (null == receiveResult) {
+                logger.warn("fetchLoginCode get result timeout taskId={},directiveId={},timeout={},timeUnit={}", taskId, directiveId, timeout,
+                        TimeUnit.SECONDS);
+                return result.failure("get data from plugin timeout");
+            }
+            logger.info("fetchLoginCode success taskId={},directiveId={},status={}", taskId, directiveId, status);
+            return result.success(receiveResult.getData());
         } catch (Exception e) {
             logger.error("fetchLoginCode error taskId={}", taskId, e);
             return result.failure();
@@ -250,62 +215,34 @@ public class CrawlerServiceImpl implements CrawlerService {
         long timeout = 30;
         String directiveId = null;
         try {
-            if (isOperator(taskId)) {
-                waitInitSuccess(taskId);
-                OperatorParam param = new OperatorParam();
-                param.setTaskId(taskId);
-                param.setFormType(FormType.LOGIN);
-                if (StringUtils.isNoneBlank(username)) {
-                    param.setMobile(Long.valueOf(username));
-                }
-                param.setPassword(password);
-                param.setPicCode(code);
-                param.setSmsCode(randomPassword);
-                if (null != extra) {
-                    if (extra.containsKey(AttributeKey.ID_CARD)) {
-                        param.setIdCard(extra.get(AttributeKey.ID_CARD));
-                    }
-                    if (extra.containsKey(AttributeKey.REAL_NAME)) {
-                        param.setRealName(extra.get(AttributeKey.REAL_NAME));
-                    }
-                }
-                HttpResult<Map<String, Object>> submitResult = crawlerOperatorService.submit(param);
-                if (!submitResult.getStatus()) {
-                    logger.warn("login fail submitResult={},param={}", submitResult, param);
-                    return result.failure(submitResult.getResponseCode(), submitResult.getMessage());
-                }
-                logger.info("login success submitResult={},param={}", submitResult, param);
-                return result.success("登陆成功!");
-            } else {
-                if (null == extra) {
-                    extra = new HashMap<>();
-                }
-                DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN, taskId);
-                extra.put(AttributeKey.USERNAME, username);
-                extra.put(AttributeKey.PASSWORD, password);
-                extra.put(AttributeKey.CODE, code);
-                extra.put(AttributeKey.RANDOM_PASSWORD, randomPassword);
-
-                //保存交互指令到redis
-                sendDirective.fill(DirectiveRedisCode.START_LOGIN, extra);
-
-                //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
-                directiveId = redisService.saveDirectiveResult(sendDirective);
-
-                DirectiveResult<String> receiveResult = redisService.getDirectiveResult(directiveId, timeout, TimeUnit.SECONDS);
-                if (null == receiveResult) {
-                    logger.warn("login get result timeout taskId={},directiveId={},timeout={},timeUnit={},username={}", taskId, directiveId, timeout,
-                            TimeUnit.SECONDS, username);
-                    return result.failure("登陆超时");
-                }
-                if (StringUtils.equals(DirectiveRedisCode.SERVER_FAIL, receiveResult.getStatus())) {
-                    logger.error("login failtaskId={},directiveId={},status={},errorMsg={},username={}", taskId, directiveId,
-                            receiveResult.getErrorMsg(), username);
-                    return result.failure(receiveResult.getData());
-                }
-                logger.info("login success taskId={},directiveId={},username={}", taskId, directiveId, username);
-                return result.success("登陆成功!");
+            if (null == extra) {
+                extra = new HashMap<>();
             }
+            DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN, taskId);
+            extra.put(AttributeKey.USERNAME, username);
+            extra.put(AttributeKey.PASSWORD, password);
+            extra.put(AttributeKey.CODE, code);
+            extra.put(AttributeKey.RANDOM_PASSWORD, randomPassword);
+
+            //保存交互指令到redis
+            sendDirective.fill(DirectiveRedisCode.START_LOGIN, extra);
+
+            //相同命令枷锁,加锁成功:发送指令,清除结果key,进入等待;加锁失败:进入等待结果
+            directiveId = redisService.saveDirectiveResult(sendDirective);
+
+            DirectiveResult<String> receiveResult = redisService.getDirectiveResult(directiveId, timeout, TimeUnit.SECONDS);
+            if (null == receiveResult) {
+                logger.warn("login get result timeout taskId={},directiveId={},timeout={},timeUnit={},username={}", taskId, directiveId, timeout,
+                        TimeUnit.SECONDS, username);
+                return result.failure("登陆超时");
+            }
+            if (StringUtils.equals(DirectiveRedisCode.SERVER_FAIL, receiveResult.getStatus())) {
+                logger.error("login failtaskId={},directiveId={},status={},errorMsg={},username={}", taskId, directiveId, receiveResult.getErrorMsg(),
+                        username);
+                return result.failure(receiveResult.getData());
+            }
+            logger.info("login success taskId={},directiveId={},username={}", taskId, directiveId, username);
+            return result.success("登陆成功!");
         } catch (Exception e) {
             logger.error("login error taskId={},directiveId={},username={}", taskId, directiveId, username, e);
             return result.failure("登陆失败!");
@@ -406,24 +343,6 @@ public class CrawlerServiceImpl implements CrawlerService {
             return WebsiteUtils.isOperator(websiteName);
         } catch (Throwable e) {
             logger.info("isOperator error taskId={}", taskId, e);
-            return false;
-        }
-    }
-
-    private boolean waitInitSuccess(Long taskId) {
-        try {
-            String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
-            String stage = RedisUtils.get(taskStageKey, 10);
-            int retry = 0, maxRetry = 100;
-            boolean readyStatus = StringUtils.isNotBlank(stage) && !StringUtils.equals(TaskStageEnum.RECEIVE.getStatus(), stage);
-            while (!readyStatus && retry++ <= maxRetry) {
-                TimeUnit.MILLISECONDS.sleep(600);
-                stage = RedisUtils.get(taskStageKey);
-                readyStatus = StringUtils.isNotBlank(stage) && !StringUtils.equals(TaskStageEnum.RECEIVE.getStatus(), stage);
-            }
-            return readyStatus;
-        } catch (Throwable e) {
-            logger.info("waitInitSuccess error taskId={}", taskId, e);
             return false;
         }
     }

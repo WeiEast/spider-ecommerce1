@@ -3,6 +3,6 @@ dependencies {
     compile project(':rawdatacentral-extractor')
     compile project(':rawdatacentral-submitter')
     compile project(':rawdatacentral-collector')
-    compile project(':rawdatacentral-plugin-operator')
+    compile project(':rawdatacentral-plugin')
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
 }
