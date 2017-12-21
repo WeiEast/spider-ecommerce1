@@ -28,7 +28,6 @@ import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
-import com.datatrees.rawdatacentral.domain.enums.TaskStageEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -67,14 +66,15 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             logger.warn("check param error,result={}", httpResult);
             return httpResult;
         }
+        Long taskId = param.getTaskId();
+        String websiteName = param.getWebsiteName();
+        TaskUtils.addStep(param.getTaskId(), StepEnum.REC_INIT_MSG);
         initExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Long taskId = param.getTaskId();
-                    String websiteName = param.getWebsiteName();
-                    String taskStageKey = RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId);
                     if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                        TaskUtils.addStep(taskId, StepEnum.INIT);
                         //清理共享信息
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
@@ -88,51 +88,48 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         }
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
-                        RedisUtils.del(RedisKeyPrefixEnum.TASK_RUN_STAGE.getRedisKey(taskId));
-                        //缓存task基本信息
-                        TaskUtils.initTaskShare(taskId, websiteName);
-                        TaskUtils.addStep(taskId, StepEnum.INIT);
-                        //记录登陆开始时间
-                        TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()),
-                                System.currentTimeMillis() + "");
-                        TaskUtils.addTaskShare(taskId, AttributeKey.STEP, param.getFormType());
-                        //初始化监控信息
-                        monitorService.initTask(taskId, websiteName, param.getMobile());
-                        //保存mobile和websiteName
-                        if (null != param.getMobile()) {
-                            TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
-                            TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getMobile().toString());
-                        }
-                        if (StringUtils.isNotBlank(param.getGroupCode())) {
-                            TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, param.getGroupCode());
-                        }
-                        if (StringUtils.isNotBlank(param.getGroupName())) {
-                            TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, param.getGroupName());
-                        }
-                        for (Map.Entry<String, Object> entry : param.getExtral().entrySet()) {
-                            TaskUtils.addTaskShare(taskId, entry.getKey(), String.valueOf(entry.getValue()));
-                        }
-
 
                         //从新的运营商表读取配置
                         WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-                        TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, websiteOperator.getWebsiteTitle());
-                        //保存taskId对应的website,因为运营过程中用的是
                         Website website = websiteConfigService.buildWebsite(websiteOperator);
                         redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
+
+                        //缓存task基本信息
+                        TaskUtils.initTaskShare(taskId, websiteName);
+                        TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getMobile().toString());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, website.getGroupCode());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, website.getGroupName());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.NICK_GROUP_CODE, param.getGroupCode());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.NICK_GROUP_NAME, param.getGroupName());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
+
                         //设置代理
                         ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
+
+                        //记录登陆开始时间
+                        TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()),
+                                System.currentTimeMillis() + "");
+                        monitorService.initTask(taskId, websiteName, param.getMobile());
+                        TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
+
+                        if (null != param.getExtral() && !param.getExtral().isEmpty()) {
+                            for (Map.Entry<String, Object> entry : param.getExtral().entrySet()) {
+                                TaskUtils.addTaskShare(taskId, entry.getKey(), String.valueOf(entry.getValue()));
+                            }
+                        }
+
                         //执行运营商插件初始化操作
                         //运营商独立部分第一次初始化后不启动爬虫
                         HttpResult<Map<String, Object>> result = getPluginService(websiteName, taskId).init(param);
                         //爬虫状态
                         if (!result.getStatus()) {
+                            TaskUtils.addStep(taskId, StepEnum.INIT_FAIL);
                             monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->失败");
                             logger.warn("登录-->初始化-->失败");
-                            TaskUtils.addStep(taskId, StepEnum.INIT_FAIL);
                             return;
                         }
-                        RedisUtils.set(taskStageKey, TaskStageEnum.INIT_SUCCESS.getStatus(), RedisKeyPrefixEnum.TASK_RUN_STAGE.toSeconds());
                         TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
                         monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->成功");
                         logger.info("登录-->初始化-->成功");
@@ -291,7 +288,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             if (!result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                 messageService.sendTaskLog(taskId, "登陆失败");
             }
-            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.STATUS.getRedisKey(param.getFormType()), result.getStatus() + "");
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.SUBMIT_RESULT.getRedisKey(param.getFormType()), JSON.toJSONString(result));
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
             sendSubmitSuccessMessage(pluginService, result, param, startTime);
@@ -416,7 +413,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                     logger.info("登陆时间超过20秒,不启动爬虫,param={},useTime={}", param, DateUtils.getUsedTime(startTime, endTime));
                     return;
                 }
-                redisService.saveString(RedisKeyPrefixEnum.TASK_RUN_STAGE, param.getTaskId(), TaskStageEnum.LOGIN_SUCCESS.getStatus());
+                TaskUtils.addStep(param.getTaskId(), StepEnum.LOGIN_SUCCESS);
                 if (pluginService instanceof OperatorPluginPostService) {
                     messageService.sendOperatorLoginPostMessage(param.getTaskId(), param.getWebsiteName());
                 } else {
