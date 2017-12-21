@@ -332,6 +332,7 @@ public class TaskHttpClient {
             request.setProtocol(url.startsWith("https") ? "https" : "http");
 
             List<Cookie> cookies = TaskUtils.getCookies(taskId, host);
+            logger.info("Cookies >>> {}", JSON.toJSONString(cookies));
             BasicCookieStore cookieStore = TaskUtils.buildBasicCookieStore(cookies);
             request.setRequestCookies(TaskUtils.getCookieMap(cookies));
             if (!extralCookie.isEmpty()) {
@@ -364,8 +365,8 @@ public class TaskHttpClient {
             }
             httpclient = httpClientBuilder.build();
             httpResponse = httpclient.execute(client);
-
             statusCode = httpResponse.getStatusLine().getStatusCode();
+            logger.info("status: {}, responseBody: {}", statusCode, EntityUtils.toString(httpResponse.getEntity()));
             response.setStatusCode(statusCode);
             cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
             TaskUtils.saveCookie(taskId, cookies);
