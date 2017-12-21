@@ -1,7 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
@@ -40,7 +39,7 @@ public class EducationServiceImpl implements EducationService {
     @Resource
     private RedisTemplate redisTemplate;
     @Autowired
-    private WebsiteConfigService websiteConfigService;
+    WebsiteConfigService websiteConfigService;
 
     @Override
     public HttpResult<Map<String, Object>> loginInit(EducationParam param) {
@@ -55,7 +54,6 @@ public class EducationServiceImpl implements EducationService {
             if(context.needProxy()){
                 ProxyUtils.setProxyEnable(param.getTaskId(), true);
             }
-
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
             String pageContent = response.getPageContent();
