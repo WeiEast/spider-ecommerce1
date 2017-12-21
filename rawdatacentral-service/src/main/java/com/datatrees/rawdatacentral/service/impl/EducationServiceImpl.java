@@ -50,8 +50,8 @@ public class EducationServiceImpl implements EducationService {
         Response response = null;
         try {
             //设置代理
-            Website context = websiteConfigService.getWebsiteFromCache(param.getTaskId());
-            if(context.needProxy()){
+            Website website = websiteConfigService.getWebsiteByWebsiteName(param.getWebsiteName());
+            if(website.needProxy()){
                 logger.info("获取代理时taskId={}",param.getTaskId());
                 ProxyUtils.setProxyEnable(param.getTaskId(), true);
             }

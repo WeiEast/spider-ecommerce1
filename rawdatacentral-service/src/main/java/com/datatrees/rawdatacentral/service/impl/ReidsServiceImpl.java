@@ -197,7 +197,6 @@ public class ReidsServiceImpl implements RedisService {
 
     @Override
     public boolean saveString(String key, String value, long timeout, TimeUnit unit) {
-        logger.info("获取代理时key={},value={}",key,value);
         if (StringUtils.isBlank(key) || null == value) {
             throw new RuntimeException("saveString invalid param key or value");
         }
@@ -215,7 +214,6 @@ public class ReidsServiceImpl implements RedisService {
 
     @Override
     public boolean saveString(RedisKeyPrefixEnum redisKeyPrefixEnum, Object postfix, String value) {
-        logger.info("获取代理时postfix={}",JSON.toJSONString(postfix));
         return saveString(redisKeyPrefixEnum.getRedisKey(postfix), value, redisKeyPrefixEnum.getTimeout(), redisKeyPrefixEnum.getTimeUnit());
     }
 
