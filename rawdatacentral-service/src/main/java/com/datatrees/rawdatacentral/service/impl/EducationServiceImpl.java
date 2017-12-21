@@ -73,7 +73,7 @@ public class EducationServiceImpl implements EducationService {
 //            redisTemplate.opsForValue().set(ltKey, lt, 300, TimeUnit.SECONDS);
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化-->失败,param={},response={}", param.toString(), response, e);
+            logger.error("登录-->初始化-->失败,param={},response={}", JSON.toJSONString(param), response, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
@@ -101,13 +101,13 @@ public class EducationServiceImpl implements EducationService {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
-                logger.error("登录-->失败，param={},response={}", param, response);
+                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("您输入的用户名或密码有误");
             } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
-                logger.error("登录-->失败，param={},response={}", param, response);
+                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("登录失败");
             } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
-                logger.error("登录-->失败，param={},response={}", param, response);
+                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("手机校验码获取过于频繁,操作被禁止");
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
                 return result.success();

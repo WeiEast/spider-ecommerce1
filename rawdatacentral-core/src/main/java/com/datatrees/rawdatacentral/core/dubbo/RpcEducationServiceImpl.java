@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.protocol.util.CookieFormater;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
@@ -49,11 +50,11 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Map<String, Object>> result = educationService.loginInit(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->失败");
-            logger.error("学信网登录-->初始化-->失败");
+            logger.error("学信网登录-->初始化-->失败 param={}", JSON.toJSONString(param));
             return result;
         }
         monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->成功");
-        logger.info("学信网登录-->初始化-->成功");
+        logger.info("学信网登录-->初始化-->成功 param={}",JSON.toJSONString(param));
         return result;
     }
 
@@ -67,7 +68,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Map<String, Object>> result = educationService.loginSubmit(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(taskId, websiteName, "学信网登陆-->校验-->失败");
-            logger.error("学信网登陆-->校验-->失败");
+            logger.error("学信网登陆-->校验-->失败 param={}",JSON.toJSONString(param));
             return result;
         }
 
@@ -77,7 +78,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         String cookies = TaskUtils.getCookieString(taskId);
         map.put(AttributeKey.COOKIE, cookies);
         messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map, DEFAULT_CHARSET_NAME);
-        logger.info("学信网，启动爬虫成功");
+        logger.info("学信网，启动爬虫成功,param={}",JSON.toJSONString(param));
         return result;
     }
 
