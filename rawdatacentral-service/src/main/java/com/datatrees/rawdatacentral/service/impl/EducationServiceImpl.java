@@ -1,6 +1,8 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
@@ -12,8 +14,10 @@ import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.EducationService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +38,8 @@ public class EducationServiceImpl implements EducationService {
 
     @Resource
     private RedisTemplate redisTemplate;
+    @Autowired
+    WebsiteConfigService websiteConfigService;
 
     @Override
     public HttpResult<Map<String, Object>> loginInit(EducationParam param) {
@@ -43,6 +49,11 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            //设置代理
+            Website context = websiteConfigService.getWebsiteFromCache(param.getTaskId());
+            if(context.needProxy()){
+                ProxyUtils.setProxyEnable(param.getTaskId(), true);
+            }
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
             String pageContent = response.getPageContent();
