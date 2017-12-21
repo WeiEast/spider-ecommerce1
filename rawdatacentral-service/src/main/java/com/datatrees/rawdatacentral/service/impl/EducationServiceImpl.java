@@ -52,6 +52,7 @@ public class EducationServiceImpl implements EducationService {
             //设置代理
             Website context = websiteConfigService.getWebsiteFromCache(param.getTaskId());
             if(context.needProxy()){
+                logger.info("获取代理时taskId={}",param.getTaskId());
                 ProxyUtils.setProxyEnable(param.getTaskId(), true);
             }
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
@@ -70,7 +71,7 @@ public class EducationServiceImpl implements EducationService {
 //            redisTemplate.opsForValue().set(ltKey, lt, 300, TimeUnit.SECONDS);
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化-->失败,param={},response={}", param, response, e);
+            logger.error("登录-->初始化-->失败,param={},response={}", param.toString(), response, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
