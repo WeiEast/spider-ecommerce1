@@ -197,19 +197,19 @@ public class EducationServiceImpl implements EducationService {
             String pageContent = response.getPageContent();
             String str = "学信网已向 " + param.getMobile() + " 发送校验码，请查收";
             if (pageContent.contains(str)) {
-                logger.info("注册-->发送短信验证码成功,param={},response={}", param, response);
+                logger.info("注册-->发送短信验证码成功,param={},response={}",JSON.toJSONString(param), response);
                 Map<String, Object> map = new HashMap<>();
                 map.put("msg", response.getPageContent());
                 return result.success(map);
             }
             if (pageContent.contains("手机号码受限，短信发送次数已达到上限，请24小时后再试")) {
-                logger.error("注册-->短信次数已达上限,param={},response={}", param, response);
+                logger.error("注册-->短信次数已达上限,param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("手机号码受限，短信发送次数已达到上限，请24小时后再试");
             }
-            logger.error("注册-->验证码不正确，param={},response={}", param, response);
+            logger.error("注册-->验证码不正确，param={},response={}", JSON.toJSONString(param), response);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         } catch (Exception e) {
-            logger.error("注册-->校验验证码或者发送短信异常，param={},response={}", param, response, e);
+            logger.error("注册-->校验验证码或者发送短信异常，param={},response={}", JSON.toJSONString(param), response, e);
             return result.failure("校验验证码异常");
         }
     }
