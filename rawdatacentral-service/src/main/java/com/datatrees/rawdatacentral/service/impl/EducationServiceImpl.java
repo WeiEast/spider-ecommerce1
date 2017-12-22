@@ -87,6 +87,7 @@ public class EducationServiceImpl implements EducationService {
 //            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
 //            RedisUtils.del(redisKey);
             //           redisTemplate.delete(redisKey);
+            Map<String, Object> map = new HashMap<>();
             StringBuilder ltKey = new StringBuilder("lt_" + param.getTaskId());
             String lt = RedisUtils.get(ltKey.toString());
             StringBuilder jsKey = new StringBuilder("jsessionId_" + param.getTaskId());
@@ -99,19 +100,31 @@ public class EducationServiceImpl implements EducationService {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
+                map.put("directive","login_fail");
+                map.put("information","您输入的用户名或密码有误");
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
-                return result.failure("您输入的用户名或密码有误");
-            } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
+                return result.success(map);
+            } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")||(pageContent != null && pageContent.contains("图片验证码输入有误"))) {
+                url="https://account.chsi.com.cn/passport/captcha.image";
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
+                map.put("directive","require_picture");
+                map.put("information", response.getPageContent());
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
-                return result.failure("登录失败");
+                return result.success(map);
             } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
+                map.put("directive","login_fail");
+                map.put("information", "手机校验码获取过于频繁,操作被禁止");
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
-                return result.failure("手机校验码获取过于频繁,操作被禁止");
+                return result.success(map);
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
+                map.put("directive","login_success");
+                map.put("information", "登陆成功");
                 logger.info("登录-->成功，param={},response={}", JSON.toJSONString(param), response);
-                return result.success();
+                return result.success(map);
             }
-            return result.failure("登录失败");
+            map.put("directive","login_fail");
+            map.put("information", "登录失败");
+            return result.success(map);
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
