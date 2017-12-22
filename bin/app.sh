@@ -34,7 +34,7 @@ function stopApp(){
 }
 
 
-APP_NAME=`ls *.jar | tail -1`
+APP_NAME=`ls -rt *.jar | tail -n 1`
 APP_HOME=`pwd`
 if test -z "$APP_NAME" 
 then

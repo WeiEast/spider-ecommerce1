@@ -53,10 +53,8 @@ public class EducationServiceImpl implements EducationService {
             //设置代理
             Website website = websiteConfigService.getWebsiteByWebsiteName(param.getWebsiteName());
             logger.info("学信网尝试获取代理时，website={},-------website.needProxy()={}",JSON.toJSONString(website),website.needProxy());
-            if(website.needProxy()){
-                logger.info("获取代理时taskId={}",param.getTaskId());
-                ProxyUtils.setProxyEnable(param.getTaskId(), true);
-            }
+            logger.info("获取代理时taskId={}",param.getTaskId());
+            ProxyUtils.setProxyEnable(param.getTaskId(), true);
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
             String pageContent = response.getPageContent();
