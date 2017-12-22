@@ -54,7 +54,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
             return result;
         }
         monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->成功");
-        logger.info("学信网登录-->初始化-->成功 param={}",JSON.toJSONString(param));
+        logger.info("学信网登录-->初始化-->成功 param={}", JSON.toJSONString(param));
         return result;
     }
 
@@ -66,9 +66,9 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         HttpResult<Map<String, Object>> result = educationService.loginSubmit(param);
-        if (!result.getStatus()) {
+        if (!result.getStatus() || !(result.getData() != null && "login_success".equals(result.getData().get("directive")))) {
             monitorService.sendTaskLog(taskId, websiteName, "学信网登陆-->校验-->失败");
-            logger.error("学信网登陆-->校验-->失败 param={}",JSON.toJSONString(param));
+            logger.error("学信网登陆-->校验-->失败 param={}", JSON.toJSONString(param));
             return result;
         }
 
@@ -78,7 +78,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         String cookies = TaskUtils.getCookieString(taskId);
         map.put(AttributeKey.COOKIE, cookies);
         messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map, DEFAULT_CHARSET_NAME);
-        logger.info("学信网，启动爬虫成功,param={}",JSON.toJSONString(param));
+        logger.info("学信网，启动爬虫成功,param={}", JSON.toJSONString(param));
         return result;
     }
 
@@ -91,11 +91,11 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Map<String, Object>> result = educationService.registerRefeshPicCode(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->刷新图片验证码-->失败");
-            logger.error("学信网注册-->刷新图片验证码-->失败,param={}",JSON.toJSONString(param));
+            logger.error("学信网注册-->刷新图片验证码-->失败,param={}", JSON.toJSONString(param));
             return result;
         }
         monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->刷新图片验证码-->成功");
-        logger.info("学信网注册-->刷新图片验证码-->成功,param={}",JSON.toJSONString(param));
+        logger.info("学信网注册-->刷新图片验证码-->成功,param={}", JSON.toJSONString(param));
         return result;
     }
 
