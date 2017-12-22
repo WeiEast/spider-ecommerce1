@@ -88,31 +88,52 @@ public class EducationServiceImpl implements EducationService {
 //            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
 //            RedisUtils.del(redisKey);
             //           redisTemplate.delete(redisKey);
+            Map<String, Object> map = new HashMap<>();
             StringBuilder ltKey = new StringBuilder("lt_" + param.getTaskId());
             String lt = RedisUtils.get(ltKey.toString());
             StringBuilder jsKey = new StringBuilder("jsessionId_" + param.getTaskId());
             String js = RedisUtils.get(jsKey.toString());
-            String url = "https://account.chsi.com.cn"+js;
-            String templateData = "username={}&password={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
-            String data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt);
-            logger.info("学信网请求登录参数url={},loginName={},password={},lt={}",url,param.getLoginName(),param.getPassword(),lt);
+            String url = "https://account.chsi.com.cn" + js;
+            String templateData ;
+            String data ;
+            if(param.getPicCode()!=null){
+                templateData = "username={}&password={}&captcha={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
+                data=TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), param.getPicCode(),lt);
+                logger.info("学信网请求登录参数url={},loginName={},password={},lt={},picCode={}",url,param.getLoginName(),param.getPassword(),lt,param.getPicCode());
+            }else {
+                templateData = "username={}&password={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
+                data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt);
+                logger.info("学信网请求登录参数url={},loginName={},password={},lt={}",url,param.getLoginName(),param.getPassword(),lt);
+            }
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
+                map.put("directive","login_fail");
+                map.put("information","您输入的用户名或密码有误");
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
-                return result.failure("您输入的用户名或密码有误");
-            } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
+                return result.success(map);
+            } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")||(pageContent != null && pageContent.contains("图片验证码输入有误"))) {
+                url="https://account.chsi.com.cn/passport/captcha.image";
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
+                map.put("directive","require_picture");
+                map.put("information", response.getPageContent());
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
-                return result.failure("登录失败");
+                return result.success(map);
             } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
+                map.put("directive","login_fail");
+                map.put("information", "手机校验码获取过于频繁,操作被禁止");
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
-                return result.failure("手机校验码获取过于频繁,操作被禁止");
+                return result.success(map);
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
+                map.put("directive","login_success");
+                map.put("information", "登陆成功");
                 logger.info("登录-->成功，param={},response={}", JSON.toJSONString(param), response);
-                return result.success();
+                return result.success(map);
             }
-            return result.failure("登录失败");
+            map.put("directive","login_fail");
+            map.put("information", "登录失败");
+            return result.success(map);
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
