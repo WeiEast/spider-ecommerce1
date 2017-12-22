@@ -60,6 +60,7 @@ public class EducationServiceImpl implements EducationService {
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
             String pageContent = response.getPageContent();
+            logger.info("学信网初始化返回页面pageContent={}",pageContent);
             String select = "//input[@name='lt']/@value";
             List<String> list = XPathUtil.getXpath(select, pageContent);
             String lt = list.get(0);
