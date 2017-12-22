@@ -83,6 +83,22 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
+    public HttpResult<Map<String, Object>> registerInit(EducationParam param){
+        if (param.getTaskId() == null || param.getWebsiteName() == null) {
+            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
+        }
+        HttpResult<Map<String, Object>> result = educationService.registerInit(param);
+        if (!result.getStatus()) {
+            monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->初始化-->失败");
+            logger.error("学信网注册-->初始化-->失败,param={}", JSON.toJSONString(param));
+            return result;
+        }
+        monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->初始化-->成功");
+        logger.info("学信网注册-->初始化-->成功,param={}", JSON.toJSONString(param));
+        return result;
+    }
+
+    @Override
     public HttpResult<Map<String, Object>> registerRefeshPicCode(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
