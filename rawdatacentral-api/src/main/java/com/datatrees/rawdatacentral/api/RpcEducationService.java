@@ -26,6 +26,13 @@ public interface RpcEducationService {
     HttpResult<Map<String, Object>> loginSubmit(EducationParam param);
 
     /**
+     * 注册初始化
+     * @param param
+     * @return
+     */
+    HttpResult<Map<String, Object>> registerInit(EducationParam param);
+
+    /**
      * 学信网注册刷新图片接口
      * @param param
      * @return

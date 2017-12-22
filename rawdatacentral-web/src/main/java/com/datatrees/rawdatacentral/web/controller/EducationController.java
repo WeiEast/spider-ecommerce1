@@ -42,6 +42,12 @@ public class EducationController {
         return educationService.loginSubmit(param);
     }
 
+    @RequestMapping("/register/init")
+    public Object registerInit(EducationParam param){
+        return educationService.registerInit(param);
+    }
+
+
     /**
      * 注册刷新图片
      * @param param
