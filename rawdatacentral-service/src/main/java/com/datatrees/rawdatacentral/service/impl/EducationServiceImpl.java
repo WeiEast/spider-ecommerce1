@@ -170,6 +170,7 @@ public class EducationServiceImpl implements EducationService {
             long time = System.currentTimeMillis();
             url = "https://account.chsi.com.cn/account/captchimagecreateaction.action?time=" + time;
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_03").setFullUrl(url).invoke();
+            logger.info("获取图片验证码返回结果response={}",JSON.toJSONString(response));
             Map<String, Object> map = new HashMap<>();
             String cookies = TaskUtils.getCookieString(param.getTaskId());
             map.put("picCode", response.getPageContent());
