@@ -142,7 +142,10 @@ public class EducationServiceImpl implements EducationService {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response=null;
         try {
+            String url="https://account.chsi.com.cn/account/preregister.action?from=archive";
+            response=TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(),RequestType.GET,"chsi_com_cn_注册初始化").setFullUrl(url).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("注册-->初始化失败,param={}", param, e);
