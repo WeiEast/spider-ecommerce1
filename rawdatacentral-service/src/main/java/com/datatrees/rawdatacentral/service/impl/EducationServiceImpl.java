@@ -86,14 +86,14 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-//            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
-//            RedisUtils.del(redisKey);
+            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
+            RedisUtils.del(redisKey);
             //           redisTemplate.delete(redisKey);
             StringBuilder ltKey = new StringBuilder("lt_" + param.getTaskId());
             String lt = RedisUtils.get(ltKey.toString());
             StringBuilder jsKey = new StringBuilder("jsessionId_" + param.getTaskId());
             String js = RedisUtils.get(jsKey.toString());
-            String url = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
+            String url = "https://account.chsi.com.cn"+js;
             String templateData = "username={}&password={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
             String data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt);
             logger.info("学信网请求登录参数url={},loginName={},password={},lt={}",url,param.getLoginName(),param.getPassword(),lt);
