@@ -142,10 +142,12 @@ public class EducationServiceImpl implements EducationService {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        Response response=null;
+        Response response = null;
         try {
-            String url="https://account.chsi.com.cn/account/preregister.action?from=archive";
-            response=TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(),RequestType.GET,"chsi_com_cn_注册初始化").setFullUrl(url).invoke();
+            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
+            RedisUtils.del(redisKey);
+            String url = "https://account.chsi.com.cn/account/preregister.action?from=archive";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_注册初始化").setFullUrl(url).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("注册-->初始化失败,param={}", param, e);
@@ -201,7 +203,7 @@ public class EducationServiceImpl implements EducationService {
             String pageContent = response.getPageContent();
             String str = "学信网已向 " + param.getMobile() + " 发送校验码，请查收";
             if (pageContent.contains(str)) {
-                logger.info("注册-->发送短信验证码成功,param={},response={}",JSON.toJSONString(param), response);
+                logger.info("注册-->发送短信验证码成功,param={},response={}", JSON.toJSONString(param), response);
                 Map<String, Object> map = new HashMap<>();
                 map.put("msg", response.getPageContent());
                 return result.success(map);
