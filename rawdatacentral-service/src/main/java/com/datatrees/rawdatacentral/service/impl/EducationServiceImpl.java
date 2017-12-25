@@ -53,11 +53,13 @@ public class EducationServiceImpl implements EducationService {
         try {
             //设置代理
             ProxyUtils.setProxyEnable(param.getTaskId(), true);
+            //删cookies是防止用户进注册页又回登录页登录时报错
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
             String pageContent = response.getPageContent();
+            //获取lt参数，登录需要使用
             String select = "//input[@name='lt']/@value";
             List<String> list = XPathUtil.getXpath(select, pageContent);
             String lt = list.get(0);
@@ -147,6 +149,7 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            //进入注册页需将原来的cookies删了 获取新cookies
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/account/preregister.action?from=archive";
@@ -166,6 +169,7 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            //注册获取图片验证码前校验手机号是否已被注册。。。
             String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
             String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
             String date = TemplateUtils.format(templateDate, param.getMobile(), param.getMobile());
@@ -179,7 +183,6 @@ public class EducationServiceImpl implements EducationService {
             url = "https://account.chsi.com.cn/account/captchimagecreateaction.action?time=" + time;
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_03").setFullUrl(url).invoke();
             Map<String, Object> map = new HashMap<>();
-            String cookies = TaskUtils.getCookieString(param.getTaskId());
             map.put("picCode", response.getPageContent());
             return result.success(map);
         } catch (Exception e) {
@@ -196,8 +199,6 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-//            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
-//            RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/account/getmphonpincode.action";
             Map<String, Object> params = new HashMap<>();
             params.put("captch", param.getPicCode());
