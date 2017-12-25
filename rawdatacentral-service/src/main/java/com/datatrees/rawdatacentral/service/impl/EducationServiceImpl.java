@@ -51,6 +51,7 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             //设置代理
             ProxyUtils.setProxyEnable(param.getTaskId(), true);
             //删cookies是防止用户进注册页又回登录页登录时报错
@@ -89,6 +90,8 @@ public class EducationServiceImpl implements EducationService {
 //            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
 //            RedisUtils.del(redisKey);
             //           redisTemplate.delete(redisKey);
+            TaskUtils.addTaskShare(param.getTaskId(), "username", param.getLoginName());
+            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             Map<String, Object> map = new HashMap<>();
             StringBuilder ltKey = new StringBuilder("lt_" + param.getTaskId());
             String lt = RedisUtils.get(ltKey.toString());
@@ -149,6 +152,7 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             //进入注册页需将原来的cookies删了 获取新cookies
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
@@ -169,6 +173,7 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             //注册获取图片验证码前校验手机号是否已被注册。。。
             String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
             String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
@@ -200,6 +205,7 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             String url = "https://account.chsi.com.cn/account/getmphonpincode.action";
             Map<String, Object> params = new HashMap<>();
             params.put("captch", param.getPicCode());
@@ -239,6 +245,7 @@ public class EducationServiceImpl implements EducationService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
+            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
             String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
             String date = TemplateUtils.format(templateDate, param.getMobile(), param.getMobile());
