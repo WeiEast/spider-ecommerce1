@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,10 +198,10 @@ public class EducationServiceImpl implements EducationService {
         try {
 //            String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
 //            RedisUtils.del(redisKey);
-            String url = "https://account.chsi.com.cn/account/getmphonpincode.action";
-            String templateDate = "captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
-            String date = TemplateUtils.format(templateDate, param.getPicCode(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_04").setFullUrl(url).setRequestBody(date).invoke();
+            String url = "https://account.chsi.com.cn/account/getmphonpincode.action?captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
+//            String templateDate = "captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
+//            String date = TemplateUtils.format(templateDate, param.getPicCode(), param.getMobile());
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_04").setFullUrl(url).setRequestCharset(Charset.forName("UTF-8")).invoke();
             String pageContent = response.getPageContent();
             String str = "学信网已向 " + param.getMobile() + " 发送校验码，请查收";
             if (pageContent.contains(str)) {
