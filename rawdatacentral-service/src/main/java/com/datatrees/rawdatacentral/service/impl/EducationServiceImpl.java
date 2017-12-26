@@ -113,7 +113,7 @@ public class EducationServiceImpl implements EducationService {
             }
 
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data, ContentType.TEXT_PLAIN).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 map.put("directive", "login_fail");
@@ -190,7 +190,6 @@ public class EducationServiceImpl implements EducationService {
             long time = System.currentTimeMillis();
             url = "https://account.chsi.com.cn/account/captchimagecreateaction.action?time=" + time;
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_03").setFullUrl(url).invoke();
-            logger.info("获取图片验证码返回结果response={}",JSON.toJSONString(response));
             Map<String, Object> map = new HashMap<>();
             map.put("picCode", response.getPageContent());
             return result.success(map);
@@ -210,14 +209,14 @@ public class EducationServiceImpl implements EducationService {
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             String url = "https://account.chsi.com.cn/account/getmphonpincode.action";
-            Map<String, Object> params = new HashMap<>();
-            params.put("captch", param.getPicCode());
-            params.put("mobilePhone", param.getMobile());
-            params.put("optType", "REGISTER");
-            params.put("ignoremphone", "false");
-//            String templateDate = "captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
-//            String date = TemplateUtils.format(templateDate, param.getPicCode(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_04").setFullUrl(url).setParams(params).setRequestCharset(Charset.forName("UTF-8")).invoke();
+//            Map<String, Object> params = new HashMap<>();
+//            params.put("captch", param.getPicCode());
+//            params.put("mobilePhone", param.getMobile());
+//            params.put("optType", "REGISTER");
+//            params.put("ignoremphone", "false");
+            String templateDate = "captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
+            String date = TemplateUtils.format(templateDate, param.getPicCode(), param.getMobile());
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_04").setFullUrl(url).setRequestBody(date,ContentType.TEXT_PLAIN).invoke();
             String pageContent = response.getPageContent();
             String str = "学信网已向 " + param.getMobile() + " 发送校验码，请查收";
             if (pageContent.contains(str)) {
