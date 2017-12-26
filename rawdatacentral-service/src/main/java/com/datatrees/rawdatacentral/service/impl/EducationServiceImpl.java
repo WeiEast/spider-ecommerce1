@@ -266,8 +266,12 @@ public class EducationServiceImpl implements EducationService {
             logger.info("注册返回结果 responPage={}",response.getPageContent());
             Map<String, Object> map = new HashMap<>();
             if (pageContent.contains("校验码有误")) {
-                logger.error("注册失败，param={},response={}", param, response);
+                logger.error("注册失败--验证码有误，param={},response={}", param, response);
                 return result.failure("校验码有误,注册失败");
+            }
+            if(pageContent.contains("证件号码已注册")){
+                logger.error("注册失败--证件号码已注册，param={},response={}", param, response);
+                return result.failure("证件号码已注册");
             }
             if (pageContent.contains("账号注册成功")) {
                 logger.info("注册成功，param={},response={}", param, response);
