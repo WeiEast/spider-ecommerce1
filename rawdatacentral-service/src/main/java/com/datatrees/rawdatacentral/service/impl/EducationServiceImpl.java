@@ -100,17 +100,25 @@ public class EducationServiceImpl implements EducationService {
             String url = "https://account.chsi.com.cn" + js;
             String templateData;
             String data;
+            Map<String, Object> params = new HashMap<>();
             if (param.getPicCode() != null) {
-                templateData = "username={}&password={}&captcha={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
-                data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), param.getPicCode(), lt);
+                params.put("username", param.getLoginName());
+                params.put("password", param.getPassword());
+                params.put("captcha", param.getPicCode());
+                params.put("lt", lt);
+                params.put("_eventId", "submit");
+                params.put("submit", "%E7%99%BB%C2%A0%C2%A0%E5%BD%95");
                 logger.info("学信网请求登录参数url={},loginName={},password={},lt={},picCode={}", url, param.getLoginName(), param.getPassword(), lt, param.getPicCode());
             } else {
-                templateData = "username={}&password={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
-                data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt);
+                params.put("username", param.getLoginName());
+                params.put("password", param.getPassword());
+                params.put("lt", lt);
+                params.put("_eventId", "submit");
+                params.put("submit", "%E7%99%BB%C2%A0%C2%A0%E5%BD%95");
                 logger.info("学信网请求登录参数url={},loginName={},password={},lt={}", url, param.getLoginName(), param.getPassword(), lt);
             }
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setParams(params).setRequestCharset(Charset.forName("UTF-8")).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 map.put("directive", "login_fail");
