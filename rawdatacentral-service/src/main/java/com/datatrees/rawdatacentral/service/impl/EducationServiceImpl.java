@@ -268,6 +268,7 @@ public class EducationServiceImpl implements EducationService {
             date = TemplateUtils.format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name, param.getIdCardType(), param.getIdCard());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_06").setFullUrl(url).setRequestBody(date).invoke();
             pageContent = response.getPageContent();
+            logger.info("注册返回结果 responPage={}",response.getPageContent());
             Map<String, Object> map = new HashMap<>();
             if (pageContent.contains("校验码有误")) {
                 logger.error("注册失败，param={},response={}", param, response);
