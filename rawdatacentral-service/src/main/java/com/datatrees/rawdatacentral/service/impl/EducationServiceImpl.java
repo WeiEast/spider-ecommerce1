@@ -216,7 +216,7 @@ public class EducationServiceImpl implements EducationService {
 //            params.put("ignoremphone", "false");
             String templateDate = "captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
             String date = TemplateUtils.format(templateDate, param.getPicCode(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_04").setFullUrl(url).setRequestBody(date,ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_04").setFullUrl(url).setRequestBody(date, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).invoke();
             String pageContent = response.getPageContent();
             String str = "学信网已向 " + param.getMobile() + " 发送校验码，请查收";
             if (pageContent.contains(str)) {
@@ -228,6 +228,10 @@ public class EducationServiceImpl implements EducationService {
             if (pageContent.contains("手机号码受限，短信发送次数已达到上限，请24小时后再试")) {
                 logger.error("注册-->短信次数已达上限,param={},response={}", JSON.toJSONString(param), response);
                 return result.failure("手机号码受限，短信发送次数已达到上限，请24小时后再试");
+            }
+            if (pageContent.contains("手机校验码获取过于频繁,操作被禁")) {
+                logger.error("注册-->手机校验码获取过于频繁,操作被禁 param={},response={}", JSON.toJSONString(param), response);
+                return result.failure("手机校验码获取过于频繁,操作被禁,请60秒后重试");
             }
             logger.error("注册-->验证码不正确，param={},response={}", JSON.toJSONString(param), response);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
@@ -263,13 +267,13 @@ public class EducationServiceImpl implements EducationService {
             date = TemplateUtils.format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name, param.getIdCardType(), param.getIdCard());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_06").setFullUrl(url).setRequestBody(date).invoke();
             pageContent = response.getPageContent();
-            logger.info("注册返回结果 responPage={}",response.getPageContent());
+            logger.info("注册返回结果 responPage={}", response.getPageContent());
             Map<String, Object> map = new HashMap<>();
             if (pageContent.contains("校验码有误")) {
                 logger.error("注册失败--验证码有误，param={},response={}", param, response);
                 return result.failure("校验码有误,注册失败");
             }
-            if(pageContent.contains("证件号码已注册")){
+            if (pageContent.contains("证件号码已注册")) {
                 logger.error("注册失败--证件号码已注册，param={},response={}", param, response);
                 return result.failure("证件号码已注册");
             }
