@@ -95,8 +95,9 @@ public class China10010ForApp implements OperatorPluginService {
             mobile = (new StringBuilder()).append(mobile).append(U).toString();
             passWord = (new StringBuilder()).append(passWord).append(U).toString();
             String templateUrl = "http://m.client.10010.com/mobileService/login.htm";
-            String templateData = "deviceOS=android6.0.1&mobile={}&netWay=WIFI&deviceCode=&isRemberPwd=false&version=android%405.2&deviceId" +
-                    "=&password={}&keyVersion=&provinceChanel=general&deviceModel=Mi+Note+2&deviceBrand=Xiaomi&timestamp={}";
+            String templateData = "deviceOS=android7.0&mobile={}&netWay=WIFI&deviceCode=869782021770311&isRemberPwd=false&version=android%405.61&deviceId" +
+                    "=869782021770311&password={}&keyVersion=&pip=&provinceChanel=general&appId" +
+                    "=818f10dfa9b3bb4a8e3f4380602d5f47458a6506bbae525a00b4ed19552ac681&deviceModel=Mi+Note+2&deviceBrand=Xiaomi&timestamp={}";
             String data = TemplateUtils
                     .format(templateData, EncryptUtilForChina10010App.encryString(mobile), EncryptUtilForChina10010App.encryString(passWord),
                             System.currentTimeMillis());
