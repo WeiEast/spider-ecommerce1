@@ -120,7 +120,7 @@ public class EducationServiceImpl implements EducationService {
                 map.put("information", "您输入的用户名或密码有误");
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.success(map);
-            } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录") || (pageContent != null && pageContent.contains("图片验证码输入有误"))) {
+            } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
                 map.put("directive", "require_picture");
@@ -132,9 +132,12 @@ public class EducationServiceImpl implements EducationService {
                 map.put("information", "手机校验码获取过于频繁,操作被禁止");
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.success(map);
-            }else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
-                map.put("directive", "login_fail");
-                map.put("information", "图片验证码输入有误");
+            } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
+                url = "https://account.chsi.com.cn/passport/captcha.image";
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
+                map.put("directive", "require_picture_again");
+                map.put("errorMessage", "图片验证码输入有误");
+                map.put("information", response.getPageContent());
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
