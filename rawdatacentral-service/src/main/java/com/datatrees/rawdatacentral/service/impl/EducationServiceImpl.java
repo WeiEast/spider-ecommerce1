@@ -132,6 +132,11 @@ public class EducationServiceImpl implements EducationService {
                 map.put("information", "手机校验码获取过于频繁,操作被禁止");
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.success(map);
+            }else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
+                map.put("directive", "login_fail");
+                map.put("information", "图片验证码输入有误");
+                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
+                return result.success(map);
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
                 map.put("directive", "login_success");
                 map.put("information", "登陆成功");
