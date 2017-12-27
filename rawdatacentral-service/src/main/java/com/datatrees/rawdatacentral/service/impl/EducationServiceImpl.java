@@ -136,7 +136,7 @@ public class EducationServiceImpl implements EducationService {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
                 map.put("directive", "require_picture_again");
-                map.put("errorMessage", "图片验证码输入有误");
+                map.put("errorMessage", "验证码错误,请重新输入");
                 map.put("information", response.getPageContent());
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.success(map);
