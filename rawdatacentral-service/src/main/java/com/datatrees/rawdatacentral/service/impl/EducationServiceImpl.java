@@ -115,7 +115,6 @@ public class EducationServiceImpl implements EducationService {
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
-            logger.info("学信网--------- pageContent={}",pageContent);
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 map.put("directive", "login_fail");
                 map.put("information", "您输入的用户名或密码有误");
@@ -131,6 +130,11 @@ public class EducationServiceImpl implements EducationService {
             } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
                 map.put("directive", "login_fail");
                 map.put("information", "手机校验码获取过于频繁,操作被禁止");
+                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
+                return result.success(map);
+            }else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
+                map.put("directive", "login_fail");
+                map.put("information", "图片验证码输入有误");
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
