@@ -55,7 +55,7 @@ public class EducationServiceImpl implements EducationService {
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             //设置代理
-            ProxyUtils.setProxyEnable(param.getTaskId(), true);
+ //           ProxyUtils.setProxyEnable(param.getTaskId(), true);
             //删cookies是防止用户进注册页又回登录页登录时报错
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
