@@ -32,4 +32,5 @@ dependencies {
 
     compile 'com.dangdang:elastic-job-lite-spring:2.1.5'
     compile 'com.dangdang:elastic-job-lite-core:2.1.5'
+    compile 'org.seleniumhq.selenium:selenium-java:3.7.1'
 }
