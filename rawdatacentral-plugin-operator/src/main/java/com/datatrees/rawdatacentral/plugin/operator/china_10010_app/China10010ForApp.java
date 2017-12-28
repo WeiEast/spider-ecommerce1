@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10010_app;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
@@ -10,9 +11,11 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -48,7 +51,12 @@ public class China10010ForApp implements OperatorPluginService {
 
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
-        return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshSmsCodeForLogin(param);
+            default:
+                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
@@ -82,28 +90,84 @@ public class China10010ForApp implements OperatorPluginService {
         }
     }
 
-    private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
-        CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
+    private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String mobile = param.getMobile().toString();
-            String passWord = param.getPassword();
             Random T = new Random();
-            String U = (new StringBuilder()).append(T.nextInt(9)).append("").append(T.nextInt(9)).append("").append(T.nextInt(9)).append("")
-                    .append(T.nextInt(9)).append("").append(T.nextInt(9)).append("").append(T.nextInt(9)).toString();
-            mobile = (new StringBuilder()).append(mobile).append(U).toString();
-            passWord = (new StringBuilder()).append(passWord).append(U).toString();
-            String templateUrl = "http://m.client.10010.com/mobileService/login.htm";
-            String templateData = "deviceOS=android7.0&mobile={}&netWay=WIFI&deviceCode=869782021770311&isRemberPwd=false&version=android%405.61&deviceId" +
-                    "=869782021770311&password={}&keyVersion=&pip=&provinceChanel=general&appId" +
-                    "=818f10dfa9b3bb4a8e3f4380602d5f47458a6506bbae525a00b4ed19552ac681&deviceModel=Mi+Note+2&deviceBrand=Xiaomi&timestamp={}";
-            String data = TemplateUtils
-                    .format(templateData, EncryptUtilForChina10010App.encryString(mobile), EncryptUtilForChina10010App.encryString(passWord),
-                            System.currentTimeMillis());
+            String U = T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9);
+            String templateUrl = "http://m.client.10010.com/mobileService/sendRadomNum.htm";
+            String templateData = "keyVersion=&mobile={}&version=android%405.61";
+            String data = TemplateUtils.format(templateData, NewEncryptUtilForChina10010App.encode(param.getMobile().toString(), U));
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_001").setFullUrl(templateUrl).setRequestBody(data).invoke();
             JSONObject json = response.getPageContentForJSON();
+            String code = json.getString("rsp_code");
+            if (org.apache.commons.lang3.StringUtils.equals(code, "0000")) {
+                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
+            }
+            logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+            return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+        } catch (Exception e) {
+            logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_SMS_ERROR);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
+        CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
+        CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            Random T = new Random();
+            String U = T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9);
+            String templateUrl = "http://m.client.10010.com/mobileService/radomLogin.htm";
+            String templateData = "loginStyle=0&deviceOS=android7.0&mobile={}&netWay=WIFI&deviceCode=869782021770312&version=android%405.61" +
+                    "&deviceId=869782021770312&password={}&keyVersion=&appId=818f10dfa9b3bb4a8e3f4380602d5f47458a6506bbae525a00b4ed19552ac681&deviceModel=Mi+Note+2&deviceBrand=Xiaomi" +
+                    "&timestamp={}";
+            String data = TemplateUtils.format(templateData, NewEncryptUtilForChina10010App.encode(param.getMobile().toString(), U),
+                    NewEncryptUtilForChina10010App.encode(param.getSmsCode(), U), new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_002").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            JSONObject json = response.getPageContentForJSON();
             String code = json.getString("code");
+            if (!StringUtils.equals(code, "0")) {
+                String errorMessage = json.getString("dsc");
+                logger.error("登陆失败,{},param={}", errorMessage, param);
+                return result.failure(errorMessage);
+            }
+
+            templateUrl = "https://m.client.10010.com/mobileService/operationservice/getUserinfo" +
+                    ".htm?menuId=000200020010&mobile_c_from=query&navUrlCode=2201";
+            data = "timestamp=&desmobile=" + param.getMobile().toString() + "&version=android%405.61";
+            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
+
+            templateUrl = "https://m.client.10010.com/mobileService/logout.htm";
+            data = "version=android%405.61&desmobile=" + param.getMobile().toString();
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data)
+                    .addHeader("User-Agent","").invoke();
+
+            //T = new Random();
+            //U = (new StringBuilder()).append(T.nextInt(9)).append("").append(T.nextInt(9)).append("").append(T.nextInt(9)).append("")
+            //        .append(T.nextInt(9)).append("").append(T.nextInt(9)).append("").append(T.nextInt(9)).toString();
+            //mobile = (new StringBuilder()).append(param.getMobile().toString()).append(U).toString();
+
+            //String passWord = param.getPassword();
+            //passWord = (new StringBuilder()).append(passWord).append(U).toString();
+            T = new Random();
+            U = T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9);
+            templateUrl = "http://m.client.10010.com/mobileService/login.htm";
+            templateData = "deviceOS=android7.0&mobile={}&netWay=WIFI&deviceCode=869782021770312&isRemberPwd=false&version=android%405.61&deviceId" +
+                    "=869782021770312&password={}&keyVersion=&pip=192.168.200.184&provinceChanel=general&appId" +
+                    "=818f10dfa9b3bb4a8e3f4380602d5f47458a6506bbae525a00b4ed19552ac681&deviceModel=Mi+Note+2&deviceBrand=Xiaomi&timestamp={}";
+            data = TemplateUtils.format(templateData, NewEncryptUtilForChina10010App.encode(param.getMobile().toString(), U),
+                    NewEncryptUtilForChina10010App.encode(param.getPassword(), U), new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_004").setFullUrl(templateUrl).setRequestBody(data)
+                    .addHeader("User-Agent","").invoke();
+            json = response.getPageContentForJSON();
+            code = json.getString("code");
             if (StringUtils.equals(code, "0")) {
                 String provinceName = PatternUtils.group(response.getPageContent(), "proName\":\"([^\"]+)\"", 1);
                 TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
