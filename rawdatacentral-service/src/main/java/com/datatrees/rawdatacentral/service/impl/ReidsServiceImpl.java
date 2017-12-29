@@ -258,8 +258,11 @@ public class ReidsServiceImpl implements RedisService {
         if (null == result) {
             throw new RuntimeException("saveDirectiveResult error param is null");
         }
-        String directiveId = createDirectiveId();
-        result.setDirectiveId(directiveId);
+        String directiveId = result.getDirectiveId();
+        if (null == directiveId) {
+            directiveId = createDirectiveId();
+            result.setDirectiveId(directiveId);
+        }
         String json = JSON.toJSONString(result, SerializerFeature.DisableCircularReferenceDetect);
         //TODO加入事物控制
         saveToList(result.getGroupKey(), json, defaultTimeOut, TimeUnit.SECONDS);

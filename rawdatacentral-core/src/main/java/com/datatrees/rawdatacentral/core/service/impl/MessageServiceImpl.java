@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.alibaba.rocketmq.client.producer.SendStatus;
+import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -13,10 +17,7 @@ import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
-import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.client.producer.SendStatus;
-import com.alibaba.rocketmq.common.message.Message;
+import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -148,6 +149,12 @@ public class MessageServiceImpl implements MessageService {
         map.put(AttributeKey.TASK_ID, taskId);
         map.put(AttributeKey.WEBSITE_NAME, websiteName);
         sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_LOGIN_POST.getTag(), map, DEFAULT_CHARSET_NAME);
+        return true;
+    }
+
+    @Override
+    public boolean sendLoginMessage(LoginMessage loginMessage) {
+        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), loginMessage, DEFAULT_CHARSET_NAME);
         return true;
     }
 
