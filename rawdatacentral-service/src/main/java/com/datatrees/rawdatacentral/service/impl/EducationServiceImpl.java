@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -44,6 +45,8 @@ public class EducationServiceImpl implements EducationService {
     private RedisTemplate redisTemplate;
     @Autowired
     WebsiteConfigService websiteConfigService;
+    @Resource
+    private MonitorService monitorService;
 
     @Override
     public HttpResult<Map<String, Object>> loginInit(EducationParam param) {
@@ -55,7 +58,7 @@ public class EducationServiceImpl implements EducationService {
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             //设置代理
- //           ProxyUtils.setProxyEnable(param.getTaskId(), true);
+            //           ProxyUtils.setProxyEnable(param.getTaskId(), true);
             //删cookies是防止用户进注册页又回登录页登录时报错
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
@@ -135,6 +138,10 @@ public class EducationServiceImpl implements EducationService {
             } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
+                if (response.getStatusCode() != 200) {
+                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->失败");
+                }
+                monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
                 map.put("directive", "require_picture_again");
                 map.put("errorMessage", "验证码错误,请重新输入");
                 map.put("information", response.getPageContent());
