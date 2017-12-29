@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
@@ -47,6 +48,8 @@ public class EducationServiceImpl implements EducationService {
     WebsiteConfigService websiteConfigService;
     @Resource
     private MonitorService monitorService;
+    @Resource
+    private MessageService messageService;
 
     @Override
     public HttpResult<Map<String, Object>> loginInit(EducationParam param) {
@@ -126,6 +129,12 @@ public class EducationServiceImpl implements EducationService {
             } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
+                if (response.getStatusCode() == 200) {
+                    messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码");
+                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
+                }else {
+                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->失败");
+                }
                 map.put("directive", "require_picture");
                 map.put("information", response.getPageContent());
                 logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
@@ -138,10 +147,12 @@ public class EducationServiceImpl implements EducationService {
             } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
-                if (response.getStatusCode() != 200) {
+                if (response.getStatusCode() == 200) {
+                    messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码");
+                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
+                }else {
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->失败");
                 }
-                monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
                 map.put("directive", "require_picture_again");
                 map.put("errorMessage", "验证码错误,请重新输入");
                 map.put("information", response.getPageContent());
