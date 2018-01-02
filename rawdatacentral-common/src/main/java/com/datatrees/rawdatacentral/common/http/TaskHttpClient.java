@@ -34,6 +34,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
@@ -356,8 +357,14 @@ public class TaskHttpClient {
             //禁止重定向
             RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
                     .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
+            // 默认socket设置。注意：正常HTTP建立连接过程中，socket超时会采用{@link RequestConfig#connectTimeout}。
+            // 但是https建立连接多了一个的协议分层阶段，其中涉及到的socket交互会采用默认设置，不会采用{@link RequestConfig#connectTimeout}
+            // 和{@link RequestConfig#socketTimeout}。
+            // SO_TIMEOUT:单位毫秒，默认设置5秒。
+            SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(5000).build();
             HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy)
-                    .setDefaultCookieStore(cookieStore).setDefaultCredentialsProvider(credsProvider).setSSLSocketFactory(sslsf);
+                    .setDefaultCookieStore(cookieStore).setSSLSocketFactory(sslsf)
+                    .setDefaultSocketConfig(socketConfig);
             if (null != credsProvider) {
                 httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
             }
