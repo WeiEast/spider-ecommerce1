@@ -82,7 +82,7 @@ public class EducationServiceImpl implements EducationService {
 //            redisTemplate.opsForValue().set(ltKey, lt, 300, TimeUnit.SECONDS);
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化-->失败,param={},response={}", JSON.toJSONString(param), response, e);
+            logger.error("登录-->初始化-->失败,param={},response={},e={}", JSON.toJSONString(param), response, e.getMessage());
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
@@ -170,7 +170,7 @@ public class EducationServiceImpl implements EducationService {
             map.put("information", "登录失败");
             return result.success(map);
         } catch (Exception e) {
-            logger.error("登录-->失败，param={},response={},异常信息e={}", JSON.toJSONString(param), response, e);
+            logger.error("登录-->失败，param={},response={},异常信息e={}", JSON.toJSONString(param), response, e.getMessage());
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
     }
@@ -191,7 +191,7 @@ public class EducationServiceImpl implements EducationService {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_注册初始化").setFullUrl(url).invoke();
             return result.success();
         } catch (Exception e) {
-            logger.error("注册-->初始化失败,param={}", param, e);
+            logger.error("注册-->初始化失败,param={},e={}", param, e.getMessage());
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
@@ -222,7 +222,7 @@ public class EducationServiceImpl implements EducationService {
             map.put("picCode", response.getPageContent());
             return result.success(map);
         } catch (Exception e) {
-            logger.error("注册-->获取图片验证码失败，param={},response={},", param, response, e);
+            logger.error("注册-->获取图片验证码失败，param={},response={},e={}", param, response, e.getMessage());
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
     }
@@ -264,7 +264,7 @@ public class EducationServiceImpl implements EducationService {
             logger.error("注册-->验证码不正确，param={},response={}", JSON.toJSONString(param), response);
             return result.failure(ErrorCode.VALIDATE_PIC_CODE_FAIL);
         } catch (Exception e) {
-            logger.error("注册-->校验验证码或者发送短信异常，param={},response={}", JSON.toJSONString(param), response, e);
+            logger.error("注册-->校验验证码或者发送短信异常，param={},response={},e={}", JSON.toJSONString(param), response, e.getMessage());
             return result.failure("校验验证码异常");
         }
     }
@@ -311,7 +311,7 @@ public class EducationServiceImpl implements EducationService {
             }
             return result.failure("注册失败");
         } catch (Exception e) {
-            logger.error("注册异常 param={},response={}", param, response);
+            logger.error("注册异常 param={},response={},e={}", param, response,e.getMessage());
             return result.failure("注册失败，请稍后重试");
         }
     }
