@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.common.http;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -391,6 +392,7 @@ public class TaskHttpClient {
                     }
                 }
             }
+            logger.info("exec http,taskId={},websiteName={},url={},status={}", taskId, request.getWebsiteName(), url, statusCode);
             if (statusCode >= 200 && statusCode <= 299) {
                 byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
                 response.setResponse(data);
@@ -420,7 +422,13 @@ public class TaskHttpClient {
             throw new RuntimeException("http error request=" + request, e);
         } finally {
             IOUtils.closeQuietly(httpclient);
-            IOUtils.closeQuietly(httpResponse);
+            if (httpResponse != null) {
+                try {
+                    EntityUtils.consume(httpResponse.getEntity());
+                } catch (IOException e) {
+                    logger.error("http close error,taskId={}", taskId, e);
+                }
+            }
             try {
                 String sassEnv = TaskUtils.getSassEnv();
 
