@@ -61,7 +61,7 @@ public class EducationServiceImpl implements EducationService {
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             //设置代理
-            //           ProxyUtils.setProxyEnable(param.getTaskId(), true);
+            ProxyUtils.setProxyEnable(param.getTaskId(), true);
             //删cookies是防止用户进注册页又回登录页登录时报错
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
@@ -121,47 +121,48 @@ public class EducationServiceImpl implements EducationService {
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
+            logger.info("点击登录返回的pageContent={}", pageContent);
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 map.put("directive", "login_fail");
                 map.put("information", "您输入的用户名或密码有误");
-                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
+                logger.error("登录-->失败，param={},登录请求的response={}", JSON.toJSONString(param), response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
                 if (response.getStatusCode() == 200) {
-                    messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码");
+                    messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
-                }else {
+                } else {
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->失败");
                 }
                 map.put("directive", "require_picture");
                 map.put("information", response.getPageContent());
-                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
+                logger.error("登录-->失败，param={},登录请求的pageContent={}，重新访问的图片的response={}", JSON.toJSONString(param), pageContent, response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
                 map.put("directive", "login_fail");
                 map.put("information", "手机校验码获取过于频繁,操作被禁止");
-                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
+                logger.error("登录-->失败，param={},登录请求的response={}", JSON.toJSONString(param), response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
                 if (response.getStatusCode() == 200) {
-                    messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码");
+                    messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
-                }else {
+                } else {
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->失败");
                 }
                 map.put("directive", "require_picture_again");
                 map.put("errorMessage", "验证码错误,请重新输入");
                 map.put("information", response.getPageContent());
-                logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response);
+                logger.error("登录-->失败，param={},登录请求的pageContent={},重新访问的图片的response={}", JSON.toJSONString(param), pageContent, response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
                 map.put("directive", "login_success");
                 map.put("information", "登陆成功");
-                logger.info("登录-->成功，param={},response={}", JSON.toJSONString(param), response);
+                logger.info("登录-->成功，param={},登录请求的response={}", JSON.toJSONString(param), response);
                 return result.success(map);
             }
             map.put("directive", "login_fail");
