@@ -358,7 +358,7 @@ public class TaskHttpClient {
             RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
                     .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
             // 默认socket设置。注意：正常HTTP建立连接过程中，socket超时会采用{@link RequestConfig#connectTimeout}。
-            // 但是https建立连接多了一个的协议分层阶段，其中涉及到的socket交互会采用默认设置，不会采用{@link RequestConfig#connectTimeout}
+            // 但是SSL在连接建立成功的基础上多了分层协议处理阶段，其中涉及到的socket交互会采用默认设置，不会采用{@link RequestConfig#connectTimeout}
             // 和{@link RequestConfig#socketTimeout}。
             // SO_TIMEOUT:单位毫秒，默认设置5秒。
             SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(5000).build();
