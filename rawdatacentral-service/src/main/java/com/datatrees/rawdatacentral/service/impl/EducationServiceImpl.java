@@ -105,7 +105,7 @@ public class EducationServiceImpl implements EducationService {
             String lt = RedisUtils.get(ltKey.toString());
             StringBuilder jsKey = new StringBuilder("jsessionId_" + param.getTaskId());
             String js = RedisUtils.get(jsKey.toString());
-            String url = "https://account.chsi.com.cn" + js;
+            String url = "https://account.chsi.com.cn";
             String templateData;
             String data;
             if (param.getPicCode() != null) {
@@ -113,6 +113,7 @@ public class EducationServiceImpl implements EducationService {
                 data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), param.getPicCode(), lt);
                 logger.info("学信网请求登录参数url={},loginName={},password={},lt={},picCode={}", url, param.getLoginName(), param.getPassword(), lt, param.getPicCode());
             } else {
+                url = url + js;
                 templateData = "username={}&password={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
                 data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt);
                 logger.info("学信网请求登录参数url={},loginName={},password={},lt={}", url, param.getLoginName(), param.getPassword(), lt);
@@ -121,7 +122,7 @@ public class EducationServiceImpl implements EducationService {
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
-            logger.info("登录的请求返回的response={}",response);
+            logger.info("登录的请求返回的response={}", response);
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 map.put("directive", "login_fail");
                 map.put("information", "您输入的用户名或密码有误");
