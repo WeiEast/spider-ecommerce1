@@ -121,11 +121,12 @@ public class EducationServiceImpl implements EducationService {
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
+            logger.info("登录的请求参数param={},response={}", JSON.toJSONString(param), response);
             logger.info("点击登录返回的pageContent={}", pageContent);
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 map.put("directive", "login_fail");
                 map.put("information", "您输入的用户名或密码有误");
-                logger.error("登录-->失败，param={},登录请求的response={}", JSON.toJSONString(param), response);
+                logger.error("登录-->失败");
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
@@ -138,12 +139,12 @@ public class EducationServiceImpl implements EducationService {
                 }
                 map.put("directive", "require_picture");
                 map.put("information", response.getPageContent());
-                logger.error("登录-->失败，param={},登录请求的pageContent={}，重新访问的图片的response={}", JSON.toJSONString(param), pageContent, response);
+                logger.error("登录-->失败，重新访问的图片的response={}", response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("手机校验码获取过于频繁,操作被禁止")) {
                 map.put("directive", "login_fail");
                 map.put("information", "手机校验码获取过于频繁,操作被禁止");
-                logger.error("登录-->失败，param={},登录请求的response={}", JSON.toJSONString(param), response);
+                logger.error("登录-->失败");
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
@@ -157,19 +158,19 @@ public class EducationServiceImpl implements EducationService {
                 map.put("directive", "require_picture_again");
                 map.put("errorMessage", "验证码错误,请重新输入");
                 map.put("information", response.getPageContent());
-                logger.error("登录-->失败，param={},登录请求的pageContent={},重新访问的图片的response={}", JSON.toJSONString(param), pageContent, response);
+                logger.error("登录-->失败,重新访问的图片的response={}", response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
                 map.put("directive", "login_success");
                 map.put("information", "登陆成功");
-                logger.info("登录-->成功，param={},登录请求的response={}", JSON.toJSONString(param), response);
+                logger.info("登录-->成功");
                 return result.success(map);
             }
             map.put("directive", "login_fail");
             map.put("information", "登录失败");
             return result.success(map);
         } catch (Exception e) {
-            logger.error("登录-->失败，param={},response={}", JSON.toJSONString(param), response, e);
+            logger.error("登录-->失败，param={},response={},异常信息e={}", JSON.toJSONString(param), response, e);
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
     }
