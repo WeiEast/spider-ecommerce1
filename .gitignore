@@ -11,6 +11,7 @@ log.txt
 out
 .DS_Store
 
-
-
+.gradletasknamecache
+gradlew
+gradlew.bat
 
