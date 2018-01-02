@@ -121,8 +121,7 @@ public class EducationServiceImpl implements EducationService {
             String referer = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url).setRequestBody(data, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
-            logger.info("登录的请求参数param={},response={}", JSON.toJSONString(param), response);
-            logger.info("点击登录返回的pageContent={}", pageContent);
+            logger.info("登录的请求返回的response={}",response);
             if (pageContent != null && pageContent.contains("您输入的用户名或密码有误")) {
                 map.put("directive", "login_fail");
                 map.put("information", "您输入的用户名或密码有误");
