@@ -109,6 +109,7 @@ public class EducationServiceImpl implements EducationService {
             String templateData;
             String data;
             if (param.getPicCode() != null) {
+                url = url + "/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
                 templateData = "username={}&password={}&captcha={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
                 data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), param.getPicCode(), lt);
                 logger.info("学信网请求登录参数url={},loginName={},password={},lt={},picCode={}", url, param.getLoginName(), param.getPassword(), lt, param.getPicCode());
