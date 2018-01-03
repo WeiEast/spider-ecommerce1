@@ -102,7 +102,7 @@ public class China10010ForApp implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_001").setFullUrl(templateUrl).setRequestBody(data).invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("rsp_code");
-            if (org.apache.commons.lang3.StringUtils.equals(code, "0000")) {
+            if (StringUtils.equals(code, "0000")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             }
@@ -128,7 +128,8 @@ public class China10010ForApp implements OperatorPluginService {
                     "&timestamp={}";
             String data = TemplateUtils.format(templateData, NewEncryptUtilForChina10010App.encode(param.getMobile().toString(), U),
                     NewEncryptUtilForChina10010App.encode(param.getSmsCode(), U), new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_002").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_002").setFullUrl(templateUrl).setRequestBody(data)
+                    .addHeader("User-Agent", "").invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("code");
             if (!StringUtils.equals(code, "0")) {
@@ -147,7 +148,7 @@ public class China10010ForApp implements OperatorPluginService {
             templateUrl = "https://m.client.10010.com/mobileService/logout.htm";
             data = "version=android%405.61&desmobile=" + param.getMobile().toString();
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data)
-                    .addHeader("User-Agent","").invoke();
+                    .addHeader("User-Agent", "").invoke();
 
             //T = new Random();
             //U = (new StringBuilder()).append(T.nextInt(9)).append("").append(T.nextInt(9)).append("").append(T.nextInt(9)).append("")
@@ -165,7 +166,7 @@ public class China10010ForApp implements OperatorPluginService {
             data = TemplateUtils.format(templateData, NewEncryptUtilForChina10010App.encode(param.getMobile().toString(), U),
                     NewEncryptUtilForChina10010App.encode(param.getPassword(), U), new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_004").setFullUrl(templateUrl).setRequestBody(data)
-                    .addHeader("User-Agent","").invoke();
+                    .addHeader("User-Agent", "").invoke();
             json = response.getPageContentForJSON();
             code = json.getString("code");
             if (StringUtils.equals(code, "0")) {
