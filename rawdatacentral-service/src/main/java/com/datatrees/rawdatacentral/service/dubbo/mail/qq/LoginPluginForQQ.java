@@ -137,7 +137,7 @@ public class LoginPluginForQQ implements Runnable {
                 messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), loginData);
 
                 retuanData.put(AttributeKey.STATUS, TaskStatusEnum.LOGIN_SUCCESS.getCode());
-                return result.success(loginData);
+                return result.success(retuanData);
             }
             logger.warn("login by selinium fail,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
             retuanData.put(AttributeKey.STATUS, TaskStatusEnum.LOGIN_FAILED.getCode());
