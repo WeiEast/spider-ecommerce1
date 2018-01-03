@@ -129,6 +129,20 @@ public class EducationServiceImpl implements EducationService {
                 map.put("information", "您输入的用户名或密码有误");
                 logger.error("登录-->失败");
                 return result.success(map);
+            } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
+                url = "https://account.chsi.com.cn/passport/captcha.image";
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
+                if (response.getStatusCode() == 200) {
+                    messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
+                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
+                } else {
+                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->失败");
+                }
+                map.put("directive", "require_picture_again");
+                map.put("errorMessage", "验证码错误,请重新输入");
+                map.put("information", response.getPageContent());
+                logger.error("登录-->失败,重新访问的图片的response={}", response);
+                return result.success(map);
             } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
@@ -146,20 +160,6 @@ public class EducationServiceImpl implements EducationService {
                 map.put("directive", "login_fail");
                 map.put("information", "手机校验码获取过于频繁,操作被禁止");
                 logger.error("登录-->失败");
-                return result.success(map);
-            } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
-                url = "https://account.chsi.com.cn/passport/captcha.image";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url).invoke();
-                if (response.getStatusCode() == 200) {
-                    messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
-                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
-                } else {
-                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->失败");
-                }
-                map.put("directive", "require_picture_again");
-                map.put("errorMessage", "验证码错误,请重新输入");
-                map.put("information", response.getPageContent());
-                logger.error("登录-->失败,重新访问的图片的response={}", response);
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("退出") || (pageContent != null && pageContent.contains("进入学信档案"))) {
                 map.put("directive", "login_success");
@@ -312,7 +312,7 @@ public class EducationServiceImpl implements EducationService {
             }
             return result.failure("注册失败");
         } catch (Exception e) {
-            logger.error("注册异常 param={},response={},e={}", param, response,e.getMessage());
+            logger.error("注册异常 param={},response={},e={}", param, response, e.getMessage());
             return result.failure("注册失败，请稍后重试");
         }
     }
