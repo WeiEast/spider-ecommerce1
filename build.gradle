@@ -60,7 +60,7 @@ subprojects {
 
     repositories {
         maven { url "http://192.168.5.252:8081/nexus/content/groups/public/" }
-//        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         mavenLocal()
     }
 
@@ -71,6 +71,8 @@ subprojects {
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
     }
+
+
 }
 
 

@@ -33,6 +33,7 @@ import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,6 +48,8 @@ public class MailServiceApiForQQImpl implements MailServiceApiForQQ, Initializin
     private WebsiteConfigService websiteConfigService;
     @Resource
     private MonitorService       monitorService;
+    @Value("${hub.url}")
+    private String               hubUrl;
 
     @Override
     public HttpResult<Map<String, String>> login(MailParam param) {
@@ -107,7 +110,7 @@ public class MailServiceApiForQQImpl implements MailServiceApiForQQ, Initializin
 
         monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->成功");
 
-        LoginPluginForQQ plugin = new LoginPluginForQQ(taskId, DEFAULT_WEBSITE_NAME);
+        LoginPluginForQQ plugin = new LoginPluginForQQ(taskId, DEFAULT_WEBSITE_NAME, hubUrl);
         initExecutor.submit(plugin);
 
         RedisUtils.setnx(initKey, IpUtils.getLocalHostName(), (int) TimeUnit.HOURS.toSeconds(1));

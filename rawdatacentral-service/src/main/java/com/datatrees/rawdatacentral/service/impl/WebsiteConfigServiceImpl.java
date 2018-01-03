@@ -57,8 +57,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Resource
     private RedisService           redisService;
     @Resource
-    private WebsiteConfigService   websiteConfigService;
-    @Resource
     private ProxyService           proxyService;
     private ParentConfigHandler    parentConfigHandler;
 

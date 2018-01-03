@@ -281,6 +281,14 @@ public class CrawlerServiceImpl implements CrawlerService {
             return result.success();
         }
 
+        DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN, taskId);
+        String directiveId = redisService.createDirectiveId();
+        sendDirective.setDirectiveId(directiveId);
+        Map<String, String> directiveData = new HashMap<>();
+        sendDirective.fill(DirectiveRedisCode.CANCEL, directiveData);
+        redisService.saveDirectiveResult(sendDirective);
+
+
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
         logger.info("cancel taskId={}", taskId);
