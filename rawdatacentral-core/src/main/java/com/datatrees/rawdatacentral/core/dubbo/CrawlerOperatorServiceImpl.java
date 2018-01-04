@@ -5,19 +5,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.retry.RetryHandler;
@@ -62,7 +58,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     private WebsiteGroupService                           websiteGroupService;
     @Resource
     private WebsiteOperatorService                        websiteOperatorService;
-    private ThreadPoolExecutor                            initExecutor;
+    @Resource
+    private ThreadPoolService                             threadPoolService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -74,7 +71,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         TaskUtils.addStep(param.getTaskId(), StepEnum.REC_INIT_MSG);
-        initExecutor.submit(new Runnable() {
+        threadPoolService.getOperatorInitExecutors().submit(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -431,21 +428,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        int corePoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.min", 10);
-        int maximumPoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.max", 100);
-        initExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(300),
-                new ThreadFactory() {
-                    private AtomicInteger count = new AtomicInteger(0);
-
-                    @Override
-                    public Thread newThread(Runnable r) {
-                        Thread t = new Thread(r);
-                        String threadName = "operator_init_thread_" + count.addAndGet(1);
-                        t.setName(threadName);
-                        logger.info("create operator init thread :{}", threadName);
-                        return t;
-                    }
-                });
 
         operatorConfigCache = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS).maximumSize(1)
                 .build(new CacheLoader<String, List<OperatorCatalogue>>() {
