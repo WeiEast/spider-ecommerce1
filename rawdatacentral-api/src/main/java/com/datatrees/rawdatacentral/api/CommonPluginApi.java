@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.api;
 
-import com.datatrees.rawdatacentral.api.service.CommonPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 
 /**
  * 通用插件服务

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.ConfigServiceApi;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.api.service.CommonPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
@@ -105,9 +105,9 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
             }
             return (CommonPluginService) loginClass.newInstance();
         } catch (Throwable e) {
-            logger.error("get common plugin service error pluginName={},className={},taskId={}", pluginName, className, taskId, e);
+            logger.error("get common plugin internal error pluginName={},className={},taskId={}", pluginName, className, taskId, e);
             throw new RuntimeException(
-                    TemplateUtils.format("get common plugin service error pluginName={},className={},taskId={}", pluginName, className, taskId), e);
+                    TemplateUtils.format("get common plugin internal error pluginName={},className={},taskId={}", pluginName, className, taskId), e);
         }
     }
 
