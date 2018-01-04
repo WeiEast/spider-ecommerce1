@@ -21,7 +21,8 @@ public enum WebsiteType {
     OPERATOR("operator", "2"),
     ECOMMERCE("ecommerce", "3"),
     BANK("bank", "4"),
-    INTERNAL("internal", "5");
+    INTERNAL("internal", "5"),
+    EDUCATION("education","6");
     private static Map<String, WebsiteType> WebsiteTypeMap = new HashMap<String, WebsiteType>();
 
     static {

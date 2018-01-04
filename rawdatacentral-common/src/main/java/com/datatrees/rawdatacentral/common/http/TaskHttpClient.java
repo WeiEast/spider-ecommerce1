@@ -333,6 +333,7 @@ public class TaskHttpClient {
             request.setProtocol(url.startsWith("https") ? "https" : "http");
 
             List<Cookie> cookies = TaskUtils.getCookies(taskId, host);
+//            logger.info("Cookies >>> {}", JSON.toJSONString(cookies));
             BasicCookieStore cookieStore = TaskUtils.buildBasicCookieStore(cookies);
             request.setRequestCookies(TaskUtils.getCookieMap(cookies));
             if (!extralCookie.isEmpty()) {
@@ -353,7 +354,8 @@ public class TaskHttpClient {
                 }
             }
 
-            logger.info("pre request taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(), request.getProxy(), url);
+//            logger.info("禁止重定向前 request={}",JSON.toJSONString(request));
+//            logger.info("pre request taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(), request.getProxy(), url);
             //禁止重定向
             RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
                     .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
@@ -370,8 +372,8 @@ public class TaskHttpClient {
             }
             httpclient = httpClientBuilder.build();
             httpResponse = httpclient.execute(client);
-
             statusCode = httpResponse.getStatusLine().getStatusCode();
+//            logger.info("status: {}", statusCode);
             response.setStatusCode(statusCode);
             cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
             TaskUtils.saveCookie(taskId, cookies);
