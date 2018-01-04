@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
@@ -103,7 +104,7 @@ public class LoginPluginForQQ implements Runnable {
                 org.openqa.selenium.Proxy p = new org.openqa.selenium.Proxy();
                 p.setSslProxy(proxyStr);
                 p.setHttpProxy(proxyStr);
-                //capabilities.setCapability(CapabilityType.PROXY, proxy);
+                capabilities.setCapability(CapabilityType.PROXY, proxy);
                 logger.info("will user proxy:{}", proxyStr);
             }
             WebDriver driver = new RemoteWebDriver(new URL(hubUrl), capabilities);
