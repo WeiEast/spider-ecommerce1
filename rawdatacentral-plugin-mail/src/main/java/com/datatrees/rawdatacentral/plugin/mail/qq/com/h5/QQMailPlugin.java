@@ -1,19 +1,15 @@
 package com.datatrees.rawdatacentral.plugin.mail.qq.com.h5;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.crawler.core.util.SeliniumUtils;
-import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
-import com.datatrees.rawdatacentral.domain.enums.TopicTag;
+import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
@@ -71,19 +67,19 @@ public class QQMailPlugin implements CommonPluginService {
                     logger.info("登陆后currentUrl={}", currentUrl);
                     if (StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
                         String cookieString = SeliniumUtils.getCookieString(driver);
-                        Map<String, String> loginData = new HashMap<>();
-                        loginData.put(AttributeKey.END_URL, currentUrl);
-                        loginData.put(AttributeKey.TASK_ID, taskId.toString());
-                        loginData.put(AttributeKey.WEBSITE_NAME, websiteName);
-                        loginData.put(AttributeKey.ACCOUNT_NO, username);
-                        loginData.put(AttributeKey.COOKIE, cookieString);
-                        logger.info("登陆成功,taskId={},websiteName={},cookieString={},endUrl={}", taskId, websiteName, cookieString, currentUrl);
-                        BeanFactoryUtils.getBean(MessageService.class)
-                                .sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), loginData);
+                        LoginMessage loginMessage = new LoginMessage();
+                        loginMessage.setTaskId(taskId);
+                        loginMessage.setWebsiteName(websiteName);
+                        loginMessage.setAccountNo(username);
+                        loginMessage.setEndUrl(currentUrl);
+                        loginMessage.setCookie(cookieString);
+                        logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
+                        BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
 
                         ProcessResultUtils.saveProcessResult(processResult.success());
                         return;
                     }
+                    SeliniumUtils.closeClient(driver);
                     logger.warn("login by selinium fail,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
                 } catch (Throwable e) {

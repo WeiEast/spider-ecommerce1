@@ -44,4 +44,15 @@ public class SeliniumUtils {
         return null;
     }
 
+    public static void closeClient(WebDriver driver) {
+        try {
+            if (null != driver) {
+                driver.close();
+                driver.quit();
+            }
+        } catch (Exception e) {
+            logger.error("web driver close error", e);
+        }
+    }
+
 }
