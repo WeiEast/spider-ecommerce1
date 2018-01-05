@@ -69,7 +69,7 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
     @Override
     public void release(Long taskId) {
         try {
-            redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
+            //redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
             proxyCallbackPool.submit(new Callable<Boolean>() {
                 @Override
                 public Boolean call() throws Exception {
