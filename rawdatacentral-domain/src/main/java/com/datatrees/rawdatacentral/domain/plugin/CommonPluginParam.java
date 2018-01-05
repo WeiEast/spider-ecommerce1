@@ -81,7 +81,11 @@ public class CommonPluginParam implements Serializable {
     /**
      * 使用代理,初始化有用
      */
-    private boolean proxyEnable = false;
+    private boolean proxyEnable             = false;
+    /**
+     * 自动发送登陆成功消息
+     */
+    private boolean autoSendLoginSuccessMsg = true;
 
     public CommonPluginParam() {
     }
@@ -238,5 +242,13 @@ public class CommonPluginParam implements Serializable {
 
     public void setDirectiveId(String directiveId) {
         this.directiveId = directiveId;
+    }
+
+    public boolean isAutoSendLoginSuccessMsg() {
+        return autoSendLoginSuccessMsg;
+    }
+
+    public void setAutoSendLoginSuccessMsg(boolean autoSendLoginSuccessMsg) {
+        this.autoSendLoginSuccessMsg = autoSendLoginSuccessMsg;
     }
 }

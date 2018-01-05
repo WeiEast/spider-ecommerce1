@@ -1,23 +1,23 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.BackRedisUtils;
-import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.enums.StepEnum;
+import com.datatrees.rawdatacentral.domain.enums.*;
+import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
@@ -72,6 +72,9 @@ public class CommonPluginApiImpl implements CommonPluginApi {
                 TaskUtils.initTaskShare(taskId, websiteName);
                 if (StringUtils.isNotBlank(username)) {
                     TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, username);
+                }
+                if (null != param.getMobile()) {
+                    TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
                 }
                 TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_CODE, website.getGroupCode());
                 TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, website.getGroupName());
@@ -140,10 +143,50 @@ public class CommonPluginApiImpl implements CommonPluginApi {
 
     @Override
     public HttpResult<Object> submit(CommonPluginParam param) {
+        long startTime = System.currentTimeMillis();
+        HttpResult<Object> result = null;
         try {
-            return classLoaderService.getCommonPluginService(param).submit(param);
+            Long taskId = param.getTaskId();
+            result = classLoaderService.getCommonPluginService(param).submit(param);
+            if (result.isAsync()) {
+                logger.info("login is async,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
+                return result;
+            }
+            if (null != result && result.getStatus()) {
+                if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                    if (StringUtils.isNotBlank(param.getUsername())) {
+                        TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getUsername().toString());
+                    }
+                    if (null != param.getMobile()) {
+                        TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
+                    }
+                    //登录成功
+                    if (StringUtils.isNoneBlank(param.getPassword())) {
+                        TaskUtils.addTaskShare(taskId, AttributeKey.PASSWORD, param.getPassword());
+                    }
+                    if (StringUtils.isNoneBlank(param.getIdCard())) {
+                        TaskUtils.addTaskShare(taskId, AttributeKey.ID_CARD, param.getIdCard());
+                    }
+                    if (StringUtils.isNoneBlank(param.getRealName())) {
+                        TaskUtils.addTaskShare(taskId, AttributeKey.REAL_NAME, param.getRealName());
+                    }
+                } else if (StringUtils.isNoneBlank(param.getSmsCode())) {
+                    TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(param.getFormType()), param.getSmsCode());
+                }
+            }
+            if (!result.getStatus() && StringUtils.equals(FormType.LOGIN, param.getFormType())) {
+                BeanFactoryUtils.getBean(MessageService.class).sendTaskLog(taskId, "登陆失败");
+            }
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.SUBMIT_RESULT.getRedisKey(param.getFormType()), JSON.toJSONString(result));
+            String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
+            monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
+            return result;
         } catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        } finally {
+            monitorService.sendMethodUseTime(param.getTaskId(), param.getWebsiteName(), param.getFormType(), this.getClass().getName(), "submit",
+                    Arrays.asList(param), result, startTime, System.currentTimeMillis());
         }
     }
 
@@ -169,4 +212,22 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     public ProcessResult<Object> queryProcessResult(long processId) {
         return ProcessResultUtils.queryProcessResult(processId);
     }
+
+    @Override
+    public void sendLoginSuccessMsg(LoginMessage loginMessage) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.END_URL, loginMessage.getEndUrl());
+        map.put(AttributeKey.TASK_ID, loginMessage.getTaskId());
+        map.put(AttributeKey.WEBSITE_NAME, loginMessage.getWebsiteName());
+        map.put(AttributeKey.ACCOUNT_NO, loginMessage.getAccountNo());
+        map.put(AttributeKey.COOKIE, loginMessage.getCookie());
+        if (null != loginMessage.getGroupCode()) {
+            map.put(AttributeKey.GROUP_CODE, loginMessage.getGroupCode());
+        }
+        if (StringUtils.isNotBlank(loginMessage.getGroupName())) {
+            map.put(AttributeKey.GROUP_NAME, loginMessage.getGroupName());
+        }
+        BeanFactoryUtils.getBean(MessageService.class).sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map);
+    }
+
 }
