@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
 import com.datatrees.rawdatacentral.service.BankService;
-import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
+import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
