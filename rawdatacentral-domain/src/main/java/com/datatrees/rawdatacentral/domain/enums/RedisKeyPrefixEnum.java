@@ -37,6 +37,7 @@ public enum RedisKeyPrefixEnum {
     PLUGIN_VERSION("plugin.version", 365, TimeUnit.DAYS, "插件版本"),
     GROUP_LAST_INFO("group.last.info", 365, TimeUnit.DAYS, "分组信息"),
     LOGIN_RESULT("login.result", 1, TimeUnit.DAYS, "登陆结果"),
+    LOGIN_INIT("login.init", 1, TimeUnit.DAYS, "登陆初始化"),
     PLUGIN_DATA("plugin.data", 365, TimeUnit.DAYS, "插件版本"),;
     /**
      * 备注

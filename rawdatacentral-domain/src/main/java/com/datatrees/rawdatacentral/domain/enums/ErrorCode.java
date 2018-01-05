@@ -5,6 +5,7 @@ import java.util.Set;
 
 public enum ErrorCode {
 
+    SYS_ERROR(-1, "处理失败"),
     TASK_CANCEL(-2, "爬虫取消任务(超5分钟任务没有关闭)"),
     TASK_CANCEL_BY_SYSTEM(-3, "网关取消任务(超时约5分钟)"),
     TASK_CANCEL_BY_USER(-4, "用户取消任务"),

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 
 public class CommonPluginParam implements Serializable {
 
@@ -73,6 +74,14 @@ public class CommonPluginParam implements Serializable {
      * 插件服务名称
      */
     private String   pluginClassName;
+    /**
+     * 指令id
+     */
+    private String   directiveId;
+    /**
+     * 使用代理,初始化有用
+     */
+    private boolean proxyEnable = false;
 
     public CommonPluginParam() {
     }
@@ -209,5 +218,25 @@ public class CommonPluginParam implements Serializable {
 
     public void setPluginClassName(String pluginClassName) {
         this.pluginClassName = pluginClassName;
+    }
+
+    public boolean isProxyEnable() {
+        return proxyEnable;
+    }
+
+    public void setProxyEnable(boolean proxyEnable) {
+        this.proxyEnable = proxyEnable;
+    }
+
+    public String getActionName() {
+        return FormType.getName(formType);
+    }
+
+    public String getDirectiveId() {
+        return directiveId;
+    }
+
+    public void setDirectiveId(String directiveId) {
+        this.directiveId = directiveId;
     }
 }

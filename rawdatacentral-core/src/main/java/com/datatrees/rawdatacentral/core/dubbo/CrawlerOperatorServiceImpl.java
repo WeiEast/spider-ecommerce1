@@ -70,13 +70,12 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
-        TaskUtils.addStep(param.getTaskId(), StepEnum.REC_INIT_MSG);
         threadPoolService.getOperatorInitExecutors().submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
-                        TaskUtils.addStep(taskId, StepEnum.INIT);
+                        TaskUtils.addStep(param.getTaskId(), StepEnum.REC_INIT_MSG);
                         //清理共享信息
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
@@ -86,7 +85,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
                         } catch (Throwable e) {
-                            logger.error("save to back redis error taskId={}", taskId, e);
+                            logger.error("delete task info from back redis error taskId={}", taskId, e);
                         }
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
@@ -114,7 +113,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()),
                                 System.currentTimeMillis() + "");
                         monitorService.initTask(taskId, websiteName, param.getMobile());
-                        TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
 
                         if (null != param.getExtral() && !param.getExtral().isEmpty()) {
                             for (Map.Entry<String, Object> entry : param.getExtral().entrySet()) {

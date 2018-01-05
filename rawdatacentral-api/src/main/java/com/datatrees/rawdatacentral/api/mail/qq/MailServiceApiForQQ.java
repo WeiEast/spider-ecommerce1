@@ -1,8 +1,6 @@
 package com.datatrees.rawdatacentral.api.mail.qq;
 
-import java.util.Map;
-
-import com.datatrees.rawdatacentral.domain.mail.MailParam;
+import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**
@@ -15,15 +13,12 @@ public interface MailServiceApiForQQ {
     /**
      * 提交登陆请求
      * 必填参数: taskId,username,password
-     * @return LOGIN_SUCCESS, LOGIN_PROCESSING, LOGIN_FAILED
+     * <p>
+     * async:true表示异步
+     * data:内包含json:{"processId":888888,"processStatus":"PROCESSING"}
+     * 拿到processId后轮训
+     * </p>
+     * @return
      */
-    HttpResult<Map<String, String>> login(MailParam param);
-
-    /**
-     * 轮训登陆状态
-     * 必填参数: taskId,directiveId
-     * @return LOGIN_SUCCESS, LOGIN_PROCESSING, LOGIN_FAILED
-     */
-    HttpResult<Map<String, String>> queryLoginStatus(MailParam param);
-
+    HttpResult<Object> login(CommonPluginParam param);
 }

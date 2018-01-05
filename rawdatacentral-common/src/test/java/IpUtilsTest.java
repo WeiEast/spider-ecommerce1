@@ -2,6 +2,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -26,21 +29,10 @@ public class IpUtilsTest {
 
     @Test
     public void testGetLocalHostName() throws IOException, URISyntaxException {
-        // 凭据提供器
-        CredentialsProvider credsProvider = new BasicCredentialsProvider();
-        //URI serverURI = new URI("http://192.168.5.206/Frame.htm");
-        URI serverURI = new URI("http://192.168.5.206/SmsRecvNew.htm");
-        credsProvider.setCredentials(new AuthScope(serverURI.getHost(), serverURI.getPort()), new UsernamePasswordCredentials("admin", "admin"));
-        RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(3000).setSocketTimeout(3000)
-                .setCookieSpec(CookieSpecs.DEFAULT).build();
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultRequestConfig(config).setDefaultCredentialsProvider(credsProvider).build();
-        while (true) {
-            HttpGet httpGet = new HttpGet(serverURI);
-            CloseableHttpResponse httpResponse = httpclient.execute(httpGet);
-            System.out.println(httpResponse.getStatusLine());
-            byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
-            String page = new String(data, "utf-8");
-            System.out.println(page);
-        }
+        String str = "{\n" + "\t\"extra\": {},\n" + "\t\"processId\": 1,\n" + "\t\"processStatus\": \"SUCCESS\",\n" +
+                "\t\"timestamp\": 1515137072053\n" + "}";
+        JSON json = JSON.parseObject(str);
+        ProcessResult<Object> result = JSON.parseObject(str, new TypeReference<ProcessResult<Object>>() {});
+        System.out.println(json.toJSONString());
     }
 }
