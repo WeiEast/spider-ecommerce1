@@ -1,6 +1,5 @@
 dependencies {
     compile project(':rawdatacentral-core')
-    compile "com.aliyun.oss:aliyun-sdk-oss:${aliyunSdkOssVersion}"
     compile "ant:ant:${antVersion}"
     compile "javax.mail:mail:${mailVersion}"
     testCompile "junit:junit:${junitVersion}"

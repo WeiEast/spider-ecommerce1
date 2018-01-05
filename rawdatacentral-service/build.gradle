@@ -15,7 +15,7 @@ dependencies {
 
     compile "org.springframework:spring-oxm:${springVersion}"
 
-    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
+    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true) {
         exclude(module: 'guava')
     }
 
