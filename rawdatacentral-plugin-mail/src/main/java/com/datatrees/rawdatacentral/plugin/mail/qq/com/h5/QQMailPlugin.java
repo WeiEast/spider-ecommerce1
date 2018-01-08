@@ -1,5 +1,8 @@
 package com.datatrees.rawdatacentral.plugin.mail.qq.com.h5;
 
+import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.crawler.core.util.SeliniumUtils;
@@ -13,9 +16,15 @@ import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
+import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.ImageOcrUtils;
+import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.ImageUtils;
+import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.ColorPoint;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +74,14 @@ public class QQMailPlugin implements CommonPluginService {
                     TimeUnit.SECONDS.sleep(3);
                     currentUrl = driver.getCurrentUrl();
                     logger.info("登陆后currentUrl={}", currentUrl);
+
+                    if (!StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
+                        WebElement element = driver.findElement(By.xpath("//div[contains(.,'安全验证')]"));
+                        logger.info("安全验证出现了,{}", driver.getCurrentUrl());
+                        driver.switchTo().frame(0);
+                        moveHk(driver);
+                    }
+
                     if (StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
                         String cookieString = SeliniumUtils.getCookieString(driver);
                         LoginMessage loginMessage = new LoginMessage();
@@ -79,6 +96,7 @@ public class QQMailPlugin implements CommonPluginService {
                         ProcessResultUtils.saveProcessResult(processResult.success());
                         return;
                     }
+
                     SeliniumUtils.closeClient(driver);
                     logger.warn("login by selinium fail,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
@@ -94,5 +112,40 @@ public class QQMailPlugin implements CommonPluginService {
     @Override
     public HttpResult<Object> defineProcess(CommonPluginParam param) {
         return new HttpResult().failure(ErrorCode.NOT_SUPORT_METHOD);
+    }
+
+    private void moveHk(WebDriver driver) throws Exception {
+        WebElement bgImg = driver.findElement(By.xpath("//img[@id='slideBkg']"));
+        if (null != bgImg) {
+            String src = bgImg.getAttribute("src");
+            logger.info("src={}", src);
+            String baseUrl = src.substring(0, src.length() - 1);
+            logger.info("baseUrl={}", baseUrl);
+            byte[] img0 = ImageUtils.downImage(baseUrl + "0");
+            byte[] img1 = ImageUtils.downImage(baseUrl + "1");
+            byte[] img2 = ImageUtils.downImage(baseUrl + "2");
+            FileUtils.writeByteArrayToFile(new File("/data/0.jpeg"), img0);
+            FileUtils.writeByteArrayToFile(new File("/data/1.jpeg"), img1);
+            FileUtils.writeByteArrayToFile(new File("/data/2.png"), img2);
+            ColorPoint point = ImageOcrUtils.ocr(img0, img1, img2);
+            int realWith = ImageIO.read(new ByteArrayInputStream(img0)).getWidth();
+            int move = point.getAbsoluteX() * 280 / realWith - 12 - 55 / 2;
+            logger.info("move={},realWith={},bgWith={},x={}", move, realWith, bgImg.getSize().getWidth(), point.getAbsoluteX());
+
+            WebElement el = driver.findElement(By.id("tcaptcha_drag_thumb"));
+            Actions actions = new Actions(driver);
+            new Actions(driver).clickAndHold(el).perform();
+            actions.moveByOffset(move, 0).click().perform();
+
+            TimeUnit.SECONDS.sleep(5);
+            String pageSource = driver.getPageSource();
+            if (pageSource.contains("拖动下方滑块完成拼图")) {
+                logger.info("拖动下方滑块完成拼图");
+                driver.findElement(By.id("e_reload")).click();
+                TimeUnit.SECONDS.sleep(10);
+                moveHk(driver);
+            }
+
+        }
     }
 }

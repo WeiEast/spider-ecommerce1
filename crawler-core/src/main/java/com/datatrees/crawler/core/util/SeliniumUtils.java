@@ -25,7 +25,7 @@ public class SeliniumUtils {
             org.openqa.selenium.Proxy p = new org.openqa.selenium.Proxy();
             p.setSslProxy(proxyStr);
             p.setHttpProxy(proxyStr);
-            capabilities.setCapability(CapabilityType.PROXY, proxy);
+            capabilities.setCapability(CapabilityType.PROXY, p);
             logger.info("will user proxy:{}", proxyStr);
         }
         String hubUrl = PropertiesConfiguration.getInstance().get("hub.url");

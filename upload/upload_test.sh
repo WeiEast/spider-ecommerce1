@@ -17,3 +17,10 @@ do
    file_name=${parent_name##*/}'.'${file##*/}
    curl  -F "file=@$file;fileName=$file_name" $url
 done
+
+list=`find rawdatacentral-plugin-mail/build/libs/rawdatacentral-plugin-mail.jar -name '*.jar' | grep -v 'sources'`
+for file in $list
+do
+    curl  -F "file=@$file" $url
+    curl  -F "file=@$file;fileName=rawdatacentral-plugin-mail-$HOSTNAME.jar" $url
+done
