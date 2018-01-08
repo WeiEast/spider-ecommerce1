@@ -5,8 +5,10 @@ import java.util.Set;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -55,4 +57,12 @@ public class SeliniumUtils {
         }
     }
 
+    public static WebElement findElement(WebDriver driver, By by) {
+        try {
+            return driver.findElement(by);
+        } catch (Exception e) {
+            logger.error("selenium find element error,by:{}", by.toString(), e);
+            return null;
+        }
+    }
 }

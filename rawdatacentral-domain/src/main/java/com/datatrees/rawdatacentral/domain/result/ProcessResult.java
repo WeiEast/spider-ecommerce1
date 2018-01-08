@@ -9,9 +9,21 @@ import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
 
 public class ProcessResult<T> implements Serializable {
 
+    /**
+     * 命令ID
+     */
     private Long    processId;
+    /**
+     * 执行结果:PROCESSING,SUCCESS,FAIL
+     */
     private String  processStatus;
+    /**
+     * 错误代码
+     */
     private Integer errorCode;
+    /**
+     * 错误信息
+     */
     private String  errorMsg;
     /**
      * 返回数据

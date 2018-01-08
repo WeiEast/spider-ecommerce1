@@ -76,9 +76,9 @@ public class QQMailPlugin implements CommonPluginService {
                     logger.info("登陆后currentUrl={}", currentUrl);
 
                     if (!StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
-                        WebElement element = driver.findElement(By.xpath("//div[contains(.,'安全验证')]"));
-                        logger.info("安全验证出现了,{}", driver.getCurrentUrl());
+                        logger.info("安全验证出现了,{}",currentUrl);
                         driver.switchTo().frame(0);
+                        WebElement element = driver.findElement(By.xpath("//div[contains(.,'安全验证')]"));
                         moveHk(driver);
                     }
 
