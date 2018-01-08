@@ -26,7 +26,6 @@ public class MailServiceApiForQQImpl implements MailServiceApiForQQ {
     public HttpResult<Object> login(CommonPluginParam param) {
         param.setWebsiteName(GroupEnum.MAIL_QQ_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
-        param.setProxyEnable(true);
         param.setAutoSendLoginSuccessMsg(false);
 
         String initKey = RedisKeyPrefixEnum.LOGIN_INIT.getRedisKey(param.getTaskId());

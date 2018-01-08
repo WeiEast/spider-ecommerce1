@@ -2,13 +2,13 @@ package com.datatrees.rawdatacentral.plugin.mail.qq.com.h5;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.crawler.core.util.SeliniumUtils;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
+import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -19,7 +19,6 @@ import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.ImageOcrUtils;
 import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.ImageUtils;
 import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.ColorPoint;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -34,6 +33,7 @@ public class QQMailPlugin implements CommonPluginService {
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
+        ProxyUtils.setProxyEnable(param.getTaskId(), false);
         return new HttpResult().success();
     }
 
@@ -76,10 +76,17 @@ public class QQMailPlugin implements CommonPluginService {
                     logger.info("登陆后currentUrl={}", currentUrl);
 
                     if (!StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
-                        logger.info("安全验证出现了,{}",currentUrl);
-                        driver.switchTo().frame(0);
-                        WebElement element = driver.findElement(By.xpath("//div[contains(.,'安全验证')]"));
-                        moveHk(driver);
+                        WebElement new_vcode = SeliniumUtils.findElement(driver, By.id("new_vcode"));
+                        String display = "none";
+                        if (null != new_vcode) {
+                            display = new_vcode.getCssValue("display");
+                            logger.info("display : {}", display);
+                        }
+                        if (StringUtils.equals("block", display)) {
+                            logger.info("安全验证出现了,{}", driver.getCurrentUrl());
+                            driver.switchTo().frame(1);
+                            moveHk(driver);
+                        }
                     }
 
                     if (StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
@@ -115,7 +122,10 @@ public class QQMailPlugin implements CommonPluginService {
     }
 
     private void moveHk(WebDriver driver) throws Exception {
-        WebElement bgImg = driver.findElement(By.xpath("//img[@id='slideBkg']"));
+        WebElement bgImg = driver.findElement(By.id("bkBlock"));
+        WebElement sideBar = driver.findElement(By.id("slideBlock"));
+        int bg_img_with = bgImg.getSize().getWidth();
+        int side_bar_with = sideBar.getSize().getWidth();
         if (null != bgImg) {
             String src = bgImg.getAttribute("src");
             logger.info("src={}", src);
@@ -124,12 +134,9 @@ public class QQMailPlugin implements CommonPluginService {
             byte[] img0 = ImageUtils.downImage(baseUrl + "0");
             byte[] img1 = ImageUtils.downImage(baseUrl + "1");
             byte[] img2 = ImageUtils.downImage(baseUrl + "2");
-            FileUtils.writeByteArrayToFile(new File("/data/0.jpeg"), img0);
-            FileUtils.writeByteArrayToFile(new File("/data/1.jpeg"), img1);
-            FileUtils.writeByteArrayToFile(new File("/data/2.png"), img2);
             ColorPoint point = ImageOcrUtils.ocr(img0, img1, img2);
             int realWith = ImageIO.read(new ByteArrayInputStream(img0)).getWidth();
-            int move = point.getAbsoluteX() * 280 / realWith - 12 - 55 / 2;
+            int move = point.getAbsoluteX() * bg_img_with / realWith - 24 - side_bar_with / 2;
             logger.info("move={},realWith={},bgWith={},x={}", move, realWith, bgImg.getSize().getWidth(), point.getAbsoluteX());
 
             WebElement el = driver.findElement(By.id("tcaptcha_drag_thumb"));
