@@ -1,13 +1,13 @@
 package com.datatrees.rawdatacentral.plugin.operator.guang_dong_10086_web;
 
+import javax.script.Invocable;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -31,17 +31,19 @@ import org.slf4j.LoggerFactory;
  */
 public class GuangDong10086ForWeb implements OperatorPluginService {
 
-    private static final Logger       logger       = LoggerFactory.getLogger(GuangDong10086ForWeb.class);
-    private static       RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GuangDong10086ForWeb.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
         try {
             //登陆页没有获取任何cookie,不用登陆
+            String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/weblogin.jsps?backURL=http://gd.10086.cn/commodity/index.shtml";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化失败,param={}", param, e);
+            logger.error("登录-->初始化失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
@@ -89,7 +91,8 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/getSmsCode.jsps";
             String templateData = "mobile={}";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_001").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_001").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             JSONObject json = response.getPageContentForJSON();
             String returnCode = json.getString("returnCode");
             if (StringUtils.equals("1000", returnCode)) {
@@ -114,7 +117,8 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/webForm.jsps";
             String templateData = "mobile={}&smsPwd={}&loginType=1&cookieMobile=on&backURL=http://gd.10086.cn/commodity/index.shtml";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_002").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_002").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"backUrl":"http:\/\/gd.10086.cn\/commodity\/index.shtml","failMsg":"成功[0]","returnCode":"1000"}
@@ -143,7 +147,6 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                  * &token=5011430823161811R0ZUmFqgP88ZmWBI&appid=501143&backURL=http%3A%2F%2Fgd.10086.cn%2Fmy%2FmyService
                  * %2FmyBasicInfo.shtml
                  */
-                templateUrl = "https://gd.ac.10086.cn/ucs/ucs/secondAuth.jsps";
                 String pageContent = response.getPageContent();
 
                 String saType = PatternUtils.group(pageContent, "saType\":\\s*\"([^\"]*)\"", 1);
@@ -154,10 +157,21 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                 String appid = PatternUtils.group(pageContent, "appid\":\\s*\"([^\"]*)\"", 1);
                 String backURL = PatternUtils.group(pageContent, "backURL\":\\s*\"([^\"]*)\"", 1);
 
-                templateData = "mobile={}&serPwd={}&saType={}&channel={}&st={}&sign={}&token={}&appid={}&backURL=http://gd.10086.cn/my/myService/myBasicInfo.shtml";
-                data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), saType, channel, st, sign, token, appid, backURL);
-                response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_004").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
+                templateUrl = "https://gd.ac.10086.cn/ucs/ucs/decryptToken/generate.jsps";
+                response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+                json = response.getPageContentForJSON();
 
+                String decryptToken = json.getString("decryptToken");
+                String publicKey = json.getString("publicKey");
+                Invocable invocable = ScriptEngineUtil.createInvocable("guang_dong_10086_web", "des.js", "GBK");
+                String encryptPassword = invocable.invokeFunction("encryptData", param.getPassword(), decryptToken, publicKey).toString();
+
+                templateUrl = "https://gd.ac.10086.cn/ucs/ucs/secondAuth.jsps";
+                templateData
+                        = "mobile={}&encryptItems={}&saType={}&channel={}&st={}&sign={}&token={}&appid={}&backURL=http://gd.10086.cn/my/myService/myBasicInfo.shtml";
+                data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, saType, channel, st, sign, token, appid, backURL);
+                response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_004").setFullUrl(templateUrl)
+                        .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
                 json = response.getPageContentForJSON();
                 returnCode = json.getString("returnCode");
                 if (StringUtils.equals("1000", returnCode)) {
