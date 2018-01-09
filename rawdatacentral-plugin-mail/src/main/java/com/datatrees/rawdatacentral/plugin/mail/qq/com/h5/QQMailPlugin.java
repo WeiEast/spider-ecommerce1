@@ -194,8 +194,9 @@ public class QQMailPlugin implements CommonPluginService {
                 try {
                     pageSource = driver.getPageSource();
                 } catch (Exception e) {
-                    logger.error("get page source error", e);
-                    return;
+                    logger.error("get page source error,will switch to default content");
+                    driver.switchTo().defaultContent();
+                    pageSource = driver.getPageSource();
                 }
                 if (pageSource.contains("拖动下方滑块完成拼图")) {
                     logger.info("拖动下方滑块完成拼图");
