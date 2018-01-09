@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImageOcrUtils {
-    /
+    
     private static final Logger logger = LoggerFactory.getLogger(ImageOcrUtils.class);
 
     public static ColorPoint ocr2(byte[] fullImageDate, byte[] bagImageDate, byte[] searchImageDate) {
