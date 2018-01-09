@@ -50,6 +50,12 @@ public class ShanXiTY10086ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.TASK_INIT_ERROR);
             }
 
+            if (StringUtils.contains(pageContent,"location.replace")) {
+                templateUrl = PatternUtils.group(pageContent,"location.replace\\('([^']+)'\\)",1);
+                response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_ty_10086_web_001").setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+            }
+
             String loginType = StringUtils.EMPTY;
             String backUrl = "https://sx.ac.10086.cn/4login/backPage.jsp";
             String errorurl = "https://sx.ac.10086.cn/4login/errorPage.jsp";
@@ -177,12 +183,16 @@ public class ShanXiTY10086ForWeb implements OperatorPluginService {
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encyptPassword = invocable.invokeFunction("enString", param.getPassword().toString()).toString();
 
+            if (StringUtils.isNotEmpty(relayStateId)) {
+                relayStateId = URLEncoder.encode(relayStateId, "UTF-8");
+            }
+
             String templateUrl = "https://sx.ac.10086.cn/Login";
             String templateData = "type={}&backurl={}&errorurl={}&spid={}&RelayState={}&webPassword=&mobileNum={}&displayPic=&isValidateCode" +
                     "=&isCheckImage=false&mobileNum_temp={}&servicePassword={}&smsValidCode={}&validCode=%B5%E3%BB%F7%BB%F1%C8%A1";
             String data = TemplateUtils
                     .format(templateData, loginType, URLEncoder.encode(backUrl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid,
-                            URLEncoder.encode(relayStateId, "UTF-8"), param.getMobile(), param.getMobile(), encyptPassword, param.getSmsCode());
+                            relayStateId, param.getMobile(), param.getMobile(), encyptPassword, param.getSmsCode());
             response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_ty_10086_web_003").setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
             String pageContent = response.getPageContent();
