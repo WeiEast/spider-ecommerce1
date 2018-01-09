@@ -4,6 +4,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.crawler.core.util.SeliniumUtils;
@@ -13,6 +16,7 @@ import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
@@ -95,7 +99,7 @@ public class QQMailPlugin implements CommonPluginService {
                         if (StringUtils.equals("block", display)) {
                             logger.info("安全验证出现了,{}", driver.getCurrentUrl());
                             driver.switchTo().frame(1);
-                            moveHk(driver);
+                            moveHk(driver, processResult.getProcessId());
                         }
 
                         driver.switchTo().defaultContent();
@@ -154,7 +158,7 @@ public class QQMailPlugin implements CommonPluginService {
 
     }
 
-    private void moveHk(WebDriver driver) throws Exception {
+    private void moveHk(WebDriver driver, Long processId) throws Exception {
         try {
             WebElement bgImg = driver.findElement(By.id("bkBlock"));
             WebElement sideBar = driver.findElement(By.id("slideBlock"));
@@ -187,7 +191,31 @@ public class QQMailPlugin implements CommonPluginService {
                 WebElement el = driver.findElement(By.id("tcaptcha_drag_thumb"));
                 Actions actions = new Actions(driver);
                 new Actions(driver).clickAndHold(el).perform();
-                actions.moveByOffset(move, 0).click().perform();
+                List<Integer> list = new ArrayList<>();
+                int left = move;
+                if (RedisUtils.incr("move.side.bar.count." + processId) <= 2) {
+                    left += 30;
+                }
+                actions.moveByOffset(left, 0).click().perform();
+                //
+                //int x = 0;
+                //Random random = new Random();
+                //while (left > 0 && x++ < 5) {
+                //    int i = Math.abs(random.nextInt(left));
+                //    if (i > 5 && i < left) {
+                //        list.add(i);
+                //        left -= i;
+                //    }
+                //}
+                //if (left > 0) {
+                //    list.add(left);
+                //}
+                //for (int i : list) {
+                //    actions.moveByOffset(i, 0);
+                //}
+                //list.add(5);
+                //actions.click()..perform();
+                //actions.moveByOffset(move, 0).click().perform();
 
                 TimeUnit.SECONDS.sleep(5);
                 String pageSource = null;
@@ -202,7 +230,7 @@ public class QQMailPlugin implements CommonPluginService {
                     logger.info("拖动下方滑块完成拼图");
                     driver.findElement(By.xpath("//div[@class='tcaptcha-action-icon']")).click();
                     TimeUnit.SECONDS.sleep(10);
-                    moveHk(driver);
+                    moveHk(driver, processId);
                 }
 
             }
