@@ -21,14 +21,16 @@ public class SeliniumUtils {
 
     public static WebDriver createClient(Long taskId, String websiteName) throws Exception {
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-        com.treefinance.proxy.domain.Proxy proxy = ProxyUtils.getProxy(taskId, websiteName);
-        if (null != proxy) {
-            String proxyStr = proxy.getIp() + ":" + proxy.getPort();
-            org.openqa.selenium.Proxy p = new org.openqa.selenium.Proxy();
-            p.setSslProxy(proxyStr);
-            p.setHttpProxy(proxyStr);
-            capabilities.setCapability(CapabilityType.PROXY, p);
-            logger.info("will user proxy:{}", proxyStr);
+        if (ProxyUtils.getProxyEnable(taskId)) {
+            com.treefinance.proxy.domain.Proxy proxy = ProxyUtils.getProxy(taskId, websiteName);
+            if (null != proxy) {
+                String proxyStr = proxy.getIp() + ":" + proxy.getPort();
+                org.openqa.selenium.Proxy p = new org.openqa.selenium.Proxy();
+                p.setSslProxy(proxyStr);
+                p.setHttpProxy(proxyStr);
+                capabilities.setCapability(CapabilityType.PROXY, p);
+                logger.info("will user proxy:{}", proxyStr);
+            }
         }
         String hubUrl = PropertiesConfiguration.getInstance().get("hub.url");
         return new RemoteWebDriver(new URL(hubUrl), capabilities);

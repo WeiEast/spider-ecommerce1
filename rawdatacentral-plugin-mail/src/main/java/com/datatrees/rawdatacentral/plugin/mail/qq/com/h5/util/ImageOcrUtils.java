@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImageOcrUtils {
-
+    /
     private static final Logger logger = LoggerFactory.getLogger(ImageOcrUtils.class);
 
     public static ColorPoint ocr2(byte[] fullImageDate, byte[] bagImageDate, byte[] searchImageDate) {
@@ -31,9 +31,7 @@ public class ImageOcrUtils {
             int with = fullRgbs.length;
             int height = fullRgbs[1].length;
             int count1 = 0;
-            int count2 = 0;
             int precision = 100;
-            int root_precision = 1;
             ColorPoint best = null;
             int min = Integer.MAX_VALUE;
             for (int x = 20; x <= with-20; x++) {
@@ -89,7 +87,7 @@ public class ImageOcrUtils {
                         }
                         count2++;
                         int value = searchColorPoint.gap(root);
-                        logger.info("x={},y={},color={}", x, y, root.getColor().toString());
+                        //logger.info("x={},y={},color={}", x, y, root.getColor().toString());
                         if (value < min) {
                             best = root;
                             min = value;
