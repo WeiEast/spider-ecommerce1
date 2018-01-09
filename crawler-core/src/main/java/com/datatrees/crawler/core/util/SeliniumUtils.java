@@ -55,7 +55,7 @@ public class SeliniumUtils {
                 driver.quit();
             }
         } catch (Exception e) {
-            logger.error("web driver close error", e);
+            logger.error("web driver close error,{}", e.getMessage());
         }
     }
 
@@ -63,7 +63,7 @@ public class SeliniumUtils {
         try {
             return driver.findElement(by);
         } catch (Exception e) {
-            logger.error("selenium find element error,by:{}", by.toString(), e);
+            logger.error("selenium find element error,by:{},{}", by.toString(), e.getMessage());
             return null;
         }
     }
