@@ -1,14 +1,18 @@
 package com.datatrees.rawdatacentral.plugin.operator.guang_dong_10086_web;
 
 import javax.script.Invocable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -16,6 +20,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -80,8 +85,12 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        logger.warn("defineProcess fail,params={}", param);
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case "CALL_DETAILS":
+                return processForDetails(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
@@ -197,6 +206,42 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
+        }
+    }
+
+    private HttpResult<Object> processForDetails(OperatorParam param) {
+        HttpResult<Object> result = new HttpResult<>();
+
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        String token = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.TOKEN);
+        String[] times = paramMap.get("page_content").split(":");
+
+        Response response = null;
+        try {
+            /**
+             * 获取通话记录
+             */
+            String templateUrl = "http://gd.10086.cn/commodity/servicio/nostandardserv/realtimeListSearch/downLoad.jsps";
+            String templateData = "downloadBeginTime={}000000&downloadEneTime={}235959&downloadType=1&uniqueTagDown=";
+            String data = TemplateUtils.format(templateData, times[1], times[2]);
+            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            String pageContent = new String(new String(response.getResponse(), "GB2312").getBytes(), "UTF-8");
+            if (!StringUtils.contains(pageContent,"清单数据")) {
+                pageContent = new String(new String(response.getResponse(), "UTF-8").getBytes(), "UTF-8");
+            }
+            if (!StringUtils.contains(pageContent,"清单数据")) {
+                pageContent = new String(new String(response.getResponse(), "GBK").getBytes(), "UTF-8");
+            }
+            if (!StringUtils.contains(pageContent,"清单数据")) {
+                logger.error("详单依然乱码,taskid={},response={}", param.getTaskId(), response);
+            } else {
+                logger.info("详单正常,taskid={},response={}", param.getTaskId(), response);
+            }
+            return result.success(pageContent);
+        } catch (Exception e) {
+            logger.error("通话记录页访问失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
         }
     }
 }
