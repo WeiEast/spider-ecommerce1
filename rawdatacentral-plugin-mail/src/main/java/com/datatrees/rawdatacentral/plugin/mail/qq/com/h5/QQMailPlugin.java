@@ -40,7 +40,7 @@ public class QQMailPlugin implements CommonPluginService {
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
-        ProxyUtils.setProxyEnable(param.getTaskId(), true);
+        ProxyUtils.setProxyEnable(param.getTaskId(), false);
         return new HttpResult().success();
     }
 
@@ -193,31 +193,12 @@ public class QQMailPlugin implements CommonPluginService {
                 new Actions(driver).clickAndHold(el).perform();
                 List<Integer> list = new ArrayList<>();
                 int left = move;
-                if (RedisUtils.incr("move.side.bar.count." + processId) <= 2) {
-                    left += 30;
-                }
+                //if (RedisUtils.incr("move.side.bar.count." + processId) <= 2) {
+                //    left += 30;
+                //}
                 actions.moveByOffset(left, 0).click().perform();
-                //
-                //int x = 0;
-                //Random random = new Random();
-                //while (left > 0 && x++ < 5) {
-                //    int i = Math.abs(random.nextInt(left));
-                //    if (i > 5 && i < left) {
-                //        list.add(i);
-                //        left -= i;
-                //    }
-                //}
-                //if (left > 0) {
-                //    list.add(left);
-                //}
-                //for (int i : list) {
-                //    actions.moveByOffset(i, 0);
-                //}
-                //list.add(5);
-                //actions.click()..perform();
-                //actions.moveByOffset(move, 0).click().perform();
 
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(2);
                 String pageSource = null;
                 try {
                     pageSource = driver.getPageSource();
