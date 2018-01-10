@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain;
+package com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain;
 
 public class RelativeColorPoint extends ColorPoint {
 

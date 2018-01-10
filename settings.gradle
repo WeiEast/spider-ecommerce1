@@ -13,6 +13,6 @@ include ':rawdatacentral-service'
 include ':rawdatacentral-web'
 include ':rawdatacentral-plugin'
 include ':rawdatacentral-plugin-operator'
-include ':rawdatacentral-plugin-mail'
+include ':rawdatacentral-plugin-common'
 include 'crawler-core'
 

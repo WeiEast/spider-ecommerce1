@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util;
+package com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -494,10 +494,10 @@ public class ImageUtils {
      * @param image
      * @return
      */
-    public static com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.Color [][] getRgb(BufferedImage image) {
+    public static com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.Color[][] getRgb(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
-        com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.Color[][] result = new com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.Color[width][height];
+        com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.Color[][] result = new com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.Color[width][height];
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
                 //使用getRGB(w, h)获取该点的颜色值是ARGB，而在实际应用中使用的是RGB，所以需要将ARGB转化成RGB，即bufImg.getRGB(w, h) & 0xFFFFFF。
@@ -506,7 +506,8 @@ public class ImageUtils {
                 int red = (color & 0x00ff0000) >> 16;
                 int green = (color & 0x0000ff00) >> 8;
                 int blue = (color & 0x000000ff);
-                com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.Color c = new com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.Color(red, green, blue, alpha);
+                com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.Color
+                        c = new com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.Color(red, green, blue, alpha);
                 result[w][h] = c;
             }
         }

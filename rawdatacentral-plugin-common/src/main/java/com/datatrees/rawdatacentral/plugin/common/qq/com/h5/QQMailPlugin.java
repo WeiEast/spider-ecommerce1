@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.mail.qq.com.h5;
+package com.datatrees.rawdatacentral.plugin.common.qq.com.h5;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -6,25 +6,23 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.crawler.core.util.SeliniumUtils;
+import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
-import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.ImageOcrUtils;
-import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.ImageUtils;
-import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.ColorPoint;
+import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.ImageUtils;
+import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.ImageOcrUtils;
+import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.ColorPoint;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -72,7 +70,7 @@ public class QQMailPlugin implements CommonPluginService {
                 String currentUrl = "http://w.mail.qq.com";
                 WebDriver driver = null;
                 try {
-                    driver = SeliniumUtils.createClient(taskId, websiteName);
+                    driver = SeleniumUtils.createClient(taskId, websiteName);
                     driver.get(currentUrl);
                     TimeUnit.SECONDS.sleep(5);
                     driver.findElement(By.xpath("//input[@id='u']")).sendKeys(username);
@@ -90,7 +88,7 @@ public class QQMailPlugin implements CommonPluginService {
 
                     if (!StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
 
-                        WebElement new_vcode = SeliniumUtils.findElement(driver, By.id("new_vcode"));
+                        WebElement new_vcode = SeleniumUtils.findElement(driver, By.id("new_vcode"));
                         String display = "none";
                         if (null != new_vcode) {
                             display = new_vcode.getCssValue("display");
@@ -103,7 +101,7 @@ public class QQMailPlugin implements CommonPluginService {
                         }
 
                         driver.switchTo().defaultContent();
-                        WebElement element = SeliniumUtils.findElement(driver, By.xpath("//div[@class='qui-dialog-content']"));
+                        WebElement element = SeleniumUtils.findElement(driver, By.xpath("//div[@class='qui-dialog-content']"));
                         if (null != element) {
                             ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_PASSWORD_FAIL));
                             return;
@@ -111,7 +109,7 @@ public class QQMailPlugin implements CommonPluginService {
                     }
 
                     if (StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
-                        String cookieString = SeliniumUtils.getCookieString(driver);
+                        String cookieString = SeleniumUtils.getCookieString(driver);
                         LoginMessage loginMessage = new LoginMessage();
                         loginMessage.setTaskId(taskId);
                         loginMessage.setWebsiteName(websiteName);
@@ -131,7 +129,7 @@ public class QQMailPlugin implements CommonPluginService {
                     logger.warn("login by selinium error,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl, e);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
                 } finally {
-                    SeliniumUtils.closeClient(driver);
+                    SeleniumUtils.closeClient(driver);
                 }
             }
         });
@@ -146,7 +144,7 @@ public class QQMailPlugin implements CommonPluginService {
     public HttpResult<Object> isWrongPassword(WebDriver driver) {
         HttpResult<Object> result = new HttpResult<>();
         try {
-            WebElement element = SeliniumUtils.findElement(driver, By.xpath("//div[@class='qui-dialog-content']"));
+            WebElement element = SeleniumUtils.findElement(driver, By.xpath("//div[@class='qui-dialog-content']"));
             if (null != element) {
                 return result.failure(element.getText());
             }

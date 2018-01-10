@@ -1,4 +1,4 @@
-package com.datatrees.crawler.core.util;
+package com.datatrees.rawdatacentral.plugin.util.selenium;
 
 import java.net.URL;
 import java.util.Set;
@@ -15,9 +15,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SeliniumUtils {
+public class SeleniumUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(SeliniumUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SeleniumUtils.class);
 
     public static WebDriver createClient(Long taskId, String websiteName) throws Exception {
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util;
+package com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.Color;
-import com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain.ColorPoint;
+import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.Color;
+import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.ColorPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

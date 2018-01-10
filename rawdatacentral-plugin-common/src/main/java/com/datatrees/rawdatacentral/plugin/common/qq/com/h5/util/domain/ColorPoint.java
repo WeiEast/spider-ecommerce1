@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.mail.qq.com.h5.util.domain;
+package com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;

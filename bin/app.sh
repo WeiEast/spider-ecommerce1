@@ -4,7 +4,7 @@
 function restartApp(){
 	if test -n "$PID" ;then
 		echo -e "\033[31mfind app is runing PID=$PID,APP_NAME=$APP_NAME ,kill $PID\033[0m"
-		kill $PID
+		kill -9 $PID
 		NEWPID=`jps -l | grep $APP_NAME | awk '{print $1}'`
 		while test "$PID" == "$NEWPID" 
 		do
@@ -44,7 +44,7 @@ then
 fi
 echo "APP_HOME=$APP_HOME"
 echo "APP_NAME=$APP_NAME"
-PID=`jps -l | grep $APP_NAME | awk '{print $1}'`
+PID=`jps -l | grep rawdatacentral | awk '{print $1}'`
 
 . jvm.conf
 . service.conf
