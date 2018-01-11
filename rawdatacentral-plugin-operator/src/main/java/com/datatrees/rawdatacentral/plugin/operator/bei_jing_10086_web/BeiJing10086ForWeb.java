@@ -286,13 +286,15 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             String data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
             response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
 
-            templateUrl = "https://www1.10086.cn/web-Center/interfaceService/realFeeQry.do";
-            templateData = "requestJson=%7B%22serviceName%22%3A%22if007_query_fee%22%2C%22header%22%3A%7B%22version%22%3A%221.0%22" +
-                    "%2C%22timestamp%22%3A{}%2C%22digest%22%3A%22{}%22%2C%22conversationId%22%3A%22%22%7D%2C%22data%22" +
-                    "%3A%7B%22channelId%22%3A%220001%22%7D%7D";
-            timestamp = System.currentTimeMillis() + "";
-            md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
-            data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
+            //templateUrl = "https://www1.10086.cn/web-Center/interfaceService/realFeeQry.do";
+            //templateData = "requestJson=%7B%22serviceName%22%3A%22if007_query_fee%22%2C%22header%22%3A%7B%22version%22%3A%221.0%22" +
+            //        "%2C%22timestamp%22%3A{}%2C%22digest%22%3A%22{}%22%2C%22conversationId%22%3A%22%22%7D%2C%22data%22" +
+            //        "%3A%7B%22channelId%22%3A%220001%22%7D%7D";
+            //timestamp = System.currentTimeMillis() + "";
+            //md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
+            //data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
+            templateUrl = "http://service.bj.10086.cn/poffice/my/showYECX.action";
+            data = "PACKAGECODE=YECX&PRODUCTSHOWCODE=YECX&REALTIME=Y";
             response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "balancePage", response.getPageContent());
 
