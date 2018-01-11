@@ -38,6 +38,9 @@ public class MonitorServiceImpl implements MonitorService {
     @Override
     public void initTask(Long taskId, String websiteName, Object userName) {
         Map<String, String> map = crawlerTaskService.getTaskBaseInfo(taskId, websiteName);
+        if (null != userName) {
+            map.put(AttributeKey.USERNAME, userName.toString());
+        }
         sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), TopicTag.TASK_INIT.getTag(), taskId, map);
     }
 

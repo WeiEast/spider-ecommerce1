@@ -7,3 +7,5 @@ dependencies {
         exclude(module: 'commons-logging')
     }
 }
+apply from: rootProject.file('printLib.gradle')
+

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
+import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 
 /**
  * 运营商分组和权重
@@ -54,7 +55,7 @@ public interface WebsiteGroupService {
      * weith>0
      * @return
      */
-    void updateCache();
+    List<OperatorCatalogue> updateCache();
 
     /**
      * 更新配置状态
