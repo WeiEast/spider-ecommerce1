@@ -6,12 +6,12 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 /**
  * Created by guimeichao on 18/1/11.
  */
-public interface EconomicApiForTaoBaoQR {
+public interface EconomicApiForTaoBao {
 
     HttpResult<Object> init(CommonPluginParam param);
 
     HttpResult<Object> refeshPicCode(CommonPluginParam param);
 
-    HttpResult<Object> login(CommonPluginParam param);
+    HttpResult<Object> queryResult(CommonPluginParam param);
 
 }
