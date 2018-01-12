@@ -6,16 +6,22 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
+import com.datatrees.crawler.plugin.qrcode.QRCodeVerification;
+import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
+import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util.QRCodeStatus;
 import com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util.QRUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +29,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
+
+    private static final String IS_RUNING = "economic_qr_is_runing_";
+    private static final String QR_STATUS = "economic_qr_status_";
+    private static final Logger logger    = LoggerFactory.getLogger(EconomicApiForTaoBaoQRImpl.class);
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
@@ -46,49 +56,84 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             String qrBase64 = response.getPageContentForBase64();
             QRUtils qrUtils = new QRUtils();
             String qrText = qrUtils.parseCode(bytes);
-            Map<String,String> dataMap = new HashMap<>();
-            dataMap.put("qrBase64",qrBase64);
-            dataMap.put("qrText",qrText);
+            Map<String, String> dataMap = new HashMap<>();
+            dataMap.put("qrBase64", qrBase64);
+            dataMap.put("qrText", qrText);
+            String isRunning = RedisUtils.get(IS_RUNING + param.getTaskId());
+            if (!StringUtils.equals(isRunning, "true")) {
+                RedisUtils.set(IS_RUNING + param.getTaskId(), "true", 60);
+                doProcess(param);
+            }
+            logger.info("刷新二维码成功，taskId={}", param.getTaskId());
             return result.success(dataMap);
         } catch (Exception e) {
-
+            logger.error("刷新二维码失败，param={},response={}", param, response, e);
+            return result.failure("刷新二维码失败");
         }
-
-        return result;
     }
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
-        HttpResult<Object> result = new HttpResult<>();
+        String status = RedisUtils.get(QR_STATUS + param.getTaskId());
+        if (StringUtils.isEmpty(status)) {
+            status = "FAILED";
+        }
+        Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("qrStatus", status);
+        return new HttpResult<>().success(dataMap);
+    }
+
+    public String getQRStatusCode(CommonPluginParam param) {
         Response response = null;
         try {
             String lgToken = TaskUtils.getTaskShare(param.getTaskId(), "lgToken");
             String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl=&_ksTS={}&callback=json";
             response = TaskHttpClient.create(param.getTaskId(), "taobao.com", RequestType.GET, "")
-                    .setFullUrl(templateUrl, lgToken,System.currentTimeMillis() + "_" + (int) (Math.random() * 1000)).invoke();
+                    .setFullUrl(templateUrl, lgToken, System.currentTimeMillis() + "_" + (int) (Math.random() * 1000)).invoke();
             String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(resultJson);
             String code = json.getString("code");
-            Map<String,String> dataMap = new HashMap<>();
+            return code;
+        } catch (Exception e) {
+            logger.error("获取二维码状态失败，param={},response={}", param, response, e);
+            return null;
+        }
+    }
+
+    public void doProcess(CommonPluginParam param) {
+        String status;
+        while (true) {
+            String code = getQRStatusCode(param);
             switch (code) {
                 case "10000":
-                    return result.success(QRCodeStatus.QR_CODE_STATUS_WATING);
+                    status = QRCodeVerification.QRCodeStatus.WAITING.name();
+                    break;
                 case "10001":
-                    return result.success(QRCodeStatus.QR_CODE_STATUS_READY);
+                    status = QRCodeVerification.QRCodeStatus.SCANNED.name();
+                    break;
                 case "10004":
-                    return result.success(QRCodeStatus.QR_CODE_STATUS_EXPIRE);
+                    status = QRCodeVerification.QRCodeStatus.EXPIRE.name();
+                    break;
                 case "10006":
-
-                    return result.success(QRCodeStatus.QR_CODE_STATUS_SUCCESS);
+                    status = QRCodeVerification.QRCodeStatus.CONFIRMED.name();
+                    break;
                 default:
-                    return result.failure(QRCodeStatus.QR_CODE_STATUS_FAIL.getStatusMessage());
-
+                    status = QRCodeVerification.QRCodeStatus.FAILED.name();
             }
-
-        } catch (Exception e) {
-
+            RedisUtils.set(QR_STATUS + param.getTaskId(), status, 60);
+            if (StringUtils.equals(status, QRCodeVerification.QRCodeStatus.CONFIRMED.name())) {
+                logger.info("用户已扫码并确认，准备发送登录消息，taskId={}",param.getTaskId());
+                String cookieString = TaskUtils.getCookieString(param.getTaskId());
+                LoginMessage loginMessage = new LoginMessage();
+                loginMessage.setTaskId(param.getTaskId());
+                loginMessage.setWebsiteName("taobao.com");
+                loginMessage.setCookie(cookieString);
+                logger.info("登陆成功,taskId={},websiteName={}", param.getTaskId(), "taobao.com");
+                BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                break;
+            } else {
+                continue;
+            }
         }
-
-        return result;
     }
 }
