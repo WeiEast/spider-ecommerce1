@@ -5,20 +5,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.retry.RetryHandler;
@@ -33,6 +28,9 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,19 +43,23 @@ import org.springframework.stereotype.Service;
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
+    private LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
     @Resource
-    private ClassLoaderService     classLoaderService;
+    private ClassLoaderService                            classLoaderService;
     @Resource
-    private RedisService           redisService;
+    private RedisService                                  redisService;
     @Resource
-    private MessageService         messageService;
+    private MessageService                                messageService;
     @Resource
-    private MonitorService         monitorService;
+    private MonitorService                                monitorService;
     @Resource
-    private WebsiteConfigService   websiteConfigService;
+    private WebsiteConfigService                          websiteConfigService;
     @Resource
-    private WebsiteOperatorService websiteOperatorService;
-    private ThreadPoolExecutor     initExecutor;
+    private WebsiteGroupService                           websiteGroupService;
+    @Resource
+    private WebsiteOperatorService                        websiteOperatorService;
+    @Resource
+    private ThreadPoolService                             threadPoolService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -68,13 +70,12 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
-        TaskUtils.addStep(param.getTaskId(), StepEnum.REC_INIT_MSG);
-        initExecutor.submit(new Runnable() {
+        threadPoolService.getOperatorInitExecutors().submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
-                        TaskUtils.addStep(taskId, StepEnum.INIT);
+                        TaskUtils.addStep(param.getTaskId(), StepEnum.REC_INIT_MSG);
                         //清理共享信息
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
@@ -84,7 +85,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
                         } catch (Throwable e) {
-                            logger.error("save to back redis error taskId={}", taskId, e);
+                            logger.error("delete task info from back redis error taskId={}", taskId, e);
                         }
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
@@ -112,7 +113,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()),
                                 System.currentTimeMillis() + "");
                         monitorService.initTask(taskId, websiteName, param.getMobile());
-                        TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
 
                         if (null != param.getExtral() && !param.getExtral().isEmpty()) {
                             for (Map.Entry<String, Object> entry : param.getExtral().entrySet()) {
@@ -304,8 +304,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     public HttpResult<List<OperatorCatalogue>> queryAllConfig() {
         HttpResult<List<OperatorCatalogue>> result = new HttpResult<>();
         try {
-            List<OperatorCatalogue> list = redisService
-                    .getCache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, new TypeReference<List<OperatorCatalogue>>() {});
+            List<OperatorCatalogue> list = operatorConfigCache.get(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
             if (null == list) {
                 logger.warn("not found OperatorCatalogue from cache");
                 list = websiteConfigService.queryAllOperatorConfig();
@@ -427,19 +426,12 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        int corePoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.min", 10);
-        int maximumPoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.max", 100);
-        initExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(300),
-                new ThreadFactory() {
-                    private AtomicInteger count = new AtomicInteger(0);
 
+        operatorConfigCache = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS).maximumSize(1)
+                .build(new CacheLoader<String, List<OperatorCatalogue>>() {
                     @Override
-                    public Thread newThread(Runnable r) {
-                        Thread t = new Thread(r);
-                        String threadName = "operator_init_thread_" + count.addAndGet(1);
-                        t.setName(threadName);
-                        logger.info("create operator init thread :{}", threadName);
-                        return t;
+                    public List<OperatorCatalogue> load(String key) throws Exception {
+                        return websiteGroupService.updateCache();
                     }
                 });
 

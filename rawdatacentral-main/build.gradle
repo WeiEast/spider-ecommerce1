@@ -1,8 +1,8 @@
 plugins {
-    id 'org.springframework.boot' version '1.5.9.RELEASE'
+    id "org.springframework.boot" version "1.5.9.RELEASE"
 }
 bootRepackage {
-    mainClass = 'com.datatrees.rawdatacentral.web.Application'
+    mainClass = "com.datatrees.rawdatacentral.web.Application"
 }
 
 processResources {
@@ -11,12 +11,35 @@ processResources {
 }
 
 dependencies {
-    compile project(':rawdatacentral-core')
-    compile project(':rawdatacentral-extractor')
-    compile project(':rawdatacentral-submitter')
-    compile project(':rawdatacentral-collector')
-    compile project(':rawdatacentral-web')
+
+
+    compile project(":rawdatacentral-web")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+    compile ("org.seleniumhq.selenium:selenium-java:${seleniumVersion}"){
+        exclude(module: "guava")
+    }
+    compile ("org.seleniumhq.selenium:selenium-remote-driver:${seleniumVersion}"){
+        exclude(module: "guava")
+    }
+    compile ("org.seleniumhq.selenium:selenium-firefox-driver:${seleniumVersion}"){
+        exclude(module: "guava")
+    }
+    compile ("org.seleniumhq.selenium:selenium-chrome-driver:${seleniumVersion}"){
+        exclude(module: "guava")
+    }
+    compile ("org.seleniumhq.selenium:selenium-ie-driver:${seleniumVersion}"){
+        exclude(module: "guava")
+    }
+    compile ("org.seleniumhq.selenium:selenium-safari-driver:${seleniumVersion}"){
+        exclude(module: "guava")
+    }
+    compile ("org.seleniumhq.selenium:selenium-support:${seleniumVersion}"){
+        exclude(module: "guava")
+    }
+    compile ("org.seleniumhq.selenium:selenium-api:${seleniumVersion}"){
+        exclude(module: "guava")
+    }
 }
 
 
+apply from: rootProject.file("printLib.gradle")

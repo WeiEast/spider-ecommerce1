@@ -6,7 +6,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.rawdatacentral.api.ConfigServiceApi;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
@@ -14,6 +16,7 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.PluginService;
@@ -23,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,17 +34,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger("plugin_log");
+    private static final Logger logger                   = LoggerFactory.getLogger("plugin_log");
+    private static final String OPERATOR_PLUGIN_FILENAME = "rawdatacentral-plugin-operator.jar";
     private static LoadingCache<String, ClassLoader> classLoacerCache;
     private static LoadingCache<String, Class>       classCache;
     @Resource
     private        PluginService                     pluginService;
     @Resource
     private        RedisService                      redisService;
-    @Value("${operator.plugin.filename}")
-    private        String                            operatorPluginFilename;
     @Resource
     private        WebsiteOperatorService            websiteOperatorService;
+    @Resource
+    private        ConfigServiceApi                  configServiceApi;
+
+    public static LoadingCache<String, ClassLoader> getClassLoacerCache() {
+        return classLoacerCache;
+    }
+
+    public static LoadingCache<String, Class> getClassCache() {
+        return classCache;
+    }
 
     @Override
     public Class loadPlugin(String pluginName, String className, Long taskId) {
@@ -71,18 +82,49 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
         if (StringUtils.isNoneBlank(pluginFileName)) {
             logger.info("websiteName={},独立映射到了插件pluginFileName={}", websiteName, pluginFileName);
         } else {
-            pluginFileName = operatorPluginFilename;
+            pluginFileName = OPERATOR_PLUGIN_FILENAME;
         }
         try {
             Class loginClass = loadPlugin(pluginFileName, mainLoginClass, taskId);
             if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
-                throw new RuntimeException("mainLoginClass not impl com.datatrees.rawdatacentral.service.OperatorPluginService");
+                throw new RuntimeException("mainLoginClass not impl " + OperatorPluginService.class.getName());
             }
             return (OperatorPluginService) loginClass.newInstance();
         } catch (Throwable e) {
             logger.error("getOperatorService error websiteName={}", websiteName, e);
             throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName, e);
         }
+    }
+
+    @Override
+    public CommonPluginService getCommonPluginService(String pluginName, String className, Long taskId) {
+        try {
+            Class loginClass = loadPlugin(pluginName, className, taskId);
+            if (!CommonPluginService.class.isAssignableFrom(loginClass)) {
+                throw new RuntimeException("mainLoginClass not impl " + CommonPluginService.class.getName());
+            }
+            return (CommonPluginService) loginClass.newInstance();
+        } catch (Throwable e) {
+            logger.error("get common plugin internal error pluginName={},className={},taskId={}", pluginName, className, taskId, e);
+            throw new RuntimeException(
+                    TemplateUtils.format("get common plugin internal error pluginName={},className={},taskId={}", pluginName, className, taskId), e);
+        }
+    }
+
+    @Override
+    public CommonPluginService getCommonPluginService(CommonPluginParam pluginParam) {
+        String pluginName = pluginParam.getPluginName();
+        String className = pluginParam.getPluginClassName();
+        Long taskId = pluginParam.getTaskId();
+        if (StringUtils.isBlank(pluginName)) {
+            logger.warn("plugin file name is blank,taskId={}", taskId);
+            pluginName = getDefaultPluginFile(pluginParam.getWebsiteName(), taskId);
+        }
+        if (StringUtils.isBlank(className)) {
+            logger.warn("plugin class name is blank,taskId={}", taskId);
+            className = getDefaultPluginClass(pluginParam.getWebsiteName(), taskId);
+        }
+        return getCommonPluginService(pluginName, className, taskId);
     }
 
     private Class getClassFromCache(String pluginName, String version, String className, Long taskId) throws ExecutionException {
@@ -103,6 +145,18 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
 
     private String buildCacheKeyForClass(String pluginName, String version, String className) {
         return new StringBuilder(pluginName).append(":").append(version).append(":").append(className).toString();
+    }
+
+    private String getDefaultPluginFile(String websiteName, Long taskId) {
+        String pluginName = configServiceApi.getProperty("plugin.file", websiteName);
+        logger.info("get default plugin file,webisteName={},taskId={},pluginFile={}", websiteName, taskId, pluginName);
+        return pluginName;
+    }
+
+    private String getDefaultPluginClass(String websiteName, Long taskId) {
+        String pluginClass = configServiceApi.getProperty("plugin.class", websiteName);
+        logger.info("get default plugin class,webisteName={},taskId={},pluginClass={}", websiteName, taskId, pluginClass);
+        return pluginClass;
     }
 
     @Override
@@ -151,13 +205,5 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
                         return classLoader.loadClass(className);
                     }
                 });
-    }
-
-    public static LoadingCache<String, ClassLoader> getClassLoacerCache() {
-        return classLoacerCache;
-    }
-
-    public static LoadingCache<String, Class> getClassCache() {
-        return classCache;
     }
 }

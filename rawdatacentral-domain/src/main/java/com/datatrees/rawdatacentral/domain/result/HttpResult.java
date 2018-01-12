@@ -40,9 +40,25 @@ public class HttpResult<T> implements Serializable {
      * 时间戳
      */
     private long                timestamp = System.currentTimeMillis();
+    /**
+     * 是否异步
+     */
+    private boolean             async     = false;
 
     public HttpResult() {
         this.failure();
+    }
+
+    public HttpResult(boolean async) {
+        this.async = async;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 
     public boolean getStatus() {

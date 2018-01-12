@@ -13,9 +13,6 @@ dependencies {
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
         exclude(module: "guava")
     }
-    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true){
-        exclude(module: "guava")
-    }
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true){
         exclude(module: "guava")
     }

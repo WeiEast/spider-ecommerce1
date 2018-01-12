@@ -26,4 +26,8 @@ public class DirectiveType {
      * 抓取过程中,二维码
      */
     public static final String CRAWL_QR     = "crawl_qr";
+    /**
+     * 取消任务
+     */
+    public static final String CANCEL       = "cancel";
 }

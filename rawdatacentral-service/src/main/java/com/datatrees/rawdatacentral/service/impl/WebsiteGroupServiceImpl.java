@@ -107,12 +107,14 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     }
 
     @Override
-    public void updateCache() {
+    public List<OperatorCatalogue> updateCache() {
         for (GroupEnum group : GroupEnum.values()) {
             updateCacheByGroupCode(group.getGroupCode());
         }
+        logger.info("update operator group config success");
         List<OperatorCatalogue> list = websiteConfigService.queryAllOperatorConfig();
         redisService.cache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, list);
+        return list;
     }
 
     @Override

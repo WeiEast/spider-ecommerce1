@@ -15,7 +15,7 @@ dependencies {
 
     compile "org.springframework:spring-oxm:${springVersion}"
 
-    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
+    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true) {
         exclude(module: 'guava')
     }
 
@@ -29,8 +29,7 @@ dependencies {
     compile 'com.datatrees.common:notify-common-facade:3.5.6'
 
     compile "com.alibaba.rocketmq:rocketmq-client:${rocketmqClientVersion}"
-
-    compile 'com.dangdang:elastic-job-lite-spring:2.1.5'
-    compile 'com.dangdang:elastic-job-lite-core:2.1.5'
-    compile 'org.seleniumhq.selenium:selenium-java:3.7.1'
+    compile 'org.projectlombok:lombok:1.16.18'
 }
+
+apply from: rootProject.file('printLib.gradle')

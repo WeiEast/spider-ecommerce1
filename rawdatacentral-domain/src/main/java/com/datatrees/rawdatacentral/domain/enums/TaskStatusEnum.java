@@ -21,6 +21,7 @@ public enum TaskStatusEnum {
     VERIFY_QR_FAILED("VERIFY_QR_FAILED", "二维码验证失败"),
     LOGIN_SUCCESS("LOGIN_SUCCESS", "登录成功"),
     LOGIN_FAILED("LOGIN_FAILED", "登录失败"),
+    LOGIN_PROCESSING("LOGIN_PROCESSING", "登陆中"),
     CRAWLER_FAILED("CRAWLER_FAILED", "爬取失败"),
     CRAWLER_SUCCESS("CRAWLER_SUCCESS", "爬取成功"),
     TASK_TIMEOUT("TASK_TIMEOUT", "任务超时"),
