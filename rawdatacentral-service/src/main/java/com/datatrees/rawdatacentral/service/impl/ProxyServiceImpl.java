@@ -17,6 +17,7 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.treefinance.proxy.api.ProxyProvider;
 import com.treefinance.proxy.domain.Proxy;
+import com.treefinance.spider.common.util.http.domain.IpLocale;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,20 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
 
     private Proxy getProxyFromDubbo(Long taskId, String websiteName) {
         try {
-            Proxy proxy = proxyProvider.getProxy(taskId, websiteName);
+            Proxy proxy = null;
+            IpLocale locale = null;
+            String key = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(taskId);
+            if (RedisUtils.exists(key)) {
+                locale = JSON.parseObject(RedisUtils.get(key), new TypeReference<IpLocale>() {});
+            }
+            if (null == locale) {
+                logger.warn("ip locale not found,taskId={}", taskId);
+                proxy = proxyProvider.getProxy(taskId, websiteName);
+            } else {
+                logger.warn("ip locale found,taskId={},locale={}", taskId, JSON.toJSONString(locale));
+                proxy = proxyProvider.getProxy(taskId, websiteName, locale.getProvinceName(), locale.getCityName());
+            }
+
             if (null != proxy && StringUtils.isNoneBlank(proxy.getIp())) {
                 logger.info("getProxyFromDubbo success,taskId={},websiteName={},proxy={}", taskId, websiteName, JSON.toJSONString(proxy));
                 return proxy;

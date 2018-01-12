@@ -30,6 +30,8 @@ dependencies {
 
     compile "com.alibaba.rocketmq:rocketmq-client:${rocketmqClientVersion}"
     compile 'org.projectlombok:lombok:1.16.18'
+
+    compile 'com.treefinance.spider:spider-common-util:1.0.5-SNAPSHOT'
 }
 
 apply from: rootProject.file('printLib.gradle')
