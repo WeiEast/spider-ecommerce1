@@ -99,7 +99,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
         String status = RedisUtils.get(QR_STATUS + param.getTaskId());
         if (StringUtils.isEmpty(status)) {
-            status = "FAILED";
+            status = "WAITING";
         }
         RedisUtils.set(QR_STATUS_QUERY_TIME + param.getTaskId(), System.currentTimeMillis() + "", 60 * 5);
         Map<String, String> dataMap = new HashMap<>();
