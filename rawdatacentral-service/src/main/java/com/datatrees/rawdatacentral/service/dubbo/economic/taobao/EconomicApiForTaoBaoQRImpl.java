@@ -74,7 +74,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             dataMap.put("qrBase64", qrBase64);
             dataMap.put("qrText", qrText);
             String isRunning = RedisUtils.get(IS_RUNING + param.getTaskId());
-            RedisUtils.set(QR_STATUS_QUERY_TIME + param.getTaskId(), System.currentTimeMillis() + "", 60 * 5);
+            RedisUtils.set(QR_STATUS_QUERY_TIME + param.getTaskId(), System.currentTimeMillis() + "", 60 * 2);
             if (!StringUtils.equals(isRunning, "true")) {
                 Thread t = new Thread(new Runnable() {
                     public void run() {
@@ -136,7 +136,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             RedisUtils.set(IS_RUNING + param.getTaskId(), "true", 10);
             String time = RedisUtils.get(QR_STATUS_QUERY_TIME + param.getTaskId());
             long now = System.currentTimeMillis();
-            if (now - Long.parseLong(time) > 1000 * 60 * 5) {
+            if (now - Long.parseLong(time) > 1000 * 60 * 1) {
                 Thread.currentThread().interrupt();
                 break;
             }
@@ -156,7 +156,8 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 default:
                     status = QRCodeVerification.QRCodeStatus.FAILED.name();
             }
-            RedisUtils.set(QR_STATUS + param.getTaskId(), status, 60 * 5);
+            RedisUtils.set(QR_STATUS + param.getTaskId(), status, 60 * 2);
+            logger.info("状态更新成功,当前二维码状态：{},taskId={}", status, param.getTaskId());
             if (StringUtils.equals(status, QRCodeVerification.QRCodeStatus.CONFIRMED.name())) {
                 String loginUrl = TaskUtils.getTaskShare(param.getTaskId(), "loginUrl");
                 Response response = null;
