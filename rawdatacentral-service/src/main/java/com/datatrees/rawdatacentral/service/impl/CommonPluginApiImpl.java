@@ -87,7 +87,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
                 ProxyUtils.setProxyEnable(taskId, param.isProxyEnable());
                 if (StringUtils.isNoneBlank(param.getUserIp())) {
                     try {
-                        IpLocale locale = IpUtils.queryIP(param.getUserIp());
+                        IpLocale locale = IpUtils.queryIpLocale(param.getUserIp());
                         if (null != locale) {
                             String k = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(param.getTaskId());
                             RedisUtils.set(k, JSON.toJSONString(locale), RedisKeyPrefixEnum.TASK_IP_LOCALE.toSeconds());
