@@ -1,6 +1,7 @@
-package com.datatrees.rawdatacentral.submitter.filestore.oss;
+package com.datatrees.rawdatacentral.core.oss;
 
-import com.datatrees.rawdatacentral.submitter.common.SubmitConstant;
+
+import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 
 public class OssServiceProvider {
 

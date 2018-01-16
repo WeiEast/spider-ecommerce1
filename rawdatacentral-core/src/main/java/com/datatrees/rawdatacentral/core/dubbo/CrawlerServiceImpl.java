@@ -67,14 +67,12 @@ public class CrawlerServiceImpl implements CrawlerService {
         logger.info("getWebsiteConf start websiteName={}", websiteName);
         Map<String, String> map = redisService.getCache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, new TypeReference<Map<String, String>>() {});
         String newWebsiteName;
-        if (map != null) {
-            newWebsiteName = map.get(websiteName);
-        } else {
+        if (null == map || !map.containsKey(websiteName)) {
             String property = PropertiesConfiguration.getInstance().get(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP.getRedisKey());
             map = JSON.parseObject(property, Map.class);
             redisService.cache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, map);
-            newWebsiteName = map.get(websiteName);
         }
+        newWebsiteName = map.get(websiteName);
         if (StringUtils.isBlank(newWebsiteName)) {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
             return null;
@@ -280,6 +278,13 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.info("电商拒绝取消,哈哈.......taskId={},websiteName={}", taskId, websiteName);
             return result.success();
         }
+
+        DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN, taskId);
+        String directiveId = redisService.createDirectiveId();
+        sendDirective.setDirectiveId(directiveId);
+        Map<String, String> directiveData = new HashMap<>();
+        sendDirective.fill(DirectiveRedisCode.CANCEL, directiveData);
+        redisService.saveDirectiveResult(sendDirective);
 
         redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);

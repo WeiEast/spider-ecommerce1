@@ -1,8 +1,6 @@
 dependencies {
-    compile project(':rawdatacentral-core')
-    compile project(':rawdatacentral-extractor')
-    compile project(':rawdatacentral-submitter')
     compile project(':rawdatacentral-collector')
     compile project(':rawdatacentral-plugin')
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
 }
+apply from: rootProject.file('printLib.gradle')

@@ -14,6 +14,7 @@ package com.datatrees.rawdatacentral.domain.enums;
  */
 public enum GroupEnum {
 
+    MAIL_QQ_H5("MAIL_QQ_H5", "QQ邮箱H5", WebsiteType.MAIL, "qq.com.h5"),
     MAIL_QQ("MAIL_QQ", "QQ邮箱", WebsiteType.MAIL, "qq.com"),
     MAIL_163("MAIL_163", "163邮箱", WebsiteType.MAIL, "163.com"),
     MAIL_126("MAIL_126", "126邮箱", WebsiteType.MAIL, "126.com"),
@@ -80,7 +81,9 @@ public enum GroupEnum {
     HAI_NAN_10000("HAI_NAN_10000", "海南电信", WebsiteType.OPERATOR, ""),
     GUI_ZHOU_10086("GUI_ZHOU_10086", "贵州移动", WebsiteType.OPERATOR, ""),
     QING_HAI_10086("QING_HAI_10086", "青海移动", WebsiteType.OPERATOR, ""),
-    NING_XIA_10086("NING_XIA_10086", "宁夏移动", WebsiteType.OPERATOR, "");
+    NING_XIA_10086("NING_XIA_10086", "宁夏移动", WebsiteType.OPERATOR, ""),
+    EDUCATION("EDUCATION","学信网",WebsiteType.EDUCATION,"chsi.com.cn");
+
     /**
      * 分组代码
      */

@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.api;
 
+import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
+
 /**
  * 消息服务
  * Created by zhouxinghai on 2017/5/11.
@@ -88,5 +90,12 @@ public interface MessageService {
      * @return
      */
     boolean sendOperatorLoginPostMessage(Long taskId, String websiteName);
+
+    /**
+     * 发送登陆消息
+     * @param loginMessage
+     * @return
+     */
+    boolean sendLoginMessage(LoginMessage loginMessage);
 
 }

@@ -1,12 +1,15 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -14,12 +17,20 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.http.entity.ContentType.MULTIPART_FORM_DATA;
 
 /**
  * Http工具类
@@ -59,6 +70,64 @@ public class HttpUtils {
             }
 
             response = httpClient.execute(httpPost);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode != 200) {
+                return null;
+            }
+
+            HttpEntity entity = response.getEntity();
+            String result = null;
+            if (entity != null) {
+                result = EntityUtils.toString(entity, CHARSET);
+            }
+            EntityUtils.consume(entity);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String doPostForImage(String url, Map<String,String> headers,String appid,String bucket,byte[] bytes,String fileName) {
+        if (StringUtils.isBlank(url)) {
+            return null;
+        }
+
+        CloseableHttpResponse response=null;
+        try {
+            HttpPost httpPost = new HttpPost(url);
+
+            if (null != bytes) {
+
+                MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+                multipartEntityBuilder
+                        .setContentType(MULTIPART_FORM_DATA)
+                        .setMode(HttpMultipartMode.RFC6532)
+                        .addPart("appid",new StringBody(appid))
+                        .addPart("bucket",new StringBody(bucket))
+                        .addPart("image",new ByteArrayBody(bytes,fileName));
+                httpPost.setEntity(multipartEntityBuilder.build());
+
+                List<Header> headerList = new ArrayList<>();
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    Header header = new BasicHeader(entry.getKey(), entry.getValue());
+                    headerList.add(header);
+                }
+                Header[] headerArray = new Header[headerList.size()];
+                headerArray = headerList.toArray(headerArray);
+                httpPost.setHeaders(headerArray);
+            }
+
+             response = httpClient.execute(httpPost);
+
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != 200) {
                 return null;

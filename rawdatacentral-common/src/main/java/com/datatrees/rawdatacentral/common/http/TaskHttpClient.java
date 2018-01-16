@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.common.http;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -34,6 +35,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
@@ -332,6 +334,7 @@ public class TaskHttpClient {
             request.setProtocol(url.startsWith("https") ? "https" : "http");
 
             List<Cookie> cookies = TaskUtils.getCookies(taskId, host);
+//            logger.info("Cookies >>> {}", JSON.toJSONString(cookies));
             BasicCookieStore cookieStore = TaskUtils.buildBasicCookieStore(cookies);
             request.setRequestCookies(TaskUtils.getCookieMap(cookies));
             if (!extralCookie.isEmpty()) {
@@ -352,19 +355,26 @@ public class TaskHttpClient {
                 }
             }
 
-            logger.info("pre request taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(), request.getProxy(), url);
+//            logger.info("禁止重定向前 request={}",JSON.toJSONString(request));
+//            logger.info("pre request taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(), request.getProxy(), url);
             //禁止重定向
             RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
                     .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
+            // 默认socket设置。注意：正常HTTP建立连接过程中，socket超时会采用{@link RequestConfig#connectTimeout}。
+            // 但是SSL在连接建立成功的基础上多了分层协议处理阶段，其中涉及到的socket交互会采用默认设置，不会采用{@link RequestConfig#connectTimeout}
+            // 和{@link RequestConfig#socketTimeout}。
+            // SO_TIMEOUT:单位毫秒，默认设置5秒。
+            SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(5000).build();
             HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy)
-                    .setDefaultCookieStore(cookieStore).setDefaultCredentialsProvider(credsProvider).setSSLSocketFactory(sslsf);
+                    .setDefaultCookieStore(cookieStore).setSSLSocketFactory(sslsf)
+                    .setDefaultSocketConfig(socketConfig);
             if (null != credsProvider) {
                 httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
             }
             httpclient = httpClientBuilder.build();
             httpResponse = httpclient.execute(client);
-
             statusCode = httpResponse.getStatusLine().getStatusCode();
+//            logger.info("status: {}", statusCode);
             response.setStatusCode(statusCode);
             cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
             TaskUtils.saveCookie(taskId, cookies);
@@ -391,6 +401,7 @@ public class TaskHttpClient {
                     }
                 }
             }
+            logger.info("exec http,taskId={},websiteName={},url={},status={}", taskId, request.getWebsiteName(), url, statusCode);
             if (statusCode >= 200 && statusCode <= 299) {
                 byte[] data = EntityUtils.toByteArray(httpResponse.getEntity());
                 response.setResponse(data);
@@ -420,7 +431,13 @@ public class TaskHttpClient {
             throw new RuntimeException("http error request=" + request, e);
         } finally {
             IOUtils.closeQuietly(httpclient);
-            IOUtils.closeQuietly(httpResponse);
+            if (httpResponse != null) {
+                try {
+                    EntityUtils.consume(httpResponse.getEntity());
+                } catch (IOException e) {
+                    logger.error("http close error,taskId={}", taskId, e);
+                }
+            }
             try {
                 String sassEnv = TaskUtils.getSassEnv();
 

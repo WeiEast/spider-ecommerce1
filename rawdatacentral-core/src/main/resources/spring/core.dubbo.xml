@@ -14,6 +14,14 @@
                    ref="crawlerOperatorServiceImpl"/>
     <dubbo:service interface="com.datatrees.rawdatacentral.api.WebsiteOperatorServiceApi"
                    ref="websiteOperatorServiceApiImpl"/>
+    <!--学信网-->
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.RpcEducationService" ref="rpcEducationServiceImpl"/>
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.RpcOssService" ref="rpcOssServiceImpl"/>
+
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiForQQ"
+                   ref="mailServiceApiForQQImpl"/>
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.CommonPluginApi"
+                   ref="commonPluginApiImpl"/>
 
 </beans>
 

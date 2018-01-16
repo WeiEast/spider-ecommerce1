@@ -1,6 +1,7 @@
 dependencies {
     compile project(':rawdatacentral-service')
     compile project(':rawdatacentral-plugin')
+    compile "com.aliyun.oss:aliyun-sdk-oss:${aliyunSdkOssVersion}"
     compile "org.apache.ibatis:ibatis-sqlmap:${ibatisSqlmapVersion}"
     compile "org.springframework:spring-ibatis:${springIbatisVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
@@ -10,9 +11,6 @@ dependencies {
     compile "com.google.guava:guava:${guavaVersion}"
     compile "net.logstash.logback:logstash-logback-encoder:${logstashLogbackEncoderVersion}"
     compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true){
-        exclude(module: "guava")
-    }
-    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true){
         exclude(module: "guava")
     }
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true){

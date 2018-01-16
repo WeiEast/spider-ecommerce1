@@ -1,4 +1,3 @@
 dependencies {
-  compile project(':rawdatacentral-core')
   compile project(':rawdatacentral-submitter')
 }

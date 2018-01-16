@@ -1,0 +1,6 @@
+version=""
+dependencies {
+    compile project(':rawdatacentral-plugin')
+    compile project(':rawdatacentral-service')
+    testCompile "junit:junit:${junitVersion}"
+}
