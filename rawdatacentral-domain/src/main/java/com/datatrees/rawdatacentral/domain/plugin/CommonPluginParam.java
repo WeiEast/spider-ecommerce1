@@ -86,6 +86,10 @@ public class CommonPluginParam implements Serializable {
      * 自动发送登陆成功消息
      */
     private boolean autoSendLoginSuccessMsg = true;
+    /**
+     * 用户IP
+     */
+    private String userIp;
 
     public CommonPluginParam() {
     }
@@ -250,5 +254,13 @@ public class CommonPluginParam implements Serializable {
 
     public void setAutoSendLoginSuccessMsg(boolean autoSendLoginSuccessMsg) {
         this.autoSendLoginSuccessMsg = autoSendLoginSuccessMsg;
+    }
+
+    public String getUserIp() {
+        return userIp;
+    }
+
+    public void setUserIp(String userIp) {
+        this.userIp = userIp;
     }
 }
