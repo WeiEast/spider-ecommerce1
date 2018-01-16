@@ -23,6 +23,8 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.treefinance.spider.common.util.http.IpUtils;
+import com.treefinance.spider.common.util.http.domain.IpLocale;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +85,21 @@ public class CommonPluginApiImpl implements CommonPluginApi {
 
                 //设置代理
                 ProxyUtils.setProxyEnable(taskId, param.isProxyEnable());
+                if (StringUtils.isNoneBlank(param.getUserIp())) {
+                    try {
+                        IpLocale locale = IpUtils.queryIpLocale(param.getUserIp());
+                        if (null != locale) {
+                            String k = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(param.getTaskId());
+                            RedisUtils.set(k, JSON.toJSONString(locale), RedisKeyPrefixEnum.TASK_IP_LOCALE.toSeconds());
+                        }
+                        logger.info("query user ip locale,taskId={},userIp={},locale={}", param.getTaskId(), param.getUserIp(),
+                                JSON.toJSONString(locale));
+                    } catch (Throwable e) {
+                        logger.error("query ip locale error,taskId={},userIp={}", param.getTaskId(), param.getUserIp(), e);
+                    }
+
+                }
+
                 //记录登陆开始时间
                 TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
                 //初始化监控信息
