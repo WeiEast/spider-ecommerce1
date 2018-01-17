@@ -51,8 +51,8 @@ public class ProcessResult<T> implements Serializable {
         return this;
     }
 
-    public ProcessResult success(Long processId) {
-        this.processId = processId;
+    public ProcessResult success(T data) {
+        this.data = data;
         this.processStatus = ProcessStatus.SUCCESS;
         return this;
     }

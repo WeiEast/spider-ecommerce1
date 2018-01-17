@@ -19,7 +19,7 @@ public class SeleniumUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SeleniumUtils.class);
 
-    public static WebDriver createClient(Long taskId, String websiteName) throws Exception {
+    public static RemoteWebDriver createClient(Long taskId, String websiteName) throws Exception {
         DesiredCapabilities capabilities = DesiredCapabilities.firefox();
         if (ProxyUtils.getProxyEnable(taskId)) {
             com.treefinance.proxy.domain.Proxy proxy = ProxyUtils.getProxy(taskId, websiteName);

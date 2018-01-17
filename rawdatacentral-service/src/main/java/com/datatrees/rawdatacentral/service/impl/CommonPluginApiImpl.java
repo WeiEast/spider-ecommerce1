@@ -11,6 +11,7 @@ import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
@@ -247,4 +248,21 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         BeanFactoryUtils.getBean(MessageService.class).sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map);
     }
 
+    @Override
+    public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
+        try {
+            return ((QRPluginService) (classLoaderService.getCommonPluginService(param))).refeshQRCode(param);
+        } catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        try {
+            return ((QRPluginService) (classLoaderService.getCommonPluginService(param))).queryQRStatus(param);
+        } catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
 }

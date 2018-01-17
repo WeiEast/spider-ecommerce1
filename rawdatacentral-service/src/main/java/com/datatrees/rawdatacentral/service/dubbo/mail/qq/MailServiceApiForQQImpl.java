@@ -43,7 +43,7 @@ public class MailServiceApiForQQImpl implements MailServiceApiForQQ {
     }
 
     @Override
-    public HttpResult<Object> refreshQR(CommonPluginParam param) {
+    public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
         return null;
     }
 

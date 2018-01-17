@@ -29,4 +29,14 @@ public class QQMailControler {
     public Object queryLoginStatus(Long processId) {
         return commonPluginApi.queryProcessResult(processId);
     }
+
+    @RequestMapping("/refeshQRCode")
+    public Object refeshQRCode(CommonPluginParam param) {
+        return commonPluginApi.refeshQRCode(param);
+    }
+
+    @RequestMapping("/queryQRStatus")
+    public Object queryQRStatus(CommonPluginParam param) {
+        return commonPluginApi.queryQRStatus(param);
+    }
 }
