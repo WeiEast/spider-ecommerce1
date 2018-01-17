@@ -141,6 +141,10 @@ public class ProcessResult<T> implements Serializable {
         this.extra = extra;
     }
 
+    public boolean isSuccess() {
+        return null != processStatus && processStatus.equals(ProcessStatus.SUCCESS);
+    }
+
     @Override
     public String toString() {
         return "ProcessResult{" + "processId='" + processId + '\'' + ", processStatus='" + processStatus + '\'' + ", errorCode='" + errorCode + '\'' +

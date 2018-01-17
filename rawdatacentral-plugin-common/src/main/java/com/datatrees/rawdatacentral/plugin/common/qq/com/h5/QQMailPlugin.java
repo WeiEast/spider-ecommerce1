@@ -246,6 +246,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         String currentLoginProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
                         if (isLoginSuccess(currentUrl) && StringUtils.equals(currentLoginProcessId, processResult.getProcessId().toString())) {
                             currentUrl = "http://w.mail.qq.com";
+                            driver.switchTo().defaultContent();
                             driver.get(currentUrl);
                             TimeUnit.SECONDS.sleep(3);
                             String cookieString = SeleniumUtils.getCookieString(driver);
