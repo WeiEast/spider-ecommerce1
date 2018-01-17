@@ -22,6 +22,8 @@
                    ref="mailServiceApiForQQImpl"/>
     <dubbo:service interface="com.datatrees.rawdatacentral.api.CommonPluginApi"
                    ref="commonPluginApiImpl"/>
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR"
+                   ref="economicApiForTaoBaoQRImpl"/>
 
 </beans>
 
