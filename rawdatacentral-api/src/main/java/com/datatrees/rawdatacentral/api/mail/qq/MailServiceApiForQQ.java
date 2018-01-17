@@ -21,4 +21,18 @@ public interface MailServiceApiForQQ {
      * @return
      */
     HttpResult<Object> login(CommonPluginParam param);
+
+    /**
+     * 刷新登陆二维码
+     * @param param
+     * @return
+     */
+    HttpResult<Object> refreshQR(CommonPluginParam param);
+
+    /**
+     * 查询二维码登陆状态
+     * @param param
+     * @return
+     */
+    HttpResult<Object> queryQRStatus(CommonPluginParam param);
 }

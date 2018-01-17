@@ -42,5 +42,15 @@ public class MailServiceApiForQQImpl implements MailServiceApiForQQ {
         return commonPluginApi.submit(param);
     }
 
+    @Override
+    public HttpResult<Object> refreshQR(CommonPluginParam param) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        return null;
+    }
+
 }
 
