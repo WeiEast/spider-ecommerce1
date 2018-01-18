@@ -28,6 +28,7 @@ import com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util.QRUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
 
+    @Autowired
     private MessageService messageService;
     private static final String IS_RUNING            = "economic_qr_is_runing_";
     private static final String IS_INIT              = "economic_qr_is_init_";
