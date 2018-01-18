@@ -87,6 +87,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 });
                 t.start();
             }
+            RedisUtils.set(QR_STATUS + param.getTaskId(), "WAITING", 60 * 2);
             logger.info("刷新二维码成功，taskId={}", param.getTaskId());
             return result.success(dataMap);
         } catch (Exception e) {
