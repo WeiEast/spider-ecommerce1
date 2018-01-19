@@ -244,7 +244,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         }
                         currentUrl = driver.getCurrentUrl();
                         String currentLoginProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
-                        if (isLoginSuccess(currentUrl) && StringUtils.equals(currentLoginProcessId, processResult.getProcessId().toString())) {
+                        if (isLoginSuccess(currentUrl) && TaskUtils.isLastLoginProcessId(taskId, processResult.getProcessId())) {
                             currentUrl = "http://w.mail.qq.com";
                             driver.switchTo().defaultContent();
                             driver.get(currentUrl);

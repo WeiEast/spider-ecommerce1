@@ -435,4 +435,14 @@ public class TaskUtils {
         return 0;
 
     }
+
+    public static boolean isLastLoginProcessId(long taskId, Long processId) {
+        String lastProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
+        boolean b = StringUtils.equals(lastProcessId, processId.toString());
+        if (!b) {
+            logger.error("this thread is not the last login thread,taskId={},processId={},lastProcessId={}", taskId, processId, lastProcessId);
+        }
+        return b;
+    }
+
 }
