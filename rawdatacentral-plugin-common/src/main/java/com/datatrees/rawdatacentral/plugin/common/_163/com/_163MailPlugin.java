@@ -9,6 +9,7 @@ import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
+import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.qr.QRUtils;
@@ -27,6 +28,8 @@ import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +45,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
-        return null;
+        ProxyUtils.setProxyEnable(param.getTaskId(), false);
+        return new HttpResult().success();
     }
 
     @Override
@@ -62,7 +66,56 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> submit(CommonPluginParam param) {
-        return new HttpResult<>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
+        Long taskId = param.getTaskId();
+        String websiteName = param.getWebsiteName();
+        String username = param.getUsername();
+        String password = param.getPassword();
+        BeanFactoryUtils.getBean(ThreadPoolService.class).getMailLoginExecutors().submit(new Runnable() {
+            @Override
+            public void run() {
+                String currentUrl = "https://mail.163.com/";
+                RemoteWebDriver driver = null;
+                try {
+                    driver = SeleniumUtils.createClient(taskId, websiteName);
+                    driver.get(currentUrl);
+                    TimeUnit.SECONDS.sleep(3);
+                    driver.switchTo().frame("x-URS-iframe");
+                    driver.findElement(By.xpath("//input[@name='email']")).sendKeys("13735874566");
+                    driver.findElement(By.xpath("//input[@name='password']")).sendKeys("wangyan");
+                    driver.findElement(By.xpath("//a[@id='dologin']")).click();
+                    TimeUnit.SECONDS.sleep(3);
+                    while (!isLoginSuccess(driver)) {
+                        TimeUnit.SECONDS.sleep(1);
+                        isShowError(driver);
+                    }
+
+                    if (isLoginSuccess(driver)) {
+                        String cookieString = SeleniumUtils.getCookieString(driver);
+                        LoginMessage loginMessage = new LoginMessage();
+                        loginMessage.setTaskId(taskId);
+                        loginMessage.setWebsiteName(GroupEnum.MAIL_163.getWebsiteName());
+                        loginMessage.setAccountNo(username);
+                        loginMessage.setEndUrl(currentUrl);
+                        loginMessage.setCookie(cookieString);
+                        logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
+                        BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+
+                        ProcessResultUtils.saveProcessResult(processResult.success());
+                        return;
+                    }
+
+                    logger.warn("login by selinium fail,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
+                    ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
+                } catch (Throwable e) {
+                    logger.warn("login by selinium error,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl, e);
+                    ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
+                } finally {
+                    SeleniumUtils.closeClient(driver);
+                }
+            }
+        });
+        return new HttpResult(true).success(processResult);
     }
 
     @Override
@@ -180,6 +233,37 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
             logger.error("query qr status error param={},uuid={}", param, uuid);
         }
         return QRStatus.EXPIRE;
+    }
+
+    private boolean isLoginSuccess(RemoteWebDriver driver) {
+        String currentUrl = driver.getCurrentUrl();
+        logger.info("currentUrl = {}", currentUrl);
+        return StringUtils.startsWith(currentUrl, "https://mail.163.com/js6/main.jsp?sid=");
+    }
+
+    private boolean isShowError(RemoteWebDriver driver) {
+        try {
+            String currentUrl = driver.getCurrentUrl();
+            if (StringUtils.equals(currentUrl, "https://mail.163.com/")) {
+                WebElement nerror = driver.findElement(By.id("nerror"));
+                String aClass = nerror.getAttribute("class");
+                if (!StringUtils.equals(aClass, "m-nerror f-dn")) {
+                    String text = nerror.findElement(By.className("ferrorhead")).getText();
+                    if (StringUtils.equals("请点击验证码", text)) {
+                        logger.info("验证码出现了");
+                    }
+                    if (StringUtils.isBlank(text)) {
+                        logger.info("验证成功,class={},text={}", aClass, text);
+                    }
+                    logger.info("class={},text={}", aClass, text);
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+
+        }
+        return false;
     }
 
 }
