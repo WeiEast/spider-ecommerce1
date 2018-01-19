@@ -1,5 +1,7 @@
 package com.datatrees.rawdatacentral.service.dubbo.economic.taobao;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.crawler.plugin.qrcode.QRCodeVerification;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -25,6 +28,7 @@ import com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util.QRUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,6 +37,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
 
+    @Autowired
+    private MessageService messageService;
     private static final String IS_RUNING            = "economic_qr_is_runing_";
     private static final String IS_INIT              = "economic_qr_is_init_";
     private static final String QR_STATUS            = "economic_qr_status_";
@@ -40,6 +46,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
     private static final Logger logger               = LoggerFactory.getLogger(EconomicApiForTaoBaoQRImpl.class);
     private static final String preLoginUrl          = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=https://consumeprod.alipay" +
             ".com/record/index.htm%3Fsign_from%3D3000";
+    private static final String ACCOUNT_NO_TOPIC     = "qr_code_account_no";
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
@@ -135,7 +142,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             RedisUtils.set(IS_RUNING + param.getTaskId(), "true", 10);
             String time = RedisUtils.get(QR_STATUS_QUERY_TIME + param.getTaskId());
             long now = System.currentTimeMillis();
-            if (now - Long.parseLong(time) > 1000 * 60 * 1) {
+            if (now - Long.parseLong(time) > 1000 * 30) {
                 Thread.currentThread().interrupt();
                 break;
             }
@@ -159,6 +166,16 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             logger.info("状态更新成功,当前二维码状态：{},taskId={}", status, param.getTaskId());
             if (StringUtils.equals(status, QRCodeVerification.QRCodeStatus.CONFIRMED.name())) {
                 String loginUrl = TaskUtils.getTaskShare(param.getTaskId(), "loginUrl");
+                String accountNoTemp = PatternUtils.group(loginUrl, "cntaobao(.*)&token", 1);
+                try {
+                    String accountNo = URLDecoder.decode(accountNoTemp, "UTF-8");
+                    Map<String, Object> msgMap = new HashMap<>();
+                    msgMap.put("taskId", param.getTaskId());
+                    msgMap.put("accountNo", accountNo);
+                    messageService.sendMessage(ACCOUNT_NO_TOPIC, msgMap);
+                } catch (UnsupportedEncodingException e) {
+                    logger.info("淘宝会员名抓取失败", e);
+                }
                 Response response = null;
                 try {
                     response = TaskHttpClient.create(param.getTaskId(), "taobao.com", RequestType.GET, "").setFullUrl(loginUrl)
@@ -183,7 +200,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 Thread.currentThread().interrupt();
                 break;
             } else {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 continue;
             }
         }
