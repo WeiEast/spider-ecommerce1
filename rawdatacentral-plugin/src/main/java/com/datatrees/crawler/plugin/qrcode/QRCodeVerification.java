@@ -27,6 +27,7 @@ public interface QRCodeVerification {
         WAITING,
         SCANNED,
         CONFIRMED,
+        EXPIRE,
         FAILED,
         SUCCESS;
     }

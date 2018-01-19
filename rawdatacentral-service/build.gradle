@@ -2,6 +2,7 @@ dependencies {
     compile project(":rawdatacentral-common")
     compile project(":rawdatacentral-dao")
     compile project(":crawler-core")
+    compile project(":rawdatacentral-plugin")
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
     compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
@@ -30,7 +31,7 @@ dependencies {
 
     compile "com.alibaba.rocketmq:rocketmq-client:${rocketmqClientVersion}"
     compile 'org.projectlombok:lombok:1.16.18'
-
+    compile 'com.google.zxing:core:3.3.1'
     compile 'com.treefinance.spider:spider-common-util:1.0.7'
 }
 
