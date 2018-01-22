@@ -69,14 +69,12 @@ public class WebRobotServiceImpl extends ServiceBase {
                 String proxyString = null;
                 ClientDriverManager clientDriverManager = BeanResourceFactory.getInstance().getBean(ClientDriverManager.class);
                 SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
-                if (context.needProxyByUrl(url)) {
-                    Proxy proxy = ((SearchProcessorContext) context).getProxyManager().getProxy();
-                    if (proxy == null) {
-                        log.info("no active proxy use for " + url + ",use default ip");
-                    } else {
-                        proxyString = proxy.format();
-                    }
+
+                Proxy proxy = context.getProxy(url);
+                if(proxy != null) {
+                    proxyString = proxy.format();
                 }
+
                 driver = clientDriverManager.getWebDriver(browserType, proxyString);
                 List<AbstractAction> actions = new ArrayList<AbstractAction>();
                 HttpState state = ProcessorContextUtil.getHttpState(context);

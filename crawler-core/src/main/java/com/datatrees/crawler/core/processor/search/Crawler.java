@@ -64,7 +64,7 @@ public class Crawler {
 
             checkConf(request);
 
-            Page page = context.getPageDefination(url, templateId);
+            Page page = context.getPageDefinition(url, templateId);
 
             if (page != null) {
                 AbstractService service = page.getService();

@@ -214,7 +214,7 @@ public class PageImpl extends AbstractPage {
         String content = RequestUtil.getContent(request);
         SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
         String templateId = RequestUtil.getCurrentTemplateId(request);
-        SearchTemplateConfig templdateConfig = wrapper.getSearchTempldateConfig(templateId);
+        SearchTemplateConfig templdateConfig = wrapper.getSearchTemplateConfig(templateId);
         if (templdateConfig != null) {
             com.datatrees.crawler.core.domain.config.search.Request reqBean = templdateConfig.getRequest();
             if (reqBean != null) {
@@ -274,7 +274,7 @@ public class PageImpl extends AbstractPage {
 
         URLHandler urlHandler = RequestUtil.getURLHandler(req);
 
-        SearchTemplateConfig searchTemplateConfig = wrapper.getSearchTempldateConfig(RequestUtil.getCurrentTemplateId(req));
+        SearchTemplateConfig searchTemplateConfig = wrapper.getSearchTemplateConfig(RequestUtil.getCurrentTemplateId(req));
         String revisitPattern = null;
         if (searchTemplateConfig != null && searchTemplateConfig.getRequest() != null && StringUtils.isNotBlank(searchTemplateConfig.getRequest().getReVisitPattern())) {
             revisitPattern = searchTemplateConfig.getRequest().getReVisitPattern();

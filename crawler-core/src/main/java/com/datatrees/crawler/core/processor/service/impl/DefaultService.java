@@ -105,15 +105,9 @@ public class DefaultService extends ServiceBase {
     // }
     // }
     private Proxy setProxy(ProtocolInput input, SearchProcessorContext context, String url) throws Exception {
-        Proxy proxy = null;
-        if (context.needProxyByUrl(url)) {
-            ProxyManager proxyManager = context.getProxyManager();
-            Preconditions.checkNotNull(proxyManager);
-            proxy = proxyManager.getProxy();
-            Preconditions.checkNotNull(proxy);
-            if (proxy != Proxy.LOCALNET) {
-                input.setProxy(proxy.format());
-            }
+        Proxy proxy = context.getProxy(url, true);
+        if(proxy != null && proxy != Proxy.LOCALNET) {
+            input.setProxy(proxy.format());
         }
         return proxy;
     }

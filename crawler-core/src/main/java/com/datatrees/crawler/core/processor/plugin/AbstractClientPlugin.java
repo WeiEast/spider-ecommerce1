@@ -82,11 +82,9 @@ public abstract class AbstractClientPlugin {
     protected String getPorxy(String cacertUrl) throws Exception {
         String proxyURL = null;
         AbstractProcessorContext context = PluginContext.getProcessorContext();
-        if (context instanceof SearchProcessorContext && ((SearchProcessorContext) context).needProxyByUrl(cacertUrl)) {
-            Proxy proxy = ((SearchProcessorContext) context).getProxyManager().getProxy();
-            if (proxy == null) {
-                logger.info("no active proxy use for " + cacertUrl + ",use default ip");
-            } else {
+        if (context instanceof SearchProcessorContext ) {
+            Proxy proxy = ((SearchProcessorContext) context).getProxy(cacertUrl);
+            if (proxy != null) {
                 proxyURL = proxy.format();
             }
         }

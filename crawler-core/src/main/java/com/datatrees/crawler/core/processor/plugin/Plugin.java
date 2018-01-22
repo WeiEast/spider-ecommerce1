@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
@@ -77,6 +78,6 @@ public abstract class Plugin extends Processor {
 
         pluginConf.put(PluginConstants.EXTRA_CONFIG, plugin.getExtraConfig());
 
-        return PluginUtil.mapPluginInput(pluginConf);
+        return GsonUtils.toJson(pluginConf);
     }
 }

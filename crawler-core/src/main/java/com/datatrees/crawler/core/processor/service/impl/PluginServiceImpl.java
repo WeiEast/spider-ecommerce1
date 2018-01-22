@@ -46,7 +46,7 @@ public class PluginServiceImpl extends ServiceBase {
                         params.put(PluginConstants.CURRENT_URL, url);
                         current.getPropertys().forEach((key, val) -> params.put(key, val + ""));
                         if (context.needProxyByUrl(url)) {
-                            Proxy proxy = context.getProxyManager().getProxy();
+                            Proxy proxy = context.getProxy();
                             Preconditions.checkNotNull(proxy);
                             log.info("set proxy to: " + url + "\tproxy:\t" + proxy.format());
                             params.put(PluginConstants.PROXY, proxy.format());

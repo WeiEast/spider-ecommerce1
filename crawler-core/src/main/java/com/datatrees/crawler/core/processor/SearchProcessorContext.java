@@ -26,6 +26,7 @@ import com.datatrees.crawler.core.domain.config.search.SearchSequenceUnit;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.domain.config.search.SearchType;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.common.exception.NoProxyException;
 import com.datatrees.crawler.core.processor.common.resource.LoginResource;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.login.Login;
@@ -52,15 +53,15 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     private final        Map<String, SearchTemplateConfig>                                 searchTemplateConfigMap     = new HashMap<>();
     private final        Map<SearchType, List<SearchTemplateConfig>>                       searchTemplateConfigListMap = new HashMap<>();
     // page id ===> page
-    private final        Map<String, Page>                                                 pageMap                     = new HashMap<String, Page>();
+    private final        Map<String, Page>                                                 pageMap                     = new HashMap<>();
     private ProxyManager   proxyManager;
     private LoginResource  loginResource;
     private String         webServiceUrl;
     private Proxy          proxyConf;
     private AbstractCookie cookieConf;
     private Login.Status   status;
-    private Map<String, String> defaultHeader     = new HashMap<String, String>();
-    private Map<Page, Integer>  pageVisitCountMap = new HashMap<Page, Integer>();
+    private Map<String, String> defaultHeader     = new HashMap<>();
+    private Map<Page, Integer>  pageVisitCountMap = new HashMap<>();
     private boolean              loginCheckIgnore;
     private WebRobotClientDriver webRobotClientDriver;
 
@@ -102,16 +103,12 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         for (SearchTemplateConfig searchTemplateConfig : searchTemplateConfigs) {
             searchTemplateConfigMap.put(searchTemplateConfig.getId(), searchTemplateConfig);
             SearchType taskType = searchTemplateConfig.getType();
-            if (searchTemplateConfigListMap.containsKey(taskType)) {
-                searchTemplateConfigListMap.get(taskType).add(searchTemplateConfig);
-            } else {
-                List<SearchTemplateConfig> templateConfigList = new ArrayList<SearchTemplateConfig>();
-                templateConfigList.add(searchTemplateConfig);
-                searchTemplateConfigListMap.put(taskType, templateConfigList);
-            }
 
-            Map<String, SearchSequenceUnit> pathPageMaps = new HashMap<String, SearchSequenceUnit>();
-            Map<Integer, List<SearchSequenceUnit>> depthPageMaps = new HashMap<Integer, List<SearchSequenceUnit>>();
+            List<SearchTemplateConfig> configList = searchTemplateConfigListMap.computeIfAbsent(taskType, searchType -> new ArrayList<>());
+            configList.add(searchTemplateConfig);
+
+            Map<String, SearchSequenceUnit> pathPageMaps = new HashMap<>();
+            Map<Integer, List<SearchSequenceUnit>> depthPageMaps = new HashMap<>();
             pathPageMap.put(searchTemplateConfig, pathPageMaps);
             depthPageMap.put(searchTemplateConfig, depthPageMaps);
 
@@ -121,14 +118,12 @@ public class SearchProcessorContext extends AbstractProcessorContext {
                 int depth = searchSequenceUnit.getDepth();
                 Page pg = searchSequenceUnit.getPage();
                 String path = (null == pg) ? null : pg.getPath();
+
                 if (StringUtils.isNotEmpty(path)) {
                     pathPageMaps.put(path, searchSequenceUnit);
                 }
-                List<SearchSequenceUnit> pages = depthPageMaps.get(depth);
-                if (pages == null) {
-                    pages = new ArrayList<SearchSequenceUnit>();
-                    depthPageMaps.put(depth, pages);
-                }
+
+                List<SearchSequenceUnit> pages = depthPageMaps.computeIfAbsent(depth, k -> new ArrayList<>());
                 pages.add(searchSequenceUnit);
             }
         }
@@ -157,11 +152,10 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         }
 
         //init proxy
-        Properties propeties = getSearchConfig().getProperties();
-        if (propeties != null) {
-            proxyConf = propeties.getProxy();
+        Properties properties = getSearchConfig().getProperties();
+        if (properties != null) {
+            proxyConf = properties.getProxy();
         }
-
     }
 
     /**
@@ -202,18 +196,16 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return pageMap.get(pid);
     }
 
-    public Page getPageDefination(LinkNode url, String templateId) {
+    public Page getPageDefinition(LinkNode url, String templateId) {
         Page page = null;
-        SearchTemplateConfig stc = getSearchTempldateConfig(templateId);
+        SearchTemplateConfig stc = getSearchTemplateConfig(templateId);
         if (stc != null) {
             if (CollectionUtils.isNotEmpty(stc.getSearchSequence())) {
                 Map<String, SearchSequenceUnit> urlPathMap = pathPageMap.get(stc);
                 if (MapUtils.isNotEmpty(urlPathMap)) {
-                    Iterator<String> pathIterator = urlPathMap.keySet().iterator();
-                    while (pathIterator.hasNext()) {
-                        String key = pathIterator.next();
-                        if (StringUtils.isNotEmpty(key) && PatternUtils.match(key, url.getUrl())) {
-                            page = urlPathMap.get(key).getPage();
+                    for (Map.Entry<String, SearchSequenceUnit> entry : urlPathMap.entrySet()) {
+                        if (StringUtils.isNotEmpty(entry.getKey()) && PatternUtils.match(entry.getKey(), url.getUrl())) {
+                            page = entry.getValue().getPage();
                             break;
                         }
                     }
@@ -256,16 +248,14 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     public void adjustUrlDepth(LinkNode curr, String templateId, int parent) {
         String url = curr.getUrl();
         int result = parent + 1;
-        SearchTemplateConfig stc = getSearchTempldateConfig(templateId);
+        SearchTemplateConfig stc = getSearchTemplateConfig(templateId);
         if (stc != null) {
             // just for keyword search
             if (CollectionUtils.isNotEmpty(stc.getSearchSequence())) {
                 Map<String, SearchSequenceUnit> urlPathMap = pathPageMap.get(stc);
-                Iterator<String> pathIterator = urlPathMap.keySet().iterator();
-                while (pathIterator.hasNext()) {
-                    String key = pathIterator.next();
-                    if (PatternUtils.match(key, url)) {
-                        SearchSequenceUnit unit = urlPathMap.get(key);
+                for (Map.Entry<String, SearchSequenceUnit> entry : urlPathMap.entrySet()) {
+                    if (PatternUtils.match(entry.getKey(), url)) {
+                        SearchSequenceUnit unit = entry.getValue();
                         result = unit.getDepth();
                         curr.setpId(unit.getPage().getId());
                         break;
@@ -290,37 +280,58 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     }
 
     public boolean needProxyByUrl(String url) {
-        boolean needProxy = false;
         if (null == proxyConf || StringUtils.isEmpty(url)) {
-            return needProxy;
+            return false;
         }
 
         String pattern = proxyConf.getPattern();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Proxy-conf >>> pattern: {}, proxy: {}, url: {}", pattern, proxyConf.getProxy(), url);
+        }
+
         if (StringUtils.isEmpty(pattern)) {
             // If not, will maintain the original logic
-            needProxy = (proxyConf.getProxy() != null);
-            log.info(" needProxy :  " + needProxy + "  url : " + url + "  regex : " + pattern + " proxyConf.getProxy()  : " + proxyConf.getProxy());
-            return needProxy;
-        } else {
-            try {
-                if (PatternUtils.match(pattern, url)) {
-                    needProxy = true;
-                    log.info(" needProxy :  " + needProxy + "  url : " + url + "  regex : " + pattern);
-                }
-            } catch (Exception e) {
-                // non standard URL
-                log.warn("Get urlDomain has encountered a problem ,url : " + url + "  Exception message  :" + e.getMessage());
-            }
+            return StringUtils.isNotBlank (proxyConf.getProxy());
         }
-        return needProxy;
+
+        try {
+            return PatternUtils.match(pattern, url);
+        } catch (Exception e) {
+            log.error("Unexpected exception!", e);
+        }
+        return false;
     }
 
-    public SearchTemplateConfig getSearchTempldateConfig(String id) {
-        SearchTemplateConfig stc = searchTemplateConfigMap.get(id);
-        return stc;
+    public com.datatrees.crawler.core.processor.proxy.Proxy getProxy(String url) throws Exception {
+        return getProxy(url, false);
     }
 
-    public List<SearchTemplateConfig> getSearchTempldateConfigList(SearchType taskType) {
+    public com.datatrees.crawler.core.processor.proxy.Proxy getProxy(String url, boolean strict) throws Exception {
+        if(needProxyByUrl(url)){
+            com.datatrees.crawler.core.processor.proxy.Proxy proxy = getProxy();
+
+            if(proxy == null){
+                if(strict)
+                    throw new NoProxyException("Not found available proxy in remote server! >>> " + url);
+
+                log.warn("Not found available proxy in remote server! >>> " + url);
+            }
+
+            return proxy;
+        }
+        return null;
+    }
+
+    public com.datatrees.crawler.core.processor.proxy.Proxy getProxy() throws Exception {
+        return getProxyManager().getProxy();
+    }
+
+    public SearchTemplateConfig getSearchTemplateConfig(String id) {
+        return searchTemplateConfigMap.get(id);
+    }
+
+    public List<SearchTemplateConfig> getSearchTemplateConfigList(SearchType taskType) {
         List<SearchTemplateConfig> searchTemplateConfigs = searchTemplateConfigListMap.get(taskType);
         return searchTemplateConfigs == null ? Collections.emptyList() : searchTemplateConfigs;
     }
@@ -333,8 +344,8 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     }
 
     public Set<String> getPageIdMap(String templateId) {
-        Set<String> pidSet = new HashSet<String>();
-        SearchTemplateConfig stc = getSearchTempldateConfig(templateId);
+        Set<String> pidSet = new HashSet<>();
+        SearchTemplateConfig stc = getSearchTemplateConfig(templateId);
         if (stc != null) {
             List<SearchSequenceUnit> sunits = stc.getSearchSequence();
             if (CollectionUtils.isNotEmpty(sunits)) {
