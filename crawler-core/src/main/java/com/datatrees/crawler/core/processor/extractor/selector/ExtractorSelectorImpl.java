@@ -21,7 +21,7 @@ import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
+import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang.StringUtils;
 
@@ -42,12 +42,12 @@ public class ExtractorSelectorImpl extends Processor {
         this.extractorSelectorList = extractorSelectorList;
     }
 
-    private boolean selectorCheck(ExtractorSelector selector, Request request, Set<String> blackPageExtractorIdSet) {
+    private boolean selectorCheck(ExtractorSelector selector, Request request, Set<String> blackPageExtractorIdSet) throws InterruptedException {
         Object input = request.getInput();
         Preconditions.checkNotNull(input, "input should not be null!");
         String value = RequestUtil.getAttribute(request, selector.getField());
         if (value == null) {
-            value = SourceFieldUtil.getInputFieldString(input, selector.getField());
+            value = SourceFieldUtils.getFieldValueAsString(input, selector.getField());
             RequestUtil.setAttribute(request, selector.getField(), value);
         }
         if (value != null) {

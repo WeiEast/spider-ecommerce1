@@ -23,7 +23,7 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
+import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.google.common.base.Preconditions;
@@ -91,7 +91,7 @@ public class PageSourceImpl extends Processor {
                 if (log.isDebugEnabled()) {
                     log.debug("getSource source:" + source + ", plugin:" + source.getPlugin());
                 }
-                Object value = SourceFieldUtil.getInputFieldObject(input, source.getField());
+                Object value = SourceFieldUtils.getFieldValue(input, source.getField());
                 if (value instanceof Collection) {
                     for (Object obj : (Collection) value) {
                         sourceValue.append(this.getSourceWithPlugin(request, source.getPlugin(), obj)).append(split);
@@ -102,7 +102,7 @@ public class PageSourceImpl extends Processor {
             } else {
                 String value = RequestUtil.getAttribute(request, source.getField());
                 if (StringUtils.isNotBlank(split) || value == null) {
-                    value = SourceFieldUtil.getInputFieldString(input, source.getField(), split);
+                    value = SourceFieldUtils.getFieldValueAsString(input, source.getField(), split);
                 }
                 sourceValue.append(value);
             }
