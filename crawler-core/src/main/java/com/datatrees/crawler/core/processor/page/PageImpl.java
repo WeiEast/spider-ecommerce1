@@ -17,7 +17,6 @@ import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.protocol.Constant;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.URLUtil;
@@ -41,7 +40,7 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
 import com.datatrees.crawler.core.processor.common.html.urlspliter.URLSplitter;
-import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
+import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.datatrees.crawler.core.processor.filter.URLRegexFilter;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
@@ -480,7 +479,7 @@ public class PageImpl extends AbstractPage {
     }
 
     protected void extractTextUrls(String currentUrl, String content, Map<String, LinkNode> linkNodeMap) {
-        List<String> textUrls = TextUrlExtractor.extractor(content, Constant.URL_REGEX, 1);
+        List<String> textUrls = UrlExtractor.extract(content);
         for (String nextURL : textUrls) {
             try {
                 nextURL = URLUtil.urlFormat(nextURL);

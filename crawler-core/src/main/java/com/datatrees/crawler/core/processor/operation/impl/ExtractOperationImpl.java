@@ -14,11 +14,10 @@ import java.util.Map.Entry;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.protocol.Constant;
 import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
-import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
+import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.collections.CollectionUtils;
@@ -53,7 +52,7 @@ public class ExtractOperationImpl extends Operation<ExtractOperation> {
         String baseURL = RequestUtil.getCurrentUrl(request).getUrl();
         String url = this.extractHtmlLink(content, baseURL);
         if (StringUtils.isBlank(url)) {
-            List<String> textUrls = TextUrlExtractor.extractor(content, Constant.URL_REGEX, 1);
+            List<String> textUrls = UrlExtractor.extract(content);
             url = CollectionUtils.isNotEmpty(textUrls) ? textUrls.get(0) : "";
         }
         if (logger.isDebugEnabled()) {
