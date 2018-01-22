@@ -14,23 +14,21 @@ import com.datatrees.crawler.core.domain.config.operation.impl.EscapeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.escape.EscapeType;
 import com.datatrees.crawler.core.domain.config.operation.impl.escape.HandlingType;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年11月19日 下午12:05:28
  */
-public class EscapeOperationImpl extends Operation {
+public class EscapeOperationImpl extends Operation<EscapeOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
         // get input
-        String orginal = getInput(request, response);
-        String result = orginal;
-        EscapeOperation operation = (EscapeOperation) getOperation();
+        String orginal = OperationHelper.getStringInput(request, response);
+        EscapeOperation operation = getOperation();
         EscapeType escapeType = operation.getEscapeType();
         HandlingType handlType = operation.getHandlingType();
 
@@ -38,17 +36,11 @@ public class EscapeOperationImpl extends Operation {
             logger.debug("EscapeOperation input: " + String.format("escapeType: %s, handlType: %s", escapeType, handlType));
         }
 
-        result = handlerEscape(orginal, escapeType, handlType);
+        String result = handlerEscape(orginal, escapeType, handlType);
 
         response.setOutPut(result);
     }
 
-    /**
-     * @param orginal
-     * @param cdType
-     * @param handlType
-     * @return
-     */
     private String handlerEscape(String orginal, EscapeType escapeType, HandlingType handlType) {
         String result = orginal;
 

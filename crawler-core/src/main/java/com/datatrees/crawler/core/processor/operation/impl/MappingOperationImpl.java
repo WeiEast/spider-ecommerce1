@@ -9,6 +9,7 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.operation.impl.MappingOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -19,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Jerry
  * @datetime 2015-07-17 20:02
  */
-public class MappingOperationImpl extends Operation {
+public class MappingOperationImpl extends Operation<MappingOperation> {
 
     private static final LoadingCache<String, Map<String, String>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.MINUTES).softValues().initialCapacity(2).build(new CacheLoader<String, Map<String, String>>() {
         @Override
@@ -43,8 +44,8 @@ public class MappingOperationImpl extends Operation {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        String input = getInput(request, response);
-        MappingOperation operation = (MappingOperation) getOperation();
+        String input = OperationHelper.getStringInput(request, response);
+        MappingOperation operation = getOperation();
 
         String result = null;
         try {

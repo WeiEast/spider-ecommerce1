@@ -10,20 +10,20 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 
 /**
  * @author Jerry
  * @datetime 2015-07-17 20:02
  */
-public class JsonPathOperationImpl extends Operation {
+public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
+        String original = OperationHelper.getStringInput(request, response);
 
-        String original = getInput(request, response);
-
-        JsonPathOperation operation = (JsonPathOperation) getOperation();
+        JsonPathOperation operation = getOperation();
 
         String jsonpath = operation.getJsonpath();
         // replace from context

@@ -14,6 +14,7 @@ import com.datatrees.crawler.core.domain.config.operation.impl.MailParserOperati
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.mail.MailParserImpl;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.BooleanUtils;
 
 /**
@@ -21,12 +22,12 @@ import org.apache.commons.lang.BooleanUtils;
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
-public class MailParserOperationImpl extends Operation {
+public class MailParserOperationImpl extends Operation<MailParserOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        String result = getInput(request, response);
-        MailParserOperation operation = (MailParserOperation) getOperation();
+        String result = OperationHelper.getStringInput(request, response);
+        MailParserOperation operation = getOperation();
         if (logger.isDebugEnabled()) {
             logger.debug("mail parser input " + result);
         }

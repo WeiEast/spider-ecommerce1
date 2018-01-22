@@ -17,6 +17,7 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
@@ -28,11 +29,11 @@ import org.joda.time.format.DateTimeFormatter;
  * @author likun
  * @version $Id: DateTimeOperationImpl.java, v 0.1 Jul 22, 2015 11:57:20 AM likun Exp $
  */
-public class DateTimeOperationImpl extends Operation {
+public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        DateTimeOperation operation = (DateTimeOperation) getOperation();
+        DateTimeOperation operation = getOperation();
 
         BaseType baseType = operation.getBaseType();
         // replace from context
@@ -45,7 +46,7 @@ public class DateTimeOperationImpl extends Operation {
             offset = Integer.valueOf(offsetString);
         }
 
-        Object src = getInputObject(request, response);
+        Object src = OperationHelper.getInput(request, response);
         if (src instanceof String) {
             src = ReplaceUtils.replaceMap(fieldContext, sourceMap, src.toString());
         }

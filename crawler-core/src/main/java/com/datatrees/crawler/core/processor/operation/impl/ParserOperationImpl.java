@@ -25,15 +25,14 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 18, 2014 2:43:36 PM
  */
-public class ParserOperationImpl extends Operation {
+public class ParserOperationImpl extends Operation<ParserOperation> {
 
     private static final FieldRequestFilter  fieldFilter         = new FieldRequestFilter();
     private static final ParserUrlListFilter parserUrlListFilter = new ParserUrlListFilter();
 
     @Override
     public void process(Request request, Response response) throws Exception {
-
-        ParserOperation op = (ParserOperation) getOperation();
+        ParserOperation op = getOperation();
         Parser parser = op.getParser();
         boolean needRequest = false;
         boolean needReturnUrlList = false;

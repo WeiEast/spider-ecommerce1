@@ -15,10 +15,12 @@ import java.util.Map.Entry;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.Constant;
+import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
 import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +31,7 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Mar 27, 2014 12:30:43 PM
  */
-public class ExtractOperationImpl extends Operation {
+public class ExtractOperationImpl extends Operation<ExtractOperation> {
 
     private String extractHtmlLink(String content, String baseURL) {
         // parser url from html
@@ -47,7 +49,7 @@ public class ExtractOperationImpl extends Operation {
     @Override
     public void process(Request request, Response response) throws Exception {
         // get input
-        String content = getInput(request, response);
+        String content = OperationHelper.getStringInput(request, response);
         String baseURL = RequestUtil.getCurrentUrl(request).getUrl();
         String url = this.extractHtmlLink(content, baseURL);
         if (StringUtils.isBlank(url)) {

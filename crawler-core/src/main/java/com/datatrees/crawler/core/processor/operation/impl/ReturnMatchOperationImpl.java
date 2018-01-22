@@ -18,19 +18,20 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 
 /**
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
  * @version 1.0
  * @since 2016年5月30日 下午8:33:11
  */
-public class ReturnMatchOperationImpl extends Operation {
+public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        ReturnMatchOperation operation = (ReturnMatchOperation) getOperation();
+        ReturnMatchOperation operation = getOperation();
         String value = operation.getValue();
-        String orginal = getInput(request, response);
+        String orginal = OperationHelper.getStringInput(request, response);
 
         Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
         Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);

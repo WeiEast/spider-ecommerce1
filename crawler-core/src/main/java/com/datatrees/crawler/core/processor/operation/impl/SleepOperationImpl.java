@@ -18,14 +18,18 @@ import com.datatrees.crawler.core.processor.operation.Operation;
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
-public class SleepOperationImpl extends Operation {
-
+public class SleepOperationImpl extends Operation<SleepOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        SleepOperation operation = (SleepOperation) getOperation();
-        logger.debug("do sleep operation {}", operation.getValue());
-        Thread.sleep(operation.getValue());
+        SleepOperation operation = getOperation();
+        Integer sleepTime = operation.getValue();
+        if (sleepTime != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Start to Sleep: {}", sleepTime);
+            }
+            Thread.sleep(sleepTime);
+        }
     }
 
 }

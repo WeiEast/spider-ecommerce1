@@ -10,23 +10,25 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.operation.impl.ReturnOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
-public class ReturnOperationImpl extends Operation {
+public class ReturnOperationImpl extends Operation<ReturnOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        String result = getInput(request, response);
+        String input = OperationHelper.getStringInput(request, response);
 
         if (logger.isDebugEnabled()) {
-            logger.debug("return current input " + result);
+            logger.debug("Return current input : {}", input);
         }
-        response.setOutPut(result);
+        response.setOutPut(input);
     }
 
 }

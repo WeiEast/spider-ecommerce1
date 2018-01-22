@@ -28,11 +28,11 @@ import org.apache.commons.lang.BooleanUtils;
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
-public class TemplateOperationImpl extends Operation {
+public class TemplateOperationImpl extends Operation<TemplateOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        TemplateOperation op = (TemplateOperation) getOperation();
+        TemplateOperation op = getOperation();
         String template = op.getTemplate();
         Set<String> replaceList = ReplaceUtils.getReplaceList(template);
         logger.debug("TemplateOperationImpl: replace list" + replaceList);
@@ -40,14 +40,14 @@ public class TemplateOperationImpl extends Operation {
         if (logger.isDebugEnabled()) {
             logger.debug("TemplateOperationImpl: field values " + fieldMap);
         }
-        Object output = null;
+        Object output;
         if (BooleanUtils.isTrue(op.getReturnObject())) {
             output = ReplaceUtils.getReplaceObject(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), template);
         } else {
             output = ReplaceUtils.replaceMap(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), template);
         }
         logger.debug("TemplateOperationImpl: after templdate combine " + output);
-        if (output.equals(template) && CollectionUtils.isNotEmpty(ReplaceUtils.getReplaceList(template))) {
+        if (output != null && output.equals(template) && CollectionUtils.isNotEmpty(ReplaceUtils.getReplaceList(template))) {
             logger.warn("template ops failed,set null...");
             output = null;
         }

@@ -22,6 +22,7 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -29,13 +30,13 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 18, 2014 2:57:53 PM
  */
-public class RegexOperationImpl extends Operation {
+public class RegexOperationImpl extends Operation<RegexOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        RegexOperation operation = (RegexOperation) getOperation();
+        RegexOperation operation = getOperation();
         String regex = operation.getRegex();
-        String orginal = getInput(request, response);
+        String orginal = OperationHelper.getStringInput(request, response);
 
         //regex support get value from context
         if (StringUtils.isNotEmpty(regex)) {

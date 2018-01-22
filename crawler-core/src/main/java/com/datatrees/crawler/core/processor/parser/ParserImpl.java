@@ -27,6 +27,7 @@ import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
@@ -73,7 +74,7 @@ public class ParserImpl extends Operation {
     @Override
     public void process(Request request, Response response) throws Exception {
         Preconditions.checkNotNull(parser);
-        String content = getInput(request, response);
+        String content = OperationHelper.getStringInput(request, response);
         Preconditions.checkState(StringUtils.isNotEmpty(content), "input for parser should not be empty!");
 
         String template = parser.getUrlTemplate();

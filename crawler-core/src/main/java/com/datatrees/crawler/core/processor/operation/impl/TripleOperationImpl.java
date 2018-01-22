@@ -10,13 +10,14 @@ import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.StringUtils;
 
-public class TripleOperationImpl extends Operation {
+public class TripleOperationImpl extends Operation<TripleOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        TripleOperation operation = (TripleOperation) getOperation();
+        TripleOperation operation = getOperation();
         // ${this}=${a}?${b}:${c}
         String expression = operation.getValue();
         TripleType type = operation.getTripleType();
@@ -24,9 +25,7 @@ public class TripleOperationImpl extends Operation {
             type = TripleType.EQ;
         }
 
-        String orginal = getInput(request, response);
-
-        String result;
+        String orginal = OperationHelper.getStringInput(request, response);
 
         if (logger.isDebugEnabled()) {
             logger.debug("TripleOperation input: " + String.format("value: %s", expression));
@@ -42,7 +41,7 @@ public class TripleOperationImpl extends Operation {
         firstResult = replaceFromContext(firstResult, orginal, request, response);
         secondResult = replaceFromContext(secondResult, orginal, request, response);
 
-        result = this.doTriple(type, firstParams, secondParams, firstResult, secondResult);
+        String result = this.doTriple(type, firstParams, secondParams, firstResult, secondResult);
 
         if (logger.isDebugEnabled()) {
             logger.debug("TripleOperation content: " + String.format("orginal: %s,expression: %s , dest: %s", orginal, expression, result));

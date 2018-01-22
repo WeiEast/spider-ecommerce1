@@ -20,14 +20,14 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since 2015年10月21日 上午10:29:59
  */
-public class CalculateOperationImpl extends Operation {
+public class CalculateOperationImpl extends Operation<CalculateOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        CalculateOperation operation = (CalculateOperation) getOperation();
+        CalculateOperation operation = getOperation();
         String expression = operation.getValue();
-        Object result = null;
 
+        Object result = null;
         // regex support get value from context
         if (StringUtils.isNotEmpty(expression)) {
             result = CalculateUtil.sourceCalculate(request, response, expression, null);

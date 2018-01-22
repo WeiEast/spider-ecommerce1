@@ -12,26 +12,31 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.SetOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
-public class SetOperationImpl extends Operation {
+public class SetOperationImpl extends Operation<SetOperation> {
+
+    private static final String EMPTY_TAG = "${empty}";
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        SetOperation operation = (SetOperation) getOperation();
+        SetOperation operation = getOperation();
         String output = operation.getValue();
+
+        if(EMPTY_TAG.equals(output)){
+            output = StringUtils.EMPTY;
+        }
+
         if (logger.isDebugEnabled()) {
-            logger.debug("operation set value " + output);
+            logger.debug("Set value : {}", output);
         }
-        if (output != null && output.equals("${empty}")) {
-            response.setOutPut("");
-        } else {
-            response.setOutPut(output);
-        }
+
+        response.setOutPut(output);
     }
 
 }

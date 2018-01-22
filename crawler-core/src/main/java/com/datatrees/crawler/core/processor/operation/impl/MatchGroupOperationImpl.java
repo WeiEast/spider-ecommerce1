@@ -22,11 +22,11 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
-public class MatchGroupOperationImpl extends Operation {
+public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        MatchGroupOperation op = (MatchGroupOperation) getOperation();
+        MatchGroupOperation op = getOperation();
         String sourceId = op.getSourceId();
         Matcher matcher = null;
         String result = null;

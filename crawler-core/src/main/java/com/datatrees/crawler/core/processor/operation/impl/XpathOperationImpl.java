@@ -19,6 +19,7 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -29,11 +30,11 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 18, 2014 2:58:48 PM
  */
-public class XpathOperationImpl extends Operation {
+public class XpathOperationImpl extends Operation<XpathOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        XpathOperation operation = (XpathOperation) getOperation();
+        XpathOperation operation = getOperation();
         String xpath = operation.getXpath();
 
         Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
@@ -41,7 +42,7 @@ public class XpathOperationImpl extends Operation {
 
         xpath = ReplaceUtils.replaceMap(fieldContext, sourceMap, xpath);
 
-        String orginal = getInput(request, response);
+        String orginal = OperationHelper.getStringInput(request, response);
         String resultStirng = "";
         List<String> result = XPathUtil.getXpath(xpath, orginal);
         if (CollectionUtils.isNotEmpty(result)) {
