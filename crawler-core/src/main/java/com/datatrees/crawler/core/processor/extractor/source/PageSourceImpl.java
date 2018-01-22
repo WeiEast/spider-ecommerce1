@@ -39,7 +39,6 @@ public class PageSourceImpl extends Processor {
 
     private List<PageSource> pageSources;
 
-
     public PageSourceImpl(List<PageSource> pageSources) {
         this.pageSources = Objects.requireNonNull(pageSources);
     }
@@ -76,7 +75,6 @@ public class PageSourceImpl extends Processor {
 
             builder.append(result);
         }
-
 
         String content = builder.toString();
         if (logger.isDebugEnabled()) {
@@ -117,7 +115,7 @@ public class PageSourceImpl extends Processor {
         String content;
         if (value instanceof FileWapper) {
             AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
-            content = (String) PluginCaller.call(context, pluginDesc,() -> {
+            content = (String) PluginCaller.call(pluginDesc, context, () -> {
                 Map<String, String> params = new HashMap<>();
                 FileWapper file = (FileWapper) value;
                 file.getFileInputStream();//download attachment to local
@@ -130,9 +128,9 @@ public class PageSourceImpl extends Processor {
             });
         } else if (value instanceof String) {
             AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
-            content = (String) PluginCaller.call(context, pluginDesc,  () -> {
+            content = (String) PluginCaller.call(pluginDesc, context, () -> {
                 Map<String, String> params = new HashMap<>();
-                params.put(PluginConstants.FILE_CONTENT,  (String) value);
+                params.put(PluginConstants.FILE_CONTENT, (String) value);
 
                 return params;
             });

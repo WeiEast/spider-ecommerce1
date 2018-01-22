@@ -19,8 +19,8 @@ import com.datatrees.rawdatacentral.domain.model.Task;
  */
 public class TaskMessage {
 
-    private Task                   task;
-    private SearchProcessorContext context;
+    private final Task                   task;
+    private final SearchProcessorContext context;
     private Boolean                messageSend;
     private int                    parentTaskID;
     private CollectorMessage       collectorMessage;
@@ -30,14 +30,7 @@ public class TaskMessage {
 
     private Long taskId;
 
-    private String websiteName;
-
-    /**
-     * @param task
-     * @param context
-     */
-    public TaskMessage(Task task, SearchProcessorContext context) {
-        super();
+    public TaskMessage(final Task task, final SearchProcessorContext context) {
         this.task = task;
         this.context = context;
         this.messageSend = true;
@@ -52,24 +45,10 @@ public class TaskMessage {
     }
 
     /**
-     * @param task the task to set
-     */
-    public void setTask(Task task) {
-        this.task = task;
-    }
-
-    /**
      * @return the context
      */
     public SearchProcessorContext getContext() {
         return context;
-    }
-
-    /**
-     * @param context the context to set
-     */
-    public void setContext(SearchProcessorContext context) {
-        this.context = context;
     }
 
     /**
@@ -169,10 +148,6 @@ public class TaskMessage {
 
     public void setTaskId(Long taskId) {
         this.taskId = taskId;
-    }
-
-    public void setWebsiteName(String websiteName) {
-        this.websiteName = websiteName;
     }
 
     /*

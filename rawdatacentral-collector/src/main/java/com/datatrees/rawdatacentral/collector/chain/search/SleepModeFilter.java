@@ -30,7 +30,7 @@ public class SleepModeFilter implements Filter {
             long waitIntervalMillis = searchProcessor.getWaitIntervalMillis();
             if (0 != waitIntervalMillis) {
                 try {
-                    Thread.currentThread().sleep(waitIntervalMillis);
+                    Thread.sleep(waitIntervalMillis);
                 } catch (InterruptedException e) {
                     log.error("doFilter error context={}", GsonUtils.toJson(context), e);
                 }

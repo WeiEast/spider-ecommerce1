@@ -37,7 +37,7 @@ public class PluginCookieFetchHandler extends CookieFetchHandler {
             //call plugin 
             String pid = cookieConf.getHandleConfig();
 
-            Object respOutput = PluginCaller.call(context, pid,  null);
+            Object respOutput = PluginCaller.call(pid,  context, null);
 
             result = (String) respOutput;
         } catch (Exception e) {

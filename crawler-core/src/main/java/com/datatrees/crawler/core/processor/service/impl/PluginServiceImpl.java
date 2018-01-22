@@ -14,12 +14,12 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class PluginServiceImpl extends ServiceBase {
         if (plugin != null) {
             for (int i = 0; i < retryCount; i++) {
                 try {
-                    String serviceResult = PluginCaller.call(context, plugin, () -> {
+                    String serviceResult = PluginCaller.call(plugin, context, () -> {
                         Map<String, String> params = new LinkedHashMap<>();
                         params.put(PluginConstants.CURRENT_URL, url);
                         params.put(PluginConstants.REDIRECT_URL, current.getRedirectUrl());
@@ -59,7 +59,9 @@ public class PluginServiceImpl extends ServiceBase {
                     // get plugin json result
                     Map<String, Object> pluginResultMap = PluginUtil.checkPluginResult(serviceResult);
                     serviceResult = StringUtils.defaultIfEmpty((String) pluginResultMap.get(PluginConstants.SERVICE_RESULT), "");
-                    ResponseUtil.setResponseContent(response, serviceResult);
+
+                    response.setOutPut(serviceResult);
+
                     RequestUtil.setContent(request, serviceResult);
                     ProcessorContextUtil.addThreadLocalLinkNode(context, current);
                     ProcessorContextUtil.addThreadLocalResponse(context, response);

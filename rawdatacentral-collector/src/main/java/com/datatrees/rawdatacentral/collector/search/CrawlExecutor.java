@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
@@ -16,7 +15,6 @@ import com.datatrees.crawler.core.domain.config.search.SearchType;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.format.unit.TimeUnit;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
@@ -36,9 +34,9 @@ import org.springframework.stereotype.Service;
  * @since 2015年7月29日 下午2:21:06
  */
 @Service
-public class CrawlExcutorHandler {
+public class CrawlExecutor {
 
-    private static final Logger log = LoggerFactory.getLogger(CrawlExcutorHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(CrawlExecutor.class);
     @Resource
     private KeywordService keywordService;
 
@@ -90,25 +88,14 @@ public class CrawlExcutorHandler {
     }
 
     private boolean isTimeOutOfTask(SearchProcessor searchProcessor) {
-        boolean isTimeOut = false;
-        try {
-            Task task = searchProcessor.getTask();
-            long taskStartTime = searchProcessor.getTask().getStartedAt().getTime();
-            long currentTime = UnifiedSysTime.INSTANCE.getSystemTime().getTime();
-            // unit minutes
-            long timeOut = TimeUnit.MINUTE.toMillis(searchProcessor.getMaxExecuteMinutes());
-            if ((currentTime - taskStartTime) >= timeOut) {
-                task.setErrorCode(ErrorCode.TASK_TIMEOUT_ERROR_CODE);
-                isTimeOut = true;
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("Task Timeout ,taskId : " + searchProcessor.getTask().getId() + " ,taskStartTime : " + taskStartTime + " ,currentTime : " + currentTime + "  ,isTimeOut : " + isTimeOut);
-            }
-        } catch (Exception e) {
-            log.error("isTimeOut encounter a problem ,error : ", e);
+        long currentTime = UnifiedSysTime.INSTANCE.getSystemTime().getTime();
+        boolean timeout = searchProcessor.isTimeout(currentTime);
+
+        if (timeout && log.isDebugEnabled()) {
+            log.debug("Crawl task is time out! taskId : {}, startTime: {}, now: {}", searchProcessor.getTaskId(), searchProcessor.getStartTime(), currentTime);
         }
 
-        return isTimeOut;
+        return timeout;
     }
 
     private void doLoopCrawl(SearchProcessor searchProcessor, LinkQueue linkQueue, LinkNode linkNode, Integer threadCount) throws ResultEmptyException {
@@ -141,6 +128,7 @@ public class CrawlExcutorHandler {
                         LinkNode link = nextLink.removeFirst();
                         // Time Out Logic
                         if (isTimeOutOfTask(searchProcessor)) {
+                            task.setErrorCode(ErrorCode.TASK_TIMEOUT_ERROR_CODE);
                             log.warn("TaskWorker has been Time Out.The program will exit");
                             break outer;
                         }
@@ -152,15 +140,12 @@ public class CrawlExcutorHandler {
                             if (crawlExecutorPool != null) {
                                 // run as muti thread pool
                                 try {
-                                    futureList.add(crawlExecutorPool.submit(new Callable<Boolean>() {
-                                        @Override
-                                        public Boolean call() throws Exception {
-                                            List<LinkNode> findLinks = searchProcessor.crawlOneURL(link);
-                                            if (!Thread.currentThread().isInterrupted()) {
-                                                linkQueue.addLinks(findLinks);
-                                            }
-                                            return true;
+                                    futureList.add(crawlExecutorPool.submit(() -> {
+                                        List<LinkNode> findLinks = searchProcessor.crawlOneURL(link);
+                                        if (!Thread.currentThread().isInterrupted()) {
+                                            linkQueue.addLinks(findLinks);
                                         }
+                                        return true;
                                     }));
                                 } catch (Exception e) {
                                     if (e instanceof RejectedExecutionException) {

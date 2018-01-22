@@ -28,7 +28,7 @@ import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
-import com.datatrees.rawdatacentral.collector.search.CrawlExcutorHandler;
+import com.datatrees.rawdatacentral.collector.search.CrawlExecutor;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.worker.filter.TemplateFilter;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
@@ -60,11 +60,12 @@ public class CollectorWorker {
 
     private static final Logger  LOGGER                    = LoggerFactory.getLogger(CollectorWorker.class);
     private final        long    maxLiveTime               = TimeUnit.SECONDS.toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
-    private              Integer maxExecuteMinutes         = PropertiesConfiguration.getInstance().getInt("default.collector.execute.minutes", 7);
+    // 爬虫任务超时时间，单位：秒
+    private static final int     DEFAULT_TASK_TIMEOUT      = PropertiesConfiguration.getInstance().getInt("crawler.task.timeout", 7 * 60);
     private              Integer interactiveTimeoutSeconds = PropertiesConfiguration.getInstance().getInt("interactive.timeout.seconds", 300);
-    private CrawlExcutorHandler crawlExcutorHandler;
-    private ResultDataHandler   resultDataHandler;
-    private SubTaskManager      subTaskManager;
+    private CrawlExecutor     crawlExecutor;
+    private ResultDataHandler resultDataHandler;
+    private SubTaskManager    subTaskManager;
     private Set<String> resultTagSet = new HashSet<>();
     private RedisDao redisDao;
 
@@ -279,13 +280,15 @@ public class CollectorWorker {
                 return null;
             }
 
-            maxExecuteMinutes = request.getMaxExecuteMinutes() != null ? request.getMaxExecuteMinutes() : maxExecuteMinutes;
-
             addDefaultHeaders(context, request);
 
-            SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate).setTemplateId(templateConfig.getId()).setSearchTemplateConfig(templateConfig).setMaxExecuteMinutes(maxExecuteMinutes).setResultDataHandler(resultDataHandler);
+            SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate).setSearchTemplateConfig(templateConfig).setResultDataHandler(resultDataHandler);
+            searchProcessor.setDefaultTimeout(DEFAULT_TASK_TIMEOUT, TimeUnit.SECONDS);
+            if (request.getMaxExecuteMinutes() != null) {
+                searchProcessor.setTimeout(request.getMaxExecuteMinutes(), TimeUnit.MINUTES);
+            }
 
-            crawlExcutorHandler.crawlExecutor(searchProcessor);
+            crawlExecutor.crawlExecutor(searchProcessor);
 
             return searchProcessor.getFutureList();
         } catch (ResultEmptyException e) {
@@ -351,10 +354,10 @@ public class CollectorWorker {
     }
 
     /**
-     * @param crawlExcutorHandler the crawlExcutorHandler to set
+     * @param crawlExecutor the crawl executor to set
      */
-    public CollectorWorker setCrawlExcutorHandler(CrawlExcutorHandler crawlExcutorHandler) {
-        this.crawlExcutorHandler = crawlExcutorHandler;
+    public CollectorWorker setCrawlExecutor(CrawlExecutor crawlExecutor) {
+        this.crawlExecutor = crawlExecutor;
         return this;
     }
 

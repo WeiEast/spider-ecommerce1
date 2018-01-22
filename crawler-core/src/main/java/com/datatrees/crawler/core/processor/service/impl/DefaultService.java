@@ -254,7 +254,9 @@ public class DefaultService extends ServiceBase {
                 }
 
                 this.proxyStatusCallBack(proxy, context, ProxyStatus.SUCCESS);
-                ResponseUtil.setResponseContent(response, content);
+
+                response.setOutPut(content);
+
                 RequestUtil.setContent(request, content);
                 RequestUtil.setContentCharset(request, output.getContent().getCharSet());
                 break;

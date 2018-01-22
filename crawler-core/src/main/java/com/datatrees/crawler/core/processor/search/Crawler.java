@@ -86,11 +86,9 @@ public class Crawler {
                         throw e;
                     }
                 }
-                //保存原始响应页面
-                response.setOriginPageContent(RequestUtil.getContent(request));
 
                 // reset content
-                ResponseUtil.setResponseContent(response, null);
+                response.setOutPut(null);
 
                 if (url.isNeedRequeue()) {
                     LOGGER.info("need requeue linknode: " + url);

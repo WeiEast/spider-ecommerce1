@@ -21,27 +21,27 @@ public final class PluginCaller {
     private PluginCaller() {
     }
 
-    public static Object call(AbstractProcessorContext context, AbstractPlugin pluginDesc, PluginParamsSupplier parametersSupplier) {
+    public static Object call(AbstractPlugin pluginDesc, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
         if (context == null) {
             throw new IllegalArgumentException("Processor context must not be null.");
         }
 
         PluginWrapper wrapper = context.createPluginWrapper(pluginDesc);
 
-        return call(context, wrapper, parametersSupplier);
+        return call(wrapper, context, parametersSupplier);
     }
 
-    public static Object call(AbstractProcessorContext context, String pluginId, PluginParamsSupplier parametersSupplier) {
+    public static Object call(String pluginId, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
         if (context == null) {
             throw new IllegalArgumentException("Processor context must not be null.");
         }
 
         PluginWrapper wrapper = context.createPluginWrapper(pluginId);
 
-        return call(context, wrapper, parametersSupplier);
+        return call(wrapper, context, parametersSupplier);
     }
 
-    public static Object call(AbstractProcessorContext context, PluginWrapper wrapper, PluginParamsSupplier parametersSupplier) {
+    public static Object call(PluginWrapper wrapper, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
         Plugin plugin = PluginFactory.getPlugin(wrapper, context);
 
         try {
