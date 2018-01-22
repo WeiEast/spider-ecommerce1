@@ -17,36 +17,35 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since Feb 7, 2014 2:06:47 PM
+ * @since Feb 7, 2014 4:54:10 PM
  */
-@Tag("replace")
-public class ReplaceMent implements Serializable {
+public class Regexp implements Serializable {
 
     /**
      *
      */
-    private static final long serialVersionUID = 6456178618030598235L;
-    private String from;
-    private String to;
+    private static final long serialVersionUID = 996749945913257735L;
+    private String  regex;
+    private Integer index;
 
-    @Attr("from")
-    public String getFrom() {
-        return from;
+    @Tag
+    public String getRegex() {
+        return regex;
     }
 
-    @Node("@from")
-    public void setFrom(String from) {
-        this.from = from;
+    @Node("text()")
+    public void setRegex(String regex) {
+        this.regex = regex;
     }
 
-    @Attr("to")
-    public String getTo() {
-        return to;
+    @Attr("index")
+    public Integer getIndex() {
+        return index;
     }
 
-    @Node("@to")
-    public void setTo(String to) {
-        this.to = to;
+    @Node("@index")
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
 }

@@ -17,35 +17,36 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since Feb 7, 2014 4:54:10 PM
+ * @since Feb 7, 2014 2:06:47 PM
  */
-public class PageContentExtractor implements Serializable {
+@Tag("replace")
+public class Replacement implements Serializable {
 
     /**
      *
      */
-    private static final long serialVersionUID = 996749945913257735L;
-    private String  contentExtractRegex;
-    private Integer contentExtractIndex;
+    private static final long serialVersionUID = 6456178618030598235L;
+    private String from;
+    private String to;
 
-    @Tag
-    public String getContentExtractRegex() {
-        return contentExtractRegex;
+    @Attr("from")
+    public String getFrom() {
+        return from;
     }
 
-    @Node("text()")
-    public void setContentExtractRegex(String contentExtractRegex) {
-        this.contentExtractRegex = contentExtractRegex;
+    @Node("@from")
+    public void setFrom(String from) {
+        this.from = from;
     }
 
-    @Attr("index")
-    public Integer getContentExtractIndex() {
-        return contentExtractIndex;
+    @Attr("to")
+    public String getTo() {
+        return to;
     }
 
-    @Node("@index")
-    public void setContentExtractIndex(Integer contentExtractIndex) {
-        this.contentExtractIndex = contentExtractIndex;
+    @Node("@to")
+    public void setTo(String to) {
+        this.to = to;
     }
 
 }

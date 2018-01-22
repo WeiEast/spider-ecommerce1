@@ -16,8 +16,8 @@ import java.util.Map;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.PageSource;
-import com.datatrees.crawler.core.domain.config.page.PageContentExtractor;
-import com.datatrees.crawler.core.domain.config.page.ReplaceMent;
+import com.datatrees.crawler.core.domain.config.page.Regexp;
+import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
@@ -108,11 +108,11 @@ public class PageSourceImpl extends Processor {
             }
 
             String result = sourceValue.toString();
-            List<ReplaceMent> replaceMents = source.getReplaceMentList();
-            if (CollectionUtils.isNotEmpty(replaceMents)) {
-                result = PageImpl.ReplaceMentImpl.replaceContent(result, replaceMents);
+            List<Replacement> replacements = source.getReplacements();
+            if (CollectionUtils.isNotEmpty(replacements)) {
+                result = PageImpl.ReplaceMentImpl.replaceContent(result, replacements);
             }
-            PageContentExtractor extractor = source.getPageContentExtractor();
+            Regexp extractor = source.getRegexp();
             if (extractor != null) {
                 result = PageImpl.PageContentExtractorImpl.extractContent(result, extractor);
             }

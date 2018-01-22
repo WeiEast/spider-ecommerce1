@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.page.PageContentExtractor;
-import com.datatrees.crawler.core.domain.config.page.ReplaceMent;
+import com.datatrees.crawler.core.domain.config.page.Regexp;
+import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
@@ -27,15 +27,14 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Tag("source")
 public class PageSource {
 
-    private String               field;
-    private AbstractPlugin       plugin;
-    private List<ReplaceMent>    replaceMentList;
-    private PageContentExtractor pageContentExtractor;
-    private String               split;
+    private String            field;
+    private AbstractPlugin    plugin;
+    private List<Replacement> replacements = new ArrayList<>();
+    private Regexp            regexp;
+    private String            split;
 
     public PageSource() {
         super();
-        replaceMentList = new ArrayList<ReplaceMent>();
     }
 
     @Attr(value = "plugin-ref", referenced = true)
@@ -69,22 +68,22 @@ public class PageSource {
     }
 
     @Tag("replaces")
-    public List<ReplaceMent> getReplaceMentList() {
-        return Collections.unmodifiableList(replaceMentList);
+    public List<Replacement> getReplacements() {
+        return Collections.unmodifiableList(replacements);
     }
 
     @Node("replaces/replace")
-    public void setReplaceMentList(ReplaceMent replaceMent) {
-        this.replaceMentList.add(replaceMent);
+    public void setReplacements(Replacement replacement) {
+        this.replacements.add(replacement);
     }
 
     @Tag("regex")
-    public PageContentExtractor getPageContentExtractor() {
-        return pageContentExtractor;
+    public Regexp getRegexp() {
+        return regexp;
     }
 
     @Node("regex")
-    public void setPageContentExtractor(PageContentExtractor pageContentExtractor) {
-        this.pageContentExtractor = pageContentExtractor;
+    public void setRegexp(Regexp regexp) {
+        this.regexp = regexp;
     }
 }

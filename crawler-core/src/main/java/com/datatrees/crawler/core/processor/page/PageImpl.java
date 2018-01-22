@@ -24,8 +24,8 @@ import com.datatrees.common.util.URLUtil;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.filter.FilterType;
 import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
-import com.datatrees.crawler.core.domain.config.page.PageContentExtractor;
-import com.datatrees.crawler.core.domain.config.page.ReplaceMent;
+import com.datatrees.crawler.core.domain.config.page.Regexp;
+import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
@@ -86,11 +86,11 @@ public class PageImpl extends AbstractPage {
         boolean needParse = needParser(ResponseUtil.getResponseStatus(response));
         // if block or no search result return
         if (needParse) {
-            List<ReplaceMent> replaceMents = page.getReplaceMentList();
-            if (CollectionUtils.isNotEmpty(replaceMents)) {
-                content = ReplaceMentImpl.replaceContent(content, replaceMents);
+            List<Replacement> replacements = page.getReplacementList();
+            if (CollectionUtils.isNotEmpty(replacements)) {
+                content = ReplaceMentImpl.replaceContent(content, replacements);
             }
-            PageContentExtractor extractor = page.getPageContentExtractor();
+            Regexp extractor = page.getRegexp();
             if (extractor != null) {
                 content = PageContentExtractorImpl.extractContent(content, extractor);
             }
@@ -544,10 +544,10 @@ public class PageImpl extends AbstractPage {
 
     public static class ReplaceMentImpl {
 
-        public static String replaceContent(String source, List<ReplaceMent> replaceMent) {
-            Preconditions.checkNotNull(replaceMent, "PageContentExtractor should not be null!");
+        public static String replaceContent(String source, List<Replacement> replacement) {
+            Preconditions.checkNotNull(replacement, "Regexp should not be null!");
             String result = source;
-            for (ReplaceMent rm : replaceMent) {
+            for (Replacement rm : replacement) {
                 result = result.replaceAll(rm.getFrom(), rm.getTo());
             }
 
@@ -558,17 +558,17 @@ public class PageImpl extends AbstractPage {
 
     public static class PageContentExtractorImpl {
 
-        public static String extractContent(String source, PageContentExtractor regexExtractor) {
-            Preconditions.checkNotNull(regexExtractor, "PageContentExtractor should not be null!");
+        public static String extractContent(String source, Regexp regexExtractor) {
+            Preconditions.checkNotNull(regexExtractor, "Regexp should not be null!");
 
-            if (StringUtils.isEmpty(regexExtractor.getContentExtractRegex())) {
+            if (StringUtils.isEmpty(regexExtractor.getRegex())) {
                 return source;
             }
 
             String result = null;
             log.debug("source .." + source);
-            result = PatternUtils.group(source, regexExtractor.getContentExtractRegex(), regexExtractor.getContentExtractIndex());
-            log.debug(regexExtractor.getContentExtractRegex() + " index: " + regexExtractor.getContentExtractIndex());
+            result = PatternUtils.group(source, regexExtractor.getRegex(), regexExtractor.getIndex());
+            log.debug(regexExtractor.getRegex() + " index: " + regexExtractor.getIndex());
             // log.debug("extract result:\t" + result);
             return result;
         }
