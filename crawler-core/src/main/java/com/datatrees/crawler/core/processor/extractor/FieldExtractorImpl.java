@@ -65,7 +65,11 @@ public class FieldExtractorImpl extends Processor {
             Map<String, String> params = new LinkedHashMap<>();
 
             params.put(PluginConstants.PAGE_CONTENT, content);
-            params.put(PluginConstants.CURRENT_URL, RequestUtil.getCurrentUrl(request).getUrl());
+            LinkNode requestLinkNode = RequestUtil.getCurrentUrl(request);
+            if (requestLinkNode != null) {
+                params.put(PluginConstants.CURRENT_URL, requestLinkNode.getUrl());
+                params.put(PluginConstants.REDIRECT_URL, requestLinkNode.getRedirectUrl());
+            }
             params.put(PluginConstants.FIELD, fieldExtractor.getField());
 
             return params;

@@ -44,6 +44,7 @@ public class PluginServiceImpl extends ServiceBase {
                     String serviceResult = PluginCaller.call(context, plugin, (PluginConfSupplier) pluginWrapper -> {
                         Map<String, String> params = new LinkedHashMap<>();
                         params.put(PluginConstants.CURRENT_URL, url);
+                        params.put(PluginConstants.REDIRECT_URL, current.getRedirectUrl());
                         current.getPropertys().forEach((key, val) -> params.put(key, val + ""));
                         if (context.needProxyByUrl(url)) {
                             Proxy proxy = context.getProxy();
