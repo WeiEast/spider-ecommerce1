@@ -10,6 +10,7 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
+import com.treefinance.crawler.framework.exception.PluginException;
 
 /**
  * @author Jerry
@@ -20,7 +21,7 @@ public final class PluginCaller {
     private PluginCaller() {
     }
 
-    public static Object call(AbstractProcessorContext context, AbstractPlugin pluginDesc, PluginParamsSupplier parametersSupplier) throws Exception {
+    public static Object call(AbstractProcessorContext context, AbstractPlugin pluginDesc, PluginParamsSupplier parametersSupplier) {
         if (context == null) {
             throw new IllegalArgumentException("Processor context must not be null.");
         }
@@ -30,7 +31,7 @@ public final class PluginCaller {
         return call(context, wrapper, parametersSupplier);
     }
 
-    public static Object call(AbstractProcessorContext context, String pluginId, PluginParamsSupplier parametersSupplier) throws Exception {
+    public static Object call(AbstractProcessorContext context, String pluginId, PluginParamsSupplier parametersSupplier) {
         if (context == null) {
             throw new IllegalArgumentException("Processor context must not be null.");
         }
@@ -40,22 +41,26 @@ public final class PluginCaller {
         return call(context, wrapper, parametersSupplier);
     }
 
-    public static Object call(AbstractProcessorContext context, PluginWrapper wrapper, PluginParamsSupplier parametersSupplier) throws Exception {
+    public static Object call(AbstractProcessorContext context, PluginWrapper wrapper, PluginParamsSupplier parametersSupplier) {
         Plugin plugin = PluginFactory.getPlugin(wrapper, context);
 
-        Request req = new Request();
+        try {
+            Request req = new Request();
 
-        if (parametersSupplier != null) {
-            Map<String, String> parameters = parametersSupplier.get();
-            if (parameters != null) {
-                RequestUtil.setPluginRuntimeConf(req, parameters);
+            if (parametersSupplier != null) {
+                Map<String, String> parameters = parametersSupplier.get();
+                if (parameters != null) {
+                    RequestUtil.setPluginRuntimeConf(req, parameters);
+                }
             }
+
+            Response resp = new Response();
+
+            plugin.invoke(req, resp);
+
+            return resp.getOutPut();
+        } catch (Exception e) {
+            throw new PluginException("Error calling plugin! >>> " + wrapper, e);
         }
-
-        Response resp = new Response();
-
-        plugin.invoke(req, resp);
-
-        return resp.getOutPut();
     }
 }

@@ -27,11 +27,11 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Tag("source")
 public class PageSource {
 
-    private String            field;
-    private AbstractPlugin    plugin;
+    private String         field;
+    private AbstractPlugin plugin;
     private List<Replacement> replacements = new ArrayList<>();
-    private Regexp            regexp;
-    private String            split;
+    private Regexp regexp;
+    private String separator;
 
     public PageSource() {
         super();
@@ -47,14 +47,24 @@ public class PageSource {
         this.plugin = plugin;
     }
 
+    @Attr("separator")
+    public String getSeparator() {
+        return separator;
+    }
+
+    @Node("@separator")
+    public void setSeparator(String separator) {
+        this.separator = separator;
+    }
+
     @Attr("split")
     public String getSplit() {
-        return split;
+        return getSeparator();
     }
 
     @Node("@split")
     public void setSplit(String split) {
-        this.split = split;
+        setSeparator(split);
     }
 
     @Attr("field")
