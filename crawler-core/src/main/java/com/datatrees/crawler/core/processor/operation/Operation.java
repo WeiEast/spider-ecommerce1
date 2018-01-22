@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Operation extends Processor {
 
-    private static final Logger            log       = LoggerFactory.getLogger(Operation.class);
+    protected  final Logger            logger       = LoggerFactory.getLogger(getClass());
     protected            AbstractOperation operation = null;
     protected            FieldExtractor    extractor = null;
 
