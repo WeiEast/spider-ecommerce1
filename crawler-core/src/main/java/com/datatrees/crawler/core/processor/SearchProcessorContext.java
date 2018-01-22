@@ -31,7 +31,6 @@ import com.datatrees.crawler.core.processor.common.resource.LoginResource;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.page.DummyPage;
-import com.datatrees.webrobot.driver.WebRobotClientDriver;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -63,7 +62,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     private Map<String, String> defaultHeader     = new HashMap<>();
     private Map<Page, Integer>  pageVisitCountMap = new HashMap<>();
     private boolean              loginCheckIgnore;
-    private WebRobotClientDriver webRobotClientDriver;
 
     /**
      * @param website
@@ -82,14 +80,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
                 proxyManager.release();
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-            }
-        }
-        if (webRobotClientDriver != null) {
-            try {
-                log.info("try to release webRobotClientDriver ...");
-                webRobotClientDriver.release();
-            } catch (Exception e) {
-                log.warn("release webRobot error " + e.getMessage());
             }
         }
     }
@@ -471,20 +461,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
             return properties.getCaptchaCode();
         }
         return null;
-    }
-
-    /**
-     * @return the webRobotClientDriver
-     */
-    public WebRobotClientDriver getWebRobotClientDriver() {
-        return webRobotClientDriver;
-    }
-
-    /**
-     * @param webRobotClientDriver the webRobotClientDriver to set
-     */
-    public void setWebRobotClientDriver(WebRobotClientDriver webRobotClientDriver) {
-        this.webRobotClientDriver = webRobotClientDriver;
     }
 
 }

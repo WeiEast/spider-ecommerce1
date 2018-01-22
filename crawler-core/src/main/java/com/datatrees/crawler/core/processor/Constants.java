@@ -103,7 +103,6 @@ public final class Constants {
     public static       String MAIL_SERVER_IP                        = "mailServerIp";
     public static       String THREAD_LOCAL_RESPONSE                 = "THREAD_LOCAL_RESPONSE";
     public static       String THREAD_LOCAL_LINKNODE                 = "THREAD_LOCAL_LINKNODE";
-    public static       String WEBROBOT_CLIENT_DRIVER                = "WEBROBOT_CLIENT_DRIVER";
     public static       String HTTP_STATE                            = "HTTP_STATE";
     String HTTP_CLIENT_TYPE = "http_client_type";
 

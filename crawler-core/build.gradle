@@ -41,10 +41,6 @@ dependencies {
     compile "org.apache.commons:commons-exec:${commonsExec}"
     compile "joda-time:joda-time:${jodaTime}"
     compile "org.apache.james:apache-mime4j:${apacheMime4j}"
-    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true) {
-        exclude module: 'guava'
-        exclude module: 'selenium-firefox-driver'
-    }
     compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: "spring")
         exclude(module: "netty")

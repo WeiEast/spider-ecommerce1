@@ -11,8 +11,6 @@ package com.datatrees.crawler.core.processor.plugin;
 import com.datatrees.common.protocol.Protocol;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
-import com.datatrees.webrobot.driver.WebRobotClientDriver;
-import com.datatrees.webrobot.webdriver.browser.BrowserType;
 import com.treefinance.crawler.framework.extension.plugin.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,20 +57,9 @@ public abstract class AbstractClientPlugin {
     protected String getPorxy(String cacertUrl) throws Exception {
         return this.getProxy(cacertUrl);
     }
+
     protected String getProxy(String url) throws Exception {
         return PluginHelper.getProxy(url);
-    }
-
-    public WebRobotClientDriver getWebRobotDriver(String url) throws Exception {
-        return getWebRobotDriver(url, BrowserType.FIREFOX, null);
-    }
-
-    public WebRobotClientDriver getWebRobotDriver(String url, BrowserType browserType, String clientName) throws Exception {
-        return PluginHelper.getWebRobotDriver(url, browserType, clientName);
-    }
-
-    public void releaseDriver(WebRobotClientDriver driver) {
-        PluginHelper.releaseDriver(driver);
     }
 
 }
