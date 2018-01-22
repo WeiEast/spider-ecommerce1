@@ -88,11 +88,11 @@ public class PageImpl extends AbstractPage {
         if (needParse) {
             List<Replacement> replacements = page.getReplacementList();
             if (CollectionUtils.isNotEmpty(replacements)) {
-                content = ReplaceMentImpl.replaceContent(content, replacements);
+                content = PageHelper.replaceText(content, replacements);
             }
-            Regexp extractor = page.getRegexp();
-            if (extractor != null) {
-                content = PageContentExtractorImpl.extractContent(content, extractor);
+            Regexp regexp = page.getRegexp();
+            if (regexp != null) {
+                content = PageHelper.getTextByRegexp(content, regexp);
             }
             request.setInput(content);
 
@@ -539,38 +539,6 @@ public class PageImpl extends AbstractPage {
             } else {
                 log.debug("text extractor url exists: " + nextURL);
             }
-        }
-    }
-
-    public static class ReplaceMentImpl {
-
-        public static String replaceContent(String source, List<Replacement> replacement) {
-            Preconditions.checkNotNull(replacement, "Regexp should not be null!");
-            String result = source;
-            for (Replacement rm : replacement) {
-                result = result.replaceAll(rm.getFrom(), rm.getTo());
-            }
-
-            return result;
-        }
-
-    }
-
-    public static class PageContentExtractorImpl {
-
-        public static String extractContent(String source, Regexp regexExtractor) {
-            Preconditions.checkNotNull(regexExtractor, "Regexp should not be null!");
-
-            if (StringUtils.isEmpty(regexExtractor.getRegex())) {
-                return source;
-            }
-
-            String result = null;
-            log.debug("source .." + source);
-            result = PatternUtils.group(source, regexExtractor.getRegex(), regexExtractor.getIndex());
-            log.debug(regexExtractor.getRegex() + " index: " + regexExtractor.getIndex());
-            // log.debug("extract result:\t" + result);
-            return result;
         }
     }
 

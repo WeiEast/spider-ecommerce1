@@ -24,10 +24,10 @@ import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
-import com.datatrees.crawler.core.processor.page.PageImpl;
-import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
+import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -110,11 +110,11 @@ public class PageSourceImpl extends Processor {
             String result = sourceValue.toString();
             List<Replacement> replacements = source.getReplacements();
             if (CollectionUtils.isNotEmpty(replacements)) {
-                result = PageImpl.ReplaceMentImpl.replaceContent(result, replacements);
+                result = PageHelper.replaceText(result, replacements);
             }
-            Regexp extractor = source.getRegexp();
-            if (extractor != null) {
-                result = PageImpl.PageContentExtractorImpl.extractContent(result, extractor);
+            Regexp regexp = source.getRegexp();
+            if (regexp != null) {
+                result = PageHelper.getTextByRegexp(result, regexp);
             }
             if (log.isDebugEnabled()) {
                 log.debug("getSource source:" + source + ", result:" + result);
