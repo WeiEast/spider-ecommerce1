@@ -20,8 +20,7 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.exception.LoginException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import org.slf4j.Logger;
@@ -70,7 +69,7 @@ public enum Login {
         if (pluginDesc != null) {// plugin
             logger.info("init cookie with plugin " + pluginDesc);
 
-            cookie = (String) PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> new LinkedHashMap<>());
+            cookie = (String) PluginCaller.call(context, pluginDesc, null);
 
             logger.info("plugin fetch cookie result : " + cookie);
             Map<String, Object> resultMap = PluginUtil.checkPluginResult(cookie);
@@ -154,7 +153,7 @@ public enum Login {
         if (pluginDesc != null) {// plugin
             logger.info("init cookie with plugin " + pluginDesc);
 
-            cookie = (String) PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> {
+            cookie = (String) PluginCaller.call(context, pluginDesc,  () -> {
                 Map<String, String> params = new LinkedHashMap<>();
                 params.put(PluginConstants.USERNAME, account.getUserName());
                 params.put(PluginConstants.PASSWORD, account.getPassword());

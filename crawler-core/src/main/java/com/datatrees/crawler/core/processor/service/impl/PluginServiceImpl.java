@@ -14,8 +14,7 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
@@ -41,7 +40,7 @@ public class PluginServiceImpl extends ServiceBase {
         if (plugin != null) {
             for (int i = 0; i < retryCount; i++) {
                 try {
-                    String serviceResult = PluginCaller.call(context, plugin, (PluginConfSupplier) pluginWrapper -> {
+                    String serviceResult = PluginCaller.call(context, plugin, () -> {
                         Map<String, String> params = new LinkedHashMap<>();
                         params.put(PluginConstants.CURRENT_URL, url);
                         params.put(PluginConstants.REDIRECT_URL, current.getRedirectUrl());

@@ -12,13 +12,13 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.protocol.WebClientUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.resource.PluginManager;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
 import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 
 /**
  * java plugin for
@@ -28,15 +28,19 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
  */
 public class JavaPlugin extends Plugin {
 
+    private AbstractProcessorContext context;
+
+    public JavaPlugin(AbstractProcessorContext context) {
+        this.context = context;
+    }
+
     @Override
     protected Object invokePlugin(PluginWrapper plugin, String args, Request request) throws Exception {
-
-        AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
         com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin javaPlugin
                 = (com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) plugin.getPlugin();
 
-        String mainClass = javaPlugin.getMainClass();
         String fileName = javaPlugin.getFileName();
+        String mainClass = javaPlugin.getMainClass();
         Long taskId = null;
         if (null != context) {
             taskId = context.getLong(AttributeKey.TASK_ID);
@@ -49,7 +53,13 @@ public class JavaPlugin extends Plugin {
         }
         // add http client
         clientPlugin.setWebClient(WebClientUtil.getWebClient());
-        //插件自定义参数
-        return clientPlugin.process(args, javaPlugin.getParams());
+
+        ProcessContextHolder.setProcessorContext(context);
+        try {
+            //插件自定义参数
+            return clientPlugin.process(args, javaPlugin.getParams());
+        } finally {
+            ProcessContextHolder.clearProcessorContext();
+        }
     }
 }

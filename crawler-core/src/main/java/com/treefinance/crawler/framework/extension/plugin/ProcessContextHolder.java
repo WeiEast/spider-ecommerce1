@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
-package com.datatrees.crawler.core.processor.plugin;
+package com.treefinance.crawler.framework.extension.plugin;
 
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 
 /**
  * @author Jerry
- * @see ProcessContextHolder
  * @since 16:31 15/05/2017
  */
-@Deprecated
-public class PluginContext {
+public final class ProcessContextHolder {
+
+    private static final ThreadLocal<AbstractProcessorContext> CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
+
+    private ProcessContextHolder() {
+    }
 
     public static AbstractProcessorContext getProcessorContext() {
-        return ProcessContextHolder.getProcessorContext();
+        return CONTEXT_THREAD_LOCAL.get();
     }
 
     public static void setProcessorContext(AbstractProcessorContext context) {
-        ProcessContextHolder.setProcessorContext(context);
+        if (context != null) {
+            CONTEXT_THREAD_LOCAL.set(context);
+        }
     }
 
     public static void clearProcessorContext() {
-        ProcessContextHolder.clearProcessorContext();
+        CONTEXT_THREAD_LOCAL.remove();
     }
 }

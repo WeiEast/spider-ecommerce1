@@ -71,13 +71,13 @@ public abstract class Plugin extends Processor {
      * dynamic by runtime business logic should impl each state
      */
     private String getPhaseInput(Request req) {
-        Map<String, String> pluginConf = RequestUtil.getPluginRuntimeConf(req);
-        if (MapUtils.isEmpty(pluginConf)) {
-            pluginConf = new HashMap<>();
+        Map<String, String> params = RequestUtil.getPluginRuntimeConf(req);
+        if (MapUtils.isEmpty(params)) {
+            params = new HashMap<>();
         }
 
-        pluginConf.put(PluginConstants.EXTRA_CONFIG, plugin.getExtraConfig());
+        params.put(PluginConstants.EXTRA_CONFIG, plugin.getExtraConfig());
 
-        return GsonUtils.toJson(pluginConf);
+        return GsonUtils.toJson(params);
     }
 }

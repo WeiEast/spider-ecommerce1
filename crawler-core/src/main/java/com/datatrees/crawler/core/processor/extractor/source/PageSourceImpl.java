@@ -25,8 +25,7 @@ import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
 import com.datatrees.crawler.core.processor.page.PageImpl;
-import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
@@ -55,7 +54,7 @@ public class PageSourceImpl extends Processor {
     private String getSourceWithPlugin(Request request, AbstractPlugin pluginDesc, Object value) throws Exception {
         AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
 
-        Object respOutput = PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> {
+        Object respOutput = PluginCaller.call(context, pluginDesc,  () -> {
             Map<String, String> params = new LinkedHashMap<>();
             if (value instanceof FileWapper) {
                 FileWapper file = (FileWapper) value;

@@ -28,8 +28,7 @@ import com.datatrees.crawler.core.processor.common.exception.ExtractorException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.google.common.base.Preconditions;
@@ -61,7 +60,7 @@ public class FieldExtractorImpl extends Processor {
     private Object extractWithPlugin(Request request, String content, AbstractPlugin pluginDesc) throws Exception {
         AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
 
-        Object fieldResult = PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> {
+        Object fieldResult = PluginCaller.call(context, pluginDesc, () -> {
             Map<String, String> params = new LinkedHashMap<>();
 
             params.put(PluginConstants.PAGE_CONTENT, content);

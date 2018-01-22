@@ -8,26 +8,12 @@
 
 package com.datatrees.crawler.core.processor.plugin;
 
-import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.Protocol;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.BeanResourceFactory;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
-import com.datatrees.crawler.core.processor.proxy.Proxy;
-import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.datatrees.webrobot.driver.ClientDriverManager;
 import com.datatrees.webrobot.driver.WebRobotClientDriver;
 import com.datatrees.webrobot.webdriver.browser.BrowserType;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import com.treefinance.crawler.framework.extension.plugin.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,33 +48,19 @@ public abstract class AbstractClientPlugin {
     public abstract String process(String... args) throws Exception;
 
     protected String getResponseByWebRequest(LinkNode linkNode) {
-        Request newRequest = new Request();
-        AbstractProcessorContext processorContext = PluginContext.getProcessorContext();
-        RequestUtil.setProcessorContext(newRequest, processorContext);
-        RequestUtil.setConf(newRequest, PropertiesConfiguration.getInstance());
-        RequestUtil.setContext(newRequest, processorContext.getContext());
-        Response newResponse = new Response();
         try {
-            RequestUtil.setCurrentUrl(newRequest, linkNode);
-            AbstractService service = processorContext.getDefaultService();
-            ServiceBase serviceProcessor = ProcessorFactory.getService(service);
-            serviceProcessor.invoke(newRequest, newResponse);
+            return PluginHelper.requestAsString(linkNode, null);
         } catch (Exception e) {
-            logger.error("execute request error! " + e.getMessage(), e);
+            throw new RuntimeException("Error sending request >>> " + linkNode, e);
         }
-        return StringUtils.defaultString(RequestUtil.getContent(newRequest));
     }
 
+    @Deprecated
     protected String getPorxy(String cacertUrl) throws Exception {
-        String proxyURL = null;
-        AbstractProcessorContext context = PluginContext.getProcessorContext();
-        if (context instanceof SearchProcessorContext ) {
-            Proxy proxy = ((SearchProcessorContext) context).getProxy(cacertUrl);
-            if (proxy != null) {
-                proxyURL = proxy.format();
-            }
-        }
-        return proxyURL;
+        return this.getProxy(cacertUrl);
+    }
+    protected String getProxy(String url) throws Exception {
+        return PluginHelper.getProxy(url);
     }
 
     public WebRobotClientDriver getWebRobotDriver(String url) throws Exception {
@@ -96,21 +68,11 @@ public abstract class AbstractClientPlugin {
     }
 
     public WebRobotClientDriver getWebRobotDriver(String url, BrowserType browserType, String clientName) throws Exception {
-        AbstractProcessorContext context = PluginContext.getProcessorContext();
-
-        ClientDriverManager clientDriverManager = BeanResourceFactory.getInstance().getBean(ClientDriverManager.class);
-        WebRobotClientDriver driver = clientDriverManager
-                .getWebDriver(browserType, getPorxy(url), clientName, ProcessorContextUtil.getAccountKey(context));
-
-        if (context instanceof SearchProcessorContext) {
-            ((SearchProcessorContext) context).setWebRobotClientDriver(driver);
-        }
-
-        return driver;
+        return PluginHelper.getWebRobotDriver(url, browserType, clientName);
     }
 
     public void releaseDriver(WebRobotClientDriver driver) {
-        if (driver != null && BooleanUtils.isNotTrue(driver.getReleased())) driver.release();
+        PluginHelper.releaseDriver(driver);
     }
 
 }

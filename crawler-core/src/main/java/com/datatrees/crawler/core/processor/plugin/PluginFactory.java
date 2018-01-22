@@ -12,6 +12,7 @@ import com.datatrees.crawler.core.domain.config.plugin.PluginType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.impl.CommandPlugin;
 import com.datatrees.crawler.core.processor.plugin.impl.JavaPlugin;
+import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -23,24 +24,24 @@ public final class PluginFactory {
     private PluginFactory() {
     }
 
+    /**
+     * @see ProcessContextHolder#getProcessorContext()
+     */
+    @Deprecated
     public static AbstractProcessorContext getProcessorContext() {
-        return PluginContext.getProcessorContext();
+        return ProcessContextHolder.getProcessorContext();
     }
 
-    public static Plugin getPlugin(PluginWrapper wrapper) {
+    public static Plugin getPlugin(PluginWrapper wrapper, AbstractProcessorContext context) {
         Plugin plugin;
         PluginType type = wrapper.getType();
         switch (type) {
             case PYTHON:
-                plugin = new CommandPlugin();
-                break;
-
             case SHELL:
                 plugin = new CommandPlugin();
                 break;
-
             default:
-                plugin = new JavaPlugin();
+                plugin = new JavaPlugin(context);
                 break;
         }
 
