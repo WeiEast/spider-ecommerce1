@@ -1,10 +1,27 @@
-package com.datatrees.crawler.core.classfile;
+/*
+ * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.treefinance.crawler.framework.classfile;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -14,7 +31,7 @@ import java.util.stream.Collectors;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
-import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.treefinance.crawler.exception.UnexpectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +55,7 @@ public final class ClassLoaderManager {
     }).build();
 
     public static ClassLoader findClassLoader(final File file, final ClassLoader classLoader, boolean expired) {
-        Objects.requireNonNull(file);
         try {
-
             Key key = new Key(file, classLoader);
             if (expired) {
                 LOADER_CACHE.invalidate(key);
@@ -48,45 +63,43 @@ public final class ClassLoaderManager {
 
             return LOADER_CACHE.get(key, () -> ClassLoaderFactory.create(file, classLoader));
         } catch (ExecutionException e) {
-            throw new UncheckedExecutionException(e);
+            throw new UnexpectedException(e);
         }
     }
 
     private static class Key {
 
-        private final File        file;
+        // file path
+        private final Path        path;
+        // last modified time of file
+        private final long        lastModified;
         private final ClassLoader classLoader;
 
         Key(File file, ClassLoader classLoader) {
-            this.file = file;
+            Objects.requireNonNull(file);
+            this.path = file.toPath();
+            this.lastModified = file.lastModified();
             this.classLoader = classLoader;
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
             Key key = (Key) o;
 
             try {
-                if (file != null && key.file != null && Files.isSameFile(file.toPath(), key.file.toPath()) || (file == null && key.file == null)) {
-                    return classLoader != null ? classLoader.equals(key.classLoader) : key.classLoader == null;
-                }
+                return lastModified == key.lastModified && Files.isSameFile(path, key.path) && (classLoader != null ? classLoader.equals(key.classLoader) : key.classLoader == null);
             } catch (IOException e) {
-                throw new UncheckedExecutionException(e);
+                throw new UnexpectedException(e);
             }
-
-            return false;
         }
 
         @Override
         public int hashCode() {
-            int result = file != null ? file.hashCode() : 0;
+            int result = path.hashCode();
+            result = 31 * result + (int) (lastModified ^ (lastModified >>> 32));
             result = 31 * result + (classLoader != null ? classLoader.hashCode() : 0);
             return result;
         }

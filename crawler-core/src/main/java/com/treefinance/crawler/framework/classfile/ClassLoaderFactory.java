@@ -1,4 +1,20 @@
-package com.datatrees.crawler.core.classfile;
+/*
+ * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.treefinance.crawler.framework.classfile;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -30,29 +46,28 @@ public final class ClassLoaderFactory {
 
     public static ClassLoader create(final File[] files, final ClassLoader parent) throws MalformedURLException {
         List<URL> urls = toURL(files);
+
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Instantiate URLClassLoader. Url size: {}, parent: {}", files.length, parent);
         }
-        if (CollectionUtils.isNotEmpty(urls)) {
-            URL[] array = urls.toArray(new URL[urls.size()]);
-            if (parent != null) {
-                return URLClassLoader.newInstance(array, parent);
-            }
-            return URLClassLoader.newInstance(array);
+
+        if (CollectionUtils.isEmpty(urls)) {
+            LOGGER.warn("Can not instantiate URLClassLoader because files is empty!");
+            throw new IllegalArgumentException("Can not find the resource of jar files to create class loader.");
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Can not instantiate URLClassLoader because files is empty!");
+        URL[] array = urls.toArray(new URL[urls.size()]);
+        if (parent != null) {
+            return URLClassLoader.newInstance(array, parent);
         }
-
-        return parent != null ? parent : ClassLoaderFactory.class.getClassLoader();
+        return URLClassLoader.newInstance(array);
     }
 
     private static List<URL> toURL(File[] files) throws MalformedURLException {
         List<URL> list = new ArrayList<>();
         if (ArrayUtils.isNotEmpty(files)) {
             for (File file : files) {
-                if (!file.exists() || !file.canRead() || !file.getName().endsWith(".jar")) {
+                if (file == null || !file.exists() || !file.canRead()) {
                     continue;
                 }
 

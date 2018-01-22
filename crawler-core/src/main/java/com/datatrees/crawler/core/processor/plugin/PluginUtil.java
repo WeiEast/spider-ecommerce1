@@ -8,12 +8,10 @@
 
 package com.datatrees.crawler.core.processor.plugin;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.classfile.ClassLoaderUtils;
-import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.processor.common.exception.PluginException;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
@@ -32,9 +30,9 @@ public final class PluginUtil {
     }
 
     public static Map<String, Object> checkPluginResult(String result) throws PluginException {
-        Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
+        Map<String, Object> resultMap = new HashMap<>();
         try {
-            resultMap.putAll((LinkedHashMap<String, Object>) GsonUtils.fromJson(result, new TypeToken<LinkedHashMap<String, Object>>() {}.getType()));
+            resultMap.putAll(GsonUtils.fromJson(result, new TypeToken<Map<String, Object>>() {}.getType()));
             if (resultMap.containsKey("errorCode")) {
                 throw new PluginException("error duing plugin invoke!");
             }
@@ -54,21 +52,5 @@ public final class PluginUtil {
         }
         return result;
     }
-
-    //public static AbstractClientPlugin loadPlugin(PluginWrapper plugin,
-    //        ClassLoader parent) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-    //    try {
-    //        String mainClass = ((JavaPlugin) plugin.getPlugin()).getMainClass();
-    //
-    //        ClassLoader parentLoader = parent;
-    //        if (parentLoader == null) {
-    //            parentLoader = PluginUtil.class.getClassLoader();
-    //        }
-    //
-    //        return ClassLoaderUtils.loadAndInstantiate(plugin.getFile(), parentLoader, plugin.isForceReload(), mainClass, AbstractClientPlugin.class);
-    //    } catch (Throwable e) {
-    //        log.error("loadPlugin error plugin={}", plugin, e);
-    //        return null;
-    //    }
-    //}
+    
 }
