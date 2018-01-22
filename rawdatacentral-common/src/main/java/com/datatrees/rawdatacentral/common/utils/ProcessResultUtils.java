@@ -43,7 +43,7 @@ public class ProcessResultUtils {
     }
 
     public static long setEndTime(long processId, long start, long end) {
-        int timeout = (int) (TimeUnit.MILLISECONDS.toSeconds(end - start) + TimeUnit.MINUTES.toSeconds(10));
+        int timeout = (int) (TimeUnit.MILLISECONDS.toSeconds(end - start) + TimeUnit.MINUTES.toSeconds(1));
         RedisUtils.set(RedisKeyPrefixEnum.PROCESS_START_TIME.getRedisKey(processId), String.valueOf(start), timeout);
         RedisUtils.set(RedisKeyPrefixEnum.PROCESS_END_TIME.getRedisKey(processId), String.valueOf(end), timeout);
         logger.info("set end time for processId : {},start : {} ,end :{}", processId, DateUtils.formatYmdhms(start), DateUtils.formatYmdhms(end));
@@ -58,7 +58,7 @@ public class ProcessResultUtils {
             logger.info("process is time out,processId={},start={},end={}", processId, startStr, endStr);
             return true;
         }
-        if (Long.valueOf(endStr) > System.currentTimeMillis()) {
+        if (Long.valueOf(endStr) < System.currentTimeMillis()) {
             logger.info("process is time out,processId={},start={},end={}", processId, startStr, endStr);
             return true;
         }
