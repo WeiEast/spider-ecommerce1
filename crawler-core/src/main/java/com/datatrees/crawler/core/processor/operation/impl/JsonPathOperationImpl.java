@@ -11,16 +11,12 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Jerry
  * @datetime 2015-07-17 20:02
  */
 public class JsonPathOperationImpl extends Operation {
-
-    private static final Logger log = LoggerFactory.getLogger(JsonPathOperationImpl.class);
 
     @Override
     public void process(Request request, Response response) throws Exception {
@@ -39,11 +35,11 @@ public class JsonPathOperationImpl extends Operation {
         try {
             original = JsonPathUtil.readAsString(original, jsonpath);
         } catch (Exception e) {
-            log.error("jsonpath extract empty content! " + jsonpath + "exception :" + e.getMessage());
+            logger.error("jsonpath extract empty content! " + jsonpath + "exception :" + e.getMessage());
             original = null;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("jsonPath extract result:" + original);
+        if (logger.isDebugEnabled()) {
+            logger.debug("jsonPath extract result:" + original);
         }
 
         response.setOutPut(original);

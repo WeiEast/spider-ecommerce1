@@ -11,12 +11,8 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AppendOperationImpl extends Operation {
-
-    private static final Logger log = LoggerFactory.getLogger(AppendOperationImpl.class);
 
     @Override
     public void process(Request request, Response response) throws Exception {
@@ -25,8 +21,8 @@ public class AppendOperationImpl extends Operation {
         String value = operation.getValue();
         String orginal = getInput(request, response);
 
-        if (log.isDebugEnabled()) {
-            log.debug("AppendOperation input: " + String.format("value: %s, index: %d", value, index));
+        if (logger.isDebugEnabled()) {
+            logger.debug("AppendOperation input: " + String.format("value: %s, index: %d", value, index));
         }
 
         Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
@@ -41,8 +37,8 @@ public class AppendOperationImpl extends Operation {
             result.append(StringUtils.substring(orginal, 0, index)).append(value).append(StringUtils.substring(orginal, index, orginal.length()));
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("AppendOperation content: " + String.format("orginal: %s , dest: %s", orginal, result));
+        if (logger.isDebugEnabled()) {
+            logger.debug("AppendOperation content: " + String.format("orginal: %s , dest: %s", orginal, result));
         }
 
         response.setOutPut(result.toString());

@@ -22,8 +22,6 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * handle codec operation decode/encode etc..
@@ -32,8 +30,6 @@ import org.slf4j.LoggerFactory;
  * @since Mar 27, 2014 12:30:43 PM
  */
 public class ExtractOperationImpl extends Operation {
-
-    private static final Logger log = LoggerFactory.getLogger(ExtractOperationImpl.class);
 
     private String extractHtmlLink(String content, String baseURL) {
         // parser url from html
@@ -58,8 +54,8 @@ public class ExtractOperationImpl extends Operation {
             List<String> textUrls = TextUrlExtractor.extractor(content, Constant.URL_REGEX, 1);
             url = CollectionUtils.isNotEmpty(textUrls) ? textUrls.get(0) : "";
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Extract operation result:" + url + " , content:" + content);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Extract operation result:" + url + " , content:" + content);
         }
         response.setOutPut(url);
     }

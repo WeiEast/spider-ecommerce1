@@ -11,12 +11,8 @@ import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TripleOperationImpl extends Operation {
-
-    private static final Logger log = LoggerFactory.getLogger(TripleOperationImpl.class);
 
     @Override
     public void process(Request request, Response response) throws Exception {
@@ -32,8 +28,8 @@ public class TripleOperationImpl extends Operation {
 
         String result;
 
-        if (log.isDebugEnabled()) {
-            log.debug("TripleOperation input: " + String.format("value: %s", expression));
+        if (logger.isDebugEnabled()) {
+            logger.debug("TripleOperation input: " + String.format("value: %s", expression));
         }
 
         String firstParams = StringUtils.substringBefore(expression, type.getExpression());
@@ -48,8 +44,8 @@ public class TripleOperationImpl extends Operation {
 
         result = this.doTriple(type, firstParams, secondParams, firstResult, secondResult);
 
-        if (log.isDebugEnabled()) {
-            log.debug("TripleOperation content: " + String.format("orginal: %s,expression: %s , dest: %s", orginal, expression, result));
+        if (logger.isDebugEnabled()) {
+            logger.debug("TripleOperation content: " + String.format("orginal: %s,expression: %s , dest: %s", orginal, expression, result));
         }
 
         response.setOutPut(result);

@@ -22,8 +22,6 @@ import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -32,20 +30,15 @@ import org.slf4j.LoggerFactory;
  */
 public class TemplateOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(TemplateOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         TemplateOperation op = (TemplateOperation) getOperation();
         String template = op.getTemplate();
         Set<String> replaceList = ReplaceUtils.getReplaceList(template);
-        log.debug("TemplateOperationImpl: replace list" + replaceList);
+        logger.debug("TemplateOperationImpl: replace list" + replaceList);
         @SuppressWarnings("unchecked") Map<String, FieldExtractorWarpper> fieldMap = ResponseUtil.getResponseFieldResult(response);
-        if (log.isDebugEnabled()) {
-            log.debug("TemplateOperationImpl: field values " + fieldMap);
+        if (logger.isDebugEnabled()) {
+            logger.debug("TemplateOperationImpl: field values " + fieldMap);
         }
         Object output = null;
         if (BooleanUtils.isTrue(op.getReturnObject())) {
@@ -53,9 +46,9 @@ public class TemplateOperationImpl extends Operation {
         } else {
             output = ReplaceUtils.replaceMap(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), template);
         }
-        log.debug("TemplateOperationImpl: after templdate combine " + output);
+        logger.debug("TemplateOperationImpl: after templdate combine " + output);
         if (output.equals(template) && CollectionUtils.isNotEmpty(ReplaceUtils.getReplaceList(template))) {
-            log.warn("template ops failed,set null...");
+            logger.warn("template ops failed,set null...");
             output = null;
         }
         response.setOutPut(output);

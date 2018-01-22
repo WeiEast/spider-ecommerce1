@@ -23,8 +23,6 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -32,8 +30,6 @@ import org.slf4j.LoggerFactory;
  * @since Feb 18, 2014 2:58:48 PM
  */
 public class XpathOperationImpl extends Operation {
-
-    private static final Logger log = LoggerFactory.getLogger(XpathOperationImpl.class);
 
     @Override
     public void process(Request request, Response response) throws Exception {
@@ -53,12 +49,12 @@ public class XpathOperationImpl extends Operation {
                 resultStirng = resultStirng + temp;
             }
         } else {
-            log.warn("xpath extract empty content! " + xpath);
+            logger.warn("xpath extract empty content! " + xpath);
             resultStirng = "";
         }
         resultStirng = StringUtils.isEmpty(resultStirng) && BooleanUtils.isTrue(operation.getEmptyToNull()) ? null : resultStirng;
-        if (log.isDebugEnabled()) {
-            log.debug("xpath extract result:" + resultStirng);
+        if (logger.isDebugEnabled()) {
+            logger.debug("xpath extract result:" + resultStirng);
         }
         response.setOutPut(resultStirng);
 

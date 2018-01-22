@@ -23,8 +23,6 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -33,11 +31,6 @@ import org.slf4j.LoggerFactory;
  */
 public class RegexOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(RegexOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         RegexOperation operation = (RegexOperation) getOperation();
@@ -58,12 +51,12 @@ public class RegexOperationImpl extends Operation {
             }
         } else {
             int index = operation.getGroupIndex();
-            if (log.isDebugEnabled()) {
-                log.debug("RegexOperation input: " + String.format("regex: %s, index: %d", regex, index));
+            if (logger.isDebugEnabled()) {
+                logger.debug("RegexOperation input: " + String.format("regex: %s, index: %d", regex, index));
             }
             result = PatternUtils.groupDefaultNull(orginal, regex, index);
-            if (log.isDebugEnabled()) {
-                log.debug("RegexOperation content: " + String.format("orginal: %s , dest: %s", orginal, result));
+            if (logger.isDebugEnabled()) {
+                logger.debug("RegexOperation content: " + String.format("orginal: %s , dest: %s", orginal, result));
             }
         }
         response.setOutPut(result);

@@ -18,8 +18,6 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
@@ -28,14 +26,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ReturnMatchOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(ReturnMatchOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.datatrees.crawler.core.processor.operation.Operation#process(com.datatrees.common.
-     * pipeline.Request, com.datatrees.common.pipeline.Response)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         ReturnMatchOperation operation = (ReturnMatchOperation) getOperation();
@@ -58,8 +48,8 @@ public class ReturnMatchOperationImpl extends Operation {
                 result = new StringBuilder(result.substring(0, result.length() - 1));
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("ReturnMatchOperation input: " + String.format("value: %s", value));
+        if (logger.isDebugEnabled()) {
+            logger.debug("ReturnMatchOperation input: " + String.format("value: %s", value));
         }
         response.setOutPut(result.toString());
     }

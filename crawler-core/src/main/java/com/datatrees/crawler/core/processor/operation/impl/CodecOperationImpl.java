@@ -22,8 +22,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * handle codec operation decode/encode etc..
@@ -32,8 +30,6 @@ import org.slf4j.LoggerFactory;
  * @since Mar 27, 2014 12:30:43 PM
  */
 public class CodecOperationImpl extends Operation {
-
-    private static final Logger log = LoggerFactory.getLogger(CodecOperationImpl.class);
 
     @Override
     public void process(Request request, Response response) throws Exception {
@@ -49,8 +45,8 @@ public class CodecOperationImpl extends Operation {
         CodecType cdType = operation.getCodecType();
         HandlingType handlType = operation.getHandlingType();
 
-        if (log.isDebugEnabled()) {
-            log.debug("CodecOperation input: " + String.format("regex: %s, index: %s", cdType, handlType));
+        if (logger.isDebugEnabled()) {
+            logger.debug("CodecOperation input: " + String.format("regex: %s, index: %s", cdType, handlType));
         }
 
         result = handlerCodec(orginal, cdType, handlType, charSet);
@@ -86,7 +82,7 @@ public class CodecOperationImpl extends Operation {
             }
         } catch (Exception e) {
             // ignore
-            log.error("codec error!", e);
+            logger.error("codec error!", e);
         }
         return result;
     }

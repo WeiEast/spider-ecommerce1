@@ -23,8 +23,6 @@ import org.joda.time.DurationFieldType;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author likun
@@ -32,11 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DateTimeOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(DateTimeOperationImpl.class);
-
-    /**
-     * @see Operation#process(Request, * Response)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         DateTimeOperation operation = (DateTimeOperation) getOperation();
@@ -58,7 +51,7 @@ public class DateTimeOperationImpl extends Operation {
         }
 
         DateTimeFieldType dateTimeFieldType = operation.getDateTimeFieldType();
-        log.debug(String.format("baseType:%s, dateTimeFieldType:%s, offset:%s", baseType, dateTimeFieldType != null ? dateTimeFieldType : "", offset));
+        logger.debug(String.format("baseType:%s, dateTimeFieldType:%s, offset:%s", baseType, dateTimeFieldType != null ? dateTimeFieldType : "", offset));
 
         Object result = null;
 
@@ -93,8 +86,8 @@ public class DateTimeOperationImpl extends Operation {
                 break;
             }
             case CUSTOM: {
-                if (log.isDebugEnabled()) {
-                    log.debug(String.format("custom src:%s", src != null ? src : ""));
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("custom src:%s", src != null ? src : ""));
                 }
                 if (src instanceof String) {
                     String sourceFormat = StringUtils.isBlank(operation.getSourceFormat()) ? "yyyy-MM-dd" : operation.getSourceFormat();
@@ -165,7 +158,7 @@ public class DateTimeOperationImpl extends Operation {
         } else {
             result = rawResultObj != null ? rawResultObj.toDate() : "";
         }
-        log.debug("raw result in date format: " + result);
+        logger.debug("raw result in date format: " + result);
         response.setOutPut(result);
     }
 

@@ -15,8 +15,6 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.mail.MailParserImpl;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -25,17 +23,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MailParserOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(MailParserOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         String result = getInput(request, response);
         MailParserOperation operation = (MailParserOperation) getOperation();
-        if (log.isDebugEnabled()) {
-            log.debug("mail parser input " + result);
+        if (logger.isDebugEnabled()) {
+            logger.debug("mail parser input " + result);
         }
         response.setOutPut(MailParserImpl.INSTANCE.parseMessage(RequestUtil.getProcessorContext(request).getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser())));
     }

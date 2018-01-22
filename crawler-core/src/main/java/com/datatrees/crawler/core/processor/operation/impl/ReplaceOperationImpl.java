@@ -19,8 +19,6 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -29,11 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ReplaceOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(ReplaceOperationImpl.class);
 
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
 
@@ -56,8 +50,8 @@ public class ReplaceOperationImpl extends Operation {
 
         String dest = orginal.replaceAll(from, to); // change replace to regex
 
-        if (log.isDebugEnabled()) {
-            log.debug("replace result:" + dest);
+        if (logger.isDebugEnabled()) {
+            logger.debug("replace result:" + dest);
         }
         response.setOutPut(dest);
         // finally invoke next valve

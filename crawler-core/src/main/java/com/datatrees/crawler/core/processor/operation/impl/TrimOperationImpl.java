@@ -13,8 +13,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -23,17 +21,12 @@ import org.slf4j.LoggerFactory;
  */
 public class TrimOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(TrimOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         String output = StringUtils.trim(getInput(request, response));
         output = CharMatcher.WHITESPACE.trimFrom(output);
-        if (log.isDebugEnabled()) {
-            log.debug("Input after trim " + output);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Input after trim " + output);
         }
         response.setOutPut(output);
     }

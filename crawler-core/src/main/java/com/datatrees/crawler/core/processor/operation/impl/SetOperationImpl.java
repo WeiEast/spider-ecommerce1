@@ -12,8 +12,6 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.SetOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -22,17 +20,12 @@ import org.slf4j.LoggerFactory;
  */
 public class SetOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(SetOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         SetOperation operation = (SetOperation) getOperation();
         String output = operation.getValue();
-        if (log.isDebugEnabled()) {
-            log.debug("operation set value " + output);
+        if (logger.isDebugEnabled()) {
+            logger.debug("operation set value " + output);
         }
         if (output != null && output.equals("${empty}")) {
             response.setOutPut("");

@@ -15,8 +15,6 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -25,17 +23,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ProxySetOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(ProxySetOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         ProxySetOperation operation = (ProxySetOperation) getOperation();
         AbstractProcessorContext processorContext = RequestUtil.getProcessorContext(request);
         if (processorContext != null && processorContext instanceof SearchProcessorContext) {
-            log.info("set proxy mode option " + operation.getOption());
+            logger.info("set proxy mode option " + operation.getOption());
         }
     }
 

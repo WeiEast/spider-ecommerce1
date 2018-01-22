@@ -16,8 +16,6 @@ import com.datatrees.crawler.core.domain.config.operation.impl.MatchGroupOperati
 import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -26,11 +24,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MatchGroupOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(MatchGroupOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         MatchGroupOperation op = (MatchGroupOperation) getOperation();
@@ -43,7 +36,7 @@ public class MatchGroupOperationImpl extends Operation {
         if (matcher != null) {
             result = matcher.group(op.getGroupIndex());
         }
-        log.debug("MatchGroupOperationImpl: after match group index:" + op.getGroupIndex() + ",result:" + result);
+        logger.debug("MatchGroupOperationImpl: after match group index:" + op.getGroupIndex() + ",result:" + result);
         response.setOutPut(result);
     }
 

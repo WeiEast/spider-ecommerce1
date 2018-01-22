@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
  */
 public class EscapeOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(EscapeOperationImpl.class);
-
     @Override
     public void process(Request request, Response response) throws Exception {
         // get input
@@ -36,8 +34,8 @@ public class EscapeOperationImpl extends Operation {
         EscapeType escapeType = operation.getEscapeType();
         HandlingType handlType = operation.getHandlingType();
 
-        if (log.isDebugEnabled()) {
-            log.debug("EscapeOperation input: " + String.format("escapeType: %s, handlType: %s", escapeType, handlType));
+        if (logger.isDebugEnabled()) {
+            logger.debug("EscapeOperation input: " + String.format("escapeType: %s, handlType: %s", escapeType, handlType));
         }
 
         result = handlerEscape(orginal, escapeType, handlType);
@@ -74,7 +72,7 @@ public class EscapeOperationImpl extends Operation {
                 }
             }
         } catch (Exception e) {
-            log.error("handlerEscape error!", e);
+            logger.error("handlerEscape error!", e);
         }
         return result;
     }

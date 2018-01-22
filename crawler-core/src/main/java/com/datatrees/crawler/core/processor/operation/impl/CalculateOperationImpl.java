@@ -14,8 +14,6 @@ import com.datatrees.crawler.core.domain.config.operation.impl.CalculateOperatio
 import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -24,15 +22,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CalculateOperationImpl extends Operation {
 
-    private static final Logger log = LoggerFactory.getLogger(CalculateOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.datatrees.crawler.core.processor.operation.Operation#process(com.datatrees.common.pipeline
-     * .Request, com.datatrees.common.pipeline.Response)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
         CalculateOperation operation = (CalculateOperation) getOperation();
@@ -43,8 +32,8 @@ public class CalculateOperationImpl extends Operation {
         if (StringUtils.isNotEmpty(expression)) {
             result = CalculateUtil.sourceCalculate(request, response, expression, null);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("calculate input:" + expression + " ,result:" + result);
+        if (logger.isDebugEnabled()) {
+            logger.debug("calculate input:" + expression + " ,result:" + result);
         }
         if (result != null) {
             response.setOutPut(result.toString());
