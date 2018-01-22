@@ -16,7 +16,7 @@ import java.util.Set;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.domain.config.extractor.ExtratorSelector;
+import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
@@ -30,19 +30,19 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since 2015年7月14日 下午3:59:14
  */
-public class ExtratorSelectorImpl extends Processor {
+public class ExtractorSelectorImpl extends Processor {
 
-    private List<ExtratorSelector> extratorSelectorList;
+    private List<ExtractorSelector> extractorSelectorList;
 
     /**
-     * @param extratorSelectorList
+     * @param extractorSelectorList
      */
-    public ExtratorSelectorImpl(List<ExtratorSelector> extratorSelectorList) {
+    public ExtractorSelectorImpl(List<ExtractorSelector> extractorSelectorList) {
         super();
-        this.extratorSelectorList = extratorSelectorList;
+        this.extractorSelectorList = extractorSelectorList;
     }
 
-    private boolean selectorCheck(ExtratorSelector selector, Request request, Set<String> blackPageExtractorIdSet) {
+    private boolean selectorCheck(ExtractorSelector selector, Request request, Set<String> blackPageExtractorIdSet) {
         Object input = request.getInput();
         Preconditions.checkNotNull(input, "input should not be null!");
         String value = RequestUtil.getAttribute(request, selector.getField());
@@ -64,10 +64,10 @@ public class ExtratorSelectorImpl extends Processor {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(extratorSelectorList, "field extractor should not be null");
+        Preconditions.checkNotNull(extractorSelectorList, "field extractor should not be null");
         List<PageExtractor> matchedPageExtractorList = new ArrayList<PageExtractor>();
         Set<String> blackPageExtractorIdSet = new HashSet<String>();
-        for (ExtratorSelector selector : extratorSelectorList) {
+        for (ExtractorSelector selector : extractorSelectorList) {
             if (this.selectorCheck(selector, request, blackPageExtractorIdSet)) {
                 matchedPageExtractorList.add(selector.getPageExtractor());
             }

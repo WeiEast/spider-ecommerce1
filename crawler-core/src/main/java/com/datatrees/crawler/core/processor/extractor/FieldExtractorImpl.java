@@ -75,7 +75,7 @@ public class FieldExtractorImpl extends Processor {
         });
 
         // get pluginDesc json result
-        Map<String, Object> pluginResultMap = PluginUtil.checkPluginResult(fieldResult.toString());
+        Map<String, Object> pluginResultMap = PluginUtil.checkPluginResult((String) fieldResult);
 
         return pluginResultMap.get(PluginConstants.FIELD);
     }

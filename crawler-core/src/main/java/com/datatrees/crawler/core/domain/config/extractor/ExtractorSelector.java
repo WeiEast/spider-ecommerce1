@@ -13,7 +13,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
  * @since 2015年7月14日 上午10:41:44
  */
 @Tag("selector")
-public class ExtratorSelector implements Serializable {
+public class ExtractorSelector implements Serializable {
 
     /**
      *

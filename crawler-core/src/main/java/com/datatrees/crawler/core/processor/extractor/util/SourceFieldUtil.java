@@ -35,7 +35,7 @@ public class SourceFieldUtil {
             Object inputObject = ((Map) input).get(field);
             return valueFormat(inputObject, split);
         } else {
-            Class userClass = (Class) input.getClass();
+            Class userClass = input.getClass();
             try {
                 Field f = userClass.getDeclaredField(field);
                 f.setAccessible(true); // set Accessible
@@ -54,15 +54,13 @@ public class SourceFieldUtil {
 
     public static Object getInputFieldObject(Object input, String field) {
         if (input instanceof Map) {
-            Object inputObject = ((Map) input).get(field);
-            return inputObject;
+            return ((Map) input).get(field);
         } else {
-            Class userClass = (Class) input.getClass();
+            Class userClass = input.getClass();
             try {
                 Field f = userClass.getDeclaredField(field);
                 f.setAccessible(true); // set Accessible
-                Object inputObject = f.get(input);
-                return inputObject;
+                return f.get(input);
             } catch (Exception e) {
                 log.error("get field value error from" + input, e);
             }
