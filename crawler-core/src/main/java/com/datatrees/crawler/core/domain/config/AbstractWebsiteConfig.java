@@ -33,15 +33,11 @@ public abstract class AbstractWebsiteConfig implements Serializable {
      *
      */
     private static final long serialVersionUID = 2850518517814023140L;
-    private List<AbstractPlugin> pluginList;
+    private List<AbstractPlugin> pluginList = new ArrayList<>();
     private String               parentWebsiteName;
 
-    /**
-     *
-     */
     public AbstractWebsiteConfig() {
         super();
-        pluginList = new ArrayList<AbstractPlugin>();
     }
 
     @Tag("plugin-definition")

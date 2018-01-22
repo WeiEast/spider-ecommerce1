@@ -67,8 +67,8 @@ public class PageImpl extends AbstractPage {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-
         Preconditions.checkNotNull(page, "Page should not be null!");
+
         LinkNode current = RequestUtil.getCurrentUrl(request);
 
         String content = RequestUtil.getContent(request);
@@ -79,10 +79,11 @@ public class PageImpl extends AbstractPage {
         // page
         // linknode
         content = DecodeUtil.decodeContent(content, request);
+
         // check block pattern
         checkBlock(request, response);
 
-        List<LinkNode> urlLinkNodes = new ArrayList<LinkNode>();
+        List<LinkNode> urlLinkNodes = new ArrayList<>();
         boolean needParse = needParser(ResponseUtil.getResponseStatus(response));
         // if block or no search result return
         if (needParse) {
@@ -109,9 +110,9 @@ public class PageImpl extends AbstractPage {
                 }
 
                 // get segment
-                Map<String, LinkNode> urlLists = null;
                 List<AbstractSegment> segments = page.getSegmentList();
 
+                Map<String, LinkNode> urlLists;
                 if (CollectionUtils.isNotEmpty(segments)) {
                     // extract url with segment
                     urlLists = extractObjectsWithSegments(segments, request, response);
@@ -145,7 +146,7 @@ public class PageImpl extends AbstractPage {
     }
 
     private Map<String, LinkNode> findPageUrls(String content, LinkNode current, String searchTemplate, Request request) {
-        Map<String, LinkNode> urlLists = new LinkedHashMap<String, LinkNode>();
+        Map<String, LinkNode> urlLists = new LinkedHashMap<>();
         String charset = RequestUtil.getContentCharset(request);
         String keyword = RequestUtil.getKeyWord(request);
         try {
@@ -156,7 +157,7 @@ public class PageImpl extends AbstractPage {
                     String pNumber = matcher.group(1);
                     try {
                         int pNum = Integer.valueOf(pNumber);
-                        log.info("add paging number...." + pNum + "  orginal.." + matcher.group(0));
+                        log.info("add paging number...." + pNum + "  original.." + matcher.group(0));
                         String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, ((SearchProcessorContext) RequestUtil.getProcessorContext(request)).getContext());
                         if (StringUtils.isNotEmpty(pageUrl)) {
                             log.info("add page url..." + pageUrl);
@@ -174,15 +175,8 @@ public class PageImpl extends AbstractPage {
         return urlLists;
     }
 
-    /**
-     * @param responseStatus
-     * @return
-     */
     private boolean needParser(Integer responseStatus) {
-        if (responseStatus == Status.NO_SEARCH_RESULT) {
-            return false;
-        }
-        return true;
+        return responseStatus != Status.NO_SEARCH_RESULT;
     }
 
     private void setPageNum(LinkNode current) {
@@ -205,18 +199,16 @@ public class PageImpl extends AbstractPage {
         }
     }
 
-    /**
-     * @param request
-     * @param response
-     */
     private void checkBlock(Request request, Response response) {
-
         String content = RequestUtil.getContent(request);
-        SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
+
+        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
+
         String templateId = RequestUtil.getCurrentTemplateId(request);
-        SearchTemplateConfig templdateConfig = wrapper.getSearchTemplateConfig(templateId);
-        if (templdateConfig != null) {
-            com.datatrees.crawler.core.domain.config.search.Request reqBean = templdateConfig.getRequest();
+
+        SearchTemplateConfig templateConfig = context.getSearchTemplateConfig(templateId);
+        if (templateConfig != null) {
+            com.datatrees.crawler.core.domain.config.search.Request reqBean = templateConfig.getRequest();
             if (reqBean != null) {
                 String blockPattern = reqBean.getBlockPattern();
                 String noResultPattern = reqBean.getNoResultPattern();
@@ -236,14 +228,9 @@ public class PageImpl extends AbstractPage {
                 log.info("set status " + StatusUtil.format(status));
                 ResponseUtil.setResponseStatus(response, status);
             }
-            ;
         }
     }
 
-    /**
-     * @param content
-     * @return
-     */
     private String getPageTitle(String content) {
         Pattern pattern = Pattern.compile(titleRegex, Pattern.CASE_INSENSITIVE);
         String title = PatternUtils.group(content, pattern, 1);
@@ -253,10 +240,6 @@ public class PageImpl extends AbstractPage {
         return title;
     }
 
-    /**
-     * @param content
-     * @return
-     */
     private String getFiltedPageTitle(String title, String regex) {
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         return PatternUtils.group(title, pattern, 1);
@@ -264,8 +247,6 @@ public class PageImpl extends AbstractPage {
 
     /**
      * using white and black list to filter web url adjust depth
-     * @param config
-     * @param urlLists
      */
     private List<LinkNode> filterUrls(Request req, Map<String, LinkNode> urlLists, LinkNode current) {
         SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
@@ -290,9 +271,9 @@ public class PageImpl extends AbstractPage {
                 Collection<String> urls = URLSplitter.split(originalURL);
                 for (String url : urls) {
                     boolean removed = false;
-                    LinkNode tmp = null;
+                    LinkNode tmp;
                     if (urls.size() > 1) {
-                        tmp = (LinkNode) GsonUtils.fromJson(GsonUtils.toJson(node), LinkNode.class);
+                        tmp = GsonUtils.fromJson(GsonUtils.toJson(node), LinkNode.class);
                     } else {
                         tmp = node;
                     }
@@ -357,9 +338,6 @@ public class PageImpl extends AbstractPage {
         return nodes;
     }
 
-    /**
-     * @param filters
-     */
     private List<UrlFilter> addDefaultFilter(List<UrlFilter> filters, Request req) {
         Configuration conf = RequestUtil.getConf(req);
         SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
@@ -367,8 +345,7 @@ public class PageImpl extends AbstractPage {
         if (conf != null) {
             blackList = conf.get("url.blacklist", blackList);
         }
-        List<UrlFilter> urlFilters = new ArrayList<UrlFilter>();
-        urlFilters.addAll(filters);
+        List<UrlFilter> urlFilters = new ArrayList<>(filters);
 
         UrlFilter filter = new UrlFilter();
         filter.setFilter(blackList);
@@ -387,15 +364,8 @@ public class PageImpl extends AbstractPage {
         return urlFilters;
     }
 
-    /**
-     * @param content
-     * @param request
-     * @param response
-     * @return
-     */
     private Map<String, LinkNode> extractUrlsWithOutSegments(String content, Request request) {
-
-        Map<String, LinkNode> linkNodeMap = new LinkedHashMap<String, LinkNode>();
+        Map<String, LinkNode> linkNodeMap = new LinkedHashMap<>();
 
         LinkNode current = RequestUtil.getCurrentUrl(request);
         String baseURL = (StringUtils.isEmpty(current.getBaseUrl()) ? current.getBaseUrl() : current.getUrl());
@@ -412,36 +382,28 @@ public class PageImpl extends AbstractPage {
         // parser url from html
         HTMLParser htmlParser = new HTMLParser();
         htmlParser.parse(content, baseURL);
-        Iterator<Entry<String, String>> urlIterator = htmlParser.getLinks().entrySet().iterator();
-        while (urlIterator.hasNext()) {
-            Entry<String, String> fl = urlIterator.next();
+        for (Entry<String, String> fl : htmlParser.getLinks().entrySet()) {
             String key = fl.getKey();
             if (!linkNodeMap.containsKey(key)) {
-                linkNodeMap.put(fl.getKey(), new LinkNode(fl.getKey()).setReferer(current.getUrl()));
+                linkNodeMap.put(key, new LinkNode(fl.getKey()).setReferer(current.getUrl()));
                 log.debug(" extractor url >> " + fl.getKey());
             }
-
         }
     }
 
     /**
      * get url list need too steps first extract field urls second extract page by regex finally
-     * resovle url by base url
-     * @param segments
-     * @param request
-     * @param response
-     * @return
-     * @exception ResultEmptyException
+     * resolve url by base url
      */
     private Map<String, LinkNode> extractObjectsWithSegments(List<AbstractSegment> segments, Request req, Response resp) throws ResultEmptyException {
-        Map<String, LinkNode> linkNodes = new LinkedHashMap<String, LinkNode>();
+        Map<String, LinkNode> linkNodes = new LinkedHashMap<>();
         StringBuilder pageContent = new StringBuilder();
 
         LinkNode current = RequestUtil.getCurrentUrl(req);
         Preconditions.checkNotNull(current, "source url should not be null!");
         String baseURL = (StringUtils.isNotEmpty(current.getBaseUrl()) ? current.getBaseUrl() : current.getUrl());
 
-        List<Map<String, Object>> segmentResult = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> segmentResult = new ArrayList<>();
         log.info("URL: " + baseURL + " segment size.." + segments.size());
         for (AbstractSegment abstractSegment : segments) {
             try {
@@ -482,7 +444,7 @@ public class PageImpl extends AbstractPage {
         // combine field urls
         log.debug("start extract field urls" + baseURL);
 
-        List<Object> instanceList = new ArrayList<Object>();
+        List<Object> instanceList = new ArrayList<>();
         for (Object obj : segmentResult) {
             if (obj instanceof LinkNode) {
                 linkNodes.put(((LinkNode) obj).getUrl(), (LinkNode) obj);
@@ -519,9 +481,7 @@ public class PageImpl extends AbstractPage {
 
     protected void extractTextUrls(String currentUrl, String content, Map<String, LinkNode> linkNodeMap) {
         List<String> textUrls = TextUrlExtractor.extractor(content, Constant.URL_REGEX, 1);
-        Iterator<String> itInText = textUrls.iterator();
-        while (itInText.hasNext()) {
-            String nextURL = itInText.next();
+        for (String nextURL : textUrls) {
             try {
                 nextURL = URLUtil.urlFormat(nextURL);
                 if (nextURL == null || nextURL.length() > URL_MAX_LENGTH) {
