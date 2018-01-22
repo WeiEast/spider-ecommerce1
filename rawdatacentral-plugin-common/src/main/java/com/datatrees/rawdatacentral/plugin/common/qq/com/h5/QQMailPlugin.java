@@ -216,6 +216,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
+        Long processId = processResult.getProcessId();
         try {
             BeanFactoryUtils.getBean(ThreadPoolService.class).getMailLoginExecutors().submit(new Runnable() {
                 @Override
@@ -236,9 +237,10 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
                         logger.info("refresh qr code success,taskId={},websiteName={}", taskId, websiteName);
 
-                        long endTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2);
+                        ProcessResultUtils.setEndTime(processId, System.currentTimeMillis(), TimeUnit.MINUTES, 2);
+
                         currentUrl = driver.getCurrentUrl();
-                        while (!isLoginSuccess(currentUrl) && System.currentTimeMillis() <= endTime) {
+                        while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.isTimeOut(processId)) {
                             TimeUnit.SECONDS.sleep(3);
                             currentUrl = driver.getCurrentUrl();
                         }
@@ -285,6 +287,12 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        String processId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
+        if (StringUtils.isBlank(processId) || ProcessResultUtils.isTimeOut(Long.valueOf(processId))) {
+            logger.warn("qr code is expire,taskId={},processId={}", param.getTaskId(), processId);
+            return new HttpResult<>().success(QRStatus.EXPIRE);
+        }
+
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
         return new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
     }
