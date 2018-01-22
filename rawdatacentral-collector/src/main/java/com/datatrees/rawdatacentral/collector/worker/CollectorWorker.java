@@ -14,24 +14,23 @@ import java.util.concurrent.TimeUnit;
 import akka.dispatch.Await;
 import akka.dispatch.Future;
 import akka.util.Timeout;
-import com.datatrees.common.actor.WrappedActorRef;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.search.Request;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.login.Login;
+import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.search.CrawlExcutorHandler;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
-import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
+import com.datatrees.rawdatacentral.collector.worker.filter.TemplateFilter;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
@@ -43,9 +42,11 @@ import com.datatrees.rawdatacentral.domain.exception.LoginTimeOutException;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
+import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.exception.ConfigException;
+import com.treefinance.crawler.framework.extension.spider.Spiders;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,12 +64,9 @@ public class CollectorWorker {
     private              Integer interactiveTimeoutSeconds = PropertiesConfiguration.getInstance().getInt("interactive.timeout.seconds", 300);
     private CrawlExcutorHandler crawlExcutorHandler;
     private ResultDataHandler   resultDataHandler;
-    private WrappedActorRef     extractorActorRef;
-    private DuplicateChecker    duplicateChecker;
     private SubTaskManager      subTaskManager;
-    private Set<String> resultTagSet = new HashSet<String>();
-    private List<LinkNode> initLinkNodeList;
-    private RedisDao       redisDao;
+    private Set<String> resultTagSet = new HashSet<>();
+    private RedisDao redisDao;
 
     /**
      * 登录
@@ -123,126 +121,210 @@ public class CollectorWorker {
      * @param taskMessage
      * @return
      */
-    public HttpResult<Map<String, Object>> doSearch(TaskMessage taskMessage) throws Exception {
+    public HttpResult<Map<String, Object>> doSearch(TaskMessage taskMessage) {
         HttpResult<Map<String, Object>> searchResult = new HttpResult<>();
         Task task = taskMessage.getTask();
         SearchProcessorContext context = taskMessage.getContext();
         try {
-            Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig().getSearchTemplateConfigList();
-            if (CollectionUtils.isEmpty(templateList)) {
-                LOGGER.error("templateList is empty taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName());
-                return searchResult.failure(ErrorCode.CONFIG_ERROR);
-            }
-            String templateId = taskMessage.getTemplateId();
-            List<Future<Object>> futureList = new ArrayList<Future<Object>>();
-            for (SearchTemplateConfig templateConfig : templateList) {
-                if (StringUtils.isNotBlank(templateId)) {
-                    if (!templateId.contains(templateConfig.getId())) {
-                        LOGGER.warn("filter template ,taskId={},templateId={} filter configId={},websiteName={}", task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
-                        continue;
-                    }
-                } else {
-                    if (BooleanUtils.isNotTrue(templateConfig.getAutoStart())) {
-                        LOGGER.warn("filter template ,taskId={},templateId={} filter configId={},websiteName={}", task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
-                        continue;
-                    }
-                }
-                try {
-                    String searchTemplate = null;
+            List<Future<Object>> futureList = this.startCrawler(taskMessage, task, context);
 
-                    Request request = templateConfig.getRequest();
-                    if (null == request) {
-                        LOGGER.warn("request is empty ,taskId={},templateId={},configId={},websiteName={}", task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
-                        continue;
-                    }
-                    // get from context ,seedurl may given by sub task or other external task
-                    Object templateUrl = ProcessorContextUtil.getValue(context, templateConfig.getId());
-                    if (templateUrl != null) {
-                        searchTemplate = templateUrl.toString();
-                    } else if (CollectionUtils.isNotEmpty(request.getSearchTemplateList())) {
-                        searchTemplate = request.getSearchTemplateList().get(0);
-                    }
+            Map<String, Object> resultMap = this.awaitDone(futureList, taskMessage);
 
-                    if (StringUtils.isEmpty(searchTemplate)) {
-                        LOGGER.warn("searchTemplate is empty or null,taskId={},templateId={},configId={},websiteName={}", task.getTaskId(), templateId, templateConfig.getId(), task.getWebsiteName());
-                        continue;
-                    }
-                    searchTemplate = ReplaceUtils.replaceMap(context.getContext(), searchTemplate);
-                    maxExecuteMinutes = request.getMaxExecuteMinutes() != null ? request.getMaxExecuteMinutes() : maxExecuteMinutes;
-                    String headerString = request.getDefaultHeader();
-                    if (StringUtils.isNotBlank(headerString)) {
-                        headerString = SourceUtil.sourceExpression(context.getContext(), headerString);
-                        Map<String, String> defaultHeader = (Map<String, String>) GsonUtils.fromJson(headerString, Map.class);
-                        if (MapUtils.isNotEmpty(defaultHeader)) {
-                            context.getDefaultHeader().putAll(defaultHeader);
-                        }
-                    }
-                    // get all the possible result tag
-                    resultTagSet.addAll(templateConfig.getResultTagList());
-                    SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate).setTemplateId(templateConfig.getId()).setSearchTemplateConfig(templateConfig).setMaxExecuteMinutes(maxExecuteMinutes).setResultDataHandler(resultDataHandler).setExtractorActorRef(extractorActorRef).setDuplicateChecker(duplicateChecker).setInitLinkNodeList(initLinkNodeList);
+            Map<String, Object> extractResult = mergeSubTaskResult(task.getId(), resultMap);
 
-                    crawlExcutorHandler.crawlExecutor(searchProcessor);
-                    futureList.addAll(searchProcessor.getFutureList());
-                } catch (Exception e) {
-                    // 除了中断,内容为空,字段为空等错误,任务不算失败
-                    LOGGER.error("doSearch error taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
-                    if (e instanceof InterruptedException) {
-                        return searchResult.failure(ErrorCode.TASK_INTERRUPTED_ERROR);
-                    }
-                    if (e instanceof ResponseCheckException) {
-                        return searchResult.failure(ErrorCode.RESPONSE_EMPTY_ERROR_CODE.getErrorCode(), e.getMessage());
-                    }
-                    if (e instanceof ResultEmptyException) {
-                        return searchResult.failure(ErrorCode.NOT_EMPTY_ERROR_CODE.getErrorCode(), e.getMessage());
-                    }
-                }
-            }
-            Map<String, Object> resultMap = futureResultHander(futureList, taskMessage);
-            Map<String, Object> submitkeyResult = mergeSubTaskResult(task.getId(), resultMap);
             LOGGER.error("doSearch success taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName());
-            return searchResult.success(submitkeyResult);
+
+            return searchResult.success(extractResult);
+        } catch (ConfigException e) {
+            LOGGER.error("Search config is incorrect! taskId=" + task.getTaskId() + ", websiteName=" + task.getWebsiteName(), e);
+            return searchResult.failure(ErrorCode.CONFIG_ERROR);
+        } catch (ResponseCheckException e) {
+            LOGGER.error("Response checking is not pass! taskId=" + task.getTaskId() + ", websiteName=" + task.getWebsiteName(), e);
+            return searchResult.failure(ErrorCode.RESPONSE_EMPTY_ERROR_CODE.getErrorCode(), e.getMessage());
+        } catch (ResultEmptyException e) {
+            LOGGER.error("The necessary fields is empty! taskId=" + task.getTaskId() + ", websiteName=" + task.getWebsiteName(), e);
+            return searchResult.failure(ErrorCode.NOT_EMPTY_ERROR_CODE.getErrorCode(), e.getMessage());
         } catch (Throwable e) {
-            LOGGER.error("doSearch error taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
+            LOGGER.error("Something is wrong when searching! taskId=" + task.getTaskId() + ", websiteName=" + task.getWebsiteName(), e);
             return searchResult.failure();
         } finally {
             task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
             task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
             //释放代理
-            if (null == searchResult || searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
+            if (searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
                 context.release();
             }
         }
     }
 
-    public Map<String, Object> futureResultHander(List<Future<Object>> futureList, TaskMessage taskMessage) {
-        Map<String, Object> submitkeyResult = new HashMap();
-        try {
-            Task task = taskMessage.getTask();
-            ExtractCount extractCount = new ExtractCount();
-            Exception exception = null;
-            for (Future future : futureList) {
-                try {
-                    ExtractMessage message = (ExtractMessage) Await.result(future, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT).duration());
-                    this.extractCodeCount(extractCount, message, submitkeyResult);
-                } catch (Exception e) {
-                    exception = e;
-                    extractCount.extractFailedCount++;
-                    LOGGER.error("get extract future result error " + e.getMessage(), e);
-                }
+    private Map<String, Object> awaitDone(List<Future<Object>> futureList, TaskMessage taskMessage) {
+        Map<String, Object> extractResult = new HashMap<>();
+
+        ExtractCount extractCount = new ExtractCount();
+
+        for (Future future : futureList) {
+            try {
+                ExtractMessage message = (ExtractMessage) Await.result(future, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT).duration());
+                this.extractCodeCount(extractCount, message, extractResult);
+            } catch (Exception e) {
+                extractCount.extractFailedCount++;
+                LOGGER.error("Error awaiting extract result : " + e.getMessage(), e);
             }
-            if (extractCount.extractSucceedCount == 0 && extractCount.extractFailedCount > 0) {
-            } else {
-            }
-            task.setExtractedCount(extractCount.extractedCount);
-            task.setExtractFailedCount(extractCount.extractFailedCount);
-            task.setNotExtractCount(extractCount.notExtractCount);
-            task.setExtractSucceedCount(extractCount.extractSucceedCount);
-            task.setStoreFailedCount(extractCount.storeFailedCount);
-        } catch (Exception e) {
-            throw e;
-        } finally {
         }
-        return submitkeyResult;
+
+        Task task = taskMessage.getTask();
+        task.setExtractedCount(extractCount.extractedCount);
+        task.setExtractFailedCount(extractCount.extractFailedCount);
+        task.setNotExtractCount(extractCount.notExtractCount);
+        task.setExtractSucceedCount(extractCount.extractSucceedCount);
+        task.setStoreFailedCount(extractCount.storeFailedCount);
+
+        return extractResult;
+    }
+
+    private void extractCodeCount(ExtractCount extractCount, ExtractMessage message, Map<String, Object> extractResult) {
+        extractCount.extractedCount++;
+        ExtractCode result = message.getExtractCode();
+        if (result == null) {
+            extractCount.extractFailedCount++;
+        } else if (result.equals(ExtractCode.EXTRACT_SUCCESS)) {
+            extractCount.extractSucceedCount++;
+        } else if (result.equals(ExtractCode.ERROR_INPUT) || result.equals(ExtractCode.EXTRACT_CONF_FAIL)) {
+            extractCount.notExtractCount++;
+        } else if (result.equals(ExtractCode.EXTRACT_STORE_FAIL)) {
+            extractCount.storeFailedCount++;
+        } else {
+            extractCount.extractFailedCount++;
+        }
+
+        extractResult.putAll(message.getSubmitkeyResult());
+
+        if (message.getSubExtractMessageList() != null) {
+            for (ExtractMessage subExtractMessage : message.getSubExtractMessageList()) {
+                this.extractCodeCount(extractCount, subExtractMessage, extractResult);
+            }
+        }
+    }
+
+    private List<Future<Object>> startCrawler(TaskMessage taskMessage, Task task, SearchProcessorContext context) throws ConfigException, ResultEmptyException {
+        Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig().getSearchTemplateConfigList();
+        if (CollectionUtils.isEmpty(templateList)) {
+            throw new ConfigException("Search template in config is empty!");
+        }
+
+        List<Future<Object>> futureList = new ArrayList<>();
+
+        String templateId = taskMessage.getTemplateId();
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Expected search template: {}", templateId);
+        }
+
+        for (SearchTemplateConfig templateConfig : templateList) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Start search template: {}", templateConfig.getId());
+            }
+
+            if (TemplateFilter.isFilter(templateConfig, templateId)) {
+                LOGGER.debug("Skip search template: {}, taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+                continue;
+            }
+
+            // get all the possible result tag
+            resultTagSet.addAll(templateConfig.getResultTagList());
+
+            Collection<Future<Object>> futures;
+            if (templateConfig.getPlugin() == null) {
+                futures = crawlByNormal(templateConfig, context, taskMessage, task);
+            } else {
+                futures = crawlByExtension(templateConfig, context, taskMessage);
+            }
+
+            if (futures != null) {
+                futureList.addAll(futures);
+            }
+        }
+
+        return futureList;
+    }
+
+    private Collection<Future<Object>> crawlByExtension(SearchTemplateConfig templateConfig, SearchProcessorContext context, TaskMessage taskMessage) {
+        try {
+            PluginWrapper pluginWrapper = context.createPluginWrapper(templateConfig.getPlugin());
+
+            CustomPageProcessor pageProcessor = new CustomPageProcessor(resultDataHandler, taskMessage);
+
+            Spiders.run(pluginWrapper, context, pageProcessor);
+
+            return pageProcessor.getFutures();
+        } catch (Exception e) {
+            LOGGER.error("Error crawling by extensional spider!", e);
+        }
+
+        return null;
+    }
+
+    private Collection<Future<Object>> crawlByNormal(SearchTemplateConfig templateConfig, SearchProcessorContext context, TaskMessage taskMessage, Task task) throws ResultEmptyException {
+        try {
+            Request request = templateConfig.getRequest();
+            if (null == request) {
+                LOGGER.warn("Request in search-template[{}] is empty! taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+                return null;
+            }
+
+            String searchTemplate = getSearchSeedUrl(request, context, templateConfig.getId());
+
+            if (StringUtils.isEmpty(searchTemplate)) {
+                LOGGER.warn("Not found seed url in search-template[{}]! taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+                return null;
+            }
+
+            maxExecuteMinutes = request.getMaxExecuteMinutes() != null ? request.getMaxExecuteMinutes() : maxExecuteMinutes;
+
+            addDefaultHeaders(context, request);
+
+            SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate).setTemplateId(templateConfig.getId()).setSearchTemplateConfig(templateConfig).setMaxExecuteMinutes(maxExecuteMinutes).setResultDataHandler(resultDataHandler);
+
+            crawlExcutorHandler.crawlExecutor(searchProcessor);
+
+            return searchProcessor.getFutureList();
+        } catch (ResultEmptyException e) {
+            throw e;
+        } catch (Exception e) {
+            // 除了中断,内容为空,字段为空等错误,任务不算失败
+            LOGGER.error("doSearch error taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
+        }
+
+        return null;
+    }
+
+    private void addDefaultHeaders(SearchProcessorContext context, Request request) {
+        String headerString = request.getDefaultHeader();
+        if (StringUtils.isNotBlank(headerString)) {
+            headerString = SourceUtil.sourceExpression(context.getContext(), headerString);
+            Map<String, String> defaultHeader = GsonUtils.fromJson(headerString, new TypeToken<Map<String, String>>() {}.getType());
+            if (MapUtils.isNotEmpty(defaultHeader)) {
+                context.getDefaultHeader().putAll(defaultHeader);
+            }
+        }
+    }
+
+    private String getSearchSeedUrl(Request request, SearchProcessorContext context, String templateId) {
+        String seedUrl = null;
+
+        // get from context ,seed url may given by sub task or other external task
+        Object templateUrl = ProcessorContextUtil.getValue(context, templateId);
+        if (templateUrl != null) {
+            seedUrl = templateUrl.toString();
+        } else if (CollectionUtils.isNotEmpty(request.getSearchTemplateList())) {
+            seedUrl = request.getSearchTemplateList().get(0);
+        }
+
+        if (StringUtils.isNotEmpty(seedUrl)) {
+            seedUrl = ReplaceUtils.replaceMap(context.getContext(), seedUrl);
+        }
+
+        return seedUrl;
     }
 
     public Map<String, Object> mergeSubTaskResult(int taskid, Map<String, Object> resultMap) {
@@ -268,48 +350,12 @@ public class CollectorWorker {
         return resultMap;
     }
 
-    private void extractCodeCount(ExtractCount extractCount, ExtractMessage message, Map<String, Object> submitkeyResult) {
-        extractCount.extractedCount++;
-        ExtractCode result = message.getExtractCode();
-        if (result == null) {
-            extractCount.extractFailedCount++;
-        } else if (result.equals(ExtractCode.EXTRACT_SUCCESS)) {
-            extractCount.extractSucceedCount++;
-        } else if (result.equals(ExtractCode.ERROR_INPUT) || result.equals(ExtractCode.EXTRACT_CONF_FAIL)) {
-            extractCount.notExtractCount++;
-        } else if (result.equals(ExtractCode.EXTRACT_STORE_FAIL)) {
-            extractCount.storeFailedCount++;
-        } else {
-            extractCount.extractFailedCount++;
-        }
-        submitkeyResult.putAll(message.getSubmitkeyResult());
-        if (message.getSubExtractMessageList() != null) {
-            for (ExtractMessage subExtractMessage : message.getSubExtractMessageList()) {
-                this.extractCodeCount(extractCount, subExtractMessage, submitkeyResult);
-            }
-        }
-    }
-
-    /**
-     * @return the crawlExcutorHandler
-     */
-    public CrawlExcutorHandler getCrawlExcutorHandler() {
-        return crawlExcutorHandler;
-    }
-
     /**
      * @param crawlExcutorHandler the crawlExcutorHandler to set
      */
     public CollectorWorker setCrawlExcutorHandler(CrawlExcutorHandler crawlExcutorHandler) {
         this.crawlExcutorHandler = crawlExcutorHandler;
         return this;
-    }
-
-    /**
-     * @return the resultDataHandler
-     */
-    public ResultDataHandler getResultDataHandler() {
-        return resultDataHandler;
     }
 
     /**
@@ -320,45 +366,8 @@ public class CollectorWorker {
         return this;
     }
 
-    /**
-     * @return the extractorActorRef
-     */
-    public WrappedActorRef getExtractorActorRef() {
-        return extractorActorRef;
-    }
-
-    /**
-     * @param extractorActorRef the extractorActorRef to set
-     */
-    public CollectorWorker setExtractorActorRef(WrappedActorRef extractorActorRef) {
-        this.extractorActorRef = extractorActorRef;
-        return this;
-    }
-
-    /**
-     * @return the duplicateChecker
-     */
-    public DuplicateChecker getDuplicateChecker() {
-        return duplicateChecker;
-    }
-
-    /**
-     * @param duplicateChecker the duplicateChecker to set
-     */
-    public CollectorWorker setDuplicateChecker(DuplicateChecker duplicateChecker) {
-        this.duplicateChecker = duplicateChecker;
-        return this;
-    }
-
     public Set<String> getResultTagSet() {
         return resultTagSet;
-    }
-
-    /**
-     * @return the subTaskManager
-     */
-    public SubTaskManager getSubTaskManager() {
-        return subTaskManager;
     }
 
     /**
@@ -367,28 +376,6 @@ public class CollectorWorker {
     public CollectorWorker setSubTaskManager(SubTaskManager subTaskManager) {
         this.subTaskManager = subTaskManager;
         return this;
-    }
-
-    /**
-     * @return the initLinkNodeList
-     */
-    public List<LinkNode> getInitLinkNodeList() {
-        return initLinkNodeList;
-    }
-
-    /**
-     * @param initLinkNodeList the initLinkNodeList to set
-     */
-    public CollectorWorker setInitLinkNodeList(List<LinkNode> initLinkNodeList) {
-        this.initLinkNodeList = initLinkNodeList;
-        return this;
-    }
-
-    /**
-     * @return the redisDao
-     */
-    public RedisDao getRedisDao() {
-        return redisDao;
     }
 
     /**

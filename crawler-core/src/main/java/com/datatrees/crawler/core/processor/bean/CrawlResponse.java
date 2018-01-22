@@ -20,6 +20,7 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
  * @since Mar 10, 2014 1:48:37 PM
  */
 public class CrawlResponse extends Response {
+    private String originPageContent;
 
     private CrawlResponse() {
         super();
@@ -72,5 +73,13 @@ public class CrawlResponse extends Response {
         StringBuilder info = new StringBuilder();
         info.append("status:").append(getStatus()).append("\n").append("error info:").append(getErrorMsg()).append("\n").append("urls size:").append(getUrls().size());
         return info.toString();
+    }
+
+    public String getOriginPageContent() {
+        return originPageContent;
+    }
+
+    public void setOriginPageContent(String originPageContent) {
+        this.originPageContent = originPageContent;
     }
 }

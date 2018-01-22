@@ -13,8 +13,7 @@ import java.io.File;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.PluginPhase;
 import com.datatrees.crawler.core.domain.config.plugin.PluginType;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import com.treefinance.crawler.framework.extension.PluginFile;
 
 /**
  * plugin wrapper which wrapper
@@ -23,35 +22,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @version 1.0
  * @since Feb 19, 2014 5:39:30 PM
  */
-public class PluginWrapper {
-
-    private File           file;
-    private AbstractPlugin plugin;
-    private boolean        forceReload;
+public class PluginWrapper extends PluginFile {
 
     public PluginWrapper() {
     }
 
     public PluginWrapper(File file, AbstractPlugin plugin) {
-        super();
-        this.file = file;
-        this.plugin = plugin;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public AbstractPlugin getPlugin() {
-        return plugin;
-    }
-
-    public void setPlugin(AbstractPlugin plugin) {
-        this.plugin = plugin;
+        super(plugin, file);
     }
 
     public PluginType getType() {
@@ -66,16 +43,20 @@ public class PluginWrapper {
         return getPlugin().getExtraConfig();
     }
 
+    public void setPlugin(AbstractPlugin plugin) {
+        super.setMetadata(plugin);
+    }
+
+    public AbstractPlugin getPlugin() {
+        return super.getMetadata();
+    }
+
     public boolean isForceReload() {
-        return forceReload;
+        return super.isReload();
     }
 
     public void setForceReload(boolean forceReload) {
-        this.forceReload = forceReload;
+        super.setReload(forceReload);
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).append("file", file.getAbsolutePath()).append("plugin", plugin.getFileName()).append("forceReload", forceReload).toString();
-    }
 }

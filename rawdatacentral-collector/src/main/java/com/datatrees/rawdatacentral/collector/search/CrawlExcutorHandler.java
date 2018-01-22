@@ -54,7 +54,7 @@ public class CrawlExcutorHandler {
             Task task = searchProcessor.getTask();
             SearchTemplateConfig searchTemplateConfig = searchProcessor.getSearchTemplateConfig();
             linkQueue = new LinkQueue(searchProcessor.getSearchTemplateConfig());
-            if (!linkQueue.init(searchProcessor.getInitLinkNodeList())) {
+            if (!linkQueue.init()) {
                 task.setErrorCode(ErrorCode.INIT_QUEUE_FAILED_ERROR_CODE);
                 log.info(searchTemplateConfig.getType() + "--" + "The queue is empty, the system will exit ." + "Template: " + searchProcessor.getSearchTemplate());
                 return;

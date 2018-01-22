@@ -8,7 +8,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import akka.dispatch.Future;
-import com.datatrees.common.actor.WrappedActorRef;
+import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
@@ -28,11 +28,9 @@ import com.datatrees.rawdatacentral.collector.chain.FilterExecutor;
 import com.datatrees.rawdatacentral.collector.chain.FilterListFactory;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
-import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,17 +50,14 @@ public class SearchProcessor {
     private boolean              duplicateRemoval;
     private long                 maxExecuteMinutes;
     private ResultDataHandler    resultDataHandler;
-    private WrappedActorRef      extractorActorRef;
-    private List<Future<Object>> futureList = new ArrayList<Future<Object>>();
+    private final List<Future<Object>> futureList = new ArrayList<>();
     private Task                   task;
     private SearchProcessorContext processorContext;
     private String                 keyword;
     private boolean                isLastLink;
     private boolean                needEarlyQuit;
-    private DuplicateChecker       duplicateChecker;
     private TaskMessage            taskMessage;
     private ThreadPoolExecutor crawlExecutorPool = null;
-    private List<LinkNode> initLinkNodeList;
 
     public SearchProcessor(TaskMessage taskMessage) {
         try {
@@ -130,13 +125,11 @@ public class SearchProcessor {
 
     private URLHandlerImpl initURLHandlerImpl() {
         URLHandlerImpl handler = new URLHandlerImpl();
-        handler.setDuplicateChecker(duplicateChecker);
         handler.setSearchProcessor(this);
         return handler;
     }
 
     /**
-     * @param taskType
      * @param url
      * @return
      * @exception InvocationTargetException
@@ -156,7 +149,7 @@ public class SearchProcessor {
 
             if (CollectionUtils.isNotEmpty(objs)) {
                 synchronized (futureList) {
-                    futureList.addAll(resultDataHandler.resultListHandler(objs, taskMessage, extractorActorRef));
+                    futureList.addAll(resultDataHandler.resultListHandler(objs, taskMessage));
                 }
             }
 
@@ -244,13 +237,6 @@ public class SearchProcessor {
     }
 
     /**
-     * @return the templateId
-     */
-    public String getTemplateId() {
-        return templateId;
-    }
-
-    /**
      * @param templateId the templateId to set
      */
     public SearchProcessor setTemplateId(String templateId) {
@@ -270,21 +256,6 @@ public class SearchProcessor {
         this.waitIntervalMillis = waitIntervalMillis;
     }
 
-    /**
-     * @return the template
-     */
-    public String getTemplate() {
-        return searchTemplate;
-    }
-
-    /**
-     * @param template the template to set
-     */
-    public SearchProcessor setTemplate(String template) {
-        this.searchTemplate = template;
-        return this;
-    }
-
     public SearchTemplateConfig getSearchTemplateConfig() {
         return searchTemplateConfig;
     }
@@ -301,12 +272,6 @@ public class SearchProcessor {
         return keyword;
     }
 
-    /**
-     * @return the resultDataHandler
-     */
-    public ResultDataHandler getResultDataHandler() {
-        return resultDataHandler;
-    }
 
     /**
      * @param resultDataHandler the resultDataHandler to set
@@ -324,21 +289,6 @@ public class SearchProcessor {
     }
 
     /**
-     * @return the extractorActorRef
-     */
-    public WrappedActorRef getExtractorActorRef() {
-        return extractorActorRef;
-    }
-
-    /**
-     * @param extractorActorRef the extractorActorRef to set
-     */
-    public SearchProcessor setExtractorActorRef(WrappedActorRef extractorActorRef) {
-        this.extractorActorRef = extractorActorRef;
-        return this;
-    }
-
-    /**
      * @return the isLastLink
      */
     public boolean isLastLink() {
@@ -350,21 +300,6 @@ public class SearchProcessor {
      */
     public void setLastLink(boolean isLastLink) {
         this.isLastLink = isLastLink;
-    }
-
-    /**
-     * @return the duplicateChecker
-     */
-    public DuplicateChecker getDuplicateChecker() {
-        return duplicateChecker;
-    }
-
-    /**
-     * @param duplicateChecker the duplicateChecker to set
-     */
-    public SearchProcessor setDuplicateChecker(DuplicateChecker duplicateChecker) {
-        this.duplicateChecker = duplicateChecker;
-        return this;
     }
 
     /**
@@ -381,27 +316,10 @@ public class SearchProcessor {
     }
 
     private ThreadPoolExecutor initCrawlExecutorPool(int threadCount) {
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(threadCount, threadCount, 20L, java.util.concurrent.TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadFactoryImpl(Thread.currentThread().getName() + "_"));
-        return threadPoolExecutor;
+        return new ThreadPoolExecutor(threadCount, threadCount, 20L, java.util.concurrent.TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadFactoryImpl(Thread.currentThread().getName() + "_"));
     }
 
     public ExecutorService getCrawlExecutorPool() {
         return crawlExecutorPool;
     }
-
-    /**
-     * @return the initLinkNodeList
-     */
-    public List<LinkNode> getInitLinkNodeList() {
-        return initLinkNodeList;
-    }
-
-    /**
-     * @param initLinkNodeList the initLinkNodeList to set
-     */
-    public SearchProcessor setInitLinkNodeList(List<LinkNode> initLinkNodeList) {
-        this.initLinkNodeList = initLinkNodeList;
-        return this;
-    }
-
 }
