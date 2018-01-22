@@ -8,10 +8,7 @@
 
 package com.datatrees.crawler.core.processor.extractor.selector;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -32,47 +29,49 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ExtractorSelectorImpl extends Processor {
 
-    private List<ExtractorSelector> extractorSelectorList;
+    private List<ExtractorSelector> extractorSelectors;
 
-    /**
-     * @param extractorSelectorList
-     */
-    public ExtractorSelectorImpl(List<ExtractorSelector> extractorSelectorList) {
-        super();
-        this.extractorSelectorList = extractorSelectorList;
-    }
-
-    private boolean selectorCheck(ExtractorSelector selector, Request request, Set<String> blackPageExtractorIdSet) throws InterruptedException {
-        Object input = request.getInput();
-        Preconditions.checkNotNull(input, "input should not be null!");
-        String value = RequestUtil.getAttribute(request, selector.getField());
-        if (value == null) {
-            value = SourceFieldUtils.getFieldValueAsString(input, selector.getField());
-            RequestUtil.setAttribute(request, selector.getField(), value);
-        }
-        if (value != null) {
-            if (StringUtils.isNotBlank(selector.getDisContainRegex()) && RegExp.find(value, selector.getDisContainRegex())) {
-                blackPageExtractorIdSet.add(selector.getPageExtractor().getId());
-                return false;
-            }
-            if (StringUtils.isNotBlank(selector.getContainRegex()) && RegExp.find(value, selector.getContainRegex())) {
-                return true;
-            }
-        }
-        return false;
+    public ExtractorSelectorImpl(List<ExtractorSelector> extractorSelectors) {
+        this.extractorSelectors = Objects.requireNonNull(extractorSelectors);
     }
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(extractorSelectorList, "field extractor should not be null");
-        List<PageExtractor> matchedPageExtractorList = new ArrayList<PageExtractor>();
-        Set<String> blackPageExtractorIdSet = new HashSet<String>();
-        for (ExtractorSelector selector : extractorSelectorList) {
-            if (this.selectorCheck(selector, request, blackPageExtractorIdSet)) {
-                matchedPageExtractorList.add(selector.getPageExtractor());
+        Object input = request.getInput();
+        Preconditions.checkNotNull(input, "input should not be null!");
+        Preconditions.checkNotNull(extractorSelectors, "field extractor should not be null");
+
+        List<PageExtractor> matchedPageExtractors = new ArrayList<>();
+        Set<String> blackPageExtractorIds = new HashSet<>();
+
+        for (ExtractorSelector selector : extractorSelectors) {
+            String value = RequestUtil.getAttribute(request, selector.getField());
+            if (value == null) {
+                value = SourceFieldUtils.getFieldValueAsString(input, selector.getField(), null);
+                RequestUtil.setAttribute(request, selector.getField(), value);
+            }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Filter extractor selector[{}] >>> {}", selector.getPageExtractor().getId(), value);
+            }
+
+            if (value == null) continue;
+
+            if (match(value, selector.getDisContainRegex())) {
+                blackPageExtractorIds.add(selector.getPageExtractor().getId());
+            } else if (match(value, selector.getContainRegex())) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Filter extractor selector[{}] >>> matched", selector.getPageExtractor().getId());
+                }
+                matchedPageExtractors.add(selector.getPageExtractor());
             }
         }
-        ResponseUtil.setMatchedPageExtractorList(response, matchedPageExtractorList);
-        ResponseUtil.setBlackPageExtractorIdSet(response, blackPageExtractorIdSet);
+
+        ResponseUtil.setMatchedPageExtractorList(response, matchedPageExtractors);
+        ResponseUtil.setBlackPageExtractorIdSet(response, blackPageExtractorIds);
+    }
+
+    private boolean match(String value, String regex) {
+        return StringUtils.isNotBlank(regex) && RegExp.find(value, regex);
     }
 }
