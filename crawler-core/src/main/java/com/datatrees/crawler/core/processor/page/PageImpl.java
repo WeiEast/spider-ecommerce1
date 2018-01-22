@@ -233,7 +233,7 @@ public class PageImpl extends AbstractPage {
     private String getPageTitle(String content) {
         String title = RegExp.group(content, titleRegex, Pattern.CASE_INSENSITIVE, 1);
         if (StringUtils.isNotEmpty(title) && title.length() > 2048) {
-            title = new String(title.substring(0, 2048));
+            title = title.substring(0, 2048);
         }
         return title;
     }

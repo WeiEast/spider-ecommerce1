@@ -184,9 +184,8 @@ public class LoginUtil {
             }
 
             String cookie = ProcessorContextUtil.getCookieString(context);
-            if (cookie != null && RegExp.find(cookie, successPattern)) {
-                return true;
-            }
+
+            return cookie != null && RegExp.find(cookie, successPattern);
         }
 
         return false;
