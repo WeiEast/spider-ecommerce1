@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.operation.impl.RegexOperation;
 import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
 import com.datatrees.crawler.core.processor.common.ReplaceUtils;
@@ -23,6 +22,7 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -46,7 +46,7 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
         }
         Object result = null;
         if (operation.getGroupIndex() == null || operation.getGroupIndex() < 0) {
-            result = PatternUtils.matcher(regex, orginal);
+            result = RegExp.getMatcher(regex, orginal);
             if (!((Matcher) result).find()) {
                 result = null;
             }
@@ -55,7 +55,7 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
             if (logger.isDebugEnabled()) {
                 logger.debug("RegexOperation input: " + String.format("regex: %s, index: %d", regex, index));
             }
-            result = PatternUtils.groupDefaultNull(orginal, regex, index);
+            result = RegExp.group(orginal, regex, index, null);
             if (logger.isDebugEnabled()) {
                 logger.debug("RegexOperation content: " + String.format("orginal: %s , dest: %s", orginal, result));
             }

@@ -13,7 +13,6 @@ import java.util.*;
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.extractor.ResultType;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
@@ -25,6 +24,7 @@ import com.datatrees.crawler.core.processor.extractor.FieldExtractorImpl;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.functors.UniquePredicate;
@@ -84,15 +84,15 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
 
         // try to get split
         for (String split : splits) {
-            if (StringUtils.isNotBlank(segment.getBreakPattern()) && StringUtils.isNotBlank(breakPattern = SourceUtil.sourceExpression(request, response, segment.getBreakPattern())) && PatternUtils.match(breakPattern, split, segment.getBreakPatternFlag() != null ? segment.getBreakPatternFlag() : 0)) {
+            if (StringUtils.isNotBlank(segment.getBreakPattern()) && StringUtils.isNotBlank(breakPattern = SourceUtil.sourceExpression(request, response, segment.getBreakPattern())) && RegExp.find(split, breakPattern, segment.getBreakPatternFlag() != null ? segment.getBreakPatternFlag() : 0)) {
                 logger.warn(segment + " match the break pattern:" + breakPattern + " break...");
                 break;
             }
-            if (StringUtils.isNotBlank(segment.getDisContains()) && StringUtils.isNotBlank(disContains = SourceUtil.sourceExpression(request, response, segment.getDisContains())) && PatternUtils.match(disContains, split, segment.getDisContainsFlag() != null ? segment.getDisContainsFlag() : 0)) {
+            if (StringUtils.isNotBlank(segment.getDisContains()) && StringUtils.isNotBlank(disContains = SourceUtil.sourceExpression(request, response, segment.getDisContains())) && RegExp.find(split, disContains, segment.getDisContainsFlag() != null ? segment.getDisContainsFlag() : 0)) {
                 logger.info("split filtered,matches the dis-contains pattern:" + disContains);
                 continue;
             }
-            if (StringUtils.isNotBlank(segment.getContains()) && StringUtils.isNotBlank(contains = SourceUtil.sourceExpression(request, response, segment.getContains())) && !PatternUtils.match(contains, split, segment.getContainsFlag() != null ? segment.getContainsFlag() : 0)) {
+            if (StringUtils.isNotBlank(segment.getContains()) && StringUtils.isNotBlank(contains = SourceUtil.sourceExpression(request, response, segment.getContains())) && !RegExp.find(split, contains, segment.getContainsFlag() != null ? segment.getContainsFlag() : 0)) {
                 logger.info("split filtered,not matches the contains pattern:" + contains);
                 continue;
             }

@@ -15,14 +15,14 @@ import java.util.Set;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.util.SourceFieldUtils;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -51,11 +51,11 @@ public class ExtractorSelectorImpl extends Processor {
             RequestUtil.setAttribute(request, selector.getField(), value);
         }
         if (value != null) {
-            if (StringUtils.isNotBlank(selector.getDisContainRegex()) && PatternUtils.match(selector.getDisContainRegex(), value)) {
+            if (StringUtils.isNotBlank(selector.getDisContainRegex()) && RegExp.find(value, selector.getDisContainRegex())) {
                 blackPageExtractorIdSet.add(selector.getPageExtractor().getId());
                 return false;
             }
-            if (StringUtils.isNotBlank(selector.getContainRegex()) && PatternUtils.match(selector.getContainRegex(), value)) {
+            if (StringUtils.isNotBlank(selector.getContainRegex()) && RegExp.find(value, selector.getContainRegex())) {
                 return true;
             }
         }

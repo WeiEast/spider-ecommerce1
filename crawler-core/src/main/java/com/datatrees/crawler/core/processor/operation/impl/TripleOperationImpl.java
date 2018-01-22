@@ -5,12 +5,12 @@ import java.util.regex.Pattern;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 
 public class TripleOperationImpl extends Operation<TripleOperation> {
@@ -93,12 +93,12 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
                     }
                     break;
                 case REGEX:
-                    if (PatternUtils.match(secondParams, firstParams)) {
+                    if (RegExp.find(firstParams, secondParams)) {
                         result = firstResult;
                     }
                     break;
                 case CONTAINS:
-                    if (PatternUtils.match(secondParams, firstParams, Pattern.CASE_INSENSITIVE)) {
+                    if (RegExp.find(firstParams, secondParams, Pattern.CASE_INSENSITIVE)) {
                         result = firstResult;
                     }
                     break;

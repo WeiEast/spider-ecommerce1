@@ -14,7 +14,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.common.protocol.WebClientUtil;
-import com.datatrees.common.util.PatternUtils;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -119,11 +119,7 @@ public class FileWapper {
     }
 
     public boolean needDetectContent() {
-        if ((this.getMimeType() != null && PatternUtils.match(textMimeTypePattern, this.getMimeType())) || (name != null && PatternUtils.match(textFileNameSuffixPattern, name))) {
-            return true;
-        } else {
-            return false;
-        }
+        return (this.getMimeType() != null && RegExp.find(this.getMimeType(), textMimeTypePattern)) || (name != null && RegExp.find(name, textFileNameSuffixPattern));
     }
 
     /**
@@ -185,7 +181,7 @@ public class FileWapper {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

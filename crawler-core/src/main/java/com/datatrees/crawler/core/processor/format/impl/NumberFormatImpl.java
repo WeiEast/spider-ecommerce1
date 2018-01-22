@@ -14,11 +14,11 @@ import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.format.container.NumberMapContainer;
 import com.datatrees.crawler.core.processor.format.unit.NumberUnit;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -98,7 +98,7 @@ public class NumberFormatImpl extends AbstractFormat {
             Iterator<String> periodPatterns = numberMap.keySet().iterator();
             while (periodPatterns.hasNext()) {
                 String pattern = periodPatterns.next();
-                if (PatternUtils.match(pattern, orginal)) {
+                if (RegExp.find(orginal, pattern)) {
                     result = numberMap.get(pattern);
                     log.debug("find period " + orginal + " unit :" + result.name());
                     break;
@@ -128,7 +128,7 @@ public class NumberFormatImpl extends AbstractFormat {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.crawler.core.processor.format.AbstractFormat#isResultType(java.lang.Object)
      */

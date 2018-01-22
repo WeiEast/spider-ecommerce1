@@ -11,7 +11,6 @@ package com.datatrees.crawler.core.processor.search;
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.ProtocolStatusCodes;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.Constants;
@@ -28,6 +27,7 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.page.AbstractPage;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -79,10 +79,8 @@ public class Crawler {
                     // check the page response failed
                     doResponseCheck(page, RequestUtil.getContent(request), url.getUrl());
                 } catch (Exception e) {
-                    // response code faild
-                    if (BooleanUtils.isTrue(page.getResponseCheck()) && PatternUtils.match(StringUtils.defaultString(page.getFailedCodePattern(),
-                            "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$"),
-                            ResponseUtil.getResponseStatus(response).toString())) {
+                    // response code failed
+                    if (BooleanUtils.isTrue(page.getResponseCheck()) && RegExp.find(ResponseUtil.getResponseStatus(response).toString(), getFailurePattern(page))) {
                         throw new ResponseCheckException("page:" + page.getId() + ",url:" + request.getUrl() + " response check failed!", e);
                     } else {
                         throw e;
@@ -115,12 +113,14 @@ public class Crawler {
         return response;
     }
 
+    private static String getFailurePattern(Page page) {
+        return StringUtils.defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$");
+    }
+
     private static void doResponseCheck(Page page, String content, String url) throws ResponseCheckException {
         // check if response failed
-        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) ||
-                (StringUtils.isNotBlank(page.getPageFailedPattern()) && PatternUtils.match(page.getPageFailedPattern(), content)))) {
-            throw new ResponseCheckException(
-                    "page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
+        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) || (StringUtils.isNotBlank(page.getPageFailedPattern()) && RegExp.find(content, page.getPageFailedPattern())))) {
+            throw new ResponseCheckException("page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
         }
     }
 

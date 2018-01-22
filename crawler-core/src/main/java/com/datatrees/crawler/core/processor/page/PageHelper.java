@@ -18,9 +18,9 @@ package com.datatrees.crawler.core.processor.page;
 
 import java.util.List;
 
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.page.Regexp;
 import com.datatrees.crawler.core.domain.config.page.Replacement;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public final class PageHelper {
             LOGGER.debug("Extract content by regexp[pattern: {}, index: {}] <<< {}", regexp.getRegex(), regexp.getIndex(), content);
         }
 
-        String result = PatternUtils.group(content, regexp.getRegex(), regexp.getIndex());
+        String result = RegExp.group(content, regexp.getRegex(), regexp.getIndex());
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Extracted result >>> {}", result);

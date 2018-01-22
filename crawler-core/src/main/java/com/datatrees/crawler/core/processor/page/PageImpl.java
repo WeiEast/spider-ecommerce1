@@ -18,7 +18,6 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.URLUtil;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.filter.FilterType;
@@ -40,12 +39,13 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
 import com.datatrees.crawler.core.processor.common.html.urlspliter.URLSplitter;
-import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.datatrees.crawler.core.processor.filter.URLRegexFilter;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.util.UrlExtractor;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -151,7 +151,7 @@ public class PageImpl extends AbstractPage {
         try {
             String contentRegex = page.getContentPageRegex();
             if (StringUtils.isNotEmpty(contentRegex) && StringUtils.isNotEmpty(searchTemplate) && StringUtils.isNotEmpty(content)) {
-                Matcher matcher = PatternUtils.matcher(contentRegex, content);
+                Matcher matcher = RegExp.getMatcher(contentRegex, content);
                 while (matcher.find()) {
                     String pNumber = matcher.group(1);
                     try {
@@ -182,7 +182,7 @@ public class PageImpl extends AbstractPage {
         try {
             String pageRegex = page.getPageNumRegex();
             if (StringUtils.isNotEmpty(pageRegex)) {
-                String pidS = PatternUtils.group(current.getUrl(), pageRegex, 1);
+                String pidS = RegExp.group(current.getUrl(), pageRegex, 1);
 
                 int pNum = -1;
                 try {
@@ -223,7 +223,7 @@ public class PageImpl extends AbstractPage {
 
     private void setResponseStatus(Response response, int status, String pattern, String content) {
         if (StringUtils.isNotEmpty(pattern)) {
-            if (PatternUtils.match(pattern, content)) {
+            if (RegExp.find(content,pattern)) {
                 log.info("set status " + StatusUtil.format(status));
                 ResponseUtil.setResponseStatus(response, status);
             }
@@ -231,8 +231,7 @@ public class PageImpl extends AbstractPage {
     }
 
     private String getPageTitle(String content) {
-        Pattern pattern = Pattern.compile(titleRegex, Pattern.CASE_INSENSITIVE);
-        String title = PatternUtils.group(content, pattern, 1);
+        String title = RegExp.group(content, titleRegex, Pattern.CASE_INSENSITIVE, 1);
         if (StringUtils.isNotEmpty(title) && title.length() > 2048) {
             title = new String(title.substring(0, 2048));
         }
@@ -240,8 +239,7 @@ public class PageImpl extends AbstractPage {
     }
 
     private String getFiltedPageTitle(String title, String regex) {
-        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        return PatternUtils.group(title, pattern, 1);
+        return RegExp.group(title, regex, Pattern.CASE_INSENSITIVE, 1);
     }
 
     /**
@@ -302,7 +300,7 @@ public class PageImpl extends AbstractPage {
                             int depth = current.getDepth();
                             if (revisitPattern != null) {
                                 try {
-                                    depth = PatternUtils.match(revisitPattern, url) ? depth - 1 : depth;
+                                    depth = RegExp.find(url, revisitPattern) ? depth - 1 : depth;
                                 } catch (Exception e) {
                                     log.error("check revisit error!", e);
                                 }

@@ -10,7 +10,6 @@ package com.datatrees.crawler.core.processor;
 
 import java.util.*;
 
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.login.LoginConfig;
@@ -32,6 +31,7 @@ import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.page.DummyPage;
 import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,8 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SearchProcessorContext extends AbstractProcessorContext {
 
-    private static final Logger                                                            log                         = LoggerFactory
-            .getLogger(SearchProcessorContext.class);
+    private static final Logger                                                            log                         = LoggerFactory.getLogger(SearchProcessorContext.class);
     private final        Map<SearchTemplateConfig, Map<Integer, List<SearchSequenceUnit>>> depthPageMap                = new HashMap<>();
     private final        Map<SearchTemplateConfig, Map<String, SearchSequenceUnit>>        pathPageMap                 = new HashMap<>();
     private final        Map<String, SearchTemplateConfig>                                 searchTemplateConfigMap     = new HashMap<>();
@@ -61,7 +60,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     private Login.Status   status;
     private Map<String, String> defaultHeader     = new HashMap<>();
     private Map<Page, Integer>  pageVisitCountMap = new HashMap<>();
-    private boolean              loginCheckIgnore;
+    private boolean loginCheckIgnore;
 
     /**
      * @param website
@@ -194,7 +193,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
                 Map<String, SearchSequenceUnit> urlPathMap = pathPageMap.get(stc);
                 if (MapUtils.isNotEmpty(urlPathMap)) {
                     for (Map.Entry<String, SearchSequenceUnit> entry : urlPathMap.entrySet()) {
-                        if (StringUtils.isNotEmpty(entry.getKey()) && PatternUtils.match(entry.getKey(), url.getUrl())) {
+                        if (StringUtils.isNotEmpty(entry.getKey()) && RegExp.find(url.getUrl(), entry.getKey())) {
                             page = entry.getValue().getPage();
                             break;
                         }
@@ -244,7 +243,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
             if (CollectionUtils.isNotEmpty(stc.getSearchSequence())) {
                 Map<String, SearchSequenceUnit> urlPathMap = pathPageMap.get(stc);
                 for (Map.Entry<String, SearchSequenceUnit> entry : urlPathMap.entrySet()) {
-                    if (PatternUtils.match(entry.getKey(), url)) {
+                    if (RegExp.find(url, entry.getKey())) {
                         SearchSequenceUnit unit = entry.getValue();
                         result = unit.getDepth();
                         curr.setpId(unit.getPage().getId());
@@ -282,11 +281,11 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
         if (StringUtils.isEmpty(pattern)) {
             // If not, will maintain the original logic
-            return StringUtils.isNotBlank (proxyConf.getProxy());
+            return StringUtils.isNotBlank(proxyConf.getProxy());
         }
 
         try {
-            return PatternUtils.match(pattern, url);
+            return RegExp.find(url, pattern);
         } catch (Exception e) {
             log.error("Unexpected exception!", e);
         }
@@ -298,12 +297,11 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     }
 
     public com.datatrees.crawler.core.processor.proxy.Proxy getProxy(String url, boolean strict) throws Exception {
-        if(needProxyByUrl(url)){
+        if (needProxyByUrl(url)) {
             com.datatrees.crawler.core.processor.proxy.Proxy proxy = getProxy();
 
-            if(proxy == null){
-                if(strict)
-                    throw new NoProxyException("Not found available proxy in remote server! >>> " + url);
+            if (proxy == null) {
+                if (strict) throw new NoProxyException("Not found available proxy in remote server! >>> " + url);
 
                 log.warn("Not found available proxy in remote server! >>> " + url);
             }

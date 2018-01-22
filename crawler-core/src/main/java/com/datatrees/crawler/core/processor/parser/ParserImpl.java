@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.parser.IndexMapping;
 import com.datatrees.crawler.core.domain.config.parser.Parser;
 import com.datatrees.crawler.core.domain.config.parser.ParserPattern;
@@ -29,6 +28,7 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -160,7 +160,7 @@ public class ParserImpl extends Operation {
         boolean first = true;
         for (ParserPattern parserPattern : mappings) {
             String regex = parserPattern.getRegex();
-            Matcher m = PatternUtils.matcher(regex, source);
+            Matcher m = RegExp.getMatcher(regex, source);
             List<IndexMapping> indexMappings = parserPattern.getIndexMappings();
             int index = 0;
             while (m.find()) {

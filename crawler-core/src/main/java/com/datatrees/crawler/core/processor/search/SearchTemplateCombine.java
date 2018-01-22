@@ -13,9 +13,9 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.datatrees.crawler.core.processor.common.ReplaceUtils;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -91,7 +91,7 @@ public class SearchTemplateCombine {
                 encodedKeyword = encodeKeyword(keyword, urlCharset);
                 log.debug("original keyword: " + keyword + ",urlCharset: " + urlCharset + ", encoded keyword: " + encodedKeyword);
             }
-            List<String> pagingParams = PatternUtils.getContents(searchURLTemplate, "(\\$\\{page,[0-9,]+\\+\\})", 1);
+            List<String> pagingParams = RegExp.findAll(searchURLTemplate, "(\\$\\{page,[0-9,]+\\+\\})", 1);
             int paramValue = 0;
             int beginOffset = 0;
             int maxOffset = 0;
@@ -101,7 +101,7 @@ public class SearchTemplateCombine {
                 log.debug("pstr: " + pstr);
                 int i = 0;
                 if (!StringUtils.isBlank(pstr)) {
-                    String pagingNums = PatternUtils.group(pstr, ",(.*)\\+", 1);
+                    String pagingNums = RegExp.group(pstr, ",(.*)\\+", 1);
                     for (String p : pagingNums.split(",")) {
                         log.debug("p:" + p);
                         if (i == 0) {
@@ -139,10 +139,10 @@ public class SearchTemplateCombine {
     }
 
     private static int arithmetic(String param) {
-        String result = PatternUtils.group(param, "(\\d+)", 1);
+        String result = RegExp.group(param, "(\\d+)", 1);
         if (result != null && param.equals(result)) {
             return Integer.parseInt(param);
-        } else if (PatternUtils.match("[\\d\\.\\+\\-\\*/]+", param)) {
+        } else if (RegExp.find(param,"[\\d\\.\\+\\-\\*/]+")) {
             double num = CalculateUtil.calculate(param);
             if (num > (int) num) {
                 num = num + 1;
@@ -161,9 +161,9 @@ public class SearchTemplateCombine {
      */
     public static String customTemplate(String customURLTemplate, int pageNum) {
         try {
-            List<String> pagingParams = PatternUtils.getContents(customURLTemplate, "(\\#\\{page.*?,[\\d+\\.\\+\\-\\/\\*]+,\\d+[\\+\\-]\\})", 1);
+            List<String> pagingParams = RegExp.findAll(customURLTemplate, "(\\#\\{page.*?,[\\d+\\.\\+\\-\\/\\*]+,\\d+[\\+\\-]\\})", 1);
             for (String pstr : pagingParams) {
-                Map<Integer, String> map = PatternUtils.getGroupMap(pstr, "\\#\\{page,(.*)\\}");
+                Map<Integer, String> map = RegExp.groupAsMap(pstr, "\\#\\{page,(.*)\\}");
                 if (MapUtils.isNotEmpty(map) && map.size() == 2) {
                     String paramTemp = map.get(1); // eg: #{page,7 * 3,2,1-}
                     int i = 0;
