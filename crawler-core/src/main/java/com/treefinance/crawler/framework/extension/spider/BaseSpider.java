@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.extension.spider;
 
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.treefinance.crawler.framework.extension.Interrupter;
 import org.slf4j.Logger;
@@ -29,17 +29,17 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseSpider implements Spider {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    private AbstractProcessorContext context;
-    private ProxyManager             proxyManager;
-    private PageProcessor            pageProcessor;
-    private Interrupter              interrupter;
+    private SearchProcessorContext context;
+    private ProxyManager           proxyManager;
+    private PageProcessor          pageProcessor;
+    private Interrupter            interrupter;
 
-    protected AbstractProcessorContext getContext() {
+    protected SearchProcessorContext getContext() {
         return context;
     }
 
     @Override
-    public void setContext(AbstractProcessorContext context) {
+    public void setContext(SearchProcessorContext context) {
         this.context = context;
     }
 

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractClientPlugin {
 
-    private Logger logger = LoggerFactory.getLogger(AbstractClientPlugin.class);
+    protected Logger logger = LoggerFactory.getLogger(AbstractClientPlugin.class);
     private Protocol     webClient;
     private ProxyManager proxyManager;
 

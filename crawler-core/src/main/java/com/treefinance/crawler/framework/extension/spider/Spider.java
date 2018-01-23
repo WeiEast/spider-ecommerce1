@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.extension.spider;
 
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.treefinance.crawler.framework.extension.Interrupter;
 
@@ -28,7 +28,7 @@ public interface Spider {
 
     void run() throws InterruptedException;
 
-    void setContext(AbstractProcessorContext context);
+    void setContext(SearchProcessorContext context);
 
     void setProxyManager(ProxyManager proxyManager);
 
