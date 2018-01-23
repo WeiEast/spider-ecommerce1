@@ -28,8 +28,6 @@ public class TaskMessage {
     private String                 uniqueSuffix;
     private Boolean                statusSend;
 
-    private Long taskId;
-
     public TaskMessage(final Task task, final SearchProcessorContext context) {
         this.task = task;
         this.context = context;
@@ -143,11 +141,7 @@ public class TaskMessage {
     }
 
     public Long getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+        return collectorMessage.getTaskId();
     }
 
     /*
