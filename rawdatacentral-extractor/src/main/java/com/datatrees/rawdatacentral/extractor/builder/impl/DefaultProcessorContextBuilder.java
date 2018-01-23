@@ -14,8 +14,10 @@ import java.util.Set;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,25 +45,29 @@ public class DefaultProcessorContextBuilder {
 
     public ExtractorProcessorContext buildExtractorProcessorContext(ExtractMessage extractMessage) {
         ResultType resultType = extractMessage.getResultType();
-        ExtractorProcessorContext context = null;
-        try {
-            switch (resultType) {
-                case MAILBILL:
-                    String websiteIdStr = Integer.valueOf(extractMessage.getWebsiteId()).toString();
-                    if (extractorUseDefaultWebsiteIdsSet.contains(websiteIdStr)) {
-                        context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId(), extractMessage.getWebsiteName());
-                    } else {
-                        context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId());
-                    }
-                    break;
-                default:
-                    // use the same website config to extract
+        ExtractorProcessorContext context;
+
+        switch (resultType) {
+            case MAILBILL:
+                String websiteIdStr = Integer.valueOf(extractMessage.getWebsiteId()).toString();
+                if (extractorUseDefaultWebsiteIdsSet.contains(websiteIdStr)) {
                     context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId(), extractMessage.getWebsiteName());
-                    break;
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+                } else {
+                    context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId());
+                }
+                break;
+            default:
+                // use the same website config to extract
+                context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId(), extractMessage.getWebsiteName());
+                break;
         }
+
+        ParentTask task = extractMessage.getTask();
+        ProcessorContextUtil.setCookieString(context, task.getCookie());
+        if(logger.isDebugEnabled()){
+            logger.debug("Add cookies into extract context: {}", task.getCookie());
+        }
+
         return context;
     }
 }
