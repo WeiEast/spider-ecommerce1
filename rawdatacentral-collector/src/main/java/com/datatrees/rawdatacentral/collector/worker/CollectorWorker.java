@@ -265,6 +265,10 @@ public class CollectorWorker {
         return null;
     }
 
+    /**
+     * @exception ResultEmptyException
+     * @exception ResponseCheckException
+     */
     private Collection<Future<Object>> crawlByNormal(SearchTemplateConfig templateConfig, SearchProcessorContext context, TaskMessage taskMessage, Task task) throws ResultEmptyException {
         try {
             Request request = templateConfig.getRequest();
@@ -333,7 +337,7 @@ public class CollectorWorker {
     public Map<String, Object> mergeSubTaskResult(int taskid, Map<String, Object> resultMap) {
         List<Map> results = subTaskManager.getSyncedSubTaskResults(taskid);
         if (CollectionUtils.isNotEmpty(results)) {
-            LOGGER.info("try to merage subTaskResult" + results);
+            LOGGER.info("try to merge subTaskResult" + results);
             List<Map> errorSubTasks = new ArrayList<Map>();
             Iterator<Map> iter = results.iterator();
             while (iter.hasNext()) {
