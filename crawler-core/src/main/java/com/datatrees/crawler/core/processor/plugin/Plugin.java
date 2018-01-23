@@ -10,14 +10,16 @@ package com.datatrees.crawler.core.processor.plugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
-import com.google.common.base.Preconditions;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,24 +29,15 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since Feb 19, 2014 1:10:48 PM
  */
-public abstract class Plugin extends Processor {
+public abstract class Plugin<T extends AbstractPlugin> extends Processor {
 
-    private static final Logger        logger = LoggerFactory.getLogger(Plugin.class);
-    protected            PluginWrapper plugin = null;
+    private static final Logger logger = LoggerFactory.getLogger(Plugin.class);
+    private final T                        metadata;
+    private final AbstractProcessorContext context;
 
-    public PluginWrapper getPluginDesc() {
-        return plugin;
-    }
-
-    public void setPluginDesc(PluginWrapper plugin) {
-        this.plugin = plugin;
-    }
-
-    @Override
-    protected void preProcess(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(plugin, "plugin wrapper must not be null!");
-        Preconditions.checkNotNull(plugin.getFile(), "plugin file must not be null!");
-        Preconditions.checkNotNull(plugin.getPlugin(), "plugin config must not be null!");
+    public Plugin(T metadata, AbstractProcessorContext context) {
+        this.metadata = Objects.requireNonNull(metadata);
+        this.context = Objects.requireNonNull(context);
     }
 
     @Override
@@ -52,19 +45,19 @@ public abstract class Plugin extends Processor {
         try {
             String args = getPhaseInput(request);
 
-            Object result = invokePlugin(plugin, args, request);
+            Object result = invokePlugin(metadata, args, request);
 
             response.setOutPut(result);
         } catch (PluginInvokeException e) {
-            logger.error("Error invoking java plugin={}", plugin, e);
+            logger.error("Error invoking plugin: {}", metadata.getId(), e);
             throw e;
         } catch (Throwable e) {
-            logger.error("Error invoking java plugin={} ", plugin, e);
-            throw new PluginInvokeException("Error invoking plugin : " + plugin, e);
+            logger.error("Error invoking plugin: {} ", metadata.getId(), e);
+            throw new PluginInvokeException("Error invoking plugin: " + metadata.getId(), e);
         }
     }
 
-    protected abstract Object invokePlugin(PluginWrapper plugin, String args, Request request) throws Exception;
+    protected abstract Object invokePlugin(T metadata, String args, Request request) throws Exception;
 
     /**
      * get Plugin inputs rules : first argument is config other arguments are
@@ -76,8 +69,12 @@ public abstract class Plugin extends Processor {
             params = new HashMap<>();
         }
 
-        params.put(PluginConstants.EXTRA_CONFIG, plugin.getExtraConfig());
+        params.put(PluginConstants.EXTRA_CONFIG, metadata.getExtraConfig());
 
         return GsonUtils.toJson(params);
+    }
+
+    public AbstractProcessorContext getContext() {
+        return context;
     }
 }

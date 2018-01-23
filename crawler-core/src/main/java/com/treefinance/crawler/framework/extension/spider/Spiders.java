@@ -18,10 +18,10 @@ package com.treefinance.crawler.framework.extension.spider;
 
 import javax.annotation.Nonnull;
 
+import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.treefinance.crawler.framework.extension.ExtensionFactory;
 import com.treefinance.crawler.framework.extension.Interrupter;
-import com.treefinance.crawler.framework.extension.PluginFile;
 
 /**
  * @author Jerry
@@ -32,12 +32,12 @@ public final class Spiders {
     private Spiders() {
     }
 
-    public static void run(@Nonnull final PluginFile pluginFile, final SearchProcessorContext context, final PageProcessor pageProcessor) throws InterruptedException {
-        run(pluginFile, context, pageProcessor, null);
+    public static void run(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context, final PageProcessor pageProcessor) throws InterruptedException {
+        run(pluginMetadata, context, pageProcessor, null);
     }
 
-    public static void run(@Nonnull final PluginFile pluginFile, final SearchProcessorContext context, final PageProcessor pageProcessor, final Interrupter interrupter) throws InterruptedException {
-        Spider spider = ExtensionFactory.getSpider(pluginFile, context, pageProcessor, interrupter);
+    public static void run(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context, final PageProcessor pageProcessor, final Interrupter interrupter) throws InterruptedException {
+        Spider spider = ExtensionFactory.getSpider(pluginMetadata, context, pageProcessor, interrupter);
         spider.run();
     }
 }

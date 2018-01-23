@@ -12,12 +12,8 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.protocol.WebClientUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.resource.PluginManager;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
-import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 
 /**
@@ -26,38 +22,26 @@ import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
  * @version 1.0
  * @since Feb 19, 2014 1:10:33 PM
  */
-public class JavaPlugin extends Plugin {
+public class JavaPlugin extends Plugin<com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin> {
 
-    private AbstractProcessorContext context;
-
-    public JavaPlugin(AbstractProcessorContext context) {
-        this.context = context;
+    public JavaPlugin(com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin metadata, AbstractProcessorContext context) {
+        super(metadata, context);
     }
 
     @Override
-    protected Object invokePlugin(PluginWrapper plugin, String args, Request request) throws Exception {
-        com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin javaPlugin
-                = (com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) plugin.getPlugin();
-
-        String fileName = javaPlugin.getFileName();
-        String mainClass = javaPlugin.getMainClass();
-        Long taskId = null;
-        if (null != context) {
-            taskId = context.getLong(AttributeKey.TASK_ID);
-        }
-
-        AbstractClientPlugin clientPlugin = BeanFactoryUtils.getBean(PluginManager.class).loadPlugin(fileName, mainClass, taskId);
-        if (context instanceof SearchProcessorContext) {
+    protected Object invokePlugin(com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin metadata, String args, Request request) throws Exception {
+        AbstractClientPlugin clientPlugin = getContext().loadPlugin(metadata);
+        if (getContext() instanceof SearchProcessorContext) {
             // add proxy if necessary
-            clientPlugin.setProxyManager(((SearchProcessorContext) context).getProxyManager());
+            clientPlugin.setProxyManager(((SearchProcessorContext) getContext()).getProxyManager());
         }
         // add http client
         clientPlugin.setWebClient(WebClientUtil.getWebClient());
 
-        ProcessContextHolder.setProcessorContext(context);
+        ProcessContextHolder.setProcessorContext(getContext());
         try {
             //插件自定义参数
-            return clientPlugin.process(args, javaPlugin.getParams());
+            return clientPlugin.process(args, metadata.getParams());
         } finally {
             ProcessContextHolder.clearProcessorContext();
         }

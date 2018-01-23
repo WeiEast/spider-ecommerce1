@@ -16,6 +16,7 @@ import akka.dispatch.Future;
 import akka.util.Timeout;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.search.Request;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
@@ -25,7 +26,6 @@ import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.login.Login;
-import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.search.CrawlExecutor;
@@ -251,11 +251,11 @@ public class CollectorWorker {
 
     private Collection<Future<Object>> crawlByExtension(SearchTemplateConfig templateConfig, SearchProcessorContext context, TaskMessage taskMessage) {
         try {
-            PluginWrapper pluginWrapper = context.createPluginWrapper(templateConfig.getPlugin());
+            AbstractPlugin plugin = templateConfig.getPlugin();
 
             CustomPageProcessor pageProcessor = new CustomPageProcessor(resultDataHandler, taskMessage);
 
-            Spiders.run(pluginWrapper, context, pageProcessor);
+            Spiders.run(plugin, context, pageProcessor);
 
             return pageProcessor.getFutures();
         } catch (Exception e) {

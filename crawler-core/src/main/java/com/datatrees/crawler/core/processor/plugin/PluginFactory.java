@@ -8,7 +8,10 @@
 
 package com.datatrees.crawler.core.processor.plugin;
 
-import com.datatrees.crawler.core.domain.config.plugin.PluginType;
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
+import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.impl.CommandPlugin;
 import com.datatrees.crawler.core.processor.plugin.impl.JavaPlugin;
@@ -32,22 +35,15 @@ public final class PluginFactory {
         return ProcessContextHolder.getProcessorContext();
     }
 
-    public static Plugin getPlugin(PluginWrapper wrapper, AbstractProcessorContext context) {
-        Plugin plugin;
-        PluginType type = wrapper.getType();
-        switch (type) {
-            case PYTHON:
-            case SHELL:
-                plugin = new CommandPlugin();
-                break;
-            default:
-                plugin = new JavaPlugin(context);
-                break;
+    public static Plugin getPlugin(@Nonnull final AbstractPlugin metadata, @Nonnull final AbstractProcessorContext context) {
+        Objects.requireNonNull(metadata);
+        Objects.requireNonNull(context);
+
+        if (metadata instanceof com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) {
+            return new JavaPlugin((com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) metadata, context);
         }
 
-        plugin.setPluginDesc(wrapper);
-
-        return plugin;
+        return new CommandPlugin(metadata, context);
     }
 
 }

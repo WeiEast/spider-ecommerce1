@@ -1,6 +1,7 @@
 package com.treefinance.crawler.framework.extension.plugin;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -9,7 +10,6 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.treefinance.crawler.framework.exception.PluginException;
 
 /**
@@ -21,28 +21,16 @@ public final class PluginCaller {
     private PluginCaller() {
     }
 
-    public static Object call(AbstractPlugin pluginDesc, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
-        if (context == null) {
-            throw new IllegalArgumentException("Processor context must not be null.");
-        }
-
-        PluginWrapper wrapper = context.createPluginWrapper(pluginDesc);
-
-        return call(wrapper, context, parametersSupplier);
-    }
-
     public static Object call(String pluginId, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
-        if (context == null) {
-            throw new IllegalArgumentException("Processor context must not be null.");
-        }
+        Objects.requireNonNull(context);
 
-        PluginWrapper wrapper = context.createPluginWrapper(pluginId);
+        AbstractPlugin pluginDesc = context.getPluginDescByID(pluginId);
 
-        return call(wrapper, context, parametersSupplier);
+        return call(pluginDesc, context, parametersSupplier);
     }
 
-    public static Object call(PluginWrapper wrapper, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
-        Plugin plugin = PluginFactory.getPlugin(wrapper, context);
+    public static Object call(AbstractPlugin pluginMetadata, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
+        Plugin plugin = PluginFactory.getPlugin(pluginMetadata, context);
 
         try {
             Request req = new Request();
@@ -60,7 +48,7 @@ public final class PluginCaller {
 
             return resp.getOutPut();
         } catch (Exception e) {
-            throw new PluginException("Error calling plugin! >>> " + wrapper, e);
+            throw new PluginException("Error calling plugin! >>> " + pluginMetadata, e);
         }
     }
 }
