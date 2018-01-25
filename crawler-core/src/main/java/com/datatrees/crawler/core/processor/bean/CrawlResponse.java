@@ -73,4 +73,5 @@ public class CrawlResponse extends Response {
         info.append("status:").append(getStatus()).append("\n").append("error info:").append(getErrorMsg()).append("\n").append("urls size:").append(getUrls().size());
         return info.toString();
     }
+
 }

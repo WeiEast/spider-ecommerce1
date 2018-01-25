@@ -10,8 +10,8 @@ package com.datatrees.crawler.core.processor.decode.impl;
 
 import java.nio.charset.Charset;
 
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
+import com.treefinance.toolkit.util.RegExp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ public class RegexDecoder extends AbstractDecoder {
 
     @Override
     public String decode(String content, Charset charset) {
-        if (PatternUtils.match(HexDecoder.pattern, content)) {
+        if (RegExp.find(content, HexDecoder.pattern)) {
             log.debug("RegexDecoder using hex decoder");
             return new HexDecoder().decode(content, charset);
         } else {

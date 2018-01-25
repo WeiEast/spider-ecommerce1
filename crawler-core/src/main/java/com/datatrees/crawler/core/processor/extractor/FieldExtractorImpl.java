@@ -28,11 +28,10 @@ import com.datatrees.crawler.core.processor.common.exception.ExtractorException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -61,18 +60,22 @@ public class FieldExtractorImpl extends Processor {
     private Object extractWithPlugin(Request request, String content, AbstractPlugin pluginDesc) throws Exception {
         AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
 
-        Object fieldResult = PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> {
+        Object fieldResult = PluginCaller.call(pluginDesc, context, () -> {
             Map<String, String> params = new LinkedHashMap<>();
 
             params.put(PluginConstants.PAGE_CONTENT, content);
-            params.put(PluginConstants.CURRENT_URL, RequestUtil.getCurrentUrl(request).getUrl());
+            LinkNode requestLinkNode = RequestUtil.getCurrentUrl(request);
+            if (requestLinkNode != null) {
+                params.put(PluginConstants.CURRENT_URL, requestLinkNode.getUrl());
+                params.put(PluginConstants.REDIRECT_URL, requestLinkNode.getRedirectUrl());
+            }
             params.put(PluginConstants.FIELD, fieldExtractor.getField());
 
             return params;
         });
 
         // get pluginDesc json result
-        Map<String, Object> pluginResultMap = PluginUtil.checkPluginResult(fieldResult.toString());
+        Map<String, Object> pluginResultMap = PluginUtil.checkPluginResult((String) fieldResult);
 
         return pluginResultMap.get(PluginConstants.FIELD);
     }

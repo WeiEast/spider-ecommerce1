@@ -10,18 +10,22 @@
 package com.datatrees.crawler.core.processor;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
-import com.datatrees.crawler.core.processor.common.resource.PluginManager;
-import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
+import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.util.SynchronizedMap;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.extension.manager.PluginManager;
+import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -184,14 +188,20 @@ public abstract class AbstractProcessorContext {
         this.pluginManager = pluginManager;
     }
 
-    public PluginWrapper createPluginWrapper(AbstractPlugin plugin) {
-        return getPluginManager().getPlugin(getWebsiteName(), plugin);
+    public <T> WrappedExtension<T> loadExtension(AbstractPlugin pluginMetadata, Class<T> extensionType) {
+        Objects.requireNonNull(pluginMetadata);
+        Long taskId = getLong(AttributeKey.TASK_ID);
+
+        return getPluginManager().loadExtension(pluginMetadata, extensionType, taskId);
     }
 
-    public PluginWrapper createPluginWrapper(String pluginId) {
-        AbstractPlugin pluginDesc = getPluginDescByID(pluginId);
+    public AbstractClientPlugin loadPlugin(JavaPlugin pluginMetadata) {
+        Objects.requireNonNull(pluginMetadata);
+        String fileName = pluginMetadata.getFileName();
+        String mainClass = pluginMetadata.getMainClass();
+        Long taskId = getLong(AttributeKey.TASK_ID);
 
-        return createPluginWrapper(pluginDesc);
+        return getPluginManager().loadPlugin(fileName, mainClass, taskId);
     }
 
     public AbstractService getDefaultService() {

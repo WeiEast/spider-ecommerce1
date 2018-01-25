@@ -18,10 +18,10 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.DateUtils;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +71,7 @@ public class DateFormatImpl extends AbstractFormat {
         }
 
         if (StringUtils.isEmpty(pattern)) {
-            String matchResult = PatternUtils.group(orginal, "(\\d+)", 1);
+            String matchResult = RegExp.group(orginal, "(\\d+)", 1);
             if (matchResult != null && matchResult.equals(orginal)) {
                 return new Date(Long.parseLong(orginal));
             }
@@ -109,7 +109,7 @@ public class DateFormatImpl extends AbstractFormat {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.crawler.core.processor.format.AbstractFormat#isResultType(java.lang.Object)
      */

@@ -38,7 +38,7 @@ public class ExtractorProcessorContext extends AbstractProcessorContext {
     @Override
     public void init() {
 
-        List<PageExtractor> PageExtractorList = this.website.getExtractorConfig().getPageExtractorList();
+        List<PageExtractor> PageExtractorList = this.website.getExtractorConfig().getPageExtractors();
         if (CollectionUtils.isNotEmpty(PageExtractorList)) {
             for (PageExtractor p : PageExtractorList) {
                 pageExtractorMap.put(p.getId(), p);

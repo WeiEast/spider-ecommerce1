@@ -18,29 +18,20 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 
 /**
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
  * @version 1.0
  * @since 2016年5月30日 下午8:33:11
  */
-public class ReturnMatchOperationImpl extends Operation {
+public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
 
-    private static final Logger log = LoggerFactory.getLogger(ReturnMatchOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.datatrees.crawler.core.processor.operation.Operation#process(com.datatrees.common.
-     * pipeline.Request, com.datatrees.common.pipeline.Response)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
-        ReturnMatchOperation operation = (ReturnMatchOperation) getOperation();
+        ReturnMatchOperation operation = getOperation();
         String value = operation.getValue();
-        String orginal = getInput(request, response);
+        String orginal = OperationHelper.getStringInput(request, response);
 
         Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
         Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
@@ -58,8 +49,8 @@ public class ReturnMatchOperationImpl extends Operation {
                 result = new StringBuilder(result.substring(0, result.length() - 1));
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("ReturnMatchOperation input: " + String.format("value: %s", value));
+        if (logger.isDebugEnabled()) {
+            logger.debug("ReturnMatchOperation input: " + String.format("value: %s", value));
         }
         response.setOutPut(result.toString());
     }

@@ -5,6 +5,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Path;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import org.apache.commons.lang.StringUtils;
 
 @Tag("operation")
 @Path(".[@type='append']")
@@ -16,7 +17,7 @@ public class AppendOperation extends AbstractOperation {
 
     @Tag
     public String getValue() {
-        return value;
+        return value == null ? StringUtils.EMPTY : value;
     }
 
     @Node("text()")
@@ -26,7 +27,7 @@ public class AppendOperation extends AbstractOperation {
 
     @Attr("index")
     public Integer getIndex() {
-        return index;
+        return index == null ? -1 : index;
     }
 
     @Node("@index")

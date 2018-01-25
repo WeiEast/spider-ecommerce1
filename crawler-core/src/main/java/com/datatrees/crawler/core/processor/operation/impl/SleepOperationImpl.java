@@ -12,26 +12,24 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.SleepOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
-public class SleepOperationImpl extends Operation {
+public class SleepOperationImpl extends Operation<SleepOperation> {
 
-    private static final Logger log = LoggerFactory.getLogger(SleepOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
-        SleepOperation operation = (SleepOperation) getOperation();
-        log.debug("do sleep operation {}", operation.getValue());
-        Thread.sleep(operation.getValue());
+        SleepOperation operation = getOperation();
+        Integer sleepTime = operation.getValue();
+        if (sleepTime != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Start to Sleep: {}", sleepTime);
+            }
+            Thread.sleep(sleepTime);
+        }
     }
 
 }

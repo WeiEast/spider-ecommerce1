@@ -13,16 +13,15 @@ import java.util.regex.Pattern;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.protocol.Constant;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.BeanResourceFactory;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.treefinance.crawler.framework.util.UrlExtractor;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -58,8 +57,7 @@ public abstract class ServiceBase extends Processor {
         if (current != null) {
             String content = RequestUtil.getContent(request);
             if (StringUtils.isNotEmpty(content)) {
-                Pattern pattern = Pattern.compile("<base(.*)>", Pattern.CASE_INSENSITIVE);
-                String baseContent = PatternUtils.group(content, pattern, 1);
+                String baseContent = RegExp.group(content, "<base(.*)>", Pattern.CASE_INSENSITIVE, 1);
                 getBaseUrl(baseContent, current);
             }
         }
@@ -73,7 +71,7 @@ public abstract class ServiceBase extends Processor {
     public String getBaseUrl(String baseContent, LinkNode current) {
         String baseDomainUrl = null;
         if (StringUtils.isNotEmpty(baseContent)) {
-            List<String> urlsInText = TextUrlExtractor.extractor(baseContent, Constant.URL_REGEX, 1);
+            List<String> urlsInText = UrlExtractor.extract(baseContent);
             if (CollectionUtils.isNotEmpty(urlsInText)) {
                 baseDomainUrl = urlsInText.get(0);
             }

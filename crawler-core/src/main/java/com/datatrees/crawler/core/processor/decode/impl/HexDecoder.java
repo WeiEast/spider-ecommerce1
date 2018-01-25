@@ -11,8 +11,8 @@ package com.datatrees.crawler.core.processor.decode.impl;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
+import com.treefinance.toolkit.util.RegExp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,13 +28,12 @@ public class HexDecoder extends AbstractDecoder {
 
     @Override
     public String decode(String content, Charset charset) {
-
-        String result = content;
         if (charset == null) {
             charset = Charset.defaultCharset();
             log.warn("using default charset! " + charset);
         }
-        result = replaceByRegex(content, charset, pattern);
+        
+        String result = replaceByRegex(content, charset, pattern);
 
         // DecodeModeContainer container = DecodeModeContainer.get(conf);
         // if (container != null) {
@@ -57,7 +56,7 @@ public class HexDecoder extends AbstractDecoder {
      * @return
      */
     private String replaceByRegex(String content, Charset charset, String regex) {
-        Matcher matcher = PatternUtils.matcher(pattern, content);
+        Matcher matcher = RegExp.getMatcher(regex, content);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             String orginal = matcher.group(1);
