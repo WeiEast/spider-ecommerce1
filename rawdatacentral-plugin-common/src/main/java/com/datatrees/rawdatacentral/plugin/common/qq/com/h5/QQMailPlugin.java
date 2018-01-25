@@ -252,6 +252,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             driver.switchTo().defaultContent();
                             driver.get(currentUrl);
                             TimeUnit.SECONDS.sleep(3);
+                            currentUrl = driver.getCurrentUrl();
                             String cookieString = SeleniumUtils.getCookieString(driver);
                             LoginMessage loginMessage = new LoginMessage();
                             loginMessage.setTaskId(taskId);
