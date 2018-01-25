@@ -7,8 +7,8 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public class CurrencyFormatImpl extends AbstractFormat {
     private String currencyMatch(String orginal, Map<String, String> unitMap) {
         if (MapUtils.isNotEmpty(unitMap)) {
             for (Map.Entry<String, String> entry : unitMap.entrySet()) {
-                if (PatternUtils.match(entry.getKey(), orginal)) {
+                if (RegExp.find(orginal, entry.getKey())) {
                     return entry.getValue();
                 }
             }

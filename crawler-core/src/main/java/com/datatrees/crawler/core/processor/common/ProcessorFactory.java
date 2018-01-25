@@ -88,7 +88,6 @@ public class ProcessorFactory {
             registOperation(OperationType.RETURNMATCH, ReturnMatchOperationImpl.class);
 
             // regist service
-            registService(ServiceType.WebRobot_Service, WebRobotServiceImpl.class);
             registService(ServiceType.Plugin_Service, PluginServiceImpl.class);
             registService(ServiceType.Grab_Service, GrabServiceImpl.class);
             registService(ServiceType.Task_Http_Service, TaskHttpServiceImpl.class);

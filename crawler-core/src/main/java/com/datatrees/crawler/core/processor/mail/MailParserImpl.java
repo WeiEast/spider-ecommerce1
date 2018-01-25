@@ -19,12 +19,12 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.Content;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.IPAddressUtil;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.james.mime4j.field.FieldName;
@@ -110,7 +110,7 @@ public enum MailParserImpl {
         try {
             List<Field> receivedList = (List<Field>) result.get("received");
             if (CollectionUtils.isNotEmpty(receivedList)) {
-                List<String> ipList = PatternUtils.findAll(receivedList.toString(), MAIL_SERVER_IP_REGEX, 1);
+                List<String> ipList = RegExp.findAll(receivedList.toString(), MAIL_SERVER_IP_REGEX, 1);
                 for (String ip : ipList) {
                     if (StringUtils.isNotBlank(ip)) {
                         if (logger.isDebugEnabled()) {
@@ -139,7 +139,7 @@ public enum MailParserImpl {
      */
     private void parseBodyParts(Mail mimeMsg, Multipart multipart) throws IOException {
         for (BodyPart part : multipart.getBodyParts()) {
-            if (part.getDispositionType() != null && PatternUtils.match(attachmentTypePattern, part.getDispositionType().toLowerCase())) {
+            if (part.getDispositionType() != null && RegExp.find(part.getDispositionType().toLowerCase(), attachmentTypePattern)) {
                 // If DispositionType is null or empty, it means that it's multipart, not attached
                 // file
                 this.saveAttachment(mimeMsg, part);
@@ -165,7 +165,7 @@ public enum MailParserImpl {
         if (StringUtils.isBlank(fileName)) {
             Field field = part.getHeader().getField(FieldName.CONTENT_DISPOSITION);
             if (field != null && field.getBody() != null) {
-                fileName = PatternUtils.group(field.getBody().toLowerCase(), PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
+                fileName = RegExp.group(field.getBody().toLowerCase(), PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
             }
         }
         return fileName;

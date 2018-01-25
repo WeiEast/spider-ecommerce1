@@ -11,11 +11,13 @@ ext {
     jodaTime = "2.7"
     apacheMime4j = "0.6.1"
     javassist = "3.20.0-GA"
+    toolkit = "1.0.4"
 }
 
 dependencies {
     compile project(':rawdatacentral-api')
     compile project(':rawdatacentral-common')
+    compile "com.treefinance.toolkit:toolkit:${toolkit}"
     compile "com.google.guava:guava:${guavaVersion}"
     compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocol}", changing: true) {
         exclude module: 'guava'
@@ -39,10 +41,6 @@ dependencies {
     compile "org.apache.commons:commons-exec:${commonsExec}"
     compile "joda-time:joda-time:${jodaTime}"
     compile "org.apache.james:apache-mime4j:${apacheMime4j}"
-    compile(group: "com.datatrees.webrobot", name: "webrobot-client", version: "${webrobotClientVersion}", changing: true) {
-        exclude module: 'guava'
-        exclude module: 'selenium-firefox-driver'
-    }
     compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: "spring")
         exclude(module: "netty")
@@ -78,4 +76,5 @@ dependencies {
 }
 
 apply from: rootProject.file('printLib.gradle')
+apply from: rootProject.file('upload.gradle')
 

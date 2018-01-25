@@ -11,14 +11,13 @@ package com.datatrees.crawler.core.processor.plugin.impl;
 import java.io.File;
 
 import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.domain.config.plugin.PluginPhase;
+import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.PluginType;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
-import com.datatrees.crawler.core.processor.plugin.PluginWrapper;
 import com.datatrees.crawler.core.util.CommandLineExecutor;
-import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,26 +30,25 @@ public class CommandPlugin extends Plugin {
 
     private static final Logger logger = LoggerFactory.getLogger(CommandPlugin.class);
 
-    @Override
-    protected void preProcess(Request request, Response response) throws Exception {
-        super.preProcess(request, response);
-        PluginPhase phase = plugin.getPhase();
-        Preconditions.checkNotNull(phase, "plugin phase should not be null!");
+    public CommandPlugin(AbstractPlugin metadata, AbstractProcessorContext context) {
+        super(metadata, context);
     }
 
     @Override
-    protected Object invokePlugin(PluginWrapper plugin, String args, Request request) throws Exception {
-        File file = plugin.getFile();
+    protected Object invokePlugin(AbstractPlugin metadata, String args, Request request) throws Exception {
+        WrappedExtension<File> extension = getContext().loadExtension(metadata, File.class);
+
+        File file = extension.getExtension();
         String path = file.getAbsolutePath();
         logger.info("Command: " + path + ", with args: " + args);
 
-        return executorCommand(path, args);
+        return executorCommand(path, args, metadata);
     }
 
-    private String executorCommand(String path, String args) throws PluginInvokeException {
+    private String executorCommand(String path, String args, AbstractPlugin metadata) throws PluginInvokeException {
         CommandLineExecutor executor = null;
         try {
-            PluginType type = plugin.getType();
+            PluginType type = metadata.getType();
             String shell = "bash";
             if (type == PluginType.PYTHON) {
                 shell = "python";

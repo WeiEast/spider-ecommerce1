@@ -2,7 +2,7 @@ package com.datatrees.crawler.core.processor.proxy;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.datatrees.common.util.PatternUtils;
+import com.treefinance.toolkit.util.RegExp;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -37,7 +37,7 @@ public class Proxy {
 
     public static Proxy parse(String proxy, long timestamp) {
         Proxy result = null;
-        if (PatternUtils.match(proxyPattern, proxy)) {
+        if (RegExp.find(proxy, proxyPattern)) {
             String[] rss = proxy.split(":");
             int port = Integer.parseInt(rss[1]);
             result = new Proxy(rss[0].trim(), port, timestamp);

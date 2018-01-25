@@ -17,7 +17,6 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 		<constructor-arg index="1" value="${core.zookeeper.sessionTimeOut}" />
 	</bean>
 
-	<import resource="classpath:spring/core.webrobot.xml" />
 	<import resource="classpath:spring/core.message.xml" />
 	<import resource="classpath:spring/core.dubbo.xml" />
 

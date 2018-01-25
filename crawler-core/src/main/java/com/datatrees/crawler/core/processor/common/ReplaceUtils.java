@@ -18,8 +18,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.util.PatternUtils;
 import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class ReplaceUtils {
      */
     public static Set<String> getReplaceList(String template) {
         Preconditions.checkNotNull(template);
-        Matcher match = PatternUtils.matcher(varPat, template);
+        Matcher match = RegExp.getMatcher(varPat, template);
         Set<String> result = new HashSet<String>();
         for (int s = 0; s < MAX_SUBST; s++) {
             if (match.find()) {
