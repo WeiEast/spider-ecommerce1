@@ -4,11 +4,11 @@ import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**
- * QQ邮箱模拟登陆接口
+ * 163邮箱模拟登陆接口
  * @author zhouxinghai
  * @date 2017/12/29
  */
-public interface MailServiceApiForQQ {
+public interface MailServiceApiFor163 {
 
     /**
      * 提交登陆请求
