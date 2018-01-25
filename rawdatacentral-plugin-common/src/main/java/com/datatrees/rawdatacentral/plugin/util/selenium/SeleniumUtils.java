@@ -41,9 +41,9 @@ public class SeleniumUtils {
         if (null != cookies && !cookies.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (Cookie cookie : cookies) {
-                sb.append(";").append(cookie.getName()).append("=").append(cookie.getValue());
+                sb.append(" ;").append(cookie.getName()).append("=").append(cookie.getValue());
             }
-            return sb.substring(1);
+            return sb.substring(2);
         }
         return null;
     }
