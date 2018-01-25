@@ -39,6 +39,8 @@ public class ResultDataHandler {
     private static final Logger log = LoggerFactory.getLogger(ResultDataHandler.class);
     @Resource
     private NormalizerFactory collectNormalizerFactory;
+    @Resource
+    private WrappedActorRef   extractorActorRef;
 
     private ParentTask getParentTask(TaskMessage taskMessage) {
         ParentTask parentTask = new ParentTask();
@@ -54,7 +56,7 @@ public class ResultDataHandler {
         return parentTask;
     }
 
-    public List<Future<Object>> resultListHandler(List<Object> objs, TaskMessage taskMessage, WrappedActorRef extractorActorRef) {
+    public List<Future<Object>> resultListHandler(List<Object> objs, TaskMessage taskMessage) {
         List<Future<Object>> futureList = new ArrayList<Future<Object>>();
         Task task = taskMessage.getTask();
         ParentTask parentTask = this.getParentTask(taskMessage);
@@ -69,8 +71,7 @@ public class ResultDataHandler {
             try {
                 boolean result = collectNormalizerFactory.normalize(message);
                 if (result) {
-                    Future<Object> future = Patterns
-                            .ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
+                    Future<Object> future = Patterns.ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
                     futureList.add(future);
                 } else {
                     log.warn("message normalize failed, message:" + message + ", obj:" + obj);

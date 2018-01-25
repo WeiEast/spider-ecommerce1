@@ -40,7 +40,7 @@ public class RegexSegment extends AbstractSegment {
 
     @Attr("group-index")
     public Integer getGroupIndex() {
-        return groupIndex;
+        return groupIndex == null ? 0 : groupIndex;
     }
 
     @Node("@group-index")

@@ -8,14 +8,9 @@
 
 package com.datatrees.crawler.core.processor.cookie.fetcher;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.datatrees.crawler.core.domain.config.properties.cookie.CustomCookie;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class PluginCookieFetchHandler extends CookieFetchHandler {
 
     private static final Logger                 log     = LoggerFactory.getLogger(PluginCookieFetchHandler.class);
-    private              SearchProcessorContext context = null;
+    private              SearchProcessorContext context;
 
     public PluginCookieFetchHandler(SearchProcessorContext wrapper) {
         super();
@@ -42,12 +37,7 @@ public class PluginCookieFetchHandler extends CookieFetchHandler {
             //call plugin 
             String pid = cookieConf.getHandleConfig();
 
-            Object respOutput = PluginCaller.call(context, pid, (PluginConfSupplier) pluginWrapper -> {
-                Map<String, String> params = new HashMap<>();
-                params.put(PluginConstants.EXTRA_CONFIG, pluginWrapper.getExtraConfig());
-
-                return params;
-            });
+            Object respOutput = PluginCaller.call(pid,  context, null);
 
             result = (String) respOutput;
         } catch (Exception e) {

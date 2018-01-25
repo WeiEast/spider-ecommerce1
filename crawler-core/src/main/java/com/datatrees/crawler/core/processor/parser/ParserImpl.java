@@ -13,9 +13,7 @@ import java.util.regex.Matcher;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.protocol.Constant;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.parser.IndexMapping;
 import com.datatrees.crawler.core.domain.config.parser.Parser;
 import com.datatrees.crawler.core.domain.config.parser.ParserPattern;
@@ -25,10 +23,12 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
-import com.datatrees.crawler.core.processor.extractor.util.TextUrlExtractor;
+import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -73,7 +73,7 @@ public class ParserImpl extends Operation {
     @Override
     public void process(Request request, Response response) throws Exception {
         Preconditions.checkNotNull(parser);
-        String content = getInput(request, response);
+        String content = OperationHelper.getStringInput(request, response);
         Preconditions.checkState(StringUtils.isNotEmpty(content), "input for parser should not be empty!");
 
         String template = parser.getUrlTemplate();
@@ -160,7 +160,7 @@ public class ParserImpl extends Operation {
         boolean first = true;
         for (ParserPattern parserPattern : mappings) {
             String regex = parserPattern.getRegex();
-            Matcher m = PatternUtils.matcher(regex, source);
+            Matcher m = RegExp.getMatcher(regex, source);
             List<IndexMapping> indexMappings = parserPattern.getIndexMappings();
             int index = 0;
             while (m.find()) {
@@ -230,7 +230,7 @@ public class ParserImpl extends Operation {
         String referer = datas[1];
         String headers = datas[2];
 
-        List<String> urls = TextUrlExtractor.extractor(url, Constant.URL_REGEX, 1);
+        List<String> urls = UrlExtractor.extract(url);
         if (urls.size() != 1) {
             log.info("url is not format in parser request! " + url);
             return url;

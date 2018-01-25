@@ -11,7 +11,6 @@ import java.util.Map;
 public enum ServiceType {
     Grab_Service("grab"),
     Task_Http_Service("task_http"),
-    WebRobot_Service("webrobot"),
     Plugin_Service("plugin");
     private static Map<String, ServiceType> serviceMap = new HashMap<String, ServiceType>();
 

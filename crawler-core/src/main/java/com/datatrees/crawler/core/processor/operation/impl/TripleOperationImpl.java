@@ -5,22 +5,19 @@ import java.util.regex.Pattern;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TripleOperationImpl extends Operation {
-
-    private static final Logger log = LoggerFactory.getLogger(TripleOperationImpl.class);
+public class TripleOperationImpl extends Operation<TripleOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        TripleOperation operation = (TripleOperation) getOperation();
+        TripleOperation operation = getOperation();
         // ${this}=${a}?${b}:${c}
         String expression = operation.getValue();
         TripleType type = operation.getTripleType();
@@ -28,12 +25,10 @@ public class TripleOperationImpl extends Operation {
             type = TripleType.EQ;
         }
 
-        String orginal = getInput(request, response);
+        String orginal = OperationHelper.getStringInput(request, response);
 
-        String result;
-
-        if (log.isDebugEnabled()) {
-            log.debug("TripleOperation input: " + String.format("value: %s", expression));
+        if (logger.isDebugEnabled()) {
+            logger.debug("TripleOperation input: " + String.format("value: %s", expression));
         }
 
         String firstParams = StringUtils.substringBefore(expression, type.getExpression());
@@ -46,10 +41,10 @@ public class TripleOperationImpl extends Operation {
         firstResult = replaceFromContext(firstResult, orginal, request, response);
         secondResult = replaceFromContext(secondResult, orginal, request, response);
 
-        result = this.doTriple(type, firstParams, secondParams, firstResult, secondResult);
+        String result = this.doTriple(type, firstParams, secondParams, firstResult, secondResult);
 
-        if (log.isDebugEnabled()) {
-            log.debug("TripleOperation content: " + String.format("orginal: %s,expression: %s , dest: %s", orginal, expression, result));
+        if (logger.isDebugEnabled()) {
+            logger.debug("TripleOperation content: " + String.format("orginal: %s,expression: %s , dest: %s", orginal, expression, result));
         }
 
         response.setOutPut(result);
@@ -98,12 +93,12 @@ public class TripleOperationImpl extends Operation {
                     }
                     break;
                 case REGEX:
-                    if (PatternUtils.match(secondParams, firstParams)) {
+                    if (RegExp.find(firstParams, secondParams)) {
                         result = firstResult;
                     }
                     break;
                 case CONTAINS:
-                    if (PatternUtils.match(secondParams, firstParams, Pattern.CASE_INSENSITIVE)) {
+                    if (RegExp.find(firstParams, secondParams, Pattern.CASE_INSENSITIVE)) {
                         result = firstResult;
                     }
                     break;

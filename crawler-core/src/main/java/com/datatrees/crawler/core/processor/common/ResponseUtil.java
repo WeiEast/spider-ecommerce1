@@ -29,13 +29,6 @@ public class ResponseUtil {
 
     private ResponseUtil() {}
 
-    ;
-
-    /**
-     * parser result list
-     * @param response
-     * @return
-     */
     public static List<Object> getResponseObjectList(Response response) {
         return (List<Object>) response.getAttribute(Constants.PAGE_EXTRACT_OBJECT_LIST);
     }
@@ -60,21 +53,12 @@ public class ResponseUtil {
         return (AbstractPage) response.getAttribute(Constants.PAGE_EXTRACT);
     }
 
-    // public static List<String> getResponseList(Response response) {
-    // return (List<String>) response.getAttribute(Constants.RESPONSE_LIST);
-    // }
-    //
-
     public static String getResponseContent(Response response) {
         return (String) response.getAttribute(Constants.RESPONSE_CONTENT);
     }
 
-    // public static void setResponseList(Response response, List<String> contentList) {
-    // response.setAttribute(Constants.RESPONSE_LIST, contentList);
-    // }
-
     public static void setResponseContent(Response response, String content) {
-        response.setAttribute(Constants.RESPONSE_CONTENT, content);
+        response.setOutPut(content);
     }
 
     public static void setResponseFieldResult(Response response, Map<String, FieldExtractorWarpper> resultMap) {

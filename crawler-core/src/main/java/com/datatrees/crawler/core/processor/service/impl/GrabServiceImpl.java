@@ -87,7 +87,8 @@ public class GrabServiceImpl extends ServiceBase {
         }
 
         logger.info("get result success,taskId={},websiteName={},resultKey={},url={}", taskId, websiteName, resultKey, url);
-        ResponseUtil.setResponseContent(response, content);
+        response.setOutPut(content);
+
         RequestUtil.setContent(request, content);
 
         ProcessorContextUtil.addThreadLocalLinkNode(context, linkNode);
