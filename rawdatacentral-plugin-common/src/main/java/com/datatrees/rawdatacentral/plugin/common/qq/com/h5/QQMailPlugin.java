@@ -241,12 +241,13 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
                         currentUrl = driver.getCurrentUrl();
                         while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.isTimeOut(processId)) {
-                            TimeUnit.SECONDS.sleep(3);
+                            TimeUnit.MILLISECONDS.sleep(500);
                             currentUrl = driver.getCurrentUrl();
                         }
                         currentUrl = driver.getCurrentUrl();
                         String currentLoginProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
                         if (isLoginSuccess(currentUrl) && TaskUtils.isLastLoginProcessId(taskId, processResult.getProcessId())) {
+                            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.SUCCESS);
                             currentUrl = "http://w.mail.qq.com";
                             driver.switchTo().defaultContent();
                             driver.get(currentUrl);
@@ -260,7 +261,6 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             loginMessage.setCookie(cookieString);
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                             BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
-                            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.SUCCESS);
                             return;
                         }
                         if (!StringUtils.equals(currentLoginProcessId, processResult.getProcessId().toString())) {
