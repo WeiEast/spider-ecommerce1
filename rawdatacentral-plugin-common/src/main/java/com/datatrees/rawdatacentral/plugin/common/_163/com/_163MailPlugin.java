@@ -91,18 +91,21 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                     }
 
                     if (isLoginSuccess(driver)) {
+                        ProcessResultUtils.saveProcessResult(processResult.success());
+                        driver.switchTo().defaultContent();
+                        currentUrl = "https://mail.163.com/entry/cgi/ntesdoor?from=smart";
+                        driver.get(currentUrl);
+                        TimeUnit.SECONDS.sleep(3);
+                        currentUrl = driver.getCurrentUrl();
                         String cookieString = SeleniumUtils.getCookieString(driver);
                         LoginMessage loginMessage = new LoginMessage();
                         loginMessage.setTaskId(taskId);
                         loginMessage.setWebsiteName(GroupEnum.MAIL_163.getWebsiteName());
                         loginMessage.setAccountNo(username);
-                        currentUrl = driver.getCurrentUrl();
                         loginMessage.setEndUrl(currentUrl);
                         loginMessage.setCookie(cookieString);
                         logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                         BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
-
-                        ProcessResultUtils.saveProcessResult(processResult.success());
                         return;
                     }
 
