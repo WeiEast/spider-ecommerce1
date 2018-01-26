@@ -205,20 +205,28 @@ public class ShanXiTY10086ForWeb implements OperatorPluginService {
                 }
             }
 
-            String samLart = PatternUtils.group(pageContent, "name=\"SAMLart\" value=\"([^\"]+)\"", 1);
-            String relay = PatternUtils.group(pageContent, "name=\"RelayState\" value=\"([^\"]+)\"", 1);
+            if (StringUtils.contains(pageContent,"location.replace")) {
+                templateUrl = PatternUtils.group(pageContent,"location.replace\\('([^']+)'\\)",1);
+                response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_ty_10086_web_004").setFullUrl(templateUrl).invoke();
 
-            templateUrl = "https://sx.ac.10086.cn/4login/backPage.jsp";
-            templateData = "SAMLart={}&isEncodePassword=2&displayPic=1&RelayState={}&isEncodeMobile=1&displayPics=mobile_sms_login%3A0%3D%3D" +
-                    "%3DsendSMS%3A0%3D%3D%3Dmobile_servicepasswd_login%3A0";
-            data = TemplateUtils.format(templateData, samLart, URLEncoder.encode(relay, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_ty_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
-                    .invoke();
+            }
+            //String samLart = PatternUtils.group(pageContent, "name=\"SAMLart\" value=\"([^\"]+)\"", 1);
+            //String relay = PatternUtils.group(pageContent, "name=\"RelayState\" value=\"([^\"]+)\"", 1);
+            //
+            //templateUrl = "https://sx.ac.10086.cn/4login/backPage.jsp";
+            //templateData = "SAMLart={}&isEncodePassword=2&displayPic=1&RelayState={}&isEncodeMobile=1&displayPics=mobile_sms_login%3A0%3D%3D" +
+            //        "%3DsendSMS%3A0%3D%3D%3Dmobile_servicepasswd_login%3A0";
+            //data = TemplateUtils.format(templateData, samLart, URLEncoder.encode(relay, "UTF-8"));
+            //response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_ty_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
+            //        .invoke();
             pageContent = response.getPageContent();
-            samLart = PatternUtils.group(pageContent, "'([^']+)'", 1);
+            String samLart = PatternUtils.group(pageContent, "'([^']+)'", 1);
             templateUrl = "http://service.sx.10086.cn/my/";
             templateData = "SAMLart={}&RelayState={}";
-            data = TemplateUtils.format(templateData, samLart, URLEncoder.encode(relayStateId, "UTF-8"));
+            if (StringUtils.isNotEmpty(relayStateId)) {
+                relayStateId = URLEncoder.encode(relayStateId, "UTF-8");
+            }
+            data = TemplateUtils.format(templateData, samLart, relayStateId);
             response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_ty_10086_web_005").setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
 
