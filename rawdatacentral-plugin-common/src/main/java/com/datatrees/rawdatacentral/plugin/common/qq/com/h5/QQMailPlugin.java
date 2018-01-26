@@ -46,7 +46,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
-        ProxyUtils.setProxyEnable(param.getTaskId(), false);
+        ProxyUtils.setProxyEnable(param.getTaskId(), true);
         return new HttpResult().success();
     }
 
