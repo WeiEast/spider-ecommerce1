@@ -46,7 +46,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
-        ProxyUtils.setProxyEnable(param.getTaskId(), false);
+        ProxyUtils.setProxyEnable(param.getTaskId(), true);
         return new HttpResult().success();
     }
 
@@ -252,6 +252,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             driver.switchTo().defaultContent();
                             driver.get(currentUrl);
                             TimeUnit.SECONDS.sleep(3);
+                            currentUrl = driver.getCurrentUrl();
                             String cookieString = SeleniumUtils.getCookieString(driver);
                             LoginMessage loginMessage = new LoginMessage();
                             loginMessage.setTaskId(taskId);

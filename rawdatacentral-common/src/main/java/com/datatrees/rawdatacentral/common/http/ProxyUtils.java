@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 public class ProxyUtils {
 
     private static final Logger       logger       = LoggerFactory.getLogger(ProxyUtils.class);
+
     private static       ProxyService proxyService = BeanFactoryUtils.getBean(ProxyService.class);
+
     private static       RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
 
     public static Proxy getProxy(Long taskId, String websiteName) {
@@ -41,7 +43,7 @@ public class ProxyUtils {
     public static IpLocale queryIpLocale(Long taskId, String userIp) {
         try {
             if (StringUtils.isBlank(userIp)) {
-                logger.info("query ip locale error,userIp is blank");
+                logger.info("query ip locale error,userIp is blank,taskId={}", taskId);
             }
             ProxyProvider provider = BeanFactoryUtils.getBean(ProxyProvider.class);
             IpLocale locale = provider.getIpLocale(userIp);
@@ -49,10 +51,10 @@ public class ProxyUtils {
                 String k = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(taskId);
                 RedisUtils.set(k, JSON.toJSONString(locale), RedisKeyPrefixEnum.TASK_IP_LOCALE.toSeconds());
             }
-            logger.info("query ip locale,userIp={},locale={}", userIp, JSON.toJSONString(locale));
+            logger.info("query ip locale,taskId={},userIp={},locale={}", taskId, userIp, JSON.toJSONString(locale));
             return locale;
         } catch (Exception e) {
-            logger.info("query ip locale error,userIp={}", userIp, e);
+            logger.info("query ip locale error,taskId={},userIp={}", taskId, userIp, e);
             return null;
         }
     }

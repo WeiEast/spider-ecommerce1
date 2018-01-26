@@ -45,7 +45,7 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
-        ProxyUtils.setProxyEnable(param.getTaskId(), false);
+        ProxyUtils.setProxyEnable(param.getTaskId(), true);
         return new HttpResult().success();
     }
 
@@ -81,8 +81,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                     driver.get(currentUrl);
                     TimeUnit.SECONDS.sleep(3);
                     driver.switchTo().frame("x-URS-iframe");
-                    driver.findElement(By.xpath("//input[@name='email']")).sendKeys("13735874566");
-                    driver.findElement(By.xpath("//input[@name='password']")).sendKeys("wangyan");
+                    driver.findElement(By.xpath("//input[@name='email']")).sendKeys(username);
+                    driver.findElement(By.xpath("//input[@name='password']")).sendKeys(password);
                     driver.findElement(By.xpath("//a[@id='dologin']")).click();
                     TimeUnit.SECONDS.sleep(3);
                     while (!isLoginSuccess(driver)) {
@@ -91,6 +91,12 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                     }
 
                     if (isLoginSuccess(driver)) {
+                        ProcessResultUtils.saveProcessResult(processResult.success());
+                        driver.switchTo().defaultContent();
+                        currentUrl = "https://mail.163.com/entry/cgi/ntesdoor?from=smart";
+                        driver.get(currentUrl);
+                        TimeUnit.SECONDS.sleep(3);
+                        currentUrl = driver.getCurrentUrl();
                         String cookieString = SeleniumUtils.getCookieString(driver);
                         LoginMessage loginMessage = new LoginMessage();
                         loginMessage.setTaskId(taskId);
@@ -100,8 +106,6 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                         loginMessage.setCookie(cookieString);
                         logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                         BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
-
-                        ProcessResultUtils.saveProcessResult(processResult.success());
                         return;
                     }
 
