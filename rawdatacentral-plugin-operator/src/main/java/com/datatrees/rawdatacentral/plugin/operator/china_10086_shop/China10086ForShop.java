@@ -1,5 +1,8 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10086_shop;
 
+import javax.script.Invocable;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.Map;
 
@@ -10,6 +13,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -342,13 +346,16 @@ public class China10086ForShop implements OperatorPluginService {
         }
         Response response = null;
         try {
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
+            String encryptPwd = invocable.invokeFunction("encrypt", param.getPassword()).toString();
             String templateUrl
                     = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID={}&protocol=https:&timestamp={}";
             //没有referer提示:Connection reset
             String referer = "https://login.10086.cn/html/login/login.html";
             String channelID = TaskUtils.getTaskShare(param.getTaskId(), "channelID");
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004")
-                    .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode(), channelID,
+                    .setFullUrl(templateUrl, param.getMobile(), URLEncoder.encode(encryptPwd,"UTF-8"), param.getSmsCode(), param.getPicCode(),
+                            channelID,
                             System.currentTimeMillis()).setReferer(referer).invoke();
             /**
              * 结果枚举:
