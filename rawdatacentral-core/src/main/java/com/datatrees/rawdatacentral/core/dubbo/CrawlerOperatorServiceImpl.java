@@ -9,10 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
-import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -60,6 +57,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     private WebsiteOperatorService                        websiteOperatorService;
     @Resource
     private ThreadPoolService                             threadPoolService;
+    @Resource
+    private ProxyService                                  proxyService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -79,8 +78,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         //清理共享信息
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
-                        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
-                        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
+
+                        // 清理与任务绑定的代理
+                        proxyService.clear(taskId);
+
                         try {
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));

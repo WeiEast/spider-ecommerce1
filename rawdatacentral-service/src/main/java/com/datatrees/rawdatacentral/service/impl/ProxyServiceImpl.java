@@ -1,10 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
-import java.util.concurrent.Callable;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -14,21 +10,18 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.treefinance.proxy.api.ProxyProvider;
-import com.treefinance.proxy.domain.IpLocale;
 import com.treefinance.proxy.domain.Proxy;
+import com.treefinance.spider.common.util.http.domain.IpLocale;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProxyServiceImpl implements ProxyService, InitializingBean {
+public class ProxyServiceImpl implements ProxyService {
 
-    private static final Logger             logger            = LoggerFactory.getLogger(ProxyServiceImpl.class);
-    private static       ThreadPoolExecutor proxyCallbackPool = null;
+    private static final Logger logger = LoggerFactory.getLogger(ProxyServiceImpl.class);
     @Resource
     private ProxyProvider proxyProvider;
     @Resource
@@ -70,18 +63,18 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
     @Override
     public void release(Long taskId) {
         try {
-            //redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
-            proxyCallbackPool.submit(new Callable<Boolean>() {
-                @Override
-                public Boolean call() throws Exception {
-                    proxyProvider.release(taskId);
-                    logger.info("release proxy success taskId={}", taskId);
-                    return null;
-                }
-            });
+            proxyProvider.release(taskId);
+            logger.info("Succeed to release proxy in remote proxy central. taskId: {}", taskId);
         } catch (Exception e) {
-            logger.error("release proxy error taskId={}", taskId, e);
+            logger.error("Error asking to release proxy in remote proxy central. taskId: " + taskId, e);
         }
+    }
+
+    @Override
+    public void clear(Long taskId) {
+        release(taskId);
+        redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
+        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
     }
 
     private Proxy getProxyFromDubbo(Long taskId, String websiteName) {
@@ -109,13 +102,6 @@ public class ProxyServiceImpl implements ProxyService, InitializingBean {
         }
         logger.warn("从dubbo获取代理失败,将使用本地网络,taskId={},websiteName={}", taskId, websiteName);
         return null;
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        proxyCallbackPool = new ThreadPoolExecutor(Constants.PROXY_CALLBACK_CORE_POOL_SIZE, Constants.PROXY_CALLBACK_MAX_POOL_SIZE, 0L,
-                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(Constants.PROXY_CALLBACK_MAX_TASK_SIZE),
-                new ThreadPoolExecutor.AbortPolicy());
     }
 
 }
