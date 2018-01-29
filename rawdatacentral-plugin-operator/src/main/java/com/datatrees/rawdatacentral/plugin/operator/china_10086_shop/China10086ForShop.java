@@ -368,6 +368,7 @@ public class China10086ForShop implements OperatorPluginService {
              新输入","islocal":false,"result":"2"}
              重复登陆:{"islocal":false,"result":"9"}
              */
+            logger.info("帮助查询问题{},响应：{}",param.getTaskId(),response.getPageContent());
             //没有设置referer会出现connect reset
             JSONObject json = response.getPageContentForJSON();
             //重复登陆:{"islocal":false,"result":"9"}
