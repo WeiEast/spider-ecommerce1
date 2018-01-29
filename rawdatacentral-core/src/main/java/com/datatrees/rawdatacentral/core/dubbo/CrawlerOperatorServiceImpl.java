@@ -31,6 +31,7 @@ import com.datatrees.rawdatacentral.service.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -60,6 +61,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     private WebsiteOperatorService                        websiteOperatorService;
     @Resource
     private ThreadPoolService                             threadPoolService;
+    @Resource
+    private ProxyProvider                                 proxyProvider;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -80,6 +83,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
+                        try {
+                            proxyProvider.release(taskId);
+                        } catch (Exception e) {
+                            logger.error("proxyProvider release error taskId={}", taskId, e);
+                        }
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
                         try {
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
