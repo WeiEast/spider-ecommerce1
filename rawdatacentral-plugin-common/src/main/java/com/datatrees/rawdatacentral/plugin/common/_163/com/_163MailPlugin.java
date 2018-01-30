@@ -97,15 +97,13 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                         driver.get(currentUrl);
                         TimeUnit.SECONDS.sleep(3);
                         currentUrl = driver.getCurrentUrl();
-                        String cookieString = SeleniumUtils.getCookieString(driver);
                         LoginMessage loginMessage = new LoginMessage();
                         loginMessage.setTaskId(taskId);
                         loginMessage.setWebsiteName(GroupEnum.MAIL_163.getWebsiteName());
                         loginMessage.setAccountNo(username);
                         loginMessage.setEndUrl(currentUrl);
-                        loginMessage.setCookie(cookieString);
                         logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
-                        BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                        BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage, SeleniumUtils.getCookies(driver));
                         return;
                     }
 
@@ -181,15 +179,13 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                             driver.get(url);
                             TimeUnit.SECONDS.sleep(5);
                             String endUrl = driver.getCurrentUrl();
-                            String cookieString = SeleniumUtils.getCookieString(driver);
                             LoginMessage loginMessage = new LoginMessage();
                             loginMessage.setTaskId(taskId);
                             loginMessage.setWebsiteName(GroupEnum.MAIL_163.getWebsiteName());
                             loginMessage.setAccountNo(null);
                             loginMessage.setEndUrl(endUrl);
-                            loginMessage.setCookie(cookieString);
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, endUrl);
-                            BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                            BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage, SeleniumUtils.getCookies(driver));
                             TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.SUCCESS);
                             return;
                         }
