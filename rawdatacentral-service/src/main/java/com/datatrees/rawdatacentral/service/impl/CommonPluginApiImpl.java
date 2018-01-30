@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -22,6 +23,7 @@ import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
+import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.treefinance.proxy.api.ProxyProvider;
@@ -34,14 +36,19 @@ import org.springframework.stereotype.Service;
 public class CommonPluginApiImpl implements CommonPluginApi {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonPluginApiImpl.class);
+
     @Resource
     private ClassLoaderService   classLoaderService;
+
     @Resource
     private RedisService         redisService;
+
     @Resource
     private WebsiteConfigService websiteConfigService;
+
     @Resource
     private MonitorService       monitorService;
+
     @Resource
     private ProxyProvider        proxyProvider;
 
@@ -221,6 +228,11 @@ public class CommonPluginApiImpl implements CommonPluginApi {
 
     @Override
     public void sendLoginSuccessMsg(LoginMessage loginMessage) {
+        sendLoginSuccessMsg(loginMessage, null);
+    }
+
+    @Override
+    public void sendLoginSuccessMsg(LoginMessage loginMessage, List<Cookie> cookies) {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.END_URL, loginMessage.getEndUrl());
         map.put(AttributeKey.TASK_ID, loginMessage.getTaskId());
@@ -232,6 +244,11 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         }
         if (StringUtils.isNotBlank(loginMessage.getGroupName())) {
             map.put(AttributeKey.GROUP_NAME, loginMessage.getGroupName());
+        }
+        if (null != cookies && !cookies.isEmpty()) {
+            TaskUtils.saveCookie(loginMessage.getTaskId(), cookies);
+            String cookieString = TaskUtils.getCookieString(cookies);
+            map.put(AttributeKey.COOKIE, cookieString);
         }
         BeanFactoryUtils.getBean(MessageService.class).sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map);
     }
