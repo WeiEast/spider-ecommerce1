@@ -1,13 +1,14 @@
 package com.datatrees.rawdatacentral.api;
 
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
+import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 
 /**
  * 通用插件服务
  */
-public interface CommonPluginApi extends CommonPluginService {
+public interface CommonPluginApi extends CommonPluginService, QRPluginService {
 
     /**
      * 查询处理结果
