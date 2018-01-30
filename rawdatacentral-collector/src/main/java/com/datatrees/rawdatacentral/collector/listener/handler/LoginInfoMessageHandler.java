@@ -27,13 +27,18 @@ import org.springframework.stereotype.Service;
 public class LoginInfoMessageHandler extends AbstractMessageHandler {
 
     private static final Logger  logger                = LoggerFactory.getLogger(LoginInfoMessageHandler.class);
+
     private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance().getBoolean("set.cookie.format.switch", false);
+
     @Resource
     private Collector            collector;
+
     @Resource
     private RedisService         redisService;
+
     @Resource
     private WebsiteConfigService websiteConfigService;
+
     @Resource
     private MonitorService       monitorService;
 
@@ -53,8 +58,8 @@ public class LoginInfoMessageHandler extends AbstractMessageHandler {
         Long taskId = loginInfo.getTaskId();
         TaskUtils.addStep(taskId, StepEnum.REC_INIT_MSG);
         String websiteName = loginInfo.getWebsiteName();
-        Boolean initStatus = RedisUtils
-                .setnx(RedisKeyPrefixEnum.TASK_RUN_COUNT.getRedisKey(taskId), "0", RedisKeyPrefixEnum.TASK_RUN_COUNT.toSeconds());
+        Boolean initStatus = TaskUtils.isDev() ||
+                RedisUtils.setnx(RedisKeyPrefixEnum.TASK_RUN_COUNT.getRedisKey(taskId), "0", RedisKeyPrefixEnum.TASK_RUN_COUNT.toSeconds());
         //第一次收到启动消息
         if (initStatus) {
             TaskUtils.addStep(taskId, StepEnum.INIT);

@@ -79,5 +79,8 @@ public class AttributeKey implements Serializable {
     public static final String WARN_TIMESTAMP           = "warnTimestamp";//预警时间戳
     public static final String FAIL_USER_COUNT          = "failUserCount";//失败用户数量
     public static final String STATISTICS_TIMESTAMP     = "statisticsTimestamp";//上一次统计时间
-
+    public static final String CURRENT_LOGIN_PROCESS_ID = "currentLoginProcessId";//当前登陆指令
+    public static final String QR_STATUS                = "qrStatus";//二维码状态
+    public static final String QR_BASE64                = "qrBase64";//二维码
+    public static final String QR_TEXT                  = "qrText";//二维码
 }

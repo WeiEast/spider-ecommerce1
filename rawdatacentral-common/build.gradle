@@ -20,5 +20,7 @@ dependencies {
     compile 'org.apache.commons:commons-exec:1.3'
     compile 'commons-codec:commons-codec:1.11'
     compile "com.google.guava:guava:${guavaVersion}"
+    compile 'com.google.zxing:core:3.3.1'
+
 
 }
