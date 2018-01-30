@@ -14,9 +14,8 @@ public interface MailServiceApiFor163 {
      * 提交登陆请求
      * 必填参数: taskId,username,password
      * <p>
-     * async:true表示异步
-     * data:内包含json:{"processId":888888,"processStatus":"PROCESSING"}
-     * 拿到processId后轮训
+     *     结果异步获取
+     *     详见:@see com.datatrees.rawdatacentral.domain.result.ProcessResult
      * </p>
      * @return
      */
@@ -24,6 +23,7 @@ public interface MailServiceApiFor163 {
 
     /**
      * 刷新登陆二维码
+     * 必填参数: taskId
      * @param param
      * @return
      */
@@ -31,6 +31,10 @@ public interface MailServiceApiFor163 {
 
     /**
      * 查询二维码登陆状态
+     * 必填参数: taskId,processId
+     * <p>
+     *     二维码状态详见:@see com.datatrees.rawdatacentral.domain.enums.QRStatus
+     * </p>
      * @param param
      * @return
      */
