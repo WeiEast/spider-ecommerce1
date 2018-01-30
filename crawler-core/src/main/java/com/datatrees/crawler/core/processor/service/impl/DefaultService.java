@@ -20,7 +20,6 @@ import com.datatrees.common.protocol.http.HTTPConstants;
 import com.datatrees.common.protocol.http.HttpResponse;
 import com.datatrees.common.protocol.util.CookieFormater;
 import com.datatrees.common.protocol.util.CookieParser;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.domain.config.page.impl.RetryMode;
 import com.datatrees.crawler.core.domain.config.properties.cookie.AbstractCookie;
@@ -37,6 +36,7 @@ import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -105,15 +105,9 @@ public class DefaultService extends ServiceBase {
     // }
     // }
     private Proxy setProxy(ProtocolInput input, SearchProcessorContext context, String url) throws Exception {
-        Proxy proxy = null;
-        if (context.needProxyByUrl(url)) {
-            ProxyManager proxyManager = context.getProxyManager();
-            Preconditions.checkNotNull(proxyManager);
-            proxy = proxyManager.getProxy();
-            Preconditions.checkNotNull(proxy);
-            if (proxy != Proxy.LOCALNET) {
-                input.setProxy(proxy.format());
-            }
+        Proxy proxy = context.getProxy(url, true);
+        if (proxy != null && proxy != Proxy.LOCALNET) {
+            input.setProxy(proxy.format());
         }
         return proxy;
     }
@@ -233,7 +227,7 @@ public class DefaultService extends ServiceBase {
                 Page page = RequestUtil.getCurrenPage(request);
 
                 // check if need retry
-                if (page != null && StringUtils.isNotBlank(page.getPageRetryPattern()) && PatternUtils.match(page.getPageRetryPattern(), content)) {
+                if (page != null && StringUtils.isNotBlank(page.getPageRetryPattern()) && RegExp.find(content, page.getPageRetryPattern())) {
                     this.proxyStatusCallBack(proxy, context, ProxyStatus.FAIL);
                     int defaultsleepSecond = page.getRetrySleepSecond() == null ? 0 : page.getRetrySleepSecond() * (i + 1);
                     long sleepSecond = this.sleep(i, context, 1000l * defaultsleepSecond);
@@ -260,7 +254,9 @@ public class DefaultService extends ServiceBase {
                 }
 
                 this.proxyStatusCallBack(proxy, context, ProxyStatus.SUCCESS);
-                ResponseUtil.setResponseContent(response, content);
+
+                response.setOutPut(content);
+
                 RequestUtil.setContent(request, content);
                 RequestUtil.setContentCharset(request, output.getContent().getCharSet());
                 break;

@@ -14,37 +14,26 @@ import com.datatrees.crawler.core.domain.config.operation.impl.CalculateOperatio
 import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月21日 上午10:29:59
  */
-public class CalculateOperationImpl extends Operation {
+public class CalculateOperationImpl extends Operation<CalculateOperation> {
 
-    private static final Logger log = LoggerFactory.getLogger(CalculateOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.datatrees.crawler.core.processor.operation.Operation#process(com.datatrees.common.pipeline
-     * .Request, com.datatrees.common.pipeline.Response)
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
-        CalculateOperation operation = (CalculateOperation) getOperation();
+        CalculateOperation operation = getOperation();
         String expression = operation.getValue();
-        Object result = null;
 
+        Object result = null;
         // regex support get value from context
         if (StringUtils.isNotEmpty(expression)) {
             result = CalculateUtil.sourceCalculate(request, response, expression, null);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("calculate input:" + expression + " ,result:" + result);
+        if (logger.isDebugEnabled()) {
+            logger.debug("calculate input:" + expression + " ,result:" + result);
         }
         if (result != null) {
             response.setOutPut(result.toString());

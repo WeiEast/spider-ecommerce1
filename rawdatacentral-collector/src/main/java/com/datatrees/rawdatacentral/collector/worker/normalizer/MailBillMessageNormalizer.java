@@ -16,14 +16,14 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
+import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -130,7 +130,13 @@ public class MailBillMessageNormalizer implements DataNormalizer {
             }
         }
 
-        String pageContent = SourceFieldUtil.getInputFieldString(data, MailBillData.PAGECONTENT);
+        String pageContent;
+        try {
+            pageContent = SourceFieldUtils.getFieldValueAsString(data, MailBillData.PAGECONTENT);
+        } catch (InterruptedException e) {
+            logger.warn(e.getMessage(), e);
+            pageContent = StringUtils.EMPTY;
+        }
         for (Map.Entry<String, Integer> entry : mailBankMap.entrySet()) {
             Pattern pattern = PatternUtils.compile(entry.getKey(), Pattern.CASE_INSENSITIVE);
             if (PatternUtils.match(pattern, pageContent)) {

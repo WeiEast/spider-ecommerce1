@@ -19,34 +19,26 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.parser.ParserImpl;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:43:36 PM
  */
-public class ParserOperationImpl extends Operation {
+public class ParserOperationImpl extends Operation<ParserOperation> {
 
-    private static final Logger              log                 = LoggerFactory.getLogger(ParserOperationImpl.class);
     private static final FieldRequestFilter  fieldFilter         = new FieldRequestFilter();
     private static final ParserUrlListFilter parserUrlListFilter = new ParserUrlListFilter();
 
-    /*
-     * (non-Javadoc)
-     * 
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
-
-        ParserOperation op = (ParserOperation) getOperation();
+        ParserOperation op = getOperation();
         Parser parser = op.getParser();
         boolean needRequest = false;
         boolean needReturnUrlList = false;
         Preconditions.checkNotNull(parser, "ParserOperation parser element should not be null!");
         FieldExtractor field = getExtractor();
-        log.debug("field name:\t" + field);
+        logger.debug("field name:\t" + field);
         String fieldResult = fieldFilter.filter(field.getField());
         String urlList = parserUrlListFilter.filter(field.getField());
         if (StringUtils.isNotEmpty(fieldResult)) {
@@ -55,10 +47,10 @@ public class ParserOperationImpl extends Operation {
         if (StringUtils.isNotEmpty(urlList)) {
             needReturnUrlList = true;
         }
-        log.debug("invoke parser process :\t" + field);
+        logger.debug("invoke parser process :\t" + field);
         ParserImpl parserImpl = new ParserImpl(needRequest, parser, needReturnUrlList);
         parserImpl.invoke(request, response);
-        log.debug("success invoke parser process :\t" + field);
+        logger.debug("success invoke parser process :\t" + field);
     }
 
 }

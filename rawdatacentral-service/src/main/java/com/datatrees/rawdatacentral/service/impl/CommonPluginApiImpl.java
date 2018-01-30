@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
@@ -11,6 +12,7 @@ import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
@@ -21,10 +23,10 @@ import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
+import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.treefinance.spider.common.util.http.IpUtils;
-import com.treefinance.spider.common.util.http.domain.IpLocale;
+import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +36,21 @@ import org.springframework.stereotype.Service;
 public class CommonPluginApiImpl implements CommonPluginApi {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonPluginApiImpl.class);
+
     @Resource
     private ClassLoaderService   classLoaderService;
+
     @Resource
     private RedisService         redisService;
+
     @Resource
     private WebsiteConfigService websiteConfigService;
+
     @Resource
     private MonitorService       monitorService;
+
+    @Resource
+    private ProxyProvider        proxyProvider;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
@@ -85,20 +94,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
 
                 //设置代理
                 ProxyUtils.setProxyEnable(taskId, param.isProxyEnable());
-                if (StringUtils.isNoneBlank(param.getUserIp())) {
-                    try {
-                        IpLocale locale = IpUtils.queryIpLocale(param.getUserIp());
-                        if (null != locale) {
-                            String k = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(param.getTaskId());
-                            RedisUtils.set(k, JSON.toJSONString(locale), RedisKeyPrefixEnum.TASK_IP_LOCALE.toSeconds());
-                        }
-                        logger.info("query user ip locale,taskId={},userIp={},locale={}", param.getTaskId(), param.getUserIp(),
-                                JSON.toJSONString(locale));
-                    } catch (Throwable e) {
-                        logger.error("query ip locale error,taskId={},userIp={}", param.getTaskId(), param.getUserIp(), e);
-                    }
-
-                }
+                ProxyUtils.queryIpLocale(taskId, param.getUserIp());
 
                 //记录登陆开始时间
                 TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.START_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
@@ -232,6 +228,11 @@ public class CommonPluginApiImpl implements CommonPluginApi {
 
     @Override
     public void sendLoginSuccessMsg(LoginMessage loginMessage) {
+        sendLoginSuccessMsg(loginMessage, null);
+    }
+
+    @Override
+    public void sendLoginSuccessMsg(LoginMessage loginMessage, List<Cookie> cookies) {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.END_URL, loginMessage.getEndUrl());
         map.put(AttributeKey.TASK_ID, loginMessage.getTaskId());
@@ -244,7 +245,29 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         if (StringUtils.isNotBlank(loginMessage.getGroupName())) {
             map.put(AttributeKey.GROUP_NAME, loginMessage.getGroupName());
         }
+        if (null != cookies && !cookies.isEmpty()) {
+            TaskUtils.saveCookie(loginMessage.getTaskId(), cookies);
+            String cookieString = TaskUtils.getCookieString(cookies);
+            map.put(AttributeKey.COOKIE, cookieString);
+        }
         BeanFactoryUtils.getBean(MessageService.class).sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map);
     }
 
+    @Override
+    public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
+        try {
+            return ((QRPluginService) (classLoaderService.getCommonPluginService(param))).refeshQRCode(param);
+        } catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        try {
+            return ((QRPluginService) (classLoaderService.getCommonPluginService(param))).queryQRStatus(param);
+        } catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
 }

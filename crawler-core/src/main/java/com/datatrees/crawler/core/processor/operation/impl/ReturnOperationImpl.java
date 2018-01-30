@@ -10,31 +10,25 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.operation.impl.ReturnOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
-public class ReturnOperationImpl extends Operation {
+public class ReturnOperationImpl extends Operation<ReturnOperation> {
 
-    private static final Logger log = LoggerFactory.getLogger(ReturnOperationImpl.class);
-
-    /*
-     * (non-Javadoc)
-     * 
-     */
     @Override
     public void process(Request request, Response response) throws Exception {
-        String result = getInput(request, response);
+        String input = OperationHelper.getStringInput(request, response);
 
-        if (log.isDebugEnabled()) {
-            log.debug("return current input " + result);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Return current input : {}", input);
         }
-        response.setOutPut(result);
+        response.setOutPut(input);
     }
 
 }

@@ -42,5 +42,21 @@ public class MailServiceApiForQQImpl implements MailServiceApiForQQ {
         return commonPluginApi.submit(param);
     }
 
+    @Override
+    public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
+        param.setWebsiteName(GroupEnum.MAIL_QQ_H5.getWebsiteName());
+        param.setFormType(FormType.LOGIN);
+        param.setAutoSendLoginSuccessMsg(false);
+        return commonPluginApi.refeshQRCode(param);
+    }
+
+    @Override
+    public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        param.setWebsiteName(GroupEnum.MAIL_QQ_H5.getWebsiteName());
+        param.setFormType(FormType.LOGIN);
+        param.setAutoSendLoginSuccessMsg(false);
+        return commonPluginApi.queryQRStatus(param);
+    }
+
 }
 

@@ -13,6 +13,8 @@ import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.pipeline.ValveBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -21,6 +23,7 @@ import com.datatrees.common.pipeline.ValveBase;
  */
 public abstract class Processor extends ValveBase implements Configurable {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected Configuration conf;
 
     @Override

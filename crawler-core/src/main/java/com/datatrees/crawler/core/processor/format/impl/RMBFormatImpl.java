@@ -6,10 +6,10 @@ import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.format.container.RMBMapContainer;
 import com.datatrees.crawler.core.processor.format.unit.RMBUnit;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class RMBFormatImpl extends AbstractFormat {
             return null;
         }
         Number result;
-        String numPart = PatternUtils.group(orginal, paymentNumRegex, 1);
+        String numPart = RegExp.group(orginal, paymentNumRegex, 1);
         Map<String, RMBUnit> rmbMapper = parseNewFormate(pattern);
         RMBUnit unit = findRMBUnit(rmbMapper, orginal);
 
@@ -61,7 +61,7 @@ public class RMBFormatImpl extends AbstractFormat {
             Iterator<String> paymentPatterns = paymentMapper.keySet().iterator();
             while (paymentPatterns.hasNext()) {
                 String paymentPattern = paymentPatterns.next();
-                if (PatternUtils.match(paymentPattern.toLowerCase(), orginal.toLowerCase())) {
+                if (RegExp.find(orginal.toLowerCase(), paymentPattern.toLowerCase())) {
                     result = paymentMapper.get(paymentPattern);
                     log.debug("find RMB " + orginal + " unit :" + result);
                     break;
