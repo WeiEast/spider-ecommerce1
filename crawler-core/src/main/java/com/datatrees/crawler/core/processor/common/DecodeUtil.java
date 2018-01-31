@@ -23,20 +23,18 @@ public class DecodeUtil {
 
     public static String decodeContent(String content, Request request) {
         String result = content;
-        boolean change = false;
-        String charset = RequestUtil.getContentCharset(request);
-        SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
-        if (wrapper.needDecoder()) {
-            UnicodeMode unicodeMode = wrapper.getSearchConfig().getProperties().getUnicodeMode();
+
+        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
+        UnicodeMode unicodeMode = context.getUnicodeMode();
+        if(unicodeMode != null){
             AbstractDecoder decoder = DecodeFactory.instance().getDecoder(unicodeMode, RequestUtil.getConf(request));
             if (decoder != null) {
-                change = true;
+                String charset = RequestUtil.getContentCharset(request);
                 result = decoder.decode(content, charset);
+                RequestUtil.setContent(request, result);
             }
         }
-        if (change) {
-            RequestUtil.setContent(request, result);
-        }
+
         return result;
     }
 
