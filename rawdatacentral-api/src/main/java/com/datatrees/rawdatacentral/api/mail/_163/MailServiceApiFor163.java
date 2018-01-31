@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api.mail.qq;
+package com.datatrees.rawdatacentral.api.mail._163;
 
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
