@@ -10,9 +10,9 @@ import java.util.Map;
  */
 public interface MailServiceApiForSina {
 
-    HttpResult<Map<String, Object>> loginInit(CommonPluginParam param);
+    HttpResult<Object> init(CommonPluginParam param);
 
-    HttpResult<Map<String, Object>> login(CommonPluginParam param);
+    HttpResult<Object> login(CommonPluginParam param);
 
-    HttpResult<Map<String, Object>> refeshPicCode(CommonPluginParam param);
+    HttpResult<Object> refeshPicCode(CommonPluginParam param);
 }

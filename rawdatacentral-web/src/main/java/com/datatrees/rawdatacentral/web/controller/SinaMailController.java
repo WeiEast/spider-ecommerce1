@@ -23,7 +23,7 @@ public class SinaMailController {
 
     @RequestMapping("/login/init")
     public Object loginInit(CommonPluginParam param){
-        return mailServiceApiForSina.loginInit(param);
+        return mailServiceApiForSina.init(param);
     }
 
     @RequestMapping("/login/submit")
