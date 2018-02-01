@@ -17,6 +17,7 @@ import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.NameValue;
 import com.datatrees.rawdatacentral.domain.vo.Request;
@@ -96,6 +97,10 @@ public class TaskHttpClient {
 
     public static TaskHttpClient create(OperatorParam operatorParam, RequestType requestType, String remarkId) {
         return create(operatorParam.getTaskId(), operatorParam.getWebsiteName(), requestType, remarkId, false);
+    }
+
+    public static TaskHttpClient create(CommonPluginParam param, RequestType requestType) {
+        return create(param.getTaskId(), param.getWebsiteName(), requestType, null, false);
     }
 
     public static TaskHttpClient create(Long taskId, String websiteName, RequestType requestType, String remarkId, boolean isRedirect) {
@@ -334,7 +339,7 @@ public class TaskHttpClient {
             request.setProtocol(url.startsWith("https") ? "https" : "http");
 
             List<Cookie> cookies = TaskUtils.getCookies(taskId, host);
-//            logger.info("Cookies >>> {}", JSON.toJSONString(cookies));
+            //            logger.info("Cookies >>> {}", JSON.toJSONString(cookies));
             BasicCookieStore cookieStore = TaskUtils.buildBasicCookieStore(cookies);
             request.setRequestCookies(TaskUtils.getCookieMap(cookies));
             if (!extralCookie.isEmpty()) {
@@ -355,8 +360,8 @@ public class TaskHttpClient {
                 }
             }
 
-//            logger.info("禁止重定向前 request={}",JSON.toJSONString(request));
-//            logger.info("pre request taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(), request.getProxy(), url);
+            //            logger.info("禁止重定向前 request={}",JSON.toJSONString(request));
+            //            logger.info("pre request taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(), request.getProxy(), url);
             //禁止重定向
             RequestConfig config = RequestConfig.custom().setRedirectsEnabled(false).setConnectTimeout(request.getConnectTimeout())
                     .setSocketTimeout(request.getSocketTimeout()).setCookieSpec(CookieSpecs.DEFAULT).build();
@@ -366,15 +371,14 @@ public class TaskHttpClient {
             // SO_TIMEOUT:单位毫秒，默认设置5秒。
             SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(5000).build();
             HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy)
-                    .setDefaultCookieStore(cookieStore).setSSLSocketFactory(sslsf)
-                    .setDefaultSocketConfig(socketConfig);
+                    .setDefaultCookieStore(cookieStore).setSSLSocketFactory(sslsf).setDefaultSocketConfig(socketConfig);
             if (null != credsProvider) {
                 httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
             }
             httpclient = httpClientBuilder.build();
             httpResponse = httpclient.execute(client);
             statusCode = httpResponse.getStatusLine().getStatusCode();
-//            logger.info("status: {}", statusCode);
+            //            logger.info("status: {}", statusCode);
             response.setStatusCode(statusCode);
             cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
             TaskUtils.saveCookie(taskId, cookies);

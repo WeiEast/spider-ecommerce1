@@ -401,6 +401,10 @@ public class TaskUtils {
         return System.getProperty(AttributeKey.SAAS_ENV, "none");
     }
 
+    public static boolean isDev() {
+        return StringUtils.equals(System.getProperty(AttributeKey.SAAS_ENV, "none"), "dev");
+    }
+
     public static String getSassEnv(String postfix) {
         return new StringBuilder(TaskUtils.getSassEnv()).append(".").append(postfix).toString();
     }
@@ -435,4 +439,25 @@ public class TaskUtils {
         return 0;
 
     }
+
+    public static boolean isLastLoginProcessId(long taskId, Long processId) {
+        String lastProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
+        boolean b = StringUtils.equals(lastProcessId, processId.toString());
+        if (!b) {
+            logger.error("this thread is not the last login thread,taskId={},processId={},lastProcessId={}", taskId, processId, lastProcessId);
+        }
+        return b;
+    }
+
+    public static String getCookieString(List<Cookie> cookies) {
+        if (null != cookies && !cookies.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (Cookie cookie : cookies) {
+                sb.append("; ").append(cookie.getName()).append("=").append(cookie.getValue());
+            }
+            return sb.substring(2);
+        }
+        return null;
+    }
+
 }

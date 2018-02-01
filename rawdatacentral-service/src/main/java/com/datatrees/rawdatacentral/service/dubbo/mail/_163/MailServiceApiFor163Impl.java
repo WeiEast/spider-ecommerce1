@@ -1,10 +1,10 @@
-package com.datatrees.rawdatacentral.service.dubbo.mail.qq;
+package com.datatrees.rawdatacentral.service.dubbo.mail._163;
 
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
-import com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiForQQ;
+import com.datatrees.rawdatacentral.api.mail._163.MailServiceApiFor163;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -17,15 +17,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MailServiceApiForQQImpl implements MailServiceApiForQQ {
+public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
 
-    private static final Logger logger = LoggerFactory.getLogger(MailServiceApiForQQImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MailServiceApiFor163Impl.class);
+
     @Resource
     private CommonPluginApi commonPluginApi;
 
     @Override
     public HttpResult<Object> login(CommonPluginParam param) {
-        param.setWebsiteName(GroupEnum.MAIL_QQ_H5.getWebsiteName());
+        param.setWebsiteName(GroupEnum.MAIL_163_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
 
@@ -44,7 +45,7 @@ public class MailServiceApiForQQImpl implements MailServiceApiForQQ {
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
-        param.setWebsiteName(GroupEnum.MAIL_QQ_H5.getWebsiteName());
+        param.setWebsiteName(GroupEnum.MAIL_163_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
         return commonPluginApi.refeshQRCode(param);
@@ -52,11 +53,9 @@ public class MailServiceApiForQQImpl implements MailServiceApiForQQ {
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
-        param.setWebsiteName(GroupEnum.MAIL_QQ_H5.getWebsiteName());
+        param.setWebsiteName(GroupEnum.MAIL_163_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
         return commonPluginApi.queryQRStatus(param);
     }
-
 }
-

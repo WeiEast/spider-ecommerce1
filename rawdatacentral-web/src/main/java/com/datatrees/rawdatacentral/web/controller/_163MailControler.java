@@ -2,10 +2,12 @@ package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
+import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
-import com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiForQQ;
+import com.datatrees.rawdatacentral.api.mail._163.MailServiceApiFor163;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import org.apache.commons.codec.binary.Base64;
@@ -19,18 +21,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/mail/qq")
-public class QQMailControler {
+@RequestMapping("/mail/163")
+public class _163MailControler {
 
-    private static final Logger logger = LoggerFactory.getLogger(QQMailControler.class);
+    private static final Logger logger = LoggerFactory.getLogger(_163MailControler.class);
     @Resource
-    private MailServiceApiForQQ mailServiceApiForQQ;
+    private MailServiceApiFor163 mailServiceApiFor163;
     @Resource
-    private CommonPluginApi     commonPluginApi;
+    private CommonPluginApi      commonPluginApi;
 
     @RequestMapping("/login")
     public Object login(CommonPluginParam param) {
-        return mailServiceApiForQQ.login(param);
+        return mailServiceApiFor163.login(param);
     }
 
     @RequestMapping("/queryLoginStatus")
@@ -40,19 +42,20 @@ public class QQMailControler {
 
     @RequestMapping("/refeshQRCode")
     public Object refeshQRCode(CommonPluginParam param) {
-        return mailServiceApiForQQ.refeshQRCode(param);
+        return mailServiceApiFor163.refeshQRCode(param);
     }
 
     @RequestMapping("/queryQRStatus")
     public Object queryQRStatus(CommonPluginParam param) {
-        return mailServiceApiForQQ.queryQRStatus(param);
+        return mailServiceApiFor163.queryQRStatus(param);
     }
 
     @RequestMapping("/refeshQRCode2")
     public ResponseEntity<InputStreamResource> refeshQRCode2(Long processId) {
-        ProcessResult<Object> processResult = ProcessResultUtils.queryProcessResult(processId);
+        ProcessResult<Map<String, String>> processResult = ProcessResultUtils.queryProcessResult(processId);
         if (processResult.isSuccess()) {
-            String picCode = processResult.getData().toString();
+            String picCode = processResult.getData().get(
+                    AttributeKey.QR_BASE64);
             byte[] bytes = Base64.decodeBase64(picCode);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate");

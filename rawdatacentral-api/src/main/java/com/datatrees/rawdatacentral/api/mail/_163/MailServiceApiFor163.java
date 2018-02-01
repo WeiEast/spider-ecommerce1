@@ -1,14 +1,14 @@
-package com.datatrees.rawdatacentral.api.mail.qq;
+package com.datatrees.rawdatacentral.api.mail._163;
 
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**
- * QQ邮箱模拟登陆接口
+ * 163邮箱模拟登陆接口
  * @author zhouxinghai
  * @date 2017/12/29
  */
-public interface MailServiceApiForQQ {
+public interface MailServiceApiFor163 {
 
     /**
      * 提交登陆请求
@@ -37,7 +37,7 @@ public interface MailServiceApiForQQ {
      * 查询二维码登陆状态
      * 必填参数: taskId
      * <p>
-     * 二维码状态详见:com.datatrees.rawdatacentral.domain.enums.QRStatus
+     * 二维码状态详见:@see com.datatrees.rawdatacentral.domain.enums.QRStatus
      * </p>
      * @param param
      * @return

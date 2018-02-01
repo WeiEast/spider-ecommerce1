@@ -79,7 +79,7 @@ public class CommonPluginParam implements Serializable {
      */
     private String   directiveId;
     /**
-     * 使用代理,初始化有用
+     * 用使用代理,初始化有
      */
     private boolean proxyEnable             = false;
     /**

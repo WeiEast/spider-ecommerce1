@@ -3,42 +3,50 @@ package com.datatrees.rawdatacentral.plugin.common.qq.com.h5;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
+import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
+import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.QRStatus;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
-import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.ImageUtils;
 import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.ImageOcrUtils;
+import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.ImageUtils;
 import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.ColorPoint;
+import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QQMailPlugin implements CommonPluginService {
+public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
     private static final Logger logger = LoggerFactory.getLogger(QQMailPlugin.class);
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
-        ProxyUtils.setProxyEnable(param.getTaskId(), false);
+        ProxyUtils.setProxyEnable(param.getTaskId(), true);
         return new HttpResult().success();
     }
 
@@ -141,21 +149,6 @@ public class QQMailPlugin implements CommonPluginService {
         return new HttpResult().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
-    public HttpResult<Object> isWrongPassword(WebDriver driver) {
-        HttpResult<Object> result = new HttpResult<>();
-        try {
-            WebElement element = SeleniumUtils.findElement(driver, By.xpath("//div[@class='qui-dialog-content']"));
-            if (null != element) {
-                return result.failure(element.getText());
-            }
-            return result.success();
-        } catch (Exception e) {
-            logger.error("check password error", e);
-        }
-        return result.success();
-
-    }
-
     private void moveHk(WebDriver driver, Long processId) throws Exception {
         try {
             WebElement bgImg = driver.findElement(By.id("bkBlock"));
@@ -216,5 +209,96 @@ public class QQMailPlugin implements CommonPluginService {
         } catch (Throwable e) {
             logger.error("move side bar error", e);
         }
+    }
+
+    @Override
+    public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
+        Long taskId = param.getTaskId();
+        String websiteName = param.getWebsiteName();
+        ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
+        Long processId = processResult.getProcessId();
+        try {
+            BeanFactoryUtils.getBean(ThreadPoolService.class).getMailLoginExecutors().submit(new Runnable() {
+                @Override
+                public void run() {
+                    TaskUtils.addTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID, processResult.getProcessId().toString());
+                    String currentUrl = "https://mail.qq.com/cgi-bin/loginpage?lang=cn";
+                    RemoteWebDriver driver = null;
+                    try {
+                        driver = SeleniumUtils.createClient(taskId, websiteName);
+                        driver.get(currentUrl);
+                        TimeUnit.SECONDS.sleep(2);
+                        driver.switchTo().frame("login_frame");
+                        driver.findElement(By.id("switcher_qlogin")).click();
+                        byte[] inData = driver.getScreenshotAs(OutputType.BYTES);
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        ImageUtils.crop(new ByteArrayInputStream(inData), out, 96, 123, 127, 127, false);
+                        ProcessResultUtils.saveProcessResult(processResult.success(Base64.getEncoder().encodeToString(out.toByteArray())));
+                        TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
+                        logger.info("refresh qr code success,taskId={},websiteName={}", taskId, websiteName);
+
+                        ProcessResultUtils.setEndTime(processId, System.currentTimeMillis(), TimeUnit.MINUTES, 2);
+
+                        currentUrl = driver.getCurrentUrl();
+                        while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.isTimeOut(processId)) {
+                            TimeUnit.MILLISECONDS.sleep(500);
+                            currentUrl = driver.getCurrentUrl();
+                        }
+                        currentUrl = driver.getCurrentUrl();
+                        String currentLoginProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
+                        if (isLoginSuccess(currentUrl) && TaskUtils.isLastLoginProcessId(taskId, processResult.getProcessId())) {
+                            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.SUCCESS);
+                            currentUrl = "http://w.mail.qq.com";
+                            driver.switchTo().defaultContent();
+                            driver.get(currentUrl);
+                            TimeUnit.SECONDS.sleep(3);
+                            currentUrl = driver.getCurrentUrl();
+                            String cookieString = SeleniumUtils.getCookieString(driver);
+                            LoginMessage loginMessage = new LoginMessage();
+                            loginMessage.setTaskId(taskId);
+                            loginMessage.setWebsiteName(websiteName);
+                            loginMessage.setAccountNo(null);
+                            loginMessage.setEndUrl(currentUrl);
+                            loginMessage.setCookie(cookieString);
+                            logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
+                            BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                            return;
+                        }
+                        if (!StringUtils.equals(currentLoginProcessId, processResult.getProcessId().toString())) {
+                            //图片验证码已经刷新,这个线程可以关闭了;
+                            logger.error("current login process will close,because new login process start,taskId={},websiteName={}", taskId,
+                                    websiteName);
+                            return;
+                        }
+                        logger.error("current login process timeout,will close,taskId={},websiteName={}", taskId, websiteName);
+                        return;
+                    } catch (Throwable e) {
+                        ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.REFESH_QR_CODE_ERROR));
+                        logger.error("current login process has error,will close,taskId={},websiteName={}", taskId, websiteName, e);
+                    } finally {
+                        SeleniumUtils.closeClient(driver);
+                    }
+                }
+            });
+        } catch (Throwable e) {
+            logger.error("refresh qr code error,taskId={},websiteName={}", taskId, websiteName, e);
+        }
+        return new HttpResult(true).success(processResult);
+    }
+
+    @Override
+    public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        String processId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
+        if (StringUtils.isBlank(processId) || ProcessResultUtils.isTimeOut(Long.valueOf(processId))) {
+            logger.warn("qr code is expire,taskId={},processId={}", param.getTaskId(), processId);
+            return new HttpResult<>().success(QRStatus.EXPIRE);
+        }
+
+        String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
+        return new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
+    }
+
+    private boolean isLoginSuccess(String url) {
+        return StringUtils.startsWith(url, "https://mail.qq.com/cgi-bin/frame_html?sid=");
     }
 }
