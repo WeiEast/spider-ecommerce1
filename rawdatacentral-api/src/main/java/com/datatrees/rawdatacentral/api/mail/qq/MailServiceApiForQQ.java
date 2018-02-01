@@ -24,6 +24,10 @@ public interface MailServiceApiForQQ {
     /**
      * 刷新登陆二维码
      * 必填参数: taskId
+     * <p>
+     * 结果异步获取
+     * 详见:@see com.datatrees.rawdatacentral.domain.result.ProcessResult
+     * </p>
      * @param param
      * @return
      */
@@ -31,7 +35,7 @@ public interface MailServiceApiForQQ {
 
     /**
      * 查询二维码登陆状态
-     * 必填参数: taskId,processId
+     * 必填参数: taskId
      * <p>
      * 二维码状态详见:com.datatrees.rawdatacentral.domain.enums.QRStatus
      * </p>
