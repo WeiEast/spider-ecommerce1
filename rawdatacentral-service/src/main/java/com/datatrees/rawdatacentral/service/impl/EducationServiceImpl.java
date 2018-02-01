@@ -1,7 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
@@ -28,11 +27,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhangyanjia on 2017/11/30.
