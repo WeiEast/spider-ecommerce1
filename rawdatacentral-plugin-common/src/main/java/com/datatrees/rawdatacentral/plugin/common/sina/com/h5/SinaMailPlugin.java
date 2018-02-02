@@ -268,7 +268,7 @@ public class SinaMailPlugin implements CommonPluginService {
             map.put("directive", "login_fail");
             map.put("information", "登录失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), "新浪邮箱h5登陆-->校验-->失败");
-            return result.success(JSON.toJSON(map));
+            return result.success(map);
 
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={},异常信息e={}", JSON.toJSONString(param), response, e.getMessage());
