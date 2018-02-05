@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 public class ProcessResultUtils {
 
     private static final org.slf4j.Logger logger         = LoggerFactory.getLogger(ProcessResultUtils.class);
+
     private static final String           KEY_PROCESS_ID = "process.id";
 
     public static Long createProcessId() {
@@ -37,32 +38,21 @@ public class ProcessResultUtils {
         return new StringBuilder("process.result.").append(processId).toString();
     }
 
-    public static long setEndTime(long processId, long start, TimeUnit unit, int timeout) {
-        long end = unit.toMillis(timeout) + start;
-        return setEndTime(processId, start, end);
+    public static void setProcessExpire(long taskId, Long processId, long timeout, TimeUnit unit) {
+        String redisKey = RedisKeyPrefixEnum.PROCESS_EXPIRE.getRedisKey(processId);
+        long end = System.currentTimeMillis() + unit.toMillis(timeout);
+        RedisUtils.setnx(redisKey, String.valueOf(end), (int) unit.toSeconds(timeout));
+        logger.info("set process expire time,taskId={},processId={},end={}", taskId, processId, DateUtils.formatYmdhms(end));
     }
 
-    public static long setEndTime(long processId, long start, long end) {
-        int timeout = (int) (TimeUnit.MILLISECONDS.toSeconds(end - start) + TimeUnit.MINUTES.toSeconds(1));
-        RedisUtils.set(RedisKeyPrefixEnum.PROCESS_START_TIME.getRedisKey(processId), String.valueOf(start), timeout);
-        RedisUtils.set(RedisKeyPrefixEnum.PROCESS_END_TIME.getRedisKey(processId), String.valueOf(end), timeout);
-        logger.info("set end time for processId : {},start : {} ,end :{}", processId, DateUtils.formatYmdhms(start), DateUtils.formatYmdhms(end));
-        return end;
-
-    }
-
-    public static boolean isTimeOut(long processId) {
-        String startStr = RedisUtils.get(RedisKeyPrefixEnum.PROCESS_START_TIME.getRedisKey(processId));
-        String endStr = RedisUtils.get(RedisKeyPrefixEnum.PROCESS_END_TIME.getRedisKey(processId));
-        if (StringUtils.isAnyBlank(startStr, endStr)) {
-            logger.info("process is time out,processId={},start={},end={}", processId, startStr, endStr);
-            return true;
+    public static boolean processExpire(long taskId, Long processId) {
+        String redisKey = RedisKeyPrefixEnum.PROCESS_EXPIRE.getRedisKey(processId);
+        String endStr = RedisUtils.get(redisKey);
+        boolean expire = StringUtils.isBlank(endStr) || System.currentTimeMillis() < Long.valueOf(endStr);
+        if (expire) {
+            logger.warn("processId is timeout,taskId={},processId={}", taskId, processId);
         }
-        if (Long.valueOf(endStr) < System.currentTimeMillis()) {
-            logger.info("process is time out,processId={},start={},end={}", processId, startStr, endStr);
-            return true;
-        }
-        return false;
+        return expire;
     }
 
 }

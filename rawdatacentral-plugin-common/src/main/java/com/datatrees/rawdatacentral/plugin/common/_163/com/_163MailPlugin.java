@@ -66,8 +66,10 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> submit(CommonPluginParam param) {
-        ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
         Long taskId = param.getTaskId();
+        ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
+        Long processId = processResult.getProcessId();
+        ProcessResultUtils.setProcessExpire(taskId, processId, 2, TimeUnit.MINUTES);
         String websiteName = param.getWebsiteName();
         String username = param.getUsername();
         String password = param.getPassword();
@@ -85,12 +87,12 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                     driver.findElement(By.xpath("//input[@name='password']")).sendKeys(password);
                     driver.findElement(By.xpath("//a[@id='dologin']")).click();
                     TimeUnit.SECONDS.sleep(3);
-                    while (!isLoginSuccess(driver)) {
+                    while (!isLoginSuccess(driver, param) && !ProcessResultUtils.processExpire(taskId, processId)) {
                         TimeUnit.SECONDS.sleep(1);
-                        isShowError(driver);
+                        isShowError(driver, param);
                     }
 
-                    if (isLoginSuccess(driver)) {
+                    if (isLoginSuccess(driver, param)) {
                         ProcessResultUtils.saveProcessResult(processResult.success());
                         driver.switchTo().defaultContent();
                         currentUrl = "https://mail.163.com/entry/cgi/ntesdoor?from=smart";
@@ -130,11 +132,13 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
+        Long processId = processResult.getProcessId();
+        ProcessResultUtils.setProcessExpire(taskId, processId, 1, TimeUnit.MINUTES);
         try {
             BeanFactoryUtils.getBean(ThreadPoolService.class).getMailLoginExecutors().submit(new Runnable() {
                 @Override
                 public void run() {
-                    TaskUtils.addTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID, processResult.getProcessId().toString());
+                    TaskUtils.addTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID, processId.toString());
                     RemoteWebDriver driver = null;
                     try {
 
@@ -152,19 +156,19 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                         dataMap.put(AttributeKey.QR_BASE64, qrBase64);
                         dataMap.put(AttributeKey.QR_TEXT, qrText);
                         ProcessResultUtils.saveProcessResult(processResult.success(dataMap));
+                        ProcessResultUtils.setProcessExpire(taskId, processId, 2, TimeUnit.MINUTES);
                         TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
                         logger.info("refresh qr code success,taskId={},websiteName={}", taskId, websiteName);
 
-                        long endTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2);
                         String qrStatus = getScandStatus(param, uuid);
-                        while (!StringUtils.equals(qrStatus, QRStatus.SUCCESS) && System.currentTimeMillis() <= endTime &&
-                                TaskUtils.isLastLoginProcessId(taskId, processResult.getProcessId())) {
+                        while (!StringUtils.equals(qrStatus, QRStatus.SUCCESS) && !ProcessResultUtils.processExpire(taskId, processId) &&
+                                TaskUtils.isLastLoginProcessId(taskId, processId)) {
                             TimeUnit.SECONDS.sleep(3);
                             qrStatus = getScandStatus(param, uuid);
                             TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, qrStatus);
                         }
                         qrStatus = getScandStatus(param, uuid);
-                        if (StringUtils.equals(qrStatus, QRStatus.SUCCESS) && TaskUtils.isLastLoginProcessId(taskId, processResult.getProcessId())) {
+                        if (StringUtils.equals(qrStatus, QRStatus.SUCCESS) && TaskUtils.isLastLoginProcessId(taskId, processId)) {
 
                             response = TaskHttpClient.create(param, RequestType.GET)
                                     .setFullUrl("https://reg.163.com/services/qrcodeauth?uuid={}&product=mail163", uuid).invoke();
@@ -208,6 +212,10 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
+        String lastProcessId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
+        if (StringUtils.isBlank(lastProcessId)) {
+            ProcessResultUtils.setProcessExpire(param.getTaskId(), Long.valueOf(lastProcessId), 2, TimeUnit.MINUTES);
+        }
         return new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
     }
 
@@ -235,13 +243,13 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
         return QRStatus.EXPIRE;
     }
 
-    private boolean isLoginSuccess(RemoteWebDriver driver) {
+    private boolean isLoginSuccess(RemoteWebDriver driver, CommonPluginParam param) {
         String currentUrl = driver.getCurrentUrl();
-        logger.info("currentUrl = {}", currentUrl);
+        logger.info("currentUrl = {},taskId={}", currentUrl, param.getTaskId());
         return StringUtils.startsWith(currentUrl, "https://mail.163.com/js6/main.jsp?sid=");
     }
 
-    private boolean isShowError(RemoteWebDriver driver) {
+    private boolean isShowError(RemoteWebDriver driver, CommonPluginParam param) {
         try {
             String currentUrl = driver.getCurrentUrl();
             if (StringUtils.equals(currentUrl, "https://mail.163.com/")) {
@@ -250,12 +258,12 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                 if (!StringUtils.equals(aClass, "m-nerror f-dn")) {
                     String text = nerror.findElement(By.className("ferrorhead")).getText();
                     if (StringUtils.equals("请点击验证码", text)) {
-                        logger.info("验证码出现了");
+                        logger.info("验证码出现了,taskId={}", param.getTaskId());
                     }
                     if (StringUtils.isBlank(text)) {
-                        logger.info("验证成功,class={},text={}", aClass, text);
+                        logger.info("验证成功,class={},text={},taskId={}", aClass, text, param.getTaskId());
                     }
-                    logger.info("class={},text={}", aClass, text);
+                    logger.info("class={},text={},taskId={}", aClass, text, param.getTaskId());
                     return true;
                 }
             }
