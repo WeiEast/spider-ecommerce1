@@ -41,23 +41,29 @@ public enum RedisKeyPrefixEnum {
     LOGIN_INIT("login.init", 1, TimeUnit.DAYS, "登陆初始化"),
     PLUGIN_DATA("plugin.data", 365, TimeUnit.DAYS, "插件版本"),
     PROCESS_START_TIME("process.start.time", 1, TimeUnit.HOURS, "处理开始时间"),
+    PROCESS_EXPIRE("process.expire", 1, TimeUnit.HOURS, "process超时时间"),
     PROCESS_END_TIME("process.end.time", 1, TimeUnit.HOURS, "处理开始时间"),;
+
     /**
      * 备注
      */
     private final String remark;
+
     /**
      * 分隔符
      */
     private final String separator = ".";
+
     /**
      * 前缀
      */
     private String   prefix;
+
     /**
      * 超时时间
      */
     private int      timeout;
+
     /**
      * 时间单位
      */
