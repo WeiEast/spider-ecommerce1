@@ -48,7 +48,7 @@ public class ProcessResultUtils {
     public static boolean processExpire(long taskId, Long processId) {
         String redisKey = RedisKeyPrefixEnum.PROCESS_EXPIRE.getRedisKey(processId);
         String endStr = RedisUtils.get(redisKey);
-        boolean expire = StringUtils.isBlank(endStr) || System.currentTimeMillis() < Long.valueOf(endStr);
+        boolean expire = StringUtils.isBlank(endStr) || System.currentTimeMillis() > Long.valueOf(endStr);
         if (expire) {
             logger.warn("processId is timeout,taskId={},processId={}", taskId, processId);
         }
