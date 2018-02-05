@@ -87,9 +87,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                     driver.findElement(By.xpath("//input[@name='password']")).sendKeys(password);
                     driver.findElement(By.xpath("//a[@id='dologin']")).click();
                     TimeUnit.SECONDS.sleep(3);
-                    while (!isLoginSuccess(driver, param) && !ProcessResultUtils.processExpire(taskId, processId)) {
+                    while (!isLoginSuccess(driver, param) && !ProcessResultUtils.processExpire(taskId, processId) && !isShowError(driver, param)) {
                         TimeUnit.SECONDS.sleep(1);
-                        isShowError(driver, param);
                     }
 
                     if (isLoginSuccess(driver, param)) {
