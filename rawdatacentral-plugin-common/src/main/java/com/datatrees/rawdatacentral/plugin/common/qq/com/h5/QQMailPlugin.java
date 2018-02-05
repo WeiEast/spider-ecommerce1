@@ -237,10 +237,10 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
                         logger.info("refresh qr code success,taskId={},websiteName={}", taskId, websiteName);
 
-                        ProcessResultUtils.setEndTime(processId, System.currentTimeMillis(), TimeUnit.MINUTES, 2);
+                        ProcessResultUtils.setProcessExpire(taskId, processId, 2, TimeUnit.MINUTES);
 
                         currentUrl = driver.getCurrentUrl();
-                        while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.isTimeOut(processId)) {
+                        while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
                             TimeUnit.MILLISECONDS.sleep(500);
                             currentUrl = driver.getCurrentUrl();
                         }
@@ -289,11 +289,11 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
         String processId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
-        if (StringUtils.isBlank(processId) || ProcessResultUtils.isTimeOut(Long.valueOf(processId))) {
+        if (StringUtils.isBlank(processId) || ProcessResultUtils.processExpire(param.getTaskId(), Long.valueOf(processId))) {
             logger.warn("qr code is expire,taskId={},processId={}", param.getTaskId(), processId);
             return new HttpResult<>().success(QRStatus.EXPIRE);
         }
-
+        ProcessResultUtils.setProcessExpire(param.getTaskId(), Long.valueOf(processId), 2, TimeUnit.MINUTES);
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
         return new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
     }
