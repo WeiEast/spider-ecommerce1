@@ -87,9 +87,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                     driver.findElement(By.xpath("//input[@name='password']")).sendKeys(password);
                     driver.findElement(By.xpath("//a[@id='dologin']")).click();
                     TimeUnit.SECONDS.sleep(3);
-                    while (!isLoginSuccess(driver, param) && !ProcessResultUtils.processExpire(taskId, processId)) {
+                    while (!isLoginSuccess(driver, param) && !ProcessResultUtils.processExpire(taskId, processId) && !isShowError(driver, param)) {
                         TimeUnit.SECONDS.sleep(1);
-                        isShowError(driver, param);
                     }
 
                     if (isLoginSuccess(driver, param)) {
@@ -213,7 +212,7 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
         String lastProcessId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
-        if (StringUtils.isBlank(lastProcessId)) {
+        if (StringUtils.isNoneBlank(lastProcessId)) {
             ProcessResultUtils.setProcessExpire(param.getTaskId(), Long.valueOf(lastProcessId), 2, TimeUnit.MINUTES);
         }
         return new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
