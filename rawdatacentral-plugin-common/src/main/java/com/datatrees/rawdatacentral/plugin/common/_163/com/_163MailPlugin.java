@@ -132,7 +132,7 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
         String websiteName = param.getWebsiteName();
         ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
         Long processId = processResult.getProcessId();
-        ProcessResultUtils.setProcessExpire(taskId, processId, 1, TimeUnit.MINUTES);
+        ProcessResultUtils.setProcessExpire(taskId, processId, 2, TimeUnit.MINUTES);
         try {
             BeanFactoryUtils.getBean(ThreadPoolService.class).getMailLoginExecutors().submit(new Runnable() {
                 @Override
@@ -160,8 +160,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                         logger.info("refresh qr code success,taskId={},websiteName={}", taskId, websiteName);
 
                         String qrStatus = getScandStatus(param, uuid);
-                        while (!StringUtils.equals(qrStatus, QRStatus.SUCCESS) && !ProcessResultUtils.processExpire(taskId, processId) &&
-                                TaskUtils.isLastLoginProcessId(taskId, processId)) {
+                        while (!StringUtils.equals(qrStatus, QRStatus.SUCCESS) && !StringUtils.equals(qrStatus, QRStatus.EXPIRE) &&
+                                !ProcessResultUtils.processExpire(taskId, processId) && TaskUtils.isLastLoginProcessId(taskId, processId)) {
                             TimeUnit.SECONDS.sleep(3);
                             qrStatus = getScandStatus(param, uuid);
                             TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, qrStatus);
@@ -220,6 +220,7 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
     }
 
     private String getScandStatus(CommonPluginParam param, String uuid) {
+        String qrStatus = null;
         try {
             Response response = TaskHttpClient.create(param, RequestType.GET)
                     .setFullUrl("https://q.reg.163.com/services/ngxqrcodeauthstatus?uuid={}&product=mail163", uuid).invoke();
@@ -227,20 +228,26 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
             logger.info("query qr status,retCode={},uuid={}", response, uuid);
             switch (retCode) {
                 case "408":
-                    return QRStatus.WAITING;
+                    qrStatus = QRStatus.WAITING;
+                    break;
                 case "404":
-                    return QRStatus.EXPIRE;
+                    qrStatus = QRStatus.EXPIRE;
+                    break;
                 case "409":
-                    return QRStatus.SCANNED;
+                    qrStatus = QRStatus.SCANNED;
+                    break;
                 case "200":
-                    return QRStatus.SUCCESS;
+                    qrStatus = QRStatus.SUCCESS;
+                    break;
                 default:
-                    return QRStatus.EXPIRE;
+                    qrStatus = QRStatus.EXPIRE;
+                    break;
             }
+            logger.info("query qr status taskId={},status={},retCode={}", param.getTaskId(), qrStatus, retCode);
         } catch (Throwable e) {
             logger.error("query qr status error param={},uuid={}", param, uuid);
         }
-        return QRStatus.EXPIRE;
+        return qrStatus;
     }
 
     private boolean isLoginSuccess(RemoteWebDriver driver, CommonPluginParam param) {

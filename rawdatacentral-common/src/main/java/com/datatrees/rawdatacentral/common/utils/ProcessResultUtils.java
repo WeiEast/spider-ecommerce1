@@ -50,7 +50,8 @@ public class ProcessResultUtils {
         String endStr = RedisUtils.get(redisKey);
         boolean expire = StringUtils.isBlank(endStr) || System.currentTimeMillis() > Long.valueOf(endStr);
         if (expire) {
-            logger.warn("processId is timeout,taskId={},processId={}", taskId, processId);
+            logger.warn("processId is timeout,taskId={},processId={},endStr={}", taskId, processId,
+                    StringUtils.isNotBlank(endStr) ? DateUtils.formatYmdhms(Long.valueOf(endStr)) : endStr);
         }
         return expire;
     }
