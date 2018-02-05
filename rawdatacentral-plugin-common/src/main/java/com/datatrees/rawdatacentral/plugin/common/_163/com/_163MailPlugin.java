@@ -193,6 +193,7 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                             return;
                         }
                         logger.error("current login process timeout,will close,taskId={},websiteName={}", taskId, websiteName);
+                        TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.EXPIRE);
                         return;
                     } catch (Throwable e) {
                         ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.REFESH_QR_CODE_ERROR));
