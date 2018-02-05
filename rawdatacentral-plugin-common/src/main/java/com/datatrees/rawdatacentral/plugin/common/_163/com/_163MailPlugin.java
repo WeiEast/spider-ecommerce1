@@ -212,7 +212,7 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
         String lastProcessId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
-        if (StringUtils.isBlank(lastProcessId)) {
+        if (StringUtils.isNoneBlank(lastProcessId)) {
             ProcessResultUtils.setProcessExpire(param.getTaskId(), Long.valueOf(lastProcessId), 2, TimeUnit.MINUTES);
         }
         return new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
