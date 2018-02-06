@@ -19,25 +19,22 @@ import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:48 PM
  */
-public class XpathOperationImpl extends Operation {
-
-    private static final Logger log = LoggerFactory.getLogger(XpathOperationImpl.class);
+public class XpathOperationImpl extends Operation<XpathOperation> {
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        XpathOperation operation = (XpathOperation) getOperation();
+        XpathOperation operation = getOperation();
         String xpath = operation.getXpath();
 
         Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
@@ -45,7 +42,7 @@ public class XpathOperationImpl extends Operation {
 
         xpath = ReplaceUtils.replaceMap(fieldContext, sourceMap, xpath);
 
-        String orginal = getInput(request, response);
+        String orginal = OperationHelper.getStringInput(request, response);
         String resultStirng = "";
         List<String> result = XPathUtil.getXpath(xpath, orginal);
         if (CollectionUtils.isNotEmpty(result)) {
@@ -53,12 +50,12 @@ public class XpathOperationImpl extends Operation {
                 resultStirng = resultStirng + temp;
             }
         } else {
-            log.warn("xpath extract empty content! " + xpath);
+            logger.warn("xpath extract empty content! " + xpath);
             resultStirng = "";
         }
         resultStirng = StringUtils.isEmpty(resultStirng) && BooleanUtils.isTrue(operation.getEmptyToNull()) ? null : resultStirng;
-        if (log.isDebugEnabled()) {
-            log.debug("xpath extract result:" + resultStirng);
+        if (logger.isDebugEnabled()) {
+            logger.debug("xpath extract result:" + resultStirng);
         }
         response.setOutPut(resultStirng);
 

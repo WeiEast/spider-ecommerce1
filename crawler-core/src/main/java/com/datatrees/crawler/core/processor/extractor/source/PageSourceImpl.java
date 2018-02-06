@@ -8,31 +8,27 @@
 
 package com.datatrees.crawler.core.processor.extractor.source;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.PageSource;
-import com.datatrees.crawler.core.domain.config.page.PageContentExtractor;
-import com.datatrees.crawler.core.domain.config.page.ReplaceMent;
+import com.datatrees.crawler.core.domain.config.page.Regexp;
+import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.extractor.util.SourceFieldUtil;
-import com.datatrees.crawler.core.processor.page.PageImpl;
-import com.datatrees.crawler.core.processor.plugin.PluginCaller;
-import com.datatrees.crawler.core.processor.plugin.PluginConfSupplier;
+import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
+import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -41,93 +37,112 @@ import org.slf4j.LoggerFactory;
  */
 public class PageSourceImpl extends Processor {
 
-    private static final Logger log = LoggerFactory.getLogger(PageSourceImpl.class);
-    private List<PageSource> pageSourceList;
+    private List<PageSource> pageSources;
 
-    /**
-     * @param pageSourceList
-     */
-    public PageSourceImpl(List<PageSource> pageSourceList) {
-        super();
-        this.pageSourceList = pageSourceList;
+    public PageSourceImpl(List<PageSource> pageSources) {
+        this.pageSources = Objects.requireNonNull(pageSources);
     }
 
-    private String getSourceWithPlugin(Request request, AbstractPlugin pluginDesc, Object value) throws Exception {
-        AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
+    @Override
+    public void process(Request request, Response response) throws Exception {
+        Object input = request.getInput();
+        Preconditions.checkNotNull(input, "input should not be null!");
 
-        Object respOutput = PluginCaller.call(context, pluginDesc, (PluginConfSupplier) pluginWrapper -> {
-            Map<String, String> params = new LinkedHashMap<>();
-            if (value instanceof FileWapper) {
+        StringBuilder builder = new StringBuilder();
+        for (PageSource source : pageSources) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Search source : {}", source);
+            }
+
+            String result = getPageContent(source, input, request);
+
+            List<Replacement> replacements = source.getReplacements();
+            if (CollectionUtils.isNotEmpty(replacements)) {
+                result = PageHelper.replaceText(result, replacements);
+            }
+
+            Regexp regexp = source.getRegexp();
+            if (regexp != null) {
+                result = PageHelper.getTextByRegexp(result, regexp);
+            }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Actual source content:", result);
+            }
+
+            // set source field to context
+            RequestUtil.getProcessorContext(request).getContext().put(source.getField(), result);
+
+            builder.append(result);
+        }
+
+        String content = builder.toString();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Actual extracting content: {}", content);
+        }
+
+        RequestUtil.setContent(request, content);
+    }
+
+    private String getPageContent(PageSource source, Object input, Request request) throws Exception {
+        String separator = StringUtils.defaultString(source.getSeparator());
+        AbstractPlugin plugin = source.getPlugin();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Get page content. <<< source-ref: {}, separator: {}, plugin-ref: {}", source.getField(), separator, plugin != null ? plugin.getId() : null);
+        }
+
+        if (plugin != null) {
+            Object value = SourceFieldUtils.getFieldValue(input, source.getField());
+            if (value instanceof Collection) {
+                Stream<String> stream = ((Collection) value).stream().map(obj -> this.getSourceContent(obj, plugin, request));
+
+                return stream.collect(Collectors.joining(separator));
+            }
+
+            return this.getSourceContent(value, plugin, request);
+        }
+
+        String value = RequestUtil.getAttribute(request, source.getField());
+        if (StringUtils.isNotBlank(separator) || value == null) {
+            value = SourceFieldUtils.getFieldValueAsString(input, source.getField(), separator);
+        }
+
+        return value;
+    }
+
+    private String getSourceContent(Object value, AbstractPlugin pluginDesc, Request request) {
+        String content;
+        if (value instanceof FileWapper) {
+            AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
+            content = (String) PluginCaller.call(pluginDesc, context, () -> {
+                Map<String, String> params = new HashMap<>();
                 FileWapper file = (FileWapper) value;
                 file.getFileInputStream();//download attachment to local
                 params.put(PluginConstants.FILE_WAPPER_PATH, file.getAbsolutePath());
                 params.put(PluginConstants.FILE_MIME_TYPE, file.getMimeType());
                 params.put(PluginConstants.FILE_NAME, file.getName());
                 params.put(PluginConstants.FILE_SOURCE_URL, file.getSourceURL());
-            } else if (value instanceof String) {
+
+                return params;
+            });
+        } else if (value instanceof String) {
+            AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
+            content = (String) PluginCaller.call(pluginDesc, context, () -> {
+                Map<String, String> params = new HashMap<>();
                 params.put(PluginConstants.FILE_CONTENT, (String) value);
-            } else {
-                log.warn("error getSourceWithPlugin with " + value);
-            }
 
-            return params;
-        });
-
-        if (log.isDebugEnabled()) {
-            log.debug("getSourceWithPlugin plugin:" + pluginDesc + ", result:" + respOutput);
+                return params;
+            });
+        } else {
+            content = StringUtils.EMPTY;
+            logger.error("incorrect input content to call plugin to get source content. <<< {}", value);
         }
 
-        return (String) respOutput;
+        if (logger.isDebugEnabled()) {
+            logger.debug("Source content : {}", content);
+        }
+
+        return content;
     }
-
-    @Override
-    public void process(Request request, Response response) throws Exception {
-        StringBuilder builder = new StringBuilder();
-        Object input = request.getInput();
-        Preconditions.checkNotNull(input, "input should not be null!");
-        for (PageSource source : pageSourceList) {
-            String split = StringUtils.defaultIfEmpty(source.getSplit(), "");
-            StringBuilder sourceValue = new StringBuilder();
-            if (source.getPlugin() != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("getSource source:" + source + ", plugin:" + source.getPlugin());
-                }
-                Object value = SourceFieldUtil.getInputFieldObject(input, source.getField());
-                if (value instanceof Collection) {
-                    for (Object obj : (Collection) value) {
-                        sourceValue.append(this.getSourceWithPlugin(request, source.getPlugin(), obj)).append(split);
-                    }
-                } else {
-                    sourceValue.append(this.getSourceWithPlugin(request, source.getPlugin(), value));
-                }
-            } else {
-                String value = RequestUtil.getAttribute(request, source.getField());
-                if (StringUtils.isNotBlank(split) || value == null) {
-                    value = SourceFieldUtil.getInputFieldString(input, source.getField(), split);
-                }
-                sourceValue.append(value);
-            }
-
-            String result = sourceValue.toString();
-            List<ReplaceMent> replaceMents = source.getReplaceMentList();
-            if (CollectionUtils.isNotEmpty(replaceMents)) {
-                result = PageImpl.ReplaceMentImpl.replaceContent(result, replaceMents);
-            }
-            PageContentExtractor extractor = source.getPageContentExtractor();
-            if (extractor != null) {
-                result = PageImpl.PageContentExtractorImpl.extractContent(result, extractor);
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("getSource source:" + source + ", result:" + result);
-            }
-            // set source field to context
-            RequestUtil.getProcessorContext(request).getContext().put(source.getField(), result);
-            builder.append(result);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("set request page content:" + builder.toString());
-        }
-        RequestUtil.setContent(request, builder.toString());
-    }
-
 }

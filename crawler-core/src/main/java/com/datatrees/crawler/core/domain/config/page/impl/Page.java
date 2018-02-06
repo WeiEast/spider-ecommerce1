@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.page.AbstractPage;
-import com.datatrees.crawler.core.domain.config.page.PageContentExtractor;
-import com.datatrees.crawler.core.domain.config.page.ReplaceMent;
+import com.datatrees.crawler.core.domain.config.page.Regexp;
+import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
@@ -28,28 +28,28 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Tag("page")
 public class Page extends AbstractPage {
 
-    private String               path;
-    private String               contentRegex;
-    private String               pageNumRegex;
-    private String               contentPageRegex;
-    private AbstractService      service;
-    private String               pageTitleRegex;
-    private Boolean              urlExtract;
-    private List<ReplaceMent>    replaceMentList;
-    private PageContentExtractor pageContentExtractor;
-    private Boolean              redirectUrlAdd;
-    private Integer              maxPageCount;
-    private Boolean              responseCheck;
-    private String               failedCodePattern;
-    private String               pageFailedPattern;
+    private String            path;
+    private String            contentRegex;
+    private String            pageNumRegex;
+    private String            contentPageRegex;
+    private AbstractService   service;
+    private String            pageTitleRegex;
+    private Boolean           urlExtract;
+    private List<Replacement> replacementList;
+    private Regexp            regexp;
+    private Boolean           redirectUrlAdd;
+    private Integer           maxPageCount;
+    private Boolean           responseCheck;
+    private String            failedCodePattern;
+    private String            pageFailedPattern;
     /* config for wbsite trigger temporary blockade */
-    private String               pageRetryPattern;
-    private Integer              retrySleepSecond;/* unit:s */
-    private RetryMode            retryMode;
+    private String            pageRetryPattern;
+    private Integer           retrySleepSecond;/* unit:s */
+    private RetryMode         retryMode;
 
     public Page() {
         super();
-        replaceMentList = new ArrayList<ReplaceMent>();
+        replacementList = new ArrayList<Replacement>();
     }
 
     @Attr("page-failed-pattern")
@@ -203,23 +203,23 @@ public class Page extends AbstractPage {
     }
 
     @Tag("replaces")
-    public List<ReplaceMent> getReplaceMentList() {
-        return Collections.unmodifiableList(replaceMentList);
+    public List<Replacement> getReplacementList() {
+        return Collections.unmodifiableList(replacementList);
     }
 
     @Node("replaces/replace")
-    public void setReplaceMentList(ReplaceMent replaceMent) {
-        this.replaceMentList.add(replaceMent);
+    public void setReplacementList(Replacement replacement) {
+        this.replacementList.add(replacement);
     }
 
     @Tag("regex")
-    public PageContentExtractor getPageContentExtractor() {
-        return pageContentExtractor;
+    public Regexp getRegexp() {
+        return regexp;
     }
 
     @Node("regex")
-    public void setPageContentExtractor(PageContentExtractor pageContentExtractor) {
-        this.pageContentExtractor = pageContentExtractor;
+    public void setRegexp(Regexp regexp) {
+        this.regexp = regexp;
     }
 
 }

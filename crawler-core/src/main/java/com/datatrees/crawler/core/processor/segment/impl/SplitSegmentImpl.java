@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.segment.impl.SplitSegment;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,7 +39,7 @@ public class SplitSegmentImpl extends SegmentBase<SplitSegment> {
         if (StringUtils.isNotEmpty(split)) {
             String[] regexResult = content.split(split);
             if (regexResult.length > 0) {
-                Matcher m = PatternUtils.matcher(split, content);
+                Matcher m = RegExp.getMatcher(split, content);
                 int count = 0;
                 while (count < regexResult.length) {
                     if (BooleanUtils.isTrue(segment.getAppend())) {

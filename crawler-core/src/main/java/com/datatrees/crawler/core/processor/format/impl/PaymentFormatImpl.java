@@ -8,10 +8,10 @@ import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.format.container.PaymentMapContainer;
 import com.datatrees.crawler.core.processor.format.unit.PaymentUnit;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class PaymentFormatImpl extends AbstractFormat {
             return null;
         }
         Number result;
-        String numPart = PatternUtils.group(orginal, paymentNumRegex, 1);
+        String numPart = RegExp.group(orginal, paymentNumRegex, 1);
         // replace ,to
         boolean needNegate = false;
         if (StringUtils.isNotBlank(pattern) && pattern.startsWith(NegateString)) {
@@ -74,7 +74,7 @@ public class PaymentFormatImpl extends AbstractFormat {
             Iterator<String> paymentPatterns = paymentMapper.keySet().iterator();
             while (paymentPatterns.hasNext()) {
                 String paymentPattern = paymentPatterns.next();
-                if (PatternUtils.match(paymentPattern.toLowerCase(), orginal.toLowerCase())) {
+                if (RegExp.find(orginal.toLowerCase(), paymentPattern.toLowerCase())) {
                     result = paymentMapper.get(paymentPattern);
                     log.debug("find payment " + orginal + " unit :" + result.getValue());
                     break;

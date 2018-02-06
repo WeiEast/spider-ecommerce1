@@ -32,51 +32,21 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
      *
      */
     private static final long serialVersionUID = -7796504114576595157L;
-    private SearchType               type;
-    private Integer                  maxDepth;
-    private Request                  request;
-    private List<SearchSequenceUnit> searchSequence;
-    private AbstractPlugin           plugin;
-    private List<String>             resultTagList;
-    private Boolean                  autoStart;
-    private Integer                  threadCount;
-    private Integer                  waitIntervalMillis;
+    // attribute
+    private SearchType     type;
+    private Boolean        autoStart;
+    private Integer        maxDepth;
+    private Integer        threadCount;
+    private Integer        waitIntervalMillis;
+    private AbstractPlugin plugin;
+    private Float          weight;
+    // child nodes
+    private Request        request;
+    private List<SearchSequenceUnit> searchSequence = new ArrayList<>();
+    private List<String>             resultTagList  = new ArrayList<>();
 
     public SearchTemplateConfig() {
         super();
-        searchSequence = new ArrayList<SearchSequenceUnit>();
-        resultTagList = new ArrayList<String>();
-    }
-
-    @ChildTag("result-tag-list/result-tag")
-    public List<String> getResultTagList() {
-        return Collections.unmodifiableList(resultTagList);
-    }
-
-    @Node("result-tag-list/result-tag/text()")
-    public void setResultTagList(String resultTag) {
-        this.resultTagList.add(resultTag);
-    }
-
-    @Attr("thread-count")
-    public Integer getThreadCount() {
-        return threadCount;
-    }
-
-    @Node("@thread-count")
-    public void setThreadCount(Integer threadCount) {
-        this.threadCount = threadCount;
-    }
-
-    @Attr("auto-start")
-    public Boolean getAutoStart() {
-        return autoStart == null ? true : autoStart;
-
-    }
-
-    @Node("@auto-start")
-    public void setAutoStart(Boolean autoStart) {
-        this.autoStart = autoStart;
     }
 
     @Attr("type")
@@ -89,6 +59,16 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
         this.type = SearchType.getSearchType(type);
     }
 
+    @Attr("auto-start")
+    public Boolean getAutoStart() {
+        return autoStart == null ? true : autoStart;
+    }
+
+    @Node("@auto-start")
+    public void setAutoStart(Boolean autoStart) {
+        this.autoStart = autoStart;
+    }
+
     @Attr("max-depth")
     public Integer getMaxDepth() {
         return maxDepth;
@@ -99,34 +79,14 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
         this.maxDepth = maxDepth;
     }
 
-    @Tag("page-sequence")
-    public List<SearchSequenceUnit> getSearchSequence() {
-        return Collections.unmodifiableList(searchSequence);
+    @Attr("thread-count")
+    public Integer getThreadCount() {
+        return threadCount;
     }
 
-    @Node("page-sequence/page")
-    public void setSearchSequence(SearchSequenceUnit searchSequenceUnit) {
-        this.searchSequence.add(searchSequenceUnit);
-    }
-
-    @Tag("request")
-    public Request getRequest() {
-        return request;
-    }
-
-    @Node("request")
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
-    @Attr(value = "plugin-ref", referenced = true)
-    public AbstractPlugin getPlugin() {
-        return plugin;
-    }
-
-    @Node(value = "@plugin-ref", referenced = true)
-    public void setPlugin(AbstractPlugin plugin) {
-        this.plugin = plugin;
+    @Node("@thread-count")
+    public void setThreadCount(Integer threadCount) {
+        this.threadCount = threadCount;
     }
 
     @Attr("wait-interval")
@@ -139,11 +99,56 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
         this.waitIntervalMillis = waitIntervalMillis;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+    @Attr("weight")
+    public Float getWeight() {
+        return weight;
+    }
+
+    @Node("@weight")
+    public void setWeight(Float weight) {
+        this.weight = weight;
+    }
+
+    @Attr(value = "plugin-ref", referenced = true)
+    public AbstractPlugin getPlugin() {
+        return plugin;
+    }
+
+    @Node(value = "@plugin-ref", referenced = true)
+    public void setPlugin(AbstractPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @Tag("request")
+    public Request getRequest() {
+        return request;
+    }
+
+    @Node("request")
+    public void setRequest(Request request) {
+        this.request = request;
+    }
+
+    @Tag("page-sequence")
+    public List<SearchSequenceUnit> getSearchSequence() {
+        return Collections.unmodifiableList(searchSequence);
+    }
+
+    @Node("page-sequence/page")
+    public void setSearchSequence(SearchSequenceUnit searchSequenceUnit) {
+        this.searchSequence.add(searchSequenceUnit);
+    }
+
+    @ChildTag("result-tag-list/result-tag")
+    public List<String> getResultTagList() {
+        return Collections.unmodifiableList(resultTagList);
+    }
+
+    @Node("result-tag-list/result-tag/text()")
+    public void setResultTagList(String resultTag) {
+        this.resultTagList.add(resultTag);
+    }
+
     @Override
     public String toString() {
         return "SearchTemplateConfig [id=" + getId() + " ,type=" + type + ", maxDepth=" + maxDepth + ", autoStart=" + autoStart + "]";

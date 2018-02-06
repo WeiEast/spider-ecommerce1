@@ -1,14 +1,14 @@
 package com.datatrees.rawdatacentral.collector.search;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import akka.dispatch.Future;
-import com.datatrees.common.actor.WrappedActorRef;
+import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
@@ -28,11 +28,9 @@ import com.datatrees.rawdatacentral.collector.chain.FilterExecutor;
 import com.datatrees.rawdatacentral.collector.chain.FilterListFactory;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
-import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import com.alibaba.rocketmq.common.ThreadFactoryImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,44 +44,41 @@ public class SearchProcessor {
     private static final Logger log = LoggerFactory.getLogger(SearchProcessor.class);
     private String               searchTemplate;
     private SearchTemplateConfig searchTemplateConfig;
-    private String               templateId;
     private String               encoding;
     private long                 waitIntervalMillis;
     private boolean              duplicateRemoval;
-    private long                 maxExecuteMinutes;
     private ResultDataHandler    resultDataHandler;
-    private WrappedActorRef      extractorActorRef;
-    private List<Future<Object>> futureList = new ArrayList<Future<Object>>();
-    private Task                   task;
-    private SearchProcessorContext processorContext;
-    private String                 keyword;
-    private boolean                isLastLink;
-    private boolean                needEarlyQuit;
-    private DuplicateChecker       duplicateChecker;
-    private TaskMessage            taskMessage;
-    private ThreadPoolExecutor crawlExecutorPool = null;
-    private List<LinkNode> initLinkNodeList;
+    private String               keyword;
+    private boolean              isLastLink;
+    private boolean              needEarlyQuit;
+    private       ThreadPoolExecutor   crawlExecutorPool = null;
+    private final List<Future<Object>> futureList        = new ArrayList<>();
+    private final TaskMessage taskMessage;
+    // 任务默认超时时间，单位：毫秒
+    private long defaultTimeout = -1;
+    // 任务超时时间，单位：毫秒
+    private long timeout        = -1;
+    // 任务可执行的结束时间戳，单位：毫秒
+    private long deadLine       = -1;
 
     public SearchProcessor(TaskMessage taskMessage) {
-        try {
-            this.taskMessage = taskMessage;
-            this.task = taskMessage.getTask();
-            this.processorContext = taskMessage.getContext();
-            if (processorContext != null && null != processorContext.getSearchConfig()) {
-                SearchConfig config = processorContext.getSearchConfig();
-                if (null != config) {
-                    Properties properties = config.getProperties();
-                    if (null != properties) {
-                        setEncoding(StringUtils.isBlank(properties.getEncoding()) ? CollectorConstants.DEFUALT_ENCODING : properties.getEncoding());
-                        setWaitIntervalMillis(properties.getWaitIntervalMillis() == null ? 0 : properties.getWaitIntervalMillis());
-                        setDuplicateRemoval(properties.getDuplicateRemoval());
-                        log.info("DuplicateRemoval Config is  " + properties.getDuplicateRemoval() + " ,workingTaskEntity_id " + task.getId());
-                    }
+        this.taskMessage = taskMessage;
+
+        SearchProcessorContext processorContext = getProcessorContext();
+        if (processorContext != null) {
+            SearchConfig config = processorContext.getSearchConfig();
+            if (null != config) {
+                Properties properties = config.getProperties();
+                if (null != properties) {
+                    String encoding = StringUtils.defaultIfBlank(properties.getEncoding(), CollectorConstants.DEFUALT_ENCODING);
+                    setEncoding(encoding);
+                    setWaitIntervalMillis(properties.getWaitIntervalMillis() == null ? 0 : properties.getWaitIntervalMillis());
+                    setDuplicateRemoval(properties.getDuplicateRemoval());
+
+                    Task task = taskMessage.getTask();
+                    log.info("DuplicateRemoval Config is  " + properties.getDuplicateRemoval() + " ,workingTaskEntity_id " + task.getId());
                 }
             }
-
-        } catch (Exception e) {
-            log.error("SearchProcessor init Resource  error.", e);
         }
     }
 
@@ -100,55 +95,18 @@ public class SearchProcessor {
         isLastLink = false;
     }
 
-    /**
-     * @return the task
-     */
-    public Task getTask() {
-        return task;
-    }
-
-    /**
-     * @param task the task to set
-     */
-    public void setTask(Task task) {
-        this.task = task;
-    }
-
-    /**
-     * @return the processorContext
-     */
-    public SearchProcessorContext getProcessorContext() {
-        return processorContext;
-    }
-
-    /**
-     * @param processorContext the processorContext to set
-     */
-    public void setProcessorContext(SearchProcessorContext processorContext) {
-        this.processorContext = processorContext;
-    }
-
     private URLHandlerImpl initURLHandlerImpl() {
         URLHandlerImpl handler = new URLHandlerImpl();
-        handler.setDuplicateChecker(duplicateChecker);
         handler.setSearchProcessor(this);
         return handler;
     }
 
-    /**
-     * @param taskType
-     * @param url
-     * @return
-     * @exception InvocationTargetException
-     * @exception IllegalAccessException
-     * @exception ResultEmptyException
-     */
-    public List<LinkNode> crawlOneURL(LinkNode url) throws IllegalAccessException, InvocationTargetException, ResultEmptyException {
+    public List<LinkNode> crawlOneURL(LinkNode url) throws ResultEmptyException {
         List<LinkNode> linkNodeList = null;
         CrawlRequest request = null;
         try {
             URLHandlerImpl handler = initURLHandlerImpl();
-            request = CrawlRequest.build().setProcessorContext(processorContext).setUrl(url).setSearchTemplateId(templateId).setSearchTemplate(searchTemplate).setUrlHandler(handler).contextInit();
+            request = CrawlRequest.build().setProcessorContext(getProcessorContext()).setUrl(url).setSearchTemplateId(searchTemplateConfig.getId()).setSearchTemplate(searchTemplate).setUrlHandler(handler).contextInit();
 
             RequestUtil.setKeyWord(request, keyword);
             CrawlResponse response = Crawler.crawl(request);
@@ -156,7 +114,7 @@ public class SearchProcessor {
 
             if (CollectionUtils.isNotEmpty(objs)) {
                 synchronized (futureList) {
-                    futureList.addAll(resultDataHandler.resultListHandler(objs, taskMessage, extractorActorRef));
+                    futureList.addAll(resultDataHandler.resultListHandler(objs, taskMessage));
                 }
             }
 
@@ -183,19 +141,10 @@ public class SearchProcessor {
                 RequestUtil.setContent(request, null);
             }
             // clear Embedded context
-            ProcessorContextUtil.clearThreadLocalLinkNode(processorContext);
-            ProcessorContextUtil.clearThreadLocalResponseList(processorContext);
+            ProcessorContextUtil.clearThreadLocalLinkNode(getProcessorContext());
+            ProcessorContextUtil.clearThreadLocalResponseList(getProcessorContext());
         }
         return linkNodeList;
-    }
-
-    public long getMaxExecuteMinutes() {
-        return maxExecuteMinutes;
-    }
-
-    public SearchProcessor setMaxExecuteMinutes(long maxExecuteMinutes) {
-        this.maxExecuteMinutes = maxExecuteMinutes;
-        return this;
     }
 
     public boolean isDuplicateRemoval() {
@@ -243,21 +192,6 @@ public class SearchProcessor {
         return this;
     }
 
-    /**
-     * @return the templateId
-     */
-    public String getTemplateId() {
-        return templateId;
-    }
-
-    /**
-     * @param templateId the templateId to set
-     */
-    public SearchProcessor setTemplateId(String templateId) {
-        this.templateId = templateId;
-        return this;
-    }
-
     public long getWaitIntervalMillis() {
         if (searchTemplateConfig == null || searchTemplateConfig.getWaitIntervalMillis() == null) {
             return waitIntervalMillis;
@@ -268,21 +202,6 @@ public class SearchProcessor {
 
     public void setWaitIntervalMillis(long waitIntervalMillis) {
         this.waitIntervalMillis = waitIntervalMillis;
-    }
-
-    /**
-     * @return the template
-     */
-    public String getTemplate() {
-        return searchTemplate;
-    }
-
-    /**
-     * @param template the template to set
-     */
-    public SearchProcessor setTemplate(String template) {
-        this.searchTemplate = template;
-        return this;
     }
 
     public SearchTemplateConfig getSearchTemplateConfig() {
@@ -302,13 +221,6 @@ public class SearchProcessor {
     }
 
     /**
-     * @return the resultDataHandler
-     */
-    public ResultDataHandler getResultDataHandler() {
-        return resultDataHandler;
-    }
-
-    /**
      * @param resultDataHandler the resultDataHandler to set
      */
     public SearchProcessor setResultDataHandler(ResultDataHandler resultDataHandler) {
@@ -321,21 +233,6 @@ public class SearchProcessor {
      */
     public List<Future<Object>> getFutureList() {
         return futureList;
-    }
-
-    /**
-     * @return the extractorActorRef
-     */
-    public WrappedActorRef getExtractorActorRef() {
-        return extractorActorRef;
-    }
-
-    /**
-     * @param extractorActorRef the extractorActorRef to set
-     */
-    public SearchProcessor setExtractorActorRef(WrappedActorRef extractorActorRef) {
-        this.extractorActorRef = extractorActorRef;
-        return this;
     }
 
     /**
@@ -353,21 +250,6 @@ public class SearchProcessor {
     }
 
     /**
-     * @return the duplicateChecker
-     */
-    public DuplicateChecker getDuplicateChecker() {
-        return duplicateChecker;
-    }
-
-    /**
-     * @param duplicateChecker the duplicateChecker to set
-     */
-    public SearchProcessor setDuplicateChecker(DuplicateChecker duplicateChecker) {
-        this.duplicateChecker = duplicateChecker;
-        return this;
-    }
-
-    /**
      * @return the crawlExecutorPool
      */
     public ExecutorService getCrawlExecutorPool(Integer threadCount) {
@@ -381,8 +263,7 @@ public class SearchProcessor {
     }
 
     private ThreadPoolExecutor initCrawlExecutorPool(int threadCount) {
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(threadCount, threadCount, 20L, java.util.concurrent.TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadFactoryImpl(Thread.currentThread().getName() + "_"));
-        return threadPoolExecutor;
+        return new ThreadPoolExecutor(threadCount, threadCount, 20L, java.util.concurrent.TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadFactoryImpl(Thread.currentThread().getName() + "_"));
     }
 
     public ExecutorService getCrawlExecutorPool() {
@@ -390,18 +271,72 @@ public class SearchProcessor {
     }
 
     /**
-     * @return the initLinkNodeList
+     * 设置默认超时. if <code>unit</code> is null,parse <code>timeout</code> as millis.
+     * @param timeout 超时时间
+     * @param unit    时间单位
      */
-    public List<LinkNode> getInitLinkNodeList() {
-        return initLinkNodeList;
+    public void setDefaultTimeout(long timeout, TimeUnit unit) {
+        if (unit != null) {
+            this.defaultTimeout = unit.toMillis(timeout);
+        } else {
+            this.defaultTimeout = timeout;
+        }
+        if (this.deadLine == -1) {
+            resetDeadLine(this.defaultTimeout);
+        }
     }
 
     /**
-     * @param initLinkNodeList the initLinkNodeList to set
+     * 设置超时. if <code>unit</code> is null,parse <code>timeout</code> as millis.
+     * @param timeout 超时时间
+     * @param unit    时间单位
      */
-    public SearchProcessor setInitLinkNodeList(List<LinkNode> initLinkNodeList) {
-        this.initLinkNodeList = initLinkNodeList;
-        return this;
+    public void setTimeout(long timeout, TimeUnit unit) {
+        if (unit != null && timeout > 0) {
+            this.timeout = unit.toMillis(timeout);
+        } else {
+            this.timeout = timeout;
+        }
+        resetDeadLine(this.timeout);
     }
 
+    private void resetDeadLine(long timeout) {
+        if (timeout > 0) {
+            this.deadLine = getStartTime() + timeout;
+        } else {
+            this.deadLine = 0;
+        }
+    }
+
+    public boolean isTimeout(long timeInMillis) {
+        if (deadLine <= 0) {
+            return false;
+        }
+
+        long now = timeInMillis;
+        if (now <= 0) {
+            now = System.currentTimeMillis();
+        }
+
+        return now > deadLine;
+    }
+
+    public Task getTask() {
+        return taskMessage.getTask();
+    }
+
+    public int getTaskId() {
+        return getTask().getId();
+    }
+
+    public long getStartTime() {
+        if (getTask().getStartedAt() == null) {
+            throw new IllegalArgumentException("Task may be created incorrect! The start time was lost!");
+        }
+        return getTask().getStartedAt().getTime();
+    }
+
+    public SearchProcessorContext getProcessorContext() {
+        return taskMessage.getContext();
+    }
 }

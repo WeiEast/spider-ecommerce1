@@ -143,8 +143,6 @@ public class Collector {
         ProcessorContextUtil.setTaskUnique(context, task.getId());
 
         TaskMessage taskMessage = new TaskMessage(task, context);
-        taskMessage.setTaskId(message.getTaskId());
-        taskMessage.setWebsiteName(message.getWebsiteName());
         taskMessage.setCollectorMessage(message);
         if (message instanceof TemplteAble) {
             taskMessage.setTemplateId(((TemplteAble) message).getTemplateId());

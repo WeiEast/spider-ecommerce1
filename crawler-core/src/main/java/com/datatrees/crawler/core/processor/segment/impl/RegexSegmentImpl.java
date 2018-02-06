@@ -12,11 +12,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.crawler.core.domain.config.segment.impl.RegexSegment;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.treefinance.toolkit.util.RegExp;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -35,8 +35,7 @@ public class RegexSegmentImpl extends SegmentBase<RegexSegment> {
         String regex = segment.getRegex();
 
         if (StringUtils.isNotEmpty(regex)) {
-            int index = segment.getGroupIndex();
-            List<String> regexResult = PatternUtils.getContents(content, regex, index);
+            List<String> regexResult = RegExp.findAll(content, regex, segment.getGroupIndex());
             result.addAll(regexResult);
         } else {
             result.add(content);

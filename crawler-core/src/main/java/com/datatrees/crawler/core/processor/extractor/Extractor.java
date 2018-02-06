@@ -23,7 +23,7 @@ import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.extractor.selector.ExtratorSelectorImpl;
+import com.datatrees.crawler.core.processor.extractor.selector.ExtractorSelectorImpl;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -52,7 +52,7 @@ public class Extractor {
         try {
             Preconditions.checkNotNull(input, "input should not be null!");
             ExtractorProcessorContext context = (ExtractorProcessorContext) RequestUtil.getProcessorContext(request);
-            ExtratorSelectorImpl processer = new ExtratorSelectorImpl(context.getWebsite().getExtractorConfig().getExtratorSelectorList());
+            ExtractorSelectorImpl processer = new ExtractorSelectorImpl(context.getWebsite().getExtractorConfig().getExtractorSelectors());
             processer.invoke(request, response);
             Collection<PageExtractor> list = ResponseUtil.getMatchedPageExtractorList(response);
             Set<String> blackSet = ResponseUtil.getBlackPageExtractorIdSet(response);

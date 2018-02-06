@@ -17,6 +17,7 @@ import com.datatrees.crawler.core.processor.decode.impl.BasicDecode;
 import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import com.datatrees.crawler.core.processor.decode.impl.StandardDecode;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,27 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2015年11月19日 下午12:05:28
  */
-public class DecodeOperationImpl extends Operation {
+public class DecodeOperationImpl extends Operation<DecodeOperation> {
 
     private static final Logger log = LoggerFactory.getLogger(DecodeOperationImpl.class);
+
+    @Override
+    public void process(Request request, Response response) throws Exception {
+        // get input
+        String orginal = OperationHelper.getStringInput(request, response);
+
+        DecodeOperation operation = getOperation();
+
+        String charSet = StringUtils.isEmpty(operation.getCharset()) ? (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil.getContentCharset(request)) : operation.getCharset();
+
+        DecodeType decodeType = operation.getDecodeType();
+
+        if (log.isDebugEnabled()) {
+            log.debug("EscapeOperation input: " + String.format("decodeType: %s", decodeType));
+        }
+        String result = decode(orginal, decodeType, charSet);
+        response.setOutPut(result);
+    }
 
     /**
      * @param original
@@ -59,23 +78,4 @@ public class DecodeOperationImpl extends Operation {
         }
         return result;
     }
-
-    @Override
-    public void process(Request request, Response response) throws Exception {
-        // get input
-        String orginal = getInput(request, response);
-
-        DecodeOperation operation = (DecodeOperation) getOperation();
-
-        String charSet = StringUtils.isEmpty(operation.getCharset()) ? (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil.getContentCharset(request)) : operation.getCharset();
-
-        DecodeType decodeType = operation.getDecodeType();
-
-        if (log.isDebugEnabled()) {
-            log.debug("EscapeOperation input: " + String.format("decodeType: %s", decodeType));
-        }
-        String result = decode(orginal, decodeType, charSet);
-        response.setOutPut(result);
-    }
-
 }
