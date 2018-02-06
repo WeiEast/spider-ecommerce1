@@ -170,7 +170,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                             lastLoginProcessId = TaskUtils.isLastLoginProcessId(taskId, processId);
                             TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, qrStatus);
                         }
-                        logger.warn("thread will close qrStatus={},expire={},isLastLoginProcessId={}", qrStatus, expire, lastLoginProcessId);
+                        logger.warn("thread will close taskId={},qrStatus={},expire={},isLastLoginProcessId={}", taskId, qrStatus, expire,
+                                lastLoginProcessId);
                         if (StringUtils.equals(qrStatus, QRStatus.SUCCESS) && TaskUtils.isLastLoginProcessId(taskId, processId)) {
 
                             response = TaskHttpClient.create(param, RequestType.GET)

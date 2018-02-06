@@ -40,23 +40,33 @@ import org.springframework.stereotype.Service;
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
+
     private LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
+
     @Resource
     private ClassLoaderService                            classLoaderService;
+
     @Resource
     private RedisService                                  redisService;
+
     @Resource
     private MessageService                                messageService;
+
     @Resource
     private MonitorService                                monitorService;
+
     @Resource
     private WebsiteConfigService                          websiteConfigService;
+
     @Resource
     private WebsiteGroupService                           websiteGroupService;
+
     @Resource
     private WebsiteOperatorService                        websiteOperatorService;
+
     @Resource
     private ThreadPoolService                             threadPoolService;
+
     @Resource
     private ProxyService                                  proxyService;
 
