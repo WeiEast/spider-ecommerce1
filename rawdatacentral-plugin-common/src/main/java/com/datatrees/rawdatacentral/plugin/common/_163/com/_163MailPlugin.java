@@ -160,13 +160,17 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                         logger.info("refresh qr code success,taskId={},websiteName={}", taskId, websiteName);
 
                         String qrStatus = getScandStatus(param, uuid);
-                        while (!StringUtils.equals(qrStatus, QRStatus.SUCCESS) && !StringUtils.equals(qrStatus, QRStatus.EXPIRE) &&
-                                !ProcessResultUtils.processExpire(taskId, processId) && TaskUtils.isLastLoginProcessId(taskId, processId)) {
+                        boolean expire = ProcessResultUtils.processExpire(taskId, processId);
+                        boolean lastLoginProcessId = TaskUtils.isLastLoginProcessId(taskId, processId);
+                        while ((StringUtils.equals(qrStatus, QRStatus.WAITING) || StringUtils.equals(qrStatus, QRStatus.SCANNED)) && !expire &&
+                                lastLoginProcessId) {
                             TimeUnit.SECONDS.sleep(3);
                             qrStatus = getScandStatus(param, uuid);
+                            expire = ProcessResultUtils.processExpire(taskId, processId);
+                            lastLoginProcessId = TaskUtils.isLastLoginProcessId(taskId, processId);
                             TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, qrStatus);
                         }
-                        qrStatus = getScandStatus(param, uuid);
+                        logger.warn("thread will close qrStatus={},expire={},isLastLoginProcessId={}", qrStatus, expire, lastLoginProcessId);
                         if (StringUtils.equals(qrStatus, QRStatus.SUCCESS) && TaskUtils.isLastLoginProcessId(taskId, processId)) {
 
                             response = TaskHttpClient.create(param, RequestType.GET)
