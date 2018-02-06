@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
@@ -63,6 +64,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     private ThreadPoolService                             threadPoolService;
     @Resource
     private ProxyProvider                                 proxyProvider;
+    private static final String OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -190,6 +192,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
         }
         monitorService.sendTaskLog(taskId, websiteName, log, result);
+
+        result = checkHttpResult(result, param);
         return result;
     }
 
@@ -230,6 +234,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         String log = TemplateUtils.format("{}-->发送短信验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
+
+        result = checkHttpResult(result, param);
         return result;
     }
 
@@ -254,6 +260,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         String log = TemplateUtils.format("{}-->校验图片验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(taskId, websiteName, log, result);
+
+        result = checkHttpResult(result, param);
         return result;
     }
 
@@ -300,6 +308,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
             sendSubmitSuccessMessage(pluginService, result, param, startTime);
+
+            result = checkHttpResult(result, param);
             return result;
         } finally {
             long endTime = System.currentTimeMillis();
@@ -466,5 +476,31 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             logger.info("waitInitSuccess error taskId={}", taskId, e);
             return false;
         }
+    }
+
+    private HttpResult<Map<String, Object>> checkHttpResult(HttpResult<Map<String, Object>> result, OperatorParam param) {
+        HttpResult<Map<String, Object>> newResult = result;
+        try {
+            if (!newResult.getStatus()) {
+                String groupCode = param.getGroupCode();
+                String property = PropertiesConfiguration.getInstance().get(OPERATOR_FAIL_USER_MAX);
+                int maxFailUser = 5;
+                if (StringUtils.isNotBlank(property)) {
+                    maxFailUser = Integer.parseInt(property);
+                }
+                boolean b = WebsiteUtils.isNormal(groupCode, maxFailUser);
+                if (!b) {
+                    if (StringUtils.equals(param.getFormType(), FormType.LOGIN)) {
+                        newResult.setResponseCode(ErrorCode.UNDER_MAINTENANCE.getErrorCode());
+                    }
+                    newResult.setMessage(ErrorCode.UNDER_MAINTENANCE.getErrorMsg());
+                }
+            }
+        } catch (Exception e) {
+            logger.error("检查HttpResult出现异常，返回原result", e);
+            return result;
+        }
+        return newResult;
+
     }
 }
