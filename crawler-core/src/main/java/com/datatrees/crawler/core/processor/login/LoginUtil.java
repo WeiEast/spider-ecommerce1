@@ -11,7 +11,6 @@ import com.datatrees.common.protocol.http.HTTPConstants;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.CookieFormater;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.login.LoginCheckConfig;
 import com.datatrees.crawler.core.domain.config.login.LoginConfig;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
@@ -22,6 +21,7 @@ import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -135,8 +135,7 @@ public class LoginUtil {
         return false;
     }
 
-    private boolean checkLoginResult(ProtocolOutput out, LoginCheckConfig loginCheckConfig,
-            SearchProcessorContext context) throws ResultEmptyException {
+    private boolean checkLoginResult(ProtocolOutput out, LoginCheckConfig loginCheckConfig, SearchProcessorContext context) throws ResultEmptyException {
         if (out != null && out.getContent() != null) {
             String responseBody = out.getContent().getContentAsString();
 
@@ -180,21 +179,20 @@ public class LoginUtil {
 
     private boolean isSuccess(String responseBody, SearchProcessorContext context, String successPattern) {
         if (successPattern != null) {
-            if (PatternUtils.match(successPattern, responseBody)) {
+            if (RegExp.find(responseBody, successPattern)) {
                 return true;
             }
 
             String cookie = ProcessorContextUtil.getCookieString(context);
-            if (cookie != null && PatternUtils.match(successPattern, cookie)) {
-                return true;
-            }
+
+            return cookie != null && RegExp.find(cookie, successPattern);
         }
 
         return false;
     }
 
     private boolean isFailure(String responseBody, String failPattern) {
-        return failPattern != null && PatternUtils.match(failPattern, responseBody);
+        return failPattern != null && RegExp.find(responseBody, failPattern);
     }
 
 }

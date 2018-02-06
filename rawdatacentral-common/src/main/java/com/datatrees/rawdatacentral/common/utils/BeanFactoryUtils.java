@@ -12,8 +12,7 @@ public class BeanFactoryUtils implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
     public static <T> T getBean(Class<T> cls) {
-        T bean = applicationContext.getBean(cls);
-        return bean;
+        return applicationContext.getBean(cls);
     }
 
     @Override

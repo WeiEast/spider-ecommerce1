@@ -67,7 +67,8 @@ public class TaskHttpServiceImpl extends ServiceBase {
         logger.info("task http service do taskId={},websiteName={},linkUrl={},status={}", taskId, websiteName, linkUrl, invoke.getStatusCode());
 
         String content = invoke.getPageContent();
-        ResponseUtil.setResponseContent(response, content);
+        response.setOutPut(content);
+
         ResponseUtil.setResponseStatus(response, Status.VISIT_SUCCESS);
         RequestUtil.setContent(request, content);
 

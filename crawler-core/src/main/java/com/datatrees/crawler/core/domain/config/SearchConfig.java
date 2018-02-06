@@ -12,9 +12,8 @@ import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.domain.config.service.impl.GrabService;
-import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.domain.config.service.impl.PluginService;
-import com.datatrees.crawler.core.domain.config.service.impl.WebRobotService;
+import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Path;
@@ -100,8 +99,7 @@ public class SearchConfig extends AbstractWebsiteConfig {
         return Collections.unmodifiableList(serviceList);
     }
 
-    @Node(value = "service-definition/service", types = {WebRobotService.class, PluginService.class, GrabService.class, TaskHttpService.class}, registered =
-            true)
+    @Node(value = "service-definition/service", types = {PluginService.class, GrabService.class, TaskHttpService.class}, registered = true)
     public void setServiceList(AbstractService service) {
         this.serviceList.add(service);
     }

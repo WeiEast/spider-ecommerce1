@@ -14,50 +14,24 @@ import com.datatrees.common.pipeline.Valve;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
 import com.datatrees.crawler.core.processor.common.Processor;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.OperationException;
 import com.google.common.base.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 1:45:54 PM
  */
-public abstract class Operation extends Processor {
+public abstract class Operation<T extends AbstractOperation> extends Processor {
 
-    private static final Logger            log       = LoggerFactory.getLogger(Operation.class);
-    protected            AbstractOperation operation = null;
+    protected            T operation = null;
     protected            FieldExtractor    extractor = null;
 
-    /**
-     * @param request
-     * @param response
-     * @return
-     */
-    public static String getInput(Request request, Response response) {
-        String result = ResponseUtil.getResponseContent(response);
-        if (result == null) {
-            result = RequestUtil.getContent(request);
-        }
-        return result;
-    }
-
-    public static Object getInputObject(Request request, Response response) {
-        Object result = response.getOutPut();
-        if (result == null) {
-            result = request.getInput();
-        }
-        return result;
-    }
-
-    public AbstractOperation getOperation() {
+    public T getOperation() {
         return operation;
     }
 
-    public void setOperation(AbstractOperation operation) {
+    public void setOperation(T operation) {
         this.operation = operation;
     }
 
@@ -69,11 +43,6 @@ public abstract class Operation extends Processor {
         this.extractor = extractor;
     }
 
-    /**
-     * @param request
-     * @param response
-     * @exception Exception
-     */
     protected void postProcess(Request request, Response response) throws Exception {
         AbstractOperation nextOperation = null;
         try {
@@ -94,14 +63,11 @@ public abstract class Operation extends Processor {
 
     }
 
-    /**
-     * @param request
-     * @param response
-     */
     protected void preProcess(Request request, Response response) throws Exception {
         Preconditions.checkNotNull(operation, "operation should not be empty!");
         Preconditions.checkNotNull(request.getInput(), "input content should not be empty!");
     }
 
     public abstract void process(Request request, Response response) throws Exception;
+
 }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.extractor.ExtratorSelector;
+import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Path;
@@ -31,43 +31,41 @@ public class ExtractorConfig extends AbstractWebsiteConfig {
     /**
      *
      */
-    private static final long serialVersionUID = 7882181962225972799L;
-    private List<ExtratorSelector> extratorSelectorList;
-    private List<PageExtractor>    pageExtractorList;
+    private static final long       serialVersionUID   = 7882181962225972799L;
+    private List<ExtractorSelector> extractorSelectors = new ArrayList<>();
+    private List<PageExtractor>     pageExtractors     = new ArrayList<>();
 
     public ExtractorConfig() {
         super();
-        pageExtractorList = new ArrayList<PageExtractor>();
-        extratorSelectorList = new ArrayList<ExtratorSelector>();
     }
 
     @Tag("page-extractor-definition")
-    public List<PageExtractor> getPageExtractorList() {
-        return Collections.unmodifiableList(pageExtractorList);
+    public List<PageExtractor> getPageExtractors() {
+        return Collections.unmodifiableList(pageExtractors);
     }
 
     @Node(value = "page-extractor-definition/page-extractor", registered = true)
-    public void setPageExtractorList(PageExtractor pageExtractor) {
-        this.pageExtractorList.add(pageExtractor);
+    public void setPageExtractors(PageExtractor pageExtractor) {
+        this.pageExtractors.add(pageExtractor);
     }
 
     @Tag("extrator-selectors")
-    public List<ExtratorSelector> getExtratorSelectorList() {
-        return Collections.unmodifiableList(extratorSelectorList);
+    public List<ExtractorSelector> getExtractorSelectors() {
+        return Collections.unmodifiableList(extractorSelectors);
     }
 
     @Node("extrator-selectors/selector")
-    public void setExtratorSelectorList(ExtratorSelector extratorSelector) {
-        this.extratorSelectorList.add(extratorSelector);
+    public void setExtractorSelectors(ExtractorSelector extractorSelector) {
+        this.extractorSelectors.add(extractorSelector);
     }
 
     public void clone(ExtractorConfig cloneFrom) {
         super.clone(cloneFrom);
-        if (CollectionUtils.isEmpty(extratorSelectorList)) {
-            this.extratorSelectorList.addAll(cloneFrom.getExtratorSelectorList());
+        if (CollectionUtils.isEmpty(extractorSelectors)) {
+            this.extractorSelectors.addAll(cloneFrom.getExtractorSelectors());
         }
-        if (CollectionUtils.isEmpty(pageExtractorList)) {
-            this.pageExtractorList.addAll(cloneFrom.getPageExtractorList());
+        if (CollectionUtils.isEmpty(pageExtractors)) {
+            this.pageExtractors.addAll(cloneFrom.getPageExtractors());
         }
     }
 }

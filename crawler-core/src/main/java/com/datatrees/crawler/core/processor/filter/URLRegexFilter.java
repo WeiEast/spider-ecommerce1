@@ -11,9 +11,9 @@ package com.datatrees.crawler.core.processor.filter;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.domain.config.filter.FilterType;
 import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
+import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -23,9 +23,6 @@ import org.apache.commons.lang.StringUtils;
  */
 public class URLRegexFilter extends RegexURLFilterBase {
 
-    /**
-     * @param filternew
-     */
     public URLRegexFilter(List<UrlFilter> filters) {
         super(filters);
     }
@@ -45,7 +42,7 @@ public class URLRegexFilter extends RegexURLFilterBase {
 
         Rule(boolean sign, String regex) {
             super(sign, regex);
-            pattern = PatternUtils.compile(regex);
+            pattern = RegExp.compile(regex);
         }
 
         protected boolean match(String url) {
