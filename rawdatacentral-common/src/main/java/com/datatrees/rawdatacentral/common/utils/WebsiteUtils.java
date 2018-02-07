@@ -37,7 +37,7 @@ public class WebsiteUtils {
      * @return
      */
     public static boolean isNormal(String nickGroupCode, Integer maxFailUser) {
-        String keyword = RedisKeyPrefixEnum.NICK_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(nickGroupCode));
+        String keyword = RedisKeyPrefixEnum.WEBSITE_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(nickGroupCode));
         Set<String> keySet = RedisUtils.keys(keyword + "*");
         if (keySet.isEmpty()) {
             logger.error("nickGroupCode not found,nickGroupCode={}", nickGroupCode);
@@ -66,7 +66,7 @@ public class WebsiteUtils {
      * @return
      */
     public static boolean isSteadied(String nickGroupCode, Integer maxFailUser) {
-        String keyword = RedisKeyPrefixEnum.NICK_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(nickGroupCode));
+        String keyword = RedisKeyPrefixEnum.WEBSITE_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(nickGroupCode));
         Set<String> keySet = RedisUtils.keys(keyword + "*");
         if (keySet.isEmpty()) {
             logger.error("nickGroupCode not found,nickGroupCode={}", nickGroupCode);
@@ -435,7 +435,7 @@ public class WebsiteUtils {
     }
 
     public static String getRedisKeyForWebsiteGroupLastInfo(String websiteName, String nickGroupCode) {
-        return RedisKeyPrefixEnum.WEBSITE_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(websiteName), nickGroupCode);
+        return RedisKeyPrefixEnum.WEBSITE_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(nickGroupCode), websiteName);
     }
 
     public static String getRedisKeyForNickGroupLastInfo(String nickGroupCode) {
