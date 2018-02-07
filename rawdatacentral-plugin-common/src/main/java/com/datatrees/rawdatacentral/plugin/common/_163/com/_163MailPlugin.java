@@ -198,7 +198,9 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                             return;
                         }
                         logger.error("current login process timeout,will close,taskId={},websiteName={}", taskId, websiteName);
-                        TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.EXPIRE);
+                        if (TaskUtils.isLastLoginProcessId(taskId, processId)) {
+                            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.EXPIRE);
+                        }
                         return;
                     } catch (Throwable e) {
                         ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.REFESH_QR_CODE_ERROR));
@@ -221,7 +223,12 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
         if (StringUtils.isNoneBlank(lastProcessId)) {
             ProcessResultUtils.setProcessExpire(param.getTaskId(), Long.valueOf(lastProcessId), 2, TimeUnit.MINUTES);
         }
-        return new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
+        qrStatus = StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING;
+        if (StringUtils.equals(qrStatus, QRStatus.EXPIRE)) {
+            logger.warn("query qr status expire taskId={}", param.getTaskId());
+        }
+
+        return new HttpResult<>().success();
     }
 
     private String getScandStatus(CommonPluginParam param, String uuid) {
