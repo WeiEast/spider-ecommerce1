@@ -9,10 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
-import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -31,7 +28,6 @@ import com.datatrees.rawdatacentral.service.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,25 +40,35 @@ import org.springframework.stereotype.Service;
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
+
     private LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
+
     @Resource
     private ClassLoaderService                            classLoaderService;
+
     @Resource
     private RedisService                                  redisService;
+
     @Resource
     private MessageService                                messageService;
+
     @Resource
     private MonitorService                                monitorService;
+
     @Resource
     private WebsiteConfigService                          websiteConfigService;
+
     @Resource
     private WebsiteGroupService                           websiteGroupService;
+
     @Resource
     private WebsiteOperatorService                        websiteOperatorService;
+
     @Resource
     private ThreadPoolService                             threadPoolService;
+
     @Resource
-    private ProxyProvider                                 proxyProvider;
+    private ProxyService                                  proxyService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -82,13 +88,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         //清理共享信息
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
-                        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
-                        try {
-                            proxyProvider.release(taskId);
-                        } catch (Exception e) {
-                            logger.error("proxyProvider release error taskId={}", taskId, e);
-                        }
-                        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
+
+                        // 清理与任务绑定的代理
+                        proxyService.clear(taskId);
+
                         try {
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));

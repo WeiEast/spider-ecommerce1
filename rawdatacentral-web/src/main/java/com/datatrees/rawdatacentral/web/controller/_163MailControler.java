@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
-import com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiFor163;
+import com.datatrees.rawdatacentral.api.mail._163.MailServiceApiFor163;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
