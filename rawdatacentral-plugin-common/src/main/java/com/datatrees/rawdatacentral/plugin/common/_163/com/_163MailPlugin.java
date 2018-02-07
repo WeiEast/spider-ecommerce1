@@ -227,8 +227,7 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
         if (StringUtils.equals(qrStatus, QRStatus.EXPIRE)) {
             logger.warn("query qr status expire taskId={}", param.getTaskId());
         }
-
-        return new HttpResult<>().success();
+        return new HttpResult<>().success(qrStatus);
     }
 
     private String getScandStatus(CommonPluginParam param, String uuid) {
