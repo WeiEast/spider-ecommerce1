@@ -53,6 +53,17 @@ public class RedisUtils {
         }
     }
 
+    /**
+     * 模糊匹配redis的key
+     * @param pattern 模糊key  例：redis.key*
+     * @return
+     */
+    public static Set<String> keys(final String pattern) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.keys(pattern);
+        }
+    }
+
     public static Boolean exists(final String key) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.exists(key);
