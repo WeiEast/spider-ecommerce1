@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.collector.utils.OperatorUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
@@ -65,7 +66,13 @@ public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
         if (!result.getStatus()) {
             logger.warn("登陆后-->处理-->失败,msg={},result={}", msg, JSON.toJSONString(result));
             monitorService.sendTaskLog(taskId, websiteName, "登陆后-->处理-->失败", result);
-            messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), null);
+            String newRemark = null;
+            try {
+                newRemark = OperatorUtils.getRemarkForTaskFail(taskId);
+            } catch (Exception e) {
+                logger.info("更新remark失败，taskId={}", taskId, e);
+            }
+            messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), newRemark);
             monitorService.sendTaskCompleteMsg(taskId, websiteName, ErrorCode.LOGIN_FAIL.getErrorCode(), ErrorCode.LOGIN_FAIL.getErrorMsg());
             return true;
         }
@@ -80,13 +87,25 @@ public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
                 logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
             } else {
                 logger.warn("登陆后-->处理-->失败,taskId={},websiteName={},result={}", taskId, websiteName, JSON.toJSONString(result));
-                messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), null);
+                String newRemark = null;
+                try {
+                    newRemark = OperatorUtils.getRemarkForTaskFail(taskId);
+                } catch (Exception e) {
+                    logger.info("更新remark失败，taskId={}", taskId, e);
+                }
+                messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), newRemark);
                 monitorService.sendTaskCompleteMsg(taskId, websiteName, ErrorCode.LOGIN_FAIL.getErrorCode(), ErrorCode.LOGIN_FAIL.getErrorMsg());
             }
         } catch (Throwable e) {
             logger.error("登陆后-->处理-->失败,taskId={},websiteName={}", taskId, websiteName, e);
             monitorService.sendTaskLog(taskId, websiteName, "登陆后-->处理-->失败");
-            messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), null);
+            String newRemark = null;
+            try {
+                newRemark = OperatorUtils.getRemarkForTaskFail(taskId);
+            } catch (Exception ee) {
+                logger.info("更新remark失败，taskId={}", taskId, ee);
+            }
+            messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), newRemark);
             monitorService.sendTaskCompleteMsg(taskId, websiteName, ErrorCode.LOGIN_FAIL.getErrorCode(), ErrorCode.LOGIN_FAIL.getErrorMsg());
         }
         return true;
