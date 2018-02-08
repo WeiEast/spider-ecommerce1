@@ -47,7 +47,8 @@ public enum RedisKeyPrefixEnum {
     NICK_GROUP_DAY_LIST("nick.group.day.list", 3, TimeUnit.DAYS, "归属地信息统计"),
     WEBSITE_GROUP_DAY_LIST("website.group.day.list", 3, TimeUnit.DAYS, "站点归属地信息统计"),
     WEBSITE_GROUP_MONITOR_ID("website.group.monitor.id", 3, TimeUnit.DAYS, "website_group_monitor主键"),
-    NICK_GROUP_MONITOR_ID("nick.group.monitor.id", 3, TimeUnit.DAYS, "group_monitor主键"),;
+    NICK_GROUP_MONITOR_ID("nick.group.monitor.id", 3, TimeUnit.DAYS, "group_monitor主键"),
+    TASK_INIT_NICK_GROUP_CODE("task.init.nick.group.code", 30, TimeUnit.MINUTES, "任务初始化时的groupCode"),;
     /**
      * 备注
      */
