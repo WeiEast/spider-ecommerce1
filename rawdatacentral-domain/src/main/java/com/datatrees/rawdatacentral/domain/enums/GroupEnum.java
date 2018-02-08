@@ -14,6 +14,7 @@ package com.datatrees.rawdatacentral.domain.enums;
  */
 public enum GroupEnum {
 
+    MAIL_SINA_H5("MAIL_SINA_H5", "新浪邮箱H5", WebsiteType.MAIL, "sina.com.h5"),
     MAIL_QQ_H5("MAIL_QQ_H5", "QQ邮箱H5", WebsiteType.MAIL, "qq.com.h5"),
     MAIL_163_H5("MAIL_163_H5", "163邮箱H5", WebsiteType.MAIL, "163.com.h5"),
     MAIL_QQ("MAIL_QQ", "QQ邮箱", WebsiteType.MAIL, "qq.com"),

@@ -31,10 +31,12 @@ import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.page.DummyPage;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,9 +167,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return cookieConf;
     }
 
-    public SearchConfig getSearchConfig() {
-        return website.getSearchConfig();
-    }
 
     public ProxyManager getProxyManager() {
         return proxyManager;
@@ -361,7 +360,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
     public boolean needDecoder() {
         boolean result = false;
-        Properties properties = this.getSearchConfig().getProperties();
+        Properties properties = this.getSearchProperties();
         if (properties != null) {
             UnicodeMode unicodeMode = properties.getUnicodeMode();
             if (unicodeMode != null) {
@@ -372,27 +371,27 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     }
 
     public String getHttpClientType() {
-        Properties properties = this.getSearchConfig().getProperties();
+        Properties properties = this.getSearchProperties();
         if (properties != null) {
             return properties.getHttpClientType();
         }
         return null;
     }
 
+    /**
+     * @see #isRedirectUriEscaped() ()
+     */
+    @Deprecated
     public Boolean getRedirectUriEscaped() {
-        Properties properties = this.getSearchConfig().getProperties();
-        if (properties != null) {
-            return properties.getRedirectUriEscaped();
-        }
-        return null;
+        return isRedirectUriEscaped();
     }
 
+    /**
+     * @see #isAllowCircularRedirects()
+     */
+    @Deprecated
     public Boolean getAllowCircularRedirects() {
-        Properties properties = this.getSearchConfig().getProperties();
-        if (properties != null) {
-            return properties.getAllowCircularRedirects();
-        }
-        return null;
+        return isAllowCircularRedirects();
     }
 
     /**
@@ -461,4 +460,44 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return null;
     }
 
+    /**
+     * @return search config
+     */
+    public SearchConfig getSearchConfig() {
+        return getWebsite().getSearchConfig();
+    }
+
+    /**
+     * @return common properties for searching
+     */
+    public Properties getSearchProperties() {
+        return getSearchConfig() != null ? getSearchConfig().getProperties() : null;
+    }
+
+    /**
+     * @return immutable list of search template configuration.
+     */
+    public List<SearchTemplateConfig> getSearchTemplates() {
+        SearchConfig searchConfig = getSearchConfig();
+        if (searchConfig != null) {
+            return ImmutableList.copyOf(searchConfig.getSearchTemplateConfigList());
+        }
+
+        return Collections.emptyList();
+    }
+
+    public UnicodeMode getUnicodeMode() {
+        Properties properties = getSearchProperties();
+        return properties != null ? properties.getUnicodeMode() : null;
+    }
+
+    public boolean isRedirectUriEscaped() {
+        Properties properties = this.getSearchProperties();
+        return properties != null && BooleanUtils.isTrue(properties.getRedirectUriEscaped());
+    }
+
+    public boolean isAllowCircularRedirects() {
+        Properties properties = this.getSearchProperties();
+        return properties != null && BooleanUtils.isTrue(properties.getAllowCircularRedirects());
+    }
 }

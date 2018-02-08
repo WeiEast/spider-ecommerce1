@@ -20,10 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
-import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
@@ -40,6 +37,7 @@ import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -61,6 +59,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private CrawlerOperatorService crawlerOperatorService;
     @Resource
     private MonitorService         monitorService;
+    @Autowired
+    private ProxyService           proxyService;
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -286,7 +286,9 @@ public class CrawlerServiceImpl implements CrawlerService {
         sendDirective.fill(DirectiveRedisCode.CANCEL, directiveData);
         redisService.saveDirectiveResult(sendDirective);
 
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
+        // 清理与任务绑定的代理
+        proxyService.clear(taskId);
+
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
         logger.info("cancel taskId={}", taskId);
         result.setData(false);
