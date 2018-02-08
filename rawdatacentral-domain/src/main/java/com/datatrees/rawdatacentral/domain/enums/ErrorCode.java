@@ -58,7 +58,9 @@ public enum ErrorCode {
     NO_RESULT_ERROR_CODE(-510, "There is no result"),
     NOT_EMPTY_ERROR_CODE(-512, "Field not empty"),
     RESPONSE_EMPTY_ERROR_CODE(-514, "Response not empty"),
-    UNKNOWN_REASON(-520, "Unknown Reason.");
+    UNKNOWN_REASON(-520, "Unknown Reason."),
+    UNDER_MAINTENANCE(-606, "当前运营商正在维护中，请稍后重试");
+
     private int    errorCode;
     private String errorMessage;
 

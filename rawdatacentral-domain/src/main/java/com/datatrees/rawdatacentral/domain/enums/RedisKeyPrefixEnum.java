@@ -42,28 +42,30 @@ public enum RedisKeyPrefixEnum {
     PLUGIN_DATA("plugin.data", 365, TimeUnit.DAYS, "插件版本"),
     PROCESS_START_TIME("process.start.time", 1, TimeUnit.HOURS, "处理开始时间"),
     PROCESS_EXPIRE("process.expire", 1, TimeUnit.HOURS, "process超时时间"),
-    PROCESS_END_TIME("process.end.time", 1, TimeUnit.HOURS, "处理开始时间"),;
-
+    PROCESS_END_TIME("process.end.time", 1, TimeUnit.HOURS, "处理开始时间"),
+    NICK_GROUP_LAST_INFO("nick.group.last.info", 365, TimeUnit.DAYS, "归属地信息"),
+    WEBSITE_GROUP_LAST_INFO("website.group.last.info", 365, TimeUnit.DAYS, "站点归属地信息"),
+    NICK_GROUP_DAY_LIST("nick.group.day.list", 3, TimeUnit.DAYS, "归属地信息统计"),
+    WEBSITE_GROUP_DAY_LIST("website.group.day.list", 3, TimeUnit.DAYS, "站点归属地信息统计"),
+    WEBSITE_GROUP_MONITOR_ID("website.group.monitor.id", 3, TimeUnit.DAYS, "website_group_monitor主键"),
+    NICK_GROUP_MONITOR_ID("nick.group.monitor.id", 3, TimeUnit.DAYS, "group_monitor主键"),
+    TASK_INIT_NICK_GROUP_CODE("task.init.nick.group.code", 30, TimeUnit.MINUTES, "任务初始化时的groupCode"),;
     /**
      * 备注
      */
     private final String remark;
-
     /**
      * 分隔符
      */
     private final String separator = ".";
-
     /**
      * 前缀
      */
     private String   prefix;
-
     /**
      * 超时时间
      */
     private int      timeout;
-
     /**
      * 时间单位
      */
