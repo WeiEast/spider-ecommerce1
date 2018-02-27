@@ -28,6 +28,8 @@
                    ref="mailServiceApiFor163Impl"/>
     <dubbo:service interface="com.datatrees.rawdatacentral.api.mail.sina.MailServiceApiForSina"
                    ref="mailServiceApiForSinaImpl"/>
+    <dubbo:service interface="com.datatrees.rawdatacentral.api.mail.exmail_qq.MailServiceApiForExMailQQ"
+                   ref="mailServiceApiForExMailQQImpl"/>
 
 </beans>
 
