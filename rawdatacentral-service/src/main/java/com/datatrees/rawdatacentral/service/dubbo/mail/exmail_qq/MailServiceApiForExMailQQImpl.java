@@ -9,12 +9,14 @@ import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 /**
  * Created by zhangyanjia on 2018/2/26.
  */
+@Service
 public class MailServiceApiForExMailQQImpl implements MailServiceApiForExMailQQ {
 
     private static final Logger logger = LoggerFactory.getLogger(MailServiceApiForExMailQQImpl.class);
