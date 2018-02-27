@@ -10,6 +10,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
@@ -18,9 +19,11 @@ import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.QRStatus;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -247,17 +250,21 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         currentUrl = driver.getCurrentUrl();
                         String currentLoginProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
                         if (isLoginSuccess(currentUrl) && TaskUtils.isLastLoginProcessId(taskId, processResult.getProcessId())) {
-                            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.SUCCESS);
                             currentUrl = "http://w.mail.qq.com";
                             driver.switchTo().defaultContent();
                             driver.get(currentUrl);
                             TimeUnit.SECONDS.sleep(3);
                             currentUrl = driver.getCurrentUrl();
                             String cookieString = SeleniumUtils.getCookieString(driver);
+                            String accountNo = PatternUtils.group(cookieString, "qqmail_alias=([^;]+);", 1);
+                            String redisKey = RedisKeyPrefixEnum.TASK_INFO_ACCOUNT_NO.getRedisKey(taskId);
+                            RedisUtils.setnx(redisKey, accountNo);
+                            //为保障网关能拿到accountNo，在存储accountNo后再更新登录成功状态
+                            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.SUCCESS);
                             LoginMessage loginMessage = new LoginMessage();
                             loginMessage.setTaskId(taskId);
                             loginMessage.setWebsiteName(websiteName);
-                            loginMessage.setAccountNo(null);
+                            loginMessage.setAccountNo(accountNo);
                             loginMessage.setEndUrl(currentUrl);
                             loginMessage.setCookie(cookieString);
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
