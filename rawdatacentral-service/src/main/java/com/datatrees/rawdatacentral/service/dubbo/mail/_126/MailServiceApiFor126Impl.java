@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.service.dubbo.mail._126;
 
 import javax.annotation.Resource;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.mail._126.MailServiceApiFor126;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
  * User: yand
  * Date: 2018/2/27
  */
+@Service
 public class MailServiceApiFor126Impl implements MailServiceApiFor126 {
 
     private static final Logger logger = LoggerFactory.getLogger(MailServiceApiFor126Impl.class);
