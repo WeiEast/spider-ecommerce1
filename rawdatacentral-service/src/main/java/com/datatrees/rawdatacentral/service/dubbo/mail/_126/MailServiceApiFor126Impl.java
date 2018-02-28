@@ -2,7 +2,6 @@ package com.datatrees.rawdatacentral.service.dubbo.mail._126;
 
 import javax.annotation.Resource;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.mail._126.MailServiceApiFor126;
@@ -15,6 +14,7 @@ import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * User: yand
