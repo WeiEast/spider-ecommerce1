@@ -23,7 +23,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -40,6 +42,22 @@ public class QQExMailPlugin implements CommonPluginService {
     private static final Pattern CURRENTURL_RESULT_PATTERN = PatternUtils.compile("showMsg\\(\"(\\w+)\"\\);");
 
     private static final Pattern ISPICCODE_RESULT_PATTERN = PatternUtils.compile("var bAlwaysShowVerifyCode = \\((\\w+) == true\\);");
+
+    private static final Pattern URLHEAD_RESULT_PATTERN = PatternUtils.compile("var urlHead=\"(\\S+)\";");
+
+    private static final Pattern SUCCESS_TARGETURL_RESULT_PATTERN = PatternUtils.compile("targetUrl = urlHead \\+ \"(\\S+)\"");
+
+    private static final Pattern SUCCESS_TARGETURL_PARAM_RESULT_PATTERN = PatternUtils.compile("targetUrl\\+=\"(\\S+)\"");
+
+    //提示正在登陆腾讯企业邮箱，响应较少的
+    private static final Pattern FAIL_TARGETURL_RESULT_PATTERN = PatternUtils.compile("targetUrl\\s*=\\s*urlHead\\s*\\+\\s*\"([^;]+)\";");
+    private static final Pattern FAIL_TARGETURL_PARAM_RESULT_PATTERN = PatternUtils.compile("targetUrl\\s*\\+=\\s*\\s*\"([^;]+)\";");
+
+    //提示腾讯企业邮箱，响应较多的FAIL__RESULT_PATTERN
+    private static final Pattern FAIL__RESULT_PATTERN = PatternUtils.compile("getTop\\(\\)\\.location\\.href=\"([^;]+)\"<");
+
+
+    private static final String URL = "https://exmail.qq.com";
 
     private static final String MAIN_URL = "https://exmail.qq.com/login";
 
@@ -106,6 +124,7 @@ public class QQExMailPlugin implements CommonPluginService {
             String passWord = param.getPassword();
             String publicTs = RedisUtils.get("exmail_publicTs_" + taskId);
             String p = EncryptExMailQQUtils.getExMailQQSP(publicTs, passWord);
+            p = URLEncoder.encode(p, "UTF-8");
             if (StringUtils.isEmpty(p)) {
                 logger.error("exmailqq login su or sp encrypt error! username : " + userName + " password " + passWord);
                 map.put("directive", "login_fail");
@@ -125,8 +144,14 @@ public class QQExMailPlugin implements CommonPluginService {
                 data = TemplateUtils.format(templateData, domain, System.currentTimeMillis(), uin, p, publicTs, userName, param.getPicCode());
             }
             response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.POST, "").setFullUrl(LOGIN_URL).setRequestBody(data).invoke();
-            String currentUrl = response.getRedirectUrl();
-            if (StringUtils.startsWith(currentUrl, "https://exmail.qq.com/cgi-bin/frame_html")) {
+            String pageContent = response.getPageContent();
+            if (pageContent.contains("正在登录腾讯企业邮箱") && pageContent.contains("\"frame_html?sid=")) {
+                String urlHead = PatternUtils.group(pageContent, URLHEAD_RESULT_PATTERN, 1);
+                String targetUrl = PatternUtils.group(pageContent, SUCCESS_TARGETURL_RESULT_PATTERN, 1);
+                String targetUrlParam = PatternUtils.group(pageContent, SUCCESS_TARGETURL_PARAM_RESULT_PATTERN, 1);
+                StringBuilder url = new StringBuilder();
+                String currentUrl = url.append(urlHead).append(targetUrl).append(targetUrlParam).toString();
+                response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(currentUrl).invoke();
                 map.put("directive", "login_success");
                 map.put("information", "登陆成功");
                 Map<String, Object> mqMap = new HashMap<>();
@@ -138,13 +163,35 @@ public class QQExMailPlugin implements CommonPluginService {
                 BeanFactoryUtils.getBean(MessageService.class).sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), mqMap, DEFAULT_CHARSET_NAME);
                 return result.success(map);
             } else {
+                String currentUrl;
+                if (pageContent.contains("正在登录腾讯企业邮箱") && pageContent.contains("var target=\"ERROR\";") && pageContent.contains("urlHead + \"loginpage?")) {
+                    String urlHead = PatternUtils.group(pageContent, URLHEAD_RESULT_PATTERN, 1);
+                    String targetUrl = PatternUtils.group(pageContent, FAIL_TARGETURL_RESULT_PATTERN, 1);
+                    targetUrl = targetUrl.replaceAll("\n", "");
+                    targetUrl = targetUrl.replaceAll(" ", "");
+                    targetUrl = targetUrl.replaceAll("\"\\+\"", "");
+                    pageContent = pageContent.replaceAll("\n", "");
+                    List<String> list = PatternUtils.findAll(pageContent, FAIL_TARGETURL_PARAM_RESULT_PATTERN, 1);
+                    String targetUrlParam = list.get(1);
+                    String targetUrlParam2 = list.get(2);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    currentUrl = stringBuilder.append(urlHead).append(targetUrl).append(targetUrlParam).append(targetUrlParam2).toString();
+                } else {
+                    String fail = PatternUtils.group(pageContent, FAIL__RESULT_PATTERN, 1);
+                    fail = fail.replaceAll("\n", "");
+                    fail = fail.replaceAll(" ", "");
+                    fail = fail.replaceAll("\"\\+\"", "");
+                    StringBuilder stringBuilder = new StringBuilder();
+                    currentUrl = stringBuilder.append(URL).append(fail).toString();
+                }
                 response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(currentUrl).invoke();
-                String pageContent = response.getPageContent();
+                pageContent = response.getPageContent();
                 //更新redis中ts的值
                 publicTs = PatternUtils.group(pageContent, PRELOGIN_RESULT_PATTERN, 1);
                 RedisUtils.del("exmail_publicTs_" + taskId);
                 RedisUtils.set("exmail_publicTs_" + taskId, publicTs, 600);
-                String errorString = PatternUtils.group(pageContent, CURRENTURL_RESULT_PATTERN, 6);
+                List<String> list = PatternUtils.findAll(pageContent, CURRENTURL_RESULT_PATTERN, 1);
+                String errorString = list.get(5);
                 String isPicCode = PatternUtils.group(pageContent, ISPICCODE_RESULT_PATTERN, 1);
                 if (isPicCode.equals("true") && errorString.equals("errorVerifyCode")) {
                     response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(PIC_URL).invoke();
@@ -153,6 +200,8 @@ public class QQExMailPlugin implements CommonPluginService {
                     map.put("information", response.getPageContent());
                     monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                     return result.success(map);
+                } else if (errorString.equals("errorNamePassowrd")) {
+                    return failForResult(param, result, monitorService, map, taskId, errorString);
                 } else if (isPicCode.equals("true")) {
                     response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(PIC_URL).invoke();
                     map.put("directive", "require_picture");
@@ -161,12 +210,7 @@ public class QQExMailPlugin implements CommonPluginService {
                     monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                     return result.success(map);
                 } else {
-                    String errorMessage = ExMailErrorEnum.getMessageByCode(errorString);
-                    map.put("directive", "login_fail");
-                    map.put("information", errorMessage);
-                    logger.error("登录-->失败,errorMessage={}", errorMessage);
-                    monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
-                    return result.success(map);
+                    return failForResult(param, result, monitorService, map, taskId, errorString);
                 }
             }
         } catch (Exception e) {
@@ -174,6 +218,20 @@ public class QQExMailPlugin implements CommonPluginService {
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
+    }
+
+    private HttpResult<Object> failForResult(CommonPluginParam param, HttpResult<Object> result, MonitorService monitorService, Map<String, Object> map, Long taskId, String errorString) {
+        String errorMessage = ExMailErrorEnum.getMessageByCode(errorString);
+        map.put("directive", "login_fail");
+        map.put("information", errorMessage);
+        logger.error("登录-->失败,errorMessage={}", errorMessage);
+        monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
+        return result.success(map);
+    }
+
+    public static void main(String[] args) {
+        String a = " /cgi-bin/loginpage?autologin=n&errtype=3&verify=true&clientuin=ningjieqiong" + "@treefinance.com.cn" + "&t=dm_loginpage" + "&d=treefinance.com.cn" + "&s=" + "&alias=" + "&regalias=" + "&delegate_url=" + "&title=" + "&url=%2Fcgi-bin%2Flogin%3F" + "&org_fun=" + "&aliastype=other" + "&ss=" + "&from=" + "&param=ningjieqiong@treefinance.com.cn" + "&sp=" + "&r=3d35a71a8a2dc46bb2f58389a98cc060" + "&ppp=UlJEfDgreiw6ezJobXsUGRVLUwUzWGNNan10b2ZbUTtBDkppdA4zNwpHRl5RITheQjwzCAlwQH0Ibj54XA0VdgRhPTpsSRt0SGtWFDF0EG5OMhBCQkxdTVdVbhcgYz5vd1NIU049T0BmOSdtXUlWR2ZXQ21BdWZPQFEVDE4iNHw5Gn9IVwErMUIkKVpwDnENJGJRd3EJbnQXQxFxcThVQFBPelpoFSEjMhUOXA%3D%3D" + "&secpp=" + "&dmtype=bizmail" + "&tfcont=22%20serialization%3A%3Aarchive%205%200%200%2014%200%200%200%2010%20firstlogin%205%20false%206%20domain%2018%20treefinance.com.cn%209%20aliastype%205%20other%2011%20errtemplate%2012%20dm_loginpage%209%20starttime%2013%201519795256777%201%20f%203%20biz%203%20uin%2012%20ningjieqiong%203%20chg%201%200%2010%20domain_bak%201%200%2010%20loginentry%201%203%206%20dmtype%207%20bizmail%208%20inputuin%2031%20ningjieqiong%40treefinance.com.cn%208%20authtype%201%208%209%20clientuin%2012%20ningjieqiong";
+        System.out.println("------" + a.replaceAll("\"\\+\"", ""));
     }
 
 
