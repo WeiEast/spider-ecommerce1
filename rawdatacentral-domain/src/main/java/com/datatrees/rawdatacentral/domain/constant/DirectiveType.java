@@ -15,6 +15,10 @@ public class DirectiveType {
      */
     public static final String PLUGIN_LOGIN = "plugin_login";
     /**
+     * 登录过程中,二次密码，例：QQ邮箱独立密码
+     */
+    public static final String LOGIN_SECOND_PASSWORD     = "login_second_password";
+    /**
      * 抓取过程中,图片验证码
      */
     public static final String CRAWL_CODE   = "crawl_code";

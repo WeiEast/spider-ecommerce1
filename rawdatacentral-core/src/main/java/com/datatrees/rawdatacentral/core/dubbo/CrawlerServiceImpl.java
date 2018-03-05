@@ -22,17 +22,20 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -118,6 +121,13 @@ public class CrawlerServiceImpl implements CrawlerService {
                 case 1:
                     directiveType = DirectiveType.CRAWL_CODE;
                     break;
+                case 3:
+                    directiveType = DirectiveType.LOGIN_SECOND_PASSWORD;
+                    Long processId = Long.parseLong(extra.get("processId"));
+                    ProcessResult<Object> processResult = ProcessResultUtils.queryProcessResult(processId);
+                    processResult.setProcessStatus(ProcessStatus.PROCESSING);
+                    ProcessResultUtils.saveProcessResult(processResult);
+                    break;
                 default:
                     logger.warn("invalid param taskId={},type={}", taskId, type);
                     return result.failure("未知参数type");
@@ -131,7 +141,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.info("import success taskId={},directiveId={},code={},extra={}", taskId, directiveId, code, JSON.toJSONString(extra));
             return result.success(true);
         } catch (Exception e) {
-            logger.error("import error taskId={},directiveId={},code={},extra={}", taskId, directiveId, code, JSON.toJSONString(extra));
+            logger.error("import error taskId={},directiveId={},code={},extra={}", taskId, directiveId, code, JSON.toJSONString(extra), e);
             return result.failure();
         }
     }
