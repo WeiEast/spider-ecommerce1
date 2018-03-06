@@ -229,11 +229,6 @@ public class QQExMailPlugin implements CommonPluginService {
         return result.success(map);
     }
 
-    public static void main(String[] args) {
-        String a = " /cgi-bin/loginpage?autologin=n&errtype=3&verify=true&clientuin=ningjieqiong" + "@treefinance.com.cn" + "&t=dm_loginpage" + "&d=treefinance.com.cn" + "&s=" + "&alias=" + "&regalias=" + "&delegate_url=" + "&title=" + "&url=%2Fcgi-bin%2Flogin%3F" + "&org_fun=" + "&aliastype=other" + "&ss=" + "&from=" + "&param=ningjieqiong@treefinance.com.cn" + "&sp=" + "&r=3d35a71a8a2dc46bb2f58389a98cc060" + "&ppp=UlJEfDgreiw6ezJobXsUGRVLUwUzWGNNan10b2ZbUTtBDkppdA4zNwpHRl5RITheQjwzCAlwQH0Ibj54XA0VdgRhPTpsSRt0SGtWFDF0EG5OMhBCQkxdTVdVbhcgYz5vd1NIU049T0BmOSdtXUlWR2ZXQ21BdWZPQFEVDE4iNHw5Gn9IVwErMUIkKVpwDnENJGJRd3EJbnQXQxFxcThVQFBPelpoFSEjMhUOXA%3D%3D" + "&secpp=" + "&dmtype=bizmail" + "&tfcont=22%20serialization%3A%3Aarchive%205%200%200%2014%200%200%200%2010%20firstlogin%205%20false%206%20domain%2018%20treefinance.com.cn%209%20aliastype%205%20other%2011%20errtemplate%2012%20dm_loginpage%209%20starttime%2013%201519795256777%201%20f%203%20biz%203%20uin%2012%20ningjieqiong%203%20chg%201%200%2010%20domain_bak%201%200%2010%20loginentry%201%203%206%20dmtype%207%20bizmail%208%20inputuin%2031%20ningjieqiong%40treefinance.com.cn%208%20authtype%201%208%209%20clientuin%2012%20ningjieqiong";
-        System.out.println("------" + a.replaceAll("\"\\+\"", ""));
-    }
-
 
     @Override
     public HttpResult<Object> defineProcess(CommonPluginParam param) {
