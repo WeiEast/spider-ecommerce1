@@ -263,6 +263,9 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
+        redisService = BeanFactoryUtils.getBean(RedisService.class);
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
@@ -290,9 +293,47 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         ProcessResultUtils.setProcessExpire(taskId, processId, 2, TimeUnit.MINUTES);
 
                         currentUrl = driver.getCurrentUrl();
+                        String currentContent = driver.getPageSource();
                         while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
                             TimeUnit.MILLISECONDS.sleep(500);
+                            if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
+                                logger.info("需要邮箱的独立密码！");
+
+                                //发送MQ指令(要求独立密码)
+                                Map<String, String> data = new HashMap<>();
+                                data.put(AttributeKey.REMARK, "请输入QQ邮箱的独立密码");
+                                String directiveId = redisService.createDirectiveId();
+                                processResult.setProcessStatus(ProcessStatus.REQUIRE_SECOND_PASSWORD);
+                                processResult.setData(directiveId);
+                                ProcessResultUtils.saveProcessResult(processResult);
+                                TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.REQUIRE_SECOND_PASSWORD);
+                                //String directiv`eId = messageService
+                                //        .sendDirective(taskId, DirectiveEnum.REQUIRE_SECOND_PASSWORD.getCode(), JSON.toJSONString(data), param.getFormType());
+                                //等待用户输入独立密码,等待120秒
+                                messageService.sendTaskLog(taskId, "等待用户输入独立密码");
+                                DirectiveResult<Map<String, Object>> receiveDirective = redisService
+                                        .getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
+                                if (null == receiveDirective) {
+                                    messageService.sendTaskLog(taskId, "独立密码校验超时");
+                                    monitorService
+                                            .sendTaskLog(taskId, TemplateUtils.format("{}-->等待用户输入独立密码-->失败", FormType.getName(param.getFormType())),
+                                                    ErrorCode.VALIDATE_TIMEOUT, "用户输入独立密码超时,任务即将失败!超时时间(单位:秒):" + timeOut);
+
+                                    logger.error("等待用户输入独立密码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName,
+                                            directiveId);
+                                    //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入独立密码超时({}秒)", timeOut));
+                                    throw new ResultEmptyException(ErrorCode.VALIDATE_TIMEOUT.getErrorMsg());
+                                }
+
+                                String secondPassword = receiveDirective.getData().get(AttributeKey.CODE).toString();
+                                driver.findElement(By.xpath("//input[@id='pp']")).sendKeys(secondPassword);
+                                driver.findElement(By.xpath("//input[@id='btlogin']")).click();
+                            }
                             currentUrl = driver.getCurrentUrl();
+                            if (StringUtils.contains(currentUrl, "ptlogin")) {
+                                driver.navigate().refresh();
+                                currentContent = driver.getPageSource();
+                            }
                         }
                         currentUrl = driver.getCurrentUrl();
                         String currentLoginProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
@@ -352,14 +393,18 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
         }
         ProcessResultUtils.setProcessExpire(param.getTaskId(), Long.valueOf(processId), 2, TimeUnit.MINUTES);
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
-        return new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
+        HttpResult<Object> result = new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
+        Map<String, Object> map = new HashMap<>();
+        map.put("processId", processId);
+        result.setExtra(map);
+        return result;
     }
 
     private boolean isLoginSuccess(String url) {
         return StringUtils.startsWith(url, "https://mail.qq.com/cgi-bin/frame_html?sid=");
     }
 
-    private void checkSecondPassword(ProcessResult<Object> processResult,CommonPluginParam param,WebDriver driver) {
+    private void checkSecondPassword(ProcessResult<Object> processResult, CommonPluginParam param, WebDriver driver) {
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         //发送MQ指令(要求独立密码)
@@ -373,8 +418,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
         //        .sendDirective(taskId, DirectiveEnum.REQUIRE_SECOND_PASSWORD.getCode(), JSON.toJSONString(data), param.getFormType());
         //等待用户输入独立密码,等待120秒
         messageService.sendTaskLog(taskId, "等待用户输入独立密码");
-        DirectiveResult<Map<String, Object>> receiveDirective = redisService
-                .getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
+        DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
         if (null == receiveDirective) {
             messageService.sendTaskLog(taskId, "独立密码校验超时");
             monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->等待用户输入独立密码-->失败", FormType.getName(param.getFormType())),
@@ -382,7 +426,11 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
             logger.error("等待用户输入独立密码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
             //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入独立密码超时({}秒)", timeOut));
-            throw new ResultEmptyException(ErrorCode.VALIDATE_TIMEOUT.getErrorMsg());
+            try {
+                throw new ResultEmptyException(ErrorCode.VALIDATE_TIMEOUT.getErrorMsg());
+            } catch (ResultEmptyException e) {
+                e.printStackTrace();
+            }
         }
 
         String secondPassword = receiveDirective.getData().get(AttributeKey.CODE).toString();

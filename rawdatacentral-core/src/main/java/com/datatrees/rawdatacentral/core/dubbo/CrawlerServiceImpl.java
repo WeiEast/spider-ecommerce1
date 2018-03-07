@@ -30,6 +30,7 @@ import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
+import com.datatrees.rawdatacentral.domain.enums.QRStatus;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
@@ -127,6 +128,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                     ProcessResult<Object> processResult = ProcessResultUtils.queryProcessResult(processId);
                     processResult.setProcessStatus(ProcessStatus.PROCESSING);
                     ProcessResultUtils.saveProcessResult(processResult);
+                    TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
                     break;
                 default:
                     logger.warn("invalid param taskId={},type={}", taskId, type);
