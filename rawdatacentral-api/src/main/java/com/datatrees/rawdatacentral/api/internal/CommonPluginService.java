@@ -38,7 +38,7 @@ public interface CommonPluginService {
     HttpResult<Object> validatePicCode(CommonPluginParam param);
 
     /**
-     * 刷新短信验证码
+     * 登录提交
      * @return
      */
     HttpResult<Object> submit(CommonPluginParam param);
