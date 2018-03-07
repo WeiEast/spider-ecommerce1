@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultProcessorContextBuilder {
 
-    private final static Logger logger                        = LoggerFactory.getLogger(DefaultProcessorContextBuilder.class);
-    private              String extractorUseDefaultWebsiteIds = PropertiesConfiguration.getInstance().get("extractor.use.default.websiteIds", "162");
+    private final static Logger logger = LoggerFactory.getLogger(DefaultProcessorContextBuilder.class);
+    private String extractorUseDefaultWebsiteIds = PropertiesConfiguration.getInstance().get("extractor.use.default.websiteIds", "162");
     @Resource
     private WebsiteConfigService websiteConfigService;
     private Set<String> extractorUseDefaultWebsiteIdsSet = new HashSet<String>();
@@ -63,8 +63,11 @@ public class DefaultProcessorContextBuilder {
         }
 
         ParentTask task = extractMessage.getTask();
+        if (context == null) {
+            return null;
+        }
         ProcessorContextUtil.setCookieString(context, task.getCookie());
-        if(logger.isDebugEnabled()){
+        if (logger.isDebugEnabled()) {
             logger.debug("Add cookies into extract context: {}", task.getCookie());
         }
 
