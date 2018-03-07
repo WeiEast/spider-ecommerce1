@@ -307,6 +307,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                                 processResult.setData(directiveId);
                                 ProcessResultUtils.saveProcessResult(processResult);
                                 TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.REQUIRE_SECOND_PASSWORD);
+                                TaskUtils.addTaskShare(taskId, AttributeKey.DIRECTIVE_ID, directiveId);
                                 //String directiv`eId = messageService
                                 //        .sendDirective(taskId, DirectiveEnum.REQUIRE_SECOND_PASSWORD.getCode(), JSON.toJSONString(data), param.getFormType());
                                 //等待用户输入独立密码,等待120秒
@@ -394,9 +395,11 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
         ProcessResultUtils.setProcessExpire(param.getTaskId(), Long.valueOf(processId), 2, TimeUnit.MINUTES);
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
         HttpResult<Object> result = new HttpResult<>().success(StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING);
-        Map<String, Object> map = new HashMap<>();
-        map.put("processId", processId);
-        result.setExtra(map);
+        if (StringUtils.equals(qrStatus, QRStatus.REQUIRE_SECOND_PASSWORD)) {
+            Map<String, Object> map = new HashMap<>();
+            map.put(AttributeKey.DIRECTIVE_ID, TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.DIRECTIVE_ID));
+            result.setExtra(map);
+        }
         return result;
     }
 
