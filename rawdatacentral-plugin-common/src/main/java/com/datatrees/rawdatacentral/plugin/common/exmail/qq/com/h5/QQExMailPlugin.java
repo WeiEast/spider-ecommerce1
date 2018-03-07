@@ -133,6 +133,13 @@ public class QQExMailPlugin implements CommonPluginService {
             }
             String templateData;
             String data;
+            if (!userName.contains("@")) {
+                map.put("directive", "login_fail");
+                map.put("information", "您输入的用户名有误,请重新输入！");
+                logger.error("登录-->失败,errorMessage={}", "您输入的用户名有误,请重新输入！");
+                monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
+                return result.success(map);
+            }
             String uin = userName.substring(0, userName.lastIndexOf("@"));
             String domain = userName.substring(userName.lastIndexOf("@") + 1);
 
