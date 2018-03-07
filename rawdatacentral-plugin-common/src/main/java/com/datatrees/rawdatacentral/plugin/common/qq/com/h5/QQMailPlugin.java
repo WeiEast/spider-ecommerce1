@@ -109,6 +109,31 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         logger.error("get current url error", e);
                     }
                     driver.switchTo().defaultContent();
+                    currentUrl = driver.getCurrentUrl();
+                    logger.info("登陆后currentUrl={}", currentUrl);
+
+                    if (!StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
+
+                        WebElement new_vcode = SeleniumUtils.findElement(driver, By.id("new_vcode"));
+                        String display = "none";
+                        if (null != new_vcode) {
+                            display = new_vcode.getCssValue("display");
+                            logger.info("display : {}", display);
+                        }
+                        if (StringUtils.equals("block", display)) {
+                            logger.info("安全验证出现了,{}", driver.getCurrentUrl());
+                            driver.switchTo().frame(1);
+                            moveHk(driver, processResult.getProcessId());
+                        }
+
+                        driver.switchTo().defaultContent();
+                        WebElement element = SeleniumUtils.findElement(driver, By.xpath("//div[@class='qui-dialog-content']"));
+                        if (null != element) {
+                            ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_PASSWORD_FAIL));
+                            return;
+                        }
+                    }
+
                     String currentContent = driver.getPageSource();
                     if (StringUtils.contains(currentContent, "请使用邮箱的“独立密码”登录")) {
                         logger.info("需要邮箱的独立密码！");
@@ -140,30 +165,6 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         driver.findElement(By.xpath("//input[@id='pwd']")).sendKeys(secondPassword);
                         driver.findElement(By.xpath("//input[@id='submitBtn']")).click();
                         TimeUnit.SECONDS.sleep(5);
-                    }
-                    currentUrl = driver.getCurrentUrl();
-                    logger.info("登陆后currentUrl={}", currentUrl);
-
-                    if (!StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
-
-                        WebElement new_vcode = SeleniumUtils.findElement(driver, By.id("new_vcode"));
-                        String display = "none";
-                        if (null != new_vcode) {
-                            display = new_vcode.getCssValue("display");
-                            logger.info("display : {}", display);
-                        }
-                        if (StringUtils.equals("block", display)) {
-                            logger.info("安全验证出现了,{}", driver.getCurrentUrl());
-                            driver.switchTo().frame(1);
-                            moveHk(driver, processResult.getProcessId());
-                        }
-
-                        driver.switchTo().defaultContent();
-                        WebElement element = SeleniumUtils.findElement(driver, By.xpath("//div[@class='qui-dialog-content']"));
-                        if (null != element) {
-                            ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_PASSWORD_FAIL));
-                            return;
-                        }
                     }
 
                     if (StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
