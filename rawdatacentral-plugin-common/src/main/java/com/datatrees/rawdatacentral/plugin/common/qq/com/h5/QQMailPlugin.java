@@ -279,12 +279,12 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
                             TimeUnit.MILLISECONDS.sleep(500);
                             currentUrl = driver.getCurrentUrl();
-                            if (StringUtils.contains(currentUrl, "ptlogin")) {
-                                driver.navigate().refresh();
-                                currentContent = driver.getPageSource();
-                            } else if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
+                            if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
                                 driver.get("http://w.mail.qq.com");
                                 break;
+                            }else if (StringUtils.contains(currentUrl, "ptlogin")) {
+                                driver.navigate().refresh();
+                                currentContent = driver.getPageSource();
                             }
                         }
                         if (StringUtils.contains(currentContent, "请使用邮箱的“独立密码”登录")) {
