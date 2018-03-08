@@ -410,8 +410,13 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
             }
 
             String secondPassword = receiveDirective.getData().get(AttributeKey.CODE).toString();
-            driver.findElement(By.xpath("//input[@id='pwd']")).sendKeys(secondPassword);
-            driver.findElement(By.xpath("//input[@id='submitBtn']")).click();
+            if (isQRLogin) {
+                driver.findElement(By.xpath("//input[@id='pp']")).sendKeys(secondPassword);
+                driver.findElement(By.xpath("//input[@id='btlogin']")).click();
+            } else {
+                driver.findElement(By.xpath("//input[@id='pwd']")).sendKeys(secondPassword);
+                driver.findElement(By.xpath("//input[@id='submitBtn']")).click();
+            }
             return driver;
         } catch (Exception e) {
             logger.error("独立密码校验失败，taskId={}",param.getTaskId());
