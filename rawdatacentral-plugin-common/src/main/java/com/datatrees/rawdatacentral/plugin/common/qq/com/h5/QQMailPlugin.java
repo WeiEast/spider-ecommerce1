@@ -147,6 +147,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             }
                         }
                     }
+
                     if (StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
                         String cookieString = SeleniumUtils.getCookieString(driver);
                         LoginMessage loginMessage = new LoginMessage();
@@ -157,6 +158,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         loginMessage.setCookie(cookieString);
                         logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                         BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+
                         ProcessResultUtils.saveProcessResult(processResult.success());
                         return;
                     }
@@ -275,31 +277,25 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         currentUrl = driver.getCurrentUrl();
                         String currentContent = driver.getPageSource();
                         while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
-                            if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
-                                String redirectUrl = "http://w.mail.qq.com";
-                                driver.get(redirectUrl);
-                                break;
-                            }
-                        }
-                        currentUrl = driver.getCurrentUrl();
-                        currentContent = driver.getPageSource();
-                        while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
-                            if (StringUtils.contains(currentContent, "请使用邮箱的“独立密码”登录")) {
-                                for (int i = 0; i < 3; i++) {
-                                    logger.info("需要邮箱的独立密码！");
-                                    driver = checkSecondPassword(processResult, param, driver, true);
-                                    String checkContent = driver.getPageSource();
-                                    if (StringUtils.contains(checkContent, "独立密码不正确")) {
-                                        continue;
-                                    } else {
-                                        break;
-                                    }
-                                }
-                            }
+                            TimeUnit.MILLISECONDS.sleep(500);
                             currentUrl = driver.getCurrentUrl();
                             if (StringUtils.contains(currentUrl, "ptlogin")) {
                                 driver.navigate().refresh();
                                 currentContent = driver.getPageSource();
+                            } else if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
+                                driver.get("http://w.mail.qq.com");
+                                break;
+                            }
+                        }
+                        if (StringUtils.contains(currentContent, "请使用邮箱的“独立密码”登录")) {
+                            for (int i = 0; i < 3; i++) {
+                                logger.info("需要邮箱的独立密码！");
+                                driver = checkSecondPassword(processResult, param, driver, true);
+                                String checkContent = driver.getPageSource();
+                                if (StringUtils.contains(checkContent,"独立密码不正确")) {
+                                } else {
+                                    break;
+                                }
                             }
                         }
                         currentUrl = driver.getCurrentUrl();
@@ -414,7 +410,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
             driver.findElement(By.xpath("//input[@id='submitBtn']")).click();
             return driver;
         } catch (Exception e) {
-            logger.error("独立密码校验失败，taskId={}", param.getTaskId());
+            logger.error("独立密码校验失败，taskId={}",param.getTaskId());
             return newRemoteWebDriver;
         }
     }
