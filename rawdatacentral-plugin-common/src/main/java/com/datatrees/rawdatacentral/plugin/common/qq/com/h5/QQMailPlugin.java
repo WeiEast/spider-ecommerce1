@@ -274,12 +274,16 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
                         currentUrl = driver.getCurrentUrl();
                         String currentContent = driver.getPageSource();
-                        if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
-                            String redirectUrl = "http://w.mail.qq.com";
-                            driver.get(redirectUrl);
-                        }
                         while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
-                            TimeUnit.MILLISECONDS.sleep(500);
+                            if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
+                                String redirectUrl = "http://w.mail.qq.com";
+                                driver.get(redirectUrl);
+                                break;
+                            }
+                        }
+                        currentUrl = driver.getCurrentUrl();
+                        currentContent = driver.getPageSource();
+                        while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
                             if (StringUtils.contains(currentContent, "请使用邮箱的“独立密码”登录")) {
                                 for (int i = 0; i < 3; i++) {
                                     logger.info("需要邮箱的独立密码！");
