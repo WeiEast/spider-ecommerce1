@@ -284,17 +284,18 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
                             TimeUnit.MILLISECONDS.sleep(500);
                             if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
+                                String redirectUrl = "http://w.mail.qq.com";
+                                driver.get(redirectUrl);
                                 for (int i = 0; i < 3; i++) {
                                     logger.info("需要邮箱的独立密码！");
                                     driver = checkSecondPassword(processResult, param, driver, true);
                                     String checkContent = driver.getPageSource();
-                                    if (StringUtils.contains(checkContent,"您输入的独立密码有误，请重新输入")) {
+                                    if (StringUtils.contains(checkContent, "独立密码不正确")) {
                                         continue;
                                     } else {
                                         break;
                                     }
                                 }
-
                             }
                             currentUrl = driver.getCurrentUrl();
                             if (StringUtils.contains(currentUrl, "ptlogin")) {
@@ -410,16 +411,11 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
             }
 
             String secondPassword = receiveDirective.getData().get(AttributeKey.CODE).toString();
-            if (isQRLogin) {
-                driver.findElement(By.xpath("//input[@id='pp']")).sendKeys(secondPassword);
-                driver.findElement(By.xpath("//input[@id='btlogin']")).click();
-            } else {
-                driver.findElement(By.xpath("//input[@id='pwd']")).sendKeys(secondPassword);
-                driver.findElement(By.xpath("//input[@id='submitBtn']")).click();
-            }
+            driver.findElement(By.xpath("//input[@id='pwd']")).sendKeys(secondPassword);
+            driver.findElement(By.xpath("//input[@id='submitBtn']")).click();
             return driver;
         } catch (Exception e) {
-            logger.error("独立密码校验失败，taskId={}",param.getTaskId());
+            logger.error("独立密码校验失败，taskId={}", param.getTaskId());
             return newRemoteWebDriver;
         }
     }
