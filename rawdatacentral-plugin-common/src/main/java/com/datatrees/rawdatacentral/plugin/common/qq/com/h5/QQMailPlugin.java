@@ -375,41 +375,47 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
     private RemoteWebDriver checkSecondPassword(ProcessResult<Object> processResult, CommonPluginParam param, RemoteWebDriver driver,
             boolean isQRLogin) {
-        Long taskId = param.getTaskId();
-        String websiteName = param.getWebsiteName();
-        //发送MQ指令(要求独立密码)
-        Map<String, String> data = new HashMap<>();
-        data.put(AttributeKey.REMARK, "请输入QQ邮箱的独立密码");
-        String directiveId = redisService.createDirectiveId();
-        processResult.setProcessStatus(ProcessStatus.REQUIRE_SECOND_PASSWORD);
-        processResult.setData(directiveId);
-        ProcessResultUtils.saveProcessResult(processResult);
-        if (isQRLogin) {
-            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.REQUIRE_SECOND_PASSWORD);
-            TaskUtils.addTaskShare(taskId, AttributeKey.DIRECTIVE_ID, directiveId);
-        }
-        //String directiv`eId = messageService
-        //        .sendDirective(taskId, DirectiveEnum.REQUIRE_SECOND_PASSWORD.getCode(), JSON.toJSONString(data), param.getFormType());
-        //等待用户输入独立密码,等待120秒
-        messageService.sendTaskLog(taskId, "等待用户输入独立密码");
-        DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
-        if (null == receiveDirective) {
-            messageService.sendTaskLog(taskId, "独立密码校验超时");
-            monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->等待用户输入独立密码-->失败", FormType.getName(param.getFormType())),
-                    ErrorCode.VALIDATE_TIMEOUT, "用户输入独立密码超时,任务即将失败!超时时间(单位:秒):" + timeOut);
-
-            logger.error("等待用户输入独立密码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
-            //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入独立密码超时({}秒)", timeOut));
-            try {
-                throw new ResultEmptyException(ErrorCode.VALIDATE_TIMEOUT.getErrorMsg());
-            } catch (ResultEmptyException e) {
-                e.printStackTrace();
+        RemoteWebDriver newRemoteWebDriver = driver;
+        try {
+            Long taskId = param.getTaskId();
+            String websiteName = param.getWebsiteName();
+            //发送MQ指令(要求独立密码)
+            Map<String, String> data = new HashMap<>();
+            data.put(AttributeKey.REMARK, "请输入QQ邮箱的独立密码");
+            String directiveId = redisService.createDirectiveId();
+            processResult.setProcessStatus(ProcessStatus.REQUIRE_SECOND_PASSWORD);
+            processResult.setData(directiveId);
+            ProcessResultUtils.saveProcessResult(processResult);
+            if (isQRLogin) {
+                TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.REQUIRE_SECOND_PASSWORD);
+                TaskUtils.addTaskShare(taskId, AttributeKey.DIRECTIVE_ID, directiveId);
             }
-        }
+            //String directiv`eId = messageService
+            //        .sendDirective(taskId, DirectiveEnum.REQUIRE_SECOND_PASSWORD.getCode(), JSON.toJSONString(data), param.getFormType());
+            //等待用户输入独立密码,等待120秒
+            messageService.sendTaskLog(taskId, "等待用户输入独立密码");
+            DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
+            if (null == receiveDirective) {
+                messageService.sendTaskLog(taskId, "独立密码校验超时");
+                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->等待用户输入独立密码-->失败", FormType.getName(param.getFormType())),
+                        ErrorCode.VALIDATE_TIMEOUT, "用户输入独立密码超时,任务即将失败!超时时间(单位:秒):" + timeOut);
 
-        String secondPassword = receiveDirective.getData().get(AttributeKey.CODE).toString();
-        driver.findElement(By.xpath("//input[@id='pwd']")).sendKeys(secondPassword);
-        driver.findElement(By.xpath("//input[@id='submitBtn']")).click();
-        return driver;
+                logger.error("等待用户输入独立密码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
+                //messageService.sendTaskLog(taskId, websiteName, TemplateUtils.format("等待用户输入独立密码超时({}秒)", timeOut));
+                try {
+                    throw new ResultEmptyException(ErrorCode.VALIDATE_TIMEOUT.getErrorMsg());
+                } catch (ResultEmptyException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            String secondPassword = receiveDirective.getData().get(AttributeKey.CODE).toString();
+            driver.findElement(By.xpath("//input[@id='pwd']")).sendKeys(secondPassword);
+            driver.findElement(By.xpath("//input[@id='submitBtn']")).click();
+            return driver;
+        } catch (Exception e) {
+            logger.error("独立密码校验失败，taskId={}",param.getTaskId());
+            return newRemoteWebDriver;
+        }
     }
 }
