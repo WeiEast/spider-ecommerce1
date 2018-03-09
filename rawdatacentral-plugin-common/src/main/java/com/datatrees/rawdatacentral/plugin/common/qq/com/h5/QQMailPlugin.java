@@ -142,6 +142,10 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             currentContent = driver.getPageSource();
                             currentUrl = driver.getCurrentUrl();
                             if (StringUtils.contains(currentContent, "独立密码不正确")) {
+                                ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_FAIL));
+                                messageService.sendTaskLog(taskId, "独立密码校验失败");
+                                monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验独立密码-->失败", FormType.getName(param.getFormType())),
+                                        ErrorCode.VALIDATE_FAIL, "检验独立密码失败,请重试!");
                             } else {
                                 break;
                             }
@@ -284,6 +288,12 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                                     driver = checkSecondPassword(processResult, param, driver, true);
                                     currentContent = driver.getPageSource();
                                     if (StringUtils.contains(currentContent, "独立密码不正确")) {
+                                        ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_FAIL));
+                                        TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.FAILED);
+                                        messageService.sendTaskLog(taskId, "独立密码校验失败");
+                                        monitorService
+                                                .sendTaskLog(taskId, TemplateUtils.format("{}-->校验独立密码-->失败", FormType.getName(param.getFormType())),
+                                                        ErrorCode.VALIDATE_FAIL, "检验独立密码失败,请重试!");
                                     } else {
                                         break;
                                     }
