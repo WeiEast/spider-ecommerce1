@@ -19,6 +19,8 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
@@ -60,7 +62,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             String viewFd4PC = TaskUtils.getTaskShare(param.getTaskId(), "viewFd4PC");
             String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login" +
                     ".do?adUrl=&adImage=&adText=&viewFd4PC={}&viewFd4Mobile=" + "&from=tb&_ksTS={}&callback=json";
-            response = TaskHttpClient.create(param.getTaskId(), "taobao.com", RequestType.GET, "")
+            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
                     .setFullUrl(templateUrl, viewFd4PC, System.currentTimeMillis() + "_" + (int) (Math.random() * 1000)).setReferer(preLoginUrl)
                     .invoke();
             String jsonString = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
@@ -71,7 +73,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             if (!StringUtils.contains(imgUrl, "https:")) {
                 imgUrl = "https:" + imgUrl;
             }
-            response = TaskHttpClient.create(param.getTaskId(), "taobao.com", RequestType.GET, "").setFullUrl(imgUrl).setReferer(preLoginUrl)
+            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(imgUrl).setReferer(preLoginUrl)
                     .invoke();
             byte[] bytes = response.getResponse();
             String qrBase64 = response.getPageContentForBase64();
@@ -119,7 +121,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             String lgToken = TaskUtils.getTaskShare(param.getTaskId(), "lgToken");
             String templateUrl
                     = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl=https%3A%2F%2Fconsumeprod.alipay.com%2Frecord%2Findex.htm%3Fsign_from%3D3000&_ksTS={}&callback=json";
-            response = TaskHttpClient.create(param.getTaskId(), "taobao.com", RequestType.GET, "")
+            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
                     .setFullUrl(templateUrl, lgToken, System.currentTimeMillis() + "_" + (int) (Math.random() * 1000)).setReferer(preLoginUrl)
                     .invoke();
             String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
@@ -167,25 +169,24 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             if (StringUtils.equals(status, QRCodeVerification.QRCodeStatus.CONFIRMED.name())) {
                 String loginUrl = TaskUtils.getTaskShare(param.getTaskId(), "loginUrl");
                 String accountNoTemp = PatternUtils.group(loginUrl, "cntaobao(.*)&token", 1);
+                String accountNo = StringUtils.EMPTY;
                 try {
-                    String accountNo = URLDecoder.decode(accountNoTemp, "UTF-8");
-                    Map<String, Object> msgMap = new HashMap<>();
-                    msgMap.put("taskId", param.getTaskId());
-                    msgMap.put("accountNo", accountNo);
-                    messageService.sendMessage(ACCOUNT_NO_TOPIC, msgMap);
+                    accountNo = URLDecoder.decode(accountNoTemp, "UTF-8");
+                    String redisKey = RedisKeyPrefixEnum.TASK_INFO_ACCOUNT_NO.getRedisKey(param.getTaskId());
+                    RedisUtils.setnx(redisKey, accountNo);
                 } catch (UnsupportedEncodingException e) {
                     logger.info("淘宝会员名抓取失败", e);
                 }
                 Response response = null;
                 try {
-                    response = TaskHttpClient.create(param.getTaskId(), "taobao.com", RequestType.GET, "").setFullUrl(loginUrl)
+                    response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(loginUrl)
                             .setReferer(preLoginUrl).invoke();
                     String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
                     String referer
                             = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=https://consumeprod.alipay.com/record/index.htm";
-                    response = TaskHttpClient.create(param.getTaskId(), "taobao.com", RequestType.GET, "").setFullUrl(redirectUrl).setReferer(referer)
+                    response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(redirectUrl).setReferer(referer)
                             .invoke();
-                    executeScriptSubmit(param.getTaskId(), "taobao.com", "", response.getPageContent());
+                    executeScriptSubmit(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), "", response.getPageContent());
                 } catch (Exception e) {
                     logger.error("淘宝二维码登录处理失败，taskId={},response={}", param.getTaskId(), response, e);
                 }
@@ -193,9 +194,10 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 String cookieString = TaskUtils.getCookieString(param.getTaskId());
                 LoginMessage loginMessage = new LoginMessage();
                 loginMessage.setTaskId(param.getTaskId());
-                loginMessage.setWebsiteName("taobao.com");
+                loginMessage.setWebsiteName(GroupEnum.TAOBAO_COM.getWebsiteName());
                 loginMessage.setCookie(cookieString);
-                logger.info("登陆成功,taskId={},websiteName={}", param.getTaskId(), "taobao.com");
+                loginMessage.setAccountNo(accountNo);
+                logger.info("登陆成功,taskId={},websiteName={}", param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName());
                 BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
                 Thread.currentThread().interrupt();
                 break;
@@ -211,7 +213,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
         Response response = null;
         try {
             String templateUrl = preLoginUrl;
-            response = TaskHttpClient.create(param.getTaskId(), "taobao.com", RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl).invoke();
             String viewFd4PC = StringUtils.EMPTY;
             List<String> viewFd4PCList = XPathUtil.getXpath("//input[@name='viewFd4PC']/@value", response.getPageContent());
             if (!viewFd4PCList.isEmpty()) {

@@ -9,6 +9,7 @@ public enum DirectiveEnum {
     REQUIRE_SMS("require_sms", "需要短信验证码"),
     REQUIRE_PICTURE("require_picture", "需要图片验证码"),
     REQUIRE_QR("require_qr", "需要二维码"),
+    REQUIRE_SECOND_PASSWORD("require_second_password", "需要二次密码"),
     GRAB_URL("grab_url", "给APP端分配抓取URL任务"),
     TASK_SUCCESS("task_success", "成功"),
     TASK_FAIL("task_fail", "失败"),;

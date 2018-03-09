@@ -40,6 +40,7 @@ public enum ErrorCode {
     VALIDATE_FAIL(-290, "校验失败,请重试"),
     VALIDATE_UNEXPECTED_RESULT(-291, "校验失败,请重试"),
     VALIDATE_ERROR(-292, "校验失败,请重试"),
+    VALIDATE_TIMEOUT(-293, "等待用户输入校验信息超时"),
     TASK_INIT_ERROR(-300, "初始化失败"),
     RESULT_SEND_ERROR(-202, "Result send error!"),
     CONFIG_ERROR(-304, "Config error!"),
