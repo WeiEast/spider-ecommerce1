@@ -363,7 +363,8 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
     }
 
     private boolean isLoginSuccess(String url) {
-        return StringUtils.startsWith(url, "https://w.mail.qq.com/cgi-bin/today?sid=");
+        return StringUtils.startsWith(url, "https://w.mail.qq.com/cgi-bin/today?sid=") ||
+                StringUtils.startsWith(url, "https://mail.qq.com/cgi-bin/frame_html?sid=");
     }
 
     private RemoteWebDriver checkSecondPassword(ProcessResult<Object> processResult, CommonPluginParam param, RemoteWebDriver driver,
@@ -407,6 +408,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
             return driver;
         } catch (Exception e) {
             logger.error("独立密码校验失败，taskId={}", param.getTaskId());
+            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.QR_STATUS, QRStatus.EXPIRE);
             return driver;
         }
     }
