@@ -408,7 +408,10 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
             return driver;
         } catch (Exception e) {
             logger.error("独立密码校验失败，taskId={}", param.getTaskId());
-            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.QR_STATUS, QRStatus.EXPIRE);
+            ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
+            if (isQRLogin) {
+                TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.QR_STATUS, QRStatus.EXPIRE);
+            }
             return driver;
         }
     }
