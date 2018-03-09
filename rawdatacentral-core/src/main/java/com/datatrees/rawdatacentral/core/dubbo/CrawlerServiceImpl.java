@@ -126,9 +126,11 @@ public class CrawlerServiceImpl implements CrawlerService {
                     directiveType = DirectiveType.LOGIN_SECOND_PASSWORD;
                     Long processId = Long.parseLong(extra.get("processId"));
                     ProcessResult<Object> processResult = ProcessResultUtils.queryProcessResult(processId);
-                    processResult.setProcessStatus(ProcessStatus.PROCESSING);
-                    ProcessResultUtils.saveProcessResult(processResult);
-                    TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
+                    if (StringUtils.equals(processResult.getProcessStatus(),ProcessStatus.REQUIRE_SECOND_PASSWORD)) {
+                        processResult.setProcessStatus(ProcessStatus.PROCESSING);
+                        ProcessResultUtils.saveProcessResult(processResult);
+                        TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
+                    }
                     break;
                 default:
                     logger.warn("invalid param taskId={},type={}", taskId, type);
