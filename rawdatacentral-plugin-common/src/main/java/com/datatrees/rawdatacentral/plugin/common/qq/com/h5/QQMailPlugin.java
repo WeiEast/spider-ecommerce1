@@ -42,7 +42,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -123,6 +122,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         if (StringUtils.equals("block", display)) {
                             logger.info("安全验证出现了,{}", driver.getCurrentUrl());
                             driver.switchTo().frame(1);
+                            TimeUnit.SECONDS.sleep(1);
                             moveHk(driver, processResult.getProcessId());
                         }
 
@@ -137,7 +137,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                     String currentContent = driver.getPageSource();
                     if (StringUtils.contains(currentContent, "请使用邮箱的“独立密码”登录")) {
                         for (int i = 0; i < 3; i++) {
-                            logger.info("需要邮箱的独立密码！");
+                            logger.info("需要邮箱的独立密码！taskId={}", taskId);
                             driver = checkSecondPassword(processResult, param, driver, false);
                             currentContent = driver.getPageSource();
                             currentUrl = driver.getCurrentUrl();
@@ -180,7 +180,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
         return new HttpResult().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
-    private void moveHk(WebDriver driver, Long processId) throws Exception {
+    private void moveHk(RemoteWebDriver driver, Long processId) throws Exception {
         try {
             WebElement bgImg = driver.findElement(By.id("bkBlock"));
             WebElement sideBar = driver.findElement(By.id("slideBlock"));
@@ -280,7 +280,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
                                 driver.get("http://w.mail.qq.com");
                                 for (int i = 0; i < 3; i++) {
-                                    logger.info("需要邮箱的独立密码！");
+                                    logger.info("需要邮箱的独立密码！taskId={}", taskId);
                                     driver = checkSecondPassword(processResult, param, driver, true);
                                     currentContent = driver.getPageSource();
                                     if (StringUtils.contains(currentContent, "独立密码不正确")) {
