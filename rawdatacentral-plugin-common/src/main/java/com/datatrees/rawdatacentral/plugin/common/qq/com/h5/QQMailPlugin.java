@@ -268,6 +268,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         TimeUnit.SECONDS.sleep(2);
                         driver.switchTo().frame("login_frame");
                         driver.findElement(By.id("switcher_qlogin")).click();
+                        TimeUnit.SECONDS.sleep(1);
                         byte[] inData = driver.getScreenshotAs(OutputType.BYTES);
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         ImageUtils.crop(new ByteArrayInputStream(inData), out, 96, 123, 127, 127, false);
