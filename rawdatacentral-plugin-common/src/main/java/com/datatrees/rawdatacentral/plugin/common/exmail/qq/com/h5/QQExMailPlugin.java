@@ -181,7 +181,13 @@ public class QQExMailPlugin implements CommonPluginService {
                 String currentUrl;
                 if (pageContent.contains("正在登录腾讯企业邮箱") && pageContent.contains("var target=\"ERROR\";") && pageContent.contains("urlHead + \"loginpage?")) {
                     String urlHead = PatternUtils.group(pageContent, URLHEAD_RESULT_PATTERN, 1);
-                    String targetUrl = PatternUtils.group(pageContent, FAIL_TARGETURL_RESULT_PATTERN, 1);
+                    List<String> targetUrlList = PatternUtils.findAll(pageContent, FAIL_TARGETURL_RESULT_PATTERN, 1);
+                    String targetUrl;
+                    if(targetUrlList.size()>1){
+                        targetUrl=targetUrlList.get(1);
+                    }else{
+                        targetUrl=targetUrlList.get(0);
+                    }
                     targetUrl = targetUrl.replaceAll("\n", "");
                     targetUrl = targetUrl.replaceAll(" ", "");
                     targetUrl = targetUrl.replaceAll("\"\\+\"", "");
@@ -205,16 +211,17 @@ public class QQExMailPlugin implements CommonPluginService {
                 publicTs = PatternUtils.group(pageContent, PRELOGIN_RESULT_PATTERN, 1);
                 RedisUtils.del("exmail_publicTs_" + taskId);
                 RedisUtils.set("exmail_publicTs_" + taskId, publicTs, 600);
-                List<String> list = PatternUtils.findAll(pageContent, CURRENTURL_RESULT_PATTERN, 1);
-                String errorString = list.get(5);
-                String isPicCode = PatternUtils.group(pageContent, ISPICCODE_RESULT_PATTERN, 1);
                 if (pageContent.contains("请用绑定的微信进行扫码登录")){
                     map.put("directive", "login_fail");
                     map.put("information", "登录失败,请关闭安全验证后再试！");
                     logger.error("登录-->失败,errorMessage={}", "用户开启安全验证，需要扫码才能登");
                     monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                     return result.success(map);
-                } else if(isPicCode.equals("true") && errorString.equals("errorVerifyCode")) {
+                }
+                List<String> list = PatternUtils.findAll(pageContent, CURRENTURL_RESULT_PATTERN, 1);
+                String errorString = list.get(5);
+                String isPicCode = PatternUtils.group(pageContent, ISPICCODE_RESULT_PATTERN, 1);
+                if(isPicCode.equals("true") && errorString.equals("errorVerifyCode")) {
                     response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(PIC_URL).invoke();
                     map.put("directive", "require_picture_again");
                     map.put("errorMessage", "输入的验证码不正确");
