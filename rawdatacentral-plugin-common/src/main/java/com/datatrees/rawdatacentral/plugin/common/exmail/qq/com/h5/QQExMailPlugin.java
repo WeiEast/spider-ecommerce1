@@ -122,6 +122,13 @@ public class QQExMailPlugin implements CommonPluginService {
             Long taskId = param.getTaskId();
             String userName = param.getUsername();
             String passWord = param.getPassword();
+            if(userName.contains("@qq.com")||userName.contains("@vip.qq.com")||userName.contains("@foxmail.com")){
+                map.put("directive", "login_fail");
+                map.put("information", "请使用企业邮箱帐号登录。");
+                logger.error("登录-->失败,errorMessage={}", "请使用企业邮箱帐号登录。");
+                monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
+                return result.success(map);
+            }
             String publicTs = RedisUtils.get("exmail_publicTs_" + taskId);
             int num = StringUtils.countMatches(userName, "@");
             if (num != 1) {
@@ -201,7 +208,13 @@ public class QQExMailPlugin implements CommonPluginService {
                 List<String> list = PatternUtils.findAll(pageContent, CURRENTURL_RESULT_PATTERN, 1);
                 String errorString = list.get(5);
                 String isPicCode = PatternUtils.group(pageContent, ISPICCODE_RESULT_PATTERN, 1);
-                if (isPicCode.equals("true") && errorString.equals("errorVerifyCode")) {
+                if (pageContent.contains("请用绑定的微信进行扫码登录")){
+                    map.put("directive", "login_fail");
+                    map.put("information", "登录失败，");
+                    logger.error("登录-->失败,errorMessage={}", "用户开启安全验证，需要扫码才能登");
+                    monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
+                    return result.success(map);
+                } else if(isPicCode.equals("true") && errorString.equals("errorVerifyCode")) {
                     response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(PIC_URL).invoke();
                     map.put("directive", "require_picture_again");
                     map.put("errorMessage", "输入的验证码不正确");
