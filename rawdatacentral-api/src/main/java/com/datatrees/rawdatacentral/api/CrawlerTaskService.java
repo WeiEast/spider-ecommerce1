@@ -31,4 +31,11 @@ public interface CrawlerTaskService {
      */
     Map<String, String> getTaskBaseInfo(Long taskId, String websiteName);
 
+    /**
+     * 获取任务的 AccountNo
+     * @param taskId
+     * @return
+     */
+    String getTaskAccountNo(Long taskId);
+
 }
