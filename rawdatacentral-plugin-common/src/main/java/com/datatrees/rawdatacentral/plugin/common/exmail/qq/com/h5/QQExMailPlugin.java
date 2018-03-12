@@ -210,7 +210,7 @@ public class QQExMailPlugin implements CommonPluginService {
                 String isPicCode = PatternUtils.group(pageContent, ISPICCODE_RESULT_PATTERN, 1);
                 if (pageContent.contains("请用绑定的微信进行扫码登录")){
                     map.put("directive", "login_fail");
-                    map.put("information", "登录失败，");
+                    map.put("information", "登录失败,请关闭安全验证后再试！");
                     logger.error("登录-->失败,errorMessage={}", "用户开启安全验证，需要扫码才能登");
                     monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                     return result.success(map);
