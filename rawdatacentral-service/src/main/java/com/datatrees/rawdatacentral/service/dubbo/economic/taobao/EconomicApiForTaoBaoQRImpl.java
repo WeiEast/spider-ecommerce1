@@ -109,7 +109,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             messageService.sendTaskLog(param.getTaskId(), "刷新二维码失败");
             monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
                     TemplateUtils.format("{}-->刷新二维码-->失败", FormType.getName(FormType.LOGIN)), ErrorCode.REFESH_QR_CODE_ERROR, "二维码刷新失败,请重试");
-            return result.failure("刷新二维码失败");
+            return result.success("刷新二维码失败");
         }
     }
 
