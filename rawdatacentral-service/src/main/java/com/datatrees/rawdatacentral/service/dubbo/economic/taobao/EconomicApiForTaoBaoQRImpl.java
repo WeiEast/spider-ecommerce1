@@ -208,6 +208,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 loginMessage.setWebsiteName(GroupEnum.TAOBAO_COM.getWebsiteName());
                 loginMessage.setCookie(cookieString);
                 loginMessage.setAccountNo(accountNo);
+                TaskUtils.addTaskShare(param.getTaskId(), "username", accountNo);
                 logger.info("登陆成功,taskId={},websiteName={}", param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName());
                 messageService.sendTaskLog(param.getTaskId(), "登陆成功");
                 monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
@@ -226,6 +227,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
         RedisUtils.set(IS_INIT + param.getTaskId(), "true", 60 * 5);
         Response response = null;
         try {
+            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "淘宝");
             String templateUrl = preLoginUrl;
             response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl)
                     .invoke();
