@@ -210,7 +210,6 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 loginMessage.setAccountNo(accountNo);
                 TaskUtils.addTaskShare(param.getTaskId(), "username", accountNo);
                 logger.info("登陆成功,taskId={},websiteName={}", param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName());
-                messageService.sendTaskLog(param.getTaskId(), "登陆成功");
                 monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
                         TemplateUtils.format("{}-->校验-->成功", FormType.getName(FormType.LOGIN)));
                 BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
