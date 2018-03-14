@@ -192,8 +192,11 @@ public class CommonPluginApiImpl implements CommonPluginApi {
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.SUBMIT_RESULT.getRedisKey(param.getFormType()), JSON.toJSONString(result));
             //腾讯企业邮箱h5和新浪邮箱h5时不再发一次mq，防止task_log中记录错误的数据
-            if (result.getData() != null && result.getData().toString().contains("directive=login_fail") && result.getData().toString().contains("information")) {
-                return result;
+            if (result.getData() != null) {
+                String str = result.getData().toString();
+                if ((str.contains("directive=login_fail") || str.contains("directive=require_picture") || str.contains("directive=require_picture_again")) && str.contains("information")) {
+                    return result;
+                }
             }
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
