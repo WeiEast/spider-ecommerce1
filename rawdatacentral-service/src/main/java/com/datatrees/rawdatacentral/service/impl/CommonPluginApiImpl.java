@@ -35,19 +35,19 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     private static final Logger logger = LoggerFactory.getLogger(CommonPluginApiImpl.class);
 
     @Resource
-    private ClassLoaderService   classLoaderService;
+    private ClassLoaderService classLoaderService;
 
     @Resource
-    private RedisService         redisService;
+    private RedisService redisService;
 
     @Resource
     private WebsiteConfigService websiteConfigService;
 
     @Resource
-    private MonitorService       monitorService;
+    private MonitorService monitorService;
 
     @Autowired
-    private ProxyService         proxyService;
+    private ProxyService proxyService;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
@@ -192,7 +192,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.SUBMIT_RESULT.getRedisKey(param.getFormType()), JSON.toJSONString(result));
             //腾讯企业邮箱h5和新浪邮箱h5时不再发一次mq
-            if(param.getWebsiteName().equals("exmail.qq.com.h5")||param.getWebsiteName().equals("sina.com.h5")){
+            if ("exmail.qq.com.h5".equals(param.getWebsiteName()) || "sina.com.h5".equals(param.getWebsiteName())) {
                 return result;
             }
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
