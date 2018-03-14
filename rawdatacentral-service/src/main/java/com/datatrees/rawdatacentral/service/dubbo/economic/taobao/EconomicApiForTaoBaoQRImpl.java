@@ -231,12 +231,12 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl)
                     .invoke();
             logger.info("淘宝二维码登录-->初始化成功，taskId={}", param.getTaskId());
-            messageService.sendTaskLog(param.getTaskId(), "初始化成功");
+            messageService.sendTaskLog(param.getTaskId(), "初始化二维码成功");
             monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
                     TemplateUtils.format("{}-->初始化-->成功", FormType.getName(FormType.LOGIN)));
         } catch (Exception e) {
             logger.error("淘宝二维码登录-->初始化失败，taskId={},response={}", param.getTaskId(), response, e);
-            messageService.sendTaskLog(param.getTaskId(), "初始化失败");
+            messageService.sendTaskLog(param.getTaskId(), "初始化二维码失败");
             monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
                     TemplateUtils.format("{}-->初始化-->失败", FormType.getName(FormType.LOGIN)), ErrorCode.TASK_INIT_ERROR, "初始化失败");
         }
