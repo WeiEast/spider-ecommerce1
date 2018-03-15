@@ -1,18 +1,20 @@
 package com.datatrees.rawdatacentral.plugin.operator.guang_dong_10086_web;
 
 import javax.script.Invocable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.zip.ZipInputStream;
 
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
+import com.datatrees.crawler.core.processor.format.unit.TimeUnit;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -214,7 +216,6 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
 
         Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
                 .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
-        String token = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.TOKEN);
         String[] times = paramMap.get("page_content").split(":");
 
         Response response = null;
@@ -226,22 +227,54 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateData = "downloadBeginTime={}000000&downloadEneTime={}235959&downloadType=1&uniqueTagDown=";
             String data = TemplateUtils.format(templateData, times[1], times[2]);
             response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
-            String pageContent = new String(new String(response.getResponse(), "GB2312").getBytes(), "UTF-8");
-            if (!StringUtils.contains(pageContent,"清单数据")) {
-                pageContent = new String(new String(response.getResponse(), "UTF-8").getBytes(), "UTF-8");
+            String pageContent = new String(response.getResponse(), "GBK");
+            String checkPageContent = new String(response.getResponse(), "UTF-8");
+            if (StringUtils.contains(checkPageContent, "发生错误")) {
+                TimeUnit.SECOND.toMillis(1);
+                response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+                pageContent = new String(response.getResponse(), "GBK");
+                checkPageContent = new String(response.getResponse(), "UTF-8");
+                logger.info("发生错误,重试一下!pageContent={},checkPageContent={},taskId={}", pageContent, checkPageContent, param.getTaskId());
             }
-            if (!StringUtils.contains(pageContent,"清单数据")) {
-                pageContent = new String(new String(response.getResponse(), "GBK").getBytes(), "UTF-8");
+            if (StringUtils.contains(checkPageContent, "发生错误")) {
+                logger.info("依然发生错误，继续查询下一个月,taskId={}", param.getTaskId());
+                return result.success(pageContent);
             }
-            if (!StringUtils.contains(pageContent,"清单数据")) {
-                logger.error("详单依然乱码,taskid={},response={}", param.getTaskId(), response);
-            } else {
-                logger.info("详单正常,taskid={},response={}", param.getTaskId(), response);
+            if (!StringUtils.contains(pageContent, "清单数据")) {
+                logger.info("当前附件为压缩文件，需先解压缩，taskId={}", param.getTaskId());
+                pageContent = new String(unZip(response.getResponse()), "GBK");
+            }
+            if (!StringUtils.contains(pageContent, "清单数据")) {
+                logger.error("详单依然乱码,taskid={},通话详单byte数组={}", param.getTaskId(), response.getResponse());
             }
             return result.success(pageContent);
         } catch (Exception e) {
             logger.error("通话记录页访问失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
         }
+    }
+
+    public static byte[] unZip(byte[] data) {
+        byte[] b = null;
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(data);
+            ZipInputStream zip = new ZipInputStream(bis);
+            while (zip.getNextEntry() != null) {
+                byte[] buf = new byte[1024];
+                int num = -1;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                while ((num = zip.read(buf, 0, buf.length)) != -1) {
+                    baos.write(buf, 0, num);
+                }
+                b = baos.toByteArray();
+                baos.flush();
+                baos.close();
+            }
+            zip.close();
+            bis.close();
+        } catch (Exception ex) {
+            logger.info("解压缩出错", ex);
+        }
+        return b;
     }
 }
