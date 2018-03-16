@@ -54,6 +54,7 @@ public class ExtractWorker {
                     subExtractMessage.setTask(extractMessage.getTask());
                     subExtractMessage.setResultType(extractMessage.getResultType());
                     subExtractMessage.setTaskLogId(extractMessage.getTaskLogId());
+                    subExtractMessage.setTaskId(extractMessage.getTaskId());
                     subExtractMessage.setTypeId(extractMessage.getTypeId());
                     subExtractMessage.setWebsiteId(extractMessage.getWebsiteId());
                     subExtractMessage.setMessageIndex(messageIndex);
