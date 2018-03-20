@@ -169,15 +169,23 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                         BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
 
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                         ProcessResultUtils.saveProcessResult(processResult.success());
                         return;
                     }
-
+                    messageService.sendTaskLog(taskId, "登录失败");
+                    monitorService
+                            .sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())), ErrorCode.LOGIN_FAIL,
+                                    "登录失败,请重试!");
                     logger.warn("login by selinium fail,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
                 } catch (Throwable e) {
                     logger.warn("login by selinium error,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl, e);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
+                    messageService.sendTaskLog(taskId, "登录失败");
+                    monitorService
+                            .sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())), ErrorCode.LOGIN_ERROR,
+                                    "登录失败,请重试!");
                 } finally {
                     SeleniumUtils.closeClient(driver);
                 }
@@ -344,6 +352,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             loginMessage.setCookie(cookieString);
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                             BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                            monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                             return;
                         }
                         if (!StringUtils.equals(currentLoginProcessId, processResult.getProcessId().toString())) {
@@ -360,6 +369,9 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                     } catch (Throwable e) {
                         ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.REFESH_QR_CODE_ERROR));
                         logger.error("current login process has error,will close,taskId={},websiteName={}", taskId, websiteName, e);
+                        messageService.sendTaskLog(taskId, "登录失败");
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())),
+                                ErrorCode.LOGIN_ERROR, "登录失败,请重试!");
                     } finally {
                         SeleniumUtils.closeClient(driver);
                     }
