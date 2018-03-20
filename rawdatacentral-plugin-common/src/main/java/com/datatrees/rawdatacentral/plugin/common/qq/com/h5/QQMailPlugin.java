@@ -134,6 +134,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         }
                     }
 
+                    boolean checkSecondPasswordStatus = true;   //设置独立密码校验结果，默认为true
                     String currentContent = driver.getPageSource();
                     if (StringUtils.contains(currentContent, "请使用邮箱的“独立密码”登录")) {
                         for (int i = 0; i < 3; i++) {
@@ -142,14 +143,20 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             currentContent = driver.getPageSource();
                             currentUrl = driver.getCurrentUrl();
                             if (StringUtils.contains(currentContent, "独立密码不正确")) {
-                                ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_FAIL));
+                                checkSecondPasswordStatus = false;
                                 messageService.sendTaskLog(taskId, "独立密码校验失败");
                                 monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验独立密码-->失败", FormType.getName(param.getFormType())),
                                         ErrorCode.VALIDATE_FAIL, "检验独立密码失败,请重试!");
                             } else {
+                                checkSecondPasswordStatus = true;
                                 break;
                             }
                         }
+                    }
+                    if (!checkSecondPasswordStatus) {
+                        ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_FAIL));
+                        logger.error("独立密码校验失败,taskId={}", taskId);
+                        return;
                     }
                     if (StringUtils.startsWith(currentUrl, "https://w.mail.qq.com/cgi-bin/today")) {
                         String cookieString = SeleniumUtils.getCookieString(driver);
@@ -162,15 +169,23 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                         BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
 
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                         ProcessResultUtils.saveProcessResult(processResult.success());
                         return;
                     }
-
+                    messageService.sendTaskLog(taskId, "登录失败");
+                    monitorService
+                            .sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())), ErrorCode.LOGIN_FAIL,
+                                    "登录失败,请重试!");
                     logger.warn("login by selinium fail,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
                 } catch (Throwable e) {
                     logger.warn("login by selinium error,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl, e);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
+                    messageService.sendTaskLog(taskId, "登录失败");
+                    monitorService
+                            .sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())), ErrorCode.LOGIN_ERROR,
+                                    "登录失败,请重试!");
                 } finally {
                     SeleniumUtils.closeClient(driver);
                 }
@@ -280,6 +295,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
                         currentUrl = driver.getCurrentUrl();
                         String currentContent = driver.getPageSource();
+                        boolean checkSecondPasswordStatus = true;   //设置独立密码校验结果，默认为true
                         while (!isLoginSuccess(currentUrl) && !ProcessResultUtils.processExpire(taskId, processId)) {
                             TimeUnit.MILLISECONDS.sleep(500);
                             if (StringUtils.contains(currentContent, "邮箱在独立密码保护下，请输入您的独立密码")) {
@@ -289,13 +305,13 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                                     driver = checkSecondPassword(processResult, param, driver, true);
                                     currentContent = driver.getPageSource();
                                     if (StringUtils.contains(currentContent, "独立密码不正确")) {
-                                        ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_FAIL));
-                                        TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.FAILED);
                                         messageService.sendTaskLog(taskId, "独立密码校验失败");
                                         monitorService
                                                 .sendTaskLog(taskId, TemplateUtils.format("{}-->校验独立密码-->失败", FormType.getName(param.getFormType())),
                                                         ErrorCode.VALIDATE_FAIL, "检验独立密码失败,请重试!");
+                                        checkSecondPasswordStatus = false;
                                     } else {
+                                        checkSecondPasswordStatus = true;
                                         break;
                                     }
                                 }
@@ -305,6 +321,12 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                                 driver.navigate().refresh();
                                 currentContent = driver.getPageSource();
                             }
+                        }
+                        if (!checkSecondPasswordStatus) {
+                            ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_FAIL));
+                            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.VALIDATE_SECOND_PASSWORD_FAIL);
+                            logger.error("独立密码校验失败,taskId={}", taskId);
+                            return;
                         }
                         currentUrl = driver.getCurrentUrl();
                         String currentLoginProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
@@ -330,6 +352,7 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                             loginMessage.setCookie(cookieString);
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                             BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                            monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                             return;
                         }
                         if (!StringUtils.equals(currentLoginProcessId, processResult.getProcessId().toString())) {
@@ -346,6 +369,9 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                     } catch (Throwable e) {
                         ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.REFESH_QR_CODE_ERROR));
                         logger.error("current login process has error,will close,taskId={},websiteName={}", taskId, websiteName, e);
+                        messageService.sendTaskLog(taskId, "登录失败");
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())),
+                                ErrorCode.LOGIN_ERROR, "登录失败,请重试!");
                     } finally {
                         SeleniumUtils.closeClient(driver);
                     }
