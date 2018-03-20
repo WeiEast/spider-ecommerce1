@@ -2,9 +2,11 @@ package com.datatrees.rawdatacentral.service.dubbo.economic.taobao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -31,6 +33,10 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util.QRUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,7 +200,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                             = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=https://consumeprod.alipay.com/record/index.htm";
                     response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
                             .setFullUrl(redirectUrl).setReferer(referer).invoke();
-                    executeScriptSubmit(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), "", response.getPageContent());
+                    processCertCheck(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), "", response.getPageContent());
                 } catch (Exception e) {
                     logger.error("淘宝二维码登录处理失败，taskId={},response={}", param.getTaskId(), response, e);
                     messageService.sendTaskLog(param.getTaskId(), "登录失败");
@@ -248,23 +254,25 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
      * @param pageContent
      * @return
      */
-    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent) {
+    private void processCertCheck(Long taskId, String websiteName, String remark, String pageContent) {
         String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
-        String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
-        List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "input[name]");
-        String url = action.replaceAll("\\?", "");
-        Map<String, Object> params = new HashMap<>();
+        if (StringUtils.isEmpty(action)) throw new IllegalArgumentException("Error find form action when redirecting to alipay auth.");
 
+        String url = action.replaceAll("\\?", "");
+
+        String params = null;
+        List<Element> list = JsoupXpathUtils.selectElements(pageContent, "//form//input[@name]|//form//textarea[@name]");
         if (null != list && !list.isEmpty()) {
-            for (Map<String, String> map : list) {
-                if (map.containsKey("name") && map.containsKey("value")) {
-                    params.put(map.get("name"), map.get("value"));
-                }
+            List<NameValuePair> pairs = new ArrayList<>(list.size());
+            for (Element element : list) {
+                pairs.add(new BasicNameValuePair(element.attr("name"), element.val()));
             }
+            params = pairs.stream().map(pair -> pair.getName() + "=" + pair.getValue()).collect(Collectors.joining("&"));
         }
-        RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
-        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setUrl(url).setParams(params).invoke();
-        return response.getPageContent();
+        Response response = TaskHttpClient.create(taskId, websiteName, RequestType.POST, remark).setUrl(url).setRequestBody(params).invoke();
+        if (HttpStatus.SC_OK != response.getStatusCode()) {
+            throw new IllegalStateException("Something is wrong when request '" + action + "'");
+        }
     }
 
 }

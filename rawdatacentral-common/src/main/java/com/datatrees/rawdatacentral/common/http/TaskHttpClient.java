@@ -382,9 +382,10 @@ public class TaskHttpClient {
             response.setStatusCode(statusCode);
             cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
             TaskUtils.saveCookie(taskId, cookies);
+
             response.setResponseCookies(TaskUtils.getResponseCookieMap(request, cookies));
+
             long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
-            TaskUtils.saveCookie(taskId, host, cookieStore, httpResponse);
             response.setTotalTime(totalTime);
             Header[] headers = httpResponse.getAllHeaders();
             if (null != headers) {
@@ -434,7 +435,6 @@ public class TaskHttpClient {
                     taskId, request.getWebsiteName(), request.getProxy(), url, e);
             throw new RuntimeException("http error request=" + request, e);
         } finally {
-            IOUtils.closeQuietly(httpclient);
             if (httpResponse != null) {
                 try {
                     EntityUtils.consume(httpResponse.getEntity());
@@ -442,6 +442,7 @@ public class TaskHttpClient {
                     logger.error("http close error,taskId={}", taskId, e);
                 }
             }
+            IOUtils.closeQuietly(httpclient);
             try {
                 String sassEnv = TaskUtils.getSassEnv();
 
