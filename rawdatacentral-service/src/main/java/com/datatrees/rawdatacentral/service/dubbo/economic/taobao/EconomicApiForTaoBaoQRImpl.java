@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.service.dubbo.economic.taobao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,17 +49,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
 
-    @Autowired
-    private MonitorService monitorService;
-    @Autowired
-    private MessageService messageService;
+    private static final Logger logger               = LoggerFactory.getLogger(EconomicApiForTaoBaoQRImpl.class);
     private static final String IS_RUNING            = "economic_qr_is_runing_";
     private static final String IS_INIT              = "economic_qr_is_init_";
     private static final String QR_STATUS            = "economic_qr_status_";
     private static final String QR_STATUS_QUERY_TIME = "economic_qr_status_query_time_";
-    private static final Logger logger               = LoggerFactory.getLogger(EconomicApiForTaoBaoQRImpl.class);
-    private static final String preLoginUrl          = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=https://consumeprod.alipay" +
-            ".com/record/index.htm%3Fsign_from%3D3000";
+    private static final String ALIPAY_URL           = "https://custweb.alipay.com/account/index.htm";
+    private static final String AUTO_SIGN_ALIPAY_URL = ALIPAY_URL + "?sign_from=3000";
+    private static final String preLoginUrl          = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" + encodeUrl(AUTO_SIGN_ALIPAY_URL);
+            ;
+    @Autowired
+    private MonitorService monitorService;
+    @Autowired
+    private MessageService messageService;
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
@@ -93,13 +96,11 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             String isRunning = RedisUtils.get(IS_RUNING + param.getTaskId());
             RedisUtils.set(QR_STATUS_QUERY_TIME + param.getTaskId(), System.currentTimeMillis() + "", 60 * 2);
             if (!StringUtils.equals(isRunning, "true")) {
-                Thread t = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            doProcess(param);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                Thread t = new Thread(() -> {
+                    try {
+                        doProcess(param);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 });
                 t.start();
@@ -134,9 +135,9 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
         try {
             String lgToken = TaskUtils.getTaskShare(param.getTaskId(), "lgToken");
             String templateUrl
-                    = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl=https%3A%2F%2Fconsumeprod.alipay.com%2Frecord%2Findex.htm%3Fsign_from%3D3000&_ksTS={}&callback=json";
+                    = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
             response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
-                    .setFullUrl(templateUrl, lgToken, System.currentTimeMillis() + "_" + (int) (Math.random() * 1000)).setReferer(preLoginUrl)
+                    .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), System.currentTimeMillis() + "_" + (int) (Math.random() * 1000)).setReferer(preLoginUrl)
                     .invoke();
             String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(resultJson);
@@ -196,8 +197,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                     response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
                             .setFullUrl(loginUrl).setReferer(preLoginUrl).invoke();
                     String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
-                    String referer
-                            = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=https://consumeprod.alipay.com/record/index.htm";
+                    String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto="+ALIPAY_URL;
                     response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
                             .setFullUrl(redirectUrl).setReferer(referer).invoke();
                     processCertCheck(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), "", response.getPageContent());
@@ -275,4 +275,13 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
         }
     }
 
+    private static String encodeUrl(String queryString){
+        try {
+            return URLEncoder.encode(queryString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.warn(e.getMessage());
+        }
+
+        return queryString;
+    }
 }
