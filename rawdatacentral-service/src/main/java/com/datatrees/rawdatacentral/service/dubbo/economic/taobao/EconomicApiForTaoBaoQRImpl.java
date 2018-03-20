@@ -54,7 +54,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
     private static final String IS_INIT              = "economic_qr_is_init_";
     private static final String QR_STATUS            = "economic_qr_status_";
     private static final String QR_STATUS_QUERY_TIME = "economic_qr_status_query_time_";
-    private static final String ALIPAY_URL           = "https://custweb.alipay.com/account/index.htm";
+    private static final String ALIPAY_URL           = "https://consumeprod.alipay.com/record/advanced.htm";
     private static final String AUTO_SIGN_ALIPAY_URL = ALIPAY_URL + "?sign_from=3000";
     private static final String preLoginUrl          = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" + encodeUrl(AUTO_SIGN_ALIPAY_URL);
             ;
