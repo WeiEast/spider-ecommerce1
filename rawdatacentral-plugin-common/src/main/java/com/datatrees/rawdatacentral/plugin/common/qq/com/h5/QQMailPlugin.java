@@ -321,12 +321,12 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                                 driver.navigate().refresh();
                                 currentContent = driver.getPageSource();
                             }
-                        }
-                        if (!checkSecondPasswordStatus) {
-                            ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_FAIL));
-                            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.VALIDATE_SECOND_PASSWORD_FAIL);
-                            logger.error("独立密码校验失败,taskId={}", taskId);
-                            return;
+                            if (!checkSecondPasswordStatus) {
+                                ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.VALIDATE_FAIL));
+                                TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.VALIDATE_SECOND_PASSWORD_FAIL);
+                                logger.error("独立密码校验失败,taskId={}", taskId);
+                                return;
+                            }
                         }
                         currentUrl = driver.getCurrentUrl();
                         String currentLoginProcessId = TaskUtils.getTaskShare(taskId, AttributeKey.CURRENT_LOGIN_PROCESS_ID);
