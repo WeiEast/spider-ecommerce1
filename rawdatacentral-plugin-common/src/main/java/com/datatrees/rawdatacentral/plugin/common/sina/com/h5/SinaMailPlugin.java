@@ -66,7 +66,7 @@ public class SinaMailPlugin implements CommonPluginService {
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("sina web login request home url error!");
-                messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登录-->初始化-->失败");
+                messageService.sendTaskLog(param.getTaskId(),"登录初始化失败");
                 monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5登录-->初始化-->失败");
                 return result.failure(ErrorMessage.MAIL_DEFAULT_ERROR);
             }
@@ -75,7 +75,7 @@ public class SinaMailPlugin implements CommonPluginService {
             pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("sina web pre login error!");
-                messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登录-->初始化-->失败");
+                messageService.sendTaskLog(param.getTaskId(),"登录初始化失败");
                 monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5登录-->初始化-->失败");
                 return result.failure(ErrorMessage.MAIL_DEFAULT_ERROR);
             }
@@ -89,12 +89,12 @@ public class SinaMailPlugin implements CommonPluginService {
             RedisUtils.set("sina_nonce_" + param.getTaskId(), nonce, 600);
             RedisUtils.set("sina_pubKey_" + param.getTaskId(), pubKey, 600);
             RedisUtils.set("sina_rsakv_" + param.getTaskId(), rsakv, 600);
-            messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登录-->初始化-->成功");
+            messageService.sendTaskLog(param.getTaskId(),"登录初始化成功");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5登录-->初始化-->成功");
             return result.success("初始化成功");
         } catch (Exception e) {
             logger.error("登录-->初始化-->失败,param={},response={},e={}", JSON.toJSONString(param), response, e.getMessage());
-            messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登录-->初始化-->失败");
+            messageService.sendTaskLog(param.getTaskId(),"登录初始化失败");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5登录-->初始化-->失败");
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
@@ -114,17 +114,17 @@ public class SinaMailPlugin implements CommonPluginService {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "sina_mail_h5_获取验证码").setFullUrl(requestUrl).invoke();
             Map<String, Object> map = new HashMap<>();
             if (response.getStatusCode() == 200) {
-                messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5-->刷新图片验证码-->成功");
+                messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码成功");
                 monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5-->刷新图片验证码-->成功");
                 map.put("picCode", response.getPageContent());
                 return result.success(map);
             }
-            messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5-->刷新图片验证码-->失败");
+            messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码失败");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5-->刷新图片验证码-->失败");
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         } catch (Exception e) {
             logger.error("获取图片验证码失败，param={},response={},e={}", param, response, e.getMessage());
-            messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5-->刷新图片验证码-->失败");
+            messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码失败");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5-->刷新图片验证码-->失败");
             return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
         }
@@ -183,7 +183,7 @@ public class SinaMailPlugin implements CommonPluginService {
                 map.put("directive", "login_fail");
                 map.put("information", "登录名或密码错误");
                 logger.error("登录-->失败,用户名或密码错误");
-                messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登陆-->校验-->失败");
+                messageService.sendTaskLog(param.getTaskId(),"登陆失败,登录名或密码错误");
                 monitorService.sendTaskLog(taskId, param.getWebsiteName(), "新浪邮箱h5登陆-->校验-->失败");
                 return result.success(map);
             } else if (pageContent.contains("2070")) {
@@ -193,16 +193,22 @@ public class SinaMailPlugin implements CommonPluginService {
                 map.put("directive", "require_picture_again");
                 map.put("errorMessage", "输入的验证码不正确");
                 map.put("information", response.getPageContent());
-                messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登陆-->校验-->失败");
+                messageService.sendTaskLog(param.getTaskId(),"登陆失败,输入的验证码不正确");
                 monitorService.sendTaskLog(taskId, param.getWebsiteName(), "新浪邮箱h5登陆-->校验-->失败");
                 return result.success(map);
-            } else if (pageContent.contains("4049")) {
+            } else if (pageContent.contains("4040")) {
+                map.put("directive", "login_fail");
+                map.put("information", "登录尝试次数过于频繁，请稍后再登录");
+                messageService.sendTaskLog(param.getTaskId(),"登陆失败,登录尝试次数过于频繁");
+                monitorService.sendTaskLog(taskId, param.getWebsiteName(), "新浪邮箱h5登陆-->校验-->失败");
+                return result.success(map);
+            }else if (pageContent.contains("4049")) {
                 //获取验证码
                 response = getPicCode(param, response, pcId);
                 map.put("directive", "require_picture");
                 map.put("information", response.getPageContent());
                 logger.error("登录-->失败，重新访问的图片的response={}", response);
-                messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登陆-->校验-->失败");
+                messageService.sendTaskLog(param.getTaskId(),"登陆失败");
                 monitorService.sendTaskLog(taskId, param.getWebsiteName(), "新浪邮箱h5登陆-->校验-->失败");
                 return result.success(map);
             } else if (pageContent.contains("crossDomainUrlList")) {
@@ -275,19 +281,19 @@ public class SinaMailPlugin implements CommonPluginService {
                 map.put("directive", "login_fail");
                 map.put("information", "抱歉！登录失败，请稍候再试");
                 logger.error("登录-->失败,抱歉！登录失败，请稍候再试");
-                messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登陆-->校验-->失败");
+                messageService.sendTaskLog(param.getTaskId(),"登陆失败");
                 monitorService.sendTaskLog(taskId, param.getWebsiteName(), "新浪邮箱h5登陆-->校验-->失败");
                 return result.success(map);
             }
             map.put("directive", "login_fail");
             map.put("information", "登录失败");
-            messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登陆-->校验-->失败");
+            messageService.sendTaskLog(param.getTaskId(),"登陆失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), "新浪邮箱h5登陆-->校验-->失败");
             return result.success(map);
 
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={},异常信息e={}", JSON.toJSONString(param), response, e.getMessage());
-            messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5登陆-->校验-->失败");
+            messageService.sendTaskLog(param.getTaskId(),"登陆失败");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5登陆-->校验-->失败");
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
@@ -301,10 +307,10 @@ public class SinaMailPlugin implements CommonPluginService {
         response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "sina_mail_h5_获取验证码").setFullUrl(picUrl).invoke();
         if (response.getStatusCode() == 200) {
             BeanFactoryUtils.getBean(MessageService.class).sendTaskLog(param.getTaskId(), "刷新图片验证码");
-            messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5-->刷新图片验证码-->成功");
+            messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码成功");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5-->刷新图片验证码-->成功");
         } else {
-            messageService.sendTaskLog(param.getTaskId(),"新浪邮箱h5-->刷新图片验证码-->失败");
+            messageService.sendTaskLog(param.getTaskId(),"刷新图片验证码失败");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "新浪邮箱h5-->刷新图片验证码-->失败");
         }
         return response;
