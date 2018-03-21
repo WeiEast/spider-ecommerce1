@@ -139,14 +139,16 @@ public class WebsiteGroupController {
     }
 
     @RequestMapping("/updateEnable")
-    public HttpResult<Object> updateEnable(String websiteName, Boolean enable) {
+    public HttpResult<Object> updateEnable(@RequestBody WebsiteGroup websiteGroup) {
         HttpResult<Object> result = new HttpResult<>();
         try {
-            websiteGroupService.updateEnable(websiteName, enable);
-            logger.info("importConfig success websiteName={}", websiteName);
+            if (null == websiteGroup) return result.failure();
+            logger.info("updateEnable success websiteName={} Enable={}", websiteGroup.getWebsiteName(), websiteGroup
+                    .getEnable());
+            websiteGroupService.updateEnable(websiteGroup.getWebsiteName(), websiteGroup.getEnable());
             return result.success(true);
         } catch (Exception e) {
-            logger.error("importConfig error", e);
+            logger.error("updateEnable error", e);
             return result.failure();
         }
     }
