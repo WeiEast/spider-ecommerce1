@@ -250,6 +250,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
         String lastProcessId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
         if (StringUtils.isNoneBlank(lastProcessId)) {
