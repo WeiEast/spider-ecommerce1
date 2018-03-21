@@ -389,6 +389,8 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         String processId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
         if (StringUtils.isBlank(processId) || ProcessResultUtils.processExpire(param.getTaskId(), Long.valueOf(processId))) {
             logger.warn("qr code is expire,taskId={},processId={}", param.getTaskId(), processId);
