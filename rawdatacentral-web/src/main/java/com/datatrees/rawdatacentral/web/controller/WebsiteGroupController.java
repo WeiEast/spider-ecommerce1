@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
@@ -139,8 +140,9 @@ public class WebsiteGroupController {
     }
 
     @RequestMapping("/updateEnable")
-    public HttpResult<Object> updateEnable(@RequestBody WebsiteGroup websiteGroup) {
+    public HttpResult<Object> updateEnable(HttpServletResponse response, @RequestBody WebsiteGroup websiteGroup) {
         HttpResult<Object> result = new HttpResult<>();
+        response.setHeader("Access-Control-Allow-Origin", "*");
         try {
             if (null == websiteGroup) return result.failure();
             logger.info("updateEnable success websiteName={} Enable={}", websiteGroup.getWebsiteName(), websiteGroup
