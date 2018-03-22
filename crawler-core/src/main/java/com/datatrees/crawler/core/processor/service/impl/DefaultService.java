@@ -88,7 +88,7 @@ public class DefaultService extends ServiceBase {
             input.setCoExist(coexist);
         }
 
-        input.setFollowRedirect(true).setRedirectUriEscaped(context.getRedirectUriEscaped()).setState(ProcessorContextUtil.getHttpState(context)).setAllowCircularRedirects(context.getAllowCircularRedirects());
+        input.setFollowRedirect(true).setRedirectUriEscaped(context.isRedirectUriEscaped()).setState(ProcessorContextUtil.getHttpState(context)).setAllowCircularRedirects(context.isAllowCircularRedirects());
 
         Protocol protocol = this.getHttpClient(context.getHttpClientType());
 

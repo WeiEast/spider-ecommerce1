@@ -27,17 +27,13 @@ public class ExtractorProcessorContext extends AbstractProcessorContext {
 
     private final Map<String, PageExtractor> pageExtractorMap = new HashMap<String, PageExtractor>();
 
-    /**
-     * @param website
-     */
-    public ExtractorProcessorContext(Website website) {
-        super(website);
+    public ExtractorProcessorContext(Website website, Long taskId) {
+        super(website, taskId);
         Preconditions.checkNotNull(website.getExtractorConfig(), "website extractor config should not be empty!");
     }
 
     @Override
     public void init() {
-
         List<PageExtractor> PageExtractorList = this.website.getExtractorConfig().getPageExtractors();
         if (CollectionUtils.isNotEmpty(PageExtractorList)) {
             for (PageExtractor p : PageExtractorList) {

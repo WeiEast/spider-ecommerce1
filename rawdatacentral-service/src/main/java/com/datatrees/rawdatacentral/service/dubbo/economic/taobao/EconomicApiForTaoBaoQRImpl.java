@@ -17,6 +17,7 @@ import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR;
+import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
@@ -65,6 +66,9 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
+        // 设置请求使用代理
+        ProxyUtils.setProxyEnable(param.getTaskId(), true);
+
         HttpResult<Object> result = new HttpResult<>();
         Response response = null;
         try {
