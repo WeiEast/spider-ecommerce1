@@ -290,7 +290,8 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
                         ProcessResultUtils.saveProcessResult(processResult.success(Base64.getEncoder().encodeToString(out.toByteArray())));
                         TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
                         logger.info("refresh qr code success,taskId={},websiteName={}", taskId, websiteName);
-
+                        messageService.sendTaskLog(taskId, "刷新二维码成功");
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->刷新二维码-->成功", FormType.getName(param.getFormType())));
                         ProcessResultUtils.setProcessExpire(taskId, processId, 2, TimeUnit.MINUTES);
 
                         currentUrl = driver.getCurrentUrl();
@@ -379,15 +380,23 @@ public class QQMailPlugin implements CommonPluginService, QRPluginService {
             });
         } catch (Throwable e) {
             logger.error("refresh qr code error,taskId={},websiteName={}", taskId, websiteName, e);
+            messageService.sendTaskLog(taskId, "刷新二维码失败");
+            monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->刷新二维码-->失败", FormType.getName(param.getFormType())),
+                    ErrorCode.REFESH_QR_CODE_ERROR, "二维码刷新失败,请重试");
         }
         return new HttpResult(true).success(processResult);
     }
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         String processId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
         if (StringUtils.isBlank(processId) || ProcessResultUtils.processExpire(param.getTaskId(), Long.valueOf(processId))) {
             logger.warn("qr code is expire,taskId={},processId={}", param.getTaskId(), processId);
+            messageService.sendTaskLog(param.getTaskId(), "二维码过期,请重新获取");
+            monitorService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->二维码过期", FormType.getName(param.getFormType())),
+                    ErrorCode.QR_CODE_STATUS_EXPIRE, "二维码过期,请重新获取!");
             return new HttpResult<>().success(QRStatus.EXPIRE);
         }
         ProcessResultUtils.setProcessExpire(param.getTaskId(), Long.valueOf(processId), 2, TimeUnit.MINUTES);
