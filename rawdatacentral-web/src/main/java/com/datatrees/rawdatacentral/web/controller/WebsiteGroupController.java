@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
@@ -101,7 +102,8 @@ public class WebsiteGroupController {
                 continue;
             }
             String maxWeightWebsiteName = RedisUtils.get(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
-            List<WebsiteOperator> operators = websiteOperatorService.queryByGroupCode(group.getGroupCode());
+            String env= TaskUtils.getSassEnv();
+            List<WebsiteOperator> operators = websiteOperatorService.queryByGroupCodeAndEnv(group.getGroupCode(),env);
 
             String template = "{}({})";
             if (CollectionUtils.isEmpty(operators)) {

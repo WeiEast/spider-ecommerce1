@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.WebsiteOperatorServiceApi;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
@@ -39,7 +40,8 @@ public class WebsiteOperatorServiceApiImpl implements WebsiteOperatorServiceApi 
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
-        return websiteOperatorService.getByWebsiteName(websiteName);
+        String env = TaskUtils.getSassEnv();
+        return websiteOperatorService.getByWebsiteNameAndEnv(websiteName, env);
     }
 
     @Override

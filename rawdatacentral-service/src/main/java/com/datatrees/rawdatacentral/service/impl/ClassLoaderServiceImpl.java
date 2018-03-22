@@ -9,6 +9,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.ConfigServiceApi;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
@@ -72,7 +73,8 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     @Override
     public OperatorPluginService getOperatorPluginService(String websiteName, Long taskId) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+        String env= TaskUtils.getSassEnv();
+        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteNameAndEnv(websiteName,env);
         if (null == websiteOperator) {
             logger.error("not found config,websiteName={}", websiteName);
             throw new CommonException("not found config,websiteName=" + websiteName);

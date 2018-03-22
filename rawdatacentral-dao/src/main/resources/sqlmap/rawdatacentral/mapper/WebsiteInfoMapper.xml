@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.datatrees.rawdatacentral.dao.WebsiteInfoDAO" >
+  <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.WebsiteInfo" >
+    <id column="website_id" property="websiteId" jdbcType="INTEGER" />
+    <result column="env" property="env" jdbcType="VARCHAR" />
+    <result column="website_type" property="websiteType" jdbcType="INTEGER" />
+    <result column="website_name" property="websiteName" jdbcType="VARCHAR" />
+    <result column="website_title" property="websiteTitle" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="BIT" />
+    <result column="proxy_enable" property="proxyEnable" jdbcType="BIT" />
+    <result column="group_code" property="groupCode" jdbcType="VARCHAR" />
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    <result column="start_stage" property="startStage" jdbcType="VARCHAR" />
+    <result column="login_url" property="loginUrl" jdbcType="VARCHAR" />
+    <result column="plugin_class" property="pluginClass" jdbcType="VARCHAR" />
+    <result column="login_config" property="loginConfig" jdbcType="VARCHAR" />
+    <result column="sms_interval" property="smsInterval" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="login_tip" property="loginTip" jdbcType="VARCHAR" />
+    <result column="verify_tip" property="verifyTip" jdbcType="VARCHAR" />
+    <result column="reset_type" property="resetType" jdbcType="VARCHAR" />
+    <result column="sms_template" property="smsTemplate" jdbcType="VARCHAR" />
+    <result column="sms_receiver" property="smsReceiver" jdbcType="VARCHAR" />
+    <result column="reset_url" property="resetUrl" jdbcType="VARCHAR" />
+    <result column="reset_tip" property="resetTip" jdbcType="VARCHAR" />
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    <result column="attribute" property="attribute" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.datatrees.rawdatacentral.domain.model.WebsiteInfo" extends="BaseResultMap" >
+    <result column="search_config" property="searchConfig" jdbcType="LONGVARCHAR" />
+    <result column="extractor_config" property="extractorConfig" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    website_id, env, website_type, website_name, website_title, enable, proxy_enable, 
+    group_code, updated_at, start_stage, login_url, plugin_class, login_config, sms_interval, 
+    remark, login_tip, verify_tip, reset_type, sms_template, sms_receiver, reset_url, 
+    reset_tip, created_at, attribute
+  </sql>
+  <sql id="Blob_Column_List" >
+    search_config, extractor_config
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.datatrees.rawdatacentral.domain.model.example.WebsiteInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from website_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from website_info
+    where website_id = #{websiteId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from website_info
+    where website_id = #{websiteId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.datatrees.rawdatacentral.domain.model.WebsiteInfo" >
+    insert into website_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="websiteId != null" >
+        website_id,
+      </if>
+      <if test="env != null" >
+        env,
+      </if>
+      <if test="websiteType != null" >
+        website_type,
+      </if>
+      <if test="websiteName != null" >
+        website_name,
+      </if>
+      <if test="websiteTitle != null" >
+        website_title,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="proxyEnable != null" >
+        proxy_enable,
+      </if>
+      <if test="groupCode != null" >
+        group_code,
+      </if>
+      <if test="updatedAt != null" >
+        updated_at,
+      </if>
+      <if test="startStage != null" >
+        start_stage,
+      </if>
+      <if test="loginUrl != null" >
+        login_url,
+      </if>
+      <if test="pluginClass != null" >
+        plugin_class,
+      </if>
+      <if test="loginConfig != null" >
+        login_config,
+      </if>
+      <if test="smsInterval != null" >
+        sms_interval,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="loginTip != null" >
+        login_tip,
+      </if>
+      <if test="verifyTip != null" >
+        verify_tip,
+      </if>
+      <if test="resetType != null" >
+        reset_type,
+      </if>
+      <if test="smsTemplate != null" >
+        sms_template,
+      </if>
+      <if test="smsReceiver != null" >
+        sms_receiver,
+      </if>
+      <if test="resetUrl != null" >
+        reset_url,
+      </if>
+      <if test="resetTip != null" >
+        reset_tip,
+      </if>
+      <if test="createdAt != null" >
+        created_at,
+      </if>
+      <if test="attribute != null" >
+        attribute,
+      </if>
+      <if test="searchConfig != null" >
+        search_config,
+      </if>
+      <if test="extractorConfig != null" >
+        extractor_config,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="websiteId != null" >
+        #{websiteId,jdbcType=INTEGER},
+      </if>
+      <if test="env != null" >
+        #{env,jdbcType=VARCHAR},
+      </if>
+      <if test="websiteType != null" >
+        #{websiteType,jdbcType=INTEGER},
+      </if>
+      <if test="websiteName != null" >
+        #{websiteName,jdbcType=VARCHAR},
+      </if>
+      <if test="websiteTitle != null" >
+        #{websiteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=BIT},
+      </if>
+      <if test="proxyEnable != null" >
+        #{proxyEnable,jdbcType=BIT},
+      </if>
+      <if test="groupCode != null" >
+        #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startStage != null" >
+        #{startStage,jdbcType=VARCHAR},
+      </if>
+      <if test="loginUrl != null" >
+        #{loginUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="pluginClass != null" >
+        #{pluginClass,jdbcType=VARCHAR},
+      </if>
+      <if test="loginConfig != null" >
+        #{loginConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="smsInterval != null" >
+        #{smsInterval,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTip != null" >
+        #{loginTip,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyTip != null" >
+        #{verifyTip,jdbcType=VARCHAR},
+      </if>
+      <if test="resetType != null" >
+        #{resetType,jdbcType=VARCHAR},
+      </if>
+      <if test="smsTemplate != null" >
+        #{smsTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="smsReceiver != null" >
+        #{smsReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="resetUrl != null" >
+        #{resetUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="resetTip != null" >
+        #{resetTip,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="attribute != null" >
+        #{attribute,jdbcType=VARCHAR},
+      </if>
+      <if test="searchConfig != null" >
+        #{searchConfig,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="extractorConfig != null" >
+        #{extractorConfig,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update website_info
+    <set >
+      <if test="record.websiteId != null" >
+        website_id = #{record.websiteId,jdbcType=INTEGER},
+      </if>
+      <if test="record.env != null" >
+        env = #{record.env,jdbcType=VARCHAR},
+      </if>
+      <if test="record.websiteType != null" >
+        website_type = #{record.websiteType,jdbcType=INTEGER},
+      </if>
+      <if test="record.websiteName != null" >
+        website_name = #{record.websiteName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.websiteTitle != null" >
+        website_title = #{record.websiteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.enable != null" >
+        enable = #{record.enable,jdbcType=BIT},
+      </if>
+      <if test="record.proxyEnable != null" >
+        proxy_enable = #{record.proxyEnable,jdbcType=BIT},
+      </if>
+      <if test="record.groupCode != null" >
+        group_code = #{record.groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatedAt != null" >
+        updated_at = #{record.updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.startStage != null" >
+        start_stage = #{record.startStage,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginUrl != null" >
+        login_url = #{record.loginUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pluginClass != null" >
+        plugin_class = #{record.pluginClass,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginConfig != null" >
+        login_config = #{record.loginConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="record.smsInterval != null" >
+        sms_interval = #{record.smsInterval,jdbcType=INTEGER},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginTip != null" >
+        login_tip = #{record.loginTip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verifyTip != null" >
+        verify_tip = #{record.verifyTip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.resetType != null" >
+        reset_type = #{record.resetType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.smsTemplate != null" >
+        sms_template = #{record.smsTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.smsReceiver != null" >
+        sms_receiver = #{record.smsReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="record.resetUrl != null" >
+        reset_url = #{record.resetUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.resetTip != null" >
+        reset_tip = #{record.resetTip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createdAt != null" >
+        created_at = #{record.createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.attribute != null" >
+        attribute = #{record.attribute,jdbcType=VARCHAR},
+      </if>
+      <if test="record.searchConfig != null" >
+        search_config = #{record.searchConfig,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.extractorConfig != null" >
+        extractor_config = #{record.extractorConfig,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.datatrees.rawdatacentral.domain.model.WebsiteInfo" >
+    update website_info
+    <set >
+      <if test="env != null" >
+        env = #{env,jdbcType=VARCHAR},
+      </if>
+      <if test="websiteType != null" >
+        website_type = #{websiteType,jdbcType=INTEGER},
+      </if>
+      <if test="websiteName != null" >
+        website_name = #{websiteName,jdbcType=VARCHAR},
+      </if>
+      <if test="websiteTitle != null" >
+        website_title = #{websiteTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=BIT},
+      </if>
+      <if test="proxyEnable != null" >
+        proxy_enable = #{proxyEnable,jdbcType=BIT},
+      </if>
+      <if test="groupCode != null" >
+        group_code = #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null" >
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startStage != null" >
+        start_stage = #{startStage,jdbcType=VARCHAR},
+      </if>
+      <if test="loginUrl != null" >
+        login_url = #{loginUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="pluginClass != null" >
+        plugin_class = #{pluginClass,jdbcType=VARCHAR},
+      </if>
+      <if test="loginConfig != null" >
+        login_config = #{loginConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="smsInterval != null" >
+        sms_interval = #{smsInterval,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTip != null" >
+        login_tip = #{loginTip,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyTip != null" >
+        verify_tip = #{verifyTip,jdbcType=VARCHAR},
+      </if>
+      <if test="resetType != null" >
+        reset_type = #{resetType,jdbcType=VARCHAR},
+      </if>
+      <if test="smsTemplate != null" >
+        sms_template = #{smsTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="smsReceiver != null" >
+        sms_receiver = #{smsReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="resetUrl != null" >
+        reset_url = #{resetUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="resetTip != null" >
+        reset_tip = #{resetTip,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null" >
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="attribute != null" >
+        attribute = #{attribute,jdbcType=VARCHAR},
+      </if>
+      <if test="searchConfig != null" >
+        search_config = #{searchConfig,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="extractorConfig != null" >
+        extractor_config = #{extractorConfig,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where website_id = #{websiteId,jdbcType=INTEGER}
+  </update>
+
+
+</mapper>

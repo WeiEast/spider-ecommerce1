@@ -3,87 +3,58 @@ package com.datatrees.rawdatacentral.domain.model;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table website_operator(运营商配置)  */
-public class WebsiteOperator implements Serializable {
-    /** 主键 */
+public class WebsiteInfo implements Serializable{
     private Integer websiteId;
 
-    /** 区分环境 */
     private String env;
 
-    /** 配置名称 */
+    private Integer websiteType;
+
     private String websiteName;
 
-    /** 配置标题 */
     private String websiteTitle;
 
-    /** 是否启用(0:不启用,1:启用) */
     private Boolean enable;
 
-    /** 代理(0:不启用,1:启用) */
     private Boolean proxyEnable;
 
-    /** 搜索配置 */
-    private String searchConfig;
-
-    /** 解析配置 */
-    private String extractorConfig;
-
-    /** 分组 */
     private String groupCode;
 
-    /** 运营商类型:10086,10010,10000 */
-    private String operatorType;
-
-    /** 区域 */
-    private String regionName;
-
-    /** 修改时间 */
     private Date updatedAt;
 
-    /** 插件启动阶段(在***表单提交成功之后发送登录成功消息) */
     private String startStage;
 
-    /** 登录地址 */
     private String loginUrl;
 
-    /** 插件地址 */
     private String pluginClass;
 
-    /** 登录配置 */
     private String loginConfig;
 
-    /** 短信重发间隔时间(全局) */
     private Integer smsInterval;
 
-    /** 描述 */
     private String remark;
 
-    /** 登录过程中自定义提示 */
     private String loginTip;
 
-    /** 爬过过程中校验,短信输入框提示 */
     private String verifyTip;
 
-    /** 重置密码方式(SMS:短信, TEL:拨打电话, WEB:url重置) */
     private String resetType;
 
-    /** 重置密码短信模板 */
     private String smsTemplate;
 
-    /** 重置密码接收手机号 */
     private String smsReceiver;
 
-    /** 重置密码url */
     private String resetUrl;
 
-    /** 重置密码提示 */
     private String resetTip;
 
-    /**  */
-    private Boolean simulate;
+    private Date createdAt;
 
-    private static final long serialVersionUID = 1L;
+    private String attribute;
+
+    private String searchConfig;
+
+    private String extractorConfig;
 
     public Integer getWebsiteId() {
         return websiteId;
@@ -93,15 +64,23 @@ public class WebsiteOperator implements Serializable {
         this.websiteId = websiteId;
     }
 
-     public String getEnv() {
-         return env;
-     }
+    public String getEnv() {
+        return env;
+    }
 
-     public void setEnv(String env) {
-         this.env = env;
-     }
+    public void setEnv(String env) {
+        this.env = env == null ? null : env.trim();
+    }
 
-     public String getWebsiteName() {
+    public Integer getWebsiteType() {
+        return websiteType;
+    }
+
+    public void setWebsiteType(Integer websiteType) {
+        this.websiteType = websiteType;
+    }
+
+    public String getWebsiteName() {
         return websiteName;
     }
 
@@ -133,44 +112,12 @@ public class WebsiteOperator implements Serializable {
         this.proxyEnable = proxyEnable;
     }
 
-    public String getSearchConfig() {
-        return searchConfig;
-    }
-
-    public void setSearchConfig(String searchConfig) {
-        this.searchConfig = searchConfig == null ? null : searchConfig.trim();
-    }
-
-    public String getExtractorConfig() {
-        return extractorConfig;
-    }
-
-    public void setExtractorConfig(String extractorConfig) {
-        this.extractorConfig = extractorConfig == null ? null : extractorConfig.trim();
-    }
-
     public String getGroupCode() {
         return groupCode;
     }
 
     public void setGroupCode(String groupCode) {
         this.groupCode = groupCode == null ? null : groupCode.trim();
-    }
-
-    public String getOperatorType() {
-        return operatorType;
-    }
-
-    public void setOperatorType(String operatorType) {
-        this.operatorType = operatorType == null ? null : operatorType.trim();
-    }
-
-    public String getRegionName() {
-        return regionName;
-    }
-
-    public void setRegionName(String regionName) {
-        this.regionName = regionName == null ? null : regionName.trim();
     }
 
     public Date getUpdatedAt() {
@@ -285,11 +232,35 @@ public class WebsiteOperator implements Serializable {
         this.resetTip = resetTip == null ? null : resetTip.trim();
     }
 
-    public Boolean getSimulate() {
-        return simulate;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setSimulate(Boolean simulate) {
-        this.simulate = simulate;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute == null ? null : attribute.trim();
+    }
+
+    public String getSearchConfig() {
+        return searchConfig;
+    }
+
+    public void setSearchConfig(String searchConfig) {
+        this.searchConfig = searchConfig == null ? null : searchConfig.trim();
+    }
+
+    public String getExtractorConfig() {
+        return extractorConfig;
+    }
+
+    public void setExtractorConfig(String extractorConfig) {
+        this.extractorConfig = extractorConfig == null ? null : extractorConfig.trim();
     }
 }

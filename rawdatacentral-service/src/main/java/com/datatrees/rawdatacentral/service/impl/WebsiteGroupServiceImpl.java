@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
@@ -69,6 +70,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         deleteByGroupCode(groupCode);
         GroupEnum groupEnum = GroupEnum.getByGroupCode(groupCode);
         CheckUtils.checkNotNull(groupEnum, "groupCode not found");
+        String env= TaskUtils.getSassEnv();
         for (Map.Entry<String, Integer> entry : config.entrySet()) {
             WebsiteGroup operatorGroup = new WebsiteGroup();
             operatorGroup.setGroupCode(groupCode);
@@ -76,7 +78,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
             operatorGroup.setWebsiteType(groupEnum.getWebsiteType().getValue());
             operatorGroup.setWebsiteName(entry.getKey());
             operatorGroup.setWeight(entry.getValue());
-            operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());
+            operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteNameAndEnv(entry.getKey(),env).getWebsiteTitle());
             websiteGroupDAO.insertSelective(operatorGroup);
         }
         updateCacheByGroupCode(groupCode);

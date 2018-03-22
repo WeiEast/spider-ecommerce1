@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.Bank">
     <id column="Id" jdbcType="SMALLINT" property="bankId" />
     <result column="WebsiteId" jdbcType="INTEGER" property="websiteId" />
+    <result column="WebsiteName" jdbcType="VARCHAR" property="websiteName" />
     <result column="BankMark" jdbcType="VARCHAR" property="bankMark" />
     <result column="BankName" jdbcType="VARCHAR" property="bankName" />
     <result column="OrderIndex" jdbcType="SMALLINT" property="orderIndex" />
@@ -71,7 +72,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    Id, WebsiteId, BankMark, BankName, OrderIndex, MatchText, isenabled, CreatedAt, UpdatedAt
+    Id, WebsiteId,WebsiteName, BankMark, BankName, OrderIndex, MatchText, isenabled, CreatedAt, UpdatedAt
   </sql>
   <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.BankExample" resultMap="BaseResultMap">
     select
@@ -109,6 +110,9 @@
       <if test="websiteId != null">
         WebsiteId,
       </if>
+      <if test="websiteName != null">
+        WebsiteName,
+      </if>
       <if test="bankMark != null">
         BankMark,
       </if>
@@ -134,6 +138,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="websiteId != null">
         #{websiteId,jdbcType=INTEGER},
+      </if>
+      <if test="websiteName != null">
+        #{websiteName,jdbcType=VARCHAR},
       </if>
       <if test="bankMark != null">
         #{bankMark,jdbcType=VARCHAR},
@@ -169,6 +176,9 @@
     <set>
       <if test="websiteId != null">
         WebsiteId = #{websiteId,jdbcType=INTEGER},
+      </if>
+      <if test="websiteName != null">
+        WebsiteName = #{websiteName,jdbcType=VARCHAR},
       </if>
       <if test="bankMark != null">
         BankMark = #{bankMark,jdbcType=VARCHAR},
