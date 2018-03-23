@@ -157,7 +157,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public boolean updateWebsiteConf(String websiteName, String searchConfig, String extractConfig) {
         CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
-        CheckUtils.checkNotBlank(searchConfig, "searchConfig is blank");
+//        CheckUtils.checkNotBlank(searchConfig, "searchConfig is blank");
         CheckUtils.checkNotBlank(extractConfig, "extractConfig is blank");
 
         WebsiteConfig websiteConfig = getWebsiteConfigByWebsiteName(websiteName);
