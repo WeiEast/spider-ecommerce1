@@ -87,7 +87,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public WebsiteConfig getWebsiteConfigByWebsiteId(Integer websiteId) {
         CheckUtils.checkNotNull(websiteId, "websiteId is null");
-        WebsiteInfo websiteInfo = websiteInfoDAO.selectByPrimaryKey(websiteId);
+        WebsiteInfoWithBLOBs websiteInfo = websiteInfoDAO.selectByPrimaryKey(websiteId);
         if (null == websiteInfo) {
             logger.warn("WebsiteConfig not found websiteId={}", websiteId);
             return null;
@@ -98,7 +98,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
         CheckUtils.checkNotNull(websiteName, "websiteName is null");
-        WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
+        WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
         if (null == websiteInfo) {
             logger.warn("WebsiteConfig not found websiteId={}", websiteName);
             return null;
@@ -166,7 +166,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         confUpdate.setExtractorConfig(extractConfig);
         confUpdate.setSearchConfig(searchConfig);
         confUpdate.setUpdatedAt(new Date());
-        WebsiteInfo websiteInfo = new WebsiteInfo();
+        WebsiteInfoWithBLOBs websiteInfo = new WebsiteInfoWithBLOBs();
         websiteInfo.setWebsiteId(websiteConfig.getWebsiteId());
         websiteInfo.setSearchConfig(searchConfig);
         websiteInfo.setExtractorConfig(extractConfig);
@@ -295,7 +295,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
         } else {
-            WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
+            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
             website = buildWebsiteFromWebsiteInfo(websiteInfo);
 //            website = getWebsiteByWebsiteName(websiteName);
         }
@@ -320,7 +320,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
         } else {
-            WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
+            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
             website = buildWebsiteFromWebsiteInfo(websiteInfo);
 //            website = getWebsiteByWebsiteName(websiteName);
         }
@@ -409,7 +409,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public Website buildWebsiteFromWebsiteInfo(WebsiteInfo websiteInfo) {
+    public Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo) {
         WebsiteConfig config = buildWebsiteConfigFromWebsiteInfo(websiteInfo);
         Website website = buildWebsite(config);
         return website;
@@ -466,7 +466,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return config;
     }
 
-    private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfo info) {
+    private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfoWithBLOBs info) {
         CheckUtils.checkNotNull(info, "info is null");
         WebsiteConfig config = new WebsiteConfig();
         config.setWebsiteId(info.getWebsiteId());

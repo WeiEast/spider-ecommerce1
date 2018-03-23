@@ -3,12 +3,12 @@ package com.datatrees.rawdatacentral.domain.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class WebsiteInfo implements Serializable{
+public class WebsiteInfo implements Serializable {
     private Integer websiteId;
 
     private String env;
 
-    private Integer websiteType;
+    private Boolean websiteType;
 
     private String websiteName;
 
@@ -52,9 +52,7 @@ public class WebsiteInfo implements Serializable{
 
     private String attribute;
 
-    private String searchConfig;
-
-    private String extractorConfig;
+    private static final long serialVersionUID = 1L;
 
     public Integer getWebsiteId() {
         return websiteId;
@@ -72,11 +70,11 @@ public class WebsiteInfo implements Serializable{
         this.env = env == null ? null : env.trim();
     }
 
-    public Integer getWebsiteType() {
+    public Boolean getWebsiteType() {
         return websiteType;
     }
 
-    public void setWebsiteType(Integer websiteType) {
+    public void setWebsiteType(Boolean websiteType) {
         this.websiteType = websiteType;
     }
 
@@ -248,19 +246,37 @@ public class WebsiteInfo implements Serializable{
         this.attribute = attribute == null ? null : attribute.trim();
     }
 
-    public String getSearchConfig() {
-        return searchConfig;
-    }
-
-    public void setSearchConfig(String searchConfig) {
-        this.searchConfig = searchConfig == null ? null : searchConfig.trim();
-    }
-
-    public String getExtractorConfig() {
-        return extractorConfig;
-    }
-
-    public void setExtractorConfig(String extractorConfig) {
-        this.extractorConfig = extractorConfig == null ? null : extractorConfig.trim();
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", websiteId=").append(websiteId);
+        sb.append(", env=").append(env);
+        sb.append(", websiteType=").append(websiteType);
+        sb.append(", websiteName=").append(websiteName);
+        sb.append(", websiteTitle=").append(websiteTitle);
+        sb.append(", enable=").append(enable);
+        sb.append(", proxyEnable=").append(proxyEnable);
+        sb.append(", groupCode=").append(groupCode);
+        sb.append(", updatedAt=").append(updatedAt);
+        sb.append(", startStage=").append(startStage);
+        sb.append(", loginUrl=").append(loginUrl);
+        sb.append(", pluginClass=").append(pluginClass);
+        sb.append(", loginConfig=").append(loginConfig);
+        sb.append(", smsInterval=").append(smsInterval);
+        sb.append(", remark=").append(remark);
+        sb.append(", loginTip=").append(loginTip);
+        sb.append(", verifyTip=").append(verifyTip);
+        sb.append(", resetType=").append(resetType);
+        sb.append(", smsTemplate=").append(smsTemplate);
+        sb.append(", smsReceiver=").append(smsReceiver);
+        sb.append(", resetUrl=").append(resetUrl);
+        sb.append(", resetTip=").append(resetTip);
+        sb.append(", createdAt=").append(createdAt);
+        sb.append(", attribute=").append(attribute);
+        sb.append("]");
+        return sb.toString();
     }
 }

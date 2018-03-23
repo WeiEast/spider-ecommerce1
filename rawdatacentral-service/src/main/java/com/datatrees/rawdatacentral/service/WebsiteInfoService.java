@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.service;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 
 /**
  * Created by zhangyanjia on 2018/3/20.
@@ -13,5 +14,5 @@ public interface WebsiteInfoService {
      * @param env
      * @return
      */
-    WebsiteInfo getByWebsiteNameAndEnv(String websiteName);
+    WebsiteInfoWithBLOBs getByWebsiteNameAndEnv(String websiteName);
 }

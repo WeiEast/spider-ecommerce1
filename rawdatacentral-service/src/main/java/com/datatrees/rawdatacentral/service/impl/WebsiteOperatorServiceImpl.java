@@ -1,10 +1,5 @@
 package com.datatrees.rawdatacentral.service.impl;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
@@ -20,7 +15,7 @@ import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
@@ -33,6 +28,11 @@ import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
@@ -94,7 +94,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     public void importWebsite(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "config is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteInfo info=websiteInfoService.getByWebsiteNameAndEnv(config.getWebsiteName());
+        WebsiteInfoWithBLOBs info=websiteInfoService.getByWebsiteNameAndEnv(config.getWebsiteName());
         if (null == info) {
             logger.warn("WebsiteConfig not found websiteName={}", config.getWebsiteName());
             throw new CommonException("websiteName config not found");

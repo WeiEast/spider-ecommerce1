@@ -7,6 +7,7 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
@@ -119,11 +120,11 @@ public interface WebsiteConfigService {
     Website buildWebsite(WebsiteOperator websiteOperator);
 
     /**
-     * 将WebsiteInfo转化成Website
+     * 将WebsiteInfoWithBLOBs转化成Website
      * @param websiteInfo
      * @return
      */
-    Website buildWebsiteFromWebsiteInfo(WebsiteInfo websiteInfo);
+    Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo);
 
     /**
      * 根据taskId从缓存取Website
