@@ -40,8 +40,7 @@ public class WebsiteOperatorServiceApiImpl implements WebsiteOperatorServiceApi 
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
-        String env = TaskUtils.getSassEnv();
-        return websiteOperatorService.getByWebsiteNameAndEnv(websiteName, env);
+        return websiteOperatorService.getByWebsiteName(websiteName);
     }
 
     @Override

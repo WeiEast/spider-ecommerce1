@@ -73,8 +73,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     @Override
     public OperatorPluginService getOperatorPluginService(String websiteName, Long taskId) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
-        String env= TaskUtils.getSassEnv();
-        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteNameAndEnv(websiteName,env);
+        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
         if (null == websiteOperator) {
             logger.error("not found config,websiteName={}", websiteName);
             throw new CommonException("not found config,websiteName=" + websiteName);

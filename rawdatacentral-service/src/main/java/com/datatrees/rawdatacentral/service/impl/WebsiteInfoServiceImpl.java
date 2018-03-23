@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -25,9 +26,10 @@ public class WebsiteInfoServiceImpl implements WebsiteInfoService {
     private WebsiteInfoDAO websiteInfoDAO;
 
     @Override
-    public WebsiteInfo getByWebsiteNameAndEnv(String websiteName, String env) {
+    public WebsiteInfo getByWebsiteNameAndEnv(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         WebsiteInfoExample example = new WebsiteInfoExample();
+        String env= TaskUtils.getSassEnv();
         example.createCriteria().andWebsiteNameEqualTo(websiteName).andEnvEqualTo(env);
         List<WebsiteInfo> list = websiteInfoDAO.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);

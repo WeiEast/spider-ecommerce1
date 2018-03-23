@@ -57,14 +57,15 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     @Resource
     private WebsiteInfoService websiteInfoService;
 
-//    @Override
-//    public WebsiteOperator getByWebsiteName(String websiteName) {
-//        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
-//        WebsiteOperatorExample example = new WebsiteOperatorExample();
-//        example.createCriteria().andWebsiteNameEqualTo(websiteName);
-//        List<WebsiteOperator> list = websiteOperatorDAO.selectByExample(example);
-//        return list.isEmpty() ? null : list.get(0);
-//    }
+    @Override
+    public WebsiteOperator getByWebsiteName(String websiteName) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        String env=TaskUtils.getSassEnv();
+        WebsiteOperatorExample example = new WebsiteOperatorExample();
+        example.createCriteria().andWebsiteNameEqualTo(websiteName).andEnvEqualTo(env);
+        List<WebsiteOperator> list = websiteOperatorDAO.selectByExample(example);
+        return list.isEmpty() ? null : list.get(0);
+    }
 
     @Override
     public WebsiteOperator getByWebsiteNameAndEnv(String websiteName, String env) {
@@ -93,10 +94,9 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     public void importWebsite(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "config is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-        String env= TaskUtils.getSassEnv();
-        WebsiteInfo info=websiteInfoService.getByWebsiteNameAndEnv(config.getWebsiteName(),env);
+        WebsiteInfo info=websiteInfoService.getByWebsiteNameAndEnv(config.getWebsiteName());
         if (null == info) {
-            logger.warn("WebsiteConfig not found websiteName={}，env={}", config.getWebsiteName(),env);
+            logger.warn("WebsiteConfig not found websiteName={}", config.getWebsiteName());
             throw new CommonException("websiteName config not found");
         }
 
@@ -127,7 +127,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         String region = config.getWebsiteTitle().split("\\(")[0].replaceAll("移动", "").replaceAll("联通", "").replaceAll("电信", "");
         config.setRegionName(region);
 
-        config.setEnv(env);
+        config.setEnv(TaskUtils.getSassEnv());
         config.setWebsiteId(source.getWebsiteId());
         config.setWebsiteName(source.getWebsiteName());
         config.setSearchConfig(source.getSearchConfig());
@@ -153,7 +153,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     @Override
     public void updateWebsite(WebsiteOperator config) {
         String env=TaskUtils.getSassEnv();
-        WebsiteOperator operatorDb = getByWebsiteNameAndEnv(config.getWebsiteName(),env);
+        WebsiteOperator operatorDb = getByWebsiteName(config.getWebsiteName());
         if (null == operatorDb) {
             throw new CommonException("websiteName not found,websiteName=" + config.getWebsiteName());
         }
@@ -201,7 +201,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         if("dev".equals(env)){
             throw new RuntimeException("请在开发环境下进行操作");
         }
-        WebsiteOperator websiteOperatorDb = getByWebsiteNameAndEnv(config.getWebsiteName(),env);
+        WebsiteOperator websiteOperatorDb = getByWebsiteName(config.getWebsiteName());
         config.setEnv(env);
         saveOrUpdateOperate(config, websiteOperatorDb);
     }
@@ -322,8 +322,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Override
     public Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto) {
-        String env=TaskUtils.getSassEnv();
-        WebsiteOperator websiteOperatorDb = getByWebsiteNameAndEnv(websiteName,env);
+        WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
         String redisKey = RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(websiteOperatorDb.getGroupCode());
         String fromWebsiteName = RedisUtils.get(redisKey);
 
@@ -336,13 +335,13 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
         WebsiteOperator from = null;
         if (StringUtils.isNotBlank(fromWebsiteName)) {
-            from = getByWebsiteNameAndEnv(fromWebsiteName,env);
+            from = getByWebsiteName(fromWebsiteName);
         }
 
         String toWebsiteName = RedisUtils.get(redisKey);
         WebsiteOperator to = null;
         if (StringUtils.isNotBlank(toWebsiteName)) {
-            to = getByWebsiteNameAndEnv(toWebsiteName,env);
+            to = getByWebsiteName(toWebsiteName);
         }
         Map<String, WebsiteOperator> map = new HashMap<>();
         map.put(AttributeKey.FROM, from);

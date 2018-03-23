@@ -105,8 +105,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
 
                         //从新的运营商表读取配置
-                        String env=TaskUtils.getSassEnv();
-                        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteNameAndEnv(websiteName,env);
+                        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
                         Website website = websiteConfigService.buildWebsite(websiteOperator);
                         redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
 
@@ -213,8 +212,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             logger.warn("task is not init ,param=[}", param.toString());
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
-        String env=TaskUtils.getSassEnv();
-        WebsiteOperator website = websiteOperatorService.getByWebsiteNameAndEnv(param.getWebsiteName(),env);
+        WebsiteOperator website = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
         //刷新短信间隔时间
         int sendSmsInterval = website.getSmsInterval();
         Long taskId = param.getTaskId();
@@ -427,8 +425,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
      */
     private void sendSubmitSuccessMessage(OperatorPluginService pluginService, HttpResult result, OperatorParam param, long startTime) {
         if (null != result && result.getStatus()) {
-            String env=TaskUtils.getSassEnv();
-            WebsiteOperator operator = websiteOperatorService.getByWebsiteNameAndEnv(param.getWebsiteName(),env);
+            WebsiteOperator operator = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
             String sendLoginStage = operator.getStartStage();
             if (StringUtils.equals(sendLoginStage, param.getFormType())) {
                 long endTime = System.currentTimeMillis();

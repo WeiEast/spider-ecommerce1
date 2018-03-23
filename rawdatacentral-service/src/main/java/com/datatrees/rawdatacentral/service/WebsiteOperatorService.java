@@ -17,6 +17,8 @@ public interface WebsiteOperatorService {
      * @param env
      * @return
      */
+
+    WebsiteOperator getByWebsiteName(String websiteName);
     WebsiteOperator getByWebsiteNameAndEnv(String websiteName,String env);
 
     /**

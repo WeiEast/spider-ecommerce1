@@ -98,10 +98,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
         CheckUtils.checkNotNull(websiteName, "websiteName is null");
-        String env = TaskUtils.getSassEnv();
-        WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName, env);
+        WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
         if (null == websiteInfo) {
-            logger.warn("WebsiteConfig not found websiteId={}，env={}", websiteName, env);
+            logger.warn("WebsiteConfig not found websiteId={}", websiteName);
             return null;
         }
         return buildWebsiteConfigFromWebsiteInfo(websiteInfo);
@@ -213,8 +212,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             }
             String env = TaskUtils.getSassEnv();
             CheckUtils.checkNotNull(env, "env is null");
-//            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteNameAndEnv(websiteName, env);
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
             if (null == websiteOperator) {
                 logger.error("website not found ,webisteName={}，env={}", websiteName, env);
                 continue;
@@ -292,14 +290,12 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
         Website website = null;
         Boolean isOperator = WebsiteUtils.isOperator(websiteName);
-        String env = TaskUtils.getSassEnv();
         if (isOperator) {
-//            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteNameAndEnv(websiteName, env);
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
         } else {
-            WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName, env);
+            WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
             website = buildWebsiteFromWebsiteInfo(websiteInfo);
 //            website = getWebsiteByWebsiteName(websiteName);
         }
@@ -319,14 +315,12 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         logger.info("getExtractorProcessorContext start,taskId={},websiteName={}", taskId, websiteName);
         Website website = null;
         Boolean isOperator = WebsiteUtils.isOperator(websiteName);
-        String env = TaskUtils.getSassEnv();
         if (isOperator) {
-//            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteNameAndEnv(websiteName, env);
+            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
         } else {
-            WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName, env);
+            WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
             website = buildWebsiteFromWebsiteInfo(websiteInfo);
 //            website = getWebsiteByWebsiteName(websiteName);
         }

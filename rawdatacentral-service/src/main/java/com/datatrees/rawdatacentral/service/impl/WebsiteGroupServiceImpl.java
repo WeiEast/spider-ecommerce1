@@ -70,7 +70,6 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         deleteByGroupCode(groupCode);
         GroupEnum groupEnum = GroupEnum.getByGroupCode(groupCode);
         CheckUtils.checkNotNull(groupEnum, "groupCode not found");
-        String env= TaskUtils.getSassEnv();
         for (Map.Entry<String, Integer> entry : config.entrySet()) {
             WebsiteGroup operatorGroup = new WebsiteGroup();
             operatorGroup.setGroupCode(groupCode);
@@ -78,7 +77,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
             operatorGroup.setWebsiteType(groupEnum.getWebsiteType().getValue());
             operatorGroup.setWebsiteName(entry.getKey());
             operatorGroup.setWeight(entry.getValue());
-            operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteNameAndEnv(entry.getKey(),env).getWebsiteTitle());
+            operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());
             websiteGroupDAO.insertSelective(operatorGroup);
         }
         updateCacheByGroupCode(groupCode);
