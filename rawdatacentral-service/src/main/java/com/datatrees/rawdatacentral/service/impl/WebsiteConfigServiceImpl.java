@@ -491,7 +491,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         config.setExtractorConfig(info.getExtractorConfig());
         config.setWebsiteTitle(info.getWebsiteTitle());
         config.setGroupCode(info.getGroupCode());
-        if (info.getGroupCode() != null && "".equals(info.getGroupCode())) {
+        if (info.getGroupCode() != null && !("".equals(info.getGroupCode()))) {
             config.setGroupName(GroupEnum.getByGroupCode(info.getGroupCode()).getGroupName());
         }
         return config;
