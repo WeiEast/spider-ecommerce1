@@ -335,52 +335,52 @@ public class WebsiteInfoCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeEqualTo(Boolean value) {
+        public Criteria andWebsiteTypeEqualTo(Integer value) {
             addCriterion("website_type =", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeNotEqualTo(Boolean value) {
+        public Criteria andWebsiteTypeNotEqualTo(Integer value) {
             addCriterion("website_type <>", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeGreaterThan(Boolean value) {
+        public Criteria andWebsiteTypeGreaterThan(Integer value) {
             addCriterion("website_type >", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andWebsiteTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("website_type >=", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeLessThan(Boolean value) {
+        public Criteria andWebsiteTypeLessThan(Integer value) {
             addCriterion("website_type <", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeLessThanOrEqualTo(Boolean value) {
+        public Criteria andWebsiteTypeLessThanOrEqualTo(Integer value) {
             addCriterion("website_type <=", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeIn(List<Boolean> values) {
+        public Criteria andWebsiteTypeIn(List<Integer> values) {
             addCriterion("website_type in", values, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeNotIn(List<Boolean> values) {
+        public Criteria andWebsiteTypeNotIn(List<Integer> values) {
             addCriterion("website_type not in", values, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeBetween(Boolean value1, Boolean value2) {
+        public Criteria andWebsiteTypeBetween(Integer value1, Integer value2) {
             addCriterion("website_type between", value1, value2, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andWebsiteTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("website_type not between", value1, value2, "websiteType");
             return (Criteria) this;
         }

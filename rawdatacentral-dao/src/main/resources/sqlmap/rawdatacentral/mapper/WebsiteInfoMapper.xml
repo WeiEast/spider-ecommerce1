@@ -8,7 +8,7 @@
     -->
     <id column="website_id" jdbcType="INTEGER" property="websiteId" />
     <result column="env" jdbcType="VARCHAR" property="env" />
-    <result column="website_type" jdbcType="BIT" property="websiteType" />
+    <result column="website_type" jdbcType="INTEGER" property="websiteType" />
     <result column="website_name" jdbcType="VARCHAR" property="websiteName" />
     <result column="website_title" jdbcType="VARCHAR" property="websiteTitle" />
     <result column="enable" jdbcType="BIT" property="enable" />
@@ -204,7 +204,7 @@
       sms_template, sms_receiver, reset_url, 
       reset_tip, created_at, `attribute`, 
       search_config, extractor_config)
-    values (#{websiteId,jdbcType=INTEGER}, #{env,jdbcType=VARCHAR}, #{websiteType,jdbcType=BIT}, 
+    values (#{websiteId,jdbcType=INTEGER}, #{env,jdbcType=VARCHAR}, #{websiteType,jdbcType=INTEGER},
       #{websiteName,jdbcType=VARCHAR}, #{websiteTitle,jdbcType=VARCHAR}, #{enable,jdbcType=BIT}, 
       #{proxyEnable,jdbcType=BIT}, #{groupCode,jdbcType=VARCHAR}, #{updatedAt,jdbcType=TIMESTAMP}, 
       #{startStage,jdbcType=VARCHAR}, #{loginUrl,jdbcType=VARCHAR}, #{pluginClass,jdbcType=VARCHAR}, 
@@ -308,7 +308,7 @@
         #{env,jdbcType=VARCHAR},
       </if>
       <if test="websiteType != null">
-        #{websiteType,jdbcType=BIT},
+        #{websiteType,jdbcType=INTEGER},
       </if>
       <if test="websiteName != null">
         #{websiteName,jdbcType=VARCHAR},
@@ -405,7 +405,7 @@
         env = #{record.env,jdbcType=VARCHAR},
       </if>
       <if test="record.websiteType != null">
-        website_type = #{record.websiteType,jdbcType=BIT},
+        website_type = #{record.websiteType,jdbcType=INTEGER},
       </if>
       <if test="record.websiteName != null">
         website_name = #{record.websiteName,jdbcType=VARCHAR},
@@ -489,7 +489,7 @@
     update website_info
     set website_id = #{record.websiteId,jdbcType=INTEGER},
       env = #{record.env,jdbcType=VARCHAR},
-      website_type = #{record.websiteType,jdbcType=BIT},
+      website_type = #{record.websiteType,jdbcType=INTEGER},
       website_name = #{record.websiteName,jdbcType=VARCHAR},
       website_title = #{record.websiteTitle,jdbcType=VARCHAR},
       `enable` = #{record.enable,jdbcType=BIT},
@@ -525,7 +525,7 @@
     update website_info
     set website_id = #{record.websiteId,jdbcType=INTEGER},
       env = #{record.env,jdbcType=VARCHAR},
-      website_type = #{record.websiteType,jdbcType=BIT},
+      website_type = #{record.websiteType,jdbcType=INTEGER},
       website_name = #{record.websiteName,jdbcType=VARCHAR},
       website_title = #{record.websiteTitle,jdbcType=VARCHAR},
       `enable` = #{record.enable,jdbcType=BIT},
@@ -562,7 +562,7 @@
         env = #{env,jdbcType=VARCHAR},
       </if>
       <if test="websiteType != null">
-        website_type = #{websiteType,jdbcType=BIT},
+        website_type = #{websiteType,jdbcType=INTEGER},
       </if>
       <if test="websiteName != null">
         website_name = #{websiteName,jdbcType=VARCHAR},
@@ -643,7 +643,7 @@
     -->
     update website_info
     set env = #{env,jdbcType=VARCHAR},
-      website_type = #{websiteType,jdbcType=BIT},
+      website_type = #{websiteType,jdbcType=INTEGER},
       website_name = #{websiteName,jdbcType=VARCHAR},
       website_title = #{websiteTitle,jdbcType=VARCHAR},
       `enable` = #{enable,jdbcType=BIT},
@@ -676,7 +676,7 @@
     -->
     update website_info
     set env = #{env,jdbcType=VARCHAR},
-      website_type = #{websiteType,jdbcType=BIT},
+      website_type = #{websiteType,jdbcType=INTEGER},
       website_name = #{websiteName,jdbcType=VARCHAR},
       website_title = #{websiteTitle,jdbcType=VARCHAR},
       `enable` = #{enable,jdbcType=BIT},

@@ -29,7 +29,7 @@ public class WebsiteInfo implements Serializable {
      *
      * @mbg.generated
      */
-    private Boolean websiteType;
+    private Integer websiteType;
 
     /**
      *
@@ -284,7 +284,7 @@ public class WebsiteInfo implements Serializable {
      *
      * @mbg.generated
      */
-    public Boolean getWebsiteType() {
+    public Integer getWebsiteType() {
         return websiteType;
     }
 
@@ -296,7 +296,7 @@ public class WebsiteInfo implements Serializable {
      *
      * @mbg.generated
      */
-    public void setWebsiteType(Boolean websiteType) {
+    public void setWebsiteType(Integer websiteType) {
         this.websiteType = websiteType;
     }
 
