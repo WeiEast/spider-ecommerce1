@@ -5,14 +5,14 @@ import java.io.FileInputStream;
 import java.util.*;
 
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
-import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
-import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
+import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.oss.OssService;
 import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.core.oss.OssUtils;
+import com.datatrees.rawdatacentral.service.constants.Constants;
+import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
+import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -35,18 +35,18 @@ public class UploadTask implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.info("start upload task! id={},taskId={}" + extractMessage.getTaskLogId());
+        LOGGER.info("start upload task! id={},taskId={}", extractMessage.getTaskLogId(), extractMessage.getTaskId());
         try {
             Map<String, SubmitFile> uploadMap = this.getSubmitFiles(extractMessage.getMessageObject());
-            // after upload complete remove extractmessage object
+            // after upload complete remove extract message object
             if (MapUtils.isNotEmpty(uploadMap)) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ZipCompressUtils.compress(baos, uploadMap);
                 OssService service = OssServiceProvider.getDefaultService();
                 service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, baos.toByteArray());
-                LOGGER.debug("upload task completed! id: " + extractMessage.getTaskLogId() + ",osskey:" + ossKey);
+                LOGGER.debug("upload task completed! id: {}, ossKey: {}", extractMessage.getTaskLogId(), ossKey);
             } else {
-                LOGGER.info("no need to upload file for message:" + extractMessage);
+                LOGGER.info("no need to upload file for message: {}", extractMessage);
             }
         } catch (Exception e) {
             LOGGER.error("upload task run failed! taskId:" + extractMessage.getTaskLogId(), e);

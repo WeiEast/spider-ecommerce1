@@ -11,7 +11,7 @@ ext {
     jodaTime = "2.7"
     apacheMime4j = "0.6.1"
     javassist = "3.20.0-GA"
-    toolkit = "1.0.4"
+    toolkit = "1.0.9"
 }
 
 dependencies {
