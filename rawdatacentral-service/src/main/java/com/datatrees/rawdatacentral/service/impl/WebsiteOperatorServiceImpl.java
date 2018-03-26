@@ -60,7 +60,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
-        String env=TaskUtils.getSassEnv();
+        String env = TaskUtils.getSassEnv();
         WebsiteOperatorExample example = new WebsiteOperatorExample();
         example.createCriteria().andWebsiteNameEqualTo(websiteName).andEnvEqualTo(env);
         List<WebsiteOperator> list = websiteOperatorDAO.selectByExample(example);
@@ -84,7 +84,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 //    }
 
     @Override
-    public List<WebsiteOperator> queryByGroupCodeAndEnv(String groupCode,String env) {
+    public List<WebsiteOperator> queryByGroupCodeAndEnv(String groupCode, String env) {
         WebsiteOperatorExample example = new WebsiteOperatorExample();
         example.createCriteria().andGroupCodeEqualTo(groupCode).andEnvEqualTo(env);
         return websiteOperatorDAO.selectByExample(example);
@@ -94,7 +94,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     public void importWebsite(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "config is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteInfoWithBLOBs info=websiteInfoService.getByWebsiteNameAndEnv(config.getWebsiteName());
+        WebsiteInfoWithBLOBs info = websiteInfoService.getByWebsiteNameAndEnv(config.getWebsiteName());
         if (null == info) {
             logger.warn("WebsiteConfig not found websiteName={}", config.getWebsiteName());
             throw new CommonException("websiteName config not found");
@@ -117,7 +117,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         source.setExtractorConfig(info.getExtractorConfig());
         source.setWebsiteTitle(info.getWebsiteTitle());
         source.setGroupCode(info.getGroupCode());
-        if(info.getGroupCode()!=null){
+        if (info.getGroupCode() != null) {
             source.setGroupName(GroupEnum.getByGroupCode(info.getGroupCode()).getGroupName());
         }
         if (StringUtils.isBlank(config.getOperatorType())) {
@@ -152,7 +152,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Override
     public void updateWebsite(WebsiteOperator config) {
-        String env=TaskUtils.getSassEnv();
+        String env = TaskUtils.getSassEnv();
         WebsiteOperator operatorDb = getByWebsiteName(config.getWebsiteName());
         if (null == operatorDb) {
             throw new CommonException("websiteName not found,websiteName=" + config.getWebsiteName());
@@ -174,16 +174,16 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             throw new RuntimeException("from 配置不存在");
         }
         String env;
-        if ("预发布".equals(from)){
-            env="preproduct";
-        }else if ("生产".equals(from)){
-            env="product";
-        }else if("准生产".equals(from)||"测试".equals(from)){
-            env="test";
-        }else{
-            env="dev";
+        if ("预发布".equals(from)) {
+            env = "preproduct";
+        } else if ("生产".equals(from)) {
+            env = "product";
+        } else if ("准生产".equals(from) || "测试".equals(from)) {
+            env = "test";
+        } else {
+            env = "dev";
         }
-        String queryUrl= TemplateUtils.format("http://{}/website/operator/getByWebsiteNameAndEnv?websiteName={}&env={}", hosts.get(from), websiteName,env);
+        String queryUrl = TemplateUtils.format("http://{}/website/operator/getByWebsiteNameAndEnv?websiteName={}&env={}", hosts.get(from), websiteName, env);
         String json = TaskHttpClient.create(6L, "", RequestType.POST, "").setFullUrl(queryUrl).setProxyEnable(false).invoke().getPageContent();
         WebsiteOperator config = JSON.parseObject(json, new TypeReference<WebsiteOperator>() {
         });
@@ -194,11 +194,11 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         logger.info("迁入运营商配置成功,websiteName={},from={}", websiteName, from);
     }
 
-    public void saveConfigForImport(WebsiteOperator config){
+    public void saveConfigForImport(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "param is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-        String env=TaskUtils.getSassEnv();
-        if("dev".equals(env)){
+        String env = TaskUtils.getSassEnv();
+        if (!"dev".equals(env)) {
             throw new RuntimeException("请在开发环境下进行操作");
         }
         WebsiteOperator websiteOperatorDb = getByWebsiteName(config.getWebsiteName());
@@ -207,10 +207,10 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     private void saveOrUpdateOperate(WebsiteOperator config, WebsiteOperator websiteOperatorDb) {
-        if(websiteOperatorDb==null){
+        if (websiteOperatorDb == null) {
             if (null == config.getWebsiteId()) {
                 websiteOperatorDAO.insertSelective(config);
-            }else{
+            } else {
                 websiteOperatorDb = websiteOperatorDAO.selectByPrimaryKey(config.getWebsiteId());
                 if (null != websiteOperatorDb) {
                     //放重复websiteId
@@ -220,7 +220,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
                     websiteOperatorDAO.insertSelectiveWithPrimaryKey(config);
                 }
             }
-        }else{
+        } else {
             config.setWebsiteId(websiteOperatorDb.getWebsiteId());
             websiteOperatorDAO.updateByPrimaryKeySelective(config);
         }
@@ -233,21 +233,21 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         if (!hosts.containsKey(to)) {
             throw new RuntimeException("from 配置不存在");
         }
-        String operateEnv=TaskUtils.getSassEnv();
-        if("dev".equals(operateEnv)){
+        String operateEnv = TaskUtils.getSassEnv();
+        if (!"dev".equals(operateEnv)) {
             throw new RuntimeException("请在开发环境下进行操作");
         }
         String env;
-        if("开发".equals(to)) {
-            env="dev";
-        }else if ("测试".equals(to)||"准生产".equals(to)){
-            env="test";
-        }else if("预发布".equals(to)){
-            env="preproduct";
-        }else{
-            env="product";
+        if ("开发".equals(to)) {
+            env = "dev";
+        } else if ("测试".equals(to) || "准生产".equals(to)) {
+            env = "test";
+        } else if ("预发布".equals(to)) {
+            env = "preproduct";
+        } else {
+            env = "product";
         }
-        WebsiteOperator config = getByWebsiteNameAndEnv(websiteName,operateEnv);
+        WebsiteOperator config = getByWebsiteNameAndEnv(websiteName, operateEnv);
         if (null == config || StringUtils.isBlank(config.getWebsiteName())) {
             throw new RuntimeException("website not found");
         }
@@ -260,11 +260,11 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Override
-    public void saveConfigForExport(WebsiteOperator config){
+    public void saveConfigForExport(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "param is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-        String env=config.getEnv();
-        WebsiteOperator websiteOperatorDb = getByWebsiteNameAndEnv(config.getWebsiteName(),env);
+        String env = config.getEnv();
+        WebsiteOperator websiteOperatorDb = getByWebsiteNameAndEnv(config.getWebsiteName(), env);
         saveOrUpdateOperate(config, websiteOperatorDb);
     }
 
