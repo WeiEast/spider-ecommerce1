@@ -1,27 +1,24 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10086_app;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONPath;
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.NameValue;
 import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean.BillReqBean;
+import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean.DetailReqBean;
+import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean.UserInfoLoginReq;
+import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.utils.MD5Util;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -274,7 +271,7 @@ public class China10086ForApp implements OperatorPluginService {
 
             xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20007", obj, param.getMobile().toString())) +
                     "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_004").setFullUrl(templateUrl)
                     .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
                     .invoke();
 
@@ -312,7 +309,7 @@ public class China10086ForApp implements OperatorPluginService {
 
             xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20016", obj, param.getMobile().toString())) +
                     "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_005").setFullUrl(templateUrl)
                     .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
                     .invoke();
 
@@ -352,7 +349,7 @@ public class China10086ForApp implements OperatorPluginService {
 
             xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20009", billObj, param.getMobile().toString())) +
                     "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_006").setFullUrl(templateUrl)
                     .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
                     .invoke();
 
@@ -361,11 +358,13 @@ public class China10086ForApp implements OperatorPluginService {
             /**
              * 查询详单
              */
-            templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/historyBillsService/getHistoryBills";
-             billObj = new BillReqBean();
-            billObj.setBgnMonth("2017-10");
-            billObj.setCellNum(param.getMobile().toString());
-            billObj.setEndMonth("2018-02");
+            templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/queryDetail/getDetail";
+            DetailReqBean detailObj = new DetailReqBean();
+            detailObj.setBillMonth("2018-02");
+            detailObj.setCellNum(param.getMobile().toString());
+            detailObj.setPage(1);
+            detailObj.setTmemType("02");
+            detailObj.setUnit(2000);
 
             TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
 
@@ -379,7 +378,7 @@ public class China10086ForApp implements OperatorPluginService {
             params.put("imei", "869782021770311");
             params.put("nt", "3");
             params.put("prov", "200");
-            params.put("reqBody", billObj);
+            params.put("reqBody", detailObj);
             params.put("sb", "Xiaomi");
             params.put("sn", "Mi Note 2");
             params.put("sp", "1080x1920");
@@ -390,9 +389,9 @@ public class China10086ForApp implements OperatorPluginService {
             params.put("xc", "A2081");
             params.put("xk", "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73");
 
-            xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20009", billObj, param.getMobile().toString())) +
+            xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20012", detailObj, param.getMobile().toString())) +
                     "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_007").setFullUrl(templateUrl)
                     .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
                     .invoke();
 
@@ -455,5 +454,179 @@ public class China10086ForApp implements OperatorPluginService {
         } catch (Exception e) {
         }
         return requestBean;
+    }
+
+    public static class RequestBean {
+        private String ak;
+        private String cid;
+        private String city;
+        private String ctid;
+        private String cv;
+        private String en;
+        private String imei;
+        private String nt;
+        private String prov;
+        private Object reqBody;
+        private String sb;
+        private String sn;
+        private String sp;
+        private String st;
+        private String sv;
+        private String f4306t;
+        private String tel;
+        private String xc;
+        private String xk;
+
+        public String getCtid() {
+            return this.ctid;
+        }
+
+        public void setCtid(String ctid) {
+            this.ctid = ctid;
+        }
+
+        public String getAk() {
+            return this.ak;
+        }
+
+        public void setAk(String ak) {
+            this.ak = ak;
+        }
+
+        public String getCid() {
+            return this.cid;
+        }
+
+        public void setCid(String cid) {
+            this.cid = cid;
+        }
+
+        public String getEn() {
+            return this.en;
+        }
+
+        public void setEn(String en) {
+            this.en = en;
+        }
+
+        public String getT() {
+            return this.f4306t;
+        }
+
+        public void setT(String t) {
+            this.f4306t = t;
+        }
+
+        public String getSn() {
+            return this.sn;
+        }
+
+        public void setSn(String sn) {
+            this.sn = sn;
+        }
+
+        public String getCv() {
+            return this.cv;
+        }
+
+        public void setCv(String cv) {
+            this.cv = cv;
+        }
+
+        public String getSt() {
+            return this.st;
+        }
+
+        public void setSt(String st) {
+            this.st = st;
+        }
+
+        public String getSv() {
+            return this.sv;
+        }
+
+        public void setSv(String sv) {
+            this.sv = sv;
+        }
+
+        public String getSp() {
+            return this.sp;
+        }
+
+        public void setSp(String sp) {
+            this.sp = sp;
+        }
+
+        public String getXk() {
+            return this.xk;
+        }
+
+        public void setXk(String xk) {
+            this.xk = xk;
+        }
+
+        public String getXc() {
+            return this.xc;
+        }
+
+        public void setXc(String xc) {
+            this.xc = xc;
+        }
+
+        public Object getReqBody() {
+            return this.reqBody;
+        }
+
+        public void setReqBody(Object reqBody) {
+            this.reqBody = reqBody;
+        }
+
+        public String getImei() {
+            return this.imei;
+        }
+
+        public void setImei(String imei) {
+            this.imei = imei;
+        }
+
+        public String getSb() {
+            return this.sb;
+        }
+
+        public void setSb(String sb) {
+            this.sb = sb;
+        }
+
+        public String getNt() {
+            return this.nt;
+        }
+
+        public void setNt(String nt) {
+            this.nt = nt;
+        }
+
+        public String getTel() {
+            return this.tel;
+        }
+
+        public void setTel(String tel) {
+            this.tel = tel;
+        }
+
+        public String getProv() {
+            return this.prov;
+        }
+
+        public void setProv(String prov) {
+            this.prov = prov;
+        }
+
+        public String getCity() {
+            return this.city;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
+        }
     }
 }

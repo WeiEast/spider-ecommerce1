@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.operator.china_10086_app;
+package com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean;
 
 import java.io.Serializable;
 
