@@ -23,7 +23,7 @@
             and o.operator_type = #{operatorType}
         </if>
         <if test="groupCode != null and groupCode != ''">
-            and g.group_code =#{groupCode};
+            and g.group_code = #{groupCode}
         </if>
     </select>
     <!--
