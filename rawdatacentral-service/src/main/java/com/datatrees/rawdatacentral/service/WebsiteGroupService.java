@@ -64,4 +64,13 @@ public interface WebsiteGroupService {
      */
     void updateEnable(String websiteName, Boolean enable);
 
+    /**
+     * 获取websitename
+     * @param enable
+     * @param operatorType
+     * @param groupCode
+     * @return
+     */
+    List<String> getWebsiteNameList(String enable, String operatorType, String groupCode);
+
 }
