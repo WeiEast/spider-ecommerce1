@@ -203,6 +203,9 @@ public class China10086ForApp implements OperatorPluginService {
             //
             //TaskUtils.saveCookie(param.getTaskId(),cookies);
 
+            /**
+             * 查询信用分
+             */
             templateUrl = "https://clientaccess.10086.cn/biz-orange/SHS/userCredit/getCredit";
             obj = new UserInfoLoginReq();
             obj.setCellNum(param.getMobile().toString());
@@ -237,7 +240,163 @@ public class China10086ForApp implements OperatorPluginService {
                     .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
                     .invoke();
 
-            logger.info("输出：{},taskId={}", response.getPageContent(), param.getTaskId());
+            logger.info("输出(信用分)：{},taskId={}", response.getPageContent(), param.getTaskId());
+
+            /**
+             * 查询个人信息
+             */
+            templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/userInformationService/getUserInformation";
+            obj = new UserInfoLoginReq();
+            obj.setCellNum(param.getMobile().toString());
+
+            TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
+
+            params = new LinkedHashMap<>();
+            params.put("ak", "F4AA34B89513F0D087CA0EF11A3277469DC74905");
+            params.put("cid", "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=");
+            params.put("city", "0668");
+            params.put("ctid", "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=");
+            params.put("cv", "4.3.0");
+            params.put("en", "0");
+            params.put("imei", "869782021770311");
+            params.put("nt", "3");
+            params.put("prov", "200");
+            params.put("reqBody", obj);
+            params.put("sb", "Xiaomi");
+            params.put("sn", "Mi Note 2");
+            params.put("sp", "1080x1920");
+            params.put("st", "1");
+            params.put("sv", "7.0");
+            params.put("t", MD5Util.MD5(cookieString, 32));
+            params.put("tel", param.getMobile().toString());
+            params.put("xc", "A2081");
+            params.put("xk", "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73");
+
+            xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20007", obj, param.getMobile().toString())) +
+                    "_Leadeon/SecurityOrganization", 32);
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
+                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
+                    .invoke();
+
+            logger.info("输出(个人信息)：{},taskId={}", response.getPageContent(), param.getTaskId());
+
+            /**
+             * 查询余额
+             */
+            templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/realFeeQuery/getRealFee";
+            obj = new UserInfoLoginReq();
+            obj.setCellNum(param.getMobile().toString());
+
+            TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
+
+            params = new LinkedHashMap<>();
+            params.put("ak", "F4AA34B89513F0D087CA0EF11A3277469DC74905");
+            params.put("cid", "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=");
+            params.put("city", "0668");
+            params.put("ctid", "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=");
+            params.put("cv", "4.3.0");
+            params.put("en", "0");
+            params.put("imei", "869782021770311");
+            params.put("nt", "3");
+            params.put("prov", "200");
+            params.put("reqBody", obj);
+            params.put("sb", "Xiaomi");
+            params.put("sn", "Mi Note 2");
+            params.put("sp", "1080x1920");
+            params.put("st", "1");
+            params.put("sv", "7.0");
+            params.put("t", MD5Util.MD5(cookieString, 32));
+            params.put("tel", param.getMobile().toString());
+            params.put("xc", "A2081");
+            params.put("xk", "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73");
+
+            xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20016", obj, param.getMobile().toString())) +
+                    "_Leadeon/SecurityOrganization", 32);
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
+                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
+                    .invoke();
+
+            logger.info("输出(余额)：{},taskId={}", response.getPageContent(), param.getTaskId());
+
+            /**
+             * 查询账单
+             */
+            templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/historyBillsService/getHistoryBills";
+            BillReqBean billObj = new BillReqBean();
+            billObj.setBgnMonth("2017-10");
+            billObj.setCellNum(param.getMobile().toString());
+            billObj.setEndMonth("2018-02");
+
+            TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
+
+            params = new LinkedHashMap<>();
+            params.put("ak", "F4AA34B89513F0D087CA0EF11A3277469DC74905");
+            params.put("cid", "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=");
+            params.put("city", "0668");
+            params.put("ctid", "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=");
+            params.put("cv", "4.3.0");
+            params.put("en", "0");
+            params.put("imei", "869782021770311");
+            params.put("nt", "3");
+            params.put("prov", "200");
+            params.put("reqBody", billObj);
+            params.put("sb", "Xiaomi");
+            params.put("sn", "Mi Note 2");
+            params.put("sp", "1080x1920");
+            params.put("st", "1");
+            params.put("sv", "7.0");
+            params.put("t", MD5Util.MD5(cookieString, 32));
+            params.put("tel", param.getMobile().toString());
+            params.put("xc", "A2081");
+            params.put("xk", "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73");
+
+            xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20009", billObj, param.getMobile().toString())) +
+                    "_Leadeon/SecurityOrganization", 32);
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
+                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
+                    .invoke();
+
+            logger.info("输出(账单)：{},taskId={}", response.getPageContent(), param.getTaskId());
+
+            /**
+             * 查询详单
+             */
+            templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/historyBillsService/getHistoryBills";
+             billObj = new BillReqBean();
+            billObj.setBgnMonth("2017-10");
+            billObj.setCellNum(param.getMobile().toString());
+            billObj.setEndMonth("2018-02");
+
+            TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
+
+            params = new LinkedHashMap<>();
+            params.put("ak", "F4AA34B89513F0D087CA0EF11A3277469DC74905");
+            params.put("cid", "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=");
+            params.put("city", "0668");
+            params.put("ctid", "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=");
+            params.put("cv", "4.3.0");
+            params.put("en", "0");
+            params.put("imei", "869782021770311");
+            params.put("nt", "3");
+            params.put("prov", "200");
+            params.put("reqBody", billObj);
+            params.put("sb", "Xiaomi");
+            params.put("sn", "Mi Note 2");
+            params.put("sp", "1080x1920");
+            params.put("st", "1");
+            params.put("sv", "7.0");
+            params.put("t", MD5Util.MD5(cookieString, 32));
+            params.put("tel", param.getMobile().toString());
+            params.put("xc", "A2081");
+            params.put("xk", "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73");
+
+            xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20009", billObj, param.getMobile().toString())) +
+                    "_Leadeon/SecurityOrganization", 32);
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
+                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie",cookieString)
+                    .invoke();
+
+            logger.info("输出(详单)：{},taskId={}", response.getPageContent(), param.getTaskId());
 
             return result.failure();
         } catch (Exception e) {
