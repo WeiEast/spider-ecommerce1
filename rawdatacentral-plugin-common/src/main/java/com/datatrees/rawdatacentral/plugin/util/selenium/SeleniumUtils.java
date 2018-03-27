@@ -34,7 +34,7 @@ public class SeleniumUtils {
                 logger.info("will user proxy:{}", proxyStr);
             }
         }
-        String hubUrl = PropertiesConfiguration.getInstance().get("hub.url");
+        String hubUrl = PropertiesConfiguration.getInstance().get("selenium.hub.url");
         return new RemoteWebDriver(new URL(hubUrl), capabilities);
     }
 

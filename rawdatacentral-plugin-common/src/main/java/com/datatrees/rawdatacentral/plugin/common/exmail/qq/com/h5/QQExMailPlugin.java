@@ -73,6 +73,7 @@ public class QQExMailPlugin implements CommonPluginService {
         Map<String, Object> map = new HashMap<>();
         Response response = null;
         MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
+        MessageService messageService = BeanFactoryUtils.getBean(MessageService.class);
         try {
             ProxyUtils.setProxyEnable(param.getTaskId(), true);
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
@@ -81,15 +82,18 @@ public class QQExMailPlugin implements CommonPluginService {
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("exmailqq web login request home url error!");
+                messageService.sendTaskLog(param.getTaskId(),"登录初始化失败");
                 monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "腾讯企业邮箱h5登录-->初始化-->失败");
                 return result.failure(ErrorMessage.MAIL_DEFAULT_ERROR);
             }
             String publicTs = PatternUtils.group(pageContent, PRELOGIN_RESULT_PATTERN, 1);
             RedisUtils.set("exmail_publicTs_" + param.getTaskId(), publicTs, 600);
+            messageService.sendTaskLog(param.getTaskId(),"登录初始化成功");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "腾讯企业邮箱h5登录-->初始化-->成功");
             return result.success("初始化成功");
         } catch (Exception e) {
             logger.error("登录-->初始化-->失败,param={},response={},e={}", JSON.toJSONString(param), response, e.getMessage());
+            messageService.sendTaskLog(param.getTaskId(),"登录初始化失败");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "腾讯企业邮箱h5登录-->初始化-->失败");
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
@@ -115,6 +119,7 @@ public class QQExMailPlugin implements CommonPluginService {
         HttpResult<Object> result = new HttpResult<>();
         Response response = null;
         MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
+        MessageService messageService = BeanFactoryUtils.getBean(MessageService.class);
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "username", param.getUsername());
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "腾讯企业邮箱h5");
@@ -126,6 +131,7 @@ public class QQExMailPlugin implements CommonPluginService {
                 map.put("directive", "login_fail");
                 map.put("information", "请使用企业邮箱帐号登录。");
                 logger.error("登录-->失败,errorMessage={}", "请使用企业邮箱帐号登录。");
+                messageService.sendTaskLog(param.getTaskId(),"登陆失败");
                 monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                 return result.success(map);
             }
@@ -135,6 +141,7 @@ public class QQExMailPlugin implements CommonPluginService {
                 map.put("directive", "login_fail");
                 map.put("information", "您输入的用户名有误,请重新输入！");
                 logger.error("登录-->失败,errorMessage={}", "您输入的用户名有误,请重新输入！");
+                messageService.sendTaskLog(param.getTaskId(),"登陆失败");
                 monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                 return result.success(map);
             }
@@ -215,6 +222,7 @@ public class QQExMailPlugin implements CommonPluginService {
                     map.put("directive", "login_fail");
                     map.put("information", "登录失败,请关闭安全验证后再试！");
                     logger.error("登录-->失败,errorMessage={}", "用户开启安全验证，需要扫码才能登");
+                    messageService.sendTaskLog(param.getTaskId(),"登陆失败");
                     monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                     return result.success(map);
                 }
@@ -226,6 +234,7 @@ public class QQExMailPlugin implements CommonPluginService {
                     map.put("directive", "require_picture_again");
                     map.put("errorMessage", "输入的验证码不正确");
                     map.put("information", response.getPageContent());
+                    messageService.sendTaskLog(param.getTaskId(),"登陆失败");
                     monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                     return result.success(map);
                 } else if (errorString.equals("errorNamePassowrd")) {
@@ -235,6 +244,7 @@ public class QQExMailPlugin implements CommonPluginService {
                     map.put("directive", "require_picture");
                     map.put("information", response.getPageContent());
                     logger.error("登录-->失败，重新访问的图片的response={}", response);
+                    messageService.sendTaskLog(param.getTaskId(),"登陆失败");
                     monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
                     return result.success(map);
                 } else {
@@ -243,16 +253,19 @@ public class QQExMailPlugin implements CommonPluginService {
             }
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={},异常信息e={}", JSON.toJSONString(param), response, e.getMessage());
+            messageService.sendTaskLog(param.getTaskId(),"登陆失败");
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
             return result.failure(ErrorCode.LOGIN_FAIL);
         }
     }
 
     private HttpResult<Object> failForResult(CommonPluginParam param, HttpResult<Object> result, MonitorService monitorService, Map<String, Object> map, Long taskId, String errorString) {
+        MessageService messageService = BeanFactoryUtils.getBean(MessageService.class);
         String errorMessage = ExMailErrorEnum.getMessageByCode(errorString);
         map.put("directive", "login_fail");
         map.put("information", errorMessage);
         logger.error("登录-->失败,errorMessage={}", errorMessage);
+        messageService.sendTaskLog(param.getTaskId(),"登陆失败");
         monitorService.sendTaskLog(taskId, param.getWebsiteName(), "腾讯企业邮箱h5登陆-->校验-->失败");
         return result.success(map);
     }
