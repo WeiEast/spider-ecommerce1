@@ -190,6 +190,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Override
     public String updateEnable(String websiteName, Boolean enable, Boolean auto) {
+        websiteOperatorDAO.updateEnable(websiteName, enable ? 1 : 0);
         return null;
     }
 

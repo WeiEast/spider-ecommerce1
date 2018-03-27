@@ -148,6 +148,7 @@ public class WebsiteGroupController {
             logger.info("updateEnable success websiteName={} Enable={}", websiteGroup.getWebsiteName(), websiteGroup
                     .getEnable());
             websiteGroupService.updateEnable(websiteGroup.getWebsiteName(), websiteGroup.getEnable());
+            websiteOperatorService.updateEnable(websiteGroup.getWebsiteName(), websiteGroup.getEnable());
             return result.success(true);
         } catch (Exception e) {
             logger.error("updateEnable error", e);
