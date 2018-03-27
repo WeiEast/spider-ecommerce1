@@ -50,16 +50,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
 
-    private static final Logger logger               = LoggerFactory.getLogger(EconomicApiForTaoBaoQRImpl.class);
-    private static final String IS_RUNNING           = "economic_qr_is_runing_";
-    private static final String IS_INIT              = "economic_qr_is_init_";
-    private static final String QR_STATUS            = "economic_qr_status_";
-    private static final String QR_STATUS_QUERY_TIME = "economic_qr_status_query_time_";
-    private static final String ALIPAY_URL           = "https://consumeprod.alipay.com/record/advanced.htm";
-    private static final String AUTO_SIGN_ALIPAY_URL = ALIPAY_URL + "?sign_from=3000";
-    private static final String preLoginUrl          = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" +
-            encodeUrl(AUTO_SIGN_ALIPAY_URL);
-    ;
+    private static final Logger logger                   = LoggerFactory.getLogger(EconomicApiForTaoBaoQRImpl.class);
+    private static final String IS_RUNNING               = "economic_qr_is_runing_";
+    private static final String IS_INIT                  = "economic_qr_is_init_";
+    private static final String QR_STATUS                = "economic_qr_status_";
+    private static final String QR_STATUS_QUERY_TIME     = "economic_qr_status_query_time_";
+    private static final String ALIPAY_URL               = "https://consumeprod.alipay.com/record/advanced.htm";
+    private static final String AUTO_SIGN_ALIPAY_URL     = ALIPAY_URL + "?sign_from=3000";
+    private static final String preLoginUrl              = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" + encodeUrl(AUTO_SIGN_ALIPAY_URL);
+    private static final String UMID_CACHE_PREFIX        = "TAOBAO_QRCODE_AUTH_LOGIN_UMID_TOKEN_";
+    private static final String UAB_COLLINA_CACHE_PREFIX = "TAOBAO_QRCODE_AUTH_LOGIN_UAB_COLLINA_";
+    private static final String UMID_PARAM               = "umid_token";
+    private static final String UAB_COLLINA_COOKIE       = "uab_collina";
+
     @Autowired
     private MonitorService monitorService;
     @Autowired
@@ -80,10 +83,10 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 }
             }
 
-            String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login" +
-                    ".do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&_ksTS={}&callback=json";
-            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
-                    .setFullUrl(templateUrl, System.currentTimeMillis() + "_" + (int) (Math.random() * 1000)).setReferer(preLoginUrl).invoke();
+            UMID umid = getUMID(true, param);
+
+            String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&_ksTS={}&callback=json&" + UMID_PARAM + "=" + umid.token;
+            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl, timestampFlag()).setReferer(preLoginUrl).addExtralCookie("taobao.com", UAB_COLLINA_COOKIE, umid.uab).invoke();
             String jsonString = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(jsonString);
             String imgUrl = json.getString("url");
@@ -92,8 +95,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             if (!StringUtils.contains(imgUrl, "https:")) {
                 imgUrl = "https:" + imgUrl;
             }
-            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(imgUrl)
-                    .setReferer(preLoginUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(imgUrl).setReferer(preLoginUrl).invoke();
             byte[] bytes = response.getResponse();
             String qrBase64 = response.getPageContentForBase64();
             QRUtils qrUtils = new QRUtils();
@@ -128,6 +130,35 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
         }
     }
 
+    private String timestampFlag() {
+        return System.currentTimeMillis() + "_" + (int) (Math.random() * 1000);
+    }
+
+    private UMID getUMID(boolean init, CommonPluginParam param) {
+        String uabCollina = RedisUtils.get(UAB_COLLINA_CACHE_PREFIX + param.getTaskId());
+        long timestamp = System.currentTimeMillis();
+        if (init && StringUtils.isEmpty(uabCollina)) {
+            uabCollina = timestamp + random(11);
+            RedisUtils.set(UAB_COLLINA_CACHE_PREFIX + param.getTaskId(), uabCollina, 60 * 10);
+        }
+
+        String umidToken = RedisUtils.get(UMID_CACHE_PREFIX + param.getTaskId());
+        if (init || StringUtils.isEmpty(umidToken)) {
+            umidToken = "C" + uabCollina + timestamp + random(3);
+            RedisUtils.set(UMID_CACHE_PREFIX + param.getTaskId(), umidToken, 60 * 10);
+        }
+
+        return new UMID(umidToken, uabCollina);
+    }
+
+    private static String random(int length) {
+        StringBuilder text = new StringBuilder(length);
+        for (; text.length() < length; ) {
+            text.append(String.valueOf(Math.random()).substring(2));
+        }
+        return text.substring(text.length() - length);
+    }
+
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
         String status = RedisUtils.get(QR_STATUS + param.getTaskId());
@@ -154,19 +185,21 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 String loginUrl = TaskUtils.getTaskShare(param.getTaskId(), "loginUrl");
 
                 String accountNo = getAccountNo(loginUrl);
-                if (accountNo != null) {
+                if(accountNo != null){
                     String redisKey = RedisKeyPrefixEnum.TASK_INFO_ACCOUNT_NO.getRedisKey(param.getTaskId());
                     RedisUtils.setnx(redisKey, accountNo);
                 }
 
+                UMID umid = getUMID(false, param);
+
+                loginUrl += "&"+  UMID_PARAM + "=" + umid.token;
+
                 Response response = null;
                 try {
-                    long timestamp = System.currentTimeMillis();
-                    loginUrl = loginUrl + "&umid_token=C" + timestamp + r(11) + timestamp + r(3);
                     response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
                             .setFullUrl(loginUrl).setReferer(preLoginUrl).invoke();
                     String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
-                    String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
+                    String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto="+ALIPAY_URL;
                     response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
                             .setFullUrl(redirectUrl).setReferer(referer).invoke();
                     processCertCheck(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), "", response.getPageContent());
@@ -256,9 +289,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
         try {
             String lgToken = TaskUtils.getTaskShare(param.getTaskId(), "lgToken");
             String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
-            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
-                    .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL),
-                            System.currentTimeMillis() + "_" + (int) (Math.random() * 1000)).setReferer(preLoginUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
             String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(resultJson);
             String code = json.getString("code");
@@ -295,7 +326,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
 
     }
 
-    private static String encodeUrl(String queryString) {
+    private static String encodeUrl(String queryString){
         try {
             return URLEncoder.encode(queryString, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -305,14 +336,14 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
         return queryString;
     }
 
-    /**
-     * 生成token里的随机数
-     */
-    private String r(int i) {
-        String str;
-        for (str = ""; str.length() < i; ) {
-            str += (Math.random() + "").substring(2);
+    private static class UMID {
+
+        private final String token;
+        private final String uab;
+
+        public UMID(String token, String uab) {
+            this.token = token;
+            this.uab = uab;
         }
-        return str.substring(str.length() - i);
     }
 }

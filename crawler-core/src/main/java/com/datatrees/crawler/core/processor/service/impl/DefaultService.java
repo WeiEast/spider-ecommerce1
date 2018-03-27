@@ -102,10 +102,10 @@ public class DefaultService extends ServiceBase {
             } catch (Exception e) {
                 long sleepSecond = this.sleep(0L, i, context);
                 current.increaseRetryCount();
-                logger.warn("get proxy error" + e.getMessage() + ", sleep " + sleepSecond + "ms, request [" + i + "] retry, url:" + url);
+                logger.warn("Error setting proxy >>> {}, sleep {}ms, request []retry, url: {}", e.getMessage(), sleepSecond, i, url);
                 if (i == retryCount - 1) {
                     ResponseUtil.setResponseStatus(response, Status.NO_PROXY);
-                    logger.warn("set no proxy status url:" + url);
+                    logger.warn("set no proxy status url: {}", url);
                     break;
                 } else {
                     continue;
@@ -248,7 +248,7 @@ public class DefaultService extends ServiceBase {
     }
 
     private void proxyRelease(@Nullable final Proxy proxy, @Nonnull final SearchProcessorContext context) throws Exception {
-        if (proxy != null && proxy != Proxy.LOCALNET) {
+        if (proxy != null) {
             ProxyManager proxyManager = context.getProxyManager();
             if (proxyManager != null) {
                 proxyManager.release();
@@ -257,7 +257,7 @@ public class DefaultService extends ServiceBase {
     }
 
     private void notifyProxyStatus(@Nullable final Proxy proxy, @Nonnull final ProxyStatus status, @Nonnull final SearchProcessorContext context) throws Exception {
-        if (proxy != null && proxy != Proxy.LOCALNET) {
+        if (proxy != null) {
             ProxyManager proxyManager = context.getProxyManager();
             if (proxyManager != null) {
                 proxyManager.callBackProxy(status);
@@ -266,8 +266,8 @@ public class DefaultService extends ServiceBase {
     }
 
     private Proxy setProxy(@Nonnull final ProtocolInput input, @Nonnull final SearchProcessorContext context, @Nonnull final String url) throws Exception {
-        Proxy proxy = context.getProxy(url, true);
-        if (proxy != null && proxy != Proxy.LOCALNET) {
+        Proxy proxy = context.getProxy(url, false);
+        if (proxy != null) {
             input.setProxy(proxy.format());
         }
         return proxy;
