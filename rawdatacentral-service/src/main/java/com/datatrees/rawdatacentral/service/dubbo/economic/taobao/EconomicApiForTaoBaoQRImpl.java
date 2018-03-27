@@ -76,6 +76,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             if (StringUtils.isEmpty(isInit)) {
                 init(param);
             }
+
             String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login" +
                     ".do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&_ksTS={}&callback=json";
             response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
@@ -145,9 +146,8 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
             }
 
             QRCodeVerification.QRCodeStatus status = queryQRCodeStatus(param);
-            RedisUtils.set(QR_STATUS + param.getTaskId(), status.name(), 60 * 2);
-            logger.info("状态更新成功,当前二维码状态：{},taskId={}", status, param.getTaskId());
 
+            logger.info("状态更新成功,当前二维码状态：{},taskId={}", status, param.getTaskId());
             if (QRCodeVerification.QRCodeStatus.CONFIRMED.equals(status)) {
                 String loginUrl = TaskUtils.getTaskShare(param.getTaskId(), "loginUrl");
 
@@ -167,12 +167,16 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                             .setFullUrl(redirectUrl).setReferer(referer).invoke();
                     processCertCheck(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), "", response.getPageContent());
                 } catch (Exception e) {
+                    RedisUtils.set(QR_STATUS + param.getTaskId(), QRCodeVerification.QRCodeStatus.FAILED.name(), 60 * 2);
+
                     logger.error("淘宝二维码登录处理失败，taskId={},response={}", param.getTaskId(), response, e);
                     messageService.sendTaskLog(param.getTaskId(), "登录失败");
                     monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
                             TemplateUtils.format("{}-->校验-->失败", FormType.getName(FormType.LOGIN)), ErrorCode.LOGIN_FAIL, "登陆失败,请重试");
                     break;
                 }
+
+                RedisUtils.set(QR_STATUS + param.getTaskId(), QRCodeVerification.QRCodeStatus.CONFIRMED.name(), 60 * 2);
 
                 logger.info("用户已扫码并确认，准备发送登录消息，taskId={}", param.getTaskId());
                 String cookieString = TaskUtils.getCookieString(param.getTaskId());
@@ -186,10 +190,10 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
                         TemplateUtils.format("{}-->校验-->成功", FormType.getName(FormType.LOGIN)));
                 BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
-
                 break;
             }
 
+            RedisUtils.set(QR_STATUS + param.getTaskId(), status.name(), 60 * 2);
             Thread.sleep(2000);
         }
     }
