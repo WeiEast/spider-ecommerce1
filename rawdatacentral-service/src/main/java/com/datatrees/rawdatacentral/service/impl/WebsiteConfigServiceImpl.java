@@ -98,7 +98,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
         CheckUtils.checkNotNull(websiteName, "websiteName is null");
-        WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
+        WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
         if (null == websiteInfo) {
             logger.warn("WebsiteConfig not found websiteId={}", websiteName);
             return null;
@@ -295,7 +295,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
         } else {
-            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
+            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
             website = buildWebsiteFromWebsiteInfo(websiteInfo);
 //            website = getWebsiteByWebsiteName(websiteName);
         }
@@ -320,7 +320,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
         } else {
-            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameAndEnv(websiteName);
+            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
             website = buildWebsiteFromWebsiteInfo(websiteInfo);
 //            website = getWebsiteByWebsiteName(websiteName);
         }

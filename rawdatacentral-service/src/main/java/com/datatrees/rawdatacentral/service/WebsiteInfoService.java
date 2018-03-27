@@ -14,5 +14,5 @@ public interface WebsiteInfoService {
      * @param env
      * @return
      */
-    WebsiteInfoWithBLOBs getByWebsiteNameAndEnv(String websiteName);
+    WebsiteInfoWithBLOBs getByWebsiteNameFromInfo(String websiteName);
 }

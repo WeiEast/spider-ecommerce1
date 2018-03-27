@@ -94,7 +94,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     public void importWebsite(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "config is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteInfoWithBLOBs info = websiteInfoService.getByWebsiteNameAndEnv(config.getWebsiteName());
+        WebsiteInfoWithBLOBs info = websiteInfoService.getByWebsiteNameFromInfo(config.getWebsiteName());
         if (null == info) {
             logger.warn("WebsiteConfig not found websiteName={}", config.getWebsiteName());
             throw new CommonException("websiteName config not found");
