@@ -27,7 +27,7 @@ public interface WebsiteOperatorService {
      * @return
      */
 
-    List<WebsiteOperator> queryByGroupCodeAndEnv(String groupCode,String env);
+    List<WebsiteOperator> queryByGroupCode(String groupCode);
 
     /**
      * 从老配置导入配置信息

@@ -84,8 +84,9 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 //    }
 
     @Override
-    public List<WebsiteOperator> queryByGroupCodeAndEnv(String groupCode, String env) {
+    public List<WebsiteOperator> queryByGroupCode(String groupCode) {
         WebsiteOperatorExample example = new WebsiteOperatorExample();
+        String env= TaskUtils.getSassEnv();
         example.createCriteria().andGroupCodeEqualTo(groupCode).andEnvEqualTo(env);
         return websiteOperatorDAO.selectByExample(example);
     }

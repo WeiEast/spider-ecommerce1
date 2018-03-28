@@ -103,8 +103,7 @@ public class WebsiteGroupController {
                 continue;
             }
             String maxWeightWebsiteName = RedisUtils.get(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
-            String env= TaskUtils.getSassEnv();
-            List<WebsiteOperator> operators = websiteOperatorService.queryByGroupCodeAndEnv(group.getGroupCode(),env);
+            List<WebsiteOperator> operators = websiteOperatorService.queryByGroupCode(group.getGroupCode());
 
             String template = "{}({})";
             if (CollectionUtils.isEmpty(operators)) {
