@@ -2,6 +2,10 @@ package com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean;
 
 import java.io.Serializable;
 
+/**
+ * 查询个人信息相关 reqBody对应的Bean
+ * Created by guimeichao on 18/3/28.
+ */
 public class UserInfoLoginReq implements Serializable {
     private String appurltype;
     private String artifact;

@@ -2,6 +2,10 @@ package com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean;
 
 import java.io.Serializable;
 
+/**
+ * 查询详单 reqBody对应的Bean
+ * Created by guimeichao on 18/3/28.
+ */
 public class DetailReqBean implements Serializable {
     private String billMonth = null;
     private String cellNum = null;
