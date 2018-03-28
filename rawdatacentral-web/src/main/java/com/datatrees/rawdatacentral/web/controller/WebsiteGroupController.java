@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
@@ -109,9 +110,11 @@ public class WebsiteGroupController {
             if (CollectionUtils.isEmpty(operators)) {
                 //无本地
                 if (StringUtils.isBlank(maxWeightWebsiteName)) {
-                    map.get("无本地-->使用老版").add(TemplateUtils.format(template, group.getGroupName(), group.getWebsiteName()));
+                    map.get("无本地-->使用老版").add(TemplateUtils.format(template, group.getGroupName(), group
+                            .getWebsiteName()));
                 } else if (StringUtils.contains(maxWeightWebsiteName, "china")) {
-                    map.get("无本地-->使用全国版").add(TemplateUtils.format(template, group.getGroupName(), maxWeightWebsiteName));
+                    map.get("无本地-->使用全国版").add(TemplateUtils.format(template, group.getGroupName(),
+                            maxWeightWebsiteName));
                 } else {
                     map.get("未识别").add(TemplateUtils.format(template, group.getGroupName(), maxWeightWebsiteName));
                 }
@@ -119,12 +122,15 @@ public class WebsiteGroupController {
                 WebsiteOperator operator = operators.get(0);
                 //有本地
                 if (StringUtils.isBlank(maxWeightWebsiteName)) {
-                    map.get("有本地-->没有使用").add(TemplateUtils.format(template, group.getGroupName(), operator.getWebsiteName()));
+                    map.get("有本地-->没有使用").add(TemplateUtils.format(template, group.getGroupName(), operator
+                            .getWebsiteName()));
                 } else {
                     if (StringUtils.equals(maxWeightWebsiteName, operator.getWebsiteName())) {
-                        map.get("有本地-->使用本地版").add(TemplateUtils.format(template, group.getGroupName(), operator.getWebsiteName()));
+                        map.get("有本地-->使用本地版").add(TemplateUtils.format(template, group.getGroupName(), operator
+                                .getWebsiteName()));
                     } else if (StringUtils.contains(maxWeightWebsiteName, "china")) {
-                        map.get("有本地-->使用全国版").add(TemplateUtils.format(template, group.getGroupName(), maxWeightWebsiteName));
+                        map.get("有本地-->使用全国版").add(TemplateUtils.format(template, group.getGroupName(),
+                                maxWeightWebsiteName));
                     } else {
                         map.get("未识别").add(TemplateUtils.format(template, group.getGroupName(), maxWeightWebsiteName));
                     }
@@ -134,4 +140,19 @@ public class WebsiteGroupController {
         return map;
     }
 
+    @RequestMapping("/updateEnable")
+    public HttpResult<Object> updateEnable(HttpServletResponse response, @RequestBody WebsiteGroup websiteGroup) {
+        HttpResult<Object> result = new HttpResult<>();
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        try {
+            if (null == websiteGroup) return result.failure();
+            logger.info("updateEnable success websiteName={} Enable={}", websiteGroup.getWebsiteName(), websiteGroup
+                    .getEnable());
+            websiteGroupService.updateEnable(websiteGroup.getWebsiteName(), websiteGroup.getEnable());
+            return result.success(true);
+        } catch (Exception e) {
+            logger.error("updateEnable error", e);
+            return result.failure();
+        }
+    }
 }

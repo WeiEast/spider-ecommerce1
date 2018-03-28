@@ -3,11 +3,12 @@ package com.datatrees.rawdatacentral.plugin.common._163.com;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
@@ -20,6 +21,7 @@ import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
@@ -42,6 +44,8 @@ import org.slf4j.LoggerFactory;
 public class _163MailPlugin implements CommonPluginService, QRPluginService {
 
     private static final Logger logger = LoggerFactory.getLogger(_163MailPlugin.class);
+    private MessageService messageService;
+    private MonitorService monitorService;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
@@ -66,6 +70,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> submit(CommonPluginParam param) {
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         Long taskId = param.getTaskId();
         ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
         Long processId = processResult.getProcessId();
@@ -105,12 +111,20 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                         loginMessage.setEndUrl(currentUrl);
                         logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                         BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage, SeleniumUtils.getCookies(driver));
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                         return;
                     }
-
+                    messageService.sendTaskLog(taskId, "登录失败");
+                    monitorService
+                            .sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())), ErrorCode.LOGIN_FAIL,
+                                    "登录失败,请重试!");
                     logger.warn("login by selinium fail,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
                 } catch (Throwable e) {
+                    messageService.sendTaskLog(taskId, "登录失败");
+                    monitorService
+                            .sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())), ErrorCode.LOGIN_ERROR,
+                                    "登录失败,请重试!");
                     logger.warn("login by selinium error,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl, e);
                     ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
                 } finally {
@@ -128,6 +142,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
         ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
@@ -158,7 +174,8 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                         ProcessResultUtils.setProcessExpire(taskId, processId, 2, TimeUnit.MINUTES);
                         TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
                         logger.info("refresh qr code success,taskId={},websiteName={}", taskId, websiteName);
-
+                        messageService.sendTaskLog(taskId, "刷新二维码成功");
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->刷新二维码-->成功", FormType.getName(param.getFormType())));
                         String qrStatus = getScandStatus(param, uuid);
                         boolean expire = ProcessResultUtils.processExpire(taskId, processId);
                         boolean lastLoginProcessId = TaskUtils.isLastLoginProcessId(taskId, processId);
@@ -189,7 +206,7 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                             String endUrl = driver.getCurrentUrl();
 
                             String cookieString = SeleniumUtils.getCookieString(driver);
-                            String accountNo = PatternUtils.group(cookieString,"MAIL_PINFO=([^|]+)",1);
+                            String accountNo = PatternUtils.group(cookieString, "MAIL_PINFO=([^|]+)", 1);
                             String redisKey = RedisKeyPrefixEnum.TASK_INFO_ACCOUNT_NO.getRedisKey(taskId);
                             RedisUtils.setnx(redisKey, accountNo);
                             LoginMessage loginMessage = new LoginMessage();
@@ -200,14 +217,21 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, endUrl);
                             BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage, SeleniumUtils.getCookies(driver));
                             TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.SUCCESS);
+                            monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                             return;
                         }
+                        messageService.sendTaskLog(taskId, "登录失败");
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())),
+                                ErrorCode.LOGIN_FAIL, "登录失败,请重试!");
                         logger.error("current login process timeout,will close,taskId={},websiteName={}", taskId, websiteName);
                         if (TaskUtils.isLastLoginProcessId(taskId, processId)) {
                             TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.EXPIRE);
                         }
                         return;
                     } catch (Throwable e) {
+                        messageService.sendTaskLog(taskId, "登录失败");
+                        monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->失败", FormType.getName(param.getFormType())),
+                                ErrorCode.LOGIN_ERROR, "登录失败,请重试!");
                         ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.REFESH_QR_CODE_ERROR));
                         logger.error("current login process has error,will close,taskId={},websiteName={}", taskId, websiteName, e);
                     } finally {
@@ -217,12 +241,17 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
             });
         } catch (Throwable e) {
             logger.error("refresh qr code error,taskId={},websiteName={}", taskId, websiteName, e);
+            messageService.sendTaskLog(taskId, "刷新二维码失败");
+            monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->刷新二维码-->失败", FormType.getName(param.getFormType())),
+                    ErrorCode.REFESH_QR_CODE_ERROR, "二维码刷新失败,请重试");
         }
         return new HttpResult(true).success(processResult);
     }
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         String qrStatus = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.QR_STATUS);
         String lastProcessId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.CURRENT_LOGIN_PROCESS_ID);
         if (StringUtils.isNoneBlank(lastProcessId)) {
@@ -230,7 +259,11 @@ public class _163MailPlugin implements CommonPluginService, QRPluginService {
         }
         qrStatus = StringUtils.isNotBlank(qrStatus) ? qrStatus : QRStatus.WAITING;
         if (StringUtils.equals(qrStatus, QRStatus.EXPIRE)) {
+            messageService.sendTaskLog(param.getTaskId(), "二维码过期,请重新获取");
+            monitorService.sendTaskLog(param.getTaskId(), TemplateUtils.format("{}-->二维码过期", FormType.getName(param.getFormType())),
+                    ErrorCode.QR_CODE_STATUS_EXPIRE, "二维码过期,请重新获取!");
             logger.warn("query qr status expire taskId={}", param.getTaskId());
+
         }
         return new HttpResult<>().success(qrStatus);
     }
