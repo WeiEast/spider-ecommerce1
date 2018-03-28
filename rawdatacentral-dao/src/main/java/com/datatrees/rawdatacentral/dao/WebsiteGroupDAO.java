@@ -1,11 +1,11 @@
 package com.datatrees.rawdatacentral.dao;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 import com.datatrees.rawdatacentral.dao.mapper.WebsiteGroupMapper;
 import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
 import org.apache.ibatis.annotations.Param;
-
 /** create by system from table website_group(运营商分组) */
 @Resource
 public interface WebsiteGroupDAO extends WebsiteGroupMapper {
@@ -24,4 +24,13 @@ public interface WebsiteGroupDAO extends WebsiteGroupMapper {
      * @return
      */
     int updateEnable(@Param("websiteName") String websiteName, @Param("enable") Integer enable);
+
+    /**
+     * @param enable
+     * @param operatorType
+     * @param groupCode
+     * @return
+     */
+    List<String> queryWebsiteNameList(@Param("enable") String enable, @Param("operatorType") String operatorType,
+            @Param("groupCode") String groupCode);
 }

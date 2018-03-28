@@ -154,4 +154,8 @@
         </trim>
     </insert>
 
+    <update id="updateEnable">
+        update website_operator set enable = #{enable} where website_name = #{websiteName}
+    </update>
+
 </mapper>

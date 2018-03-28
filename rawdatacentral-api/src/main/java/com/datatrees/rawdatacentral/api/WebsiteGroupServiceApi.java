@@ -42,4 +42,14 @@ public interface WebsiteGroupServiceApi {
      * @return
      */
     int updateEnable(String websiteName, Boolean enable);
+
+    /**
+     * 查询站点名称
+     * @param enable
+     * @param operatorType
+     * @param groupCode
+     * @return
+     */
+    List<String> getWebsiteNameList(String enable, String operatorType, String groupCode);
+
 }
