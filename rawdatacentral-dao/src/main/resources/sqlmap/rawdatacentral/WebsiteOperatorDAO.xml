@@ -8,6 +8,9 @@
             <if test="websiteId != null">
                 website_id,
             </if>
+            <if test="env != null">
+                env,
+            </if>
             <if test="websiteName != null">
                 website_name,
             </if>
@@ -81,6 +84,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="websiteId != null">
                 #{websiteId,jdbcType=INTEGER},
+            </if>
+            <if test="env != null">
+                #{env,jdbcType=VARCHAR},
             </if>
             <if test="websiteName != null">
                 #{websiteName,jdbcType=VARCHAR},

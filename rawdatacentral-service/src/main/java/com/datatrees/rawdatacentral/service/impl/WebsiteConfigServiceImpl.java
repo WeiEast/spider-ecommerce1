@@ -18,19 +18,19 @@ import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
-import com.datatrees.rawdatacentral.dao.WebsiteConfigDAO;
+import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import com.datatrees.rawdatacentral.domain.model.*;
 import com.datatrees.rawdatacentral.domain.operator.*;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
@@ -49,16 +49,18 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Resource
     private WebsiteOperatorService websiteOperatorService;
     @Resource
-    private WebsiteConfigDAO       websiteConfigDAO;
+    private WebsiteInfoService websiteInfoService;
     @Resource
-    private PluginManager          pluginManager;
+    private WebsiteInfoDAO websiteInfoDAO;
     @Resource
-    private BankService            bankService;
+    private PluginManager pluginManager;
     @Resource
-    private RedisService           redisService;
+    private BankService bankService;
     @Resource
-    private ProxyService           proxyService;
-    private ParentConfigHandler    parentConfigHandler;
+    private RedisService redisService;
+    @Resource
+    private ProxyService proxyService;
+    private ParentConfigHandler parentConfigHandler;
 
     public WebsiteConfigServiceImpl() {
         parentConfigHandler = new ParentConfigHandler() {
@@ -85,21 +87,23 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public WebsiteConfig getWebsiteConfigByWebsiteId(Integer websiteId) {
         CheckUtils.checkNotNull(websiteId, "websiteId is null");
-        WebsiteConfig config = websiteConfigDAO.getWebsiteConfig(websiteId, null);
-        if (null == config) {
+        WebsiteInfoWithBLOBs websiteInfo = websiteInfoDAO.selectByPrimaryKey(websiteId);
+        if (null == websiteInfo) {
             logger.warn("WebsiteConfig not found websiteId={}", websiteId);
+            return null;
         }
-        return config;
+        return buildWebsiteConfigFromWebsiteInfo(websiteInfo);
     }
 
     @Override
     public WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
         CheckUtils.checkNotNull(websiteName, "websiteName is null");
-        WebsiteConfig config = websiteConfigDAO.getWebsiteConfig(null, websiteName);
-        if (null == config) {
+        WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
+        if (null == websiteInfo) {
             logger.warn("WebsiteConfig not found websiteId={}", websiteName);
+            return null;
         }
-        return config;
+        return buildWebsiteConfigFromWebsiteInfo(websiteInfo);
     }
 
     @Override
@@ -152,7 +156,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public boolean updateWebsiteConf(String websiteName, String searchConfig, String extractConfig) {
         CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
-        CheckUtils.checkNotBlank(searchConfig, "searchConfig is blank");
+//        CheckUtils.checkNotBlank(searchConfig, "searchConfig is blank");
         CheckUtils.checkNotBlank(extractConfig, "extractConfig is blank");
 
         WebsiteConfig websiteConfig = getWebsiteConfigByWebsiteName(websiteName);
@@ -162,13 +166,18 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         confUpdate.setExtractorConfig(extractConfig);
         confUpdate.setSearchConfig(searchConfig);
         confUpdate.setUpdatedAt(new Date());
-        int i = websiteConfigDAO.updateWebsiteConf(websiteConfig.getWebsiteId(), searchConfig, extractConfig);
+        WebsiteInfoWithBLOBs websiteInfo = new WebsiteInfoWithBLOBs();
+        websiteInfo.setWebsiteId(websiteConfig.getWebsiteId());
+        websiteInfo.setSearchConfig(searchConfig);
+        websiteInfo.setExtractorConfig(extractConfig);
+        websiteInfo.setUpdatedAt(new Date());
+        int i = websiteInfoDAO.updateByPrimaryKeySelective(websiteInfo);
         if (i == 0) {
-            logger.warn("updateWebsiteConf error websiteName={}", websiteName);
+            logger.warn("updateWebsiteInfo error websiteName={}", websiteName);
             return false;
         }
         deleteCacheByWebsiteName(websiteName);
-        logger.info("updateWebsiteConf success websiteName={}", websiteName);
+        logger.info("updateWebsiteInfo success websiteName={}", websiteName);
         return true;
     }
 
@@ -201,9 +210,11 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
                 logger.error("严重错误,group没有配置,websiteName is blank,groupCode={}", group.getGroupCode());
                 continue;
             }
+            String env = TaskUtils.getSassEnv();
+            CheckUtils.checkNotNull(env, "env is null");
             WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
             if (null == websiteOperator) {
-                logger.error("website not found ,webisteName={}", websiteName);
+                logger.error("website not found ,webisteName={}，env={}", websiteName, env);
                 continue;
             }
             WebsiteConfig websiteConfig = buildWebsiteConfig(websiteOperator);
@@ -211,15 +222,15 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             websiteConfig.setWebsiteName(websiteName);
             String initSetting = websiteConfig.getInitSetting();
             if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
-                throw new RuntimeException("initSetting is blank websiteName=" + websiteName);
+                throw new RuntimeException("initSetting is blank websiteName=" + websiteName + ",env=" + env);
             }
             JSONObject json = JSON.parseObject(initSetting);
             if (!json.containsKey("fields")) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
+                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName + ",env=" + env);
             }
             List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
             if (null == fieldInitSettings) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName);
+                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName + ",env=" + env);
             }
             config.setWebsiteName(websiteConfig.getWebsiteName());
             config.setLoginTip(websiteConfig.getLoginTip());
@@ -283,7 +294,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
         } else {
-            website = getWebsiteByWebsiteName(websiteName);
+            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
+            website = buildWebsiteFromWebsiteInfo(websiteInfo);
+//            website = getWebsiteByWebsiteName(websiteName);
         }
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website, taskId);
@@ -305,7 +318,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
         } else {
-            website = getWebsiteByWebsiteName(websiteName);
+            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
+            website = buildWebsiteFromWebsiteInfo(websiteInfo);
+//            website = getWebsiteByWebsiteName(websiteName);
         }
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
@@ -321,7 +336,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId, Long taskId) {
         Bank bank = bankService.getByBankIdFromCache(bankId);
         if (bank != null) {
-            Website website = getWebsiteByWebsiteId(bank.getWebsiteId());
+            Website website = getWebsiteByWebsiteName(bank.getWebsiteName());
             if (website != null) {
                 ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
                 extractorProcessorContext.setPluginManager(pluginManager);
@@ -392,8 +407,16 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
+    public Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo) {
+        WebsiteConfig config = buildWebsiteConfigFromWebsiteInfo(websiteInfo);
+        Website website = buildWebsite(config);
+        return website;
+    }
+
+    @Override
     public Website getWebsiteFromCache(Long taskId) {
-        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
+        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {
+        });
         if (website != null) {
             if (StringUtils.isNotEmpty(website.getSearchConfigSource())) {
                 try {
@@ -438,6 +461,31 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         config.setWebsiteTitle(operator.getWebsiteTitle());
         config.setGroupCode(operator.getGroupCode());
         config.setGroupName(GroupEnum.getByGroupCode(operator.getGroupCode()).getGroupName());
+        return config;
+    }
+
+    private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfoWithBLOBs info) {
+        CheckUtils.checkNotNull(info, "info is null");
+        WebsiteConfig config = new WebsiteConfig();
+        config.setWebsiteId(info.getWebsiteId());
+        config.setWebsiteName(info.getWebsiteName());
+        config.setWebsiteType(info.getWebsiteType().toString());
+        config.setIsenabled(true);
+        config.setLoginTip(info.getLoginTip());
+        config.setVerifyTip(info.getVerifyTip());
+        config.setResetType(info.getResetType());
+        config.setSmsReceiver(info.getSmsReceiver());
+        config.setSmsTemplate(info.getSmsTemplate());
+        config.setResetTip(info.getResetTip());
+        config.setResetURL(info.getResetUrl());
+        config.setInitSetting(info.getLoginConfig());
+        config.setSearchConfig(info.getSearchConfig());
+        config.setExtractorConfig(info.getExtractorConfig());
+        config.setWebsiteTitle(info.getWebsiteTitle());
+        config.setGroupCode(info.getGroupCode());
+        if (info.getGroupCode() != null && !("".equals(info.getGroupCode()))) {
+            config.setGroupName(GroupEnum.getByGroupCode(info.getGroupCode()).getGroupName());
+        }
         return config;
     }
 
