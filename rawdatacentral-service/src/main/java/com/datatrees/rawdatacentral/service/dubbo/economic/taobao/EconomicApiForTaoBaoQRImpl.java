@@ -115,7 +115,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
                 });
                 t.start();
             }
-            RedisUtils.set(QR_STATUS + param.getTaskId(), "WAITING", 60 * 2);
+            RedisUtils.set(QR_STATUS + param.getTaskId(), QRCodeVerification.QRCodeStatus.WAITING.name(), 60 * 2);
             logger.info("刷新二维码成功，taskId={}", param.getTaskId());
             messageService.sendTaskLog(param.getTaskId(), "刷新二维码成功");
             monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
@@ -163,7 +163,7 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
         String status = RedisUtils.get(QR_STATUS + param.getTaskId());
         if (StringUtils.isEmpty(status)) {
-            status = "WAITING";
+            status = QRCodeVerification.QRCodeStatus.WAITING.name();
         }
         RedisUtils.set(QR_STATUS_QUERY_TIME + param.getTaskId(), System.currentTimeMillis() + "", 60 * 5);
         return new HttpResult<>().success(status);
