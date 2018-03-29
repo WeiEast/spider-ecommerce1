@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.common.http;
 
 import java.net.HttpCookie;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -11,12 +12,14 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.Request;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.cookie.ClientCookie;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -68,42 +71,42 @@ public class TaskUtils {
         }
         // HttpClient默认添加了ResponseProcessCookies处理器，已处理过response中的Set-Cookie和Set-Cookie2
         //更新自定义cookie
-        //Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
-        //if (null != headers && headers.length > 0) {
-        //    for (Header header : headers) {
-        //        String headerValue = header.getValue();
-        //        HttpCookie httpCookie = HttpCookie.parse(headerValue).get(0);
-        //        Cookie orignCookie = findCookie(host, httpCookie, list);
-        //        if (null != orignCookie) {
-        //            if (!StringUtils.equals(orignCookie.getValue(), httpCookie.getValue())) {
-        //                logger.info("更新cookie,taskId={},cookeName={},domain={},update value {}-->{}", taskId, orignCookie.getName(),
-        //                        orignCookie.getDomain(), orignCookie.getValue(), httpCookie.getValue());
-        //                orignCookie.setValue(httpCookie.getValue());
-        //            }
-        //        } else {
-        //            String domain = StringUtils.isBlank(httpCookie.getDomain()) ? host : httpCookie.getDomain();
-        //            if (StringUtils.startsWith(domain, ".")) {
-        //                domain = domain.substring(1);
-        //            }
-        //            Cookie cookie = new Cookie();
-        //            cookie.setName(httpCookie.getName());
-        //            cookie.setValue(httpCookie.getValue());
-        //            cookie.setDomain(domain);
-        //            cookie.setPath(httpCookie.getPath());
-        //            cookie.setVersion(httpCookie.getVersion());
-        //            cookie.setSecure(httpCookie.getSecure());
-        //            cookie.getAttribs().put("domain", domain);
-        //            cookie.getAttribs().put("path", httpCookie.getPath());
-        //            long maxAge = httpCookie.getMaxAge();
-        //            if (maxAge <= 0) {
-        //                maxAge = TimeUnit.MINUTES.toSeconds(30);
-        //            }
-        //            cookie.setExpiryDate(new Date(System.currentTimeMillis() + maxAge * 1000));
-        //            list.add(cookie);
-        //            logger.info("新增 rejected cookie, taskId={},cookeName={},value={},domain={}", taskId, cookie.getName(), cookie.getValue(), domain);
-        //        }
-        //    }
-        //}
+        Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
+        if (null != headers && headers.length > 0) {
+            for (Header header : headers) {
+                String headerValue = header.getValue();
+                HttpCookie httpCookie = HttpCookie.parse(headerValue).get(0);
+                Cookie orignCookie = findCookie(host, httpCookie, list);
+                if (null != orignCookie) {
+                    if (!StringUtils.equals(orignCookie.getValue(), httpCookie.getValue())) {
+                        logger.info("更新cookie,taskId={},cookeName={},domain={},update value {}-->{}", taskId, orignCookie.getName(),
+                                orignCookie.getDomain(), orignCookie.getValue(), httpCookie.getValue());
+                        orignCookie.setValue(httpCookie.getValue());
+                    }
+                } else {
+                    String domain = StringUtils.isBlank(httpCookie.getDomain()) ? host : httpCookie.getDomain();
+                    if (StringUtils.startsWith(domain, ".")) {
+                        domain = domain.substring(1);
+                    }
+                    Cookie cookie = new Cookie();
+                    cookie.setName(httpCookie.getName());
+                    cookie.setValue(httpCookie.getValue());
+                    cookie.setDomain(domain);
+                    cookie.setPath(httpCookie.getPath());
+                    cookie.setVersion(httpCookie.getVersion());
+                    cookie.setSecure(httpCookie.getSecure());
+                    cookie.getAttribs().put("domain", domain);
+                    cookie.getAttribs().put("path", httpCookie.getPath());
+                    long maxAge = httpCookie.getMaxAge();
+                    if (maxAge <= 0) {
+                        maxAge = TimeUnit.MINUTES.toSeconds(30);
+                    }
+                    cookie.setExpiryDate(new Date(System.currentTimeMillis() + maxAge * 1000));
+                    list.add(cookie);
+                    logger.info("新增 rejected cookie, taskId={},cookeName={},value={},domain={}", taskId, cookie.getName(), cookie.getValue(), domain);
+                }
+            }
+        }
         return list;
     }
 
