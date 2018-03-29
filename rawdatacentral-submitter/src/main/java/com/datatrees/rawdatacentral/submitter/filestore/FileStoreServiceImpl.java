@@ -29,7 +29,7 @@ public class FileStoreServiceImpl implements FileStoreService {
     @Override
     public void storeEviFile(SubmitMessage submitMessage) {
         try {
-            LOGGER.info("store envidevce file to oss by key: " + submitMessage.getResult().getStoragePath());
+            LOGGER.info("store envidevce file to oss by key: {}", submitMessage.getResult().getStoragePath());
             UploadTask task = new UploadTask(submitMessage.getExtractMessage(), needUploadList, submitMessage.getResult().getStoragePath());
 
             threadPool.submit(task);

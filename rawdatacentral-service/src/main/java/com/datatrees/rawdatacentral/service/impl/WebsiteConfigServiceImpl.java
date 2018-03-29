@@ -266,7 +266,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public SearchProcessorContext getSearchProcessorContext(Long taskId) {
         Website website = getWebsiteFromCache(taskId);
         if (website != null) {
-            SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
+            SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website, taskId);
             searchProcessorContext.setPluginManager(pluginManager);
             searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, website.getWebsiteName(), proxyService));
             searchProcessorContext.init();
@@ -277,9 +277,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
-        Website website = null;
-        Boolean isOperator = WebsiteUtils.isOperator(websiteName);
-        if (isOperator) {
+        Website website;
+        if (WebsiteUtils.isOperator(websiteName)) {
             WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
@@ -287,7 +286,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             website = getWebsiteByWebsiteName(websiteName);
         }
         if (website != null) {
-            SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website);
+            SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website, taskId);
             searchProcessorContext.setPluginManager(pluginManager);
             searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, website.getWebsiteName(), proxyService));
             searchProcessorContext.init();
@@ -301,8 +300,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public ExtractorProcessorContext getExtractorProcessorContext(Long taskId, String websiteName) {
         logger.info("getExtractorProcessorContext start,taskId={},websiteName={}", taskId, websiteName);
         Website website = null;
-        Boolean isOperator = WebsiteUtils.isOperator(websiteName);
-        if (isOperator) {
+        if (WebsiteUtils.isOperator(websiteName)) {
             WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
             //保存taskId对应的website,因为运营过程中用的是
             website = buildWebsite(websiteOperator);
@@ -310,7 +308,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             website = getWebsiteByWebsiteName(websiteName);
         }
         if (website != null) {
-            ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website);
+            ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
             extractorProcessorContext.setPluginManager(pluginManager);
             extractorProcessorContext.init();
             logger.info("getExtractorProcessorContext success,taskId={},websiteName={}", taskId, websiteName);
@@ -320,12 +318,12 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId) {
+    public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId, Long taskId) {
         Bank bank = bankService.getByBankIdFromCache(bankId);
         if (bank != null) {
             Website website = getWebsiteByWebsiteId(bank.getWebsiteId());
             if (website != null) {
-                ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website);
+                ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
                 extractorProcessorContext.setPluginManager(pluginManager);
                 extractorProcessorContext.init();
                 return extractorProcessorContext;

@@ -9,8 +9,8 @@
 package com.datatrees.rawdatacentral.extractor.builder.impl;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
@@ -19,6 +19,7 @@ import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,14 +33,16 @@ import org.springframework.stereotype.Component;
 public class DefaultProcessorContextBuilder {
 
     private final static Logger logger = LoggerFactory.getLogger(DefaultProcessorContextBuilder.class);
-    private String extractorUseDefaultWebsiteIds = PropertiesConfiguration.getInstance().get("extractor.use.default.websiteIds", "162");
+    private final List<String>         extractorUseDefaultWebsiteIds;
     @Resource
-    private WebsiteConfigService websiteConfigService;
-    private Set<String> extractorUseDefaultWebsiteIdsSet = new HashSet<String>();
+    private       WebsiteConfigService websiteConfigService;
 
-    {
-        for (String str : extractorUseDefaultWebsiteIds.split(",")) {
-            extractorUseDefaultWebsiteIdsSet.add(str);
+    public DefaultProcessorContextBuilder() {
+        String extractorUseDefaultWebsiteIds = PropertiesConfiguration.getInstance().get("extractor.use.default.websiteIds", "162");
+        if (StringUtils.isNotEmpty(extractorUseDefaultWebsiteIds)) {
+            this.extractorUseDefaultWebsiteIds = Arrays.stream(extractorUseDefaultWebsiteIds.split(",")).map(String::trim).filter(s -> !s.isEmpty()).distinct().collect(Collectors.toList());
+        } else {
+            this.extractorUseDefaultWebsiteIds = Collections.emptyList();
         }
     }
 
@@ -50,10 +53,10 @@ public class DefaultProcessorContextBuilder {
         switch (resultType) {
             case MAILBILL:
                 String websiteIdStr = Integer.valueOf(extractMessage.getWebsiteId()).toString();
-                if (extractorUseDefaultWebsiteIdsSet.contains(websiteIdStr)) {
+                if (extractorUseDefaultWebsiteIds.contains(websiteIdStr)) {
                     context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId(), extractMessage.getWebsiteName());
                 } else {
-                    context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId());
+                    context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId(), extractMessage.getTaskId());
                 }
                 break;
             default:
@@ -66,6 +69,7 @@ public class DefaultProcessorContextBuilder {
         if (context == null) {
             return null;
         }
+
         ProcessorContextUtil.setCookieString(context, task.getCookie());
         if (logger.isDebugEnabled()) {
             logger.debug("Add cookies into extract context: {}", task.getCookie());
