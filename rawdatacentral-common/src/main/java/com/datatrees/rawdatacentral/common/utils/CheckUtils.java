@@ -11,31 +11,31 @@ public class CheckUtils {
 
     public static void checkNotNull(Object param, String errorMsg) {
         if (null == param) {
-            throw new RuntimeException(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
         }
     }
 
     public static void checkNotBlank(String param, String errorMsg) {
         if (StringUtils.isBlank(param)) {
-            throw new RuntimeException(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
         }
     }
 
     public static void checkNotBlank(String param, ErrorCode errorCode) {
         if (StringUtils.isBlank(param)) {
-            throw new RuntimeException(errorCode.getErrorMsg());
+            throw new IllegalArgumentException(errorCode.getErrorMsg());
         }
     }
 
     public static void checkNotPositiveNumber(Number number, ErrorCode errorCode) {
         if (null == number || number.longValue() <= 0) {
-            throw new RuntimeException(errorCode.getErrorMsg());
+            throw new IllegalArgumentException(errorCode.getErrorMsg());
         }
     }
 
     public static void checkNotPositiveNumber(Number number, String errorMsg) {
         if (null == number || number.longValue() <= 0) {
-            throw new RuntimeException(errorMsg);
+            throw new IllegalArgumentException(errorMsg);
         }
     }
 
