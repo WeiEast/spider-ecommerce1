@@ -69,7 +69,6 @@ public class TaskUtils {
         for (org.apache.http.cookie.Cookie cookie : cookies) {
             list.add(toCrawlerCookie((BasicClientCookie) cookie));
         }
-        // HttpClient默认添加了ResponseProcessCookies处理器，已处理过response中的Set-Cookie和Set-Cookie2
         //更新自定义cookie
         Header[] headers = httpResponse.getHeaders(HttpHeadKey.SET_COOKIE);
         if (null != headers && headers.length > 0) {
