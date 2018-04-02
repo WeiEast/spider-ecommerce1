@@ -53,7 +53,7 @@ public class China10086ForApp implements OperatorPluginPostService {
     private static final String P_TEL                = "99999999999";
     private static final String P_XC                 = "A2081";
     private static final String P_XK                 = "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73";
-    private static final String ENCRYPT_URL_TEMPLATE = "http://192.168.202.143:8088/?str={}";
+    private static final String ENCRYPT_URL_TEMPLATE = "http://192.168.202.63:8088/?str={}";
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
