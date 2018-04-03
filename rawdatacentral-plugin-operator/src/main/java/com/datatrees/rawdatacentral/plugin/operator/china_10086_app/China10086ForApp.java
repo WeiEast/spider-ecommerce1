@@ -1,13 +1,11 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10086_app;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -54,6 +52,7 @@ public class China10086ForApp implements OperatorPluginPostService {
     private static final String P_XC                 = "A2081";
     private static final String P_XK                 = "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73";
     private static final String ENCRYPT_URL_TEMPLATE = "http://192.168.202.63:8088/?str={}";
+    private              String encryptUrls          = PropertiesConfiguration.getInstance().get("china.10086.app.encrypt.urls");
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -169,12 +168,12 @@ public class China10086ForApp implements OperatorPluginPostService {
             /**
              * 获取手机号加密
              */
-            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(ENCRYPT_URL_TEMPLATE, param.getMobile().toString()).invoke();
 
             String templateUrl = "https://clientaccess.10086.cn/biz-orange/LN/uamrandcodelogin/login";
+            String encryptCellNum = encryptStr(param.getMobile().toString(), param);
 
             UserInfoLoginReq obj = new UserInfoLoginReq();
-            obj.setCellNum(response.getPageContent());
+            obj.setCellNum(encryptCellNum);
             obj.setImei(P_IMEI);
             obj.setSendSmsFlag("0");
             obj.setVerifyCode(param.getSmsCode());
@@ -428,10 +427,8 @@ public class China10086ForApp implements OperatorPluginPostService {
         try {
             String cookieString = TaskUtils.getTaskShare(param.getTaskId(), "cookieString");
 
-            String encryptCellNum = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(ENCRYPT_URL_TEMPLATE, param.getMobile().toString())
-                    .invoke().getPageContent();
-            String encryptPasswd = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(ENCRYPT_URL_TEMPLATE, param.getPassword()).invoke()
-                    .getPageContent();
+            String encryptCellNum = encryptStr(param.getMobile().toString(), param);
+            String encryptPasswd = encryptStr(param.getPassword(), param);
 
             String templateUrl = "https://clientaccess.10086.cn/biz-orange/LN/tempIdentCode/getTmpIdentCode";
             UserInfoLoginDoubleReq obj = new UserInfoLoginDoubleReq();
@@ -694,6 +691,37 @@ public class China10086ForApp implements OperatorPluginPostService {
         } catch (Exception e) {
         }
         return requestBean;
+    }
+
+    private String encryptStr(String str, OperatorParam param) {
+        Response response = null;
+        String result = StringUtils.EMPTY;
+        try {
+            String[] urls = encryptUrls.split(",");
+            int size = urls.length;
+            for (int i = 0; i < size; i++) {
+                int index = (int) Math.floor(Math.random() * urls.length);
+                String url = urls[index] + "?str={}";
+                response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(url, str).invoke();
+                String pageContent = response.getPageContent();
+                if (StringUtils.isNotBlank(pageContent)) {
+                    result = pageContent;
+                    break;
+                }
+                /**
+                 * 删除不能加密的地址
+                 */
+                urls[index] = urls[urls.length - 1];
+                urls = Arrays.copyOf(urls, urls.length - 1);
+            }
+
+        } catch (Exception e) {
+            logger.error("调用安卓服务加密失败,response={}", response, e);
+        }
+        if (StringUtils.isBlank(result)) {
+            logger.error("调用安卓服务加密失败,response={}", response);
+        }
+        return result;
     }
 
 }
