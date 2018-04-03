@@ -10,6 +10,22 @@
         update website_group set enable = #{enable} where website_name = #{websiteName}
     </update>
 
+    <select id="queryWebsiteNameList" resultType="java.lang.String">
+        select g.website_name
+        from website_group g
+        inner join website_operator o on g.website_name = o.website_name
+        where
+        1=1
+        <if test="enable != null and enable != ''">
+            and g.enable = #{enable}
+        </if>
+        <if test="operatorType != null and operatorType != ''">
+            and o.operator_type = #{operatorType}
+        </if>
+        <if test="groupCode != null and groupCode != ''">
+            and g.group_code = #{groupCode}
+        </if>
+    </select>
     <!--
     这个sql很重要
     select a.* from website_group a right join  (select group_code,max(weight) as weight from website_group group by group_code) b on a.group_code = b.group_code and a.weight = b.weight ;

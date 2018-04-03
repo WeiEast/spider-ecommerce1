@@ -69,7 +69,8 @@ public class EbankMessageNormalizer implements DataNormalizer {
     }
 
     private int getBankId(ExtractMessage message) {
-        Bank bank = bankService.getByWebsiteIdFromCache(message.getWebsiteId());
+        //需要测试websiteName能否
+        Bank bank = bankService.getByWebsiteName(message.getWebsiteName());
         if (bank == null) {
             LOGGER.warn("bank not found websiteId={}", message.getWebsiteId());
             return 0;

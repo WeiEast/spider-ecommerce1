@@ -19,10 +19,12 @@ public interface BankService {
 
     /**
      * 从缓存获取bank
-     * @param websiteId
+     * @param
      * @return
      */
-    Bank getByWebsiteIdFromCache(Integer websiteId);
+//    Bank getByWebsiteIdFromCache(Integer websiteId);
+
+    Bank getByWebsiteName(String websiteName);
 
     /**
      * 获取有效的bank
@@ -36,7 +38,7 @@ public interface BankService {
      * @param websiteId
      * @return
      */
-    Bank getEnabledByWebsiteId(Integer websiteId);
+//    Bank getEnabledByWebsiteId(Integer websiteId);
 
     /**
      * key:mail
