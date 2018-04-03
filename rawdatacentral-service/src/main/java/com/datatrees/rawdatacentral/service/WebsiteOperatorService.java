@@ -12,17 +12,21 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 public interface WebsiteOperatorService {
 
     /**
-     * 获取运营商配置
+     *根据环境和站点名获取运营商配置
      * @param websiteName
+     * @param env
      * @return
      */
+
     WebsiteOperator getByWebsiteName(String websiteName);
+    WebsiteOperator getByWebsiteNameAndEnv(String websiteName,String env);
 
     /**
      * 获取运营商配置
      * @param groupCode
      * @return
      */
+
     List<WebsiteOperator> queryByGroupCode(String groupCode);
 
     /**
@@ -45,16 +49,22 @@ public interface WebsiteOperatorService {
     void importConfig(String websiteName, String from);
 
     /**
-     * 从其他环境导入配置
+     * 从开发环境导入到其他环境
      * @param websiteName
      * @param to          开发,测试,准生产,预发布
      */
     void exportConfig(String websiteName, String to);
 
     /**
+     * 导出运营商时的保存
+     * @param config
+     */
+    void saveConfigForExport(WebsiteOperator config);
+
+    /**
      * 保存运营商配置
      */
-    void saveConfig(WebsiteOperator websiteOperator);
+//    void saveConfig(WebsiteOperator websiteOperator);
 
     /**
      * 启用/禁用

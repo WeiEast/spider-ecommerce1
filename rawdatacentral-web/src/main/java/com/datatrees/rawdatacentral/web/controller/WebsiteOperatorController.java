@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.web.controller;
 import javax.annotation.Resource;
 import java.util.HashMap;
 
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
@@ -98,16 +99,34 @@ public class WebsiteOperatorController {
         }
     }
 
+//    /**
+//     * 保存配置
+//     * @param websiteOperator
+//     * @return
+//     */
+//    @RequestMapping("/saveConfig")
+//    public HttpResult<Object> saveConfig(@RequestBody WebsiteOperator websiteOperator) {
+//        HttpResult<Object> result = new HttpResult<>();
+//        try {
+//            websiteOperatorService.saveConfig(websiteOperator);
+//            logger.info("importConfig success websiteName={}", websiteOperator.getWebsiteName());
+//            return result.success(true);
+//        } catch (Exception e) {
+//            logger.error("importConfig error", e);
+//            return result.failure();
+//        }
+//    }
+
     /**
-     * 保存配置
+     * 导出运营商时所需保存的
      * @param websiteOperator
      * @return
      */
-    @RequestMapping("/saveConfig")
-    public HttpResult<Object> saveConfig(@RequestBody WebsiteOperator websiteOperator) {
+    @RequestMapping("/saveConfigForExport")
+    public HttpResult<Object> saveConfigForExport(@RequestBody WebsiteOperator websiteOperator) {
         HttpResult<Object> result = new HttpResult<>();
         try {
-            websiteOperatorService.saveConfig(websiteOperator);
+            websiteOperatorService.saveConfigForExport(websiteOperator);
             logger.info("importConfig success websiteName={}", websiteOperator.getWebsiteName());
             return result.success(true);
         } catch (Exception e) {
@@ -119,10 +138,10 @@ public class WebsiteOperatorController {
     /**
      * 查询配置
      */
-    @RequestMapping("/getByWebsiteName")
-    public Object getByWebsiteName(String websiteName) {
+    @RequestMapping("/getByWebsiteNameAndEnv")
+    public Object getByWebsiteNameAndEnv(String websiteName,String env) {
         try {
-            return websiteOperatorService.getByWebsiteName(websiteName);
+            return websiteOperatorService.getByWebsiteNameAndEnv(websiteName,env);
         } catch (Exception e) {
             logger.error("getByWebsiteName error websiteName={}", websiteName, e);
             return new HashMap<>();

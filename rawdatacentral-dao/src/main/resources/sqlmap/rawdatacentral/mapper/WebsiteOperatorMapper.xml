@@ -3,6 +3,7 @@
 <mapper namespace="com.datatrees.rawdatacentral.dao.WebsiteOperatorDAO">
   <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.WebsiteOperator">
     <id column="website_id" jdbcType="INTEGER" property="websiteId" />
+    <result column="env" jdbcType="VARCHAR" property="env" />
     <result column="website_name" jdbcType="VARCHAR" property="websiteName" />
     <result column="website_title" jdbcType="VARCHAR" property="websiteTitle" />
     <result column="enable" jdbcType="BIT" property="enable" />
@@ -87,7 +88,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    website_id, website_name, website_title, enable, proxy_enable, search_config, extractor_config, 
+    website_id,env, website_name, website_title, enable, proxy_enable, search_config, extractor_config,
     group_code, operator_type, region_name, updated_at, start_stage, login_url, plugin_class, 
     login_config, sms_interval, remark, login_tip, verify_tip, reset_type, sms_template, 
     sms_receiver, reset_url, reset_tip, simulate
@@ -125,6 +126,9 @@
     </selectKey>
     insert into website_operator
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="env != null">
+        env,
+      </if>
       <if test="websiteName != null">
         website_name,
       </if>
@@ -199,6 +203,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="env != null">
+        #{env,jdbcType=VARCHAR},
+      </if>
       <if test="websiteName != null">
         #{websiteName,jdbcType=VARCHAR},
       </if>
@@ -285,6 +292,9 @@
       <if test="record.websiteId != null">
         website_id = #{record.websiteId,jdbcType=INTEGER},
       </if>
+      <if test="record.env != null">
+        env = #{record.env,jdbcType=VARCHAR},
+      </if>
       <if test="record.websiteName != null">
         website_name = #{record.websiteName,jdbcType=VARCHAR},
       </if>
@@ -365,6 +375,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.datatrees.rawdatacentral.domain.model.WebsiteOperator">
     update website_operator
     <set>
+      <if test="env != null">
+        env = #{env,jdbcType=VARCHAR},
+      </if>
       <if test="websiteName != null">
         website_name = #{websiteName,jdbcType=VARCHAR},
       </if>

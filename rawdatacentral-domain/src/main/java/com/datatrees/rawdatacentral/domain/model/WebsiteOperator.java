@@ -8,6 +8,9 @@ public class WebsiteOperator implements Serializable {
     /** 主键 */
     private Integer websiteId;
 
+    /** 区分环境 */
+    private String env;
+
     /** 配置名称 */
     private String websiteName;
 
@@ -90,7 +93,15 @@ public class WebsiteOperator implements Serializable {
         this.websiteId = websiteId;
     }
 
-    public String getWebsiteName() {
+     public String getEnv() {
+         return env;
+     }
+
+     public void setEnv(String env) {
+         this.env = env;
+     }
+
+     public String getWebsiteName() {
         return websiteName;
     }
 
