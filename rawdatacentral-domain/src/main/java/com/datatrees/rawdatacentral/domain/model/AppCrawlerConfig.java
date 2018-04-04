@@ -12,6 +12,10 @@ public class AppCrawlerConfig implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer id;
     /**
+     * 爬取业务类型 电商/运营商
+     */
+    private Integer websiteType;
+    /**
      * 商户标识
      */
     private String  appId;
@@ -24,7 +28,7 @@ public class AppCrawlerConfig implements Serializable {
      */
     private Boolean isCrawler;
     private Date    createdAt;
-    private Date    lastUpdatedAt;
+    private Date    updatedAt;
 
     public Integer getId() {
         return id;
@@ -32,6 +36,14 @@ public class AppCrawlerConfig implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getWebsiteType() {
+        return websiteType;
+    }
+
+    public void setWebsiteType(Integer websiteType) {
+        this.websiteType = websiteType;
     }
 
     public String getAppId() {
@@ -66,11 +78,11 @@ public class AppCrawlerConfig implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Date getLastUpdatedAt() {
-        return lastUpdatedAt;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setLastUpdatedAt(Date lastUpdatedAt) {
-        this.lastUpdatedAt = lastUpdatedAt;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
