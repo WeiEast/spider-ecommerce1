@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.datatrees.rawdatacentral.dao.AppCrawlerConfigDao">
     <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.AppCrawlerConfig">
-        <id column="Id" jdbcType="SMALLINT" property="id"/>
-        <result column="WebsiteType" jdbcType="VARCHAR" property="websiteType"/>
-        <result column="AppId" jdbcType="VARCHAR" property="appId"/>
-        <result column="Project" jdbcType="VARCHAR" property="project"/>
-        <result column="IsCrawler" jdbcType="BIT" property="isCrawler"/>
-        <result column="CreatedAt" jdbcType="TIMESTAMP" property="createdAt"/>
-        <result column="UpdatedAt" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <id column="id" jdbcType="SMALLINT" property="id"/>
+        <result column="website_type" jdbcType="INT" property="websiteType"/>
+        <result column="app_id" jdbcType="VARCHAR" property="appId"/>
+        <result column="project" jdbcType="VARCHAR" property="project"/>
+        <result column="is_crawler" jdbcType="BIT" property="isCrawler"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
     </resultMap>
 
     <sql id="Example_Where_Clause">
@@ -70,12 +70,12 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-        Id, WebsiteType, AppId, Project, IsCrawler, CreatedAt, UpdatedAt
+        id, website_type, app_id, project, is_crawler, created_at, updated_at
     </sql>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from app_crawler_config
-        where Id = #{id,jdbcType=SMALLINT}
+        where id = #{id,jdbcType=SMALLINT}
     </delete>
 
     <insert id="insertSelective" parameterType="com.datatrees.rawdatacentral.domain.model.AppCrawlerConfig">
@@ -85,22 +85,22 @@
         insert into app_crawler_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="websiteType != null">
-                WebsiteType,
+                website_type,
             </if>
             <if test="appId != null">
-                AppId,
+                app_id,
             </if>
             <if test="project != null">
-                Project,
+                project,
             </if>
             <if test="isCrawler != null">
-                IsCrawler,
+                is_crawler,
             </if>
             <if test="createdAt != null">
-                CreatedAt,
+                created_at,
             </if>
             <if test="updatedAt != null">
-                UpdatedAt,
+                updated_at,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -147,32 +147,32 @@
         select
         <include refid="Base_Column_List" />
         from app_crawler_config
-        where Id = #{id,jdbcType=SMALLINT}
+        where id = #{id,jdbcType=SMALLINT}
     </select>
 
     <update id="updateByPrimaryKeySelective" parameterType="com.datatrees.rawdatacentral.domain.model.AppCrawlerConfig">
         update app_crawler_config
         <set>
             <if test="websiteType != null">
-                WebsiteType = #{websiteType,jdbcType=VARCHAR},
+                website_type = #{websiteType,jdbcType=VARCHAR},
             </if>
             <if test="appId != null">
-                AppId = #{appId,jdbcType=VARCHAR},
+                app_id = #{appId,jdbcType=VARCHAR},
             </if>
             <if test="project != null">
-                Project = #{project,jdbcType=VARCHAR},
+                project = #{project,jdbcType=VARCHAR},
             </if>
             <if test="isCrawler != null">
-                IsCrawler = #{isCrawler,jdbcType=BIT},
+                is_crawler = #{isCrawler,jdbcType=BIT},
             </if>
             <if test="createdAt != null">
-                CreatedAt = #{createdAt,jdbcType=TIMESTAMP},
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
             </if>
             <if test="updatedAt != null">
-                UpdatedAt = #{updatedAt,jdbcType=TIMESTAMP},
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
             </if>
         </set>
-        where Id = #{id,jdbcType=SMALLINT}
+        where id = #{id,jdbcType=SMALLINT}
     </update>
 
 
