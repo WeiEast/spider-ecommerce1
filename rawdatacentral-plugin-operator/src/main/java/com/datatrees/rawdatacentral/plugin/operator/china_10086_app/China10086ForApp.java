@@ -31,28 +31,27 @@ import org.slf4j.LoggerFactory;
  */
 public class China10086ForApp implements OperatorPluginPostService {
 
-    private static final Logger logger               = LoggerFactory.getLogger(China10086ForApp.class);
-    private static final String P_AK                 = "F4AA34B89513F0D087CA0EF11A3277469DC74905";
+    private static final Logger logger      = LoggerFactory.getLogger(China10086ForApp.class);
+    private static final String P_AK        = "F4AA34B89513F0D087CA0EF11A3277469DC74905";
     private static final String P_CID
-                                                     = "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=";
-    private static final String P_CITY               = "0668";
+                                            = "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=";
+    private static final String P_CITY      = "0668";
     private static final String P_CTID
-                                                     = "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=";
-    private static final String P_CV                 = "4.3.0";
-    private static final String P_EN                 = "0";
-    private static final String P_IMEI               = "869782021770311";
-    private static final String P_NT                 = "3";
-    private static final String P_PROV               = "200";
-    private static final String P_SB                 = "Xiaomi";
-    private static final String P_SN                 = "Mi Note 2";
-    private static final String P_SP                 = "1080x1920";
-    private static final String P_ST                 = "1";
-    private static final String P_SV                 = "7.0";
-    private static final String P_TEL                = "99999999999";
-    private static final String P_XC                 = "A2081";
-    private static final String P_XK                 = "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73";
-    private static final String ENCRYPT_URL_TEMPLATE = "http://192.168.202.63:8088/?str={}";
-    private              String encryptUrls          = PropertiesConfiguration.getInstance().get("china.10086.app.encrypt.urls");
+                                            = "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=";
+    private static final String P_CV        = "4.3.0";
+    private static final String P_EN        = "0";
+    private static final String P_IMEI      = "869782021770311";
+    private static final String P_NT        = "3";
+    private static final String P_PROV      = "200";
+    private static final String P_SB        = "Xiaomi";
+    private static final String P_SN        = "Mi Note 2";
+    private static final String P_SP        = "1080x1920";
+    private static final String P_ST        = "1";
+    private static final String P_SV        = "7.0";
+    private static final String P_TEL       = "99999999999";
+    private static final String P_XC        = "A2081";
+    private static final String P_XK        = "2b6b8c9c7c4ced5301d618797b94a6b5a20c021545c62b9a4ad15568591693d7968bbb73";
+    private              String encryptUrls = PropertiesConfiguration.getInstance().get("china.10086.app.encrypt.urls");
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -701,7 +700,7 @@ public class China10086ForApp implements OperatorPluginPostService {
             int size = urls.length;
             for (int i = 0; i < size; i++) {
                 int index = (int) Math.floor(Math.random() * urls.length);
-                String url = urls[index] + "?str={}";
+                String url = "http://" + urls[index] + "?str={}";
                 response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(url, str).invoke();
                 String pageContent = response.getPageContent();
                 if (StringUtils.isNotBlank(pageContent)) {
