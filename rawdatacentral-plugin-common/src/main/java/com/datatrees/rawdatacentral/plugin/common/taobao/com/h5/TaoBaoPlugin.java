@@ -26,7 +26,6 @@ import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
@@ -98,9 +97,8 @@ public class TaoBaoPlugin implements QRPluginService {
             String templateUrl =
                     "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&_ksTS={}&callback=json&" +
                             UMID_PARAM + "=" + umid.token;
-            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
-                    .setFullUrl(templateUrl, timestampFlag()).setReferer(preLoginUrl).addExtralCookie("taobao.com", UAB_COLLINA_COOKIE, umid.uab)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl, timestampFlag())
+                    .setReferer(preLoginUrl).addExtralCookie("taobao.com", UAB_COLLINA_COOKIE, umid.uab).invoke();
             String jsonString = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(jsonString);
             String imgUrl = json.getString("url");
@@ -109,7 +107,7 @@ public class TaoBaoPlugin implements QRPluginService {
             if (!StringUtils.contains(imgUrl, "https:")) {
                 imgUrl = "https:" + imgUrl;
             }
-            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(imgUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(imgUrl)
                     .setReferer(preLoginUrl).invoke();
             byte[] bytes = response.getResponse();
             String qrBase64 = response.getPageContentForBase64();
@@ -133,14 +131,15 @@ public class TaoBaoPlugin implements QRPluginService {
             RedisUtils.set(QR_STATUS + param.getTaskId(), QRCodeVerification.QRCodeStatus.WAITING.name(), 60 * 2);
             logger.info("刷新二维码成功，taskId={}", param.getTaskId());
             messageService.sendTaskLog(param.getTaskId(), "刷新二维码成功");
-            monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
+            monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(),
                     TemplateUtils.format("{}-->刷新二维码-->成功", FormType.getName(FormType.LOGIN)));
             return result.success(dataMap);
         } catch (Exception e) {
             logger.error("刷新二维码失败，param={},response={}", param, response, e);
             messageService.sendTaskLog(param.getTaskId(), "刷新二维码失败");
-            monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
-                    TemplateUtils.format("{}-->刷新二维码-->失败", FormType.getName(FormType.LOGIN)), ErrorCode.REFESH_QR_CODE_ERROR, "二维码刷新失败,请重试");
+            monitorService
+                    .sendTaskLog(param.getTaskId(), param.getWebsiteName(), TemplateUtils.format("{}-->刷新二维码-->失败", FormType.getName(FormType.LOGIN)),
+                            ErrorCode.REFESH_QR_CODE_ERROR, "二维码刷新失败,请重试");
             return result.success("刷新二维码失败");
         }
     }
@@ -182,19 +181,19 @@ public class TaoBaoPlugin implements QRPluginService {
 
                 Response response = null;
                 try {
-                    response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
-                            .setFullUrl(loginUrl).setReferer(preLoginUrl).invoke();
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(loginUrl)
+                            .setReferer(preLoginUrl).invoke();
                     String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
                     String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
-                    response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
-                            .setFullUrl(redirectUrl).setReferer(referer).invoke();
-                    processCertCheck(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), "", response.getPageContent());
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(redirectUrl)
+                            .setReferer(referer).invoke();
+                    processCertCheck(param.getTaskId(), param.getWebsiteName(), "", response.getPageContent());
                 } catch (Exception e) {
                     RedisUtils.set(QR_STATUS + param.getTaskId(), QRCodeVerification.QRCodeStatus.FAILED.name(), 60 * 2);
 
                     logger.error("淘宝二维码登录处理失败，taskId={},response={}", param.getTaskId(), response, e);
                     messageService.sendTaskLog(param.getTaskId(), "登录失败");
-                    monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
+                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(),
                             TemplateUtils.format("{}-->校验-->失败", FormType.getName(FormType.LOGIN)), ErrorCode.LOGIN_FAIL, "登陆失败,请重试");
                     break;
                 }
@@ -205,12 +204,12 @@ public class TaoBaoPlugin implements QRPluginService {
                 String cookieString = TaskUtils.getCookieString(param.getTaskId());
                 LoginMessage loginMessage = new LoginMessage();
                 loginMessage.setTaskId(param.getTaskId());
-                loginMessage.setWebsiteName(GroupEnum.TAOBAO_COM.getWebsiteName());
+                loginMessage.setWebsiteName(param.getWebsiteName());
                 loginMessage.setCookie(cookieString);
                 loginMessage.setAccountNo(StringUtils.defaultString(accountNo));
                 TaskUtils.addTaskShare(param.getTaskId(), "username", accountNo);
-                logger.info("登陆成功,taskId={},websiteName={}", param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName());
-                monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
+                logger.info("登陆成功,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
+                monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(),
                         TemplateUtils.format("{}-->校验-->成功", FormType.getName(FormType.LOGIN)));
                 BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
                 break;
@@ -275,7 +274,7 @@ public class TaoBaoPlugin implements QRPluginService {
         try {
             String lgToken = TaskUtils.getTaskShare(param.getTaskId(), "lgToken");
             String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
-            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
                     .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
             String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(resultJson);
@@ -294,19 +293,19 @@ public class TaoBaoPlugin implements QRPluginService {
         Response response = null;
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "淘宝");
-            response = TaskHttpClient.create(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(), RequestType.GET, "").setFullUrl(preLoginUrl)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(preLoginUrl).invoke();
             logger.info("淘宝二维码登录-->初始化成功，taskId={}", param.getTaskId());
             messageService.sendTaskLog(param.getTaskId(), "初始化二维码成功");
-            monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
-                    TemplateUtils.format("{}-->初始化-->成功", FormType.getName(FormType.LOGIN)));
+            monitorService
+                    .sendTaskLog(param.getTaskId(), param.getWebsiteName(), TemplateUtils.format("{}-->初始化-->成功", FormType.getName(FormType.LOGIN)));
             RedisUtils.set(IS_INIT + param.getTaskId(), "true", 60 * 5);
             return true;
         } catch (Exception e) {
             logger.error("淘宝二维码登录-->初始化失败，taskId={},response={}", param.getTaskId(), response, e);
             messageService.sendTaskLog(param.getTaskId(), "初始化二维码失败");
-            monitorService.sendTaskLog(param.getTaskId(), GroupEnum.TAOBAO_COM.getWebsiteName(),
-                    TemplateUtils.format("{}-->初始化-->失败", FormType.getName(FormType.LOGIN)), ErrorCode.TASK_INIT_ERROR, "初始化失败");
+            monitorService
+                    .sendTaskLog(param.getTaskId(), param.getWebsiteName(), TemplateUtils.format("{}-->初始化-->失败", FormType.getName(FormType.LOGIN)),
+                            ErrorCode.TASK_INIT_ERROR, "初始化失败");
             RedisUtils.set(IS_INIT + param.getTaskId(), "false", 60 * 5);
             return false;
         }
