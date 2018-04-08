@@ -16,6 +16,7 @@ import com.datatrees.crawler.plugin.qrcode.QRCodeVerification;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
@@ -46,7 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by guimeichao on 18/4/8.
  */
-public class TaoBaoPlugin implements QRPluginService {
+public class TaoBaoPlugin implements QRPluginService,CommonPluginService {
 
     private static final Logger logger                   = LoggerFactory.getLogger(TaoBaoPlugin.class);
     private static final String IS_RUNNING               = "economic_qr_is_runing_";
@@ -87,7 +88,7 @@ public class TaoBaoPlugin implements QRPluginService {
         try {
             String isInit = RedisUtils.get(IS_INIT + param.getTaskId());
             if (StringUtils.isEmpty(isInit) || StringUtils.equals(isInit, "false")) {
-                if (!init(param)) {
+                if (!iniit(param)) {
                     return result.success("刷新二维码失败");
                 }
             }
@@ -289,7 +290,7 @@ public class TaoBaoPlugin implements QRPluginService {
         return StringUtils.EMPTY;
     }
 
-    private boolean init(CommonPluginParam param) {
+    private boolean iniit(CommonPluginParam param) {
         Response response = null;
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "淘宝");
@@ -310,6 +311,36 @@ public class TaoBaoPlugin implements QRPluginService {
             return false;
         }
 
+    }
+
+    @Override
+    public HttpResult<Object> init(CommonPluginParam param) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<Object> refeshPicCode(CommonPluginParam param) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<Object> refeshSmsCode(CommonPluginParam param) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<Object> validatePicCode(CommonPluginParam param) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<Object> submit(CommonPluginParam param) {
+        return null;
+    }
+
+    @Override
+    public HttpResult<Object> defineProcess(CommonPluginParam param) {
+        return null;
     }
 
     private static String encodeUrl(String queryString) {
