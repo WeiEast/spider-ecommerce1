@@ -7,8 +7,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -604,6 +606,7 @@ public class China10086ForApp implements OperatorPluginPostService {
     }
 
     private HttpResult<Object> processForCallDetails(OperatorParam param) {
+        MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         HttpResult<Object> result = new HttpResult<>();
         Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
                 .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
@@ -676,7 +679,10 @@ public class China10086ForApp implements OperatorPluginPostService {
             int pages = 0;
             if (StringUtils.contains(pageContent, "totalCount")) {
                 String totalCount = (String) JSONPath.eval(response.getPageContentForJSON(), "$.rspBody.totalCount");
+                monitorService.sendTaskLog(param.getTaskId(), "详单-->查询-->成功," + billMonth + "月份,数量-" + totalCount);
                 pages = (Integer.parseInt(totalCount) - 1) / 200 + 1;
+            } else {
+                monitorService.sendTaskLog(param.getTaskId(), "详单-->查询-->失败," + billMonth + "月份，原文-" + pageContent);
             }
             /**
              * 如果超过200条，需翻页
@@ -797,7 +803,7 @@ public class China10086ForApp implements OperatorPluginPostService {
             for (int i = 0; i < size; i++) {
                 int index = (int) Math.floor(Math.random() * urls.length);
                 String url = "http://" + urls[index] + "?str={}";
-                response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(url, str).invoke();
+                response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(url, str).setProxyEnable(false).invoke();
                 String pageContent = response.getPageContent();
                 if (StringUtils.isNotBlank(pageContent)) {
                     result = pageContent;
