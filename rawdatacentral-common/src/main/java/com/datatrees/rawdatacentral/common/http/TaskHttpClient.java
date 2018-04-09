@@ -35,6 +35,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.config.SocketConfig;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.cookie.ClientCookie;
@@ -415,9 +416,13 @@ public class TaskHttpClient {
                 logger.error("HttpClient status error,taskId={},websiteName={},proxy={},url={},statusCode={}", taskId, request.getWebsiteName(),
                         request.getProxy(), url, statusCode);
             }
-        } catch (SocketTimeoutException e) {
+        } catch (SocketTimeoutException | HttpHostConnectException e) {
+            // release proxy when socket was timeout or the setting proxy is unreachable.
+            logger.warn("release proxy if need. error: {}", e.getMessage());
+            ProxyUtils.releaseProxy(taskId);
+
             if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
-                logger.error("http timeout ,will retry ,taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(),
+                logger.warn("http timeout ,will retry ,taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(),
                         request.getProxy(), url);
                 return invoke();
             }

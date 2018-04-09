@@ -1,6 +1,6 @@
 allprojects {
     group = 'com.datatrees.rawdatacentral'
-    version = '3.0.21.6'
+    version = '3.0.21.8-SNAPSHOT'
     description = "爬虫核心"
 }
 //buildscript {
