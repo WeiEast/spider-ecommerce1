@@ -418,10 +418,11 @@ public class TaskHttpClient {
             }
         } catch (SocketTimeoutException | HttpHostConnectException e) {
             // release proxy when socket was timeout or the setting proxy is unreachable.
+            logger.warn("release proxy if need. error: {}", e.getMessage());
             ProxyUtils.releaseProxy(taskId);
 
             if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
-                logger.error("http timeout ,will retry ,taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(),
+                logger.warn("http timeout ,will retry ,taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(),
                         request.getProxy(), url);
                 return invoke();
             }
