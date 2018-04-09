@@ -275,6 +275,14 @@ public class China10086ForApp implements OperatorPluginPostService {
                         retDesc = "尊敬的用户，您好，您输入的手机号码和服务密码不匹配，请检查后重新输入";
                         logger.error("登录-->校验-->失败,{},param={},pateContent={}", retDesc, param, response.getPageContent());
                         return result.failure(retDesc);
+                    } else if (StringUtils.equals(retCode, "310003")) {
+                        retDesc = "您输入的服务密码包含非数字字符，请检查后重新输入";
+                        logger.error("登录-->校验-->失败,{},param={},pateContent={}", retDesc, param, response.getPageContent());
+                        return result.failure(retDesc);
+                    } else if (StringUtils.equals(retCode, "310002")) {
+                        retDesc = "您输入的服务密码长度非法，请检查后重新输入";
+                        logger.error("登录-->校验-->失败,{},param={},pateContent={}", retDesc, param, response.getPageContent());
+                        return result.failure(retDesc);
                     }
                     TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
                     logger.info("登录-->校验-->成功,param={}", param);
