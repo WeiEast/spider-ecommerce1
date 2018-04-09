@@ -59,4 +59,11 @@ public class ProxyUtils {
         }
     }
 
+    public static void releaseProxy(Long taskId) {
+        proxyService.release(taskId);
+    }
+
+    public static void clearProxy(Long taskId) {
+        proxyService.clear(taskId);
+    }
 }
