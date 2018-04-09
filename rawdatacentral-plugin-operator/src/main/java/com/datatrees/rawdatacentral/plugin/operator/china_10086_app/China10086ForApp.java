@@ -141,14 +141,8 @@ public class China10086ForApp implements OperatorPluginPostService {
             String xs = MD5Util
                     .MD5(templateUrl + "_" + JSON.toJSONString(getEntity("", "60002", obj, "", param)) + "_Leadeon/SecurityOrganization", 32);
 
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_001").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("User-Agent", "okhttp/3.9.0")
-                    .addHeader("xs", xs).invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_001").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("User-Agent", "okhttp/3.9.0")
-                        .addHeader("xs", xs).invoke();
-            }
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_001", xs, params, null);
+
             logger.info("输出：{},taskId={}", response, param.getTaskId());
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
@@ -211,12 +205,8 @@ public class China10086ForApp implements OperatorPluginPostService {
             String xs = MD5Util
                     .MD5(templateUrl + "_" + JSON.toJSONString(getEntity("", "60002", obj, "", param)) + "_Leadeon/SecurityOrganization", 32);
 
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_002").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_002").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).invoke();
-            }
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_002", xs, params, null);
+
             logger.info("输出：{},taskId={}", response.getPageContent(), param.getTaskId());
 
             String cookieString = StringUtils.EMPTY;
@@ -273,14 +263,9 @@ public class China10086ForApp implements OperatorPluginPostService {
                     xs = MD5Util
                             .MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "60006", obj2, param.getMobile().toString(), param)) +
                                     "_Leadeon/SecurityOrganization", 32);
-                    response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
-                            .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                            .addHeader("Cookie", cookieString).invoke();
-                    if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                        response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_003").setFullUrl(templateUrl)
-                                .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                                .addHeader("Cookie", cookieString).invoke();
-                    }
+
+                    response = httpRequestAndCheck(param, templateUrl, "china_10086_app_003", xs, params, cookieString);
+
                     json = response.getPageContentForJSON();
                     retCode = json.getString("retCode");
                     logger.info("输出(校验服务密码)：{},taskId={}", response.getPageContent(), param.getTaskId());
@@ -348,14 +333,9 @@ public class China10086ForApp implements OperatorPluginPostService {
 
             String xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "5044", obj, param.getMobile().toString(), param)) +
                     "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_004").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                    .invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_004").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-            }
+
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_004", xs, params, cookieString);
+
             logger.info("输出(信用分)：{},taskId={}", response.getPageContent(), param.getTaskId());
             JSONObject json = response.getPageContentForJSON();
             String creditSumSco = (String) JSONPath.eval(json, "$.rspBody.userCreditInfos[0].creditSumSco");
@@ -391,14 +371,9 @@ public class China10086ForApp implements OperatorPluginPostService {
 
             xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20007", obj, param.getMobile().toString(), param)) +
                     "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_005").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                    .invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_005").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-            }
+
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_005", xs, params, cookieString);
+
             logger.info("输出(个人信息)：{},taskId={}", response.getPageContent(), param.getTaskId());
             TaskUtils.addTaskShare(param.getTaskId(), "userInfo", response.getPageContent());
 
@@ -434,14 +409,9 @@ public class China10086ForApp implements OperatorPluginPostService {
 
             xs = MD5Util.MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20016", obj, param.getMobile().toString(), param)) +
                     "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_006").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                    .invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_006").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-            }
+
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_006", xs, params, cookieString);
+
             logger.info("输出(余额)：{},taskId={}", response.getPageContent(), param.getTaskId());
             json = response.getPageContentForJSON();
             String curFee = (String) JSONPath.eval(json, "$.rspBody.curFee");
@@ -489,14 +459,9 @@ public class China10086ForApp implements OperatorPluginPostService {
             String xs = MD5Util
                     .MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "60002", obj, param.getMobile().toString(), param)) +
                             "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_007").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                    .invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_007").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-            }
+
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_007", xs, params, cookieString);
+
             logger.info("输出(获取短信)：{},taskId={}", response.getPageContent(), param.getTaskId());
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
@@ -557,14 +522,9 @@ public class China10086ForApp implements OperatorPluginPostService {
             String xs = MD5Util
                     .MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "60006", obj, param.getMobile().toString(), param)) +
                             "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_008").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                    .invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_008").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-            }
+
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_008", xs, params, cookieString);
+
             logger.info("输出(校验短信)：{},taskId={}", response.getPageContent(), param.getTaskId());
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
@@ -634,14 +594,9 @@ public class China10086ForApp implements OperatorPluginPostService {
             String xs = MD5Util
                     .MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20009", billObj, param.getMobile().toString(), param)) +
                             "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_009").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                    .invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_009").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-            }
+
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_009", xs, params, cookieString);
+
             String pageContent = response.getPageContent();
             logger.info("输出(账单)：{},taskId={}", pageContent, param.getTaskId());
             return result.success(pageContent);
@@ -699,39 +654,24 @@ public class China10086ForApp implements OperatorPluginPostService {
             String xs = MD5Util
                     .MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20012", detailObj, param.getMobile().toString(), param)) +
                             "_Leadeon/SecurityOrganization", 32);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_010").setFullUrl(templateUrl)
-                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                    .invoke();
-            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_010").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-            }
+
+            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_010", xs, params, cookieString);
+
             String pageContent = response.getPageContent();
 
             if (StringUtils.contains(pageContent, "服务异常,请稍后再试")) {
                 logger.warn("详单查询：服务异常,请稍后再试！当前页：1--》进行第一次重试taskId={}", param.getTaskId());
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_010").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-                if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                    response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_010").setFullUrl(templateUrl)
-                            .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                            .addHeader("Cookie", cookieString).invoke();
-                }
+
+                response = httpRequestAndCheck(param, templateUrl, "china_10086_app_010", xs, params, cookieString);
+
                 pageContent = response.getPageContent();
             }
 
             if (StringUtils.contains(pageContent, "服务异常,请稍后再试")) {
                 logger.warn("详单查询：服务异常,请稍后再试！当前页：1--》进行第二次重试taskId={}", param.getTaskId());
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_010").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-                if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                    response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_010").setFullUrl(templateUrl)
-                            .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                            .addHeader("Cookie", cookieString).invoke();
-                }
+
+                response = httpRequestAndCheck(param, templateUrl, "china_10086_app_010", xs, params, cookieString);
+
                 pageContent = response.getPageContent();
             }
 
@@ -774,38 +714,23 @@ public class China10086ForApp implements OperatorPluginPostService {
                 xs = MD5Util
                         .MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20012", detailObj, param.getMobile().toString(), param)) +
                                 "_Leadeon/SecurityOrganization", 32);
-                response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_011").setFullUrl(templateUrl)
-                        .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
-                        .invoke();
-                if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                    response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_011").setFullUrl(templateUrl)
-                            .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                            .addHeader("Cookie", cookieString).invoke();
-                }
+
+                response = httpRequestAndCheck(param, templateUrl, "china_10086_app_011", xs, params, cookieString);
+
                 pageContent = response.getPageContent();
                 if (StringUtils.contains(pageContent, "服务异常,请稍后再试")) {
                     logger.warn("详单查询：服务异常,请稍后再试！当前页：{}--》进行第一次重试taskId={}", i, param.getTaskId());
-                    response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_011").setFullUrl(templateUrl)
-                            .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                            .addHeader("Cookie", cookieString).invoke();
-                    if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                        response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_011").setFullUrl(templateUrl)
-                                .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                                .addHeader("Cookie", cookieString).invoke();
-                    }
+
+                    response = httpRequestAndCheck(param, templateUrl, "china_10086_app_011", xs, params, cookieString);
+
                     pageContent = response.getPageContent();
                 }
 
                 if (StringUtils.contains(pageContent, "服务异常,请稍后再试")) {
                     logger.warn("详单查询：服务异常,请稍后再试！当前页：{}--》进行第二次重试taskId={}", i, param.getTaskId());
-                    response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_011").setFullUrl(templateUrl)
-                            .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                            .addHeader("Cookie", cookieString).invoke();
-                    if (StringUtils.equals(response.getStatusCode() + "", "403")) {
-                        response = TaskHttpClient.create(param, RequestType.POST, "china_10086_app_011").setFullUrl(templateUrl)
-                                .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs)
-                                .addHeader("Cookie", cookieString).invoke();
-                    }
+
+                    response = httpRequestAndCheck(param, templateUrl, "china_10086_app_011", xs, params, cookieString);
+
                     pageContent = response.getPageContent();
                 }
                 logger.info("输出(详单)：{},taskId={}", pageContent, param.getTaskId());
@@ -901,4 +826,21 @@ public class China10086ForApp implements OperatorPluginPostService {
         return result;
     }
 
+    private Response httpRequestAndCheck(OperatorParam param, String templateUrl, String remarkId, String xs, Object params, String cookieString) {
+        Response response = null;
+        for (int i = 0; i < 3; i++) {
+            response = TaskHttpClient.create(param, RequestType.POST, remarkId).setFullUrl(templateUrl)
+                    .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
+                    .invoke();
+            if (!StringUtils.equals(response.getStatusCode() + "", "403")) {
+                break;
+            }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                logger.info("睡眠等待异常，taskId={}", param.getTaskId(), e);
+            }
+        }
+        return response;
+    }
 }
