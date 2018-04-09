@@ -833,12 +833,18 @@ public class China10086ForApp implements OperatorPluginPostService {
                     .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
                     .invoke();
             if (!StringUtils.equals(response.getStatusCode() + "", "403")) {
+                if (i > 0) {
+                    logger.info("遇到403请求重试有效，taskId={}", param.getTaskId());
+                }
                 break;
             }
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 logger.info("睡眠等待异常，taskId={}", param.getTaskId(), e);
+            }
+            if (StringUtils.equals(response.getStatusCode() + "", "403")) {
+                logger.info("遇到403请求重试无效，response={},taskId={}", response, param.getTaskId());
             }
         }
         return response;
