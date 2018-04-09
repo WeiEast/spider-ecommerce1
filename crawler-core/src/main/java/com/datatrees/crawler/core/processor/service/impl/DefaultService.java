@@ -169,6 +169,8 @@ public class DefaultService extends ServiceBase {
                 break;
             } else if (output.needRetry()) {
                 this.notifyProxyStatus(proxy, ProxyStatus.FAIL, context);
+                // 由于暂时无法分清异常，出现异常都重置代理
+                this.proxyRelease(proxy, context);
 
                 long sleepMills = this.sleep(0L, i, context);
 
