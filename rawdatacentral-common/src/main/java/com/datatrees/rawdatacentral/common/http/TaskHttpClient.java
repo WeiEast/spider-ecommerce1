@@ -417,9 +417,11 @@ public class TaskHttpClient {
                         request.getProxy(), url, statusCode);
             }
         } catch (SocketTimeoutException | HttpHostConnectException e) {
-            // release proxy when socket was timeout or the setting proxy is unreachable.
-            logger.warn("release proxy if need. error: {}", e.getMessage());
-            ProxyUtils.releaseProxy(taskId);
+            if(request.getProxyEnable()){
+                // release proxy when socket was timeout or the setting proxy is unreachable.
+                logger.warn("release the setting proxy. error: {}", e.getMessage());
+                ProxyUtils.releaseProxy(taskId);
+            }
 
             if (request.getRetry().getAndIncrement() < request.getMaxRetry()) {
                 logger.warn("http timeout ,will retry ,taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(),
