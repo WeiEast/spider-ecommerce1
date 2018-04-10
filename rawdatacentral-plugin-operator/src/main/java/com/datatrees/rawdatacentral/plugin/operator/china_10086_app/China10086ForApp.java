@@ -281,6 +281,10 @@ public class China10086ForApp implements OperatorPluginPostService {
                         retDesc = "您输入的服务密码长度非法，请检查后重新输入";
                         logger.error("登录-->校验-->失败,{},param={},pateContent={}", retDesc, param, response.getPageContent());
                         return result.failure(retDesc);
+                    } else if (StringUtils.equals(retCode, "213146")) {
+                        retDesc = "尊敬的用户，您的账户已锁定，将于24小时后解锁";
+                        logger.error("登录-->校验-->失败,{},param={},pateContent={}", retDesc, param, response.getPageContent());
+                        return result.failure(retDesc);
                     }
                     TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
                     logger.info("登录-->校验-->成功,param={}", param);
@@ -839,7 +843,7 @@ public class China10086ForApp implements OperatorPluginPostService {
                 break;
             }
             try {
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 logger.info("睡眠等待异常，taskId={}", param.getTaskId(), e);
             }
