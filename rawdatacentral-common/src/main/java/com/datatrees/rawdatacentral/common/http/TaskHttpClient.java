@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.common.utils.*;
@@ -80,6 +81,7 @@ public class TaskHttpClient {
      * 自定义的cookie
      */
     private List<BasicClientCookie> extralCookie = new ArrayList<>();
+    private AtomicInteger connectFailures = new AtomicInteger(0);
 
     private TaskHttpClient(Request request) {
         this.request = request;
@@ -416,9 +418,25 @@ public class TaskHttpClient {
                 logger.error("HttpClient status error,taskId={},websiteName={},proxy={},url={},statusCode={}", taskId, request.getWebsiteName(),
                         request.getProxy(), url, statusCode);
             }
-        } catch (SocketTimeoutException | HttpHostConnectException e) {
+        } catch (HttpHostConnectException e) {
             if(request.getProxyEnable()){
-                // release proxy when socket was timeout or the setting proxy is unreachable.
+                // release proxy when the setting proxy is unreachable.
+                logger.warn("release the setting proxy. error: {}", e.getMessage());
+                ProxyUtils.releaseProxy(taskId);
+            }
+
+            if(connectFailures.incrementAndGet() < 3){
+                logger.warn("connect host failure ,will retry ,taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(),
+                        request.getProxy(), url);
+                return invoke();
+            }
+
+            logger.error("connect failure,retry={},taskId={},websiteName={},proxy={},url={}", connectFailures.get(),
+                    taskId, request.getWebsiteName(), request.getProxy(), url, e);
+            throw new RuntimeException("connect host failure, times=" + connectFailures.get() +", request=" + request, e);
+        } catch (SocketTimeoutException e) {
+            if(request.getProxyEnable()){
+                // release proxy when socket was timeout.
                 logger.warn("release the setting proxy. error: {}", e.getMessage());
                 ProxyUtils.releaseProxy(taskId);
             }
