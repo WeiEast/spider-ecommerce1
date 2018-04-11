@@ -382,7 +382,7 @@ public class China10086ForShop implements OperatorPluginService {
 
                 //获取权限信息,必须访问下主页,否则详单有些cookie没用
                 String artifact = json.getString("artifact");
-                templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?artifact={}";
+                templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/&artifact={}";
                 TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_005").setFullUrl(templateUrl, artifact).invoke();
                 String provinceCode = TaskUtils.getCookieValue(param.getTaskId(), "ssologinprovince");
                 String provinceName = getProvinceName(provinceCode);
