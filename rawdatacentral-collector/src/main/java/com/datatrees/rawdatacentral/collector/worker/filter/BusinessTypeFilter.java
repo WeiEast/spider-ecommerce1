@@ -30,11 +30,11 @@ public class BusinessTypeFilter {
             return Boolean.FALSE;
         }
         SaasResult<TaskRO> taskRO = taskFacade.getById(taskId);
-        logger.debug("taskRO is {}", taskRO.getData());
+        logger.info("taskRO is {}", taskRO.getData());
         String appId = taskRO.getData().getAppId();
         String project = templateConfig.getBusinessType().getName();
         String result = appCrawlerConfigService.getFromRedis(appId, project);
-        logger.debug("result from redis is {},appId is {},project is {}", result, appId, project);
+        logger.info("result from redis is {},appId is {},project is {}", result, appId, project);
         //result为null，该业务未配置，默认为抓取
         if (StringUtils.isBlank(result)) {
             return Boolean.FALSE;
