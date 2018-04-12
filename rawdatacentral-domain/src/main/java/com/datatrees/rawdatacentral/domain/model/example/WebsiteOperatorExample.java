@@ -202,6 +202,76 @@ public class WebsiteOperatorExample implements Serializable {
             return (Criteria) this;
         }
 
+        public Criteria andEnvIsNull() {
+            addCriterion("env is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvIsNotNull() {
+            addCriterion("env is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvEqualTo(String value) {
+            addCriterion("env =", value, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvNotEqualTo(String value) {
+            addCriterion("env <>", value, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvGreaterThan(String value) {
+            addCriterion("env >", value, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvGreaterThanOrEqualTo(String value) {
+            addCriterion("env >=", value, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvLessThan(String value) {
+            addCriterion("env <", value, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvLessThanOrEqualTo(String value) {
+            addCriterion("env <=", value, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvLike(String value) {
+            addCriterion("env like", value, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvNotLike(String value) {
+            addCriterion("env not like", value, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvIn(List<String> values) {
+            addCriterion("env in", values, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvNotIn(List<String> values) {
+            addCriterion("env not in", values, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvBetween(String value1, String value2) {
+            addCriterion("env between", value1, value2, "env");
+            return (Criteria) this;
+        }
+
+        public Criteria andEnvNotBetween(String value1, String value2) {
+            addCriterion("env not between", value1, value2, "env");
+            return (Criteria) this;
+        }
+
         public Criteria andWebsiteNameIsNull() {
             addCriterion("website_name is null");
             return (Criteria) this;

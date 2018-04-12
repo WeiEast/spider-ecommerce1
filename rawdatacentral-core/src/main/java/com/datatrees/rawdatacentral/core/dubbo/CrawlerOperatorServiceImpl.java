@@ -8,11 +8,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
-import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -31,7 +29,6 @@ import com.datatrees.rawdatacentral.service.*;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,25 +41,37 @@ import org.springframework.stereotype.Service;
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
+
     private LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
+
     @Resource
     private ClassLoaderService                            classLoaderService;
+
     @Resource
     private RedisService                                  redisService;
+
     @Resource
     private MessageService                                messageService;
+
     @Resource
     private MonitorService                                monitorService;
+
     @Resource
     private WebsiteConfigService                          websiteConfigService;
+
     @Resource
     private WebsiteGroupService                           websiteGroupService;
+
     @Resource
     private WebsiteOperatorService                        websiteOperatorService;
+
     @Resource
     private ThreadPoolService                             threadPoolService;
+
     @Resource
-    private ProxyProvider                                 proxyProvider;
+    private ProxyService                                  proxyService;
+
+    private static final String OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -82,13 +91,10 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         //清理共享信息
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
                         RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
-                        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
-                        try {
-                            proxyProvider.release(taskId);
-                        } catch (Exception e) {
-                            logger.error("proxyProvider release error taskId={}", taskId, e);
-                        }
-                        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
+
+                        // 清理与任务绑定的代理
+                        proxyService.clear(taskId);
+
                         try {
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
                             BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
@@ -190,6 +196,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
         }
         monitorService.sendTaskLog(taskId, websiteName, log, result);
+
+        result = checkHttpResult(result, param);
         return result;
     }
 
@@ -230,6 +238,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         String log = TemplateUtils.format("{}-->发送短信验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
+
+        result = checkHttpResult(result, param);
         return result;
     }
 
@@ -254,6 +264,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         String log = TemplateUtils.format("{}-->校验图片验证码-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
         monitorService.sendTaskLog(taskId, websiteName, log, result);
+
+        result = checkHttpResult(result, param);
         return result;
     }
 
@@ -300,6 +312,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
             sendSubmitSuccessMessage(pluginService, result, param, startTime);
+
+            result = checkHttpResult(result, param);
             return result;
         } finally {
             long endTime = System.currentTimeMillis();
@@ -466,5 +480,31 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             logger.info("waitInitSuccess error taskId={}", taskId, e);
             return false;
         }
+    }
+
+    private HttpResult<Map<String, Object>> checkHttpResult(HttpResult<Map<String, Object>> result, OperatorParam param) {
+        HttpResult<Map<String, Object>> newResult = result;
+        try {
+            if (!newResult.getStatus()) {
+                String groupCode = param.getGroupCode();
+                String property = PropertiesConfiguration.getInstance().get(OPERATOR_FAIL_USER_MAX);
+                int maxFailUser = 5;
+                if (StringUtils.isNotBlank(property)) {
+                    maxFailUser = Integer.parseInt(property);
+                }
+                boolean b = WebsiteUtils.isNormal(groupCode, maxFailUser);
+                if (!b) {
+                    if (StringUtils.equals(param.getFormType(), FormType.LOGIN)) {
+                        newResult.setResponseCode(ErrorCode.UNDER_MAINTENANCE.getErrorCode());
+                    }
+                    newResult.setMessage(ErrorCode.UNDER_MAINTENANCE.getErrorMsg());
+                }
+            }
+        } catch (Exception e) {
+            logger.error("检查HttpResult出现异常，返回原result", e);
+            return result;
+        }
+        return newResult;
+
     }
 }

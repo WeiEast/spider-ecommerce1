@@ -31,12 +31,14 @@ import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.collector.utils.OperatorUtils;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.IpUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
+import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
@@ -45,6 +47,8 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
+import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
+import com.datatrees.rawdatacentral.core.oss.OssUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -55,11 +59,8 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.TaskService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
-import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
-import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
-import com.datatrees.rawdatacentral.core.oss.OssUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -318,7 +319,13 @@ public class Collector {
                     }
                     messageService.sendTaskLog(task.getTaskId(), logMsg, task.getRemark());
                     if (task.getStatus() != 0) {
-                        messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), null);
+                        String newRemark = null;
+                        try {
+                            newRemark = OperatorUtils.getRemarkForTaskFail(task.getTaskId());
+                        } catch (Exception e) {
+                            logger.info("更新remark失败，taskId={}", task.getTaskId(), e);
+                        }
+                        messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), newRemark);
                     }
                 }
                 logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={},status={}", task.getTaskId(), task.isSubTask(),
@@ -337,7 +344,6 @@ public class Collector {
     }
 
     private void messageComplement(TaskMessage taskMessage, CollectorMessage message) {
-        String resultMsg = null;
         try {
             if (StringUtils.isBlank(taskMessage.getTask().getResultMessage())) {
                 taskMessage.getTask().setResultMessage(GsonUtils.toJson(taskMessage.getContext().getProcessorResult()));

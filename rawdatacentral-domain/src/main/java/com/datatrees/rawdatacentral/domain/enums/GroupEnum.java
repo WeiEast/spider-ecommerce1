@@ -14,8 +14,13 @@ package com.datatrees.rawdatacentral.domain.enums;
  */
 public enum GroupEnum {
 
+    EXMAIL_QQ_H5("EXMAIL_QQ_H5", "腾讯企业邮箱H5", WebsiteType.MAIL, "exmail.qq.com.h5"),
+    MAIL_SINA_H5("MAIL_SINA_H5", "新浪邮箱H5", WebsiteType.MAIL, "sina.com.h5"),
     MAIL_QQ_H5("MAIL_QQ_H5", "QQ邮箱H5", WebsiteType.MAIL, "qq.com.h5"),
     MAIL_163_H5("MAIL_163_H5", "163邮箱H5", WebsiteType.MAIL, "163.com.h5"),
+    MAIL_126_H5("MAIL_126_H5", "126邮箱H5", WebsiteType.MAIL, "126.com.h5"),
+    TAOBAO_COM_H5("TAOBAO_COM_H5", "淘宝H5", WebsiteType.ECOMMERCE, "taobao.com.h5"),
+
     MAIL_QQ("MAIL_QQ", "QQ邮箱", WebsiteType.MAIL, "qq.com"),
     MAIL_163("MAIL_163", "163邮箱", WebsiteType.MAIL, "163.com"),
     MAIL_126("MAIL_126", "126邮箱", WebsiteType.MAIL, "126.com"),

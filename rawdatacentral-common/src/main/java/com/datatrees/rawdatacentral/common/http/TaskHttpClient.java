@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +37,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.cookie.ClientCookie;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -48,26 +47,21 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TaskHttpClient {
 
-    private static final Logger                     logger = LoggerFactory.getLogger(TaskHttpClient.class);
-    private static       SSLConnectionSocketFactory sslsf  = null;//海南电信,重定向要忽略证书
+    private static final Logger                     logger     = LoggerFactory.getLogger(TaskHttpClient.class);
+    private static final String                     USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:29.0) Gecko/20100101 Firefox/29.0";
+    private static       SSLConnectionSocketFactory sslsf      = null;//海南电信,重定向要忽略证书
 
     static {
         try {
             SSLContextBuilder builder = new SSLContextBuilder();
             // 全部信任 不做身份鉴定
-            builder.loadTrustMaterial(null, new TrustStrategy() {
-                @Override
-                public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                    return true;
-                }
-            });
+            builder.loadTrustMaterial(null, (x509Certificates, s) -> true);
             sslsf = new SSLConnectionSocketFactory(builder.build(), new String[]{"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"}, null,
                     NoopHostnameVerifier.INSTANCE);
         } catch (Exception e) {
@@ -281,20 +275,21 @@ public class TaskHttpClient {
         cookie.setSecure(false);
         cookie.setVersion(0);
         cookie.setExpiryDate(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30)));
-        cookie.setAttribute("path", "/");
-        cookie.setAttribute("domain", domain);
+        cookie.setAttribute(ClientCookie.PATH_ATTR, "/");
+        cookie.setAttribute(ClientCookie.DOMAIN_ATTR, domain);
         SimpleDateFormat sdf = new SimpleDateFormat("EEE d MMM yyyy HH:mm:ss 'GMT'", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT")); // 设置时区为GMT
-        cookie.setAttribute("expires", sdf.format(cookie.getExpiryDate()));
-        request.getExtralCookie().put(name, value);
+        cookie.setAttribute(ClientCookie.EXPIRES_ATTR, sdf.format(cookie.getExpiryDate()));
         extralCookie.add(cookie);
+        request.addExtraCookie(cookie.getName(), cookie.getValue());
         return this;
     }
 
     public Response invoke() {
         checkRequest(request);
-        Long taskId = request.getTaskId();
         request.setRequestId(RequestIdUtils.createId());
+
+        Long taskId = request.getTaskId();
         CloseableHttpClient httpclient = null;
         CloseableHttpResponse httpResponse = null;
         int statusCode = 0;
@@ -302,8 +297,7 @@ public class TaskHttpClient {
         try {
             //参数处理
             if (CollectionUtils.isNotEmpty(request.getParams())) {
-                CheckUtils.checkNotBlank(request.getUrl(), "url is blank");
-                List<NameValuePair> pairs = new ArrayList<NameValuePair>(request.getParams().size());
+                List<NameValuePair> pairs = new ArrayList<>(request.getParams().size());
                 for (Map.Entry<String, Object> entry : request.getParams().entrySet()) {
                     pairs.add(new BasicNameValuePair(entry.getKey(), null == entry.getValue() ? "" : String.valueOf(entry.getValue())));
                 }
@@ -371,7 +365,7 @@ public class TaskHttpClient {
             // SO_TIMEOUT:单位毫秒，默认设置5秒。
             SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(5000).build();
             HttpClientBuilder httpClientBuilder = HttpClients.custom().setDefaultRequestConfig(config).setProxy(proxy)
-                    .setDefaultCookieStore(cookieStore).setSSLSocketFactory(sslsf).setDefaultSocketConfig(socketConfig);
+                    .setDefaultCookieStore(cookieStore).setSSLSocketFactory(sslsf).setDefaultSocketConfig(socketConfig).setUserAgent(USER_AGENT);
             if (null != credsProvider) {
                 httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
             }
@@ -382,9 +376,10 @@ public class TaskHttpClient {
             response.setStatusCode(statusCode);
             cookies = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
             TaskUtils.saveCookie(taskId, cookies);
+
             response.setResponseCookies(TaskUtils.getResponseCookieMap(request, cookies));
+
             long totalTime = System.currentTimeMillis() - request.getRequestTimestamp();
-            TaskUtils.saveCookie(taskId, host, cookieStore, httpResponse);
             response.setTotalTime(totalTime);
             Header[] headers = httpResponse.getAllHeaders();
             if (null != headers) {
@@ -426,7 +421,7 @@ public class TaskHttpClient {
                         request.getProxy(), url);
                 return invoke();
             }
-            logger.error("http timout,retry={},maxRetry={},taskId={},websiteName={},proxy={},url={}", request.getRetry(), request.getMaxRetry(),
+            logger.error("http timeout,retry={},maxRetry={},taskId={},websiteName={},proxy={},url={}", request.getRetry(), request.getMaxRetry(),
                     taskId, request.getWebsiteName(), request.getProxy(), url, e);
             throw new RuntimeException("http timeout,request=" + request, e);
         } catch (Throwable e) {
@@ -434,7 +429,6 @@ public class TaskHttpClient {
                     taskId, request.getWebsiteName(), request.getProxy(), url, e);
             throw new RuntimeException("http error request=" + request, e);
         } finally {
-            IOUtils.closeQuietly(httpclient);
             if (httpResponse != null) {
                 try {
                     EntityUtils.consume(httpResponse.getEntity());
@@ -442,6 +436,7 @@ public class TaskHttpClient {
                     logger.error("http close error,taskId={}", taskId, e);
                 }
             }
+            IOUtils.closeQuietly(httpclient);
             try {
                 String sassEnv = TaskUtils.getSassEnv();
 
@@ -486,9 +481,7 @@ public class TaskHttpClient {
     private void checkRequest(Request request) {
         CheckUtils.checkNotNull(request, "request is null");
         CheckUtils.checkNotPositiveNumber(request.getTaskId(), ErrorCode.EMPTY_TASK_ID);
-        if (StringUtils.isBlank(request.getUrl())) {
-            throw new RuntimeException("url  is blank");
-        }
+        CheckUtils.checkNotBlank(request.getUrl(), "url is blank");
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
@@ -94,13 +95,14 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         if (list.size() == 1) {
             maxWeight = list.get(0);
         } else {
-            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a.getWeight().compareTo(b.getWeight()))
-                    .collect(Collectors.toList());
+            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a
+                    .getWeight().compareTo(b.getWeight())).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(enables)) {
                 maxWeight = enables.get(enables.size() - 1);
             } else {
                 maxWeight = list.get(random.nextInt(list.size()));
-                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName());
+                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName
+                        ());
             }
         }
         RedisUtils.set(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(groupCode), maxWeight.getWebsiteName());
@@ -122,5 +124,10 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         if (null != websiteName && null != enable) {
             websiteGroupDAO.updateEnable(websiteName, enable ? 1 : 0);
         }
+    }
+
+    @Override
+    public List<String> getWebsiteNameList(String enable, String operatorType, String groupCode) {
+        return websiteGroupDAO.queryWebsiteNameList(enable, operatorType, groupCode);
     }
 }

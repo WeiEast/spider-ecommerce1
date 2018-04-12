@@ -93,6 +93,10 @@ public class Request implements Serializable {
         this.extralCookie = extralCookie;
     }
 
+    public void addExtraCookie(String name, String value){
+        getExtralCookie().put(name, value);
+    }
+
     public Boolean getProxyEnable() {
         return proxyEnable;
     }

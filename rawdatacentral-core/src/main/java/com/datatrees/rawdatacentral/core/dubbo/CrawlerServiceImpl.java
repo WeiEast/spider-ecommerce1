@@ -20,26 +20,28 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
-import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
+import com.datatrees.rawdatacentral.domain.enums.QRStatus;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -61,6 +63,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private CrawlerOperatorService crawlerOperatorService;
     @Resource
     private MonitorService         monitorService;
+    @Autowired
+    private ProxyService           proxyService;
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -118,6 +122,16 @@ public class CrawlerServiceImpl implements CrawlerService {
                 case 1:
                     directiveType = DirectiveType.CRAWL_CODE;
                     break;
+                case 3:
+                    directiveType = DirectiveType.LOGIN_SECOND_PASSWORD;
+                    Long processId = Long.parseLong(extra.get("processId"));
+                    ProcessResult<Object> processResult = ProcessResultUtils.queryProcessResult(processId);
+                    if (StringUtils.equals(processResult.getProcessStatus(),ProcessStatus.REQUIRE_SECOND_PASSWORD)) {
+                        processResult.setProcessStatus(ProcessStatus.PROCESSING);
+                        ProcessResultUtils.saveProcessResult(processResult);
+                        TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
+                    }
+                    break;
                 default:
                     logger.warn("invalid param taskId={},type={}", taskId, type);
                     return result.failure("未知参数type");
@@ -131,7 +145,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.info("import success taskId={},directiveId={},code={},extra={}", taskId, directiveId, code, JSON.toJSONString(extra));
             return result.success(true);
         } catch (Exception e) {
-            logger.error("import error taskId={},directiveId={},code={},extra={}", taskId, directiveId, code, JSON.toJSONString(extra));
+            logger.error("import error taskId={},directiveId={},code={},extra={}", taskId, directiveId, code, JSON.toJSONString(extra), e);
             return result.failure();
         }
     }
@@ -286,7 +300,9 @@ public class CrawlerServiceImpl implements CrawlerService {
         sendDirective.fill(DirectiveRedisCode.CANCEL, directiveData);
         redisService.saveDirectiveResult(sendDirective);
 
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
+        // 清理与任务绑定的代理
+        proxyService.clear(taskId);
+
         ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
         logger.info("cancel taskId={}", taskId);
         result.setData(false);

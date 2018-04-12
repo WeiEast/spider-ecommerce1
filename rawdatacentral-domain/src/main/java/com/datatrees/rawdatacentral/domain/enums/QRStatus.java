@@ -15,5 +15,7 @@ public class QRStatus {
     public static final String SUCCESS         = "SUCCESS";//验证成功
     public static final String CRAWLER_FAILED  = "CRAWLER_FAILED";//任务结束,爬取失败
     public static final String CRAWLER_SUCCESS = "CRAWLER_SUCCESS";//任务结束,爬取成功
+    public static final String REQUIRE_SECOND_PASSWORD = "REQUIRE_SECOND_PASSWORD";//请求qq邮箱独立密码
+    public static final String VALIDATE_SECOND_PASSWORD_FAIL = "VALIDATE_SECOND_PASSWORD_FAIL";//校验qq邮箱独立密码失败
 
 }

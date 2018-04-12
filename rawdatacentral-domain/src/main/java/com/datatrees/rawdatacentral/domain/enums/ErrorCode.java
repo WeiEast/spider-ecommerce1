@@ -26,6 +26,7 @@ public enum ErrorCode {
     VALIDATE_PHONE_FAIL(-241, "手机号码与运营商归属地不符，请重新输入"),
     REFESH_PIC_CODE_ERROR(-250, "图片验证码刷新失败,请重试"),
     REFESH_QR_CODE_ERROR(-251, " 二维码刷新失败,请重试"),
+    QR_CODE_STATUS_EXPIRE(-252, " 二维码过期,请重新获取"),
     VALIDATE_PIC_CODE_FAIL(-260, "请输入正确的图片验证码"),
     VALIDATE_PIC_CODE_UNEXPECTED_RESULT(-261, "请输入正确的图片验证码"),
     VALIDATE_PIC_CODE_ERROR(-262, "请输入正确的图片验证码"),
@@ -40,6 +41,7 @@ public enum ErrorCode {
     VALIDATE_FAIL(-290, "校验失败,请重试"),
     VALIDATE_UNEXPECTED_RESULT(-291, "校验失败,请重试"),
     VALIDATE_ERROR(-292, "校验失败,请重试"),
+    VALIDATE_TIMEOUT(-293, "等待用户输入校验信息超时"),
     TASK_INIT_ERROR(-300, "初始化失败"),
     RESULT_SEND_ERROR(-202, "Result send error!"),
     CONFIG_ERROR(-304, "Config error!"),
@@ -58,7 +60,9 @@ public enum ErrorCode {
     NO_RESULT_ERROR_CODE(-510, "There is no result"),
     NOT_EMPTY_ERROR_CODE(-512, "Field not empty"),
     RESPONSE_EMPTY_ERROR_CODE(-514, "Response not empty"),
-    UNKNOWN_REASON(-520, "Unknown Reason.");
+    UNKNOWN_REASON(-520, "Unknown Reason."),
+    UNDER_MAINTENANCE(-606, "当前运营商正在维护中，请稍后重试");
+
     private int    errorCode;
     private String errorMessage;
 

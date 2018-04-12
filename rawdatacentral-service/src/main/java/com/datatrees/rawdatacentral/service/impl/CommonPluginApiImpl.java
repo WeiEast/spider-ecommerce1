@@ -8,10 +8,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
-import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -26,10 +23,10 @@ import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.treefinance.proxy.api.ProxyProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,19 +35,19 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     private static final Logger logger = LoggerFactory.getLogger(CommonPluginApiImpl.class);
 
     @Resource
-    private ClassLoaderService   classLoaderService;
+    private ClassLoaderService classLoaderService;
 
     @Resource
-    private RedisService         redisService;
+    private RedisService redisService;
 
     @Resource
     private WebsiteConfigService websiteConfigService;
 
     @Resource
-    private MonitorService       monitorService;
+    private MonitorService monitorService;
 
-    @Resource
-    private ProxyProvider        proxyProvider;
+    @Autowired
+    private ProxyService proxyService;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
@@ -65,8 +62,10 @@ public class CommonPluginApiImpl implements CommonPluginApi {
                 //清理共享信息
                 RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId));
                 RedisUtils.del(RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId));
-                RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
-                RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
+
+                // 清理与任务绑定的代理
+                proxyService.clear(taskId);
+
                 try {
                     BackRedisUtils.del(RedisKeyPrefixEnum.TASK_REQUEST.getRedisKey(taskId));
                     BackRedisUtils.del(RedisKeyPrefixEnum.TASK_PAGE_CONTENT.getRedisKey(taskId));
@@ -192,6 +191,13 @@ public class CommonPluginApiImpl implements CommonPluginApi {
             }
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.SUBMIT_RESULT.getRedisKey(param.getFormType()), JSON.toJSONString(result));
+            //腾讯企业邮箱h5和新浪邮箱h5时不再发一次mq，防止task_log中记录错误的数据
+            if (result.getData() != null) {
+                String str = result.getData().toString();
+                if ((str.contains("directive=login_fail") || str.contains("directive=require_picture") || str.contains("directive=require_picture_again")) && str.contains("information")) {
+                    return result;
+                }
+            }
             String log = TemplateUtils.format("{}-->校验-->{}", param.getActionName(), result.getStatus() ? "成功" : "失败");
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
             return result;

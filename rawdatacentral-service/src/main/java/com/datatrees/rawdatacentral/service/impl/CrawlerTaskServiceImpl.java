@@ -5,7 +5,9 @@ import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.service.TaskService;
 import org.slf4j.Logger;
@@ -35,5 +37,12 @@ public class CrawlerTaskServiceImpl implements CrawlerTaskService {
         map.put(AttributeKey.TASK_ID, String.valueOf(taskId));
         map.put(AttributeKey.TIMESTAMP, String.valueOf(System.currentTimeMillis()));
         return map;
+    }
+
+    @Override
+    public String getTaskAccountNo(Long taskId) {
+        String redisKey = RedisKeyPrefixEnum.TASK_INFO_ACCOUNT_NO.getRedisKey(taskId);
+        String accountNo = RedisUtils.get(redisKey);
+        return accountNo;
     }
 }
