@@ -6,7 +6,7 @@
         <result column="website_type" jdbcType="INT" property="websiteType"/>
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
         <result column="project" jdbcType="VARCHAR" property="project"/>
-        <result column="is_crawler" jdbcType="BIT" property="isCrawler"/>
+        <result column="crawler_status" jdbcType="BIT" property="crawlerStatus"/>
         <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
         <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
     </resultMap>
@@ -70,7 +70,7 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-        id, website_type, app_id, project, is_crawler, created_at, updated_at
+        id, website_type, app_id, project, crawler_status, created_at, updated_at
     </sql>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -93,8 +93,8 @@
             <if test="project != null">
                 project,
             </if>
-            <if test="isCrawler != null">
-                is_crawler,
+            <if test="crawlerStatus != null">
+                crawler_status,
             </if>
             <if test="createdAt != null">
                 created_at,
@@ -113,8 +113,8 @@
             <if test="project != null">
                 #{project,jdbcType=VARCHAR},
             </if>
-            <if test="isCrawler != null">
-                #{isCrawler,jdbcType=BIT},
+            <if test="crawlerStatus != null">
+                #{crawlerStatus,jdbcType=BIT},
             </if>
             <if test="createdAt != null">
                 #{createdAt,jdbcType=TIMESTAMP},
@@ -162,8 +162,8 @@
             <if test="project != null">
                 project = #{project,jdbcType=VARCHAR},
             </if>
-            <if test="isCrawler != null">
-                is_crawler = #{isCrawler,jdbcType=BIT},
+            <if test="crawlerStatus != null">
+                crawler_status = #{crawlerStatus,jdbcType=BIT},
             </if>
             <if test="createdAt != null">
                 created_at = #{createdAt,jdbcType=TIMESTAMP},

@@ -403,63 +403,63 @@ public class AppCrawlerConfigExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerIsNull() {
-            addCriterion("is_crawler is null");
+        public Criteria andCrawlerStatusIsNull() {
+            addCriterion("crawler_status is null");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerIsNotNull() {
-            addCriterion("is_crawler is not null");
+        public Criteria andCrawlerStatusIsNotNull() {
+            addCriterion("crawler_status is not null");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerEqualTo(Boolean value) {
-            addCriterion("is_crawler =", value, "isCrawler");
+        public Criteria andCrawlerStatusEqualTo(Boolean value) {
+            addCriterion("crawler_status =", value, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerNotEqualTo(Boolean value) {
-            addCriterion("is_crawler <>", value, "isCrawler");
+        public Criteria andCrawlerStatusNotEqualTo(Boolean value) {
+            addCriterion("crawler_status <>", value, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerGreaterThan(Boolean value) {
-            addCriterion("is_crawler >", value, "isCrawler");
+        public Criteria andCrawlerStatusGreaterThan(Boolean value) {
+            addCriterion("crawler_status >", value, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("is_crawler >=", value, "isCrawler");
+        public Criteria andCrawlerStatusGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("crawler_status >=", value, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerLessThan(Boolean value) {
-            addCriterion("is_crawler <", value, "isCrawler");
+        public Criteria andCrawlerStatusLessThan(Boolean value) {
+            addCriterion("crawler_status <", value, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerLessThanOrEqualTo(Boolean value) {
-            addCriterion("is_crawler <=", value, "isCrawler");
+        public Criteria andCrawlerStatusLessThanOrEqualTo(Boolean value) {
+            addCriterion("crawler_status <=", value, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerIn(List<Boolean> values) {
-            addCriterion("is_crawler in", values, "isCrawler");
+        public Criteria andCrawlerStatusIn(List<Boolean> values) {
+            addCriterion("crawler_status in", values, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerNotIn(List<Boolean> values) {
-            addCriterion("is_crawler not in", values, "isCrawler");
+        public Criteria andCrawlerStatusNotIn(List<Boolean> values) {
+            addCriterion("crawler_status not in", values, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerBetween(Boolean value1, Boolean value2) {
-            addCriterion("is_crawler between", value1, value2, "isCrawler");
+        public Criteria andCrawlerStatusBetween(Boolean value1, Boolean value2) {
+            addCriterion("crawler_status between", value1, value2, "crawlerStatus");
             return (Criteria) this;
         }
 
-        public Criteria andIsCrawlerNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("is_crawler not between", value1, value2, "isCrawler");
+        public Criteria andCrawlerStatusNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("crawler_status not between", value1, value2, "crawlerStatus");
             return (Criteria) this;
         }
 

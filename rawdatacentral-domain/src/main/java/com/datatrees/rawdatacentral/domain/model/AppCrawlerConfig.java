@@ -26,7 +26,7 @@ public class AppCrawlerConfig implements Serializable {
     /**
      * 是否爬取
      */
-    private Boolean isCrawler;
+    private Boolean crawlerStatus;
     private Date    createdAt;
     private Date    updatedAt;
 
@@ -62,12 +62,12 @@ public class AppCrawlerConfig implements Serializable {
         this.project = project;
     }
 
-    public Boolean getCrawler() {
-        return isCrawler;
+    public Boolean getCrawlerStatus() {
+        return crawlerStatus;
     }
 
-    public void setCrawler(Boolean crawler) {
-        isCrawler = crawler;
+    public void setCrawlerStatus(Boolean crawlerStatus) {
+        this.crawlerStatus = crawlerStatus;
     }
 
     public Date getCreatedAt() {
