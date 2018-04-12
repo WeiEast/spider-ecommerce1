@@ -12,6 +12,7 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
+import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,18 @@ public class KpiUtils {
     private static final Logger logger               = LoggerFactory.getLogger(KpiUtils.class);
 
     private static final String DEFAULT_CHARSET_NAME = "UTF-8";
+
+    public static void sendKpi(OperatorParam param, String kpiType, String kpiName, String kpiValue, String extra) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, param.getTaskId());
+        map.put(AttributeKey.WEBSITE_NAME, param.getWebsiteName());
+        map.put("kpiType", kpiType);
+        map.put("kpiName", kpiName);
+        map.put("kpiValue", kpiValue);
+        map.put("extra", extra);
+        sendMessage(TopicEnum.CRAWLER_MONITOR.getCode(), "kpi", param.getTaskId(), map);
+        logger.info("send kpi data:{}", JSON.toJSONString(map));
+    }
 
     public static void sendKpi(long taskId, String websiteName, String kpiType, String kpiName, String kpiValue, String extra) {
         Map<String, Object> map = new HashMap<>();
