@@ -485,8 +485,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     private HttpResult<Map<String, Object>> checkHttpResult(HttpResult<Map<String, Object>> result, OperatorParam param) {
         HttpResult<Map<String, Object>> newResult = result;
         try {
-            if (!newResult.getStatus()) {
-                String groupCode = param.getGroupCode();
+            if (result.getResponseCode() != ErrorCode.NOT_SUPORT_METHOD.getErrorCode() && !newResult.getStatus()) {                String groupCode = param.getGroupCode();
                 String property = PropertiesConfiguration.getInstance().get(OPERATOR_FAIL_USER_MAX);
                 int maxFailUser = 5;
                 if (StringUtils.isNotBlank(property)) {
