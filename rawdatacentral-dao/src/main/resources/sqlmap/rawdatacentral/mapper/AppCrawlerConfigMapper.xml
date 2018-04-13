@@ -3,7 +3,7 @@
 <mapper namespace="com.datatrees.rawdatacentral.dao.AppCrawlerConfigDao">
     <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.AppCrawlerConfig">
         <id column="id" jdbcType="SMALLINT" property="id"/>
-        <result column="website_type" jdbcType="INT" property="websiteType"/>
+        <result column="website_type" jdbcType="INTEGER" property="websiteType"/>
         <result column="app_id" jdbcType="VARCHAR" property="appId"/>
         <result column="project" jdbcType="VARCHAR" property="project"/>
         <result column="crawler_status" jdbcType="BIT" property="crawlerStatus"/>
@@ -105,7 +105,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="websiteType != null">
-                #{websiteType,jdbcType=INT},
+                #{websiteType,jdbcType=INTEGER},
             </if>
             <if test="appId != null">
                 #{appId,jdbcType=VARCHAR},
@@ -154,7 +154,7 @@
         update app_crawler_config
         <set>
             <if test="websiteType != null">
-                website_type = #{websiteType,jdbcType=INT},
+                website_type = #{websiteType,jdbcType=INTEGER},
             </if>
             <if test="appId != null">
                 app_id = #{appId,jdbcType=VARCHAR},
