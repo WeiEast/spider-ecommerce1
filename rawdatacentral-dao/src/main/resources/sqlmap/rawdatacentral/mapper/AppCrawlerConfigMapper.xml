@@ -105,7 +105,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="websiteType != null">
-                #{websiteType,jdbcType=VARCHAR},
+                #{websiteType,jdbcType=INT},
             </if>
             <if test="appId != null">
                 #{appId,jdbcType=VARCHAR},
@@ -154,7 +154,7 @@
         update app_crawler_config
         <set>
             <if test="websiteType != null">
-                website_type = #{websiteType,jdbcType=VARCHAR},
+                website_type = #{websiteType,jdbcType=INT},
             </if>
             <if test="appId != null">
                 app_id = #{appId,jdbcType=VARCHAR},
