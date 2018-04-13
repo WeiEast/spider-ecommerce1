@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 18/3/26.
  */
-public class China10086ForApp implements OperatorPluginPostService {
+public class China10086ForApp3 implements OperatorPluginPostService {
 
-    private static final Logger logger = LoggerFactory.getLogger(China10086ForApp.class);
+    private static final Logger logger = LoggerFactory.getLogger(China10086ForApp3.class);
     private static final String P_AK   = "F4AA34B89513F0D087CA0EF11A3277469DC74905";
     private static final String P_CID
                                        = "lTCBX3oN8dvUy3/GSR2Sm/Gf9AdcsF2yq1wiQSBUBZUlOEkaHhg8ZBANqxIrb2JuIOkYB9E2REpDNcWnBzyqABIyveyVYD/0ap+sx0AGqj8=";
@@ -113,7 +113,7 @@ public class China10086ForApp implements OperatorPluginPostService {
         Response response = null;
         try {
             P_IMEI = "8697" + param.getMobile();
-            String templateUrl = "https://clientaccess.10086.cn/biz-orange/LN/uamrandcode/sendMsgLogin";
+            String templateUrl = "https://app.10086.cn/biz-orange/LN/uamrandcode/sendMsgLogin";
 
             UserInfoLoginReq obj = new UserInfoLoginReq();
             obj.setCellNum(param.getMobile().toString());
@@ -173,7 +173,7 @@ public class China10086ForApp implements OperatorPluginPostService {
              * 获取手机号加密
              */
 
-            String templateUrl = "https://clientaccess.10086.cn/biz-orange/LN/uamrandcodelogin/login";
+            String templateUrl = "https://app.10086.cn/biz-orange/LN/uamrandcodelogin/login";
             String encryptCellNum = encryptStr(param.getMobile().toString(), param);
 
             UserInfoLoginReq obj = new UserInfoLoginReq();
@@ -226,13 +226,14 @@ public class China10086ForApp implements OperatorPluginPostService {
                 case "000000":
                     String provinceName = (String) JSONPath.eval(json, "$.rspBody.provinceName");
                     TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
+                    String cookieString2 = cookieString.replaceAll(" ", "%20");
                     /**
                      * 校验一下服务密码是否正确
                      */
                     encryptCellNum = encryptStr(param.getMobile().toString(), param);
                     String encryptPasswd = encryptStr(param.getPassword(), param);
 
-                    templateUrl = "https://clientaccess.10086.cn/biz-orange/LN/tempIdentCode/getTmpIdentCode";
+                    templateUrl = "https://app.10086.cn/biz-orange/LN/tempIdentCode/getTmpIdentCode?" + cookieString2;
                     UserInfoLoginDoubleReq obj2 = new UserInfoLoginDoubleReq();
                     obj2.setBusinessCode("01");
                     obj2.setCellNum(encryptCellNum);
@@ -307,10 +308,11 @@ public class China10086ForApp implements OperatorPluginPostService {
         try {
             P_IMEI = "8697" + param.getMobile();
             String cookieString = TaskUtils.getTaskShare(param.getTaskId(), "cookieString");
+            String cookieString2 = cookieString.replaceAll(" ", "%20");
             /**
              * 查询信用分
              */
-            String templateUrl = "https://clientaccess.10086.cn/biz-orange/SHS/userCredit/getCredit";
+            String templateUrl = "https://app.10086.cn/biz-orange/SHS/userCredit/getCredit?" + cookieString2;
             UserInfoLoginReq obj = new UserInfoLoginReq();
             obj.setCellNum(param.getMobile().toString());
             obj.setPageFlag("2");
@@ -349,7 +351,7 @@ public class China10086ForApp implements OperatorPluginPostService {
             /**
              * 查询个人信息
              */
-            templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/userInformationService/getUserInformation";
+            templateUrl = "https://app.10086.cn/biz-orange/BN/userInformationService/getUserInformation?" + cookieString2;
             obj = new UserInfoLoginReq();
             obj.setCellNum(param.getMobile().toString());
 
@@ -385,7 +387,7 @@ public class China10086ForApp implements OperatorPluginPostService {
             /**
              * 查询余额
              */
-            templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/realFeeQuery/getRealFee";
+            templateUrl = "https://app.10086.cn/biz-orange/BN/realFeeQuery/getRealFee?" + cookieString2;
             obj = new UserInfoLoginReq();
             obj.setCellNum(param.getMobile().toString());
 
@@ -435,8 +437,9 @@ public class China10086ForApp implements OperatorPluginPostService {
         try {
             P_IMEI = "8697" + param.getMobile();
             String cookieString = TaskUtils.getTaskShare(param.getTaskId(), "cookieString");
+            String cookieString2 = cookieString.replaceAll(" ", "%20");
 
-            String templateUrl = "https://clientaccess.10086.cn/biz-orange/LN/uamrandcode/sendMsgLogin";
+            String templateUrl = "https://app.10086.cn/biz-orange/LN/uamrandcode/sendMsgLogin?" + cookieString2;
             UserInfoLoginReq obj = new UserInfoLoginReq();
             obj.setCellNum(param.getMobile().toString());
 
@@ -491,11 +494,12 @@ public class China10086ForApp implements OperatorPluginPostService {
         try {
             P_IMEI = "8697" + param.getMobile();
             String cookieString = TaskUtils.getTaskShare(param.getTaskId(), "cookieString");
+            String cookieString2 = cookieString.replaceAll(" ", "%20");
 
             String encryptCellNum = encryptStr(param.getMobile().toString(), param);
             String encryptPasswd = encryptStr(param.getPassword(), param);
 
-            String templateUrl = "https://clientaccess.10086.cn/biz-orange/LN/tempIdentCode/getTmpIdentCode";
+            String templateUrl = "https://app.10086.cn/biz-orange/LN/tempIdentCode/getTmpIdentCode?" + cookieString2;
             UserInfoLoginDoubleReq obj = new UserInfoLoginDoubleReq();
             obj.setBusinessCode("01");
             obj.setCellNum(encryptCellNum);
@@ -542,7 +546,7 @@ public class China10086ForApp implements OperatorPluginPostService {
                             cookieString = nameValue.getValue();
                         }
                     }
-                    TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
+                    TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString.replaceAll(" ", "%20"));
                     logger.info("详单-->校验成功,param={}", param);
                     return result.success();
                 default:
@@ -564,10 +568,11 @@ public class China10086ForApp implements OperatorPluginPostService {
         try {
             P_IMEI = "8697" + param.getMobile();
             String cookieString = TaskUtils.getTaskShare(param.getTaskId(), "cookieString");
+            String cookieString2 = cookieString.replaceAll(" ", "%20");
             /**
              * 查询账单
              */
-            String templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/historyBillsService/getHistoryBills";
+            String templateUrl = "https://app.10086.cn/biz-orange/BN/historyBillsService/getHistoryBills?" + cookieString2;
             BillReqBean billObj = new BillReqBean();
             billObj.setBgnMonth(billMonth[0]);
             billObj.setCellNum(param.getMobile().toString());
@@ -622,10 +627,11 @@ public class China10086ForApp implements OperatorPluginPostService {
             P_IMEI = "8697" + param.getMobile();
             List<String> dataList = new ArrayList<>();
             String cookieString = TaskUtils.getTaskShare(param.getTaskId(), "cookieString");
+            String cookieString2 = cookieString.replaceAll(" ", "%20");
             /**
              * 查询详单
              */
-            String templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/queryDetail/getDetail";
+            String templateUrl = "https://app.10086.cn/biz-orange/BN/queryDetail/getDetail?" + cookieString2;
             DetailReqBean detailObj = new DetailReqBean();
             detailObj.setBillMonth(billMonth);
             detailObj.setCellNum(param.getMobile().toString());
