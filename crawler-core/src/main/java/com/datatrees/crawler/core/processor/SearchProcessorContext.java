@@ -37,7 +37,6 @@ import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -421,12 +420,12 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
     public boolean isRedirectUriEscaped() {
         Properties properties = this.getSearchProperties();
-        return properties != null && BooleanUtils.isTrue(properties.getRedirectUriEscaped());
+        return properties != null && (properties.getRedirectUriEscaped() == null || properties.getRedirectUriEscaped());
     }
 
     public boolean isAllowCircularRedirects() {
         Properties properties = this.getSearchProperties();
-        return properties != null && BooleanUtils.isTrue(properties.getAllowCircularRedirects());
+        return properties != null && (properties.getAllowCircularRedirects() == null || properties.getAllowCircularRedirects());
     }
 
     public Integer getCaptchaCode() {
