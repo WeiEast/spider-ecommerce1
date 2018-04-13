@@ -1,15 +1,16 @@
 /*
  * $Header: /home/jerenkrantz/tmp/commons/commons-convert/cvs/home/cvs/jakarta-commons//httpclient/src/java/org/apache/commons/httpclient/cookie/CookieSpecBase.java,v 1.28 2004/11/06 19:15:42 mbecke Exp $
- * $Revision: 190485 $
- * $Date: 2005-06-13 15:04:56 -0400 (Mon, 13 Jun 2005) $
+ * $Revision: 480424 $
+ * $Date: 2006-11-29 06:56:49 +0100 (Wed, 29 Nov 2006) $
  *
  * ====================================================================
  *
- *  Copyright 2002-2004 The Apache Software Foundation
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -25,7 +26,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  *
- */ 
+ */
 
 package org.apache.commons.httpclient.cookie;
 
@@ -44,7 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * 
+ *
  * Cookie management functions shared by all specification.
  *
  * @author  B.C. Holmes
@@ -57,17 +58,17 @@ import org.apache.commons.logging.LogFactory;
  * @author Marc A. Saegesser
  * @author <a href="mailto:oleg@ural.ru">Oleg Kalnichevski</a>
  * @author <a href="mailto:mbowler@GargoyleSoftware.com">Mike Bowler</a>
- * 
- * @since 2.0 
+ *
+ * @since 2.0
  */
 public class CookieSpecBase implements CookieSpec {
-    
+
     /** Log object */
     protected static final Log        LOG          = LogFactory.getLog(CookieSpec.class);
 
     /** Valid date patterns */
     private                Collection datepatterns = null;
-    
+
     /** Default constructor */
     public CookieSpecBase() {
         super();
@@ -75,57 +76,51 @@ public class CookieSpecBase implements CookieSpec {
 
 
     /**
-      * Parses the Set-Cookie value into an array of <tt>Cookie</tt>s.
-      *
-      * <P>The syntax for the Set-Cookie response header is:
-      *
-      * <PRE>
-      * set-cookie      =    "Set-Cookie:" cookies
-      * cookies         =    1#cookie
-      * cookie          =    NAME "=" VALUE * (";" cookie-av)
-      * NAME            =    attr
-      * VALUE           =    value
-      * cookie-av       =    "Comment" "=" value
-      *                 |    "Domain" "=" value
-      *                 |    "Max-Age" "=" value
-      *                 |    "Path" "=" value
-      *                 |    "Secure"
-      *                 |    "Version" "=" 1*DIGIT
-      * </PRE>
-      *
-      * @param host the host from which the <tt>Set-Cookie</tt> value was
-      * received
-      * @param port the port from which the <tt>Set-Cookie</tt> value was
-      * received
-      * @param path the path from which the <tt>Set-Cookie</tt> value was
-      * received
-      * @param secure <tt>true</tt> when the <tt>Set-Cookie</tt> value was
-      * received over secure conection
-      * @param header the <tt>Set-Cookie</tt> received from the server
-      * @return an array of <tt>Cookie</tt>s parsed from the Set-Cookie value
-      * @throws MalformedCookieException if an exception occurs during parsing
-      */
-    public Cookie[] parse(String host, int port, String path,
-        boolean secure, final String header) 
-        throws MalformedCookieException {
-            
-        LOG.trace("enter CookieSpecBase.parse(" 
-            + "String, port, path, boolean, Header)");
+     * Parses the Set-Cookie value into an array of <tt>Cookie</tt>s.
+     *
+     * <P>The syntax for the Set-Cookie response header is:
+     *
+     * <PRE>
+     * set-cookie      =    "Set-Cookie:" cookies
+     * cookies         =    1#cookie
+     * cookie          =    NAME "=" VALUE * (";" cookie-av)
+     * NAME            =    attr
+     * VALUE           =    value
+     * cookie-av       =    "Comment" "=" value
+     *                 |    "Domain" "=" value
+     *                 |    "Max-Age" "=" value
+     *                 |    "Path" "=" value
+     *                 |    "Secure"
+     *                 |    "Version" "=" 1*DIGIT
+     * </PRE>
+     *
+     * @param host the host from which the <tt>Set-Cookie</tt> value was
+     * received
+     * @param port the port from which the <tt>Set-Cookie</tt> value was
+     * received
+     * @param path the path from which the <tt>Set-Cookie</tt> value was
+     * received
+     * @param secure <tt>true</tt> when the <tt>Set-Cookie</tt> value was
+     * received over secure conection
+     * @param header the <tt>Set-Cookie</tt> received from the server
+     * @return an array of <tt>Cookie</tt>s parsed from the Set-Cookie value
+     * @throws MalformedCookieException if an exception occurs during parsing
+     */
+    public Cookie[] parse(String host, int port, String path, boolean secure, final String header) throws MalformedCookieException {
+
+        LOG.trace("enter CookieSpecBase.parse(" + "String, port, path, boolean, Header)");
 
         if (host == null) {
-            throw new IllegalArgumentException(
-                "Host of origin may not be null");
+            throw new IllegalArgumentException("Host of origin may not be null");
         }
         if (host.trim().equals("")) {
-            throw new IllegalArgumentException(
-                "Host of origin may not be blank");
+            throw new IllegalArgumentException("Host of origin may not be blank");
         }
         if (port < 0) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
         if (path == null) {
-            throw new IllegalArgumentException(
-                "Path of origin may not be null.");
+            throw new IllegalArgumentException("Path of origin may not be null.");
         }
         if (header == null) {
             throw new IllegalArgumentException("Header may not be null.");
@@ -136,7 +131,7 @@ public class CookieSpecBase implements CookieSpec {
         }
         host = host.toLowerCase();
 
-        String defaultPath = path;    
+        String defaultPath = path;
         int lastSlashIndex = defaultPath.lastIndexOf(PATH_DELIM);
         if (lastSlashIndex >= 0) {
             if (lastSlashIndex == 0) {
@@ -148,17 +143,17 @@ public class CookieSpecBase implements CookieSpec {
 
         HeaderElement[] headerElements = null;
 
-        boolean isNetscapeCookie = false; 
+        boolean isNetscapeCookie = false;
         int i1 = header.toLowerCase().indexOf("expires=");
         if (i1 != -1) {
             i1 += "expires=".length();
             int i2 = header.indexOf(";", i1);
             if (i2 == -1) {
-                i2 = header.length(); 
+                i2 = header.length();
             }
             try {
                 DateUtil.parseDate(header.substring(i1, i2), this.datepatterns);
-                isNetscapeCookie = true; 
+                isNetscapeCookie = true;
             } catch (DateParseException e) {
                 // Does not look like a valid expiry date
             }
@@ -170,7 +165,7 @@ public class CookieSpecBase implements CookieSpec {
         } else {
             headerElements = HeaderElement.parseElements(header.toCharArray());
         }
-        
+
         Cookie[] cookies = new Cookie[headerElements.length];
 
         for (int i = 0; i < headerElements.length; i++) {
@@ -178,12 +173,7 @@ public class CookieSpecBase implements CookieSpec {
             HeaderElement headerelement = headerElements[i];
             Cookie cookie = null;
             try {
-                cookie = new Cookie(host,
-                                    headerelement.getName(),
-                                    headerelement.getValue(),
-                                    defaultPath, 
-                                    null,
-                                    false);
+                cookie = new Cookie(host, headerelement.getName(), headerelement.getValue(), defaultPath, null, false);
             } catch (IllegalArgumentException e) {
                 throw new MalformedCookieException(e.getMessage());
             }
@@ -203,44 +193,41 @@ public class CookieSpecBase implements CookieSpec {
 
 
     /**
-      * Parse the <tt>"Set-Cookie"</tt> {@link Header} into an array of {@link
-      * Cookie}s.
-      *
-      * <P>The syntax for the Set-Cookie response header is:
-      *
-      * <PRE>
-      * set-cookie      =    "Set-Cookie:" cookies
-      * cookies         =    1#cookie
-      * cookie          =    NAME "=" VALUE * (";" cookie-av)
-      * NAME            =    attr
-      * VALUE           =    value
-      * cookie-av       =    "Comment" "=" value
-      *                 |    "Domain" "=" value
-      *                 |    "Max-Age" "=" value
-      *                 |    "Path" "=" value
-      *                 |    "Secure"
-      *                 |    "Version" "=" 1*DIGIT
-      * </PRE>
-      *
-      * @param host the host from which the <tt>Set-Cookie</tt> header was
-      * received
-      * @param port the port from which the <tt>Set-Cookie</tt> header was
-      * received
-      * @param path the path from which the <tt>Set-Cookie</tt> header was
-      * received
-      * @param secure <tt>true</tt> when the <tt>Set-Cookie</tt> header was
-      * received over secure conection
-      * @param header the <tt>Set-Cookie</tt> received from the server
-      * @return an array of <tt>Cookie</tt>s parsed from the <tt>"Set-Cookie"
-      * </tt> header
-      * @throws MalformedCookieException if an exception occurs during parsing
-      */
-    public Cookie[] parse(
-        String host, int port, String path, boolean secure, final Header header)
-        throws MalformedCookieException {
-            
-        LOG.trace("enter CookieSpecBase.parse("
-            + "String, port, path, boolean, String)");
+     * Parse the <tt>"Set-Cookie"</tt> {@link Header} into an array of {@link
+     * Cookie}s.
+     *
+     * <P>The syntax for the Set-Cookie response header is:
+     *
+     * <PRE>
+     * set-cookie      =    "Set-Cookie:" cookies
+     * cookies         =    1#cookie
+     * cookie          =    NAME "=" VALUE * (";" cookie-av)
+     * NAME            =    attr
+     * VALUE           =    value
+     * cookie-av       =    "Comment" "=" value
+     *                 |    "Domain" "=" value
+     *                 |    "Max-Age" "=" value
+     *                 |    "Path" "=" value
+     *                 |    "Secure"
+     *                 |    "Version" "=" 1*DIGIT
+     * </PRE>
+     *
+     * @param host the host from which the <tt>Set-Cookie</tt> header was
+     * received
+     * @param port the port from which the <tt>Set-Cookie</tt> header was
+     * received
+     * @param path the path from which the <tt>Set-Cookie</tt> header was
+     * received
+     * @param secure <tt>true</tt> when the <tt>Set-Cookie</tt> header was
+     * received over secure conection
+     * @param header the <tt>Set-Cookie</tt> received from the server
+     * @return an array of <tt>Cookie</tt>s parsed from the <tt>"Set-Cookie"
+     * </tt> header
+     * @throws MalformedCookieException if an exception occurs during parsing
+     */
+    public Cookie[] parse(String host, int port, String path, boolean secure, final Header header) throws MalformedCookieException {
+
+        LOG.trace("enter CookieSpecBase.parse(" + "String, port, path, boolean, String)");
         if (header == null) {
             throw new IllegalArgumentException("Header may not be null.");
         }
@@ -249,19 +236,17 @@ public class CookieSpecBase implements CookieSpec {
 
 
     /**
-      * Parse the cookie attribute and update the corresponsing {@link Cookie}
-      * properties.
-      *
-      * @param attribute {@link HeaderElement} cookie attribute from the
-      * <tt>Set- Cookie</tt>
-      * @param cookie {@link Cookie} to be updated
-      * @throws MalformedCookieException if an exception occurs during parsing
-      */
+     * Parse the cookie attribute and update the corresponsing {@link Cookie}
+     * properties.
+     *
+     * @param attribute {@link HeaderElement} cookie attribute from the
+     * <tt>Set- Cookie</tt>
+     * @param cookie {@link Cookie} to be updated
+     * @throws MalformedCookieException if an exception occurs during parsing
+     */
 
-    public void parseAttribute(
-        final NameValuePair attribute, final Cookie cookie)
-        throws MalformedCookieException {
-            
+    public void parseAttribute(final NameValuePair attribute, final Cookie cookie) throws MalformedCookieException {
+
         if (attribute == null) {
             throw new IllegalArgumentException("Attribute may not be null.");
         }
@@ -282,12 +267,10 @@ public class CookieSpecBase implements CookieSpec {
         } else if (paramName.equals("domain")) {
 
             if (paramValue == null) {
-                throw new MalformedCookieException(
-                    "Missing value for domain attribute");
+                throw new MalformedCookieException("Missing value for domain attribute");
             }
             if (paramValue.trim().equals("")) {
-                throw new MalformedCookieException(
-                    "Blank value for domain attribute");
+                throw new MalformedCookieException("Blank value for domain attribute");
             }
             cookie.setDomain(paramValue);
             cookie.setDomainAttributeSpecified(true);
@@ -295,18 +278,15 @@ public class CookieSpecBase implements CookieSpec {
         } else if (paramName.equals("max-age")) {
 
             if (paramValue == null) {
-                throw new MalformedCookieException(
-                    "Missing value for max-age attribute");
+                throw new MalformedCookieException("Missing value for max-age attribute");
             }
             int age;
             try {
                 age = Integer.parseInt(paramValue);
             } catch (NumberFormatException e) {
-                throw new MalformedCookieException("Invalid max-age "
-                    + "attribute: " + e.getMessage());
+                throw new MalformedCookieException("Invalid max-age " + "attribute: " + e.getMessage());
             }
-            cookie.setExpiryDate(
-                new Date(System.currentTimeMillis() + age * 1000L));
+            cookie.setExpiryDate(new Date(System.currentTimeMillis() + age * 1000L));
 
         } else if (paramName.equals("secure")) {
 
@@ -319,27 +299,23 @@ public class CookieSpecBase implements CookieSpec {
         } else if (paramName.equals("expires")) {
 
             if (paramValue == null) {
-                throw new MalformedCookieException(
-                    "Missing value for expires attribute");
+                throw new MalformedCookieException("Missing value for expires attribute");
             }
 
             try {
                 cookie.setExpiryDate(DateUtil.parseDate(paramValue, this.datepatterns));
             } catch (DateParseException dpe) {
                 LOG.debug("Error parsing cookie date", dpe);
-                throw new MalformedCookieException(
-                    "Unable to parse expiration date parameter: " 
-                    + paramValue);
+                throw new MalformedCookieException("Unable to parse expiration date parameter: " + paramValue);
             }
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Unrecognized cookie attribute: " 
-                    + attribute.toString());
+                LOG.debug("Unrecognized cookie attribute: " + attribute.toString());
             }
         }
     }
 
-    
+
     public Collection getValidDateFormats() {
         return this.datepatterns;
     }
@@ -349,38 +325,31 @@ public class CookieSpecBase implements CookieSpec {
     }
 
     /**
-      * Performs most common {@link Cookie} validation
-      *
-      * @param host the host from which the {@link Cookie} was received
-      * @param port the port from which the {@link Cookie} was received
-      * @param path the path from which the {@link Cookie} was received
-      * @param secure <tt>true</tt> when the {@link Cookie} was received using a
-      * secure connection
-      * @param cookie The cookie to validate.
-      * @throws MalformedCookieException if an exception occurs during
-      * validation
-      */
-    
-    public void validate(String host, int port, String path, 
-        boolean secure, final Cookie cookie)
-        throws MalformedCookieException {
-            
-        LOG.trace("enter CookieSpecBase.validate("
-            + "String, port, path, boolean, Cookie)");
+     * Performs most common {@link Cookie} validation
+     *
+     * @param host the host from which the {@link Cookie} was received
+     * @param port the port from which the {@link Cookie} was received
+     * @param path the path from which the {@link Cookie} was received
+     * @param secure <tt>true</tt> when the {@link Cookie} was received using a
+     * secure connection
+     * @param cookie The cookie to validate.
+     * @throws MalformedCookieException if an exception occurs during
+     * validation
+     */
+    public void validate(String host, int port, String path, boolean secure, final Cookie cookie) throws MalformedCookieException {
+
+        LOG.trace("enter CookieSpecBase.validate(" + "String, port, path, boolean, Cookie)");
         if (host == null) {
-            throw new IllegalArgumentException(
-                "Host of origin may not be null");
+            throw new IllegalArgumentException("Host of origin may not be null");
         }
         if (host.trim().equals("")) {
-            throw new IllegalArgumentException(
-                "Host of origin may not be blank");
+            throw new IllegalArgumentException("Host of origin may not be blank");
         }
         if (port < 0) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
         if (path == null) {
-            throw new IllegalArgumentException(
-                "Path of origin may not be null.");
+            throw new IllegalArgumentException("Path of origin may not be null.");
         }
         if (path.trim().equals("")) {
             path = PATH_DELIM;
@@ -388,8 +357,7 @@ public class CookieSpecBase implements CookieSpec {
         host = host.toLowerCase();
         // check version
         if (cookie.getVersion() < 0) {
-            throw new MalformedCookieException("Illegal version number "
-                + cookie.getValue());
+            throw new MalformedCookieException("Illegal version number " + cookie.getValue());
         }
 
         // security check... we musn't allow the server to give us an
@@ -410,17 +378,13 @@ public class CookieSpecBase implements CookieSpec {
                 if (s.startsWith(".")) {
                     s = s.substring(1, s.length());
                 }
-                if (!host.equals(s)) { 
-                    throw new MalformedCookieException(
-                        "Illegal domain attribute \"" + cookie.getDomain() 
-                        + "\". Domain of origin: \"" + host + "\"");
+                if (!host.equals(s)) {
+                    throw new MalformedCookieException("Illegal domain attribute \"" + cookie.getDomain() + "\". Domain of origin: \"" + host + "\"");
                 }
             }
         } else {
             if (!host.equals(cookie.getDomain())) {
-                throw new MalformedCookieException(
-                    "Illegal domain attribute \"" + cookie.getDomain() 
-                    + "\". Domain of origin: \"" + host + "\"");
+                throw new MalformedCookieException("Illegal domain attribute \"" + cookie.getDomain() + "\". Domain of origin: \"" + host + "\"");
             }
         }
 
@@ -428,9 +392,7 @@ public class CookieSpecBase implements CookieSpec {
         // cookie that doesn't match this path
 
         if (!path.startsWith(cookie.getPath())) {
-            throw new MalformedCookieException(
-                "Illegal path attribute \"" + cookie.getPath() 
-                + "\". Path of origin: \"" + path + "\"");
+            throw new MalformedCookieException("Illegal path attribute \"" + cookie.getPath() + "\". Path of origin: \"" + path + "\"");
         }
     }
 
@@ -445,27 +407,21 @@ public class CookieSpecBase implements CookieSpec {
      * @param cookie {@link Cookie} to be matched
      * @return true if the cookie matches the criterium
      */
+    public boolean match(String host, int port, String path, boolean secure, final Cookie cookie) {
 
-    public boolean match(String host, int port, String path, 
-        boolean secure, final Cookie cookie) {
-            
-        LOG.trace("enter CookieSpecBase.match("
-            + "String, int, String, boolean, Cookie");
-            
+        LOG.trace("enter CookieSpecBase.match(" + "String, int, String, boolean, Cookie");
+
         if (host == null) {
-            throw new IllegalArgumentException(
-                "Host of origin may not be null");
+            throw new IllegalArgumentException("Host of origin may not be null");
         }
         if (host.trim().equals("")) {
-            throw new IllegalArgumentException(
-                "Host of origin may not be blank");
+            throw new IllegalArgumentException("Host of origin may not be blank");
         }
         if (port < 0) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
         if (path == null) {
-            throw new IllegalArgumentException(
-                "Path of origin may not be null.");
+            throw new IllegalArgumentException("Path of origin may not be null.");
         }
         if (cookie == null) {
             throw new IllegalArgumentException("Cookie may not be null");
@@ -482,18 +438,17 @@ public class CookieSpecBase implements CookieSpec {
             LOG.warn("Invalid cookie state: path not specified");
             return false;
         }
-        
+
         return
-            // only add the cookie if it hasn't yet expired 
-            (cookie.getExpiryDate() == null 
-                || cookie.getExpiryDate().after(new Date()))
-            // and the domain pattern matches 
-            && (domainMatch(host, cookie.getDomain()))
-            // and the path is null or matching
-            && (pathMatch(path, cookie.getPath()))
-            // and if the secure flag is set, only if the request is 
-            // actually secure 
-            && (cookie.getSecure() ? secure : true);      
+                // only add the cookie if it hasn't yet expired
+                (cookie.getExpiryDate() == null || cookie.getExpiryDate().after(new Date()))
+                        // and the domain pattern matches
+                        && (domainMatch(host, cookie.getDomain()))
+                        // and the path is null or matching
+                        && (pathMatch(path, cookie.getPath()))
+                        // and if the secure flag is set, only if the request is
+                        // actually secure
+                        && (cookie.getSecure() ? secure : true);
     }
 
     /**
@@ -541,12 +496,9 @@ public class CookieSpecBase implements CookieSpec {
      * @param cookies an array of <tt>Cookie</tt>s to be matched
      * @return an array of <tt>Cookie</tt>s matching the criterium
      */
+    public Cookie[] match(String host, int port, String path, boolean secure, final Cookie cookies[]) {
 
-    public Cookie[] match(String host, int port, String path,
-        boolean secure, final Cookie cookies[]) {
-            
-        LOG.trace("enter CookieSpecBase.match("
-            + "String, int, String, boolean, Cookie[])");
+        LOG.trace("enter CookieSpecBase.match(" + "String, int, String, boolean, Cookie[])");
 
         if (cookies == null) {
             return null;
@@ -610,8 +562,7 @@ public class CookieSpecBase implements CookieSpec {
      * @throws IllegalArgumentException if an input parameter is illegal
      */
 
-    public String formatCookies(Cookie[] cookies)
-      throws IllegalArgumentException {
+    public String formatCookies(Cookie[] cookies) throws IllegalArgumentException {
         LOG.trace("enter CookieSpecBase.formatCookies(Cookie[])");
         if (cookies == null) {
             throw new IllegalArgumentException("Cookie array may not be null");

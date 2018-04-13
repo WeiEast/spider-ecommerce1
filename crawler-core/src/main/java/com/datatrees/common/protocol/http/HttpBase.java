@@ -18,6 +18,7 @@ import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.protocol.*;
 import com.datatrees.common.protocol.util.DeflateUtils;
 import com.datatrees.common.protocol.util.GZIPUtils;
+import com.google.common.net.HttpHeaders;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +146,7 @@ public abstract class HttpBase implements Protocol {
             if (code == 200) { // got a good response
                 return new ProtocolOutput(c, ProtocolStatusCodes.SUCCESS, response); // return it
             } else if (code >= 300 && code < 400) { // handle redirect
-                String location = response.getHeader("Location");
+                String location = response.getHeader(HttpHeaders.LOCATION);
                 // some broken servers, such as MS IIS, use lowercase header name...
                 if (location == null) location = response.getHeader("location");
                 if (location == null) location = "";

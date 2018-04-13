@@ -1,26 +1,31 @@
 /*
- * $Header:
- * /home/jerenkrantz/tmp/commons/commons-convert/cvs/home/cvs/jakarta-commons//httpclient/src
- * /java/org/apache/commons/httpclient/HttpMethodDirector.java,v 1.34 2005/01/14 19:40:39 olegk Exp
- * $ $Revision: 366870 $ $Date: 2006-01-07 13:12:55 -0500 (Sat, 07 Jan 2006) $
- * 
+ * $Header: /home/jerenkrantz/tmp/commons/commons-convert/cvs/home/cvs/jakarta-commons//httpclient/src/java/org/apache/commons/httpclient/HttpMethodDirector.java,v 1.34 2005/01/14 19:40:39 olegk Exp $
+ * $Revision: 486658 $
+ * $Date: 2006-12-13 15:05:50 +0100 (Wed, 13 Dec 2006) $
+ *
  * ====================================================================
- * 
- * Copyright 1999-2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License. ====================================================================
- * 
- * This software consists of voluntary contributions made by many individuals on behalf of the
- * Apache Software Foundation. For more information on the Apache Software Foundation, please see
+ *
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
+ *
  */
 
 package org.apache.commons.httpclient;
@@ -31,30 +36,17 @@ import java.util.*;
 import org.apache.commons.httpclient.auth.*;
 import org.apache.commons.httpclient.methods.CustomGetMethod;
 import org.apache.commons.httpclient.params.*;
-import org.apache.commons.lang.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Handles the process of executing a method including authentication, redirection and retries.
- * 
+ *
  * @since 3.0
  */
-class ProtocalHttpMethodDirector extends HttpMethodDirector {
+public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
-    /** The www authenticate challange header. */
-    public static final  String WWW_AUTH_CHALLENGE   = "WWW-Authenticate";
-
-    /** The www authenticate response header. */
-    public static final  String WWW_AUTH_RESP        = "Authorization";
-
-    /** The proxy authenticate challange header. */
-    public static final  String PROXY_AUTH_CHALLENGE = "Proxy-Authenticate";
-
-    /** The proxy authenticate response header. */
-    public static final  String PROXY_AUTH_RESP      = "Proxy-Authorization";
-
-    private static final Logger LOG                  = LoggerFactory.getLogger(ProtocalHttpMethodDirector.class);
+    private static final Log LOG = LogFactory.getLog(ProtocolHttpMethodDirector.class);
 
     private ConnectMethod         connectMethod;
 
@@ -76,8 +68,7 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
 
     private Set                    redirectLocations = null;
 
-    public ProtocalHttpMethodDirector(final HttpConnectionManager connectionManager, final HostConfiguration hostConfiguration,
-            final HttpClientParams params, final HttpState state) {
+    public ProtocolHttpMethodDirector(final HttpConnectionManager connectionManager, final HostConfiguration hostConfiguration, final HttpClientParams params, final HttpState state) {
         super(connectionManager, hostConfiguration, params, state);
         this.connectionManager = connectionManager;
         this.hostConfiguration = hostConfiguration;
@@ -89,7 +80,7 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Executes the method associated with this method director.
-     * 
+     *
      * @throws IOException
      * @throws HttpException
      */
@@ -103,7 +94,8 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
         method.getParams().setDefaults(this.hostConfiguration.getParams());
 
         // Generate default request headers
-        Collection defaults = (Collection) this.hostConfiguration.getParams().getParameter(HostParams.DEFAULT_HEADERS);
+        Collection defaults = (Collection) this.hostConfiguration.getParams().
+                getParameter(HostParams.DEFAULT_HEADERS);
         if (defaults != null) {
             Iterator i = defaults.iterator();
             while (i.hasNext()) {
@@ -167,25 +159,20 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
                 if (!retry) {
                     break;
                 }
-                // retry - close previous stream. Caution - this causes
+                // retry - close previous stream.  Caution - this causes
                 // responseBodyConsumed to be called, which may also close the
                 // connection.
                 if (method.getResponseBodyAsStream() != null) {
-                    try{
-                        method.getResponseBodyAsStream().close();
-                    }catch(Exception e){
-                        LOG.warn("close response body error!" + e.getMessage(),e);
-                        method.getResponseBodyAsStream().close();
-                    }
+                    method.getResponseBodyAsStream().close();
                 }
 
-            } // end of retry loop
+            } //end of retry loop
         } finally {
             if (this.conn != null) {
                 this.conn.setLocked(false);
             }
             // If the response has been fully processed, return the connection
-            // to the pool. Use this flag, rather than other tests (like
+            // to the pool.  Use this flag, rather than other tests (like
             // responseStream == null), as subclasses, might reset the stream,
             // for example, reading the entire response into a file and then
             // setting the file as the stream.
@@ -299,9 +286,9 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Applies connection parameters specified for a given method
-     * 
+     *
      * @param method HTTP method
-     * 
+     *
      * @throws IOException if an I/O occurs setting connection parameters
      */
     private void applyConnectionParams(final HttpMethod method) throws IOException {
@@ -320,11 +307,11 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Executes a method with the current hostConfiguration.
-     * 
-     * @throws IOException if an I/O (transport) error occurs. Some transport exceptions can be
-     *         recovered from.
-     * @throws HttpException if a protocol exception occurs. Usually protocol exceptions cannot be
-     *         recovered from.
+     *
+     * @throws IOException if an I/O (transport) error occurs. Some transport exceptions
+     * can be recovered from.
+     * @throws HttpException  if a protocol exception occurs. Usually protocol exceptions
+     * cannot be recovered from.
      */
     private void executeWithRetry(final HttpMethod method) throws IOException, HttpException {
 
@@ -348,8 +335,7 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
                         // This has nothing to do with opening a secure tunnel
                         this.conn.open();
                         if (this.conn.isProxied() && this.conn.isSecure() && !(method instanceof ConnectMethod)) {
-                            // we need to create a secure tunnel before we can execute the real
-                            // method
+                            // we need to create a secure tunnel before we can execute the real method
                             if (!executeConnect()) {
                                 // abort, the connect method failed
                                 return;
@@ -405,7 +391,7 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
             releaseConnection = true;
             throw e;
         } catch (RuntimeException e) {
-            if (this.conn.isOpen) {
+            if (this.conn.isOpen()) {
                 LOG.debug("Closing the connection.");
                 this.conn.close();
             }
@@ -416,15 +402,15 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Executes a ConnectMethod to establish a tunneled connection.
-     * 
+     *
      * @return <code>true</code> if the connect was successful
-     * 
+     *
      * @throws IOException
      * @throws HttpException
      */
     private boolean executeConnect() throws IOException, HttpException {
 
-        this.connectMethod = new ConnectMethod();
+        this.connectMethod = new ConnectMethod(this.hostConfiguration);
         this.connectMethod.getParams().setDefaults(this.hostConfiguration.getParams());
 
         int code;
@@ -466,17 +452,16 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
             this.connectMethod = null;
             return true;
         } else {
+            this.conn.close();
             return false;
         }
     }
 
     /**
      * Fake response
-     * 
      * @param method
      * @return
      */
-
     private void fakeResponse(final HttpMethod method) throws IOException, HttpException {
         // What is to follow is an ugly hack.
         // I REALLY hate having to resort to such
@@ -497,8 +482,7 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
         // the wrapped method closes the response connection in
         // releaseConnection().
         if (method instanceof HttpMethodBase) {
-            ((HttpMethodBase) method).fakeResponse(this.connectMethod.getStatusLine(), this.connectMethod.getResponseHeaderGroup(),
-                    this.connectMethod.getResponseBodyAsStream());
+            ((HttpMethodBase) method).fakeResponse(this.connectMethod.getStatusLine(), this.connectMethod.getResponseHeaderGroup(), this.connectMethod.getResponseBodyAsStream());
             method.getProxyAuthState().setAuthScheme(this.connectMethod.getProxyAuthState().getAuthScheme());
             this.connectMethod = null;
         } else {
@@ -509,11 +493,11 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Process the redirect response.
-     * 
+     *
      * @return <code>true</code> if the redirect was successful
      */
     private boolean processRedirectResponse(final HttpMethod method) throws RedirectException {
-        // get the location header to find out where to redirect to
+        //get the location header to find out where to redirect to
         Header locationHeader = method.getResponseHeader("location");
         if (locationHeader == null) {
             // got a redirect response, but no location header
@@ -525,29 +509,28 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
             LOG.debug("Redirect requested to location '" + location + "'");
         }
 
-        // rfc2616 demands the location value be a complete URI
-        // Location = "Location" ":" absoluteURI
+        //rfc2616 demands the location value be a complete URI
+        //Location       = "Location" ":" absoluteURI
         URI redirectUri = null;
         URI currentUri = null;
 
         try {
             currentUri = new URI(this.conn.getProtocol().getScheme(), null, this.conn.getHost(), this.conn.getPort(), method.getPath());
-            try {
-                if (method instanceof CustomGetMethod && BooleanUtils.isFalse(((CustomGetMethod) method).isUriEscaped())) {
-                    redirectUri = new URI(location, false);
-                } else {
-                    redirectUri = new URI(location, true);
-                }
-            } catch (URIException e) {
-                LOG.warn("location '" + location + "' is malformed");
-                redirectUri = new URI(location, false);
+
+            String charset = method.getParams().getUriCharset();
+
+            if (method instanceof CustomGetMethod && !((CustomGetMethod) method).isUriEscaped()) {
+                redirectUri = new URI(location, false, charset);
+            } else {
+                redirectUri = new URI(location, true, charset);
             }
+
             if (redirectUri.isRelativeURI()) {
                 if (this.params.isParameterTrue(HttpClientParams.REJECT_RELATIVE_REDIRECT)) {
                     LOG.warn("Relative redirect location '" + location + "' not allowed");
                     return false;
                 } else {
-                    // location is incomplete, use current values for defaults
+                    //location is incomplete, use current values for defaults
                     LOG.debug("Redirect URI is not absolute - parsing as relative");
                     redirectUri = new URI(currentUri, redirectUri);
                 }
@@ -555,14 +538,18 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
                 // Reset the default params
                 method.getParams().setDefaults(this.params);
             }
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Actual Redirect url: " + redirectUri.getURI());
+            }
+
             method.setURI(redirectUri);
             hostConfiguration.setHost(redirectUri);
-        } catch (URIException e) {
-            LOG.warn("Redirected location '" + location + "' is malformed");
-            return false;
+        } catch (URIException ex) {
+            throw new InvalidRedirectLocationException("Invalid redirect location: " + location, location, ex);
         }
 
-        if (this.params.isParameterFalse(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS) && method.getParams().isParameterFalse(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS)) {
+        if (this.params.isParameterFalse(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS) || method.getParams().isParameterFalse(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS)) {
             if (this.redirectLocations == null) {
                 this.redirectLocations = new HashSet();
             }
@@ -584,19 +571,19 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Redirecting from '" + currentUri.getEscapedURI() + "' to '" + redirectUri.getEscapedURI());
         }
-        // And finally invalidate the actual authentication scheme
+        //And finally invalidate the actual authentication scheme
         method.getHostAuthState().invalidate();
         return true;
     }
 
     /**
      * Processes a response that requires authentication
-     * 
+     *
      * @param method the current {@link HttpMethod HTTP method}
-     * 
-     * @return <tt>true</tt> if the authentication challenge can be responsed to, (that is, at least
-     *         one of the requested authentication scheme is supported, and matching credentials
-     *         have been found), <tt>false</tt> otherwise.
+     *
+     * @return <tt>true</tt> if the authentication challenge can be responsed to,
+     *   (that is, at least one of the requested authentication scheme is supported,
+     *   and matching credentials have been found), <tt>false</tt> otherwise.
      */
     private boolean processAuthenticationResponse(final HttpMethod method) {
         LOG.trace("enter HttpMethodBase.processAuthenticationResponse(" + "HttpState, HttpConnection)");
@@ -727,9 +714,9 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Tests if the {@link HttpMethod method} requires a redirect to another location.
-     * 
+     *
      * @param method HTTP method
-     * 
+     *
      * @return boolean <tt>true</tt> if a retry is needed, <tt>false</tt> otherwise.
      */
     private boolean isRedirectNeeded(final HttpMethod method) {
@@ -742,19 +729,18 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
                 if (method.getFollowRedirects()) {
                     return true;
                 } else {
-                    LOG.info("Redirect requested but followRedirects is " + "disabled");
                     return false;
                 }
             default:
                 return false;
-        } // end of switch
+        } //end of switch
     }
 
     /**
      * Tests if the {@link HttpMethod method} requires authentication.
-     * 
+     *
      * @param method HTTP method
-     * 
+     *
      * @return boolean <tt>true</tt> if a retry is needed, <tt>false</tt> otherwise.
      */
     private boolean isAuthenticationNeeded(final HttpMethod method) {
@@ -762,9 +748,9 @@ class ProtocalHttpMethodDirector extends HttpMethodDirector {
         method.getProxyAuthState().setAuthRequested(method.getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED);
         if (method.getHostAuthState().isAuthRequested() || method.getProxyAuthState().isAuthRequested()) {
             LOG.debug("Authorization required");
-            if (method.getDoAuthentication()) { // process authentication response
+            if (method.getDoAuthentication()) { //process authentication response
                 return true;
-            } else { // let the client handle the authenticaiton
+            } else { //let the client handle the authenticaiton
                 LOG.info("Authentication requested but doAuthentication is " + "disabled");
                 return false;
             }

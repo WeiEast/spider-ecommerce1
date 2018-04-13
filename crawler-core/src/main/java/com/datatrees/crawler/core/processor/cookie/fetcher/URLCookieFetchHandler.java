@@ -13,9 +13,9 @@ import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.ProtocolInput.CookieScope;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.common.protocol.WebClientUtil;
-import com.datatrees.common.protocol.http.HTTPConstants;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.CookieFormater;
+import com.google.common.net.HttpHeaders;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ public class URLCookieFetchHandler extends CookieFetchHandler {
             log.debug("url cookie fetcher.." + url + " response: " + responseCode);
             Metadata metadata = output.getContent().getMetadata();
             //
-            String[] cookieVals = (String[]) ArrayUtils.addAll(metadata.getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE), metadata.getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE2));
+            String[] cookieVals = (String[]) ArrayUtils.addAll(metadata.getValues(HttpHeaders.SET_COOKIE), metadata.getValues(HttpHeaders.SET_COOKIE2));
             if (cookieVals != null) {
                 log.debug("url cookie fetcher.." + url + "cookie " + cookieVals);
                 return CookieFormater.INSTANCE.parserCookie(cookieVals, false);

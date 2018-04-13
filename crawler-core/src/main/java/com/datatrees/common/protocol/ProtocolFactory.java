@@ -8,50 +8,36 @@
  */
 package com.datatrees.common.protocol;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.protocol.http.WebClient;
-import com.datatrees.common.util.CacheUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * Creates and caches {@link Protocol} plugins. Protocol plugins should define the attribute
  * "protocolName" with the name of the protocol that they implement. Configuration object is used
  * for caching. Cache key is constructed from appending protocol name (eg. http) to constant
- * {@link Protocol#X_POINT_ID}.
  */
 public class ProtocolFactory {
 
-    public static final Logger LOG = LoggerFactory.getLogger(ProtocolFactory.class);
+    private static final Cache<Key, Protocol> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).softValues().build();
 
-    private final Configuration conf;
+    public static Protocol getProtocol(ProtocolType type, Configuration conf) {
 
-    static final Cache CACHE = new Cache();
+        Key key = new Key(conf, type.name());
 
-    private ProtocolFactory(Configuration conf) {
-        this.conf = conf;
-    }
-
-
-    public static ProtocolFactory get(Configuration conf) {
-        return CACHE.get(conf);
-    }
-
-    public synchronized Protocol getProtocol(ProtocolType type) {
-        String cacheId = Protocol.X_POINT_ID + this.hashCode() + type.name();
-        Protocol protocol = (Protocol) CacheUtil.getInstance().getNoExpiredObject(cacheId);
-        if (protocol == null) {
-            protocol = createProtocol(type);
-            CacheUtil.getInstance().insertObject(cacheId, protocol);
+        try {
+            return cache.get(key, () -> createProtocol(type, conf));
+        } catch (ExecutionException e) {
+            throw new UncheckedExecutionException("获取protocol失败！", e);
         }
-
-        return protocol;
     }
 
-    private Protocol createProtocol(ProtocolType type) {
+    private static Protocol createProtocol(ProtocolType type, Configuration conf) {
         if (ProtocolType.HTTP.equals(type)) {
             Protocol protocol = new WebClient();
             protocol.setConf(conf);
@@ -60,22 +46,36 @@ public class ProtocolFactory {
         throw new UnsupportedOperationException("Unsupported protocol type: " + type);
     }
 
-    static class Cache {
-
-       private static  Map<Configuration, ProtocolFactory> cache = new HashMap<Configuration, ProtocolFactory>();
-       
-        public synchronized ProtocolFactory get(Configuration conf) {
-            ProtocolFactory factory = cache.get(conf);
-            if (factory == null) {
-                factory = new ProtocolFactory(conf);
-                cache.put(conf, factory);
-            }
-            return factory;
-        }
-    }
-
     public enum ProtocolType {
         HTTP, FTP, FILE, SFTP;
     }
 
+    private static class Key {
+
+        private final Configuration conf;
+        private final String        type;
+
+        public Key(Configuration conf, String type) {
+            this.conf = conf;
+            this.type = type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Key key = (Key) o;
+
+            if (conf != null ? !conf.equals(key.conf) : key.conf != null) return false;
+            return type.equals(key.type);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = conf != null ? conf.hashCode() : 0;
+            result = 31 * result + type.hashCode();
+            return result;
+        }
+    }
 }

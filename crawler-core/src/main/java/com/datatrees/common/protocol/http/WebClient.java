@@ -29,20 +29,23 @@ import com.datatrees.common.protocol.https.EasySSLProtocolSocketFactory;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.*;
 import com.datatrees.common.util.ReflectionUtils;
+import com.google.common.net.HttpHeaders;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.params.HostParams;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,15 +60,15 @@ public class WebClient extends HttpBase {
 
     private static final Logger                             LOG               = LoggerFactory.getLogger(WebClient.class);
 
-    private              MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+    private MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
 
     // Since the Configuration has not yet been set,
     // then an unconfigured client is returned.
-    private              HttpClient                         client            = new ProtocalHttpClient(connectionManager);
+    private HttpClient                         client            = new ProtocolHttpClient(connectionManager);
 
-    private int maxThreadsTotal = 400;
-    private int maxThreadsPerHost = 200;
-    private int maxRedirect = 10;
+    private int                                maxThreadsTotal   = 400;
+    private int                                maxThreadsPerHost = 200;
+    private int                                maxRedirect       = 10;
 
     private String proxyUsername;
     private String proxyPassword;
@@ -141,24 +144,36 @@ public class WebClient extends HttpBase {
         // Set the User Agent in the header
         // headers.add(new Header("User-Agent", userAgent));
         // prefer English
-        headers.add(new Header("Accept-Language", acceptLanguage));
+        headers.add(new Header(HttpHeaders.ACCEPT_LANGUAGE, acceptLanguage));
         // prefer UTF-8
-        headers.add(new Header("Accept-Charset", acceptCharset));
+        headers.add(new Header(HttpHeaders.ACCEPT_CHARSET, acceptCharset));
         // prefer understandable formats
         // headers.add(new Header("Accept", accept));
         // accept gzipped content
-        headers.add(new Header("Accept-Encoding", acceptEncoding));
+        headers.add(new Header(HttpHeaders.ACCEPT_ENCODING, acceptEncoding));
         // set Connection
-        headers.add(new Header("Connection", connection));
+        headers.add(new Header(HttpHeaders.CONNECTION, connection));
 
-        client.getParams().setParameter("http.default-headers", headers);
+        client.getParams().setParameter(HostParams.DEFAULT_HEADERS, headers);
 
-        ArrayList<String> patterns = new ArrayList<String>();
-        patterns.addAll(Arrays.asList(new String[] {"EEE, dd MMM yyyy HH:mm:ss zzz", "EEEE, dd-MMM-yy HH:mm:ss zzz", "EEE MMM d HH:mm:ss yyyy",
-                "EEE, dd-MMM-yyyy HH:mm:ss z", "EEE, dd-MMM-yyyy HH-mm-ss z", "EEE, dd MMM yy HH:mm:ss z", "EEE dd-MMM-yyyy HH:mm:ss z",
-                "EEE dd MMM yyyy HH:mm:ss z", "EEE dd-MMM-yyyy HH-mm-ss z", "EEE dd-MMM-yy HH:mm:ss z", "EEE dd MMM yy HH:mm:ss z",
-                "EEE,dd-MMM-yy HH:mm:ss z", "EEE,dd-MMM-yyyy HH:mm:ss z", "EEE, dd-MM-yyyy HH:mm:ss z", "EEE MMM dd HH:mm:ss Z yyyy"}));
-        client.getParams().setParameter("http.dateparser.patterns", patterns);
+        List<String> patterns = new ArrayList<>(Arrays.asList(
+                DateUtil.PATTERN_RFC1123,
+                DateUtil.PATTERN_RFC1036,
+                DateUtil.PATTERN_ASCTIME,
+                "EEE, dd-MMM-yyyy HH:mm:ss z",
+                "EEE, dd-MMM-yyyy HH-mm-ss z",
+                "EEE, dd MMM yy HH:mm:ss z",
+                "EEE dd-MMM-yyyy HH:mm:ss z",
+                "EEE dd MMM yyyy HH:mm:ss z",
+                "EEE dd-MMM-yyyy HH-mm-ss z",
+                "EEE dd-MMM-yy HH:mm:ss z",
+                "EEE dd MMM yy HH:mm:ss z",
+                "EEE,dd-MMM-yy HH:mm:ss z",
+                "EEE,dd-MMM-yyyy HH:mm:ss z",
+                "EEE, dd-MM-yyyy HH:mm:ss z",
+                "EEE MMM dd HH:mm:ss Z yyyy"));
+
+        client.getParams().setParameter(HttpMethodParams.DATE_PATTERNS, patterns);
         // HTTP proxy server details
         if (useProxy) {
             hostConf.setProxy(proxyHost, proxyPort);
@@ -177,7 +192,7 @@ public class WebClient extends HttpBase {
      * 
      */
     private void setRetryHandler() {
-        String retryHandlerClass = conf.get(HTTPConstants.RETRY_HANDLER, CustomerRetryHandler.class.getName());
+        String retryHandlerClass = conf.get(HttpMethodParams.RETRY_HANDLER);
         HttpMethodRetryHandler retryHandler = null;
         if (StringUtils.isNotEmpty(retryHandlerClass)) {
             try {
@@ -186,9 +201,12 @@ public class WebClient extends HttpBase {
             } catch (Exception e) {
                 LOG.error("load retry handler class error!", e);
             }
+        } else {
+            int retryCount = conf.getInt(HTTPConstants.HTTP_MAX_RETRY_COUNT, 3);
+            retryHandler = new CustomRetryHandler(retryCount);
         }
         if (retryHandler != null) {
-            client.getParams().setParameter(HTTPConstants.RETRY_HANDLER, retryHandler);
+            client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
         }
     }
 
@@ -226,7 +244,7 @@ public class WebClient extends HttpBase {
         return getAuthScope(host, port, realm, "");
     }
 
-    private void setPostBody(String postData, PostMethod method) throws UnsupportedEncodingException {
+    private <T extends EntityEnclosingMethod> void setPostBody(String postData, T method) throws UnsupportedEncodingException {
         if (postData != null) {
             try {
                 method.setRequestEntity(new StringRequestEntity(postData, null, "UTF-8"));
@@ -281,7 +299,7 @@ public class WebClient extends HttpBase {
                 break;
             case PUT:
                 method = new PutMethod(url);
-                this.setPostBody(input.getPostBody(), (PostMethod) method);
+                this.setPostBody(input.getPostBody(), (PutMethod) method);
                 break;
             case DELETE:
                 method = new DeleteMethod(url);
@@ -333,14 +351,16 @@ public class WebClient extends HttpBase {
                 if (orgianlUrl != null) {
                     String refer = method.getURI().toString();
                     method = new CustomGetMethod(orgianlUrl).setUriEscaped(input.getRedirectUriEscaped());
-                    method.addRequestHeader("Referer", refer);
+                    method.addRequestHeader(HttpHeaders.REFERER, refer);
                     // reset cookie string
                     try {
+                        Metadata headers = response.getHeaders();
+                        String[] setCookies = headers.getValues(HttpHeaders.SET_COOKIE);
+                        String[] setCookies2 = headers.getValues(HttpHeaders.SET_COOKIE2);
+                        setCookies = ArrayUtils.addAll(setCookies, setCookies2);
+
                         Map<String, String> cookieMap = CookieFormater.INSTANCE.parserCookieToMap(input.getCookie(), scope.isRetainQuote());
-                        String[] cookieVals =
-                                (String[]) ArrayUtils.addAll(response.getHeaders().getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE), response
-                                        .getHeaders().getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE2));
-                        cookieMap.putAll(CookieFormater.INSTANCE.parserCookietToMap(cookieVals, scope.isRetainQuote()));
+                        cookieMap.putAll(CookieFormater.INSTANCE.parserCookietToMap(setCookies, scope.isRetainQuote()));
                         String cookieString = CookieFormater.INSTANCE.listToString(cookieMap);
                         LOG.info("redirect input reset cookie string " + cookieString);
                         input.setCookie(cookieString);
@@ -350,14 +370,14 @@ public class WebClient extends HttpBase {
                     fillMethodWithParameter(input, method);
                     // clear header except cookie
                     for (String name : response.getHeaders().names()) {
-                        if (!name.startsWith(HTTPConstants.HTTP_HEADER_SET_COOKIE)) {
+                        if (!name.startsWith(HttpHeaders.SET_COOKIE)) {
                             response.getHeaders().remove(name);
                         }
                     }
                 }
                 HttpState state = getHttpState(scope, input);
                 Metadata headers = response.getHeaders();
-                byte[] content = null;
+
                 // state = new HttpState();
                 int code = getClient().executeMethod(hostConfiguration, method, state);
 
@@ -379,12 +399,12 @@ public class WebClient extends HttpBase {
                 if (state != null && CookieScope.SESSION != scope) {
                     Cookie[] cks = state.getCookies();
                     for (Cookie cookie : cks) {
-                        headers.add(HTTPConstants.HTTP_HEADER_SET_COOKIE, CookieParser.formatCookieFull(cookie));
+                        headers.add(HttpHeaders.SET_COOKIE, CookieParser.formatCookieFull(cookie));
                     }
                 }
 
                 // Limit download size
-                content = getResponseContent(url, method, headers, content, code);
+                byte[] content = getResponseContent(url, method, headers, code);
                 response.setContent(content);
                 response.setState(state);
 
@@ -393,7 +413,6 @@ public class WebClient extends HttpBase {
                     String redirectUrl = processRedirectResponse(method);
                     if (StringUtils.isNotEmpty(redirectUrl)) {
                         orgianlUrl = redirectUrl;
-                        continue;
                     } else {
                         break;
                     }
@@ -420,27 +439,32 @@ public class WebClient extends HttpBase {
         return null;
     }
 
-    private String processRedirectResponse(final HttpMethod method) throws RedirectException {
-        String result = null;
+    private String processRedirectResponse(final HttpMethod method) {
         // get the location header to find out where to redirect to
-        Header locationHeader = method.getResponseHeader("Location");
-        locationHeader = locationHeader == null ? method.getResponseHeader("location") : locationHeader;
-        Header refreshHeader = method.getResponseHeader("Refresh");
-        refreshHeader = refreshHeader == null ? method.getResponseHeader("refresh") : refreshHeader;
+        Header locationHeader = method.getResponseHeader(HttpHeaders.LOCATION);
+        if(locationHeader ==null){
+            locationHeader = method.getResponseHeader("location");
+        }
+        Header refreshHeader = method.getResponseHeader(HttpHeaders.REFRESH);
+        if(refreshHeader == null){
+            refreshHeader = method.getResponseHeader("refresh");
+        }
         if (locationHeader == null && refreshHeader == null) {
             // got a redirect response, but no location header
             LOG.error("Received redirect response " + method.getStatusCode() + " but no location header");
-            return result;
+            return null;
         }
-        String orignal;
+        String result = null;
         try {
-            orignal = method.getURI().toString();
             if (locationHeader != null) {
-                result = UrlUtils.resolveUrl(orignal, locationHeader.getValue());
+                result = UrlUtils.resolveUrl(method.getURI().toString(), locationHeader.getValue());
             }
-            result = (result == null) ? getRedirectURLInRefreshHeader(refreshHeader) : result;
+
+            if(result == null){
+                result = getRedirectURLInRefreshHeader(refreshHeader);
+            }
         } catch (Exception e) {
-            LOG.error("handler redirce error!", e);
+            LOG.error("handler redirect error!", e);
         }
         return result;
     }
@@ -465,7 +489,9 @@ public class WebClient extends HttpBase {
         } // end of switch
     }
 
-    protected byte[] getResponseContent(String url, HttpMethod method, Metadata headers, byte[] content, int code) throws IOException {
+    protected byte[] getResponseContent(String url, HttpMethod method, Metadata headers, int code) throws IOException {
+        byte[] content = null;
+
         int contentLength = Integer.MAX_VALUE;
         String contentLengthString = headers.get(Response.CONTENT_LENGTH);
         if (contentLengthString != null) {
@@ -549,20 +575,20 @@ public class WebClient extends HttpBase {
         if (CollectionUtils.isNotEmpty(headers)) {
             for (NameValuePair hd : headers) {
                 method.addRequestHeader(hd.getName(), hd.getValue());
-                if (method instanceof PostMethod && "Content-Type".equals(hd.getName())) {
+                if (method instanceof PostMethod && HttpHeaders.CONTENT_TYPE.equals(hd.getName())) {
                     hasContentType = true;
                 }
             }
         }
 
-        if (method.getRequestHeader("Accept") == null) {
+        if (method.getRequestHeader(HttpHeaders.ACCEPT) == null) {
             // add default Accept
-            method.addRequestHeader("Accept", accept);
+            method.addRequestHeader(HttpHeaders.ACCEPT, accept);
         }
 
-        if (method.getRequestHeader("User-Agent") == null) {
+        if (method.getRequestHeader(HttpHeaders.USER_AGENT) == null) {
             // add default user agent
-            method.addRequestHeader("User-Agent", userAgent);
+            method.addRequestHeader(HttpHeaders.USER_AGENT, userAgent);
         }
 
         if (!(method instanceof EntityEnclosingMethod)) {
@@ -570,14 +596,14 @@ public class WebClient extends HttpBase {
         }
 
         long lastModified = input.getLastModify();
-        // set coustom parameter... to do
+        // set custom parameter... to do
 
         if (lastModified > 0) {
-            method.setRequestHeader("If-Modified-Since", HttpDateFormat.toString(lastModified));
+            method.setRequestHeader(HttpHeaders.IF_MODIFIED_SINCE, HttpDateFormat.toString(lastModified));
         }
         // set default post content type
         if (method instanceof PostMethod && !hasContentType) {
-            method.addRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            method.addRequestHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded; charset=UTF-8");
         }
 
         // Set HTTP parameters
@@ -591,7 +617,7 @@ public class WebClient extends HttpBase {
         params.setBooleanParameter(HttpMethodParams.SINGLE_COOKIE_HEADER, true);
 
         if (StringUtils.isNotEmpty(input.getCookie()) && (input.getState() == null || ArrayUtils.isEmpty(input.getState().getCookies()))) {
-            method.setRequestHeader("Cookie", input.getCookie());
+            method.setRequestHeader(HttpHeaders.COOKIE, input.getCookie());
         }
         
         params.setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, input.getAllowCircularRedirects());
@@ -601,7 +627,6 @@ public class WebClient extends HttpBase {
      * create httpstate to hold cookie info
      * 
      * @param scope
-     * @param cookie
      * @return
      */
     private HttpState getHttpState(CookieScope scope, ProtocolInput input) {
@@ -631,11 +656,10 @@ public class WebClient extends HttpBase {
             if (!proxy.startsWith("http") && !proxy.startsWith("https")) {
                 proxy = "http://" + proxy;
             }
-            int port = 80;
             try {
                 URI u = new URI(proxy);
                 proxy = u.getHost() + u.getPath();
-                port = u.getPort();
+                int port = u.getPort();
                 host = new ProxyHost(proxy, port);
             } catch (Exception e) {
                 LOG.error("parse proxy server error! " + proxy, e);

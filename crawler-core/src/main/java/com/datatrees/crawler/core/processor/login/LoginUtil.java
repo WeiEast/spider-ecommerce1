@@ -7,7 +7,6 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.ProtocolOutput;
-import com.datatrees.common.protocol.http.HTTPConstants;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.CookieFormater;
 import com.datatrees.common.util.GsonUtils;
@@ -21,6 +20,7 @@ import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
+import com.google.common.net.HttpHeaders;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -72,7 +72,7 @@ public class LoginUtil {
 
             if (out != null && out.getContent() != null) {
                 Metadata metadata = out.getContent().getMetadata();
-                String[] vals = metadata.getValues(HTTPConstants.HTTP_HEADER_SET_COOKIE);
+                String[] vals = metadata.getValues(HttpHeaders.SET_COOKIE);
 
                 return CookieFormater.INSTANCE.parserCookie(vals, retainQuote);
             }
