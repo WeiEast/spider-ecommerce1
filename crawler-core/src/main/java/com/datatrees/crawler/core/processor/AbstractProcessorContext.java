@@ -23,7 +23,6 @@ import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.util.SynchronizedMap;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import org.apache.commons.lang3.BooleanUtils;
@@ -38,19 +37,20 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractProcessorContext {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected   final Logger logger = LoggerFactory.getLogger(getClass());
     protected final Website                     website;
+    protected final Long                        taskId;
     protected final Map<String, Object>         context;
     protected final Map<String, AbstractPlugin> pluginMaps;
-    protected final Map<String, Object>         statusContext;
-    protected final Map<Thread, Object>         threadContext;
+    private final   Map<String, Object>         statusContext;
+    private final   Map<Thread, Object>         threadContext;
     private final   ProcessorResult             processorResult;
     private final   ProcessorResult             processorLog;
     private         PluginManager               pluginManager;
 
-    public AbstractProcessorContext(Website website) {
-        Preconditions.checkNotNull(website, "input for website should not be empty!");
-        this.website = website;
+    public AbstractProcessorContext(Website website, Long taskId) {
+        this.website = Objects.requireNonNull(website);
+        this.taskId = taskId;
         context = new SynchronizedMap<>();
         pluginMaps = new SynchronizedMap<>();
         statusContext = new SynchronizedMap<>();
@@ -70,10 +70,6 @@ public abstract class AbstractProcessorContext {
 
     public String getWebsiteName() {
         return website.getWebsiteName();
-    }
-
-    public Long getTaskId() {
-        return taskId;
     }
 
     /**

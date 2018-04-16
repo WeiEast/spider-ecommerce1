@@ -61,4 +61,9 @@ public class WebsiteGroupServiceApiImpl implements WebsiteGroupServiceApi {
         websiteGroupService.updateEnable(websiteName, enable);
         return 1;
     }
+
+    @Override
+    public List<String> getWebsiteNameList(String enable, String operatorType, String groupCode) {
+        return websiteGroupService.getWebsiteNameList(enable, operatorType, groupCode);
+    }
 }

@@ -259,6 +259,76 @@ public class BankExample implements Serializable {
             return (Criteria) this;
         }
 
+        public Criteria andWebsiteNameIsNull() {
+            addCriterion("WebsiteName is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameIsNotNull() {
+            addCriterion("WebsiteName is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameEqualTo(String value) {
+            addCriterion("WebsiteName =", value, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameNotEqualTo(String value) {
+            addCriterion("WebsiteName <>", value, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameGreaterThan(String value) {
+            addCriterion("WebsiteName >", value, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameGreaterThanOrEqualTo(String value) {
+            addCriterion("WebsiteName >=", value, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameLessThan(String value) {
+            addCriterion("WebsiteName <", value, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameLessThanOrEqualTo(String value) {
+            addCriterion("WebsiteName <=", value, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameLike(String value) {
+            addCriterion("WebsiteName like", value, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameNotLike(String value) {
+            addCriterion("WebsiteName not like", value, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameIn(List<String> values) {
+            addCriterion("WebsiteName in", values, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameNotIn(List<String> values) {
+            addCriterion("WebsiteName not in", values, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameBetween(String value1, String value2) {
+            addCriterion("WebsiteName between", value1, value2, "websitename");
+            return (Criteria) this;
+        }
+
+        public Criteria andWebsiteNameNotBetween(String value1, String value2) {
+            addCriterion("WebsiteName not between", value1, value2, "websitename");
+            return (Criteria) this;
+        }
+
         public Criteria andBankmarkIsNull() {
             addCriterion("BankMark is null");
             return (Criteria) this;

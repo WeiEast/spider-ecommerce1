@@ -337,7 +337,6 @@ public class Collector {
     }
 
     private void messageComplement(TaskMessage taskMessage, CollectorMessage message) {
-        String resultMsg = null;
         try {
             if (StringUtils.isBlank(taskMessage.getTask().getResultMessage())) {
                 taskMessage.getTask().setResultMessage(GsonUtils.toJson(taskMessage.getContext().getProcessorResult()));

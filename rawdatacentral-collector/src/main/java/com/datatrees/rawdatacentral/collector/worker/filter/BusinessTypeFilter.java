@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.collector.worker.filter;
 
 import javax.annotation.Resource;
 
+import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
 import com.treefinance.saas.grapserver.facade.model.TaskRO;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
  * User: yand
  * Date: 2018/4/9
  */
-@Service
+@Service("businessTypeFilter")
 public class BusinessTypeFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(BusinessTypeFilter.class);
@@ -26,15 +27,24 @@ public class BusinessTypeFilter {
     private AppCrawlerConfigService appCrawlerConfigService;
 
     public boolean isFilter(SearchTemplateConfig templateConfig, Long taskId) {
-        if (StringUtils.isBlank(templateConfig.getBusinessType().getName())) {
+        logger.info(" BusinessTypeFilter templateConfig is {},taskId is {}", templateConfig, taskId);
+        if (templateConfig.getBusinessType() == null) {
+            logger.info("search templateId is {}", templateConfig.getId());
+            return false;
+        }
+        logger.info("bushinessType from searchTemplate is {}", templateConfig.getBusinessType());
+        return isFilter(templateConfig.getBusinessType().getName(), taskId);
+    }
+
+    public boolean isFilter(String bussinessType, Long taskId) {
+        if (StringUtils.isBlank(bussinessType)) {
             return Boolean.FALSE;
         }
         SaasResult<TaskRO> taskRO = taskFacade.getById(taskId);
         logger.info("taskRO is {}", taskRO.getData());
         String appId = taskRO.getData().getAppId();
-        String project = templateConfig.getBusinessType().getName();
-        String result = appCrawlerConfigService.getFromRedis(appId, project);
-        logger.info("result from redis is {},appId is {},project is {}", result, appId, project);
+        String result = appCrawlerConfigService.getFromRedis(appId, bussinessType);
+        logger.info("result from redis is {},appId is {},project is {}", result, appId, bussinessType);
         //result为null，该业务未配置，默认为抓取
         if (StringUtils.isBlank(result)) {
             return Boolean.FALSE;
@@ -44,6 +54,7 @@ public class BusinessTypeFilter {
             return Boolean.TRUE;
         }
         return false;
+
     }
 
 }

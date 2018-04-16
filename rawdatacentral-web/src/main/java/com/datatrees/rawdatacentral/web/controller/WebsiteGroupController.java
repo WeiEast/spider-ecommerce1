@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
@@ -101,8 +102,7 @@ public class WebsiteGroupController {
             if (group == GroupEnum.CHINA_10086 || group == GroupEnum.CHINA_10000 || group == GroupEnum.CHINA_10010) {
                 continue;
             }
-            String maxWeightWebsiteName = RedisUtils.get(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group
-                    .getGroupCode()));
+            String maxWeightWebsiteName = RedisUtils.get(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
             List<WebsiteOperator> operators = websiteOperatorService.queryByGroupCode(group.getGroupCode());
 
             String template = "{}({})";
@@ -148,10 +148,20 @@ public class WebsiteGroupController {
             logger.info("updateEnable success websiteName={} Enable={}", websiteGroup.getWebsiteName(), websiteGroup
                     .getEnable());
             websiteGroupService.updateEnable(websiteGroup.getWebsiteName(), websiteGroup.getEnable());
+            websiteOperatorService.updateEnable(websiteGroup.getWebsiteName(), websiteGroup.getEnable());
             return result.success(true);
         } catch (Exception e) {
             logger.error("updateEnable error", e);
             return result.failure();
         }
+    }
+
+    @RequestMapping("/getwebsitenamelist")
+    public Object getwebsitenamelist(HttpServletResponse response, String enable, String groupCode, String
+            operatorType) {
+        logger.info("getwebsitenamelist() enable={},groupCode={},operatorType={}", enable, groupCode, operatorType);
+        HttpResult<Object> result = new HttpResult<>();
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        return websiteGroupService.getWebsiteNameList(enable, groupCode, operatorType);
     }
 }

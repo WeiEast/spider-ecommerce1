@@ -11,7 +11,6 @@ import com.treefinance.toolkit.util.RegExp;
  */
 public class Proxy {
 
-    public final static  Proxy  LOCALNET     = new Proxy("localhost", 3128);// use local
     private static final String proxyPattern = ("^([\\d]+\\.){3}[\\d]+:[\\d]+$");
     private final String host;
     private final int    port;

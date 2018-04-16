@@ -11,6 +11,7 @@ public class Bank implements Serializable {
     private Integer bankId;
     /** not null if bank support search */
     private Integer websiteId;
+    private String websiteName;
     /**  */
     private String  bankMark;
     /** bank name */
@@ -40,6 +41,14 @@ public class Bank implements Serializable {
 
     public void setWebsiteId(Integer websiteId) {
         this.websiteId = websiteId;
+    }
+
+    public String getWebsiteName() {
+        return websiteName;
+    }
+
+    public void setWebsiteName(String websiteName) {
+        this.websiteName = websiteName;
     }
 
     public String getBankMark() {

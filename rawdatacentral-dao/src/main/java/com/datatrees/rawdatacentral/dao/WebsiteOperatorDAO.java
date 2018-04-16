@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import com.datatrees.rawdatacentral.dao.mapper.WebsiteOperatorMapper;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import org.apache.ibatis.annotations.Param;
 
 /** create by system from table website_operator(运营商配置) */
 @Resource
@@ -15,5 +16,13 @@ public interface WebsiteOperatorDAO extends WebsiteOperatorMapper {
      * @return
      */
     int insertSelectiveWithPrimaryKey(WebsiteOperator record);
+
+    /**
+     * 更新分组状态(启用/禁用)
+     * @param websiteName
+     * @param enable
+     * @return
+     */
+    int updateEnable(@Param("websiteName") String websiteName, @Param("enable") Integer enable);
 
 }
