@@ -20,6 +20,7 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.URLUtil;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.filter.FilterType;
 import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
 import com.datatrees.crawler.core.domain.config.page.Regexp;
@@ -43,6 +44,8 @@ import com.datatrees.crawler.core.processor.filter.URLRegexFilter;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.datatrees.crawler.core.util.SpringUtil;
+import com.datatrees.rawdatacentral.collector.worker.filter.BusinessTypeFilter;
 import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
@@ -60,12 +63,14 @@ import org.slf4j.LoggerFactory;
  */
 public class PageImpl extends AbstractPage {
 
-    private static final Logger log            = LoggerFactory.getLogger(PageImpl.class);
-    private static final String titleRegex     = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
-    private static final int    URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
+    private static final Logger             log                = LoggerFactory.getLogger(PageImpl.class);
+    private static final String             titleRegex         = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
+    private static final int                URL_MAX_LENGTH     = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
+    private static final BusinessTypeFilter businessTypeFilter = (BusinessTypeFilter) SpringUtil.getBeanByBeanName("businessTypeFilter");
 
     @Override
     public void process(Request request, Response response) throws Exception {
+
         Preconditions.checkNotNull(page, "Page should not be null!");
 
         LinkNode current = RequestUtil.getCurrentUrl(request);
@@ -223,7 +228,7 @@ public class PageImpl extends AbstractPage {
 
     private void setResponseStatus(Response response, int status, String pattern, String content) {
         if (StringUtils.isNotEmpty(pattern)) {
-            if (RegExp.find(content,pattern)) {
+            if (RegExp.find(content, pattern)) {
                 log.info("set status " + StatusUtil.format(status));
                 ResponseUtil.setResponseStatus(response, status);
             }
@@ -402,9 +407,17 @@ public class PageImpl extends AbstractPage {
 
         List<Map<String, Object>> segmentResult = new ArrayList<>();
         log.info("URL: " + baseURL + " segment size.." + segments.size());
+        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
         for (AbstractSegment abstractSegment : segments) {
             try {
 
+                List<FieldExtractor> fieldExtractors = abstractSegment.getFieldExtractorList();
+                for (FieldExtractor elem : fieldExtractors) {
+                    if (businessTypeFilter.isFilter(elem.getBusinessType(), context.getTaskId())) {
+                        fieldExtractors.remove(elem);
+                    }
+
+                }
                 Response segResponse = Response.build();
                 SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
 

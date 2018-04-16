@@ -36,11 +36,10 @@ public class LinkNode {
     private int                 pNum       = -1;
     private boolean             isRemoved  = false;
     private boolean             isHosting  = false;
-    private String       anchorText;
+    private String  anchorText;
     /* get from parser */
-    private boolean      isFromParser;
-    private boolean      needRequeue;
-    private BusinessType businessType;
+    private boolean isFromParser;
+    private boolean needRequeue;
 
     public LinkNode(String url) {
         this(0, url, null);
@@ -223,14 +222,6 @@ public class LinkNode {
 
     public Map<String, Object> getPropertys() {
         return MapUtils.unmodifiableMap(property);
-    }
-
-    public BusinessType getBusinessType() {
-        return businessType;
-    }
-
-    public void setBusinessType(BusinessType businessType) {
-        this.businessType = businessType;
     }
 
     @Override

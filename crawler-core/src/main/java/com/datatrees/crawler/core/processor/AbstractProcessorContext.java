@@ -28,6 +28,8 @@ import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -36,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class AbstractProcessorContext {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected final Website                     website;
     protected final Map<String, Object>         context;
     protected final Map<String, AbstractPlugin> pluginMaps;
@@ -67,6 +70,10 @@ public abstract class AbstractProcessorContext {
 
     public String getWebsiteName() {
         return website.getWebsiteName();
+    }
+
+    public Long getTaskId() {
+        return taskId;
     }
 
     /**

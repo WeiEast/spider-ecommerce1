@@ -10,6 +10,7 @@ public interface AppCrawlerConfigService {
      * 从redis中获取
      * @return
      */
-    String getFromRedis(String appId, String project);
+    String
+    getFromRedis(String appId, String project);
 
 }

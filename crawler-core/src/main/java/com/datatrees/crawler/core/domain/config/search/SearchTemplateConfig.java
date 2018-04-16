@@ -151,19 +151,19 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
         this.resultTagList.add(resultTag);
     }
 
-    @Attr("businessType")
+    @Attr("business-type")
     public BusinessType getBusinessType() {
         return businessType;
     }
 
-    @Node("@businessType")
+    @Node("@business-type")
     public void setBusinessType(String businessType) {
         this.businessType = BusinessType.getBusinessType(businessType);
     }
 
     @Override
     public String toString() {
-        return "SearchTemplateConfig [id=" + getId() + " ,type=" + type + ", maxDepth=" + maxDepth + ", autoStart=" + autoStart + "]";
+        return "SearchTemplateConfig [id=" + getId() + " ,type=" + type + ", maxDepth=" + maxDepth + ", autoStart=" + autoStart + ", businessType=" + businessType + "]";
     }
 
 }

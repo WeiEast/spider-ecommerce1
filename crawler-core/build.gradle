@@ -17,6 +17,7 @@ ext {
 dependencies {
     compile project(':rawdatacentral-api')
     compile project(':rawdatacentral-common')
+    compile project(':rawdatacentral-collector')
     compile "com.treefinance.toolkit:toolkit:${toolkit}"
     compile "com.google.guava:guava:${guavaVersion}"
     compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocol}", changing: true) {

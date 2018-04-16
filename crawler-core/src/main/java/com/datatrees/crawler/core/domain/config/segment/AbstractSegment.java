@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.datatrees.common.util.json.annotation.Description;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
+import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.domain.config.segment.impl.*;
 import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
@@ -50,6 +51,7 @@ public abstract class AbstractSegment implements Serializable {
     private Integer               containsFlag;
     private Integer               disContainsFlag;
     private Integer               breakPatternFlag;
+    private BusinessType          businessType;
 
     public AbstractSegment() {
         super();
@@ -238,14 +240,24 @@ public abstract class AbstractSegment implements Serializable {
         this.breakPatternFlag = breakPatternFlag;
     }
 
+    @Attr("business-type")
+    public BusinessType getBusinessType() {
+        return businessType;
+    }
+
+    @Node("@business-type")
+    public void setBusinessType(BusinessType businessType) {
+        this.businessType = businessType;
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+         * (non-Javadoc)
+         *
+         * @see java.lang.Object#toString()
+         */
     @Override
     public String toString() {
-        return "Segment [type=" + type + ", name=" + name + "]";
+        return "Segment [type=" + type + ", name=" + name + ", businessType=" + businessType + "]";
     }
 
 }

@@ -224,6 +224,7 @@ public class CollectorWorker {
         }
 
         for (SearchTemplateConfig templateConfig : templateList) {
+            LOGGER.info("Start search template: {}", templateConfig.getId());
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Start search template: {}", templateConfig.getId());
             }

@@ -51,7 +51,7 @@ public enum RedisKeyPrefixEnum {
     NICK_GROUP_MONITOR_ID("nick.group.monitor.id", 3, TimeUnit.DAYS, "group_monitor主键"),
     TASK_INIT_NICK_GROUP_CODE("task.init.nick.group.code", 30, TimeUnit.MINUTES, "任务初始化时的groupCode"),
     TASK_INFO_ACCOUNT_NO("task.info.account.no", 30, TimeUnit.MINUTES, "任务对应的accountNo"),
-    APP_CRAWLER_CONFIG("app_crawler_config", 365, TimeUnit.DAYS, "用户爬取模块配置");
+    APP_CRAWLER_CONFIG("app_crawler_config", 1, TimeUnit.MILLISECONDS, "用户爬取模块配置");
     /**
      * 备注
      */
