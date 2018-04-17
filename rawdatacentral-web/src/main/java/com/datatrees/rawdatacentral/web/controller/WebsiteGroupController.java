@@ -17,6 +17,10 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.treefinance.saas.knife.common.CommonStateCode;
+import com.treefinance.saas.knife.common.StateCode;
+import com.treefinance.saas.knife.result.Results;
+import com.treefinance.saas.knife.result.SaasResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,19 +144,19 @@ public class WebsiteGroupController {
     }
 
     @RequestMapping("/updateEnable")
-    public HttpResult<Object> updateEnable(HttpServletResponse response, @RequestBody WebsiteGroup websiteGroup) {
+    public SaasResult updateEnable(HttpServletResponse response, @RequestBody WebsiteGroup websiteGroup) {
         HttpResult<Object> result = new HttpResult<>();
         response.setHeader("Access-Control-Allow-Origin", "*");
         try {
-            if (null == websiteGroup) return result.failure();
+            if (null == websiteGroup) return Results.newFailedResult(CommonStateCode.PARAMETER_LACK,"请求参数websiteGroup不能为空！");
             logger.info("updateEnable success websiteName={} Enable={}", websiteGroup.getWebsiteName(), websiteGroup
                     .getEnable());
             websiteGroupService.updateEnable(websiteGroup.getWebsiteName(), websiteGroup.getEnable());
             websiteOperatorService.updateEnable(websiteGroup.getWebsiteName(), websiteGroup.getEnable());
-            return result.success(true);
+            return Results.newSuccessResult(true);
         } catch (Exception e) {
             logger.error("updateEnable error", e);
-            return result.failure();
+            return Results.newFailedResult(CommonStateCode.FAILURE);
         }
     }
 
