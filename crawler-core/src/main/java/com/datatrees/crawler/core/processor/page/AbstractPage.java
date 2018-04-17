@@ -10,6 +10,7 @@ package com.datatrees.crawler.core.processor.page;
 
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.processor.common.Processor;
+import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandler;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -19,6 +20,7 @@ import com.datatrees.crawler.core.processor.common.Processor;
 public abstract class AbstractPage extends Processor {
 
     protected Page page = null;
+    protected BusinessTypeFilterHandler businessTypeFilterhandler;
 
     public Page getPage() {
         return page;
@@ -28,4 +30,11 @@ public abstract class AbstractPage extends Processor {
         this.page = page;
     }
 
+    public BusinessTypeFilterHandler getBusinessTypeFilterhandler() {
+        return businessTypeFilterhandler;
+    }
+
+    public void setBusinessTypeFilterhandler(BusinessTypeFilterHandler businessTypeFilterhandler) {
+        this.businessTypeFilterhandler = businessTypeFilterhandler;
+    }
 }

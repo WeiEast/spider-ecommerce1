@@ -51,7 +51,7 @@ appender("pluginAppender", RollingFileAppender) {
     }
 }
 
-root(DEBUG, ["consoleAppender", "sysAppender"])
+root(INFO, ["consoleAppender", "sysAppender"])
 logger("plugin_log", INFO, ["pluginAppender"], false)
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
 

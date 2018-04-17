@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.collector.worker.filter;
 
 import javax.annotation.Resource;
 
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
+import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandler;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
 import com.treefinance.saas.grapserver.facade.model.TaskRO;
 import com.treefinance.saas.grapserver.facade.service.TaskFacade;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  * Date: 2018/4/9
  */
 @Service("businessTypeFilter")
-public class BusinessTypeFilter {
+public class BusinessTypeFilter implements BusinessTypeFilterHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(BusinessTypeFilter.class);
     @Resource
@@ -26,25 +26,16 @@ public class BusinessTypeFilter {
     @Resource
     private AppCrawlerConfigService appCrawlerConfigService;
 
-    public boolean isFilter(SearchTemplateConfig templateConfig, Long taskId) {
-        logger.info(" BusinessTypeFilter templateConfig is {},taskId is {}", templateConfig, taskId);
-        if (templateConfig.getBusinessType() == null) {
-            logger.info("search templateId is {}", templateConfig.getId());
-            return false;
-        }
-        logger.info("bushinessType from searchTemplate is {}", templateConfig.getBusinessType());
-        return isFilter(templateConfig.getBusinessType().getName(), taskId);
-    }
-
-    public boolean isFilter(String bussinessType, Long taskId) {
-        if (StringUtils.isBlank(bussinessType)) {
+    @Override
+    public Boolean isFilter(String businessType, long taskId) {
+        if (StringUtils.isBlank(businessType)) {
             return Boolean.FALSE;
         }
         SaasResult<TaskRO> taskRO = taskFacade.getById(taskId);
         logger.info("taskRO is {}", taskRO.getData());
         String appId = taskRO.getData().getAppId();
-        String result = appCrawlerConfigService.getFromRedis(appId, bussinessType);
-        logger.info("result from redis is {},appId is {},project is {}", result, appId, bussinessType);
+        String result = appCrawlerConfigService.getFromRedis(appId, businessType);
+        logger.info("result from redis is {},appId is {},project is {}", result, appId, businessType);
         //result为null，该业务未配置，默认为抓取
         if (StringUtils.isBlank(result)) {
             return Boolean.FALSE;
@@ -54,7 +45,16 @@ public class BusinessTypeFilter {
             return Boolean.TRUE;
         }
         return false;
+    }
 
+    public boolean isFilter(SearchTemplateConfig templateConfig, Long taskId) {
+        logger.info(" BusinessTypeFilter templateConfig is {},taskId is {}", templateConfig, taskId);
+        if (templateConfig.getBusinessType() == null) {
+            logger.info("search templateId is {}", templateConfig.getId());
+            return false;
+        }
+        logger.info("bushinessType from searchTemplate is {}", templateConfig.getBusinessType());
+        return isFilter(templateConfig.getBusinessType().getName(), taskId);
     }
 
 }

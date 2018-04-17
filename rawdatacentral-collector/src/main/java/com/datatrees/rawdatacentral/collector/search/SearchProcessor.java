@@ -28,6 +28,7 @@ import com.datatrees.rawdatacentral.collector.chain.FilterExecutor;
 import com.datatrees.rawdatacentral.collector.chain.FilterListFactory;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
+import com.datatrees.rawdatacentral.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +54,7 @@ public class SearchProcessor {
     private boolean              needEarlyQuit;
     private       ThreadPoolExecutor   crawlExecutorPool = null;
     private final List<Future<Object>> futureList        = new ArrayList<>();
-    private final TaskMessage taskMessage;
+    private final TaskMessage        taskMessage;
     // 任务默认超时时间，单位：毫秒
     private long defaultTimeout = -1;
     // 任务超时时间，单位：毫秒
