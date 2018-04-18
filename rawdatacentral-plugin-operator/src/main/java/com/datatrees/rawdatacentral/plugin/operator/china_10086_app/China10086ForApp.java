@@ -559,52 +559,59 @@ public class China10086ForApp implements OperatorPluginPostService {
         HttpResult<Object> result = new HttpResult<>();
         Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
                 .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
-        String[] billMonth = paramMap.get("page_content").split(",");
+        String[] billMonths = paramMap.get("page_content").split(",");
         Response response = null;
         try {
             P_IMEI = "8697" + param.getMobile();
             String cookieString = TaskUtils.getTaskShare(param.getTaskId(), "cookieString");
+            List<String> results = new ArrayList<>();
+            for (String billMonth:billMonths) {
+                String templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/historyBillsService/getHistoryBills";
+                BillReqBean billObj = new BillReqBean();
+                billObj.setBgnMonth(billMonth);
+                billObj.setCellNum(param.getMobile().toString());
+                billObj.setEndMonth(billMonth);
+
+                TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
+
+                Map<String, Object> params = new LinkedHashMap<>();
+                params.put("ak", P_AK);
+                params.put("cid", P_CID);
+                params.put("city", P_CITY);
+                params.put("ctid", P_CTID);
+                params.put("cv", P_CV);
+                params.put("en", P_EN);
+                params.put("imei", P_IMEI);
+                params.put("nt", P_NT);
+                params.put("prov", P_PROV);
+                params.put("reqBody", billObj);
+                params.put("sb", P_SB);
+                params.put("sn", P_SN);
+                params.put("sp", P_SP);
+                params.put("st", P_ST);
+                params.put("sv", P_SV);
+                params.put("t", MD5Util.MD5(cookieString, 32));
+                params.put("tel", param.getMobile().toString());
+                params.put("xc", P_XC);
+                params.put("xk", P_XK);
+
+                String xs = MD5Util
+                        .MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20009", billObj, param.getMobile().toString(), param)) +
+                                "_Leadeon/SecurityOrganization", 32);
+
+                response = httpRequestAndCheck(param, templateUrl, "china_10086_app_009", xs, params, cookieString);
+
+                String pageContent = response.getPageContent();
+                logger.info("输出(账单)：{},taskId={}", pageContent, param.getTaskId());
+                if (StringUtils.contains(pageContent,"totalBill")) {
+                    results.add(pageContent);
+                }
+            }
             /**
              * 查询账单
              */
-            String templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/historyBillsService/getHistoryBills";
-            BillReqBean billObj = new BillReqBean();
-            billObj.setBgnMonth(billMonth[0]);
-            billObj.setCellNum(param.getMobile().toString());
-            billObj.setEndMonth(billMonth[1]);
 
-            TaskUtils.addTaskShare(param.getTaskId(), "cookieString", cookieString);
-
-            Map<String, Object> params = new LinkedHashMap<>();
-            params.put("ak", P_AK);
-            params.put("cid", P_CID);
-            params.put("city", P_CITY);
-            params.put("ctid", P_CTID);
-            params.put("cv", P_CV);
-            params.put("en", P_EN);
-            params.put("imei", P_IMEI);
-            params.put("nt", P_NT);
-            params.put("prov", P_PROV);
-            params.put("reqBody", billObj);
-            params.put("sb", P_SB);
-            params.put("sn", P_SN);
-            params.put("sp", P_SP);
-            params.put("st", P_ST);
-            params.put("sv", P_SV);
-            params.put("t", MD5Util.MD5(cookieString, 32));
-            params.put("tel", param.getMobile().toString());
-            params.put("xc", P_XC);
-            params.put("xk", P_XK);
-
-            String xs = MD5Util
-                    .MD5(templateUrl + "_" + JSON.toJSONString(getEntity(cookieString, "20009", billObj, param.getMobile().toString(), param)) +
-                            "_Leadeon/SecurityOrganization", 32);
-
-            response = httpRequestAndCheck(param, templateUrl, "china_10086_app_009", xs, params, cookieString);
-
-            String pageContent = response.getPageContent();
-            logger.info("输出(账单)：{},taskId={}", pageContent, param.getTaskId());
-            return result.success(pageContent);
+            return result.success(JSON.toJSONString(results));
         } catch (Exception e) {
             logger.error("账单页访问失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
