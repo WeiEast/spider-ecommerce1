@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public void handle(HttpServletRequest request, Exception ex, HttpServletResponse response){
-        responseException(request, CommonStateCode.FAILURE, ex, "系统异常", HttpStatus.FORBIDDEN, response);
+        responseException(request, CommonStateCode.FAILURE, ex, "系统异常", HttpStatus.BAD_REQUEST, response);
     }
 
     private void responseException(HttpServletRequest request, StateCode stateCode, Exception ex, String statusText,
