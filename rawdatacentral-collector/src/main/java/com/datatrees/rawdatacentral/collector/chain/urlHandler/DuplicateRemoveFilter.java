@@ -31,7 +31,6 @@ public class DuplicateRemoveFilter implements Filter {
             DuplicateChecker checker = ContextUtil.getDuplicateChecker(context);
             Object uniqueKey = fetched.getProperty(AbstractData.UNIQUESIGN);
             if (deduplicateRemoveSwitch && uniqueKey != null && checker != null && searchProcessor.isDuplicateRemoval()) {
-                logger.debug("DuplicateRemoveFilter execute begin ...");
                 if (checker.isDuplicate(websiteType, uniqueKey.toString())) {
                     fetched.setRemoved(true);
                     logger.info("Node:" + fetched + " filtered by uniqueKey:" + uniqueKey + "websiteType:" + websiteType);
@@ -40,7 +39,7 @@ public class DuplicateRemoveFilter implements Filter {
                 }
             }
             if (!fetched.isRemoved()) {
-                filterChain.doFilter(context, filterChain);
+                filterChain.doFilter(context);
             } else {
                 searchProcessor.getTask().getFilteredCount().getAndIncrement();
             }

@@ -53,8 +53,8 @@ public class AddPagingUrlLinkFilter implements Filter {
                 }
             }
         }
-        log.debug("Execute AddPagingUrlLinkFilter end...");
-        filterChain.doFilter(context, filterChain);
+
+        filterChain.doFilter(context);
     }
 
     private boolean needAddPagingUrl(CrawlRequest request, CrawlResponse response) {

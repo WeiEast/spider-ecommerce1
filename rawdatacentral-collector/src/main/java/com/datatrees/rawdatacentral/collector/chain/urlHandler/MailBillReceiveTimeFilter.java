@@ -55,19 +55,18 @@ public class MailBillReceiveTimeFilter implements Filter {
                 log.info("filter pageNode:" + fetchedLinkNode + " as LastPageLink marked ,receiveAt:" + receiveAt);
                 fetchedLinkNode.setRemoved(true);
             } else if (mailReceiveTimeFilterSwitch && receiveAt != null && receiveAt instanceof Date && websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
-                log.debug("MailBillReceiveTimeFilter execute bagin ...");
                 if ((UnifiedSysTime.INSTANCE.getSystemTime().getTime() - ((Date) receiveAt).getTime() > maxMailReceiveInterval)) {
-                    log.info("Node:" + fetchedLinkNode + ",receiveAt:" + receiveAt + " receivetime filtered...");
+                    log.info("Node:" + fetchedLinkNode + ",receiveAt:" + receiveAt + " receive time filtered...");
                     fetchedLinkNode.setRemoved(true);
                     if (currentLinkNode != null && currentLinkNode.getpNum() > 0) {
-                        log.info("receivetime come to threshold, mark as the LastPageLink ...");
+                        log.info("receive time come to threshold, mark as the LastPageLink ...");
                         searchProcessor.setLastLink(true);
                         searchProcessor.getProcessorContext().getProcessorResult().put("LastPageLink", true);
                     }
                 }
             }
             if (!fetchedLinkNode.isRemoved()) {
-                filterChain.doFilter(context, filterChain);
+                filterChain.doFilter(context);
             } else {
                 searchProcessor.getTask().getFilteredCount().getAndIncrement();
             }

@@ -66,8 +66,8 @@ public class ResponseStatusFilter implements Filter {
 
             }
         }
-        log.debug("Execute ResponseStatusFilter end...");
-        filterChain.doFilter(context, filterChain);
+
+        filterChain.doFilter(context);
     }
 
 }

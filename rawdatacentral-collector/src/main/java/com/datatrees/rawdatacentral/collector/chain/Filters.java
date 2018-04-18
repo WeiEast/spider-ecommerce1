@@ -7,15 +7,14 @@ import com.datatrees.rawdatacentral.collector.chain.search.*;
 import com.datatrees.rawdatacentral.collector.chain.urlHandler.*;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月29日 上午2:36:45
+ * @author Jerry
+ * @since 21:01 2018/4/17
  */
-public enum FilterListFactory {
-
+public enum Filters {
     LINKNODE {
-        List<Filter> filterList = new ArrayList<Filter>();
-        {
+        @Override
+        List<Filter> getFilters() {
+            List<Filter> filterList = new ArrayList<>();
             filterList.add(new MailBillReceiveTimeFilter());
             filterList.add(new MailBillillegalSubjectFilter());
             filterList.add(new MailBillOutboxFilter());
@@ -24,30 +23,34 @@ public enum FilterListFactory {
             filterList.add(new DuplicateRemoveFilter());
             filterList.add(new AddParserTemplateUrlFilter());
             filterList.add(new EcommerceTitleFilter());
-        }
 
-        @Override
-        public List<Filter> getFilterList() {
             return filterList;
         }
-
     },
     SEARCH {
-        List<Filter> filterList = new ArrayList<Filter>();
-        {
+        @Override
+        List<Filter> getFilters() {
+            List<Filter> filterList = new ArrayList<>();
+
             filterList.add(new RecordNetworkTrafficFilter());
             filterList.add(new ResponseStatusFilter());
             filterList.add(new AddPagingUrlLinkFilter());
             filterList.add(new RetryRequestFilter());
             filterList.add(new SleepModeFilter());
-        }
 
-        @Override
-        public List<Filter> getFilterList() {
             return filterList;
         }
     };
+    private List<Filter> filters;
 
-    public abstract List<Filter> getFilterList();
+    Filters() {
+        this.filters = getFilters();
+    }
+
+    abstract List<Filter> getFilters();
+
+    public void doFilter(Context context) {
+        new FilterChain(filters).doFilter(context);
+    }
 
 }

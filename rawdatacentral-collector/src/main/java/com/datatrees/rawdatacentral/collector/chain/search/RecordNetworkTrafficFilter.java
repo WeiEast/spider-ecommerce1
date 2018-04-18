@@ -40,8 +40,8 @@ public class RecordNetworkTrafficFilter implements Filter {
                 }
             }
         }
-        log.debug("Execute RecordNetworkTrafficFilter end...");
-        filterChain.doFilter(context, filterChain);
+
+        filterChain.doFilter(context);
     }
 
 }

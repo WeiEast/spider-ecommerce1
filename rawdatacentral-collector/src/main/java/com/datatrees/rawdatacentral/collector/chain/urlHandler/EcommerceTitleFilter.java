@@ -18,7 +18,7 @@ public class EcommerceTitleFilter implements Filter {
     private static final Logger logger                     = LoggerFactory.getLogger(EcommerceTitleFilter.class);
     private static       String titleBlackListPattern      = PropertiesConfiguration.getInstance().get("ecommerce.title.blacklist.pattern", "充值|电影票|提现|转账|话费|自动发货|代金劵");
     private static       String EcommerceTitleFilterSwitch = PropertiesConfiguration.getInstance().get("ecommerce.title.filter.switch", "off");
-    private static       String titleWhilteListPattern     = PropertiesConfiguration.getInstance().get("ecommerce.title.whiltelist.pattern", "淘宝购物");
+    private static       String titleWhiteListPattern      = PropertiesConfiguration.getInstance().get("ecommerce.title.whiltelist.pattern", "淘宝购物");
 
     @Override
     public void doFilter(Context context, FilterChain filterChain) {
@@ -28,8 +28,7 @@ public class EcommerceTitleFilter implements Filter {
             String websiteType = searchProcessor.getProcessorContext().getWebsite().getWebsiteType();
             Object title = fetched.getProperty(EcommerceData.TITLE);
             if (EcommerceTitleFilterSwitch.toLowerCase().equals("on") && title != null && websiteType != null && WebsiteType.ECOMMERCE.getValue().equals(websiteType)) {
-                logger.debug("ECOMMERCE TitleFilter execute bagin ...");
-                if (PatternUtils.match(titleWhilteListPattern, title.toString())) {
+                if (PatternUtils.match(titleWhiteListPattern, title.toString())) {
                     if (!PatternUtils.match(titleBlackListPattern, title.toString())) {
                         logger.info("ECOMMERCE Node:" + fetched + " filter success...");
                         fetched.setRemoved(false);
@@ -45,7 +44,7 @@ public class EcommerceTitleFilter implements Filter {
                 }
             }
             if (!fetched.isRemoved()) {
-                filterChain.doFilter(context, filterChain);
+                filterChain.doFilter(context);
             } else {
                 searchProcessor.getTask().getFilteredCount().getAndIncrement();
             }

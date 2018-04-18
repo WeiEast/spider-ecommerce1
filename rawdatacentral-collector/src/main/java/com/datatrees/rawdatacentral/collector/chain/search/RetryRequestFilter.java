@@ -42,8 +42,8 @@ public class RetryRequestFilter implements Filter {
                 }
             }
         }
-        log.debug("Execute RetryRequestFilter end...");
-        filterChain.doFilter(context, filterChain);
+
+        filterChain.doFilter(context);
     }
 
 }

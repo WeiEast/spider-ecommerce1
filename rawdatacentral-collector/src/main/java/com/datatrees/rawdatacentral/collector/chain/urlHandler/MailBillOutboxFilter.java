@@ -45,7 +45,6 @@ public class MailBillOutboxFilter implements Filter {
             Object folder = fetched.getProperty(MailBillData.FOLDER);
             // use sender to detect mail in outbox
             if (websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
-                logger.debug("MailBillOutboxFilter execute bagin ...");
                 boolean inOutbox = false;
                 if (folder != null && PatternUtils.match(outBoxFolderName, folder.toString())) {
                     inOutbox = true;
@@ -69,7 +68,7 @@ public class MailBillOutboxFilter implements Filter {
             }
 
             if (!fetched.isRemoved()) {
-                filterChain.doFilter(context, filterChain);
+                filterChain.doFilter(context);
             } else {
                 searchProcessor.getTask().getFilteredCount().getAndIncrement();
             }

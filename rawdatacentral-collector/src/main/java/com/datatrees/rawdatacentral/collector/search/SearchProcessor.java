@@ -22,10 +22,7 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.search.Crawler;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
-import com.datatrees.rawdatacentral.collector.chain.Context;
-import com.datatrees.rawdatacentral.collector.chain.FilterConstant;
-import com.datatrees.rawdatacentral.collector.chain.FilterExecutor;
-import com.datatrees.rawdatacentral.collector.chain.FilterListFactory;
+import com.datatrees.rawdatacentral.collector.chain.*;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
 import com.datatrees.rawdatacentral.domain.model.Task;
@@ -128,7 +125,7 @@ public class SearchProcessor {
             context.setAttribute(FilterConstant.CURRENT_RESPONSE, response);
             context.setAttribute(FilterConstant.FETCHED_LINK_NODE_LIST, linkNodeList);
 
-            FilterExecutor.INSTANCE.execut(context, FilterListFactory.SEARCH.getFilterList());
+            Filters.SEARCH.doFilter(context);
         } catch (Exception e) {
             if (e instanceof ResultEmptyException) {
                 throw (ResultEmptyException) e;

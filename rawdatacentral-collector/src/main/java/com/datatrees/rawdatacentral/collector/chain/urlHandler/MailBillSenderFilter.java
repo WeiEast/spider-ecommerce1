@@ -40,7 +40,6 @@ public class MailBillSenderFilter implements Filter {
             String websiteType = searchProcessor.getProcessorContext().getWebsite().getWebsiteType();
 
             if (websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
-                logger.debug("MailBillSenderFilter execute begin ...");
                 Object sender = fetched.getProperty(MailBillData.SENDER);
                 if (sender != null && PatternUtils.match(senderBlackListPattern, sender.toString().toLowerCase())) {
                     logger.info("Node:" + fetched + " filtered as the sender is " + sender);
@@ -48,7 +47,7 @@ public class MailBillSenderFilter implements Filter {
                 }
             }
             if (!fetched.isRemoved()) {
-                filterChain.doFilter(context, filterChain);
+                filterChain.doFilter(context);
             } else {
                 searchProcessor.getTask().getFilteredCount().getAndIncrement();
             }

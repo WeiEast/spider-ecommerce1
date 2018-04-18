@@ -38,7 +38,7 @@ public class AddParserTemplateUrlFilter implements Filter {
                     URLHandlerImpl handler = ContextUtil.getURLHandlerImpl(context);
                     List<LinkNode> parserTemplatelinkNodeList = handler.getTempLinkNodes();
 
-                    LinkNode firsetLinkNode = (LinkNode) GsonUtils.fromJson(GsonUtils.toJson(fetchLinkNode), LinkNode.class);
+                    LinkNode firsetLinkNode = GsonUtils.fromJson(GsonUtils.toJson(fetchLinkNode), LinkNode.class);
                     firsetLinkNode.setUrl(currentParserLinkUrl);
                     parserTemplatelinkNodeList.add(firsetLinkNode);
 
@@ -50,7 +50,7 @@ public class AddParserTemplateUrlFilter implements Filter {
                             break;
                         }
                         log.info("AddParserTemplateUrlFilter : currentParserLinkUrl : " + currentParserLinkUrl);
-                        LinkNode parserLinkNode = (LinkNode) GsonUtils.fromJson(GsonUtils.toJson(fetchLinkNode), LinkNode.class);
+                        LinkNode parserLinkNode = GsonUtils.fromJson(GsonUtils.toJson(fetchLinkNode), LinkNode.class);
                         parserLinkNode.setUrl(currentParserLinkUrl);
                         parserLinkNode.setRemoved(false);
                         parserTemplatelinkNodeList.add(parserLinkNode);
@@ -61,7 +61,7 @@ public class AddParserTemplateUrlFilter implements Filter {
                 fetchLinkNode.setRemoved(true);
             }
             if (!fetchLinkNode.isRemoved()) {
-                filterChain.doFilter(context, filterChain);
+                filterChain.doFilter(context);
             } else {
                 searchProcessor.getTask().getFilteredCount().getAndIncrement();
             }

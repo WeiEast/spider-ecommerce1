@@ -35,8 +35,7 @@ public class SleepModeFilter implements Filter {
                     log.error("doFilter error context={}", GsonUtils.toJson(context), e);
                 }
             }
-            log.debug("Execute SleepModeFilter end...");
         }
-        filterChain.doFilter(context, filterChain);
+        filterChain.doFilter(context);
     }
 }
