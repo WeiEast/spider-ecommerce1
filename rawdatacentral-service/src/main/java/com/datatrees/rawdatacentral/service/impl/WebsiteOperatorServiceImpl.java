@@ -1,6 +1,12 @@
 package com.datatrees.rawdatacentral.service.impl;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -18,6 +24,10 @@ import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.model.example.WebsiteOperatorExample;
+import com.datatrees.rawdatacentral.domain.operator.FieldBizType;
+import com.datatrees.rawdatacentral.domain.operator.FieldInitSetting;
+import com.datatrees.rawdatacentral.domain.operator.InputField;
+import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
@@ -29,16 +39,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Service
 public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebsiteOperatorServiceImpl.class);
-    private static final Map<String, String> hosts = new HashMap<>();
+    private static final Logger              logger = LoggerFactory.getLogger(WebsiteOperatorServiceImpl.class);
+
+    private static final Map<String, String> hosts  = new HashMap<>();
 
     static {
         hosts.put("开发", "192.168.5.15:6789");
@@ -49,13 +55,16 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Resource
-    private WebsiteOperatorDAO websiteOperatorDAO;
+    private WebsiteOperatorDAO  websiteOperatorDAO;
+
     @Resource
     private WebsiteGroupService websiteGroupService;
+
     @Resource
-    private NotifyService notifyService;
+    private NotifyService       notifyService;
+
     @Resource
-    private WebsiteInfoService websiteInfoService;
+    private WebsiteInfoService  websiteInfoService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -76,17 +85,17 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         return list.isEmpty() ? null : list.get(0);
     }
 
-//    @Override
-//    public List<WebsiteOperator> queryByGroupCode(String groupCode) {
-//        WebsiteOperatorExample example = new WebsiteOperatorExample();
-//        example.createCriteria().andGroupCodeEqualTo(groupCode);
-//        return websiteOperatorDAO.selectByExample(example);
-//    }
+    //    @Override
+    //    public List<WebsiteOperator> queryByGroupCode(String groupCode) {
+    //        WebsiteOperatorExample example = new WebsiteOperatorExample();
+    //        example.createCriteria().andGroupCodeEqualTo(groupCode);
+    //        return websiteOperatorDAO.selectByExample(example);
+    //    }
 
     @Override
     public List<WebsiteOperator> queryByGroupCode(String groupCode) {
         WebsiteOperatorExample example = new WebsiteOperatorExample();
-        String env= TaskUtils.getSassEnv();
+        String env = TaskUtils.getSassEnv();
         example.createCriteria().andGroupCodeEqualTo(groupCode).andEnvEqualTo(env);
         return websiteOperatorDAO.selectByExample(example);
     }
@@ -184,10 +193,10 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         } else {
             env = "dev";
         }
-        String queryUrl = TemplateUtils.format("http://{}/website/operator/getByWebsiteNameAndEnv?websiteName={}&env={}", hosts.get(from), websiteName, env);
+        String queryUrl = TemplateUtils
+                .format("http://{}/website/operator/getByWebsiteNameAndEnv?websiteName={}&env={}", hosts.get(from), websiteName, env);
         String json = TaskHttpClient.create(6L, "", RequestType.POST, "").setFullUrl(queryUrl).setProxyEnable(false).invoke().getPageContent();
-        WebsiteOperator config = JSON.parseObject(json, new TypeReference<WebsiteOperator>() {
-        });
+        WebsiteOperator config = JSON.parseObject(json, new TypeReference<WebsiteOperator>() {});
         if (null == config || StringUtils.isBlank(config.getWebsiteName())) {
             throw new RuntimeException("website not found");
         }
@@ -269,32 +278,32 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         saveOrUpdateOperate(config, websiteOperatorDb);
     }
 
-//    @Override
-//    public void saveConfig(WebsiteOperator config) {
-//        CheckUtils.checkNotNull(config, "param is null");
-//        CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-//        String env=config.getEnv();
-//        WebsiteOperator websiteOperatorDb = getByWebsiteNameAndEnv(config.getWebsiteName(),env);
-//        if (null == websiteOperatorDb) {
-//            if (null == config.getWebsiteId()) {
-//                websiteOperatorDAO.insertSelective(config);
-//            } else {
-//                websiteOperatorDb = websiteOperatorDAO.selectByPrimaryKey(config.getWebsiteId());
-//                if (null != websiteOperatorDb) {
-//                    //放重复websiteId
-//                    config.setEnv(env);
-//                    websiteOperatorDAO.insertSelective(config);
-//                } else {
-//                    //保持相同的websiteId
-//
-//                    websiteOperatorDAO.insertSelectiveWithPrimaryKey(config);
-//                }
-//            }
-//        } else {
-//            config.setWebsiteId(websiteOperatorDb.getWebsiteId());
-//            websiteOperatorDAO.updateByPrimaryKeySelective(config);
-//        }
-//    }
+    //    @Override
+    //    public void saveConfig(WebsiteOperator config) {
+    //        CheckUtils.checkNotNull(config, "param is null");
+    //        CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
+    //        String env=config.getEnv();
+    //        WebsiteOperator websiteOperatorDb = getByWebsiteNameAndEnv(config.getWebsiteName(),env);
+    //        if (null == websiteOperatorDb) {
+    //            if (null == config.getWebsiteId()) {
+    //                websiteOperatorDAO.insertSelective(config);
+    //            } else {
+    //                websiteOperatorDb = websiteOperatorDAO.selectByPrimaryKey(config.getWebsiteId());
+    //                if (null != websiteOperatorDb) {
+    //                    //放重复websiteId
+    //                    config.setEnv(env);
+    //                    websiteOperatorDAO.insertSelective(config);
+    //                } else {
+    //                    //保持相同的websiteId
+    //
+    //                    websiteOperatorDAO.insertSelectiveWithPrimaryKey(config);
+    //                }
+    //            }
+    //        } else {
+    //            config.setWebsiteId(websiteOperatorDb.getWebsiteId());
+    //            websiteOperatorDAO.updateByPrimaryKeySelective(config);
+    //        }
+    //    }
 
     @Override
     public void updateEnable(String websiteName, Boolean enable) {
@@ -353,5 +362,45 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             notifyService.sendMsgForOperatorStatusUpdate(websiteOperatorDb, from, to, enable, auto);
         }
         return map;
+    }
+
+    @Override
+    public OperatorLoginConfig getLoginConfig(String websiteName) {
+        OperatorLoginConfig config = new OperatorLoginConfig();
+        WebsiteOperator website = getByWebsiteName(websiteName);
+
+        config.setWebsiteName(website.getWebsiteName());
+        config.setLoginTip(website.getLoginTip());
+        config.setResetTip(website.getResetTip());
+        config.setResetType(website.getResetType());
+        config.setResetURL(website.getResetUrl());
+        config.setSmsReceiver(website.getSmsReceiver());
+        config.setSmsTemplate(website.getSmsTemplate());
+        config.setVerifyTip(website.getVerifyTip());
+
+        config.setGroupCode(website.getGroupCode());
+        String groupName = GroupEnum.getByGroupCode(website.getGroupCode()).getGroupName();
+        config.setGroupName(groupName);
+
+        String initSetting = website.getLoginConfig();
+        JSONObject json = JSON.parseObject(initSetting);
+        List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
+        for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
+            InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
+            if (null != fieldInitSetting.getDependencies()) {
+                for (String dependency : fieldInitSetting.getDependencies()) {
+                    field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
+                }
+            }
+            if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
+                config.setHasPicCode(true);
+            }
+            if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
+                config.setHasSmsCode(true);
+            }
+            config.getFields().add(field);
+        }
+        config.setEnable(true);
+        return config;
     }
 }

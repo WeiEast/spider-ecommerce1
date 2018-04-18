@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
+import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
@@ -77,4 +78,15 @@ public interface CrawlerOperatorService {
      * @return
      */
     HttpResult<Map<String, Object>> checkParams(OperatorParam param);
+
+    /**
+     * 获取运营商登陆配置
+     * 运营商登陆准备
+     * 必填参数:taskId,mobile,groupCode
+     * @return
+     */
+    HttpResult<OperatorLoginConfig> preLogin(OperatorParam param);
+
+
+
 }

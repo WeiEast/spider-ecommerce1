@@ -19,10 +19,12 @@ import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
+import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.*;
@@ -40,38 +42,39 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
+    private static final org.slf4j.Logger                              logger                 = LoggerFactory
+            .getLogger(CrawlerOperatorServiceImpl.class);
 
-    private LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
+    private static final String                                        OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
 
-    @Resource
-    private ClassLoaderService                            classLoaderService;
-
-    @Resource
-    private RedisService                                  redisService;
+    private              LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
 
     @Resource
-    private MessageService                                messageService;
+    private              ClassLoaderService                            classLoaderService;
 
     @Resource
-    private MonitorService                                monitorService;
+    private              RedisService                                  redisService;
 
     @Resource
-    private WebsiteConfigService                          websiteConfigService;
+    private              MessageService                                messageService;
 
     @Resource
-    private WebsiteGroupService                           websiteGroupService;
+    private              MonitorService                                monitorService;
 
     @Resource
-    private WebsiteOperatorService                        websiteOperatorService;
+    private              WebsiteConfigService                          websiteConfigService;
 
     @Resource
-    private ThreadPoolService                             threadPoolService;
+    private              WebsiteGroupService                           websiteGroupService;
 
     @Resource
-    private ProxyService                                  proxyService;
+    private              WebsiteOperatorService                        websiteOperatorService;
 
-    private static final String OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
+    @Resource
+    private              ThreadPoolService                             threadPoolService;
+
+    @Resource
+    private              ProxyService                                  proxyService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -418,6 +421,37 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
     }
 
+    @Override
+    public HttpResult<OperatorLoginConfig> preLogin(OperatorParam param) {
+        HttpResult<OperatorLoginConfig> result = new HttpResult<>();
+        try {
+            if (null == param || BooleanUtils.isNotPositiveNumber(param.getTaskId())) {
+                return result.failure(ErrorCode.EMPTY_TASK_ID);
+            }
+            if (StringUtils.isBlank(param.getGroupCode())) {
+                return result.failure(ErrorCode.EMPTY_GROUP_CODE);
+            }
+            if (BooleanUtils.isNotPositiveNumber(param.getMobile())) {
+                return result.failure(ErrorCode.EMPTY_MOBILE);
+            }
+
+            String websiteName = redisService.getString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(param.getGroupCode()));
+            OperatorLoginConfig config = websiteOperatorService.getLoginConfig(websiteName);
+            config.setTaskId(param.getTaskId());
+            config.setMobile(param.getMobile());
+
+            param.setWebsiteName(websiteName);
+            param.setFormType(FormType.LOGIN);
+            param.setGroupName(GroupEnum.getGroupName(param.getGroupCode()));
+            init(param);
+
+            return result.success(config);
+        } catch (Throwable e) {
+            logger.error("checkParams error,param={}", JSON.toJSONString(param), e);
+            return result.failure();
+        }
+    }
+
     /**
      * 发送消息,启动爬虫
      * 超过20秒不启动爬虫
@@ -485,7 +519,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     private HttpResult<Map<String, Object>> checkHttpResult(HttpResult<Map<String, Object>> result, OperatorParam param) {
         HttpResult<Map<String, Object>> newResult = result;
         try {
-            if (result.getResponseCode() != ErrorCode.NOT_SUPORT_METHOD.getErrorCode() && !newResult.getStatus()) {                String groupCode = param.getGroupCode();
+            if (result.getResponseCode() != ErrorCode.NOT_SUPORT_METHOD.getErrorCode() && !newResult.getStatus()) {
+                String groupCode = param.getGroupCode();
                 String property = PropertiesConfiguration.getInstance().get(OPERATOR_FAIL_USER_MAX);
                 int maxFailUser = 5;
                 if (StringUtils.isNotBlank(property)) {
