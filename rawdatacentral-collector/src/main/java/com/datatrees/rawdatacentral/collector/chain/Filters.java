@@ -16,7 +16,7 @@ public enum Filters {
         List<Filter> getFilters() {
             List<Filter> filterList = new ArrayList<>();
             filterList.add(new MailBillReceiveTimeFilter());
-            filterList.add(new MailBillillegalSubjectFilter());
+            filterList.add(new MailBillIllegalSubjectFilter());
             filterList.add(new MailBillOutboxFilter());
             filterList.add(new MailBillSenderFilter());
 

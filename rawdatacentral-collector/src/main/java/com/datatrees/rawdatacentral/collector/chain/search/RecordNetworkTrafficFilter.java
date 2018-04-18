@@ -1,47 +1,34 @@
 package com.datatrees.rawdatacentral.collector.chain.search;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.ProtocolOutput;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.rawdatacentral.collector.chain.Context;
-import com.datatrees.rawdatacentral.collector.chain.Filter;
-import com.datatrees.rawdatacentral.collector.chain.FilterChain;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.domain.model.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午3:19:33
  */
-public class RecordNetworkTrafficFilter implements Filter {
-
-    private static final Logger log = LoggerFactory.getLogger(RecordNetworkTrafficFilter.class);
+public class RecordNetworkTrafficFilter extends ResponsesFilter {
 
     @Override
-    public void doFilter(Context context, FilterChain filterChain) {
-        SearchProcessor searchProcessor = ContextUtil.getSearchProcessor(context);
+    protected void doInternalFilter(@Nonnull List<Response> responses, SearchProcessor searchProcessor, Context context) {
         Task task = searchProcessor.getTask();
-        List<Response> threadLocalResponseList = ProcessorContextUtil.getThreadLocalResponseList(searchProcessor.getProcessorContext());
-        if (threadLocalResponseList != null) {
-            for (Response response : threadLocalResponseList) {
-                ProtocolOutput outPut = ResponseUtil.getProtocolResponse(response);
-                if (outPut != null && outPut.getContent() != null && outPut.getContent().getContent() != null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("add new networkTraffic length:" + outPut.getContent().getContent().length);
-                    }
-                    task.getNetworkTraffic().addAndGet(outPut.getContent().getContent().length);
+        for (Response response : responses) {
+            ProtocolOutput outPut = ResponseUtil.getProtocolResponse(response);
+            if (outPut != null && outPut.getContent() != null && outPut.getContent().getContent() != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("add new networkTraffic length:" + outPut.getContent().getContent().length);
                 }
+                task.getNetworkTraffic().addAndGet(outPut.getContent().getContent().length);
             }
         }
-
-        filterChain.doFilter(context);
     }
 
 }
