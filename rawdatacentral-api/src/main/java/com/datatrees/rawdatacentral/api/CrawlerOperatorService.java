@@ -87,6 +87,10 @@ public interface CrawlerOperatorService {
      */
     HttpResult<OperatorLoginConfig> preLogin(OperatorParam param);
 
-
+    /**
+     * 查询运营商分组信息
+     * @return
+     */
+    HttpResult<Map<String, Map<String, String>>> queryGroups();
 
 }

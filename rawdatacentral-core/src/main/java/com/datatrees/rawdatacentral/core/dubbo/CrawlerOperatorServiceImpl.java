@@ -18,10 +18,7 @@ import com.datatrees.rawdatacentral.common.retry.RetryHandler;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.enums.StepEnum;
+import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
@@ -450,6 +447,35 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             logger.error("checkParams error,param={}", JSON.toJSONString(param), e);
             return result.failure();
         }
+    }
+
+    @Override
+    public HttpResult<Map<String, Map<String, String>>> queryGroups() {
+        Map<String, Map<String, String>> map = new HashMap<>();
+        Map<String, String> map10086 = new HashMap<>();
+        Map<String, String> map10000 = new HashMap<>();
+        Map<String, String> map10010 = new HashMap<>();
+        map.put("移动", map10086);
+        map.put("联通", map10010);
+        map.put("电信", map10000);
+        for (GroupEnum group : GroupEnum.values()) {
+            if (group.getWebsiteType() != WebsiteType.OPERATOR | group == GroupEnum.CHINA_10000 || group == GroupEnum.CHINA_10086) {
+                continue;
+            }
+            if (group.getGroupName().contains("移动")) {
+                map10086.put(group.getGroupCode(), group.getGroupName());
+                continue;
+            }
+            if (group.getGroupName().contains("联通")) {
+                map10010.put(group.getGroupCode(), group.getGroupName());
+                continue;
+            }
+            if (group.getGroupName().contains("电信")) {
+                map10000.put(group.getGroupCode(), group.getGroupName());
+                continue;
+            }
+        }
+        return new HttpResult<Map<String, Map<String, String>>>().success(map);
     }
 
     /**
