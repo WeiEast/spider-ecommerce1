@@ -18,34 +18,34 @@ public enum BusinessType {
     TAOBAO_RECORD("taobao_record", "淘宝交易记录"),
     ALIPA_RECORD("alipay_record", "支付宝交易记录"),
     TRADE_ADDRESS("trade_address", "淘宝交易地址");
+    private String code;
     private String name;
-    private String remark;
 
-    BusinessType(String name, String remark) {
+    BusinessType(String code, String name) {
         this.name = name;
-        this.remark = remark;
+        this.code = code;
     }
 
-    public static BusinessType getBusinessType(String name) {
+    public static BusinessType getBusinessType(String code) {
         for (BusinessType businessType : BusinessType.values()) {
-            if (name.equals(businessType.getName())) {
+            if (code.equals(businessType.getCode())) {
                 return businessType;
             }
         }
         return null;
     }
 
+    public String getCode() {
+        return code;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getRemark() {
-        return remark;
-    }
-
     @Override
     public String toString() {
-        return "BusinessType{" + "remark='" + remark + '\'' + ", name='" + name + '\'' + '}';
+        return "BusinessType{" + "code='" + code + '\'' + ", name='" + name + '\'' + '}';
     }
 
 }

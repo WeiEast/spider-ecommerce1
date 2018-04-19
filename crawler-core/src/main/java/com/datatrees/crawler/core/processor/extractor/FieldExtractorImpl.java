@@ -142,6 +142,9 @@ public class FieldExtractorImpl extends Processor {
     @SuppressWarnings("unchecked")
     @Override
     public void process(Request request, Response response) throws Exception {
+
+
+
         Object fieldResult = null;
         Map<String, FieldExtractorWarpper> resultMap = initMap(response);
         String content = "";

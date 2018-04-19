@@ -154,16 +154,16 @@ public class ProcessorFactory {
     }
 
     public static AbstractPage getPage(Page page) throws Exception {
-        BusinessTypeFilterHandler businessTypeFilterHandler = (BusinessTypeFilterHandler) SpringUtil.getBeanByBeanName("businessTypeFilter");
-        log.info("BusinessTypeFilterHandler is {}",businessTypeFilterHandler);
+        //BusinessTypeFilterHandler businessTypeFilterHandler = (BusinessTypeFilterHandler) SpringUtil.getBeanByBeanName("businessTypeFilter");
+        //log.info("BusinessTypeFilterHandler is {}",businessTypeFilterHandler);
         AbstractPage base = null;
         String key = resolveKey(PagePrefix, null);
         Class<AbstractPage> serviceImpl = TypeRegistry.getInstance().resolve(key);
         if (serviceImpl != null) {
             base = ReflectionUtils.newInstance(serviceImpl);
             base.setPage(page);
-            base.setBusinessTypeFilterhandler(businessTypeFilterHandler);
-            log.info("businessTypeFilterHandler is {}", businessTypeFilterHandler);
+            //base.setBusinessTypeFilterhandler(businessTypeFilterHandler);
+            //log.info("businessTypeFilterHandler is {}", businessTypeFilterHandler);
         }
         return base;
     }

@@ -404,25 +404,26 @@ public class PageImpl extends AbstractPage {
 
         List<Map<String, Object>> segmentResult = new ArrayList<>();
         log.info("URL: " + baseURL + " segment size.." + segments.size());
-        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
+        //SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
         for (AbstractSegment abstractSegment : segments) {
             try {
 
-                List<FieldExtractor> fieldExtractors = abstractSegment.getFieldExtractorList();
-                log.info("fieldExtractors is {}", fieldExtractors);
-                List<FieldExtractor> list = new ArrayList<>(fieldExtractors);
-                log.info("list is {}", list);
-
-                if (CollectionUtils.isNotEmpty(list)) {
-                    for (FieldExtractor elem : list) {
-                        logger.info("elem businessType is {}", elem.getBusinessType());
-                        if (businessTypeFilterhandler.isFilter(elem.getBusinessType(), context.getTaskId())) {
-                            list.remove(elem);
-                            logger.info("elem businessType skip crawler is {}", elem.getBusinessType());
-                        }
-
-                    }
-                }
+                //List<FieldExtractor> fieldExtractors = abstractSegment.getFieldExtractorList();
+                //log.info("fieldExtractors is {}", fieldExtractors);
+                //List<FieldExtractor> list = new ArrayList<>(fieldExtractors);
+                //log.info("list is {}", list);
+                //
+                //if (CollectionUtils.isNotEmpty(list)) {
+                //    Iterator<FieldExtractor> iterator = list.iterator();
+                //    while (iterator.hasNext()) {
+                //        FieldExtractor elem = iterator.next();
+                //        logger.info("elem businessType is {}", elem.getBusinessType());
+                //        if (businessTypeFilterhandler.isFilter(elem.getBusinessType(), context.getTaskId())) {
+                //            iterator.remove();
+                //            logger.info("elem businessType skip crawler is {}", elem.getBusinessType());
+                //        }
+                //    }
+                //}
 
                 Response segResponse = Response.build();
                 SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);

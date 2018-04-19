@@ -20,7 +20,6 @@ import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandl
 public abstract class AbstractPage extends Processor {
 
     protected Page page = null;
-    protected BusinessTypeFilterHandler businessTypeFilterhandler;
 
     public Page getPage() {
         return page;
@@ -30,11 +29,4 @@ public abstract class AbstractPage extends Processor {
         this.page = page;
     }
 
-    public BusinessTypeFilterHandler getBusinessTypeFilterhandler() {
-        return businessTypeFilterhandler;
-    }
-
-    public void setBusinessTypeFilterhandler(BusinessTypeFilterHandler businessTypeFilterhandler) {
-        this.businessTypeFilterhandler = businessTypeFilterhandler;
-    }
 }

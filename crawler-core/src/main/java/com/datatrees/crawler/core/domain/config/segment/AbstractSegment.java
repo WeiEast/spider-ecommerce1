@@ -51,7 +51,7 @@ public abstract class AbstractSegment implements Serializable {
     private Integer               containsFlag;
     private Integer               disContainsFlag;
     private Integer               breakPatternFlag;
-    private BusinessType          businessType;
+    private String                businessType;
 
     public AbstractSegment() {
         super();
@@ -241,12 +241,12 @@ public abstract class AbstractSegment implements Serializable {
     }
 
     @Attr("business-type")
-    public BusinessType getBusinessType() {
+    public String getBusinessType() {
         return businessType;
     }
 
     @Node("@business-type")
-    public void setBusinessType(BusinessType businessType) {
+    public void setBusinessType(String businessType) {
         this.businessType = businessType;
     }
 
