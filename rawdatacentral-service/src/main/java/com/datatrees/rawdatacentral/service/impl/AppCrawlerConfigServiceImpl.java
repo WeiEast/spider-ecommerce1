@@ -95,20 +95,38 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         AppCrawlerConfigParam result = new AppCrawlerConfigParam();
         List<String> projectNames = new ArrayList<>();
         List<CrawlerProjectParam> projectConfigInfos = new ArrayList<>();
-        CrawlerProjectParam crawlerProjectParam = new CrawlerProjectParam();
+
         //set appId
         result.setAppId(appId);
         //遍历websiteId
         for (WebsiteType websiteType : WebsiteType.values()) {
+            CrawlerProjectParam crawlerProjectParam = new CrawlerProjectParam();
+            List<ProjectParam> projects = new ArrayList<>();
             AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
             example.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(websiteType.getValue());
             List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
             logger.info("appCrawlerConfigList size is {},WebsiteType is {},appId is {}", appCrawlerConfigList.size(), websiteType.getValue(), appId);
+
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
+                //如果参数为数据库里没值，说明是新增用户，目前只对website=2或者website=3做新增
+                if ("2".equals(websiteType.getValue()) || "3".equals(websiteType.getValue())) {
+                    crawlerProjectParam.setWebsiteType(Integer.valueOf(websiteType.getValue()));
+                    for (BusinessType type : BusinessType.values()) {
+                        if (type.getWebsiteType().equals(websiteType.getValue())) {
+                            ProjectParam projectParam = new ProjectParam();
+                            projectParam.setCode(type.getCode());
+                            projectParam.setName(type.getName());
+                            projects.add(projectParam);
+                        }
+                    }
+                    crawlerProjectParam.setProjects(projects);
+                    projectConfigInfos.add(crawlerProjectParam);
+                }
+
                 continue;
             }
 
-            List<ProjectParam> projects = new ArrayList<>();
+
             crawlerProjectParam.setWebsiteType(Integer.valueOf(websiteType.getValue()));
 
             for (AppCrawlerConfig appCrawlerConfig : appCrawlerConfigList) {
@@ -118,16 +136,22 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 ProjectParam projectParam = new ProjectParam();
                 projectParam.setCode(project);
                 projectParam.setName(projectName);
-                projectParam.setCrawlerStatus(appCrawlerConfig.getCrawlerStatus());
+                if (appCrawlerConfig.getCrawlerStatus()) {
+                    projectParam.setCrawlerStatus(1);
+                } else {
+                    projectParam.setCrawlerStatus(0);
+                }
                 if (appCrawlerConfig.getCrawlerStatus()) {
                     projectNames.add(projectName);
                 }
                 projects.add(projectParam);
             }
             crawlerProjectParam.setProjects(projects);
-
+            logger.info("crawlerProjectParam is {}",crawlerProjectParam);
+            projectConfigInfos.add(crawlerProjectParam);
+            logger.info("projectConfigInfos is {}",projectConfigInfos);
         }
-        projectConfigInfos.add(crawlerProjectParam);
+
         result.setProjectNames(projectNames);
         result.setProjectConfigInfos(projectConfigInfos);
 
@@ -181,7 +205,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 for (ProjectParam project : projectList) {
                     AppCrawlerConfig appCrawlerConfig = new AppCrawlerConfig();
                     appCrawlerConfig.setAppId(appId);
-                    appCrawlerConfig.setCrawlerStatus(project.getCrawlerStatus());
+                    if (project.getCrawlerStatus() == 0) {
+                        appCrawlerConfig.setCrawlerStatus(false);
+                    } else {
+                        appCrawlerConfig.setCrawlerStatus(true);
+                    }
+
                     appCrawlerConfig.setWebsiteType(String.valueOf(crawlerProjectParam.getWebsiteType()));
                     appCrawlerConfig.setProject(project.getCode());
                     addAppCrawlerConfig(appCrawlerConfig);
@@ -192,8 +221,16 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             for (ProjectParam project : projectList) {
                 for (AppCrawlerConfig elem : appCrawlerConfigList) {
                     if (project.getCode().equals(elem.getProject())) {
-                        if (project.getCrawlerStatus() != elem.getCrawlerStatus()) {
-                            elem.setCrawlerStatus(project.getCrawlerStatus());
+                        //TODO临时判断之后在修改
+                        boolean crawlerStatus;
+                        if (project.getCrawlerStatus() == 0) {
+                            crawlerStatus = false;
+                        } else {
+                            crawlerStatus = true;
+                        }
+
+                        if (crawlerStatus != elem.getCrawlerStatus()) {
+                            elem.setCrawlerStatus(crawlerStatus);
                             updateAppCrawlerConfig(elem);
                         }
                     }
@@ -206,4 +243,13 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         return 0;
 
     }
+
+
+
+    public static void main(String[] args){
+
+
+
+    }
+
 }

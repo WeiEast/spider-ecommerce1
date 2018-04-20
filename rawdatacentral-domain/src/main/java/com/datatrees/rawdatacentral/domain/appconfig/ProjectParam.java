@@ -19,7 +19,7 @@ public class ProjectParam {
     /**
      * 爬取状态
      */
-    private Boolean crawlerStatus;
+    private Integer crawlerStatus;
 
     public String getCode() {
         return code;
@@ -37,11 +37,11 @@ public class ProjectParam {
         this.name = name;
     }
 
-    public Boolean getCrawlerStatus() {
+    public Integer getCrawlerStatus() {
         return crawlerStatus;
     }
 
-    public void setCrawlerStatus(Boolean crawlerStatus) {
+    public void setCrawlerStatus(Integer crawlerStatus) {
         this.crawlerStatus = crawlerStatus;
     }
 
