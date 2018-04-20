@@ -43,8 +43,8 @@ public class AppCrwalerController {
     //}
 
     @RequestMapping("/update")
-    public SaasResult<String> updateAppCrawlerConfig(List<CrawlerProjectParam> param, String appId) {
-        appCrawlerConfigService.updateAppConfig(param, appId);
+    public SaasResult<String> updateAppCrawlerConfig(List<CrawlerProjectParam> crawlerProjectParam, String appId) {
+        appCrawlerConfigService.updateAppConfig(crawlerProjectParam, appId);
         return Results.newResult(CommonStateCode.SUCCESS);
     }
 

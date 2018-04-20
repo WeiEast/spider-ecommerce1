@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.domain.appconfig.ProjectParam;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.AppCrawlerConfig;
-import com.datatrees.rawdatacentral.domain.model.example.AppCrawlerConfigExample;
+import com.datatrees.rawdatacentral.domain.model.AppCrawlerConfigCriteria;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
 import com.treefinance.saas.merchant.center.facade.request.common.BaseRequest;
 import com.treefinance.saas.merchant.center.facade.result.console.MerchantResult;
@@ -44,8 +44,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        AppCrawlerConfigExample appCrawlerConfigExample = new AppCrawlerConfigExample();
-        List<AppCrawlerConfig> list = appCrawlerConfigDao.selectByExample(appCrawlerConfigExample);
+        AppCrawlerConfigCriteria appCrawlerConfigCriteria = new AppCrawlerConfigCriteria();
+        List<AppCrawlerConfig> list = appCrawlerConfigDao.selectByExample(appCrawlerConfigCriteria);
         if (list != null && list.size() > 0) {
             for (AppCrawlerConfig appCrawlerConfig : list) {
                 String redisKey = appCrawlerConfig.getAppId() + separator + appCrawlerConfig.getProject();
@@ -99,14 +99,13 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         //set appId
         result.setAppId(appId);
         //遍历websiteId
-        AppCrawlerConfigExample example = new AppCrawlerConfigExample();
-        AppCrawlerConfigExample.Criteria criteria = example.createCriteria();
         for (WebsiteType websiteType : WebsiteType.values()) {
-            criteria.andAppIdEqualTo(appId).andWebsiteTypeEqualTo(Integer.valueOf(websiteType.getValue()));
+            AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
+            example.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(websiteType.getValue());
             List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
             logger.info("appCrawlerConfigList size is {},WebsiteType is {},appId is {}", appCrawlerConfigList.size(), websiteType.getValue(), appId);
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
-                break;
+                continue;
             }
 
             List<ProjectParam> projects = new ArrayList<>();
@@ -158,9 +157,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     @Override
     public AppCrawlerConfig getOneAppCrawlerConfig(String appId, String project) {
         AppCrawlerConfig result = new AppCrawlerConfig();
-        AppCrawlerConfigExample example = new AppCrawlerConfigExample();
-        AppCrawlerConfigExample.Criteria criteria = example.createCriteria();
-        criteria.andAppIdEqualTo(appId).andProjectEqualTo(project);
+        AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
+        example.createCriteria().andAppIdEqualTo(appId).andProjectEqualTo(project);
         List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
         if (CollectionUtils.isNotEmpty(appCrawlerConfigList)) {
             result = appCrawlerConfigList.get(0);
@@ -173,11 +171,10 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         if (CollectionUtils.isEmpty(params)) {
             throw new RuntimeException("CrawlerProjectParamList is null");
         }
-        AppCrawlerConfigExample example = new AppCrawlerConfigExample();
-        AppCrawlerConfigExample.Criteria criteria = example.createCriteria();
+        AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
         for (CrawlerProjectParam crawlerProjectParam : params) {
             List<ProjectParam> projectList = crawlerProjectParam.getProjects();
-            criteria.andAppIdEqualTo(appId).andWebsiteTypeEqualTo(crawlerProjectParam.getWebsiteType());
+            example.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(String.valueOf(crawlerProjectParam.getWebsiteType()));
             List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
             //若数据库里没有记录
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
@@ -185,7 +182,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     AppCrawlerConfig appCrawlerConfig = new AppCrawlerConfig();
                     appCrawlerConfig.setAppId(appId);
                     appCrawlerConfig.setCrawlerStatus(project.getCrawlerStatus());
-                    appCrawlerConfig.setWebsiteType(crawlerProjectParam.getWebsiteType());
+                    appCrawlerConfig.setWebsiteType(String.valueOf(crawlerProjectParam.getWebsiteType()));
                     appCrawlerConfig.setProject(project.getCode());
                     addAppCrawlerConfig(appCrawlerConfig);
                 }
