@@ -1,10 +1,7 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
@@ -21,6 +18,7 @@ import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
+import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -450,11 +448,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     }
 
     @Override
-    public HttpResult<Map<String, Map<String, String>>> queryGroups() {
-        Map<String, Map<String, String>> map = new HashMap<>();
-        Map<String, String> map10086 = new HashMap<>();
-        Map<String, String> map10000 = new HashMap<>();
-        Map<String, String> map10010 = new HashMap<>();
+    public HttpResult<Map<String, List<OperatorGroup>>> queryGroups() {
+        Map<String, List<OperatorGroup>> map = new HashMap<>();
+        List<OperatorGroup> map10086 = new ArrayList<>();
+        List<OperatorGroup> map10000 = new ArrayList<>();
+        List<OperatorGroup> map10010 = new ArrayList<>();
         map.put("移动", map10086);
         map.put("联通", map10010);
         map.put("电信", map10000);
@@ -462,20 +460,24 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             if (group.getWebsiteType() != WebsiteType.OPERATOR | group == GroupEnum.CHINA_10000 || group == GroupEnum.CHINA_10086) {
                 continue;
             }
+            OperatorGroup config = new OperatorGroup();
+            config.setGroupCode(group.getGroupCode());
+            config.setGroupName(group.getGroupName());
+
             if (group.getGroupName().contains("移动")) {
-                map10086.put(group.getGroupCode(), group.getGroupName());
+                map10086.add(config);
                 continue;
             }
             if (group.getGroupName().contains("联通")) {
-                map10010.put(group.getGroupCode(), group.getGroupName());
+                map10010.add(config);
                 continue;
             }
             if (group.getGroupName().contains("电信")) {
-                map10000.put(group.getGroupCode(), group.getGroupName());
+                map10000.add(config);
                 continue;
             }
         }
-        return new HttpResult<Map<String, Map<String, String>>>().success(map);
+        return new HttpResult<Map<String, List<OperatorGroup>>>().success(map);
     }
 
     /**

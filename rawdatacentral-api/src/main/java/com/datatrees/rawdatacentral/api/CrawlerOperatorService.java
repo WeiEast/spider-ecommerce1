@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
+import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
@@ -91,6 +92,6 @@ public interface CrawlerOperatorService {
      * 查询运营商分组信息
      * @return
      */
-    HttpResult<Map<String, Map<String, String>>> queryGroups();
+    HttpResult<Map<String, List<OperatorGroup>>> queryGroups();
 
 }
