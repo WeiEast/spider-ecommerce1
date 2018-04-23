@@ -108,7 +108,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             logger.info("appCrawlerConfigList size is {},WebsiteType is {},appId is {}", appCrawlerConfigList.size(), websiteType.getValue(), appId);
 
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
-                //如果参数为数据库里没值，说明是新增用户，目前只对website=2或者website=3做新增
+                //如果参数为数据库里没值，说明是新增商户，目前只对website=2或者website=3做新增操作
                 if ("2".equals(websiteType.getValue()) || "3".equals(websiteType.getValue())) {
                     crawlerProjectParam.setWebsiteType(Integer.valueOf(websiteType.getValue()));
                     for (BusinessType type : BusinessType.values()) {
@@ -125,7 +125,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
                 continue;
             }
-
 
             crawlerProjectParam.setWebsiteType(Integer.valueOf(websiteType.getValue()));
 
@@ -147,9 +146,9 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 projects.add(projectParam);
             }
             crawlerProjectParam.setProjects(projects);
-            logger.info("crawlerProjectParam is {}",crawlerProjectParam);
+            logger.info("crawlerProjectParam is {}", crawlerProjectParam);
             projectConfigInfos.add(crawlerProjectParam);
-            logger.info("projectConfigInfos is {}",projectConfigInfos);
+            logger.info("projectConfigInfos is {}", projectConfigInfos);
         }
 
         result.setProjectNames(projectNames);
@@ -195,9 +194,10 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         if (CollectionUtils.isEmpty(params)) {
             throw new RuntimeException("CrawlerProjectParamList is null");
         }
-        AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
+
         for (CrawlerProjectParam crawlerProjectParam : params) {
             List<ProjectParam> projectList = crawlerProjectParam.getProjects();
+            AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
             example.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(String.valueOf(crawlerProjectParam.getWebsiteType()));
             List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
             //若数据库里没有记录
@@ -244,11 +244,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
     }
 
-
-
-    public static void main(String[] args){
-
-
+    public static void main(String[] args) {
 
     }
 
