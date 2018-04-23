@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import com.datatrees.rawdatacentral.domain.appconfig.AppCrawlerConfigParam;
 import com.datatrees.rawdatacentral.domain.appconfig.CrawlerProjectParam;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
@@ -43,8 +44,10 @@ public class AppCrwalerController {
     //}
 
     @RequestMapping("/update")
-    public SaasResult<String> updateAppCrawlerConfig(List<CrawlerProjectParam> crawlerProjectParam, String appId) {
-        appCrawlerConfigService.updateAppConfig(crawlerProjectParam, appId);
+    public SaasResult<String> updateAppCrawlerConfig(String crawlerProjectParam, String appId) {
+        List<CrawlerProjectParam> crawlerProjectParams = JSONObject.parseArray(crawlerProjectParam, CrawlerProjectParam.class);
+        logger.info("crawlerProjectParams is {},appId is {}", crawlerProjectParams, appId);
+        appCrawlerConfigService.updateAppConfig(crawlerProjectParams, appId);
         return Results.newResult(CommonStateCode.SUCCESS);
     }
 
