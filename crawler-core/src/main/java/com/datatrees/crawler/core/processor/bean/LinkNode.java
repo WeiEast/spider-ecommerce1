@@ -11,6 +11,7 @@ package com.datatrees.crawler.core.processor.bean;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import org.apache.commons.collections.MapUtils;
 
 /**

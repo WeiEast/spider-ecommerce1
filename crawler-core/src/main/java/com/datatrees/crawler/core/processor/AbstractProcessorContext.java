@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractProcessorContext {
 
-    protected   final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected final Website                     website;
     protected final Long                        taskId;
     protected final Map<String, Object>         context;
@@ -47,6 +47,7 @@ public abstract class AbstractProcessorContext {
     private final   ProcessorResult             processorResult;
     private final   ProcessorResult             processorLog;
     private         PluginManager               pluginManager;
+
 
     public AbstractProcessorContext(Website website, Long taskId) {
         this.website = Objects.requireNonNull(website);
@@ -70,6 +71,10 @@ public abstract class AbstractProcessorContext {
 
     public String getWebsiteName() {
         return website.getWebsiteName();
+    }
+
+    public Long getTaskId() {
+        return taskId;
     }
 
     /**

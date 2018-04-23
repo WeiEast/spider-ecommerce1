@@ -27,10 +27,12 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.impl.*;
 import com.datatrees.crawler.core.processor.page.AbstractPage;
 import com.datatrees.crawler.core.processor.page.PageImpl;
+import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandler;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.processor.segment.impl.*;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.crawler.core.processor.service.impl.*;
+import com.datatrees.crawler.core.util.SpringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,12 +154,16 @@ public class ProcessorFactory {
     }
 
     public static AbstractPage getPage(Page page) throws Exception {
+        //BusinessTypeFilterHandler businessTypeFilterHandler = (BusinessTypeFilterHandler) SpringUtil.getBeanByBeanName("businessTypeFilter");
+        //log.info("BusinessTypeFilterHandler is {}",businessTypeFilterHandler);
         AbstractPage base = null;
         String key = resolveKey(PagePrefix, null);
         Class<AbstractPage> serviceImpl = TypeRegistry.getInstance().resolve(key);
         if (serviceImpl != null) {
             base = ReflectionUtils.newInstance(serviceImpl);
             base.setPage(page);
+            //base.setBusinessTypeFilterhandler(businessTypeFilterHandler);
+            //log.info("businessTypeFilterHandler is {}", businessTypeFilterHandler);
         }
         return base;
     }
