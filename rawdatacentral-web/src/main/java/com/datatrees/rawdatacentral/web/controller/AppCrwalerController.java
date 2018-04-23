@@ -38,11 +38,6 @@ public class AppCrwalerController {
 
     }
 
-    //@RequestMapping("/getList")
-    //public Object getAppCrawlerConfigList() {
-    //    return appCrawlerConfigService.getAppCrawlerConfigList();
-    //
-    //}
 
     @RequestMapping("/update")
     public SaasResult<String> updateAppCrawlerConfig(@RequestBody AppCrawlerConfigParam params) {
