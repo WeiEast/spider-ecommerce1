@@ -105,7 +105,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
             example.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(websiteType.getValue());
             List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
-            logger.info("appCrawlerConfigList size is {},WebsiteType is {},appId is {}", appCrawlerConfigList.size(), websiteType.getValue(), appId);
+            //logger.info("appCrawlerConfigList size is {},WebsiteType is {},appId is {}", appCrawlerConfigList.size(), websiteType.getValue(), appId);
 
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
                 //如果参数为数据库里没值，说明是新增商户，目前只对website=2或者website=3做新增操作
