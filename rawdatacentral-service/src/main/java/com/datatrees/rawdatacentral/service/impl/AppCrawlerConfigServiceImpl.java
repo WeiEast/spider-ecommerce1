@@ -190,7 +190,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     }
 
     @Override
-    public int updateAppConfig(List<CrawlerProjectParam> params, String appId) {
+    public void updateAppConfig(List<CrawlerProjectParam> params, String appId) {
         if (CollectionUtils.isEmpty(params)) {
             throw new RuntimeException("CrawlerProjectParamList is null");
         }
@@ -200,7 +200,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
             example.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(String.valueOf(crawlerProjectParam.getWebsiteType()));
             List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
-            //若数据库里没有记录
+            //若数据库里没有记录 做新增操作
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
                 for (ProjectParam project : projectList) {
                     AppCrawlerConfig appCrawlerConfig = new AppCrawlerConfig();
@@ -213,14 +213,18 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
                     appCrawlerConfig.setWebsiteType(String.valueOf(crawlerProjectParam.getWebsiteType()));
                     appCrawlerConfig.setProject(project.getCode());
+                    logger.info("appCrawlerConfig new add is {}", appCrawlerConfig);
                     addAppCrawlerConfig(appCrawlerConfig);
                 }
-                break;
+                continue;
             }
-            //appCrawlerConfigList 不为null
+
+            //数据库里有记录，做修改操作
             for (ProjectParam project : projectList) {
                 for (AppCrawlerConfig elem : appCrawlerConfigList) {
                     if (project.getCode().equals(elem.getProject())) {
+                        logger.info("project  is {}", project);
+                        logger.info("elem  is {}", elem);
                         //TODO临时判断之后在修改
                         boolean crawlerStatus;
                         if (project.getCrawlerStatus() == 0) {
@@ -240,7 +244,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             }
 
         }
-        return 0;
 
     }
 

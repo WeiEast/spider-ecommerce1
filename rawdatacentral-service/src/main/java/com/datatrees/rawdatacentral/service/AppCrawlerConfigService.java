@@ -37,12 +37,11 @@ public interface AppCrawlerConfigService {
      * @param params
      * @param appId
      */
-    int updateAppConfig(List<CrawlerProjectParam> params, String appId);
+    void updateAppConfig(List<CrawlerProjectParam> params, String appId);
 
     void addAppCrawlerConfig(AppCrawlerConfig param);
 
     AppCrawlerConfig getOneAppCrawlerConfig(String appId, String project);
-
 
     void updateAppCrawlerConfig(AppCrawlerConfig param);
 
