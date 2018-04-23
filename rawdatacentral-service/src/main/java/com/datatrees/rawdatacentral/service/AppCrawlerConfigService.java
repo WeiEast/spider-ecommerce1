@@ -34,15 +34,13 @@ public interface AppCrawlerConfigService {
 
     /**
      * 修改商户配置信息
-     * @param params
+     * @param projectConfigInfos
      * @param appId
      */
-    void updateAppConfig(List<CrawlerProjectParam> params, String appId);
+    void updateAppConfig(List<CrawlerProjectParam> projectConfigInfos, String appId);
 
-    void addAppCrawlerConfig(AppCrawlerConfig param);
 
     AppCrawlerConfig getOneAppCrawlerConfig(String appId, String project);
 
-    void updateAppCrawlerConfig(AppCrawlerConfig param);
 
 }

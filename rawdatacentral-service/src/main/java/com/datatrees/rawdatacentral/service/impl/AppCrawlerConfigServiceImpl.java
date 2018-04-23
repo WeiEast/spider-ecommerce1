@@ -2,7 +2,9 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -72,22 +74,20 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
     @Override
     public List<AppCrawlerConfigParam> getAppCrawlerConfigList() {
-        List<AppCrawlerConfigParam> resultList = new ArrayList<>();
         BaseRequest var1 = new BaseRequest();
         MerchantResult<List<MerchantSimpleResult>> merchantResult = merchantBaseInfoFacade.querySimpleMerchantSimple(var1);
         List<MerchantSimpleResult> appList = merchantResult.getData();
-        logger.info("appList is {}", appList);
+        logger.info("appList is {} ,applist size is {}", appList, appList.size());
 
         if (CollectionUtils.isEmpty(appList)) {
             throw new RuntimeException("商户列表为null");
         }
-        for (MerchantSimpleResult merchantSimpleResult : appList) {
+
+        return appList.stream().map(merchantSimpleResult -> {
             AppCrawlerConfigParam appCrawlerConfigParam = getOneAppCrawlerConfigParam(merchantSimpleResult.getAppId());
             appCrawlerConfigParam.setAppName(merchantSimpleResult.getAppName());
-            resultList.add(appCrawlerConfigParam);
-        }
-
-        return resultList;
+            return appCrawlerConfigParam;
+        }).sorted(Comparator.comparing(AppCrawlerConfigParam::getAppId)).collect(Collectors.toList());
     }
 
     @Override
@@ -158,26 +158,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     }
 
     @Override
-    public void addAppCrawlerConfig(AppCrawlerConfig param) {
-        AppCrawlerConfig appCrawlerConfig = getOneAppCrawlerConfig(param.getAppId(), param.getProject());
-        if (appCrawlerConfig == null) {
-            //新增
-            appCrawlerConfigDao.insertSelective(param);
-            //存入redis
-            String redisKey = appCrawlerConfig.getAppId() + separator + appCrawlerConfig.getProject();
-            redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, String.valueOf(appCrawlerConfig.getCrawlerStatus()));
-        }
-    }
-
-    @Override
-    public void updateAppCrawlerConfig(AppCrawlerConfig param) {
-        appCrawlerConfigDao.updateByPrimaryKeySelective(param);
-        String redisKey = param.getAppId() + separator + param.getProject();
-        redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, String.valueOf(param.getCrawlerStatus()));
-
-    }
-
-    @Override
     public AppCrawlerConfig getOneAppCrawlerConfig(String appId, String project) {
         AppCrawlerConfig result = new AppCrawlerConfig();
         AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
@@ -190,12 +170,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     }
 
     @Override
-    public void updateAppConfig(List<CrawlerProjectParam> params, String appId) {
-        if (CollectionUtils.isEmpty(params)) {
+    public void updateAppConfig(List<CrawlerProjectParam> projectConfigInfos, String appId) {
+        if (CollectionUtils.isEmpty(projectConfigInfos)) {
             throw new RuntimeException("CrawlerProjectParamList is null");
         }
 
-        for (CrawlerProjectParam crawlerProjectParam : params) {
+        for (CrawlerProjectParam crawlerProjectParam : projectConfigInfos) {
             List<ProjectParam> projectList = crawlerProjectParam.getProjects();
             AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
             example.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(String.valueOf(crawlerProjectParam.getWebsiteType()));
@@ -214,7 +194,13 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     appCrawlerConfig.setWebsiteType(String.valueOf(crawlerProjectParam.getWebsiteType()));
                     appCrawlerConfig.setProject(project.getCode());
                     logger.info("appCrawlerConfig new add is {}", appCrawlerConfig);
-                    addAppCrawlerConfig(appCrawlerConfig);
+                    int result = appCrawlerConfigDao.insertSelective(appCrawlerConfig);
+                    logger.info("appCrawlerConfig new add result is {}", result);
+                    //存入redis
+                    String redisKey = appCrawlerConfig.getAppId() + separator + appCrawlerConfig.getProject();
+                    logger.info("appCrawlerConfig new add redisKey is {}", redisKey);
+                    redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, String.valueOf(appCrawlerConfig.getCrawlerStatus()));
+                    //addAppCrawlerConfig(appCrawlerConfig);
                 }
                 continue;
             }
@@ -235,7 +221,9 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
                         if (crawlerStatus != elem.getCrawlerStatus()) {
                             elem.setCrawlerStatus(crawlerStatus);
-                            updateAppCrawlerConfig(elem);
+                            appCrawlerConfigDao.updateByPrimaryKeySelective(elem);
+                            String redisKey = elem.getAppId() + separator + elem.getProject();
+                            redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, String.valueOf(elem.getCrawlerStatus()));
                         }
                     }
 
@@ -244,10 +232,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             }
 
         }
-
-    }
-
-    public static void main(String[] args) {
 
     }
 

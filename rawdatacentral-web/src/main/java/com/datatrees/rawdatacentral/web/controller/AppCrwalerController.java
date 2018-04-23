@@ -15,6 +15,7 @@ import com.treefinance.saas.knife.result.SaasResult;
 import org.apache.poi.ss.formula.functions.Count;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,11 +45,11 @@ public class AppCrwalerController {
     //}
 
     @RequestMapping("/update")
-    public SaasResult<String> updateAppCrawlerConfig(String crawlerProjectParam, String appId) {
-        List<CrawlerProjectParam> crawlerProjectParams = JSONObject.parseArray(crawlerProjectParam, CrawlerProjectParam.class);
-        logger.info("crawlerProjectParams is {},appId is {}", crawlerProjectParams, appId);
-        appCrawlerConfigService.updateAppConfig(crawlerProjectParams, appId);
+    public SaasResult<String> updateAppCrawlerConfig(@RequestBody AppCrawlerConfigParam params) {
+        logger.info("AppCrawlerConfigParam is {}",params);
+        appCrawlerConfigService.updateAppConfig(params.getProjectConfigInfos(), params.getAppId());
         return Results.newResult(CommonStateCode.SUCCESS);
     }
+
 
 }
