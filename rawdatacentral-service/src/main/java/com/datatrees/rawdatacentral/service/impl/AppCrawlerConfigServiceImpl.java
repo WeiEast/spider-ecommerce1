@@ -59,9 +59,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     @Override
     public String getFromRedis(String appId, String project) {
         String redisKey = appId + separator + project;
-        logger.info("redisKey : {}", redisKey);
         String result = redisService.getString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey);
-        logger.info("result from redis : {}", result);
+        logger.info("result from redis : {},redisKey : {}", result, redisKey);
         if (StringUtils.isBlank(result)) {
             AppCrawlerConfig appCrawlerConfig = getOneAppCrawlerConfig(appId, project);
             if (appCrawlerConfig != null) {
