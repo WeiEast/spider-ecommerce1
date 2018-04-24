@@ -220,6 +220,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
                         if (crawlerStatus != elem.getCrawlerStatus()) {
                             elem.setCrawlerStatus(crawlerStatus);
+                            elem.setUpdatedAt(null);
                             appCrawlerConfigDao.updateByPrimaryKeySelective(elem);
                             String redisKey = elem.getAppId() + separator + elem.getProject();
                             redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, String.valueOf(elem.getCrawlerStatus()));

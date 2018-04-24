@@ -40,9 +40,9 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
             //result为null，该业务未配置，默认为抓取
             if (StringUtils.isBlank(result)) {
                 return Boolean.FALSE;
-            } else if (result.equals("false")) {
-                return Boolean.FALSE;
             } else if (result.equals("true")) {
+                return Boolean.FALSE;
+            } else if (result.equals("false")) {
                 return Boolean.TRUE;
             }
         }
