@@ -7,10 +7,10 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.rawdatacentral.common.utils.RedissonUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteGroupDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -21,23 +21,38 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WebsiteGroupServiceImpl implements WebsiteGroupService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebsiteGroupServiceImpl.class);
+    private static final Logger                 logger = LoggerFactory.getLogger(WebsiteGroupServiceImpl.class);
+
+    private static       RedissonClient         redissonClient;
+
     @Resource
-    private WebsiteGroupDAO        websiteGroupDAO;
+    private              WebsiteGroupDAO        websiteGroupDAO;
+
     @Resource
-    private WebsiteOperatorService websiteOperatorService;
+    private              WebsiteOperatorService websiteOperatorService;
+
     @Resource
-    private RedisService           redisService;
+    private              RedisService           redisService;
+
     @Resource
-    private WebsiteConfigService   websiteConfigService;
-    private Random random = new Random();
+    private              WebsiteConfigService   websiteConfigService;
+
+    @Value("${core.redis.hostName}")
+    private              String                 redisIp;
+
+    @Value("${core.redis.password}")
+    private              String                 redisPort;
+
+    private              Random                 random = new Random();
 
     @Override
     public List<WebsiteGroup> queryByGroupCode(String groupCode) {
@@ -95,14 +110,13 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         if (list.size() == 1) {
             maxWeight = list.get(0);
         } else {
-            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a
-                    .getWeight().compareTo(b.getWeight())).collect(Collectors.toList());
+            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a.getWeight().compareTo(b.getWeight()))
+                    .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(enables)) {
                 maxWeight = enables.get(enables.size() - 1);
             } else {
                 maxWeight = list.get(random.nextInt(list.size()));
-                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName
-                        ());
+                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName());
             }
         }
         RedisUtils.set(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(groupCode), maxWeight.getWebsiteName());
@@ -129,5 +143,16 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     @Override
     public List<String> getWebsiteNameList(String enable, String operatorType, String groupCode) {
         return websiteGroupDAO.queryWebsiteNameList(enable, operatorType, groupCode);
+    }
+
+    @Override
+    public String selectOperator(long taskId, String groupCode) {
+        return null;
+    }
+
+    private void initRedis() {
+        if (null == redissonClient) {
+            redissonClient = RedissonUtils.getRedisson(redisIp, redisPort);
+        }
     }
 }
