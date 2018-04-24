@@ -78,6 +78,6 @@ public interface WebsiteGroupService {
      * @param groupCode
      * @return
      */
-    String selectOperator(long taskId, String groupCode);
+    String selectOperator(String groupCode);
 
 }

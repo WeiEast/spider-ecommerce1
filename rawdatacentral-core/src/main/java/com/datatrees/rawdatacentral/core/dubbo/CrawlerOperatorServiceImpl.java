@@ -430,7 +430,8 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                 return result.failure(ErrorCode.EMPTY_MOBILE);
             }
 
-            String websiteName = redisService.getString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(param.getGroupCode()));
+            String websiteName = websiteGroupService.selectOperator(param.getGroupCode());
+            logger.info("select website : {} for taskId : {}", websiteName, param.getTaskId());
             OperatorLoginConfig config = websiteOperatorService.getLoginConfig(websiteName);
             config.setTaskId(param.getTaskId());
             config.setMobile(param.getMobile());

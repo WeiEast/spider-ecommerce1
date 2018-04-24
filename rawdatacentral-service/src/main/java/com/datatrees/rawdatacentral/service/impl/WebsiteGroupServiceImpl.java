@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -10,7 +11,7 @@ import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.rawdatacentral.common.utils.RedissonUtils;
+import com.datatrees.rawdatacentral.common.utils.WeightUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteGroupDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -21,7 +22,6 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
 
     private static final Logger                 logger = LoggerFactory.getLogger(WebsiteGroupServiceImpl.class);
 
-    private static       RedissonClient         redissonClient;
+    private static       WeightUtils            weightUtils;
 
     @Resource
     private              WebsiteGroupDAO        websiteGroupDAO;
@@ -50,7 +50,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     private              String                 redisIp;
 
     @Value("${core.redis.password}")
-    private              String                 redisPort;
+    private              String                 redisPassword;
 
     private              Random                 random = new Random();
 
@@ -146,13 +146,35 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     }
 
     @Override
-    public String selectOperator(long taskId, String groupCode) {
-        return null;
+    public String selectOperator(String groupCode) {
+        initRedis();
+        return weightUtils.poll(groupCode);
     }
 
-    private void initRedis() {
-        if (null == redissonClient) {
-            redissonClient = RedissonUtils.getRedisson(redisIp, redisPort);
+    public void initRedis() {
+        if (null == weightUtils) {
+            weightUtils = new WeightUtils(redisIp, redisPassword, new WeightUtils.WeightQueueConfig() {
+                @Override
+                public Map<String, Integer> getWeights(String groupCode) {
+                    List<WebsiteGroup> groups = queryByGroupCode(groupCode);
+                    Map<String, Integer> map = new HashMap<>();
+                    groups.stream().filter(s -> s.getEnable()).forEach(e -> {
+                        map.put(e.getWebsiteName(), e.getWeight());
+                    });
+                    if (map.isEmpty()) {
+                        groups.stream().forEach(e -> {
+                            map.put(e.getWebsiteName(), e.getWeight());
+                        });
+                    }
+                    return map;
+                }
+
+                @Override
+                public int getQueueSize() {
+                    return 50;
+                }
+            });
         }
+
     }
 }
