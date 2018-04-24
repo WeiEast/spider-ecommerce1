@@ -64,6 +64,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         if (StringUtils.isBlank(result)) {
             AppCrawlerConfig appCrawlerConfig = getOneAppCrawlerConfig(appId, project);
             if (appCrawlerConfig != null) {
+                logger.info("result from db appCrawlerConfig is : {}", appCrawlerConfig);
                 result = String.valueOf(appCrawlerConfig.getCrawlerStatus());
                 redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, result);
             }
