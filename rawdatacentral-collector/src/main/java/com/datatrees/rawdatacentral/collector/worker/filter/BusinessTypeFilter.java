@@ -57,7 +57,7 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
             return false;
         }
         logger.info("bushinessType from searchTemplate is {}", templateConfig.getBusinessType());
-        return isFilter(templateConfig.getBusinessType().getName(), taskId);
+        return isFilter(templateConfig.getBusinessType().getCode(), taskId);
     }
 
 }
