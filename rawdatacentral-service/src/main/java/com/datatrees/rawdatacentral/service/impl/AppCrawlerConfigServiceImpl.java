@@ -91,12 +91,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
     @Override
     public AppCrawlerConfigParam getOneAppCrawlerConfigParam(String appId) {
-        AppCrawlerConfigParam result = new AppCrawlerConfigParam();
+        AppCrawlerConfigParam appCrawlerConfigParam = new AppCrawlerConfigParam();
         List<String> projectNames = new ArrayList<>();
         List<CrawlerProjectParam> projectConfigInfos = new ArrayList<>();
 
         //set appId
-        result.setAppId(appId);
+        appCrawlerConfigParam.setAppId(appId);
         //遍历websiteId
         for (WebsiteType websiteType : WebsiteType.values()) {
             CrawlerProjectParam crawlerProjectParam = new CrawlerProjectParam();
@@ -109,20 +109,32 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
                 //如果参数为数据库里没值，说明是新增商户，目前只对website=2或者website=3做新增操作
                 if ("2".equals(websiteType.getValue()) || "3".equals(websiteType.getValue())) {
-                    crawlerProjectParam.setWebsiteType(Integer.valueOf(websiteType.getValue()));
                     for (BusinessType type : BusinessType.values()) {
                         if (type.getWebsiteType().equals(websiteType.getValue())) {
-                            ProjectParam projectParam = new ProjectParam();
-                            projectParam.setCode(type.getCode());
-                            projectParam.setName(type.getName());
-                            projects.add(projectParam);
+                            AppCrawlerConfig appCrawlerConfig = new AppCrawlerConfig();
+                            appCrawlerConfig.setAppId(appId);
+                            appCrawlerConfig.setWebsiteType(websiteType.getValue());
+                            appCrawlerConfig.setProject(type.getCode());
+                            //全部默认为爬取
+                            appCrawlerConfig.setCrawlerStatus(true);
+                            logger.info("appCrawlerConfig new add is {}", appCrawlerConfig);
+                            int result = appCrawlerConfigDao.insertSelective(appCrawlerConfig);
+                            logger.info("appCrawlerConfig new add result is {}", result);
+                            //存入redis
+                            String redisKey = appCrawlerConfig.getAppId() + separator + appCrawlerConfig.getProject();
+                            logger.info("appCrawlerConfig new add redisKey is {}", redisKey);
+                            redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, String.valueOf(appCrawlerConfig.getCrawlerStatus()));
+                            appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
+                            //再次判断数据是否新增成功
+                            if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
+                                throw new RuntimeException("商户爬取信息新增失败");
+                            }
                         }
                     }
-                    crawlerProjectParam.setProjects(projects);
-                    projectConfigInfos.add(crawlerProjectParam);
-                }
 
-                continue;
+                } else {
+                    continue;
+                }
             }
 
             crawlerProjectParam.setWebsiteType(Integer.valueOf(websiteType.getValue()));
@@ -150,10 +162,10 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             logger.info("projectConfigInfos is {}", projectConfigInfos);
         }
 
-        result.setProjectNames(projectNames);
-        result.setProjectConfigInfos(projectConfigInfos);
+        appCrawlerConfigParam.setProjectNames(projectNames);
+        appCrawlerConfigParam.setProjectConfigInfos(projectConfigInfos);
 
-        return result;
+        return appCrawlerConfigParam;
     }
 
     @Override
@@ -181,30 +193,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
             //若数据库里没有记录 做新增操作
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
-                for (ProjectParam project : projectList) {
-                    AppCrawlerConfig appCrawlerConfig = new AppCrawlerConfig();
-                    appCrawlerConfig.setAppId(appId);
-                    if (project.getCrawlerStatus() == 0) {
-                        appCrawlerConfig.setCrawlerStatus(false);
-                    } else {
-                        appCrawlerConfig.setCrawlerStatus(true);
-                    }
-
-                    appCrawlerConfig.setWebsiteType(String.valueOf(crawlerProjectParam.getWebsiteType()));
-                    appCrawlerConfig.setProject(project.getCode());
-                    logger.info("appCrawlerConfig new add is {}", appCrawlerConfig);
-                    int result = appCrawlerConfigDao.insertSelective(appCrawlerConfig);
-                    logger.info("appCrawlerConfig new add result is {}", result);
-                    //存入redis
-                    String redisKey = appCrawlerConfig.getAppId() + separator + appCrawlerConfig.getProject();
-                    logger.info("appCrawlerConfig new add redisKey is {}", redisKey);
-                    redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, String.valueOf(appCrawlerConfig.getCrawlerStatus()));
-                    //addAppCrawlerConfig(appCrawlerConfig);
-                }
-                continue;
+                throw new RuntimeException("商户数据异常");
             }
-
-            //数据库里有记录，做修改操作
             for (ProjectParam project : projectList) {
                 for (AppCrawlerConfig elem : appCrawlerConfigList) {
                     if (project.getCode().equals(elem.getProject())) {
@@ -220,6 +210,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
                         if (crawlerStatus != elem.getCrawlerStatus()) {
                             elem.setCrawlerStatus(crawlerStatus);
+                            elem.setUpdatedAt(null);
                             appCrawlerConfigDao.updateByPrimaryKeySelective(elem);
                             String redisKey = elem.getAppId() + separator + elem.getProject();
                             redisService.saveString(RedisKeyPrefixEnum.APP_CRAWLER_CONFIG, redisKey, String.valueOf(elem.getCrawlerStatus()));
