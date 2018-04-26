@@ -12,7 +12,7 @@ public enum BusinessType {
      */
     BASE_INFO("base_info", "个人信息", WebsiteType.ECOMMERCE.getValue()),
     HUABEI("huabei", "花呗信息", WebsiteType.ECOMMERCE.getValue()),
-    MY_RATE("my_rate", "淘宝我的评价", WebsiteType.ECOMMERCE.getValue()),
+    MY_RATE("my_rate", "买家信用", WebsiteType.ECOMMERCE.getValue()),
     BANK_CARD("bank_card", "银行卡信息", WebsiteType.ECOMMERCE.getValue()),
     FEES("fees", "缴费信息", WebsiteType.ECOMMERCE.getValue()),
     ADDRESS("address", "收货地址", WebsiteType.ECOMMERCE.getValue()),
