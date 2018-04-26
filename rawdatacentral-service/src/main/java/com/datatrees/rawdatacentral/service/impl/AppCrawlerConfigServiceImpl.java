@@ -104,7 +104,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             AppCrawlerConfigCriteria example = new AppCrawlerConfigCriteria();
             example.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(websiteType.getValue());
             List<AppCrawlerConfig> appCrawlerConfigList = appCrawlerConfigDao.selectByExample(example);
-            //logger.info("appCrawlerConfigList size is {},WebsiteType is {},appId is {}", appCrawlerConfigList.size(), websiteType.getValue(), appId);
 
             if (CollectionUtils.isEmpty(appCrawlerConfigList)) {
                 //如果参数为数据库里没值，说明是新增商户，目前只对website=2或者website=3做新增操作
@@ -117,9 +116,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                             appCrawlerConfig.setProject(type.getCode());
                             //全部默认为爬取
                             appCrawlerConfig.setCrawlerStatus(true);
-                            logger.info("appCrawlerConfig new add is {}", appCrawlerConfig);
                             int result = appCrawlerConfigDao.insertSelective(appCrawlerConfig);
-                            logger.info("appCrawlerConfig new add result is {}", result);
+                            logger.info("appCrawlerConfig new add result is {}，appCrawlerConfig is {}", result,appCrawlerConfig);
                             //存入redis
                             String redisKey = appCrawlerConfig.getAppId() + separator + appCrawlerConfig.getProject();
                             logger.info("appCrawlerConfig new add redisKey is {}", redisKey);
@@ -157,9 +155,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 projects.add(projectParam);
             }
             crawlerProjectParam.setProjects(projects);
-            logger.info("crawlerProjectParam is {}", crawlerProjectParam);
             projectConfigInfos.add(crawlerProjectParam);
-            logger.info("projectConfigInfos is {}", projectConfigInfos);
         }
 
         appCrawlerConfigParam.setProjectNames(projectNames);
@@ -198,16 +194,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             for (ProjectParam project : projectList) {
                 for (AppCrawlerConfig elem : appCrawlerConfigList) {
                     if (project.getCode().equals(elem.getProject())) {
-                        logger.info("project  is {}", project);
-                        logger.info("elem  is {}", elem);
-                        //TODO临时判断之后在修改
                         boolean crawlerStatus;
                         if (project.getCrawlerStatus() == 0) {
                             crawlerStatus = false;
                         } else {
                             crawlerStatus = true;
                         }
-
                         if (crawlerStatus != elem.getCrawlerStatus()) {
                             elem.setCrawlerStatus(crawlerStatus);
                             elem.setUpdatedAt(null);

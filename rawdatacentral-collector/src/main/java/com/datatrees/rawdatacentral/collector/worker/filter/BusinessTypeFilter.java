@@ -32,11 +32,11 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
             return Boolean.FALSE;
         }
         SaasResult<TaskRO> taskRO = taskFacade.getById(taskId);
-        logger.info("taskRO is {}", taskRO.getData());
+        logger.debug("taskRO is {}", taskRO.getData());
         if (taskRO.getData() != null) {
             String appId = taskRO.getData().getAppId();
             String result = appCrawlerConfigService.getFromRedis(appId, businessType);
-            logger.info("result from redis is {},appId is {},project is {}", result, appId, businessType);
+            logger.info("appCrawlerConfig result from redis is {},appId is {},project is {}", result, appId, businessType);
             //result为null，该业务未配置，默认为抓取
             if (StringUtils.isBlank(result)) {
                 return Boolean.FALSE;
@@ -51,12 +51,11 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
     }
 
     public boolean isFilter(SearchTemplateConfig templateConfig, Long taskId) {
-        logger.info(" BusinessTypeFilter templateConfig is {},taskId is {}", templateConfig, taskId);
         if (templateConfig.getBusinessType() == null) {
-            logger.info("search templateId is {}", templateConfig.getId());
+            logger.info("search businessType is null and search templateId is {}", templateConfig.getId());
             return false;
         }
-        logger.info("bushinessType from searchTemplate is {}", templateConfig.getBusinessType());
+        logger.debug("bushinessType from searchTemplate is {}", templateConfig.getBusinessType());
         return isFilter(templateConfig.getBusinessType().getCode(), taskId);
     }
 
