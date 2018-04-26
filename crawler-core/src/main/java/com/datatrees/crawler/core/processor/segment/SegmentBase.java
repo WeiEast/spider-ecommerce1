@@ -58,8 +58,6 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
     public void process(Request request, Response response) throws Exception {
         context = RequestUtil.getProcessorContext(request);
         String businessType = segment.getBusinessType();
-        logger.info("businessTypeFilterhandler is {}", businessTypeFilterhandler);
-        logger.info("process segmeng is {},businessType is {}", segment, businessType);
         if (!businessTypeFilterhandler.isFilter(businessType, context.getTaskId())) {
             String original = RequestUtil.getContent(request);
             processExtractor(request, response);

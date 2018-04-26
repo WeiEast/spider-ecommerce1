@@ -62,5 +62,4 @@ public enum BusinessType {
         return "BusinessType{" + "code='" + code + '\'' + ", name='" + name + '\'' + ", websiteType='" + websiteType + '\'' + '}';
     }
 
-
 }
