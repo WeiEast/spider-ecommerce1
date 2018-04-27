@@ -47,6 +47,7 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
+import com.datatrees.rawdatacentral.core.model.message.impl.SubTaskCollectorMessage;
 import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.core.oss.OssUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
@@ -270,7 +271,9 @@ public class Collector {
                             resultTagSet = message.getResultTagSet();
                         }
                     }
-                    if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
+                    if (submitkeyResult == null && message instanceof SubTaskCollectorMessage) {
+                        logger.info("skip send mq message threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
+                    } else if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
                         logger.error("Thread interrupt bafore result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
                         task.setStatus(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode());
                         task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg());
