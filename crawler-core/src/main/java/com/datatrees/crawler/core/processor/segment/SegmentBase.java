@@ -18,6 +18,7 @@ import com.datatrees.crawler.core.domain.config.extractor.ResultType;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
+import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
@@ -54,11 +55,15 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
         Preconditions.checkNotNull(request.getInput(), "page content in segment should not be null!");
     }
 
+    private boolean support(String businessType, AbstractProcessorContext context){
+        return context instanceof ExtractorProcessorContext || !businessTypeFilterhandler.isFilter(businessType, context.getTaskId());
+    }
+
     @Override
     public void process(Request request, Response response) throws Exception {
         context = RequestUtil.getProcessorContext(request);
         String businessType = segment.getBusinessType();
-        if (!businessTypeFilterhandler.isFilter(businessType, context.getTaskId())) {
+        if (support(businessType, context)) {
             String original = RequestUtil.getContent(request);
             processExtractor(request, response);
             request.setInput(original);
@@ -118,7 +123,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
             if (CollectionUtils.isNotEmpty(fieldExtractors)) {
                 List<Processor> fieldExtractorProcessors = new ArrayList<Processor>(fieldExtractors.size());
                 for (FieldExtractor fieldExtractor : fieldExtractors) {
-                    if (!businessTypeFilterhandler.isFilter(fieldExtractor.getBusinessType(), context.getTaskId())) {
+                    if (support(fieldExtractor.getBusinessType(), context)) {
                         FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl();
                         fieldExtractorImpl.setFieldExtractor(fieldExtractor);
                         fieldExtractorProcessors.add(fieldExtractorImpl);
