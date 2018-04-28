@@ -30,6 +30,7 @@ import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.search.CrawlExecutor;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
+import com.datatrees.rawdatacentral.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.rawdatacentral.collector.worker.filter.TemplateFilter;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
@@ -67,7 +68,8 @@ public class CollectorWorker {
     private ResultDataHandler resultDataHandler;
     private SubTaskManager    subTaskManager;
     private Set<String> resultTagSet = new HashSet<>();
-    private RedisDao redisDao;
+    private RedisDao           redisDao;
+    private BusinessTypeFilter businessTypeFilter;
 
     /**
      * 登录
@@ -222,10 +224,15 @@ public class CollectorWorker {
         }
 
         for (SearchTemplateConfig templateConfig : templateList) {
+            LOGGER.info("Start search template: {}", templateConfig.getId());
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Start search template: {}", templateConfig.getId());
             }
 
+            if (businessTypeFilter.isFilter(templateConfig, taskMessage.getTask().getTaskId())) {
+                LOGGER.info("Skip search template: {},taskId: {}，websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+                continue;
+            }
             if (TemplateFilter.isFilter(templateConfig, templateId)) {
                 LOGGER.debug("Skip search template: {}, taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
                 continue;
@@ -390,6 +397,16 @@ public class CollectorWorker {
      */
     public CollectorWorker setRedisDao(RedisDao redisDao) {
         this.redisDao = redisDao;
+        return this;
+    }
+
+    /**
+     * businessTypeFilter to set
+     * @param businessTypeFilter
+     * @return
+     */
+    public CollectorWorker setBusinessTypeFilter(BusinessTypeFilter businessTypeFilter) {
+        this.businessTypeFilter = businessTypeFilter;
         return this;
     }
 

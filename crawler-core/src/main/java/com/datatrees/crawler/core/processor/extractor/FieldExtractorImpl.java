@@ -142,12 +142,16 @@ public class FieldExtractorImpl extends Processor {
     @SuppressWarnings("unchecked")
     @Override
     public void process(Request request, Response response) throws Exception {
+
+
+
         Object fieldResult = null;
         Map<String, FieldExtractorWarpper> resultMap = initMap(response);
         String content = "";
         try {
             // precheck
             Preconditions.checkNotNull(fieldExtractor, "field extractor should not be null");
+            log.info(">>>>>>>>>>>fieldExtractor is {}", fieldExtractor);
             if (BooleanUtils.isTrue(fieldExtractor.getStandBy()) && resultMap.get(fieldExtractor.getId()) != null && isValid(resultMap.get(fieldExtractor.getId()))) {
                 log.debug("no need use stand by fieldExtractor:" + fieldExtractor);
                 return;

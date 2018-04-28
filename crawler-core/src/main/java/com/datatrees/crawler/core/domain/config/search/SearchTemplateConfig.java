@@ -40,6 +40,8 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
     private Integer        waitIntervalMillis;
     private AbstractPlugin plugin;
     private Float          weight;
+    //爬取业务标识
+    private BusinessType   businessType;
     // child nodes
     private Request        request;
     private List<SearchSequenceUnit> searchSequence = new ArrayList<>();
@@ -149,9 +151,19 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
         this.resultTagList.add(resultTag);
     }
 
+    @Attr("business-type")
+    public BusinessType getBusinessType() {
+        return businessType;
+    }
+
+    @Node("@business-type")
+    public void setBusinessType(String businessType) {
+        this.businessType = BusinessType.getBusinessType(businessType);
+    }
+
     @Override
     public String toString() {
-        return "SearchTemplateConfig [id=" + getId() + " ,type=" + type + ", maxDepth=" + maxDepth + ", autoStart=" + autoStart + "]";
+        return "SearchTemplateConfig [id=" + getId() + " ,type=" + type + ", maxDepth=" + maxDepth + ", autoStart=" + autoStart + ", businessType=" + businessType + "]";
     }
 
 }
