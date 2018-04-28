@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.web.controller;
 
 import com.datatrees.rawdatacentral.api.RpcEducationService;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.rawdatacentral.service.EducationService;
+import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +28,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/login/init")
-    public Object loginInit(EducationParam param){
+    public Object loginInit(CommonPluginParam param){
         return educationService.loginInit(param);
     }
 
@@ -38,12 +38,12 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/login/submit")
-    public Object loginSubmit(EducationParam param){
+    public Object loginSubmit(CommonPluginParam param){
         return educationService.loginSubmit(param);
     }
 
     @RequestMapping("/register/init")
-    public Object registerInit(EducationParam param){
+    public Object registerInit(CommonPluginParam param){
         return educationService.registerInit(param);
     }
 
@@ -54,7 +54,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/register/refeshPicCode")
-    public Object registerRefeshPicCode(EducationParam param){
+    public Object registerRefeshPicCode(CommonPluginParam param){
         return educationService.registerRefeshPicCode(param);
     }
 
@@ -64,7 +64,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/register/ValidatePicCode")
-    public Object registerValidatePicCodeAndSendSmsCode(EducationParam param){
+    public Object registerValidatePicCodeAndSendSmsCode(CommonPluginParam param){
         return educationService.registerValidatePicCodeAndSendSmsCode(param);
     }
 

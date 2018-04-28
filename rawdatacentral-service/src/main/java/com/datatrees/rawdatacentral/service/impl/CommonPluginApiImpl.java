@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
+import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
@@ -273,6 +274,42 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         try {
             return ((QRPluginService) (classLoaderService.getCommonPluginService(param))).queryQRStatus(param);
         } catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> registerInit(CommonPluginParam param) {
+        try {
+            return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerInit(param);
+        }catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> registerRefreshPicCode(CommonPluginParam param) {
+        try {
+            return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerRefreshPicCode(param);
+        }catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
+        try {
+            return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerValidatePicCodeAndSendSmsCode(param);
+        }catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> registerSubmit(CommonPluginParam param) {
+        try {
+            return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerSubmit(param);
+        }catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
         }
     }
