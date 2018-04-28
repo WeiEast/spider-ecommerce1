@@ -14,5 +14,7 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
     <import resource="rawdatacentral-mq.xml"/>
 
     <context:component-scan base-package="com.datatrees.rawdatacentral"/>
+    <context:component-scan base-package="com.datatrees.crawler"/>
+
 
 </beans>

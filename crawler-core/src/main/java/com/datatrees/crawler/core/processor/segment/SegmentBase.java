@@ -16,6 +16,7 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.extractor.ResultType;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
@@ -34,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @param <V>
+ * @param <>
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 5:19:42 PM
@@ -44,20 +45,26 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
     protected final Logger       logger  = LoggerFactory.getLogger(getClass());
     protected       T            segment = null;
     private         List<String> splits  = null;
+    private AbstractProcessorContext context;
 
     @Override
     protected void preProcess(Request request, Response response) throws Exception {
         super.preProcess(request, response);
-
         Preconditions.checkNotNull(getSegment(), "segment config should not be null!");
         Preconditions.checkNotNull(request.getInput(), "page content in segment should not be null!");
     }
 
     @Override
     public void process(Request request, Response response) throws Exception {
-        String original = RequestUtil.getContent(request);
-        processExtractor(request, response);
-        request.setInput(original);
+        context = RequestUtil.getProcessorContext(request);
+        String businessType = segment.getBusinessType();
+        if (!businessTypeFilterhandler.isFilter(businessType, context.getTaskId())) {
+            String original = RequestUtil.getContent(request);
+            processExtractor(request, response);
+            request.setInput(original);
+        } else {
+            logger.info("segment skip businessType is {},taskId is {}", businessType, context.getTaskId());
+        }
     }
 
     @SuppressWarnings({"unused", "rawtypes", "unchecked"})
@@ -111,9 +118,14 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
             if (CollectionUtils.isNotEmpty(fieldExtractors)) {
                 List<Processor> fieldExtractorProcessors = new ArrayList<Processor>(fieldExtractors.size());
                 for (FieldExtractor fieldExtractor : fieldExtractors) {
-                    FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl();
-                    fieldExtractorImpl.setFieldExtractor(fieldExtractor);
-                    fieldExtractorProcessors.add(fieldExtractorImpl);
+                    if (!businessTypeFilterhandler.isFilter(fieldExtractor.getBusinessType(), context.getTaskId())) {
+                        FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl();
+                        fieldExtractorImpl.setFieldExtractor(fieldExtractor);
+                        fieldExtractorProcessors.add(fieldExtractorImpl);
+                    } else {
+                        logger.info("FieldExtractor skip businessType is {},taskId is {}", fieldExtractor.getBusinessType(), context.getTaskId());
+                    }
+
                 }
 
                 ProcessorRunner fieldProcessRunner = new ProcessorRunner(fieldExtractorProcessors);

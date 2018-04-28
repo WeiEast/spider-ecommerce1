@@ -10,7 +10,7 @@ import com.datatrees.common.pipeline.Request;
  */
 public class Context extends Request {
 
-    ContextBase context;
+    private ContextBase context;
 
     public Context(ContextBase context) {
         super();

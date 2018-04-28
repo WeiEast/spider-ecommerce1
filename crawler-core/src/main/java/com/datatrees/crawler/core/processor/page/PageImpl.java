@@ -20,6 +20,7 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.URLUtil;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.filter.FilterType;
 import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
 import com.datatrees.crawler.core.domain.config.page.Regexp;
@@ -66,6 +67,7 @@ public class PageImpl extends AbstractPage {
 
     @Override
     public void process(Request request, Response response) throws Exception {
+
         Preconditions.checkNotNull(page, "Page should not be null!");
 
         LinkNode current = RequestUtil.getCurrentUrl(request);
@@ -223,7 +225,7 @@ public class PageImpl extends AbstractPage {
 
     private void setResponseStatus(Response response, int status, String pattern, String content) {
         if (StringUtils.isNotEmpty(pattern)) {
-            if (RegExp.find(content,pattern)) {
+            if (RegExp.find(content, pattern)) {
                 log.info("set status " + StatusUtil.format(status));
                 ResponseUtil.setResponseStatus(response, status);
             }
@@ -402,8 +404,26 @@ public class PageImpl extends AbstractPage {
 
         List<Map<String, Object>> segmentResult = new ArrayList<>();
         log.info("URL: " + baseURL + " segment size.." + segments.size());
+        //SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
         for (AbstractSegment abstractSegment : segments) {
             try {
+
+                //List<FieldExtractor> fieldExtractors = abstractSegment.getFieldExtractorList();
+                //log.info("fieldExtractors is {}", fieldExtractors);
+                //List<FieldExtractor> list = new ArrayList<>(fieldExtractors);
+                //log.info("list is {}", list);
+                //
+                //if (CollectionUtils.isNotEmpty(list)) {
+                //    Iterator<FieldExtractor> iterator = list.iterator();
+                //    while (iterator.hasNext()) {
+                //        FieldExtractor elem = iterator.next();
+                //        logger.info("elem businessType is {}", elem.getBusinessType());
+                //        if (businessTypeFilterhandler.isFilter(elem.getBusinessType(), context.getTaskId())) {
+                //            iterator.remove();
+                //            logger.info("elem businessType skip crawler is {}", elem.getBusinessType());
+                //        }
+                //    }
+                //}
 
                 Response segResponse = Response.build();
                 SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);

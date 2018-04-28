@@ -7,5 +7,5 @@ package com.datatrees.rawdatacentral.collector.chain;
  */
 public interface Filter {
 
-    public void doFilter(Context context, FilterChain filterChain);
+    void doFilter(Context context, FilterChain filterChain);
 }

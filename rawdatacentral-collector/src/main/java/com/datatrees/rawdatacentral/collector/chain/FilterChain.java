@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.collector.chain;
 
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Collections;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,21 +11,29 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2015年7月29日 上午2:35:30
  */
-public class FilterChain implements Filter {
+public class FilterChain {
 
     private static final Logger logger = LoggerFactory.getLogger(FilterChain.class);
-    LinkedBlockingDeque<Filter> filterDeque = new LinkedBlockingDeque<Filter>();
+    private List<Filter> filters;
+    private int pos = 0;
 
-    public void addFilter(Filter filter) {
-        filterDeque.add(filter);
+    public FilterChain(List<Filter> filters) {
+        if (filters != null) {
+            this.filters = filters;
+        } else {
+            this.filters = Collections.emptyList();
+        }
     }
 
-    public void doFilter(Context context, FilterChain filterChain) {
-        Filter filter = filterDeque.poll();
-        if (null != filter) {
-            filter.doFilter(context, filterChain);
-        } else {
-            logger.debug("All FilterChain execute finished ...");
+    public void doFilter(Context context) {
+        if (this.pos < this.filters.size()) {
+            Filter nextFilter = this.filters.get(pos++);
+
+            if (logger.isTraceEnabled()) {
+                logger.trace("Call filter: {}", nextFilter.getClass().getName());
+            }
+
+            nextFilter.doFilter(context, this);
         }
     }
 }

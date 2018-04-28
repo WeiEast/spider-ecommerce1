@@ -10,6 +10,7 @@ package com.datatrees.crawler.core.processor.page;
 
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.processor.common.Processor;
+import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandler;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

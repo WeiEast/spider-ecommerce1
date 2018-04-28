@@ -49,7 +49,7 @@
       <property name="enableSubPackages" value="true"/>
     </javaClientGenerator>
 
-    <table tableName="website_info" domainObjectName="WebsiteInfo">
+    <table tableName="app_crawler_config" domainObjectName="AppCrawlerConfig">
       <property name="useActualColumnNames" value="false"/>
       <generatedKey column="Id" sqlStatement="MySql" identity="true"/>
     </table>

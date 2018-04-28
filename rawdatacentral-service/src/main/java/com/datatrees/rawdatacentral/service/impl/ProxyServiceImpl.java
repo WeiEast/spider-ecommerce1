@@ -64,17 +64,21 @@ public class ProxyServiceImpl implements ProxyService {
     public void release(Long taskId) {
         try {
             proxyProvider.release(taskId);
-            logger.info("Succeed to release proxy in remote proxy central. taskId: {}", taskId);
+            redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
+            logger.info("Succeed to release proxy for task: {}", taskId);
         } catch (Exception e) {
-            logger.error("Error asking to release proxy in remote proxy central. taskId: " + taskId, e);
+            logger.error("Error releasing proxy for task: {}", taskId, e);
         }
     }
 
     @Override
     public void clear(Long taskId) {
-        release(taskId);
-        redisService.deleteKey(RedisKeyPrefixEnum.TASK_PROXY.getRedisKey(taskId));
-        RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
+        try {
+            release(taskId);
+            RedisUtils.del(RedisKeyPrefixEnum.TASK_PROXY_ENABLE.getRedisKey(taskId));
+        } catch (Exception e) {
+            logger.error("Error clear proxy info for task: {}", taskId, e);
+        }
     }
 
     private Proxy getProxyFromDubbo(Long taskId, String websiteName) {

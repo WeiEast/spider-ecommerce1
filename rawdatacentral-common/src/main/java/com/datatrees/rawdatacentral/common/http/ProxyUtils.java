@@ -28,8 +28,8 @@ public class ProxyUtils {
         return proxyService.getProxy(taskId, websiteName);
     }
 
-    public static void setProxyEnable(Long taskId, boolean enable) {
-        redisService.saveString(RedisKeyPrefixEnum.TASK_PROXY_ENABLE, taskId, Boolean.toString(enable));
+    public static boolean setProxyEnable(Long taskId, boolean enable) {
+        return redisService.saveString(RedisKeyPrefixEnum.TASK_PROXY_ENABLE, taskId, Boolean.toString(enable));
     }
 
     public static boolean getProxyEnable(long taskId) {
@@ -59,4 +59,25 @@ public class ProxyUtils {
         }
     }
 
+    public static void releaseProxy(Long taskId) {
+        proxyService.release(taskId);
+    }
+
+    public static void clearProxy(Long taskId) {
+        proxyService.clear(taskId);
+    }
+
+    public static void setProxyLocation(Long taskId, String province, String city) {
+        IpLocale locale = new IpLocale();
+        locale.setProvinceName(province);
+        locale.setCityName(city);
+        String key = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(taskId);
+        RedisUtils.setnx(key, JSON.toJSONString(locale));
+    }
+
+    public static void setProxyEnabled(Long taskId, String province, String city) {
+        if (setProxyEnable(taskId, true)) {
+            setProxyLocation(taskId, province, city);
+        }
+    }
 }

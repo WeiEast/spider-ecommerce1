@@ -23,10 +23,10 @@ public class SleepModeFilter implements Filter {
 
     @Override
     public void doFilter(Context context, FilterChain filterChain) {
-        SearchProcessor searchProcessor = ContextUtil.getSearchProcessor(context);
         CrawlResponse response = ContextUtil.getCrawlResponse(context);
         int codeStatus = ResponseUtil.getResponseStatus(response);
         if (Status.FILTERED != codeStatus) {
+            SearchProcessor searchProcessor = ContextUtil.getSearchProcessor(context);
             long waitIntervalMillis = searchProcessor.getWaitIntervalMillis();
             if (0 != waitIntervalMillis) {
                 try {
@@ -35,8 +35,7 @@ public class SleepModeFilter implements Filter {
                     log.error("doFilter error context={}", GsonUtils.toJson(context), e);
                 }
             }
-            log.debug("Execute SleepModeFilter end...");
         }
-        filterChain.doFilter(context, filterChain);
+        filterChain.doFilter(context);
     }
 }
