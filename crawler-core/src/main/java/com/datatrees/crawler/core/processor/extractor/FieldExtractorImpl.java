@@ -151,7 +151,6 @@ public class FieldExtractorImpl extends Processor {
         try {
             // precheck
             Preconditions.checkNotNull(fieldExtractor, "field extractor should not be null");
-            log.info(">>>>>>>>>>>fieldExtractor is {}", fieldExtractor);
             if (BooleanUtils.isTrue(fieldExtractor.getStandBy()) && resultMap.get(fieldExtractor.getId()) != null && isValid(resultMap.get(fieldExtractor.getId()))) {
                 log.debug("no need use stand by fieldExtractor:" + fieldExtractor);
                 return;
