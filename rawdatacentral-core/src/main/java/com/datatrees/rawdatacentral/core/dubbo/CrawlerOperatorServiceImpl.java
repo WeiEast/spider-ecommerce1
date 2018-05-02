@@ -449,14 +449,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     }
 
     @Override
-    public HttpResult<Map<String, List<OperatorGroup>>> queryGroups() {
-        Map<String, List<OperatorGroup>> map = new HashMap<>();
-        List<OperatorGroup> map10086 = new ArrayList<>();
-        List<OperatorGroup> map10000 = new ArrayList<>();
-        List<OperatorGroup> map10010 = new ArrayList<>();
-        map.put("移动", map10086);
-        map.put("联通", map10010);
-        map.put("电信", map10000);
+    public HttpResult<List<Map<String, List<OperatorGroup>>>> queryGroups() {
+        List<Map<String, List<OperatorGroup>>> list = new ArrayList<>();
+        List<OperatorGroup> group10086 = new ArrayList<>();
+        List<OperatorGroup> group10000 = new ArrayList<>();
+        List<OperatorGroup> group10010 = new ArrayList<>();
         for (GroupEnum group : GroupEnum.values()) {
             if (group.getWebsiteType() != WebsiteType.OPERATOR | group == GroupEnum.CHINA_10000 || group == GroupEnum.CHINA_10086) {
                 continue;
@@ -466,19 +463,28 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             config.setGroupName(group.getGroupName());
 
             if (group.getGroupName().contains("移动")) {
-                map10086.add(config);
+                group10086.add(config);
                 continue;
             }
             if (group.getGroupName().contains("联通")) {
-                map10010.add(config);
+                group10010.add(config);
                 continue;
             }
             if (group.getGroupName().contains("电信")) {
-                map10000.add(config);
+                group10000.add(config);
                 continue;
             }
         }
-        return new HttpResult<Map<String, List<OperatorGroup>>>().success(map);
+        Map<String, List<OperatorGroup>> map10086 = new HashMap<>();
+        map10086.put("移动", group10086);
+
+        Map<String, List<OperatorGroup>> map10010 = new HashMap<>();
+        map10086.put("联通", group10010);
+
+        Map<String, List<OperatorGroup>> map10000 = new HashMap<>();
+        map10086.put("电信", group10000);
+
+        return new HttpResult<List<Map<String, List<OperatorGroup>>>>().success(list);
     }
 
     /**

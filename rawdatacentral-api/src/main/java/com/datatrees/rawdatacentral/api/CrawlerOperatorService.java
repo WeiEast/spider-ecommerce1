@@ -92,6 +92,6 @@ public interface CrawlerOperatorService {
      * 查询运营商分组信息
      * @return
      */
-    HttpResult<Map<String, List<OperatorGroup>>> queryGroups();
+    HttpResult<List<Map<String, List<OperatorGroup>>>> queryGroups();
 
 }
