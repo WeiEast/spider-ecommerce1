@@ -480,11 +480,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         list.add(map10086);
 
         Map<String, List<OperatorGroup>> map10010 = new HashMap<>();
-        map10086.put("联通", group10010);
+        map10010.put("联通", group10010);
         list.add(map10010);
 
         Map<String, List<OperatorGroup>> map10000 = new HashMap<>();
-        map10086.put("电信", group10000);
+        map10000.put("电信", group10000);
         list.add(map10000);
 
 
