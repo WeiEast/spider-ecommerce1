@@ -1,13 +1,19 @@
 package com.datatrees.rawdatacentral.plugin.operator.guang_dong_10086_web;
 
+import javax.script.Invocable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.zip.ZipInputStream;
 
 import com.alibaba.fastjson.JSONObject;
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.crawler.core.processor.format.unit.TimeUnit;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
@@ -16,6 +22,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -31,17 +38,19 @@ import org.slf4j.LoggerFactory;
  */
 public class GuangDong10086ForWeb implements OperatorPluginService {
 
-    private static final Logger       logger       = LoggerFactory.getLogger(GuangDong10086ForWeb.class);
-    private static       RedisService redisService = BeanFactoryUtils.getBean(RedisService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GuangDong10086ForWeb.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
         try {
             //登陆页没有获取任何cookie,不用登陆
+            String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/weblogin.jsps?backURL=http://gd.10086.cn/commodity/index.shtml";
+            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化失败,param={}", param, e);
+            logger.error("登录-->初始化失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
@@ -78,8 +87,12 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        logger.warn("defineProcess fail,params={}", param);
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case "CALL_DETAILS":
+                return processForDetails(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
@@ -89,7 +102,8 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/getSmsCode.jsps";
             String templateData = "mobile={}";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_001").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_001").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             JSONObject json = response.getPageContentForJSON();
             String returnCode = json.getString("returnCode");
             if (StringUtils.equals("1000", returnCode)) {
@@ -114,7 +128,8 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/webForm.jsps";
             String templateData = "mobile={}&smsPwd={}&loginType=1&cookieMobile=on&backURL=http://gd.10086.cn/commodity/index.shtml";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_002").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_002").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"backUrl":"http:\/\/gd.10086.cn\/commodity\/index.shtml","failMsg":"成功[0]","returnCode":"1000"}
@@ -143,7 +158,6 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                  * &token=5011430823161811R0ZUmFqgP88ZmWBI&appid=501143&backURL=http%3A%2F%2Fgd.10086.cn%2Fmy%2FmyService
                  * %2FmyBasicInfo.shtml
                  */
-                templateUrl = "https://gd.ac.10086.cn/ucs/ucs/secondAuth.jsps";
                 String pageContent = response.getPageContent();
 
                 String saType = PatternUtils.group(pageContent, "saType\":\\s*\"([^\"]*)\"", 1);
@@ -154,10 +168,21 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                 String appid = PatternUtils.group(pageContent, "appid\":\\s*\"([^\"]*)\"", 1);
                 String backURL = PatternUtils.group(pageContent, "backURL\":\\s*\"([^\"]*)\"", 1);
 
-                templateData = "mobile={}&serPwd={}&saType={}&channel={}&st={}&sign={}&token={}&appid={}&backURL=http://gd.10086.cn/my/myService/myBasicInfo.shtml";
-                data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), saType, channel, st, sign, token, appid, backURL);
-                response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_004").setFullUrl(templateUrl).setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
+                templateUrl = "https://gd.ac.10086.cn/ucs/ucs/decryptToken/generate.jsps";
+                response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+                json = response.getPageContentForJSON();
 
+                String decryptToken = json.getString("decryptToken");
+                String publicKey = json.getString("publicKey");
+                Invocable invocable = ScriptEngineUtil.createInvocable("guang_dong_10086_web", "des.js", "GBK");
+                String encryptPassword = invocable.invokeFunction("encryptData", param.getPassword(), decryptToken, publicKey).toString();
+
+                templateUrl = "https://gd.ac.10086.cn/ucs/ucs/secondAuth.jsps";
+                templateData
+                        = "mobile={}&encryptItems={}&saType={}&channel={}&st={}&sign={}&token={}&appid={}&backURL=http://gd.10086.cn/my/myService/myBasicInfo.shtml";
+                data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, saType, channel, st, sign, token, appid, backURL);
+                response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_004").setFullUrl(templateUrl)
+                        .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
                 json = response.getPageContentForJSON();
                 returnCode = json.getString("returnCode");
                 if (StringUtils.equals("1000", returnCode)) {
@@ -184,5 +209,72 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
         }
+    }
+
+    private HttpResult<Object> processForDetails(OperatorParam param) {
+        HttpResult<Object> result = new HttpResult<>();
+
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        String[] times = paramMap.get("page_content").split(":");
+
+        Response response = null;
+        try {
+            /**
+             * 获取通话记录
+             */
+            String templateUrl = "http://gd.10086.cn/commodity/servicio/nostandardserv/realtimeListSearch/downLoad.jsps";
+            String templateData = "downloadBeginTime={}000000&downloadEneTime={}235959&downloadType=1&uniqueTagDown=";
+            String data = TemplateUtils.format(templateData, times[1], times[2]);
+            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            String pageContent = new String(response.getResponse(), "GBK");
+            String checkPageContent = new String(response.getResponse(), "UTF-8");
+            if (StringUtils.contains(checkPageContent, "发生错误")) {
+                TimeUnit.SECOND.toMillis(1);
+                response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+                pageContent = new String(response.getResponse(), "GBK");
+                checkPageContent = new String(response.getResponse(), "UTF-8");
+                logger.info("发生错误,重试一下!pageContent={},checkPageContent={},taskId={}", pageContent, checkPageContent, param.getTaskId());
+            }
+            if (StringUtils.contains(checkPageContent, "发生错误")) {
+                logger.info("依然发生错误，继续查询下一个月,taskId={}", param.getTaskId());
+                return result.success(pageContent);
+            }
+            if (!StringUtils.contains(pageContent, "清单数据")) {
+                logger.info("当前附件为压缩文件，需先解压缩，taskId={}", param.getTaskId());
+                pageContent = new String(unZip(response.getResponse()), "GBK");
+            }
+            if (!StringUtils.contains(pageContent, "清单数据")) {
+                logger.error("详单依然乱码,taskid={},通话详单byte数组={}", param.getTaskId(), response.getResponse());
+            }
+            return result.success(pageContent);
+        } catch (Exception e) {
+            logger.error("通话记录页访问失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
+        }
+    }
+
+    public static byte[] unZip(byte[] data) {
+        byte[] b = null;
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(data);
+            ZipInputStream zip = new ZipInputStream(bis);
+            while (zip.getNextEntry() != null) {
+                byte[] buf = new byte[1024];
+                int num = -1;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                while ((num = zip.read(buf, 0, buf.length)) != -1) {
+                    baos.write(buf, 0, num);
+                }
+                b = baos.toByteArray();
+                baos.flush();
+                baos.close();
+            }
+            zip.close();
+            bis.close();
+        } catch (Exception ex) {
+            logger.info("解压缩出错", ex);
+        }
+        return b;
     }
 }

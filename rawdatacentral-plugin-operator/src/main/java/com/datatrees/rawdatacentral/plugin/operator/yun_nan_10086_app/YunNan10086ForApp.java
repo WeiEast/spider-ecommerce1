@@ -167,7 +167,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
                 TaskUtils.addTaskShare(param.getTaskId(), "baseInfo", response.getPageContent());
                 return result.success();
             } else {
-                String errorMessage = json.getString("errorMessage");
+                String errorMessage = (String) JSONPath.eval(json, "$.pwdLogin_node.errorMessage");
                 if (StringUtils.contains(errorMessage, "用户服务密码错误")) {
                     logger.warn("登录失败-->账户名与密码不匹配,param={}", param);
                     return result.failure(ErrorCode.VALIDATE_PASSWORD_FAIL);
@@ -176,7 +176,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
                     return result.failure(ErrorCode.VALIDATE_PHONE_FAIL);
                 } else {
                     logger.error("登陆失败,param={},pageContent={}", param, response);
-                    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+                    return result.failure(errorMessage);
                 }
             }
         } catch (Exception e) {

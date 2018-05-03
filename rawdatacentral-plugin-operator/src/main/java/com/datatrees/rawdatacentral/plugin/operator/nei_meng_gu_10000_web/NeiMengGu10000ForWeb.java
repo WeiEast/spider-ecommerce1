@@ -170,6 +170,17 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                 areaCode = PatternUtils.group(pageContent, "areaCode\":\"(\\d+)\"", 1);
                 TaskUtils.addTaskShare(param.getTaskId(), "areaCode", areaCode);
+
+                templateUrl = "http://nm.189.cn/selfservice/cust/queryAllProductInfo";
+                response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_006").setFullUrl(templateUrl)
+                        .setRequestBody("{\"qryAccNbrType\":\"\"}", ContentType.APPLICATION_JSON).invoke();
+                pageContent = response.getPageContent();
+                String prodSpecId = PatternUtils.group(pageContent, "\"prodSpecId\":\"(\\d+)\"", 1);
+                String productType = PatternUtils.group(pageContent, "\"productType\":\"(\\d+)\"", 1);
+
+                TaskUtils.addTaskShare(param.getTaskId(), "prodSpecId", prodSpecId + "");
+                TaskUtils.addTaskShare(param.getTaskId(), "productType", productType + "");
+
                 logger.warn("登录成功,params={}", param);
                 return result.success();
             } else {

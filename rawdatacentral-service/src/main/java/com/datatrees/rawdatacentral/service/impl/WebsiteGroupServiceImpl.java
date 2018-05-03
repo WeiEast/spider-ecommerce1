@@ -1,16 +1,17 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.rawdatacentral.common.utils.WeightUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteGroupDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -23,21 +24,35 @@ import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WebsiteGroupServiceImpl implements WebsiteGroupService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebsiteGroupServiceImpl.class);
+    private static final Logger                 logger = LoggerFactory.getLogger(WebsiteGroupServiceImpl.class);
+
+    private static       WeightUtils            weightUtils;
+
     @Resource
-    private WebsiteGroupDAO        websiteGroupDAO;
+    private              WebsiteGroupDAO        websiteGroupDAO;
+
     @Resource
-    private WebsiteOperatorService websiteOperatorService;
+    private              WebsiteOperatorService websiteOperatorService;
+
     @Resource
-    private RedisService           redisService;
+    private              RedisService           redisService;
+
     @Resource
-    private WebsiteConfigService   websiteConfigService;
-    private Random random = new Random();
+    private              WebsiteConfigService   websiteConfigService;
+
+    @Value("${core.redis.hostName}")
+    private              String                 redisIp;
+
+    @Value("${core.redis.password}")
+    private              String                 redisPassword;
+
+    private              Random                 random = new Random();
 
     @Override
     public List<WebsiteGroup> queryByGroupCode(String groupCode) {
@@ -95,14 +110,13 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         if (list.size() == 1) {
             maxWeight = list.get(0);
         } else {
-            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a
-                    .getWeight().compareTo(b.getWeight())).collect(Collectors.toList());
+            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a.getWeight().compareTo(b.getWeight()))
+                    .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(enables)) {
                 maxWeight = enables.get(enables.size() - 1);
             } else {
                 maxWeight = list.get(random.nextInt(list.size()));
-                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName
-                        ());
+                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName());
             }
         }
         RedisUtils.set(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(groupCode), maxWeight.getWebsiteName());
@@ -129,5 +143,38 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     @Override
     public List<String> getWebsiteNameList(String enable, String operatorType, String groupCode) {
         return websiteGroupDAO.queryWebsiteNameList(enable, operatorType, groupCode);
+    }
+
+    @Override
+    public String selectOperator(String groupCode) {
+        initRedis();
+        return weightUtils.poll(groupCode);
+    }
+
+    public void initRedis() {
+        if (null == weightUtils) {
+            weightUtils = new WeightUtils(redisIp, redisPassword, new WeightUtils.WeightQueueConfig() {
+                @Override
+                public Map<String, Integer> getWeights(String groupCode) {
+                    List<WebsiteGroup> groups = queryByGroupCode(groupCode);
+                    Map<String, Integer> map = new HashMap<>();
+                    groups.stream().filter(s -> s.getEnable()).forEach(e -> {
+                        map.put(e.getWebsiteName(), e.getWeight());
+                    });
+                    if (map.isEmpty()) {
+                        groups.stream().forEach(e -> {
+                            map.put(e.getWebsiteName(), e.getWeight());
+                        });
+                    }
+                    return map;
+                }
+
+                @Override
+                public int getQueueSize() {
+                    return 50;
+                }
+            });
+        }
+
     }
 }

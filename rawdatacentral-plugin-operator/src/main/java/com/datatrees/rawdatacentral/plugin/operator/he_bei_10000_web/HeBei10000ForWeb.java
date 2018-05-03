@@ -2,7 +2,6 @@ package com.datatrees.rawdatacentral.plugin.operator.he_bei_10000_web;
 
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
@@ -71,7 +70,12 @@ public class HeBei10000ForWeb implements OperatorPluginService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case "CALL_DETAILS":
+                return processForDetails(param, "callDetails");
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
@@ -148,8 +152,7 @@ public class HeBei10000ForWeb implements OperatorPluginService {
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "随机码不正确,请重新输入")) {
-                //TaskUtils.addTaskShare(param.getTaskId(), "callDetails", pageContent);
-                PluginFactory.getProcessorContext().getContext().put("callDetails", pageContent);
+                TaskUtils.addTaskShare(param.getTaskId(), "callDetails", pageContent);
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
@@ -159,6 +162,17 @@ public class HeBei10000ForWeb implements OperatorPluginService {
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
+        }
+    }
+
+    private HttpResult<Object> processForDetails(OperatorParam param, String key) {
+        HttpResult<Object> result = new HttpResult<>();
+        try {
+            String pageContent = TaskUtils.getTaskShare(param.getTaskId(), key);
+            return result.success(pageContent);
+        } catch (Exception e) {
+            logger.error("通话记录页获取失败,param={}", param, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
         }
     }
 }

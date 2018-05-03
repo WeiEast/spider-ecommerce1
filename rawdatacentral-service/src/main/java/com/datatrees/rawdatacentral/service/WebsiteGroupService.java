@@ -73,4 +73,11 @@ public interface WebsiteGroupService {
      */
     List<String> getWebsiteNameList(String enable, String operatorType, String groupCode);
 
+    /**
+     * 选择运营商
+     * @param groupCode
+     * @return
+     */
+    String selectOperator(String groupCode);
+
 }
