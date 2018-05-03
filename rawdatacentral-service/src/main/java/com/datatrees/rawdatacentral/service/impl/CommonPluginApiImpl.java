@@ -16,6 +16,7 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.rawdatacentral.domain.education.EducationParam;
 import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
@@ -279,7 +280,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     }
 
     @Override
-    public HttpResult<Object> registerInit(CommonPluginParam param) {
+    public HttpResult<Object> registerInit(EducationParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerInit(param);
         }catch (Throwable e) {
@@ -288,7 +289,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     }
 
     @Override
-    public HttpResult<Object> registerRefreshPicCode(CommonPluginParam param) {
+    public HttpResult<Object> registerRefreshPicCode(EducationParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerRefreshPicCode(param);
         }catch (Throwable e) {
@@ -297,7 +298,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     }
 
     @Override
-    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
+    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerValidatePicCodeAndSendSmsCode(param);
         }catch (Throwable e) {
@@ -306,7 +307,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     }
 
     @Override
-    public HttpResult<Object> registerSubmit(CommonPluginParam param) {
+    public HttpResult<Object> registerSubmit(EducationParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerSubmit(param);
         }catch (Throwable e) {

@@ -201,8 +201,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
     }
 
     @Override
-    public HttpResult<Object> registerInit(CommonPluginParam commonPluginParam) {
-        EducationParam param = (EducationParam) commonPluginParam;
+    public HttpResult<Object> registerInit(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -224,8 +223,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
     }
 
     @Override
-    public HttpResult<Object> registerRefreshPicCode(CommonPluginParam commonPluginParam) {
-        EducationParam param = (EducationParam) commonPluginParam;
+    public HttpResult<Object> registerRefreshPicCode(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -257,8 +255,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
     }
 
     @Override
-    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam commonPluginParam) {
-        EducationParam param = (EducationParam) commonPluginParam;
+    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }

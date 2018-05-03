@@ -18,21 +18,21 @@ public interface XueXinPluginService {
      * @param param
      * @return
      */
-    HttpResult<Object> registerInit(CommonPluginParam param);
+    HttpResult<Object> registerInit(EducationParam param);
 
     /**
      * 注册刷新验证码
      * @param param
      * @return
      */
-    HttpResult<Object>  registerRefreshPicCode(CommonPluginParam param);
+    HttpResult<Object>  registerRefreshPicCode(EducationParam param);
 
     /**
      * 注册刷新验证码和校验码
      * @param param
      * @return
      */
-    HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param);
+    HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param);
 
 
     /**
