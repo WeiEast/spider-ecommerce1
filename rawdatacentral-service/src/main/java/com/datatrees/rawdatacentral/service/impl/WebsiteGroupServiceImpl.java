@@ -67,6 +67,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         WebsiteGroupExample example = new WebsiteGroupExample();
         example.createCriteria().andGroupCodeEqualTo(groupCode);
         websiteGroupDAO.deleteByExample(example);
+        clearOperatorQueueByGroupCode(groupCode);
         updateCacheByGroupCode(groupCode);
     }
 
@@ -96,6 +97,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
             websiteGroupDAO.insertSelective(operatorGroup);
         }
         updateCacheByGroupCode(groupCode);
+        clearOperatorQueueByGroupCode(groupCode);
         return queryByGroupCode(groupCode);
     }
 
@@ -149,6 +151,31 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     public String selectOperator(String groupCode) {
         initRedis();
         return weightUtils.poll(groupCode);
+    }
+
+    @Override
+    public void clearOperatorQueueByGroupCode(String groupCode) {
+        weightUtils.clear(groupCode);
+    }
+
+    @Override
+    public void clearOperatorQueueByWebsite(String websiteName) {
+        List<WebsiteGroup> websites = queryAll();
+        websites.stream().filter(f -> f.getWebsiteName().equals(websiteName)).forEach(e -> {
+            weightUtils.clear(e.getGroupCode());
+        });
+    }
+
+    @Override
+    public List<WebsiteGroup> queryAll() {
+        WebsiteGroupExample example = new WebsiteGroupExample();
+        return websiteGroupDAO.selectByExample(example);
+    }
+
+    @Override
+    public Map<String, String> queryAllGroupCode() {
+        List<WebsiteGroup> websites = queryAll();
+        return websites.stream().collect(Collectors.toMap(WebsiteGroup::getGroupCode, WebsiteGroup::getGroupName));
     }
 
     public void initRedis() {

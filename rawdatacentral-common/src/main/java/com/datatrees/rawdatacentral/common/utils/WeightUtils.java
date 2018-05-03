@@ -89,6 +89,13 @@ public class WeightUtils {
 
     }
 
+    public void clear(String group) {
+        String key = QUEUE_PRE + group;
+        RQueue<Object> rQueue = client.getQueue(key);
+        rQueue.clear();
+        logger.warn("clear weight queue : {}", group);
+    }
+
     /**
      * 队列配置
      * @author zhouxinghai
