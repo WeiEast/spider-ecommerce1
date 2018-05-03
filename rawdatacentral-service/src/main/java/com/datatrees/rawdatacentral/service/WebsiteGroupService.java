@@ -80,4 +80,28 @@ public interface WebsiteGroupService {
      */
     String selectOperator(String groupCode);
 
+    /**
+     * 清除运营商权重队列
+     * @param groupCode
+     */
+    void clearOperatorQueueByGroupCode(String groupCode);
+
+    /**
+     * 清除运营商权重队列
+     * @param websiteName
+     */
+    void clearOperatorQueueByWebsite(String websiteName);
+
+    /**
+     * 查询所有
+     * @return
+     */
+    List<WebsiteGroup> queryAll();
+
+    /**
+     * 查询所有分组
+     * @return
+     */
+    Map<String, String> queryAllGroupCode();
+
 }
