@@ -52,11 +52,11 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Object> result = commonPluginApi.init(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->失败");
-            logger.error("学信网登录-->初始化-->失败 param={}", JSON.toJSONString(param));
+            logger.error("学信网登录-->初始化-->失败,result={}", result);
             return result;
         }
         monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->成功");
-        logger.info("学信网登录-->初始化-->成功 param={}", JSON.toJSONString(param));
+        logger.info("学信网登录-->初始化-->成功,result={}", result);
         return result;
     }
 
@@ -71,7 +71,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HashMap<String, Object> loginStatus = (HashMap<String, Object>) result.getData();
         if (!result.getStatus() || !(result.getData() != null && "login_success".equals((loginStatus.get("directive"))))) {
             monitorService.sendTaskLog(taskId, websiteName, "学信网登陆-->校验-->失败");
-            logger.error("学信网登陆-->校验-->失败 param={}", JSON.toJSONString(param));
+            logger.error("学信网登陆-->校验-->失败,loginStatus={}", loginStatus);
             return result;
         }
 
@@ -81,7 +81,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         String cookies = TaskUtils.getCookieString(taskId);
         map.put(AttributeKey.COOKIE, cookies);
         messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map, DEFAULT_CHARSET_NAME);
-        logger.info("学信网，启动爬虫成功,param={}", JSON.toJSONString(param));
+        logger.info("学信网，启动爬虫成功,loginStatus={}", loginStatus);
         return result;
     }
 
@@ -93,11 +93,11 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Object> result = commonPluginApi.registerInit(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->初始化-->失败");
-            logger.error("学信网注册-->初始化-->失败,param={}", JSON.toJSONString(param));
+            logger.error("学信网注册-->初始化-->失败,result={}", result);
             return result;
         }
         monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->初始化-->成功");
-        logger.info("学信网注册-->初始化-->成功,param={}", JSON.toJSONString(param));
+        logger.info("学信网注册-->初始化-->成功,result={}", result);
         return result;
     }
 
@@ -110,11 +110,11 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         HttpResult<Object> result = commonPluginApi.registerRefreshPicCode(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->刷新图片验证码-->失败");
-            logger.error("学信网注册-->刷新图片验证码-->失败,param={}", JSON.toJSONString(param));
+            logger.error("学信网注册-->刷新图片验证码-->失败,param={}", param);
             return result;
         }
         monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->刷新图片验证码-->成功");
-        logger.info("学信网注册-->刷新图片验证码-->成功,param={}", JSON.toJSONString(param));
+        logger.info("学信网注册-->刷新图片验证码-->成功,param={}", param);
         return result;
     }
 
