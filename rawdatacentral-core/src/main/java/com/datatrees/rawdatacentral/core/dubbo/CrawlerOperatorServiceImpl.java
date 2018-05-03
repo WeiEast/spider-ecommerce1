@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
+import sun.security.x509.CertificatePolicyMap;
 
 /**
  * Created by zhouxinghai on 2017/7/17.
@@ -432,14 +433,17 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
 
             String websiteName = websiteGroupService.selectOperator(param.getGroupCode());
             logger.info("select website : {} for taskId : {}", websiteName, param.getTaskId());
-            OperatorLoginConfig config = websiteOperatorService.getLoginConfig(websiteName);
-            config.setTaskId(param.getTaskId());
-            config.setMobile(param.getMobile());
 
             param.setWebsiteName(websiteName);
             param.setFormType(FormType.LOGIN);
             param.setGroupName(GroupEnum.getGroupName(param.getGroupCode()));
             init(param);
+
+            OperatorLoginConfig config = websiteOperatorService.getLoginConfig(websiteName);
+            config.setTaskId(param.getTaskId());
+            config.setMobile(param.getMobile());
+            config.setGroupCode(param.getGroupCode());
+            config.setGroupName(param.getGroupName());
 
             return result.success(config);
         } catch (Throwable e) {
