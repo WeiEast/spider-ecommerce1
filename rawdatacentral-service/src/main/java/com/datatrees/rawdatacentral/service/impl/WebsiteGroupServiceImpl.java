@@ -174,8 +174,12 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
 
     @Override
     public Map<String, String> queryAllGroupCode() {
+        Map<String, String> map = new HashMap<>();
         List<WebsiteGroup> websites = queryAll();
-        return websites.stream().collect(Collectors.toMap(WebsiteGroup::getGroupCode, WebsiteGroup::getGroupName));
+        websites.forEach(e -> {
+            map.put(e.getGroupCode(), e.getGroupName());
+        });
+        return map;
     }
 
     public void initRedis() {
