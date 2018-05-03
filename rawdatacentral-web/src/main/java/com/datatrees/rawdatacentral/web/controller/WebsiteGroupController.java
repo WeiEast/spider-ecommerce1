@@ -180,4 +180,13 @@ public class WebsiteGroupController {
         return websiteGroupService.queryAllGroupCode();
     }
 
+    /**
+     * 查询所有分组
+     * @return
+     */
+    @RequestMapping("/queryByGroupCode")
+    public List<WebsiteGroup> queryByGroupCode(String groupCode) {
+        return websiteGroupService.queryByGroupCode(groupCode);
+    }
+
 }
