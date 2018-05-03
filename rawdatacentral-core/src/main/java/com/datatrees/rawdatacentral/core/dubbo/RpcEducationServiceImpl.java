@@ -47,6 +47,8 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
+        //提供username字段，防止初始化出错
+        param.setUsername("未知");
         HttpResult<Object> result = commonPluginApi.init(param);
         if (!result.getStatus()) {
             monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->失败");

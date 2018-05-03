@@ -94,7 +94,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
         HttpResult<Object> result = new HttpResult<>();
         Response response = null;
         try {
-            TaskUtils.addTaskShare(param.getTaskId(), "username", param.getUsername());
+            TaskUtils.addTaskShare(param.getTaskId(), "username", param.getLoginName());
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             Map<String, Object> map = new HashMap<>();
             String ltKey = new StringBuilder("lt_" + param.getTaskId()).toString();
@@ -323,7 +323,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             templateDate
                     = "from=&mphone={}&vcode={}&password={}&password1={}&xm={}&credentialtype={}&sfzh={}&from=&email=&pwdreq1=&pwdanswer1=&pwdreq2=&pwdanswer2=&pwdreq3=&pwdanswer3=&continueurl=&serviceId=&serviceNote=1&serviceNote_res=0";
             date = TemplateUtils
-                    .format(templateDate, param.getMobile(), param.getSmsCode(), param.getPassword(), param.getExtral().get("surePwd"), name,
+                    .format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name,
                             param.getExtral().get("idCardType"), param.getIdCard());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_06").setFullUrl(url)
                     .setRequestBody(date).invoke();
