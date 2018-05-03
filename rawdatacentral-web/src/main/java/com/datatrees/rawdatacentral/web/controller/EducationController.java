@@ -28,7 +28,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/login/init")
-    public Object loginInit(CommonPluginParam param){
+    public Object loginInit(EducationParam param){
         return educationService.loginInit(param);
     }
 
@@ -38,12 +38,12 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/login/submit")
-    public Object loginSubmit(CommonPluginParam param){
+    public Object loginSubmit(EducationParam param){
         return educationService.loginSubmit(param);
     }
 
     @RequestMapping("/register/init")
-    public Object registerInit(CommonPluginParam param){
+    public Object registerInit(EducationParam param){
         return educationService.registerInit(param);
     }
 
@@ -54,7 +54,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/register/refeshPicCode")
-    public Object registerRefeshPicCode(CommonPluginParam param){
+    public Object registerRefeshPicCode(EducationParam param){
         return educationService.registerRefeshPicCode(param);
     }
 
@@ -64,7 +64,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/register/ValidatePicCode")
-    public Object registerValidatePicCodeAndSendSmsCode(CommonPluginParam param){
+    public Object registerValidatePicCodeAndSendSmsCode(EducationParam param){
         return educationService.registerValidatePicCodeAndSendSmsCode(param);
     }
 

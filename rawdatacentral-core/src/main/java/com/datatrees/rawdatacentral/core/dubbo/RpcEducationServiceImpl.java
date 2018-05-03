@@ -41,7 +41,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     private MessageService messageService;
 
     @Override
-    public HttpResult<Object> loginInit(CommonPluginParam param) {
+    public HttpResult<Object> loginInit(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -59,7 +59,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> loginSubmit(CommonPluginParam param) {
+    public HttpResult<Object> loginSubmit(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getUsername() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -84,7 +84,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> registerInit(CommonPluginParam param) {
+    public HttpResult<Object> registerInit(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -100,7 +100,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> registerRefeshPicCode(CommonPluginParam param) {
+    public HttpResult<Object> registerRefeshPicCode(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -117,7 +117,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
+    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
