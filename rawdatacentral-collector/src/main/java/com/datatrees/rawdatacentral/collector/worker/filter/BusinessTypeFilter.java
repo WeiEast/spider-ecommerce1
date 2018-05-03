@@ -41,10 +41,12 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
         try {
             return localCache.get(taskId + "_" + businessType, () -> {
                 SaasResult<TaskRO> taskRO = taskFacade.getById(taskId);
-                logger.debug("taskRO is {}", taskRO.getData());
+                TaskRO data = taskRO.getData();
 
-                if (taskRO.getData() != null) {
-                    String appId = taskRO.getData().getAppId();
+                logger.debug("taskRO is {}", data);
+
+                if (data != null) {
+                    String appId = data.getAppId();
                     String result = appCrawlerConfigService.getFromRedis(appId, businessType);
                     logger.info("appCrawlerConfig result from redis is {},appId is {},project is {}", result, appId, businessType);
 
