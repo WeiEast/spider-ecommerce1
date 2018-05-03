@@ -139,6 +139,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
     public void updateEnable(String websiteName, Boolean enable) {
         if (null != websiteName && null != enable) {
             websiteGroupDAO.updateEnable(websiteName, enable ? 1 : 0);
+            clearOperatorQueueByWebsite(websiteName);
         }
     }
 
@@ -194,7 +195,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
                     });
                     if (map.isEmpty()) {
                         groups.stream().forEach(e -> {
-                            map.put(e.getWebsiteName(), e.getWeight());
+                            map.put(e.getWebsiteName(), 1);
                         });
                     }
                     return map;
