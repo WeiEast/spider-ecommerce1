@@ -149,19 +149,23 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             while (iterator.hasNext()) {
                 AppCrawlerConfig config = iterator.next();
                 if (websiteType.getValue().equals(config.getWebsiteType())) {
-                    map.put(config.getWebsiteType() + "_" + config.getProject(), config);
+                    map.put(uniqueKey(config.getWebsiteType(), config.getProject()), config);
                     iterator.remove();
                 }
             }
 
             for (BusinessType businessType : businessTypes) {
-                map.computeIfAbsent(businessType.getWebsiteType() + "_" + businessType.getCode(), s -> {
+                if (!businessType.isEnable()) {
+                    map.remove(uniqueKey(businessType));
+                    continue;
+                }
+
+                map.computeIfAbsent(uniqueKey(businessType), s -> {
                     AppCrawlerConfig conf = new AppCrawlerConfig();
                     conf.setAppId(appId);
                     conf.setWebsiteType(websiteType.getValue());
                     conf.setProject(businessType.getCode());
-                    //全部默认为爬取
-                    conf.setCrawlerStatus(true);
+                    conf.setCrawlerStatus(businessType.isOpen());
 
                     return conf;
                 });
@@ -172,14 +176,17 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             for (AppCrawlerConfig config : list) {
                 String project = config.getProject();
                 BusinessType businessType = BusinessType.getBusinessType(project);
-                String projectName = businessType == null ? "" : businessType.getName();
+                if (businessType == null) {
+                    continue;
+                }
+
                 ProjectParam projectParam = new ProjectParam();
                 projectParam.setCode(project);
-                projectParam.setName(projectName);
+                projectParam.setName(businessType.getName());
                 projectParam.setCrawlerStatus(config.getCrawlerStatus() ? 1 : 0);
 
                 if (config.getCrawlerStatus()) {
-                    projectNames.add(projectName);
+                    projectNames.add(businessType.getName());
                 }
 
                 projects.add(projectParam);
@@ -199,6 +206,13 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         return appCrawlerConfigParam;
     }
 
+    private String uniqueKey(String websiteType, String project) {
+        return websiteType + "_" + project;
+    }
+
+    private String uniqueKey(BusinessType businessType) {
+        return uniqueKey(businessType.getWebsiteType().getValue(), businessType.getCode());
+    }
 
     @Override
     public void updateAppConfig(String appId, List<CrawlerProjectParam> projectConfigInfos) {
