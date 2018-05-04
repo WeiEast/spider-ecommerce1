@@ -55,15 +55,19 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        List<AppCrawlerConfig> list = this.selectAll();
+        // TODO: 2018/5/4 初期启动可以先异步缓存，数据量增大后需要优化改进
+        new Thread(() -> {
+            List<AppCrawlerConfig> list = selectAll();
 
-        if (CollectionUtils.isNotEmpty(list)) {
-            Map<String, Map<String, Boolean>> map = list.stream().collect(Collectors.groupingBy(AppCrawlerConfig::getAppId, Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (v1, v2) -> v2)));
+            if (CollectionUtils.isNotEmpty(list)) {
+                Map<String, Map<String, Boolean>> map = list.stream().filter(config -> StringUtils.isNotEmpty(config.getAppId())).collect(Collectors.groupingBy(AppCrawlerConfig::getAppId, Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (v1, v2) -> v2)));
 
-            map.forEach((appId, configMap) -> {
-                redisService.putMap(CACHE_PREFIX + appId, configMap);
-            });
-        }
+                map.forEach((appId, configMap) -> {
+                    redisService.putMap(CACHE_PREFIX + appId, configMap);
+                });
+            }
+            logger.info("app crawling business config was finished to load into cache.");
+        }).start();
     }
 
     private List<AppCrawlerConfig> selectAll() {
@@ -148,7 +152,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
             while (iterator.hasNext()) {
                 AppCrawlerConfig config = iterator.next();
-                if (websiteType.getValue().equals(config.getWebsiteType())) {
+                if (websiteType.val() == config.getWebsiteType()) {
                     map.put(uniqueKey(config.getWebsiteType(), config.getProject()), config);
                     iterator.remove();
                 }
@@ -163,7 +167,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 map.computeIfAbsent(uniqueKey(businessType), s -> {
                     AppCrawlerConfig conf = new AppCrawlerConfig();
                     conf.setAppId(appId);
-                    conf.setWebsiteType(websiteType.getValue());
+                    conf.setWebsiteType(websiteType.val());
                     conf.setProject(businessType.getCode());
                     conf.setCrawlerStatus(businessType.isOpen());
 
@@ -183,7 +187,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 ProjectParam projectParam = new ProjectParam();
                 projectParam.setCode(project);
                 projectParam.setName(businessType.getName());
-                projectParam.setCrawlerStatus(config.getCrawlerStatus() ? 1 : 0);
+                projectParam.setCrawlerStatus((byte) (config.getCrawlerStatus() ? 1 : 0));
 
                 if (config.getCrawlerStatus()) {
                     projectNames.add(businessType.getName());
@@ -195,7 +199,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             logger.info("appId: {}, websiteType: {}, projects: {}", appId, websiteType.getType(), projects);
 
             CrawlerProjectParam crawlerProjectParam = new CrawlerProjectParam();
-            crawlerProjectParam.setWebsiteType(Integer.valueOf(websiteType.getValue()));
+            crawlerProjectParam.setWebsiteType(websiteType.val());
             crawlerProjectParam.setProjects(projects);
             projectConfigInfos.add(crawlerProjectParam);
         });
@@ -206,12 +210,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         return appCrawlerConfigParam;
     }
 
-    private String uniqueKey(String websiteType, String project) {
+    private String uniqueKey(byte websiteType, String project) {
         return websiteType + "_" + project;
     }
 
     private String uniqueKey(BusinessType businessType) {
-        return uniqueKey(businessType.getWebsiteType().getValue(), businessType.getCode());
+        return uniqueKey(businessType.getWebsiteType().val(), businessType.getCode());
     }
 
     @Override
@@ -234,11 +238,11 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         config.setCrawlerStatus(projectParam.getCrawlerStatus() != 0);
 
                         AppCrawlerConfigCriteria criteria = new AppCrawlerConfigCriteria();
-                        criteria.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(String.valueOf(crawlerProjectParam.getWebsiteType())).andProjectEqualTo(projectParam.getCode());
+                        criteria.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(crawlerProjectParam.getWebsiteType()).andProjectEqualTo(projectParam.getCode());
                         int i = appCrawlerConfigDao.updateByExampleSelective(config, criteria);
                         if (i == 0) {
                             config.setAppId(appId);
-                            config.setWebsiteType(String.valueOf(crawlerProjectParam.getWebsiteType()));
+                            config.setWebsiteType(crawlerProjectParam.getWebsiteType());
                             config.setProject(projectParam.getCode());
                             appCrawlerConfigDao.insertSelective(config);
                         }

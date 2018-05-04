@@ -11,15 +11,15 @@ public class ProjectParam {
     /**
      * 爬取业务标识 例"huabei"
      */
-    private String  code;
+    private String code;
     /**
      * 爬取业务名称 例"花呗"
      */
-    private String  name;
+    private String name;
     /**
      * 爬取状态
      */
-    private Integer crawlerStatus;
+    private Byte   crawlerStatus;
 
     public String getCode() {
         return code;
@@ -37,11 +37,11 @@ public class ProjectParam {
         this.name = name;
     }
 
-    public Integer getCrawlerStatus() {
+    public Byte getCrawlerStatus() {
         return crawlerStatus;
     }
 
-    public void setCrawlerStatus(Integer crawlerStatus) {
+    public void setCrawlerStatus(Byte crawlerStatus) {
         this.crawlerStatus = crawlerStatus;
     }
 
