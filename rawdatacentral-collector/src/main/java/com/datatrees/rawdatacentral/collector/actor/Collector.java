@@ -63,6 +63,7 @@ import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -266,15 +267,15 @@ public class Collector {
 
                     if (CollectionUtils.isEmpty(resultTagSet)) {
                         if (CollectionUtils.isEmpty(message.getResultTagSet())) {
-                            resultTagSet = new HashSet<String>(taskMessage.getContext().getWebsite().getSearchConfig().getResultTagList());
+                            resultTagSet = new HashSet<>(taskMessage.getContext().getWebsite().getSearchConfig().getResultTagList());
                         } else {
                             resultTagSet = message.getResultTagSet();
                         }
                     }
-                    if (submitkeyResult == null && message instanceof SubTaskCollectorMessage) {
+                    if (message instanceof SubTaskCollectorMessage && MapUtils.isEmpty(submitkeyResult)) {
                         logger.info("skip send mq message threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
                     } else if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                        logger.error("Thread interrupt bafore result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
+                        logger.error("Thread interrupt before result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
                         task.setStatus(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode());
                         task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg());
                     } else {
