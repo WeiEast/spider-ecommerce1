@@ -3,18 +3,22 @@ package com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5;
 import javax.annotation.Resource;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.api.RpcOssService;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
@@ -24,7 +28,10 @@ import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
+import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.google.gson.reflect.TypeToken;
 import org.apache.http.Consts;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -43,6 +50,13 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
     private MonitorService monitorService;
     @Resource
     private MessageService messageService;
+
+    private final static String TX_GENERAL_URL = "http://recognition.image.myqcloud.com/ocr/general";
+    private final static String appid = "1255658810";
+    private final static String bucket = "dashutest";
+    private final static String secretid = "AKIDHQRPGv4iroY7UgqxNejeNuFOLBpHscje";
+    private final static String secretkey = "swyoTwCIH4f4IKBsPkwwTxGRTL1Vnupd";
+    private final static String HOST = "recognition.image.myqcloud.com";
 
     private static void setRedisBySelect(String key, String select, String pageContent) {
         List<String> list = XPathUtil.getXpath(select, pageContent);
@@ -197,7 +211,12 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
 
     @Override
     public HttpResult<Object> defineProcess(CommonPluginParam param) {
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case "OCR":
+                return processForOCR(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
@@ -347,5 +366,65 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             logger.error("注册异常 param={},response={},e={}", param, response, e.getMessage());
             return result.failure("注册失败，请稍后重试");
         }
+    }
+
+    private HttpResult<Object> processForOCR(CommonPluginParam commonPluginParam) {
+        HttpResult<Object> result = new HttpResult<>();
+        try {
+            EducationParam param = (EducationParam) commonPluginParam;
+            String websiteName = param.getWebsiteName();
+            Long taskId = param.getTaskId();
+            Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                    .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+            String url = paramMap.get("page_content");
+
+            String string = handlePic(url, taskId, websiteName);
+            Map<String, Object> pluginResult = new HashMap<>();
+            return result.success(pluginResult);
+        }catch (Exception e){
+            logger.error("OCR处理失败,param={}", commonPluginParam, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
+        }
+    }
+    private static String handlePic(String url, Long taskId, String websiteName) {
+
+        try {
+            Map<String, String> map = new HashMap<>();
+            byte[] pageContent = TaskHttpClient.create(taskId, websiteName, RequestType.GET, "chsi_com_cn_pic").setFullUrl(url).invoke().getResponse();
+            int i = (int) (Math.random() * 100000);
+            String picName=i+".jpeg";
+            String path = "education/" + websiteName + "/" + taskId + "/" + picName;
+            RpcOssService rpcOssService = BeanFactoryUtils.getBean(RpcOssService.class);
+            rpcOssService.upload(path, pageContent);
+            logger.info("学信网图片上传oss成功！path={}", path);
+            String authorization = RedisUtils.get("authorization");
+            if (authorization == null) {
+                Long appId = Long.parseLong(appid);
+                //authorization的有效期为81天
+                authorization = Sign.appSign(appId, secretid, secretkey, bucket, 6998400L);
+                //存redis存80天
+                RedisUtils.set("authorization", authorization, 6912000);
+            }
+            map.put("Authorization", authorization);
+            map.put("Host", HOST);
+            String fileName = taskId + ".jpg";
+            logger.info("请求腾讯解析图片接口参数：tx_url={},appid={},bucket={},map={}", TX_GENERAL_URL, appid, bucket, JSON.toJSONString(map));
+            int num = 1;
+            //腾讯云可能返回为空,所以试3次,3次都为空那你可以去买彩票了。。。
+            while (num < 4) {
+                String imageResult = HttpUtils.doPostForImage(TX_GENERAL_URL, map, appid, bucket, pageContent, fileName);
+                if (imageResult != null) {
+                    logger.info("腾讯云返回结果result={}", imageResult);
+                    return imageResult;
+                } else {
+                    logger.info("第{}次腾讯云返回结果为空", num);
+                    num++;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
