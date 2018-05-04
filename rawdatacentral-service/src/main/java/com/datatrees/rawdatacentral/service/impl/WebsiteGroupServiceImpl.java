@@ -24,11 +24,12 @@ import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WebsiteGroupServiceImpl implements WebsiteGroupService {
+public class WebsiteGroupServiceImpl implements WebsiteGroupService, InitializingBean {
 
     private static final Logger                 logger = LoggerFactory.getLogger(WebsiteGroupServiceImpl.class);
 
@@ -150,7 +151,6 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
 
     @Override
     public String selectOperator(String groupCode) {
-        initRedis();
         return weightUtils.poll(groupCode);
     }
 
@@ -183,7 +183,8 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
         return map;
     }
 
-    public void initRedis() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
         if (null == weightUtils) {
             weightUtils = new WeightUtils(redisIp, redisPassword, new WeightUtils.WeightQueueConfig() {
                 @Override
@@ -207,6 +208,5 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
                 }
             });
         }
-
     }
 }
