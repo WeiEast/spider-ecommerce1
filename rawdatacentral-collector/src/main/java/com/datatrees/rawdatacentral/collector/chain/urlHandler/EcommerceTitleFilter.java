@@ -21,16 +21,16 @@ public class EcommerceTitleFilter extends RemovedFetchLinkNodeFilter {
         if (EcommerceTitleFilterSwitch.toLowerCase().equals("on") && title != null && websiteType != null && WebsiteType.ECOMMERCE.getValue().equals(websiteType)) {
             if (PatternUtils.match(titleWhiteListPattern, title.toString())) {
                 if (!PatternUtils.match(titleBlackListPattern, title.toString())) {
-                    logger.info("ECOMMERCE Node:" + fetchLinkNode + " filter success...");
+                    logger.info("ECOMMERCE Node: {} filter success...", fetchLinkNode);
                     fetchLinkNode.setRemoved(false);
                 } else {
-                    logger.info("ECOMMERCE Node:" + fetchLinkNode + " filtered by title blacklist...");
+                    logger.info("ECOMMERCE Node: {} filtered by title blacklist...", fetchLinkNode);
                     // in black list need filter
                     fetchLinkNode.setRemoved(true);
                 }
             } else {
                 // not in whilte list need filter
-                logger.info("ECOMMERCE Node:" + fetchLinkNode + " filtered by title whiltelist...");
+                logger.info("ECOMMERCE Node: {} filtered by title whitelist...", fetchLinkNode);
                 fetchLinkNode.setRemoved(true);
             }
         }

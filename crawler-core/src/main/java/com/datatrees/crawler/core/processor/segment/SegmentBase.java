@@ -32,8 +32,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.functors.UniquePredicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @param <>
@@ -43,7 +41,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
 
-    protected final Logger       logger  = LoggerFactory.getLogger(getClass());
     protected       T            segment = null;
     private         List<String> splits  = null;
     private AbstractProcessorContext context;
@@ -81,7 +78,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
             throw new ResultEmptyException(segment + " result should not be Empty!");
         }
 
-        logger.info(segment + " begin process, whit split size:" + splits.size());
+        logger.info("{} begin process, split size: {}", segment, splits.size());
 
         ResponseUtil.setSegmentsContent(response, splits);
 
@@ -97,21 +94,21 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
         // try to get split
         for (String split : splits) {
             if (StringUtils.isNotBlank(segment.getBreakPattern()) && StringUtils.isNotBlank(breakPattern = SourceUtil.sourceExpression(request, response, segment.getBreakPattern())) && RegExp.find(split, breakPattern, segment.getBreakPatternFlag() != null ? segment.getBreakPatternFlag() : 0)) {
-                logger.warn(segment + " match the break pattern:" + breakPattern + " break...");
+                logger.warn("{} match the break pattern:{}  break...", segment, breakPattern);
                 break;
             }
             if (StringUtils.isNotBlank(segment.getDisContains()) && StringUtils.isNotBlank(disContains = SourceUtil.sourceExpression(request, response, segment.getDisContains())) && RegExp.find(split, disContains, segment.getDisContainsFlag() != null ? segment.getDisContainsFlag() : 0)) {
-                logger.info("split filtered,matches the dis-contains pattern:" + disContains);
+                logger.info("split filtered,matches the dis-contains pattern: {}", disContains);
                 continue;
             }
             if (StringUtils.isNotBlank(segment.getContains()) && StringUtils.isNotBlank(contains = SourceUtil.sourceExpression(request, response, segment.getContains())) && !RegExp.find(split, contains, segment.getContainsFlag() != null ? segment.getContainsFlag() : 0)) {
-                logger.info("split filtered,not matches the contains pattern:" + contains);
+                logger.info("split filtered,not matches the contains pattern: {}", contains);
                 continue;
             }
 
             if (maxCycles != null) {
                 if (resultList != null && resultList.size() >= maxCycles) {
-                    logger.warn(segment + " reach the maxCycles:" + maxCycles + ",total size:" + splits.size());
+                    logger.warn("{} reach the maxCycles: {},total-size: {}", segment, maxCycles, splits.size());
                     break;
                 }
             }
@@ -149,7 +146,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
                 Object segResultList = null;
                 try {
                     if (BooleanUtils.isTrue(abstractSegment.getStandBy()) && resultMap.get(abstractSegment.getName()) != null && isValid(resultMap.get(abstractSegment.getName()))) {
-                        logger.info("no need to execute the stand by segment:" + segment);
+                        logger.info("no need to execute the stand by segment: {}", segment);
                         continue;
                     }
                     String content = split;
@@ -161,7 +158,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
                         }
                     }
                     if (StringUtils.isEmpty(content)) {
-                        logger.warn("stop due to upper field value is empty! segment: " + segment);
+                        logger.warn("stop due to upper field value is empty! segment: {}", segment);
                     } else {
                         Request newRequest = new Request();
                         newRequest.setInput(content);
@@ -205,12 +202,11 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
                 AbstractFormat formater = ProcessorFactory.getFormat(type, conf);
                 Collection values = resultMap.values();
                 if (CollectionUtils.isNotEmpty(values) && formater.isResultType(values.toArray()[0])) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(resultMap + "format to " + values.toArray()[0] + " with type:" + type);
-                    }
+                    logger.debug("{} format to {} with type: {}", resultMap, values.toArray()[0], type);
+
                     resultList.add(values.toArray()[0]);
                 } else {
-                    logger.warn(resultMap + "failed format to " + segment.getResultClass());
+                    logger.warn("{} failed to format to {}", resultMap, segment.getResultClass());
                 }
             } else {
                 // obj-seg --> obj-seg with the same name
@@ -218,7 +214,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
                 if (resultObject != null && resultObject instanceof Map) {
                     resultMap.remove(segment.getName());
                     ((Map) resultObject).putAll(resultMap);
-                    resultList.add((Map) resultObject);
+                    resultList.add(resultObject);
                 } else if (resultObject != null && resultObject instanceof Collection) {
                     resultMap.remove(segment.getName());
                     for (Object map : (Collection) resultObject) {
@@ -345,27 +341,12 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
     }
 
     /**
-     * url map between segments key is url val is link node
-     * @param response
-     * @return
-     */
-    protected Map<String, LinkNode> initMap(Response response) {
-
-        Map<String, LinkNode> resultMap = ResponseUtil.getSegmentsResultMap(response);
-        if (resultMap == null) {
-            resultMap = new LinkedHashMap<String, LinkNode>();
-            ResponseUtil.setSegmentsResultMap(response, resultMap);
-        }
-        return resultMap;
-    }
-
-    /**
      * return List<Map<String, Object>> or List<ResultType>
      * @param response
      * @return
      */
     @SuppressWarnings("rawtypes")
-    protected List initResultList(Response response) {
+    private List initResultList(Response response) {
         List resultList = (List) ResponseUtil.getSegmentsResults(response);
         if (resultList == null) {
             resultList = new ArrayList();
@@ -374,14 +355,9 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
         return resultList;
     }
 
-    boolean isValid(Object obj) {
+    private boolean isValid(Object obj) {
         // Check whether the data is valid
-        if (obj instanceof Collection) {
-            if (CollectionUtils.isEmpty((Collection) obj)) {
-                return false;
-            }
-        }
-        return true;
+        return !(obj instanceof Collection) || !CollectionUtils.isEmpty((Collection) obj);
     }
 
     @Override

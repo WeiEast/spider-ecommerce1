@@ -32,9 +32,7 @@ public class EscapeOperationImpl extends Operation<EscapeOperation> {
         EscapeType escapeType = operation.getEscapeType();
         HandlingType handlType = operation.getHandlingType();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("EscapeOperation input: " + String.format("escapeType: %s, handlType: %s", escapeType, handlType));
-        }
+        logger.debug("escape-Type: {}, handling-Type: {}", escapeType, handlType);
 
         String result = handlerEscape(orginal, escapeType, handlType);
 

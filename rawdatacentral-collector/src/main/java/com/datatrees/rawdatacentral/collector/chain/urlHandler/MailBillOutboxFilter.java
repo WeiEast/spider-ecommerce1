@@ -53,7 +53,7 @@ public class MailBillOutboxFilter extends RemovedFetchLinkNodeFilter {
                 }
             }
             if (inOutbox) {
-                logger.info("Node:" + fetchLinkNode + " filtered as in outbox.");
+                logger.info("Node: {} filtered as in outbox.",fetchLinkNode);
                 fetchLinkNode.setRemoved(true);
             }
         }

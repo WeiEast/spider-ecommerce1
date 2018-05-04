@@ -50,13 +50,11 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
                 resultStirng = resultStirng + temp;
             }
         } else {
-            logger.warn("xpath extract empty content! " + xpath);
+            logger.warn("xpath extract empty content! - {}", xpath);
             resultStirng = "";
         }
         resultStirng = StringUtils.isEmpty(resultStirng) && BooleanUtils.isTrue(operation.getEmptyToNull()) ? null : resultStirng;
-        if (logger.isDebugEnabled()) {
-            logger.debug("xpath extract result:" + resultStirng);
-        }
+        logger.debug("xpath extracted result: {}", resultStirng);
         response.setOutPut(resultStirng);
 
     }

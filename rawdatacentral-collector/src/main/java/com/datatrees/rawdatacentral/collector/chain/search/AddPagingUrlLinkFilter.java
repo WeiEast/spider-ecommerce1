@@ -35,7 +35,7 @@ public class AddPagingUrlLinkFilter implements Filter {
 
         int pNum = linkNode.getpNum();
         if (pNum != -1) {
-            log.info("current PageNum: " + pNum + " ,pageLinkUrl: " + lastPagingUrl);
+            log.info("current PageNum: {},pageLinkUrl: {}", pNum, lastPagingUrl);
             searchProcessor.getTask().getOpenPageCount().getAndIncrement();
             CrawlRequest request = ContextUtil.getCrawlRequest(context);
             CrawlResponse response = ContextUtil.getCrawlResponse(context);
@@ -45,7 +45,7 @@ public class AddPagingUrlLinkFilter implements Filter {
                 if (!pageLinkUrl.equals(lastPagingUrl)) {
                     LinkNode pageNumUrlLink = new LinkNode(pageLinkUrl);
                     copyProperties(pageNumUrlLink, linkNode);
-                    log.info("add newpNum: " + newpNum + " ,pageLinkUrl: " + pageLinkUrl);
+                    log.info("add newpNum: {},pageLinkUrl: {}", newpNum, pageLinkUrl);
                     pageNumUrlLink.setpNum(newpNum);
 
                     List<LinkNode> linkNodeList = ContextUtil.getFetchedLinkNodeList(context);
@@ -59,15 +59,21 @@ public class AddPagingUrlLinkFilter implements Filter {
 
     private boolean needAddPagingUrl(CrawlRequest request, CrawlResponse response) {
         int responseStatus = ResponseUtil.getResponseStatus(response);
-        if (responseStatus == Status.NO_SEARCH_RESULT || responseStatus == Status.LAST_PAGE || StringUtils.isEmpty(RequestUtil.getContent(request))) {
-            log.warn("isContinuousPageFlag : " + " responseStatus " + responseStatus + " pageContent is empty : " + StringUtils.isEmpty(RequestUtil.getContent(request)));
+
+        if (responseStatus == Status.NO_SEARCH_RESULT || responseStatus == Status.LAST_PAGE) {
+            log.warn("needAddPagingUrl : false, responseStatus: {}", responseStatus);
+            return false;
+        }
+
+        if (StringUtils.isEmpty(RequestUtil.getContent(request))) {
+            log.warn("needAddPagingUrl : false, pageContent is empty.");
             return false;
         }
         return true;
     }
 
     private String getPageLinkUrl(int currentPageNum, SearchProcessor searchProcessor) {
-        log.info("getPageLinkUrl currentPageNum:  " + currentPageNum);
+        log.info("getPageLinkUrl currentPageNum: {}", currentPageNum);
         return SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(), searchProcessor.getEncoding(), currentPageNum, true, searchProcessor.getProcessorContext().getContext());
     }
 

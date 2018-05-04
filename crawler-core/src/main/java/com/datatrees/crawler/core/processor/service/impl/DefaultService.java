@@ -140,23 +140,23 @@ public class DefaultService extends ServiceBase {
                     current.increaseRetryCount();
 
                     if (page.getRetryMode() == null || page.getRetryMode() == RetryMode.RETRY) {
-                        logger.warn("sleep " + sleepMills + "ms, request [" + current.getRetryCount() + "] retry, url:" + url + ", content:" + content);
+                        logger.warn("sleep {}ms, request [{}] retry, url:{}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         continue;
                     } else if (page.getRetryMode() == RetryMode.REQUEUE) {
+                        logger.warn("sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         // node requeue
                         current.setNeedRequeue(true);
                         ResponseUtil.setResponseStatus(response, Status.REQUEUE);
-                        logger.warn("sleep " + sleepMills + "ms, request [" + current.getRetryCount() + "] retry, node will requeue url:" + url + ", content:" + content);
                     } else if (page.getRetryMode() == RetryMode.PROXY_RETRY) {
-                        logger.warn("wait proxy change sleep " + sleepMills + "ms, request [" + current.getRetryCount() + "] retry, url:" + url + ", content:" + content);
+                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         this.proxyRelease(proxy, context);
                         continue;
                     } else if (page.getRetryMode() == RetryMode.PROXY_REQUEUE) {
+                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         // node requeue
                         current.setNeedRequeue(true);
                         ResponseUtil.setResponseStatus(response, Status.REQUEUE);
                         this.proxyRelease(proxy, context);
-                        logger.warn("wait proxy change sleep " + sleepMills + "ms, request [" + current.getRetryCount() + "] retry, node will requeue url:" + url + ", content:" + content);
                     }
                 }
 
@@ -176,9 +176,9 @@ public class DefaultService extends ServiceBase {
                 long sleepMills = this.sleep(0L, i, context);
 
                 current.increaseRetryCount();
-                logger.warn("sleep " + sleepMills + "ms, request [" + (i + 1) + "] error, url:" + url + ", statusCode:" + output.getStatusCode());
+                logger.warn("sleep {}ms, request [{}] error, url: {}, statusCode: {}", sleepMills, (i + 1), url, output.getStatusCode());
             } else {
-                logger.warn("ignore request error, statusCode:" + output.getStatusCode() + ", url:" + url);
+                logger.warn("ignore request error, statusCode: {}, url: {}", output.getStatusCode(), url);
                 break;
             }
         }

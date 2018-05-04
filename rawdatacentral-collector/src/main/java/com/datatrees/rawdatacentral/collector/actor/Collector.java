@@ -47,7 +47,6 @@ import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
-import com.datatrees.rawdatacentral.core.model.message.impl.SubTaskCollectorMessage;
 import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.core.oss.OssUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
@@ -185,7 +184,6 @@ public class Collector {
     }
 
     private AbstractLockerWatcher actorLockWatchInit(TaskMessage taskMessage) {
-        String websiteName = taskMessage.getWebsiteName();
         String templateId = taskMessage.getTemplateId();
         String uniqueSuffix = taskMessage.getUniqueSuffix();
         String serialNum = taskMessage.getCollectorMessage().getSerialNum();
@@ -217,14 +215,13 @@ public class Collector {
     public ProcessorResult processMessage(CollectorMessage message) {
         TaskMessage taskMessage = null;
         Task task = null;
-        SearchProcessorContext context = null;
         AbstractLockerWatcher watcher = null;
         try {
             //初始化,生成上下文,保存task
             taskMessage = this.taskMessageInit(message);
             task = taskMessage.getTask();
-            context = taskMessage.getContext();
-            //zookepper做去重处理,后来的线程活着,ThreadInterruptedUtil.isInterrupted(Thread.currentThread())手动判断,并停止
+            SearchProcessorContext context = taskMessage.getContext();
+            //zookeeper做去重处理,后来的线程活着,ThreadInterruptedUtil.isInterrupted(Thread.currentThread())手动判断,并停止
             watcher = this.actorLockWatchInit(taskMessage);
             CollectorWorker collectorWorker = collectorWorkerFactory.getCollectorWorker(taskMessage);
 
@@ -272,10 +269,10 @@ public class Collector {
                             resultTagSet = message.getResultTagSet();
                         }
                     }
-                    if (message instanceof SubTaskCollectorMessage && MapUtils.isEmpty(submitkeyResult)) {
+                    if (task.isSubTask() && MapUtils.isEmpty(submitkeyResult)) {
                         logger.info("skip send mq message threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
                     } else if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                        logger.error("Thread interrupt before result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
+                        logger.warn("Thread interrupt before result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
                         task.setStatus(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode());
                         task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg());
                     } else {
@@ -288,11 +285,11 @@ public class Collector {
             logger.error("processMessage error taskId={}", message.getTaskId(), e);
             if (null != taskMessage && null != taskMessage.getTask()) {
                 if (e instanceof LoginTimeOutException) {
-                    taskMessage.getTask().setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMsg() + " " + e.getMessage());
+                    taskMessage.setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMsg() + " " + e.getMessage());
                 } else if (e instanceof InterruptedException) {
-                    taskMessage.getTask().setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR, ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg() + " " + e.getMessage());
+                    taskMessage.setErrorCode(ErrorCode.TASK_INTERRUPTED_ERROR, ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg() + " " + e.getMessage());
                 } else {
-                    taskMessage.getTask().setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
+                    taskMessage.setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
                 }
             }
         } finally {
@@ -301,7 +298,7 @@ public class Collector {
             }
             if (null != task) {
                 if (!task.isSubTask()) {
-                    String logMsg = null;
+                    String logMsg;
                     switch (taskMessage.getTask().getStatus()) {
                         case 0:
                             logMsg = "抓取成功";
@@ -322,7 +319,7 @@ public class Collector {
                         try {
                             newRemark = OperatorUtils.getRemarkForTaskFail(task.getTaskId());
                         } catch (Exception e) {
-                            logger.info("更新remark失败，taskId={}", task.getTaskId(), e);
+                            logger.error("更新remark失败，taskId={}", task.getTaskId(), e);
                         }
                         messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), newRemark);
                     }
@@ -366,14 +363,14 @@ public class Collector {
                     ZipCompressUtils.compress(baos, uploadMap);
                     OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), baos.toByteArray());
                 } catch (Exception e) {
-                    logger.error("upload startMsg.json error:" + e.getMessage(), e);
+                    logger.error("upload startMsg.json error: {}", e.getMessage(), e);
                 } finally {
                     IOUtils.closeQuietly(baos);
                 }
             }
             taskMessage.getTask().setResultMessage(JSON.toJSONString(map, SerializerFeature.WriteDateUseDateFormat));
         } catch (Exception e) {
-            logger.error("messageComplement error:" + e.getMessage(), e);
+            logger.error("messageComplement error: {}", e.getMessage(), e);
         }
     }
 
@@ -423,14 +420,14 @@ public class Collector {
                     try {
                         notEmptyTag.add(mqMessage.getTags());
                         SendResult sendResult = defaultMQProducer.send(mqMessage);
-                        logger.info("send message:" + mqMessage + "result:" + sendResult);
+                        logger.info("send message: {}, result: {}", mqMessage, sendResult);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                         task.setErrorCode(ErrorCode.RESULT_SEND_ERROR);
                     }
                 }
             } else {
-                logger.warn(taskMessage + "no need to submit result:" + submitkeyResult);
+                logger.warn("{} no need to submit result: {}", taskMessage, submitkeyResult);
             }
             task.setResultMessage(GsonUtils.toJson(result));
         }
@@ -453,17 +450,17 @@ public class Collector {
                     try {
                         Message mqMessage = messageFactory.getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
                         SendResult sendResult = defaultMQProducer.send(mqMessage);
-                        logger.info("send result message:" + mqMessage + "result:" + sendResult);
+                        logger.info("send result message: {}, result: {}", mqMessage, sendResult);
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
                         task.setErrorCode(ErrorCode.RESULT_SEND_ERROR);
                     }
                 } else {
-                    logger.warn(taskMessage + " no need to send status key:" + key + ",resultMessage:" + resultMessage);
+                    logger.warn("{} no need to send status key: {}, resultMessage: {}", taskMessage, key, resultMessage);
                 }
             }
         } else {
-            logger.warn(taskMessage + " no need to send status:" + resultTagSet + ",resultMessage:" + resultMessage);
+            logger.warn("{} no need to send status: {}, resultMessage: {}", taskMessage, resultTagSet, resultMessage);
         }
     }
 

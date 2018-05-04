@@ -25,9 +25,7 @@ public class ReturnOperationImpl extends Operation<ReturnOperation> {
     public void process(Request request, Response response) throws Exception {
         String input = OperationHelper.getStringInput(request, response);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Return current input : {}", input);
-        }
+        logger.debug("Return current input : {}", input);
         response.setOutPut(input);
     }
 

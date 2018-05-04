@@ -25,9 +25,7 @@ public class SleepOperationImpl extends Operation<SleepOperation> {
         SleepOperation operation = getOperation();
         Integer sleepTime = operation.getValue();
         if (sleepTime != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Start to Sleep: {}", sleepTime);
-            }
+            logger.debug("Start to Sleep: {}", sleepTime);
             Thread.sleep(sleepTime);
         }
     }

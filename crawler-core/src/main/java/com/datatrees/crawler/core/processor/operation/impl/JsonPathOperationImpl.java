@@ -35,12 +35,11 @@ public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
         try {
             original = JsonPathUtil.readAsString(original, jsonpath);
         } catch (Exception e) {
-            logger.error("jsonpath extract empty content! " + jsonpath + "exception :" + e.getMessage());
+            logger.error("Error extracting content with jsonpath: {}", jsonpath, e);
             original = null;
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("jsonPath extract result:" + original);
-        }
+
+        logger.debug("jsonPath extract result: {}", original);
 
         response.setOutPut(original);
     }

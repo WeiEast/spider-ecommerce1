@@ -30,15 +30,11 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
 
         value = ReplaceUtils.replaceMap(fieldContext, sourceMap, value);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Actual append text: {}", value);
-        }
+        logger.debug("Actual append text: {}", value);
 
         String input = OperationHelper.getStringInput(request, response);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("AppendOperation, input : {}", input);
-        }
+        logger.debug("AppendOperation, input : {}", input);
 
         StringBuilder result = new StringBuilder();
         if (index < 0) {
@@ -49,9 +45,7 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
 
         String outPut = result.toString();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("AppendOperation, output: {}", outPut);
-        }
+        logger.debug("AppendOperation, output: {}", outPut);
 
         response.setOutPut(outPut);
     }

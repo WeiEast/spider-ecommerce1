@@ -25,7 +25,7 @@ public class DuplicateRemoveFilter extends RemovedFetchLinkNodeFilter {
         if (deduplicateRemoveSwitch && uniqueKey != null && checker != null && searchProcessor.isDuplicateRemoval()) {
             if (checker.isDuplicate(websiteType, uniqueKey.toString())) {
                 fetchLinkNode.setRemoved(true);
-                logger.info("Node:" + fetchLinkNode + " filtered by uniqueKey:" + uniqueKey + "websiteType:" + websiteType);
+                logger.info("Node: {} filtered by uniqueKey: {}, websiteType: {}",fetchLinkNode,  uniqueKey ,  websiteType);
                 // mark the task has been DuplicateRemoved
                 searchProcessor.getTask().setDuplicateRemoved(true);
             }
