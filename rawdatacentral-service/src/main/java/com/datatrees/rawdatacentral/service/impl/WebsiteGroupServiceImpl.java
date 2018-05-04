@@ -190,7 +190,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService {
                 public Map<String, Integer> getWeights(String groupCode) {
                     List<WebsiteGroup> groups = queryByGroupCode(groupCode);
                     Map<String, Integer> map = new HashMap<>();
-                    groups.stream().filter(s -> s.getEnable()).forEach(e -> {
+                    groups.stream().filter(s -> s.getEnable() && s.getWeight() > 0).forEach(e -> {
                         map.put(e.getWebsiteName(), e.getWeight());
                     });
                     if (map.isEmpty()) {
