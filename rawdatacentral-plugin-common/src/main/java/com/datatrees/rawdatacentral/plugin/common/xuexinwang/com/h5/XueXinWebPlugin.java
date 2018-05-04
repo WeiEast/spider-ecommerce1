@@ -368,10 +368,9 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
         }
     }
 
-    private HttpResult<Object> processForOCR(CommonPluginParam commonPluginParam) {
+    private HttpResult<Object> processForOCR(CommonPluginParam param) {
         HttpResult<Object> result = new HttpResult<>();
         try {
-            EducationParam param = (EducationParam) commonPluginParam;
             String websiteName = param.getWebsiteName();
             Long taskId = param.getTaskId();
             Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
@@ -379,10 +378,9 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             String url = paramMap.get("page_content");
 
             String string = handlePic(url, taskId, websiteName);
-            Map<String, Object> pluginResult = new HashMap<>();
-            return result.success(pluginResult);
+            return result.success(string);
         }catch (Exception e){
-            logger.error("OCR处理失败,param={}", commonPluginParam, e);
+            logger.error("OCR处理失败,param={}", param, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
         }
     }
@@ -395,7 +393,8 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             String picName=i+".jpeg";
             String path = "education/" + websiteName + "/" + taskId + "/" + picName;
             RpcOssService rpcOssService = BeanFactoryUtils.getBean(RpcOssService.class);
-            rpcOssService.upload(path, pageContent);
+            //todo 开发环境无法使用oss，需注释
+            //rpcOssService.upload(path, pageContent);
             logger.info("学信网图片上传oss成功！path={}", path);
             String authorization = RedisUtils.get("authorization");
             if (authorization == null) {
