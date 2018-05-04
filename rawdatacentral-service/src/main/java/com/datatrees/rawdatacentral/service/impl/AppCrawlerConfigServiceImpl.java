@@ -127,7 +127,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             return Collections.emptyList();
         }
 
-        return appList.stream().map(merchantSimpleResult -> {
+        return appList.parallelStream().map(merchantSimpleResult -> {
             AppCrawlerConfigParam appCrawlerConfigParam = getAppCrawlerConfigParamByAppId(merchantSimpleResult.getAppId());
             appCrawlerConfigParam.setAppName(merchantSimpleResult.getAppName());
             return appCrawlerConfigParam;
@@ -148,12 +148,20 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
         Map<WebsiteType, List<BusinessType>> group = BusinessType.getGroup();
         group.forEach((websiteType, businessTypes) -> {
-            Map<String, AppCrawlerConfig> map = new HashMap<>();
+            Map<String, ProjectParam> map = new HashMap<>();
 
             while (iterator.hasNext()) {
                 AppCrawlerConfig config = iterator.next();
                 if (websiteType.val() == config.getWebsiteType()) {
-                    map.put(uniqueKey(config.getWebsiteType(), config.getProject()), config);
+                    BusinessType businessType = BusinessType.getBusinessType(config.getProject());
+                    if (businessType == null) {
+                        continue;
+                    }
+
+                    ProjectParam projectParam = convertProjectParam(businessType, config.getCrawlerStatus());
+
+                    map.put(uniqueKey(config.getWebsiteType(), projectParam.getCode()), projectParam);
+
                     iterator.remove();
                 }
             }
@@ -164,50 +172,32 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     continue;
                 }
 
-                map.computeIfAbsent(uniqueKey(businessType), s -> {
-                    AppCrawlerConfig conf = new AppCrawlerConfig();
-                    conf.setAppId(appId);
-                    conf.setWebsiteType(websiteType.val());
-                    conf.setProject(businessType.getCode());
-                    conf.setCrawlerStatus(businessType.isOpen());
-
-                    return conf;
-                });
+                map.computeIfAbsent(uniqueKey(businessType), s -> convertProjectParam(businessType, null));
             }
 
-            List<ProjectParam> projects = new ArrayList<>();
-            Collection<AppCrawlerConfig> list = map.values();
-            for (AppCrawlerConfig config : list) {
-                String project = config.getProject();
-                BusinessType businessType = BusinessType.getBusinessType(project);
-                if (businessType == null) {
-                    continue;
-                }
-
-                ProjectParam projectParam = new ProjectParam();
-                projectParam.setCode(project);
-                projectParam.setName(businessType.getName());
-                projectParam.setCrawlerStatus((byte) (config.getCrawlerStatus() ? 1 : 0));
-
-                if (config.getCrawlerStatus()) {
-                    projectNames.add(businessType.getName());
-                }
-
-                projects.add(projectParam);
-            }
+            List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getCode)).collect(Collectors.toList());
+            List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName).collect(Collectors.toList());
+            projectNames.addAll(names);
 
             logger.info("appId: {}, websiteType: {}, projects: {}", appId, websiteType.getType(), projects);
 
-            CrawlerProjectParam crawlerProjectParam = new CrawlerProjectParam();
-            crawlerProjectParam.setWebsiteType(websiteType.val());
-            crawlerProjectParam.setProjects(projects);
-            projectConfigInfos.add(crawlerProjectParam);
+            projectConfigInfos.add(new CrawlerProjectParam(websiteType.val(), projects));
         });
 
         appCrawlerConfigParam.setProjectNames(projectNames);
         appCrawlerConfigParam.setProjectConfigInfos(projectConfigInfos);
 
         return appCrawlerConfigParam;
+    }
+
+    private ProjectParam convertProjectParam(BusinessType businessType, Boolean open) {
+        ProjectParam projectParam = new ProjectParam();
+        projectParam.setCode(businessType.getCode());
+        projectParam.setName(businessType.getName());
+        boolean isOpen = open != null ? open : businessType.isOpen();
+        projectParam.setCrawlerStatus((byte) (isOpen ? 1 : 0));
+        projectParam.setOrder(businessType.getOrder());
+        return projectParam;
     }
 
     private String uniqueKey(byte websiteType, String project) {

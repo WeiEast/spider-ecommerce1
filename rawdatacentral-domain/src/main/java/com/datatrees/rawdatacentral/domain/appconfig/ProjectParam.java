@@ -20,6 +20,10 @@ public class ProjectParam {
      * 爬取状态
      */
     private Byte   crawlerStatus;
+    /**
+     * 排序
+     */
+    private int    order;
 
     public String getCode() {
         return code;
@@ -43,6 +47,14 @@ public class ProjectParam {
 
     public void setCrawlerStatus(Byte crawlerStatus) {
         this.crawlerStatus = crawlerStatus;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     @Override

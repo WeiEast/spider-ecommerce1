@@ -19,6 +19,14 @@ public class CrawlerProjectParam {
      */
     private List<ProjectParam> projects;
 
+    public CrawlerProjectParam() {
+    }
+
+    public CrawlerProjectParam(Byte websiteType, List<ProjectParam> projects) {
+        this.websiteType = websiteType;
+        this.projects = projects;
+    }
+
     public Byte getWebsiteType() {
         return websiteType;
     }
