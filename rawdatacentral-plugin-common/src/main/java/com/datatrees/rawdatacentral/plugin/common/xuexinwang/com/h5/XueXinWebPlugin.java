@@ -394,7 +394,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             String path = "education/" + websiteName + "/" + taskId + "/" + picName;
             RpcOssService rpcOssService = BeanFactoryUtils.getBean(RpcOssService.class);
             //todo 开发环境无法使用oss，需注释
-            //rpcOssService.upload(path, pageContent);
+            rpcOssService.upload(path, pageContent);
             logger.info("学信网图片上传oss成功！path={}", path);
             String authorization = RedisUtils.get("authorization");
             if (authorization == null) {
