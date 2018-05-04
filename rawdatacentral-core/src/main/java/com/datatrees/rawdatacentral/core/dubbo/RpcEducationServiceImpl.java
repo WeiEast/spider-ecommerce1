@@ -7,6 +7,7 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RpcEducationService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
@@ -47,6 +48,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
+        param.setFormType(FormType.LOGIN);
         //提供username字段，防止初始化出错
         param.setUsername("未知");
         HttpResult<Object> result = commonPluginApi.init(param);
@@ -67,6 +69,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
+        param.setFormType(FormType.LOGIN);
         HttpResult<Object> result = commonPluginApi.submit(param);
         HashMap<String, Object> loginStatus = (HashMap<String, Object>) result.getData();
         if (!result.getStatus() || !(result.getData() != null && "login_success".equals((loginStatus.get("directive"))))) {
