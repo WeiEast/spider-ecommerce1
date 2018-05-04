@@ -11,7 +11,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
+import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
@@ -19,7 +19,7 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
-import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
     @Override
     public String process(String... args) throws Exception {
         monitorService = BeanFactoryUtils.getBean(MonitorService.class);
-        CrawlerOperatorService pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+        CommonPluginApi pluginService = BeanFactoryUtils.getBean(CommonPluginApi.class);
         AbstractProcessorContext context = PluginFactory.getProcessorContext();
         Map<String, Object> pluginResult = new HashMap<>();
 
@@ -52,7 +52,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
         logger.info("自定义插件-->启动-->成功,taskId={},websiteName={},fromType={}", taskId, websiteName, fromType);
         monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->启动-->成功", FormType.getName(fromType)));
 
-        OperatorParam param = new OperatorParam(fromType, taskId, websiteName);
+        CommonPluginParam param = new CommonPluginParam(fromType, taskId, websiteName);
         param.setArgs(Arrays.copyOf(args, args.length - 1));
         param.getExtral().putAll(context.getContext());
 
