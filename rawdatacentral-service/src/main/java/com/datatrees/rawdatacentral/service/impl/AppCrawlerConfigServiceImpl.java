@@ -154,7 +154,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 AppCrawlerConfig config = iterator.next();
                 if (websiteType.val() == config.getWebsiteType()) {
                     BusinessType businessType = BusinessType.getBusinessType(config.getProject());
-                    if (businessType == null) {
+                    if (businessType == null || !businessType.isEnable()) {
                         continue;
                     }
 
@@ -168,14 +168,13 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
             for (BusinessType businessType : businessTypes) {
                 if (!businessType.isEnable()) {
-                    map.remove(uniqueKey(businessType));
                     continue;
                 }
 
                 map.computeIfAbsent(uniqueKey(businessType), s -> convertProjectParam(businessType, null));
             }
 
-            List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getCode)).collect(Collectors.toList());
+            List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getOrder)).collect(Collectors.toList());
             List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName).collect(Collectors.toList());
             projectNames.addAll(names);
 
