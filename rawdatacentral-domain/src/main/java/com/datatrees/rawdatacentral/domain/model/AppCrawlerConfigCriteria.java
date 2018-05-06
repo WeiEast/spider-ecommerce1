@@ -265,62 +265,52 @@ public class AppCrawlerConfigCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeEqualTo(String value) {
+        public Criteria andWebsiteTypeEqualTo(Byte value) {
             addCriterion("website_type =", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeNotEqualTo(String value) {
+        public Criteria andWebsiteTypeNotEqualTo(Byte value) {
             addCriterion("website_type <>", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeGreaterThan(String value) {
+        public Criteria andWebsiteTypeGreaterThan(Byte value) {
             addCriterion("website_type >", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeGreaterThanOrEqualTo(String value) {
+        public Criteria andWebsiteTypeGreaterThanOrEqualTo(Byte value) {
             addCriterion("website_type >=", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeLessThan(String value) {
+        public Criteria andWebsiteTypeLessThan(Byte value) {
             addCriterion("website_type <", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeLessThanOrEqualTo(String value) {
+        public Criteria andWebsiteTypeLessThanOrEqualTo(Byte value) {
             addCriterion("website_type <=", value, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeLike(String value) {
-            addCriterion("website_type like", value, "websiteType");
-            return (Criteria) this;
-        }
-
-        public Criteria andWebsiteTypeNotLike(String value) {
-            addCriterion("website_type not like", value, "websiteType");
-            return (Criteria) this;
-        }
-
-        public Criteria andWebsiteTypeIn(List<String> values) {
+        public Criteria andWebsiteTypeIn(List<Byte> values) {
             addCriterion("website_type in", values, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeNotIn(List<String> values) {
+        public Criteria andWebsiteTypeNotIn(List<Byte> values) {
             addCriterion("website_type not in", values, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeBetween(String value1, String value2) {
+        public Criteria andWebsiteTypeBetween(Byte value1, Byte value2) {
             addCriterion("website_type between", value1, value2, "websiteType");
             return (Criteria) this;
         }
 
-        public Criteria andWebsiteTypeNotBetween(String value1, String value2) {
+        public Criteria andWebsiteTypeNotBetween(Byte value1, Byte value2) {
             addCriterion("website_type not between", value1, value2, "websiteType");
             return (Criteria) this;
         }

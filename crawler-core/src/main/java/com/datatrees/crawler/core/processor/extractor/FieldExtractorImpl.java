@@ -35,19 +35,16 @@ import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * field exetractor should be parallel
+ * field extractor should be parallel
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 1:45:17 PM
  */
 public class FieldExtractorImpl extends Processor {
 
-    private static final Logger log = LoggerFactory.getLogger(FieldExtractorImpl.class);
-    protected FieldExtractor fieldExtractor;
+    private FieldExtractor fieldExtractor;
 
     public FieldExtractor getFieldExtractor() {
         return fieldExtractor;
@@ -92,7 +89,7 @@ public class FieldExtractorImpl extends Processor {
                     op.setExtractor(fieldExtractor);
                     operationsList.add(op);
                 } else {
-                    log.warn("unknow operation!" + operation.getType());
+                    logger.warn("unknown operation: {}", operation.getType());
                 }
             }
             ProcessorRunner runner = new ProcessorRunner(new ArrayList<>(operationsList));
@@ -110,7 +107,7 @@ public class FieldExtractorImpl extends Processor {
             }
 
         } else {
-            log.warn("operation list is empty for field " + getFieldExtractor().getField());
+            logger.warn("operation list is empty for field: {}", getFieldExtractor().getField());
             fieldResult = content;
         }
         return fieldResult;
@@ -142,9 +139,6 @@ public class FieldExtractorImpl extends Processor {
     @SuppressWarnings("unchecked")
     @Override
     public void process(Request request, Response response) throws Exception {
-
-
-
         Object fieldResult = null;
         Map<String, FieldExtractorWarpper> resultMap = initMap(response);
         String content = "";
@@ -152,7 +146,7 @@ public class FieldExtractorImpl extends Processor {
             // precheck
             Preconditions.checkNotNull(fieldExtractor, "field extractor should not be null");
             if (BooleanUtils.isTrue(fieldExtractor.getStandBy()) && resultMap.get(fieldExtractor.getId()) != null && isValid(resultMap.get(fieldExtractor.getId()))) {
-                log.debug("no need use stand by fieldExtractor:" + fieldExtractor);
+                logger.debug("no need use stand by fieldExtractor: {}", fieldExtractor);
                 return;
             }
 
@@ -166,12 +160,12 @@ public class FieldExtractorImpl extends Processor {
                 }
             }
             if (StringUtils.isEmpty(content)) {
-                log.warn("stop due to input content is empty,fieldExtractor:" + fieldExtractor);
+                logger.warn("stop due to input content is empty,fieldExtractor: {}", fieldExtractor);
             } else {
                 // encoding
                 String encoding = fieldExtractor.getEncoding();
                 if (StringUtils.isNotEmpty(encoding)) {
-                    log.debug("field encoding..." + encoding);
+                    logger.debug("field encoding: {}", encoding);
                     content = encodeContent(content, encoding);
                 }
                 AbstractPlugin plugin = fieldExtractor.getPlugin();
@@ -184,11 +178,8 @@ public class FieldExtractorImpl extends Processor {
                 fieldResult = this.format(request, response, fieldResult, fieldExtractor.getResultType());
             }
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.error(fieldExtractor + " " + e.getMessage(), e);
-            } else {
-                log.error(fieldExtractor + " " + e.getMessage());
-            }
+            logger.error("Error processing field extractor: {}", fieldExtractor, e);
+
             if (e instanceof ResultEmptyException) {
                 throw new ResultEmptyException(e.getMessage());
             }
@@ -200,24 +191,20 @@ public class FieldExtractorImpl extends Processor {
                 fieldResult = resolveUrl((String) fieldResult, request);
             }
         } catch (Exception e) {
-            log.warn(fieldResult + " resolveUrl error " + e.getMessage(), e);
+            logger.warn("error resolving url for field result: {} ", fieldResult, e);
             fieldResult = null;
         }
         if (BooleanUtils.isTrue(fieldExtractor.getNotEmpty()) && (fieldResult == null || StringUtils.isEmpty(fieldResult.toString()))) {
-            log.error(fieldExtractor + " extractor failed with input content: " + content);
-            throw new ResultEmptyException(fieldExtractor + " result should not be Empty!");
+            throw new ResultEmptyException(fieldExtractor + " >> result should not be Empty!");
         }
 
         String id = fieldExtractor.getId();
-        FieldExtractorWarpper warpper = new FieldExtractorWarpper();
-        warpper.setResult(fieldResult);
-        warpper.setExtractor(fieldExtractor);
-        if (log.isDebugEnabled()) {
-            log.debug("end field extractor result: " + warpper);
+        FieldExtractorWarpper warpper = new FieldExtractorWarpper(fieldExtractor, fieldResult);
+
+        if (BooleanUtils.isTrue(fieldExtractor.getNotEmpty())) {
+            logger.info("end not-empty field extractor result: {}", warpper);
         } else {
-            if (BooleanUtils.isTrue(fieldExtractor.getNotEmpty())) {
-                log.info("end not-empty field extractor result: " + warpper);
-            }
+            logger.debug("end field extractor result: {}", warpper);
         }
         resultMap.put(id, warpper);
 
@@ -250,7 +237,7 @@ public class FieldExtractorImpl extends Processor {
                     fieldResult = null;
                 }
             } catch (Exception e) {
-                throw new ExtractorException("foramt " + input + " error", e);
+                throw new ExtractorException("format " + input + " error", e);
             }
         }
         return fieldResult;
@@ -262,7 +249,7 @@ public class FieldExtractorImpl extends Processor {
             try {
                 return this.format(request, response, fieldResult, type);
             } catch (Exception e) {
-                log.error("field defaultValue format error:" + e.getMessage(), e);
+                logger.warn("Error formatting default value for field: {}", fieldExtractor, e);
                 return null;
             }
         } else {
@@ -288,10 +275,9 @@ public class FieldExtractorImpl extends Processor {
         String res = url;
         LinkNode current = RequestUtil.getCurrentUrl(request);
         if (current != null) {
-            log.debug("resolve url...." + current.getUrl());
+            logger.debug("resolve url: {}", current.getUrl());
             String baseURL = (StringUtils.isNotEmpty(current.getBaseUrl()) ? current.getBaseUrl() : current.getUrl());
-            String tmp = url;
-            res = UrlUtils.resolveUrl(baseURL, tmp);
+            res = UrlUtils.resolveUrl(baseURL, url);
         }
         return res;
     }
@@ -322,12 +308,10 @@ public class FieldExtractorImpl extends Processor {
             if (getNext() != null) {
                 getNext().invoke(request, response);
             }
+        } catch (ResultEmptyException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof ResultEmptyException) {
-                throw (ResultEmptyException) e;
-            } else {
-                log.error("invoke next error!", e);
-            }
+            logger.error("invoke next error!", e);
         }
 
     }
@@ -336,7 +320,7 @@ public class FieldExtractorImpl extends Processor {
      * @param response
      * @return
      */
-    protected Map<String, FieldExtractorWarpper> initMap(Response response) {
+    private Map<String, FieldExtractorWarpper> initMap(Response response) {
 
         @SuppressWarnings("unchecked") Map<String, FieldExtractorWarpper> resultMap = ResponseUtil.getResponseFieldResult(response);
         if (resultMap == null) {
@@ -346,10 +330,8 @@ public class FieldExtractorImpl extends Processor {
         return resultMap;
     }
 
-    public void printExtractorInfo(FieldExtractor ex) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("field: ").append(ex.getField()).append(" id:").append(ex.getId());
-        log.debug("start field extractor info:" + sb.toString());
+    private void printExtractorInfo(FieldExtractor ex) {
+        logger.debug("start field extractor >> field: {}, id: {}", ex.getField(), ex.getId());
     }
 
 }

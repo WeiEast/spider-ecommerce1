@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.api;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
@@ -249,4 +250,10 @@ public interface RedisService {
      */
     void unLock(Object redisKey);
 
+
+    <K,V> Map<K,V> getMap(String redisKey);
+
+    <K,V> void putMap(String redisKey, Map<K, V> map);
+
+    <K,V> void putMap(String redisKey, K key, V value);
 }

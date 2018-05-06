@@ -56,9 +56,7 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
             logger.error("Error mapping field value, group: {}, input: {}, error: {}", operation.getGroupName(), input, e.getMessage());
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Mapping field value, group: {}, input: {}, output: {}", operation.getGroupName(), input, result);
-        }
+        logger.debug("Mapping field value, group: {}, input: {}, output: {}", operation.getGroupName(), input, result);
 
         response.setOutPut(result);
     }

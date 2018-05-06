@@ -10,16 +10,12 @@ import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Jerry
  * @datetime 2015-07-17 19:45
  */
 public class JsonPathSegmentImpl extends SegmentBase<JsonPathSegment> {
-
-    private static final Logger log = LoggerFactory.getLogger(JsonPathSegmentImpl.class);
 
     @Override
     protected List<String> getSplit(Request request) {
@@ -32,7 +28,7 @@ public class JsonPathSegmentImpl extends SegmentBase<JsonPathSegment> {
 
         if (StringUtils.isNotBlank(jsonPath)) {
             List<String> segments = JsonPathUtil.readAsList(content, jsonPath);
-            log.info("segment count@" + segments.size() + " by using jsonPath.." + jsonPath);
+            logger.info("segment count@{} by using jsonPath: {}", segments.size(), jsonPath);
             if (CollectionUtils.isNotEmpty(segments)) {
                 result.addAll(segments);
             }

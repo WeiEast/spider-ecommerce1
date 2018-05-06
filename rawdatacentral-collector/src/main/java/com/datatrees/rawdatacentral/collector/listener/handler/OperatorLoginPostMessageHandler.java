@@ -20,8 +20,6 @@ import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperatorLoginPostMessageHandler.class);
     @Resource
     private MonitorService         monitorService;
     @Resource
@@ -70,7 +67,7 @@ public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
             try {
                 newRemark = OperatorUtils.getRemarkForTaskFail(taskId);
             } catch (Exception e) {
-                logger.info("更新remark失败，taskId={}", taskId, e);
+                logger.error("更新remark失败，taskId={}", taskId, e);
             }
             messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), newRemark);
             monitorService.sendTaskCompleteMsg(taskId, websiteName, ErrorCode.LOGIN_FAIL.getErrorCode(), ErrorCode.LOGIN_FAIL.getErrorMsg());
@@ -91,7 +88,7 @@ public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
                 try {
                     newRemark = OperatorUtils.getRemarkForTaskFail(taskId);
                 } catch (Exception e) {
-                    logger.info("更新remark失败，taskId={}", taskId, e);
+                    logger.error("更新remark失败，taskId={}", taskId, e);
                 }
                 messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), newRemark);
                 monitorService.sendTaskCompleteMsg(taskId, websiteName, ErrorCode.LOGIN_FAIL.getErrorCode(), ErrorCode.LOGIN_FAIL.getErrorMsg());
@@ -103,7 +100,7 @@ public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
             try {
                 newRemark = OperatorUtils.getRemarkForTaskFail(taskId);
             } catch (Exception ee) {
-                logger.info("更新remark失败，taskId={}", taskId, ee);
+                logger.error("更新remark失败，taskId={}", taskId, ee);
             }
             messageService.sendDirective(taskId, DirectiveEnum.TASK_FAIL.getCode(), newRemark);
             monitorService.sendTaskCompleteMsg(taskId, websiteName, ErrorCode.LOGIN_FAIL.getErrorCode(), ErrorCode.LOGIN_FAIL.getErrorMsg());

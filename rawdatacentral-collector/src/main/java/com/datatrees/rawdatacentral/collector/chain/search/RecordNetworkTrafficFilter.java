@@ -23,9 +23,7 @@ public class RecordNetworkTrafficFilter extends ResponsesFilter {
         for (Response response : responses) {
             ProtocolOutput outPut = ResponseUtil.getProtocolResponse(response);
             if (outPut != null && outPut.getContent() != null && outPut.getContent().getContent() != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("add new networkTraffic length:" + outPut.getContent().getContent().length);
-                }
+                log.debug("add new networkTraffic length: {}", outPut.getContent().getContent().length);
                 task.getNetworkTraffic().addAndGet(outPut.getContent().getContent().length);
             }
         }

@@ -50,9 +50,7 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
 
         String dest = orginal.replaceAll(from, to); // change replace to regex
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("replace result:" + dest);
-        }
+        logger.debug("replace result: {}", dest);
         response.setOutPut(dest);
         // finally invoke next valve
     }

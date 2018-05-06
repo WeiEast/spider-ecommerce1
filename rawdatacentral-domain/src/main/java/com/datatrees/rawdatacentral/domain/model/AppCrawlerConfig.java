@@ -20,7 +20,7 @@ public class AppCrawlerConfig implements Serializable {
      *
      * @mbg.generated
      */
-    private String websiteType;
+    private Byte websiteType;
 
     /**
      *
@@ -107,7 +107,7 @@ public class AppCrawlerConfig implements Serializable {
      *
      * @mbg.generated
      */
-    public String getWebsiteType() {
+    public Byte getWebsiteType() {
         return websiteType;
     }
 
@@ -119,8 +119,8 @@ public class AppCrawlerConfig implements Serializable {
      *
      * @mbg.generated
      */
-    public void setWebsiteType(String websiteType) {
-        this.websiteType = websiteType == null ? null : websiteType.trim();
+    public void setWebsiteType(Byte websiteType) {
+        this.websiteType = websiteType;
     }
 
     /**
