@@ -189,4 +189,14 @@ public class WebsiteGroupController {
         return websiteGroupService.queryByGroupCode(groupCode);
     }
 
+    /**
+     * 清除缓存
+     * @return
+     */
+    @RequestMapping("/clearOperatorQueueByGroupCode")
+    public Object clearOperatorQueueByGroupCode(String groupCode) {
+        websiteGroupService.clearOperatorQueueByGroupCode(groupCode);
+        return new HttpResult<>().success();
+    }
+
 }
