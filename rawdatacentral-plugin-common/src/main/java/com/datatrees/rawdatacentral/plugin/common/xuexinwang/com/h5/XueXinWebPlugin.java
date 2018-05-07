@@ -30,13 +30,12 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by wangpan on 4/27/18 5:19 PM
@@ -48,13 +47,12 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
     private MonitorService monitorService;
     @Resource
     private MessageService messageService;
-
     private final static String TX_GENERAL_URL = "http://recognition.image.myqcloud.com/ocr/general";
-    private final static String appid = "1255658810";
-    private final static String bucket = "dashutest";
-    private final static String secretid = "AKIDHQRPGv4iroY7UgqxNejeNuFOLBpHscje";
-    private final static String secretkey = "swyoTwCIH4f4IKBsPkwwTxGRTL1Vnupd";
-    private final static String HOST = "recognition.image.myqcloud.com";
+    private final static String appid          = "1255658810";
+    private final static String bucket         = "dashutest";
+    private final static String secretid       = "AKIDHQRPGv4iroY7UgqxNejeNuFOLBpHscje";
+    private final static String secretkey      = "swyoTwCIH4f4IKBsPkwwTxGRTL1Vnupd";
+    private final static String HOST           = "recognition.image.myqcloud.com";
 
     private static void setRedisBySelect(String key, String select, String pageContent) {
         List<String> list = XPathUtil.getXpath(select, pageContent);
@@ -79,6 +77,10 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
+            if (StringUtils.equals(response.getStatusCode()+"","400")){
+                logger.error("登录-->初始化-->失败,当前代理不可用,请重新初始化,param={}", param);
+                return result.failure("初始化失败，请重试");
+            }
             String pageContent = response.getPageContent();
             //获取lt参数，登录需要使用
             String select = "//input[@name='lt']/@value";
@@ -122,10 +124,10 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             String data;
             if (param.getPicCode() != null) {
                 url = url + "/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
-                templateData = "username={}&password={}&captcha={}&lt={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
-                data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), param.getPicCode(), lt);
-                logger.info("学信网请求登录参数url={},loginName={},password={},lt={},picCode={}", url, param.getLoginName(), param.getPassword(), lt,
-                        param.getPicCode());
+                templateData = "username={}&password={}&captcha={}&lt={}&execution={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
+                data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), param.getPicCode(), lt, execution);
+                logger.info("学信网请求登录参数url={},loginName={},password={},lt={},picCode={},execution={}", url, param.getLoginName(), param.getPassword(),
+                        lt, param.getPicCode(), execution);
             } else {
                 url = url + js;
                 templateData = "username={}&password={}&lt={}&execution={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
@@ -294,7 +296,8 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
                     .setRequestBody(date, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).invoke();
             String pageContent = response.getPageContent();
             String str = "学信网已向 " + param.getMobile() + " 发送校验码，请查收";
-            if (pageContent.contains(str)) {
+            String str2 = "学信网已向 " + param.getMobile() + " 发送短信验证码，请查收";
+            if (pageContent.contains(str) || pageContent.contains(str2)) {
                 logger.info("注册-->发送短信验证码成功,param={},response={}", JSON.toJSONString(param), response);
                 Map<String, Object> map = new HashMap<>();
                 map.put("msg", response.getPageContent());
@@ -341,9 +344,8 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             url = "https://account.chsi.com.cn/account/registerprocess.action";
             templateDate
                     = "from=&mphone={}&vcode={}&password={}&password1={}&xm={}&credentialtype={}&sfzh={}&from=&email=&pwdreq1=&pwdanswer1=&pwdreq2=&pwdanswer2=&pwdreq3=&pwdanswer3=&continueurl=&serviceId=&serviceNote=1&serviceNote_res=0";
-            date = TemplateUtils
-                    .format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name,
-                            param.getExtral().get("idCardType"), param.getIdCard());
+            date = TemplateUtils.format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name,
+                    param.getExtral().get("idCardType"), param.getIdCard());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_06").setFullUrl(url)
                     .setRequestBody(date).invoke();
             pageContent = response.getPageContent();
@@ -379,18 +381,20 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
 
             String string = handlePic(url, taskId, websiteName);
             return result.success(string);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("OCR处理失败,param={}", param, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
         }
     }
+
     private static String handlePic(String url, Long taskId, String websiteName) {
 
         try {
             Map<String, String> map = new HashMap<>();
-            byte[] pageContent = TaskHttpClient.create(taskId, websiteName, RequestType.GET, "chsi_com_cn_pic").setFullUrl(url).invoke().getResponse();
+            byte[] pageContent = TaskHttpClient.create(taskId, websiteName, RequestType.GET, "chsi_com_cn_pic").setFullUrl(url).invoke()
+                    .getResponse();
             int i = (int) (Math.random() * 100000);
-            String picName=i+".jpeg";
+            String picName = i + ".jpeg";
             String path = "education/" + websiteName + "/" + taskId + "/" + picName;
             RpcOssService rpcOssService = BeanFactoryUtils.getBean(RpcOssService.class);
             //todo 开发环境无法使用oss，需注释
