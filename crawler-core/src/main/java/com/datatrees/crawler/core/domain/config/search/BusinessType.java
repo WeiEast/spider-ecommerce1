@@ -22,11 +22,11 @@ public enum BusinessType {
     MY_RATE("my_rate", "买家信用", WebsiteType.ECOMMERCE, 2),
     BANK_CARD("bank_card", "银行卡信息", WebsiteType.ECOMMERCE, 3),
     FEES("fees", "缴费信息", WebsiteType.ECOMMERCE, 5),
-    ADDRESS("address", "收货地址", WebsiteType.ECOMMERCE, 4, false),
+    ADDRESS("address", "收货地址", WebsiteType.ECOMMERCE, 4),
     ZM_CREDIT("zm_credit", "芝麻分", WebsiteType.ECOMMERCE, 9, false),
     TAOBAO_RECORD("taobao_record", "淘宝交易记录", WebsiteType.ECOMMERCE, 7),
     ALIPAY_RECORD("alipay_record", "支付宝交易记录", WebsiteType.ECOMMERCE, 6),
-    TRADE_ADDRESS("trade_address", "淘宝交易地址", WebsiteType.ECOMMERCE, 8),
+    TRADE_ADDRESS("trade_address", "淘宝交易地址", WebsiteType.ECOMMERCE, 8, false),
     /**
      * 运营商
      */
