@@ -345,7 +345,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             templateDate
                     = "from=&mphone={}&vcode={}&password={}&password1={}&xm={}&credentialtype={}&sfzh={}&from=&email=&pwdreq1=&pwdanswer1=&pwdreq2=&pwdanswer2=&pwdreq3=&pwdanswer3=&continueurl=&serviceId=&serviceNote=1&serviceNote_res=0";
             date = TemplateUtils.format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name,
-                    param.getExtral().get("idCardType"), param.getIdCard());
+                    param.getIdCardType(), param.getIdCard());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_06").setFullUrl(url)
                     .setRequestBody(date).invoke();
             pageContent = response.getPageContent();
@@ -355,9 +355,9 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
                 logger.error("注册失败--验证码有误，param={},response={}", param, response);
                 return result.failure("校验码有误,注册失败");
             }
-            if (pageContent.contains("证件号码已注册")) {
+            if (pageContent.contains("证件号码已注册")||pageContent.contains("证件号码已被注册")) {
                 logger.error("注册失败--证件号码已注册，param={},response={}", param, response);
-                return result.failure("证件号码已注册");
+                return result.failure("证件号码已被注册");
             }
             if (pageContent.contains("账号注册成功")) {
                 logger.info("注册成功，param={},response={}", param, response);
