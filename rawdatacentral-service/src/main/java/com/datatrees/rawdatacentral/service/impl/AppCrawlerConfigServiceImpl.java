@@ -249,8 +249,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         continue;
                     }
 
-                    redisService.deleteKey(CACHE_PREFIX + appId);
-
                     for (ProjectParam projectParam : projectList) {
                         AppCrawlerConfig config = new AppCrawlerConfig();
                         config.setCrawlerStatus(projectParam.getCrawlerStatus() != 0);
@@ -267,9 +265,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         map.put(projectParam.getCode(), config.getCrawlerStatus());
                     }
                 }
-                logger.info("更新业务标签. appId: {}, 标签：{}", appId, JSON.toJSONString(map));
-                redisService.putMap(CACHE_PREFIX + appId, map);
-                localCache.invalidate(appId);
+                if (!map.isEmpty()) {
+                    redisService.deleteKey(CACHE_PREFIX + appId);
+                    logger.info("更新业务标签. appId: {}, 标签：{}", appId, JSON.toJSONString(map));
+                    redisService.putMap(CACHE_PREFIX + appId, map);
+                    localCache.invalidate(appId);
+                }
             });
         } catch (InterruptedException e) {
             throw new UnexpectedException("The thread is interrupted unexpectedly", e);
