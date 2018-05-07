@@ -234,6 +234,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
         try {
             distributedLocks.doInLock("crawler_business_control_setting_update", 3, TimeUnit.SECONDS, () -> {
+                Map<String, Object> map = new HashMap<>();
                 for (CrawlerProjectParam crawlerProjectParam : projectConfigInfos) {
                     List<ProjectParam> projectList = crawlerProjectParam.getProjects();
 
@@ -243,7 +244,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
                     redisService.deleteKey(CACHE_PREFIX + appId);
 
-                    Map<String, Object> map = new HashMap<>();
                     for (ProjectParam projectParam : projectList) {
                         AppCrawlerConfig config = new AppCrawlerConfig();
                         config.setCrawlerStatus(projectParam.getCrawlerStatus() != 0);
@@ -259,10 +259,9 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         }
                         map.put(projectParam.getCode(), config.getCrawlerStatus());
                     }
-
-                    logger.info("更新业务标签. appId: {}, 标签：{}", appId, JSON.toJSONString(map));
-                    redisService.putMap(CACHE_PREFIX + appId, map);
                 }
+                logger.info("更新业务标签. appId: {}, 标签：{}", appId, JSON.toJSONString(map));
+                redisService.putMap(CACHE_PREFIX + appId, map);
                 localCache.invalidate(appId);
             });
         } catch (InterruptedException e) {
