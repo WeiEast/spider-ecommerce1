@@ -44,8 +44,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService {
 
     private static final Logger logger = LoggerFactory.getLogger(XueXinWebPlugin.class);
-    @Autowired
-    WebsiteConfigService websiteConfigService;
     @Resource
     private MonitorService monitorService;
     @Resource
@@ -93,14 +91,16 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             StringBuilder jsKey = new StringBuilder("jsessionId_" + param.getTaskId());
             setRedisBySelect(jsKey.toString(), str, pageContent);
             return result.success();
-        } catch (Exception e) {
-            logger.error("登录-->初始化-->失败,param={},response={},e={}", JSON.toJSONString(param), response, e.getMessage());
+        } catch (Throwable e) {
+            logger.error("登录-->初始化-->失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
 
     @Override
     public HttpResult<Object> submit(CommonPluginParam commonPluginParam) {
+        messageService = BeanFactoryUtils.getBean(MessageService.class);
+        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         EducationParam param = (EducationParam) commonPluginParam;
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getLoginName() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
