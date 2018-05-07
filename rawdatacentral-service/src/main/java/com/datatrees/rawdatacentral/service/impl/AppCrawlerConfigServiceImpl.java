@@ -116,6 +116,9 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         }
 
         Boolean value = result.get(project);
+
+        logger.debug("Actual crawling-business result: {}", value);
+
         return value == null ? Boolean.TRUE.toString() : value.toString();
     }
 

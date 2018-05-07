@@ -49,7 +49,7 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
     private Boolean isFiltered(String businessType, long taskId) {
         BusinessType type = BusinessType.getBusinessType(businessType);
         if (type == null || !type.isEnable()) {
-            logger.warn("Disabled crawling-business type >>> {}", businessType);
+            logger.warn("Disabled crawling-business type >>> {}, taskId: {}", businessType, taskId);
             return Boolean.FALSE;
         }
 

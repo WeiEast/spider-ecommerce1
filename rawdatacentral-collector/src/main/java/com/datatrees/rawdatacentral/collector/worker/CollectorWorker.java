@@ -223,7 +223,7 @@ public class CollectorWorker {
         for (SearchTemplateConfig templateConfig : templateList) {
             LOGGER.info("Start search template: {}", templateConfig.getId());
 
-            if (businessTypeFilter.isFilter(templateConfig, taskMessage.getTask().getTaskId()) || TemplateFilter.isFilter(templateConfig, templateId)) {
+            if (TemplateFilter.isFilter(templateConfig, templateId) || businessTypeFilter.isFilter(templateConfig, taskMessage.getTask().getTaskId())) {
                 LOGGER.info("Skip search template: {}, taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
                 continue;
             }
