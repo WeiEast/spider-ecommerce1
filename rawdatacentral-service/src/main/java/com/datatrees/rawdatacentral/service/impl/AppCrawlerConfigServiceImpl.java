@@ -123,7 +123,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     public List<AppCrawlerConfigParam> getAppCrawlerConfigList() {
         MerchantResult<List<MerchantAppLicenseResult>> merchantResult = merchantBaseInfoFacade.queryAllMerchantAppLicense(new BaseRequest());
         List<MerchantAppLicenseResult> appList = merchantResult.getData();
-        logger.info("Merchant list: {}, size: {}", appList, appList.size());
+        logger.debug("Merchant list: {}, size: {}", appList, appList.size());
 
         if (CollectionUtils.isEmpty(appList)) {
             return Collections.emptyList();
@@ -133,9 +133,10 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     }
 
     private AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(MerchantAppLicenseResult merchant) {
+        logger.debug("查询业务标签，appId: {}, appName: {}", merchant.getAppId(), merchant.getAppName());
         AppCrawlerConfigParam param = new AppCrawlerConfigParam(merchant.getAppId(), merchant.getAppName());
-
         List<AppBizLicenseSimpleResult> results = merchant.getAppBizLicenseResults();
+
         if (CollectionUtils.isNotEmpty(results)) {
             List<AppCrawlerConfig> configs = selectListByAppId(merchant.getAppId());
             Iterator<AppCrawlerConfig> iterator = configs.iterator();
@@ -144,7 +145,9 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             List<String> projectNames = new ArrayList<>();
             for (AppBizLicenseSimpleResult result : results) {
                 if (result.getIsValid() == 1) {
+                    logger.debug("业务标签类型，bizType: {}, bizName: {}", result.getBizType(), result.getBizName());
                     WebsiteType websiteType = WebsiteType.getWebsiteType(String.valueOf(result.getBizType()));
+                    if (websiteType == null) continue;
 
                     Map<String, ProjectParam> map = new HashMap<>();
                     while (iterator.hasNext()) {
