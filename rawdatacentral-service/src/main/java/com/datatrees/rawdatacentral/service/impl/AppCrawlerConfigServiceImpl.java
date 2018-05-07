@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
@@ -24,8 +25,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.saas.merchant.center.facade.request.common.BaseRequest;
+import com.treefinance.saas.merchant.center.facade.result.console.AppBizLicenseSimpleResult;
+import com.treefinance.saas.merchant.center.facade.result.console.MerchantAppLicenseResult;
 import com.treefinance.saas.merchant.center.facade.result.console.MerchantResult;
-import com.treefinance.saas.merchant.center.facade.result.console.MerchantSimpleResult;
 import com.treefinance.saas.merchant.center.facade.service.MerchantBaseInfoFacade;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -54,7 +56,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     private DistributedLocks       distributedLocks;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         // TODO: 2018/5/4 初期启动可以先异步缓存，数据量增大后需要优化改进
         new Thread(() -> {
             List<AppCrawlerConfig> list = selectAll();
@@ -119,74 +121,73 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
     @Override
     public List<AppCrawlerConfigParam> getAppCrawlerConfigList() {
-        MerchantResult<List<MerchantSimpleResult>> merchantResult = merchantBaseInfoFacade.querySimpleMerchantSimple(new BaseRequest());
-        List<MerchantSimpleResult> appList = merchantResult.getData();
+        MerchantResult<List<MerchantAppLicenseResult>> merchantResult = merchantBaseInfoFacade.queryAllMerchantAppLicense(new BaseRequest());
+        List<MerchantAppLicenseResult> appList = merchantResult.getData();
         logger.info("Merchant list: {}, size: {}", appList, appList.size());
 
         if (CollectionUtils.isEmpty(appList)) {
             return Collections.emptyList();
         }
 
-        return appList.parallelStream().map(merchantSimpleResult -> {
-            AppCrawlerConfigParam appCrawlerConfigParam = getAppCrawlerConfigParamByAppId(merchantSimpleResult.getAppId());
-            appCrawlerConfigParam.setAppName(merchantSimpleResult.getAppName());
-            return appCrawlerConfigParam;
-        }).sorted(Comparator.comparing(AppCrawlerConfigParam::getAppId)).collect(Collectors.toList());
+        return appList.parallelStream().map(this::getAppCrawlerConfigParamByAppId).sorted(Comparator.comparing(AppCrawlerConfigParam::getAppId)).collect(Collectors.toList());
     }
 
-    @Override
-    public AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(String appId) {
-        AppCrawlerConfigParam appCrawlerConfigParam = new AppCrawlerConfigParam();
-        //set appId
-        appCrawlerConfigParam.setAppId(appId);
+    private AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(MerchantAppLicenseResult merchant) {
+        AppCrawlerConfigParam param = new AppCrawlerConfigParam(merchant.getAppId(), merchant.getAppName());
 
-        List<AppCrawlerConfig> configs = selectListByAppId(appId);
-        Iterator<AppCrawlerConfig> iterator = configs.iterator();
+        List<AppBizLicenseSimpleResult> results = merchant.getAppBizLicenseResults();
+        if (CollectionUtils.isNotEmpty(results)) {
+            List<AppCrawlerConfig> configs = selectListByAppId(merchant.getAppId());
+            Iterator<AppCrawlerConfig> iterator = configs.iterator();
 
-        List<CrawlerProjectParam> projectConfigInfos = new ArrayList<>();
-        List<String> projectNames = new ArrayList<>();
+            List<CrawlerProjectParam> projectConfigInfos = new ArrayList<>();
+            List<String> projectNames = new ArrayList<>();
+            for (AppBizLicenseSimpleResult result : results) {
+                if (result.getIsValid() == 1) {
+                    WebsiteType websiteType = WebsiteType.getWebsiteType(String.valueOf(result.getBizType()));
 
-        Map<WebsiteType, List<BusinessType>> group = BusinessType.getGroup();
-        group.forEach((websiteType, businessTypes) -> {
-            Map<String, ProjectParam> map = new HashMap<>();
+                    Map<String, ProjectParam> map = new HashMap<>();
+                    while (iterator.hasNext()) {
+                        AppCrawlerConfig config = iterator.next();
+                        if (websiteType.val() == config.getWebsiteType()) {
+                            BusinessType businessType = BusinessType.getBusinessType(config.getProject());
+                            if (businessType == null || !businessType.isEnable()) {
+                                continue;
+                            }
 
-            while (iterator.hasNext()) {
-                AppCrawlerConfig config = iterator.next();
-                if (websiteType.val() == config.getWebsiteType()) {
-                    BusinessType businessType = BusinessType.getBusinessType(config.getProject());
-                    if (businessType == null || !businessType.isEnable()) {
-                        continue;
+                            ProjectParam projectParam = convertProjectParam(businessType, config.getCrawlerStatus());
+
+                            map.put(uniqueKey(config.getWebsiteType(), projectParam.getCode()), projectParam);
+
+                            iterator.remove();
+                        }
                     }
 
-                    ProjectParam projectParam = convertProjectParam(businessType, config.getCrawlerStatus());
+                    List<BusinessType> businessTypes = BusinessType.getBusinessTypeList(websiteType);
+                    if (CollectionUtils.isNotEmpty(businessTypes)) {
+                        for (BusinessType businessType : businessTypes) {
+                            if (!businessType.isEnable()) {
+                                continue;
+                            }
 
-                    map.put(uniqueKey(config.getWebsiteType(), projectParam.getCode()), projectParam);
+                            map.computeIfAbsent(uniqueKey(businessType), s -> convertProjectParam(businessType, null));
+                        }
+                    }
 
-                    iterator.remove();
+                    List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getOrder)).collect(Collectors.toList());
+                    List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName).collect(Collectors.toList());
+                    projectNames.addAll(names);
+
+                    logger.info("appId: {}, websiteType: {}, projects: {}", param.getAppId(), websiteType.getType(), projects);
+
+                    projectConfigInfos.add(new CrawlerProjectParam(websiteType.val(), projects));
                 }
             }
+            param.setProjectNames(projectNames);
+            param.setProjectConfigInfos(projectConfigInfos.stream().sorted(Comparator.comparing(CrawlerProjectParam::getWebsiteType)).collect(Collectors.toList()));
+        }
 
-            for (BusinessType businessType : businessTypes) {
-                if (!businessType.isEnable()) {
-                    continue;
-                }
-
-                map.computeIfAbsent(uniqueKey(businessType), s -> convertProjectParam(businessType, null));
-            }
-
-            List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getOrder)).collect(Collectors.toList());
-            List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName).collect(Collectors.toList());
-            projectNames.addAll(names);
-
-            logger.info("appId: {}, websiteType: {}, projects: {}", appId, websiteType.getType(), projects);
-
-            projectConfigInfos.add(new CrawlerProjectParam(websiteType.val(), projects));
-        });
-
-        appCrawlerConfigParam.setProjectNames(projectNames);
-        appCrawlerConfigParam.setProjectConfigInfos(projectConfigInfos);
-
-        return appCrawlerConfigParam;
+        return param;
     }
 
     private ProjectParam convertProjectParam(BusinessType businessType, Boolean open) {
@@ -222,6 +223,9 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         continue;
                     }
 
+                    redisService.deleteKey(CACHE_PREFIX + appId);
+
+                    Map<String, Object> map = new HashMap<>();
                     for (ProjectParam projectParam : projectList) {
                         AppCrawlerConfig config = new AppCrawlerConfig();
                         config.setCrawlerStatus(projectParam.getCrawlerStatus() != 0);
@@ -235,13 +239,11 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                             config.setProject(projectParam.getCode());
                             appCrawlerConfigDao.insertSelective(config);
                         }
-
-                        try {
-                            redisService.putMap(CACHE_PREFIX + appId, projectParam.getCode(), config.getCrawlerStatus());
-                        } catch (Exception e) {
-                            logger.warn("Error putting app business config into redis. appId: {}, businessType: {}, isCrawling: {}", appId, projectParam.getCode(), config.getCrawlerStatus(), e);
-                        }
+                        map.put(projectParam.getCode(), config.getCrawlerStatus());
                     }
+
+                    logger.info("更新业务标签. appId: {}, 标签：{}", appId, JSON.toJSONString(map));
+                    redisService.putMap(CACHE_PREFIX + appId, map);
                 }
             });
         } catch (InterruptedException e) {

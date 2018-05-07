@@ -135,7 +135,11 @@ public class DistributedLock {
     public void unlock() {
         LOGGER.info("unlock within the name: {}", lockName);
         if (Thread.currentThread() == removeOwnerThread()) {
-            redisTemplate.delete(lockName);
+            try {
+                redisTemplate.delete(lockName);
+            } catch (Exception e) {
+                LOGGER.warn("error unlock with the name: {}", lockName, e);
+            }
         } else {
             LOGGER.warn("The current thread is not the owner of lock. lock-name: {}", lockName);
         }

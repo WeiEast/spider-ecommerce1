@@ -89,6 +89,10 @@ public enum BusinessType {
         return Holder.MAP;
     }
 
+    public static List<BusinessType> getBusinessTypeList(WebsiteType websiteType) {
+        return getGroup().get(websiteType);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).append("code", code).append("name", name).append("websiteType", websiteType).append("open", open).append("enable", enable).toString();
