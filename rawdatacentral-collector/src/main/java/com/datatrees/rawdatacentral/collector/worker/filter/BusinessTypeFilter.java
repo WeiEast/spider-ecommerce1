@@ -41,7 +41,7 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
 
         Boolean filtered = isFiltered(businessType, taskId);
 
-        logger.info("taskId: {}, businessType: {}, filter: {}", taskId, businessType, filtered);
+        logger.info("crawling-business decider >> taskId: {}, businessType: {}, filter: {}", taskId, businessType, filtered);
 
         return filtered;
     }
@@ -49,6 +49,7 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
     private Boolean isFiltered(String businessType, long taskId) {
         BusinessType type = BusinessType.getBusinessType(businessType);
         if (type == null || !type.isEnable()) {
+            logger.warn("Disabled crawling-business type >>> {}", businessType);
             return Boolean.FALSE;
         }
 
@@ -65,7 +66,6 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
 
                     logger.info("appId: {}, projectCode: {}, crawlBizConfig: {} ", appId, type.getCode(), result);
 
-                    //result为null，该业务未配置，默认为抓取
                     return Boolean.FALSE.toString().equalsIgnoreCase(result);
                 }
 

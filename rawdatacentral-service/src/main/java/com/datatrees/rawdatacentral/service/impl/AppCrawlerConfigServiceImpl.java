@@ -238,6 +238,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         if (StringUtils.isBlank(appId) || CollectionUtils.isEmpty(projectConfigInfos)) {
             throw new IllegalArgumentException("Incorrect parameters!");
         }
+        logger.info("update crawling-business config >> appId: {}", appId);
 
         try {
             distributedLocks.doInLock("crawler_business_control_setting_update", 3, TimeUnit.SECONDS, () -> {
