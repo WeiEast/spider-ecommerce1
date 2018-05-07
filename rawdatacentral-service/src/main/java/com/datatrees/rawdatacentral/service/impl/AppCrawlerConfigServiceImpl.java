@@ -148,9 +148,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             for (AppBizLicenseSimpleResult result : results) {
                 if (result.getIsValid() == 1) {
                     logger.debug("业务标签类型，bizType: {}, bizName: {}", result.getBizType(), result.getBizName());
-                    WebsiteType websiteType = WebsiteType.getWebsiteType(String.valueOf(result.getBizType()));
+
+                    WebsiteType websiteType = getWebsiteType(result.getBizType());
+                    if (websiteType == null) continue;
+
                     List<BusinessType> businessTypes = BusinessType.getBusinessTypeList(websiteType);
-                    if (websiteType == null || businessTypes == null) continue;
+                    if (CollectionUtils.isEmpty(businessTypes)) continue;
 
                     Map<String, ProjectParam> map = new HashMap<>();
                     while (iterator.hasNext()) {
@@ -169,14 +172,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         }
                     }
 
-                    if (!businessTypes.isEmpty()) {
-                        for (BusinessType businessType : businessTypes) {
-                            if (!businessType.isEnable()) {
-                                continue;
-                            }
-
-                            map.computeIfAbsent(uniqueKey(businessType), s -> convertProjectParam(businessType, null));
+                    for (BusinessType businessType : businessTypes) {
+                        if (!businessType.isEnable()) {
+                            continue;
                         }
+
+                        map.computeIfAbsent(uniqueKey(businessType), s -> convertProjectParam(businessType, null));
                     }
 
                     List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getOrder)).collect(Collectors.toList());
@@ -193,6 +194,15 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         }
 
         return param;
+    }
+
+    private WebsiteType getWebsiteType(Byte bizType) {
+        if (bizType == 2) {
+            return WebsiteType.ECOMMERCE;
+        } else if (bizType == 3) {
+            return WebsiteType.OPERATOR;
+        }
+        return null;
     }
 
     private ProjectParam convertProjectParam(BusinessType businessType, Boolean open) {
