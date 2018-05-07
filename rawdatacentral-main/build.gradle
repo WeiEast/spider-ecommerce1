@@ -5,14 +5,15 @@ bootRepackage {
     mainClass = "com.datatrees.rawdatacentral.web.Application"
 }
 
-processResources {
-    from "src/main/resources/env/$env"
-    into "src/main/resources"
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources", "src/main/profile/$env"]
+        }
+    }
 }
 
 dependencies {
-
-
     compile project(":rawdatacentral-web")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     compile ("org.seleniumhq.selenium:selenium-java:${seleniumVersion}"){
