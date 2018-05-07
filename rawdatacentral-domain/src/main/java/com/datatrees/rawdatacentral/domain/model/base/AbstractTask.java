@@ -11,7 +11,7 @@ public abstract class AbstractTask {
     /**
      * 是否子任务
      */
-    protected boolean isSubTask = false;
+    private boolean isSubTask = false;
     private boolean isDuplicateRemoved;
 
     public void setErrorCode(ErrorCode errorCode) {

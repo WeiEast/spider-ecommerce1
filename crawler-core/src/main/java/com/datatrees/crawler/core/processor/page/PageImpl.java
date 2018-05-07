@@ -20,7 +20,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.URLUtil;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.filter.FilterType;
 import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
 import com.datatrees.crawler.core.domain.config.page.Regexp;
@@ -51,8 +50,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -61,13 +58,11 @@ import org.slf4j.LoggerFactory;
  */
 public class PageImpl extends AbstractPage {
 
-    private static final Logger log            = LoggerFactory.getLogger(PageImpl.class);
     private static final String titleRegex     = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
     private static final int    URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
 
     @Override
     public void process(Request request, Response response) throws Exception {
-
         Preconditions.checkNotNull(page, "Page should not be null!");
 
         LinkNode current = RequestUtil.getCurrentUrl(request);
@@ -130,17 +125,17 @@ public class PageImpl extends AbstractPage {
                     redirectNode.setReferer(current.getUrl());
                     redirectNode.setDepth(current.getDepth());
                     urlLists.put(redirectNode.getUrl(), redirectNode);
-                    log.info("add redirect url to urlLists , url : " + current.getRedirectUrl() + " referer url : " + current.getReferer());
+                    logger.info("add redirect url to urlLists, url: {}, referer: {}", current.getRedirectUrl(), current.getReferer());
                 }
 
                 // filter url set url depth
                 urlLinkNodes = filterUrls(request, urlLists, current);
             } else {
-                log.warn("after page replace content is empty! " + current);
+                logger.warn("after page replace content is empty! LinkNode: {}", current);
             }
 
         } else {
-            log.warn("Need not Parse that no search result return or encounter block flag");
+            logger.warn("Need not Parse that no search result return or encounter block flag");
         }
 
         ResponseUtil.setResponseLinkNodes(response, urlLinkNodes);
@@ -158,10 +153,10 @@ public class PageImpl extends AbstractPage {
                     String pNumber = matcher.group(1);
                     try {
                         int pNum = Integer.valueOf(pNumber);
-                        log.info("add paging number...." + pNum + "  original.." + matcher.group(0));
+                        logger.info("add paging number: {},  match-text: {}", pNum, matcher.group(0));
                         String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, ((SearchProcessorContext) RequestUtil.getProcessorContext(request)).getContext());
                         if (StringUtils.isNotEmpty(pageUrl)) {
-                            log.info("add page url..." + pageUrl);
+                            logger.info("add page url: {}", pageUrl);
                             LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
                             tmp.setpNum(pNum);
                             urlLists.put(pageUrl, tmp);
@@ -171,7 +166,7 @@ public class PageImpl extends AbstractPage {
                 }
             }
         } catch (Exception e) {
-            log.error("extract page urls error!", e);
+            logger.error("extract page urls error!", e);
         }
         return urlLists;
     }
@@ -192,11 +187,11 @@ public class PageImpl extends AbstractPage {
                 } catch (NumberFormatException nfe) {
                     // eat it if not configured correctly.
                 }
-                log.info("find page number from url: " + current.getUrl() + ", num: " + pNum);
+                logger.info("find page number from url: {}, num: {}", current.getUrl(), pNum);
                 current.setpNum(pNum);
             }
         } catch (Exception e) {
-            log.error("set page num error!", e);
+            logger.error("set page num error!", e);
         }
     }
 
@@ -226,7 +221,7 @@ public class PageImpl extends AbstractPage {
     private void setResponseStatus(Response response, int status, String pattern, String content) {
         if (StringUtils.isNotEmpty(pattern)) {
             if (RegExp.find(content, pattern)) {
-                log.info("set status " + StatusUtil.format(status));
+                logger.info("set status: {}", StatusUtil.format(status));
                 ResponseUtil.setResponseStatus(response, status);
             }
         }
@@ -280,7 +275,7 @@ public class PageImpl extends AbstractPage {
                     tmp.setUrl(url);
                     // filll page title
                     tmp.setPageTitle(current.getPageTitle());
-                    log.debug("filter url ... " + url);
+                    logger.debug("filter url : {}", url);
                     String dest = fl.filter(url);
                     // run url handler
                     if (urlHandler != null) {
@@ -289,7 +284,7 @@ public class PageImpl extends AbstractPage {
 
                             // return true/false remove node
                         } catch (Exception e) {
-                            log.error("invoke url handler exception!", e);
+                            logger.error("invoke url handler exception!", e);
                         }
                     }
 
@@ -304,16 +299,16 @@ public class PageImpl extends AbstractPage {
                                 try {
                                     depth = RegExp.find(url, revisitPattern) ? depth - 1 : depth;
                                 } catch (Exception e) {
-                                    log.error("check revisit error!", e);
+                                    logger.error("check revisit error!", e);
                                 }
                             }
 
                             // adjust depth
                             wrapper.adjustUrlDepth(tmp, template, depth);
                             nodes.add(tmp);
-                            log.debug(current.getUrl() + "@@accept url:" + url);
+                            logger.debug("{} @@accept url: {}", current.getUrl(), url);
                         } else {
-                            log.debug(current.getUrl() + "@@filter url:" + url);
+                            logger.debug("{} @@filter url: {}", current.getUrl(), url);
                         }
                     }
 
@@ -332,7 +327,7 @@ public class PageImpl extends AbstractPage {
                 }
             }
         }
-        log.debug("after url filter...original:" + urlLists.size() + "@@after.." + nodes.size());
+        logger.debug("After url filter... original={} @@after={}", urlLists.size(), nodes.size());
         // nodes.add(current);
         return nodes;
     }
@@ -385,7 +380,7 @@ public class PageImpl extends AbstractPage {
             String key = fl.getKey();
             if (!linkNodeMap.containsKey(key)) {
                 linkNodeMap.put(key, new LinkNode(fl.getKey()).setReferer(current.getUrl()));
-                log.debug(" extractor url >> " + fl.getKey());
+                logger.debug(" extractor url >> {}", fl.getKey());
             }
         }
     }
@@ -403,7 +398,7 @@ public class PageImpl extends AbstractPage {
         String baseURL = (StringUtils.isNotEmpty(current.getBaseUrl()) ? current.getBaseUrl() : current.getUrl());
 
         List<Map<String, Object>> segmentResult = new ArrayList<>();
-        log.info("URL: " + baseURL + " segment size.." + segments.size());
+        logger.info("URL: {}, segment-size: {}", baseURL, segments.size());
         //SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
         for (AbstractSegment abstractSegment : segments) {
             try {
@@ -439,7 +434,7 @@ public class PageImpl extends AbstractPage {
                 } else if (segResult instanceof List) {
                     segmentResult.addAll((List) segResult);
                 } else {
-                    log.warn("unaccepted segResult type:" + segResult);
+                    logger.warn("unaccepted segResult type: {}", segResult);
                 }
 
                 if (BooleanUtils.isTrue(page.getUrlExtract())) {
@@ -448,18 +443,15 @@ public class PageImpl extends AbstractPage {
                         pageContent.append(split);
                     }
                 }
+            } catch (ResultEmptyException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof ResultEmptyException) {
-                    throw (ResultEmptyException) e;
-                } else {
-                    log.error("invoke segment processor error!", e);
-                }
-
+                logger.error("invoke segment processor error!", e);
             }
         }
 
         // combine field urls
-        log.debug("start extract field urls" + baseURL);
+        logger.debug("start to extract field url: {}", baseURL);
 
         List<Object> instanceList = new ArrayList<>();
         for (Object obj : segmentResult) {
@@ -472,19 +464,18 @@ public class PageImpl extends AbstractPage {
 
         if (BooleanUtils.isTrue(page.getUrlExtract())) {
             String content = pageContent.toString();
-            if (log.isDebugEnabled()) {
-                log.debug("after segment page content" + content);
-            }
-            log.debug("start extract html link urls" + baseURL);
+            logger.debug("after segment page content: {}", content);
+
+            logger.debug("start to extract html link urls: {}", baseURL);
             extractHtmlLinks(content, baseURL, current, linkNodes);
             // extract text url add to map
-            log.debug("start extract text urls" + baseURL);
+            logger.debug("start to extract text urls: {}", baseURL);
             extractTextUrls(current.getUrl(), content, linkNodes);
         }
 
         // return the page objects
         ResponseUtil.setResponseObjectList(resp, instanceList);
-        // return all linknodes in current page
+        // return all link-nodes in current page
         return linkNodes;
     }
 
@@ -505,16 +496,16 @@ public class PageImpl extends AbstractPage {
                     continue;
                 }
             } catch (Exception e) {
-                log.error("url format error...", e);
+                logger.error("url format error...", e);
                 continue;
             }
 
             LinkNode tmp = new LinkNode(nextURL).setReferer(currentUrl);
             if (StringUtils.isNotBlank(nextURL) && !linkNodeMap.containsKey(nextURL)) {
                 linkNodeMap.put(nextURL, tmp);
-                log.debug("new url extracted in text extractor: " + nextURL);
+                logger.debug("new url extracted in text extractor: {}", nextURL);
             } else {
-                log.debug("text extractor url exists: " + nextURL);
+                logger.debug("text extractor url exists: {}", nextURL);
             }
         }
     }

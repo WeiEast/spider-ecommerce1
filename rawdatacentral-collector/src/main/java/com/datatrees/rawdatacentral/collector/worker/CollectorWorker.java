@@ -75,9 +75,8 @@ public class CollectorWorker {
      * 登录
      * @param taskMessage
      * @return
-     * @exception InterruptedException
      */
-    public HttpResult<Boolean> doLogin(TaskMessage taskMessage) throws InterruptedException {
+    public HttpResult<Boolean> doLogin(TaskMessage taskMessage) {
         HttpResult<Boolean> loginResult = new HttpResult<>();
         Task task = taskMessage.getTask();
         SearchProcessorContext context = taskMessage.getContext();
@@ -135,20 +134,20 @@ public class CollectorWorker {
 
             Map<String, Object> extractResult = mergeSubTaskResult(task.getId(), resultMap);
 
-            LOGGER.error("doSearch success taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName());
+            LOGGER.info("doSearch success taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName());
 
             return searchResult.success(extractResult);
         } catch (ConfigException e) {
-            LOGGER.error("Search config is incorrect! taskId=" + task.getTaskId() + ", websiteName=" + task.getWebsiteName(), e);
+            LOGGER.error("Search config is incorrect! taskId={}, websiteName= {}", task.getTaskId(), task.getWebsiteName(), e);
             return searchResult.failure(ErrorCode.CONFIG_ERROR);
         } catch (ResponseCheckException e) {
-            LOGGER.error("Response checking is not pass! taskId=" + task.getTaskId() + ", websiteName=" + task.getWebsiteName(), e);
+            LOGGER.error("Response checking is not pass! taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
             return searchResult.failure(ErrorCode.RESPONSE_EMPTY_ERROR_CODE.getErrorCode(), e.getMessage());
         } catch (ResultEmptyException e) {
-            LOGGER.error("The necessary fields is empty! taskId=" + task.getTaskId() + ", websiteName=" + task.getWebsiteName(), e);
+            LOGGER.error("The necessary fields is empty! taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
             return searchResult.failure(ErrorCode.NOT_EMPTY_ERROR_CODE.getErrorCode(), e.getMessage());
         } catch (Throwable e) {
-            LOGGER.error("Something is wrong when searching! taskId=" + task.getTaskId() + ", websiteName=" + task.getWebsiteName(), e);
+            LOGGER.error("Something is wrong when searching! taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
             return searchResult.failure();
         } finally {
             task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
@@ -171,7 +170,7 @@ public class CollectorWorker {
                 this.extractCodeCount(extractCount, message, extractResult);
             } catch (Exception e) {
                 extractCount.extractFailedCount++;
-                LOGGER.error("Error awaiting extract result : " + e.getMessage(), e);
+                LOGGER.error("Error awaiting extract result : {}", e.getMessage(), e);
             }
         }
 
@@ -219,22 +218,13 @@ public class CollectorWorker {
 
         String templateId = taskMessage.getTemplateId();
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Expected search template: {}", templateId);
-        }
+        LOGGER.debug("Expected search template: {}", templateId);
 
         for (SearchTemplateConfig templateConfig : templateList) {
             LOGGER.info("Start search template: {}", templateConfig.getId());
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Start search template: {}", templateConfig.getId());
-            }
 
-            if (businessTypeFilter.isFilter(templateConfig, taskMessage.getTask().getTaskId())) {
-                LOGGER.info("Skip search template: {},taskId: {}，websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
-                continue;
-            }
-            if (TemplateFilter.isFilter(templateConfig, templateId)) {
-                LOGGER.debug("Skip search template: {}, taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+            if (businessTypeFilter.isFilter(templateConfig, taskMessage.getTask().getTaskId()) || TemplateFilter.isFilter(templateConfig, templateId)) {
+                LOGGER.info("Skip search template: {}, taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
                 continue;
             }
 
@@ -344,8 +334,8 @@ public class CollectorWorker {
     public Map<String, Object> mergeSubTaskResult(int taskid, Map<String, Object> resultMap) {
         List<Map> results = subTaskManager.getSyncedSubTaskResults(taskid);
         if (CollectionUtils.isNotEmpty(results)) {
-            LOGGER.info("try to merge subTaskResult" + results);
-            List<Map> errorSubTasks = new ArrayList<Map>();
+            LOGGER.info("try to merge subTaskResult: {}", results);
+            List<Map> errorSubTasks = new ArrayList<>();
             Iterator<Map> iter = results.iterator();
             while (iter.hasNext()) {
                 Map map = iter.next();

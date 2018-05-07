@@ -39,13 +39,13 @@ public class MailBillIllegalSubjectFilter extends RemovedFetchLinkNodeFilter {
             if (PatternUtils.match(subjectContainsPattern, subject.toString().replaceAll("\\s", ""))) {
                 if (PatternUtils.match(subjectBlackListPattern, subject.toString())) {
                     if (!PatternUtils.match(subjectWhiteListPattern, subject.toString()) || PatternUtils.match(secondSubjectBlackListPattern, subject.toString())) {
-                        logger.info("Node:" + fetchLinkNode + ",subject:" + subject + " filtered by subject blacklist.");
+                        logger.info("Node: {}, subject: {} filtered by subject blacklist.", fetchLinkNode, subject);
                         fetchLinkNode.setRemoved(true);
                     }
                 }
             } else {
                 fetchLinkNode.setRemoved(true);
-                logger.info("Node:" + fetchLinkNode + " filtered as " + subject + " discontain '{}'", searchProcessor.getKeyword());
+                logger.info("Node: {} filtered as {} discontain '{}'", fetchLinkNode, subject, searchProcessor.getKeyword());
             }
         }
     }

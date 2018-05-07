@@ -28,9 +28,9 @@ public class MailParserOperationImpl extends Operation<MailParserOperation> {
     public void process(Request request, Response response) throws Exception {
         String result = OperationHelper.getStringInput(request, response);
         MailParserOperation operation = getOperation();
-        if (logger.isDebugEnabled()) {
-            logger.debug("mail parser input " + result);
-        }
+
+        logger.debug("mail parser input: {}", result);
+
         response.setOutPut(MailParserImpl.INSTANCE.parseMessage(RequestUtil.getProcessorContext(request).getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser())));
     }
 

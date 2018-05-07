@@ -42,9 +42,8 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
 
         DecodeType decodeType = operation.getDecodeType();
 
-        if (log.isDebugEnabled()) {
-            log.debug("EscapeOperation input: " + String.format("decodeType: %s", decodeType));
-        }
+        log.debug("decode-type: {}", decodeType);
+
         String result = decode(orginal, decodeType, charSet);
         response.setOutPut(result);
     }

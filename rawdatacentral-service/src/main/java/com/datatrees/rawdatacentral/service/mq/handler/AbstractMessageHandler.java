@@ -1,11 +1,14 @@
 package com.datatrees.rawdatacentral.service.mq.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 通用topic处理
  */
 public abstract class AbstractMessageHandler {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 重试次数

@@ -42,9 +42,8 @@ public class CodecOperationImpl extends Operation<CodecOperation> {
         CodecType cdType = operation.getCodecType();
         HandlingType handlType = operation.getHandlingType();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("CodecOperation input: " + String.format("regex: %s, index: %s", cdType, handlType));
-        }
+        logger.debug("codec-type: {}, handling-type: {}", cdType, handlType);
+
         // get input
         String input = OperationHelper.getStringInput(request, response);
         String result = handlerCodec(input, cdType, handlType, charSet);

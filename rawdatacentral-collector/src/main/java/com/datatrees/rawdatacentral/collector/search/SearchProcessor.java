@@ -22,10 +22,11 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.search.Crawler;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
-import com.datatrees.rawdatacentral.collector.chain.*;
+import com.datatrees.rawdatacentral.collector.chain.Context;
+import com.datatrees.rawdatacentral.collector.chain.FilterConstant;
+import com.datatrees.rawdatacentral.collector.chain.Filters;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
-import com.datatrees.rawdatacentral.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -74,7 +75,7 @@ public class SearchProcessor {
                     setDuplicateRemoval(properties.getDuplicateRemoval());
 
                     Task task = taskMessage.getTask();
-                    log.info("DuplicateRemoval Config is  " + properties.getDuplicateRemoval() + " ,workingTaskEntity_id " + task.getId());
+                    log.info("DuplicateRemoval Config is {}, workingTaskEntity_id: {}", properties.getDuplicateRemoval(), task.getId());
                 }
             }
         }
@@ -127,12 +128,10 @@ public class SearchProcessor {
             context.setAttribute(FilterConstant.FETCHED_LINK_NODE_LIST, linkNodeList);
 
             Filters.SEARCH.doFilter(context);
+        } catch (ResultEmptyException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof ResultEmptyException) {
-                throw (ResultEmptyException) e;
-            } else {
-                log.error("Caught Exception in crawlOneURL ,url [" + url.getUrl() + "]", e);
-            }
+            log.error("Caught Exception in crawlOneURL ,url [{}]", url.getUrl(), e);
         } finally {
             if (null != request) {
                 // reset page content

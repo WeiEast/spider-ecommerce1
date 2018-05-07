@@ -36,7 +36,7 @@ public class MailBillSenderFilter extends RemovedFetchLinkNodeFilter {
         if (websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
             Object sender = fetchLinkNode.getProperty(MailBillData.SENDER);
             if (sender != null && PatternUtils.match(senderBlackListPattern, sender.toString().toLowerCase())) {
-                logger.info("Node:" + fetchLinkNode + " filtered as the sender is " + sender);
+                logger.info("Node: {} filtered as the sender is {}", fetchLinkNode, sender);
                 fetchLinkNode.setRemoved(true);
             }
         }

@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
@@ -375,8 +376,9 @@ public class ReidsServiceImpl implements RedisService {
     public Boolean lock(Object redisKey) {
         long endTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5);
         String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(redisKey.toString());
-        boolean result = false;
-        while (!result && System.currentTimeMillis() < endTime) {
+        boolean result;
+        while (System.currentTimeMillis() < endTime) {
+            // TODO: 2018/5/3 死锁风险。比如：设置成功值后，系统崩溃或redis连接异常导致超时设置失败。
             result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "locked");
             if (result) {
                 stringRedisTemplate.expire(lockKey, RedisKeyPrefixEnum.LOCK.getTimeout(), RedisKeyPrefixEnum.LOCK.getTimeUnit());
@@ -400,6 +402,21 @@ public class ReidsServiceImpl implements RedisService {
         String lockKey = RedisKeyPrefixEnum.LOCK.getRedisKey(redisKey.toString());
         deleteKey(lockKey);
         logger.info("unlock success redisKey={}", redisKey);
+    }
+
+    @Override
+    public <K, V> Map<K, V> getMap(String redisKey) {
+        return redisTemplate.opsForHash().entries(redisKey);
+    }
+
+    @Override
+    public <K, V> void putMap(String redisKey, Map<K, V> map) {
+        redisTemplate.opsForHash().putAll(redisKey, map);
+    }
+
+    @Override
+    public <K, V> void putMap(String redisKey, K key, V value) {
+        redisTemplate.opsForHash().put(redisKey, key, value);
     }
 
     public String getStringWithNoClean(String key) {

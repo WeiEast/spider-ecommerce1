@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandler;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
@@ -38,15 +39,23 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
             return Boolean.FALSE;
         }
 
-        try {
-            return localCache.get(taskId + "_" + businessType, () -> {
-                SaasResult<TaskRO> taskRO = taskFacade.getById(taskId);
-                logger.debug("taskRO is {}", taskRO.getData());
+        BusinessType type = BusinessType.getBusinessType(businessType);
+        if (type == null || !type.isEnable()) {
+            return Boolean.FALSE;
+        }
 
-                if (taskRO.getData() != null) {
-                    String appId = taskRO.getData().getAppId();
-                    String result = appCrawlerConfigService.getFromRedis(appId, businessType);
-                    logger.info("appCrawlerConfig result from redis is {},appId is {},project is {}", result, appId, businessType);
+        try {
+            return localCache.get(taskId + "_" + type.getCode(), () -> {
+                SaasResult<TaskRO> taskRO = taskFacade.getById(taskId);
+                TaskRO data = taskRO.getData();
+
+                logger.debug("taskRO is {}", data);
+
+                if (data != null) {
+                    String appId = data.getAppId();
+                    String result = appCrawlerConfigService.getFromRedis(appId, type.getCode());
+
+                    logger.info("appId: {}, projectCode: {}, crawlBizConfig: {} ", appId, type.getCode(), result);
 
                     //result为null，该业务未配置，默认为抓取
                     return Boolean.FALSE.toString().equalsIgnoreCase(result);

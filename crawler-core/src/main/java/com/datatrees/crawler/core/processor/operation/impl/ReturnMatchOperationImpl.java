@@ -37,6 +37,9 @@ public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
         Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
 
         value = ReplaceUtils.replaceMap(fieldContext, sourceMap, value);
+
+        logger.debug("input: {}", value);
+
         StringBuilder result = new StringBuilder();
         String[] matchedKeys = value.split(",");
         for (String matchedKey : matchedKeys) {
@@ -49,9 +52,7 @@ public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
                 result = new StringBuilder(result.substring(0, result.length() - 1));
             }
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("ReturnMatchOperation input: " + String.format("value: %s", value));
-        }
+
         response.setOutPut(result.toString());
     }
 

@@ -26,7 +26,7 @@ public class AddParserTemplateUrlFilter extends RemovedFetchLinkNodeFilter {
             String currentParserLinkUrl = SearchTemplateCombine.customTemplate(fetchLinkNode.getUrl(), pageNum);
 
             if (!currentParserLinkUrl.equals(fetchLinkNode.getUrl())) {
-                logger.info("AddParserTemplateUrlFilter : currentParserLinkUrl : " + currentParserLinkUrl);
+                logger.info("currentParserLinkUrl : {}", currentParserLinkUrl);
                 URLHandlerImpl handler = ContextUtil.getURLHandlerImpl(context);
                 List<LinkNode> parserTemplatelinkNodeList = handler.getTempLinkNodes();
 
@@ -41,7 +41,7 @@ public class AddParserTemplateUrlFilter extends RemovedFetchLinkNodeFilter {
                     if (lastParserLinkUrl.equals(currentParserLinkUrl)) {
                         break;
                     }
-                    logger.info("AddParserTemplateUrlFilter : currentParserLinkUrl : " + currentParserLinkUrl);
+                    logger.info("currentParserLinkUrl : {}", currentParserLinkUrl);
                     LinkNode parserLinkNode = GsonUtils.fromJson(GsonUtils.toJson(fetchLinkNode), LinkNode.class);
                     parserLinkNode.setUrl(currentParserLinkUrl);
                     parserLinkNode.setRemoved(false);

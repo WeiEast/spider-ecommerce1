@@ -32,9 +32,8 @@ public class CalculateOperationImpl extends Operation<CalculateOperation> {
         if (StringUtils.isNotEmpty(expression)) {
             result = CalculateUtil.sourceCalculate(request, response, expression, null);
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("calculate input:" + expression + " ,result:" + result);
-        }
+        logger.debug("calculate input: {}, result: {}", expression, result);
+
         if (result != null) {
             response.setOutPut(result.toString());
         } else {
