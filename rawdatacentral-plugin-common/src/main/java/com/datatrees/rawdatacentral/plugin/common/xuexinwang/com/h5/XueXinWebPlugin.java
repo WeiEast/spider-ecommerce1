@@ -162,7 +162,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
                 map.put("information", response.getPageContent());
                 logger.error("登录-->失败,重新访问的图片的response={}", response);
                 return result.success(map);
-            } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
+            } else if (pageContent != null && (pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")||pageContent.contains("为保障您的账号安全，请输入图片验证码后重新登录"))) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url)
                         .invoke();
