@@ -35,6 +35,10 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
 
     @Override
     public Boolean isFilter(String businessType, long taskId) {
+        if (StringUtils.isBlank(businessType)) {
+            return Boolean.FALSE;
+        }
+
         Boolean filtered = isFiltered(businessType, taskId);
 
         logger.info("taskId: {}, businessType: {}, filter: {}", taskId, businessType, filtered);
@@ -43,10 +47,6 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
     }
 
     private Boolean isFiltered(String businessType, long taskId) {
-        if (StringUtils.isBlank(businessType)) {
-            return Boolean.FALSE;
-        }
-
         BusinessType type = BusinessType.getBusinessType(businessType);
         if (type == null || !type.isEnable()) {
             return Boolean.FALSE;
