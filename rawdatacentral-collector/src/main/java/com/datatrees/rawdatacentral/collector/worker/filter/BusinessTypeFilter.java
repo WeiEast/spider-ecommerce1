@@ -35,6 +35,14 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
 
     @Override
     public Boolean isFilter(String businessType, long taskId) {
+        Boolean filtered = isFiltered(businessType, taskId);
+
+        logger.info("taskId: {}, businessType: {}, filter: {}", taskId, businessType, filtered);
+
+        return filtered;
+    }
+
+    private Boolean isFiltered(String businessType, long taskId) {
         if (StringUtils.isBlank(businessType)) {
             return Boolean.FALSE;
         }
@@ -70,10 +78,10 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
 
     public boolean isFilter(SearchTemplateConfig templateConfig, Long taskId) {
         if (templateConfig.getBusinessType() == null) {
-            logger.info("search businessType is null and search templateId is {}", templateConfig.getId());
+            logger.info("Empty businessType with search templateId[{}]", templateConfig.getId());
             return false;
         }
-        logger.debug("bushinessType from searchTemplate is {}", templateConfig.getBusinessType());
+
         return isFilter(templateConfig.getBusinessType().getCode(), taskId);
     }
 
