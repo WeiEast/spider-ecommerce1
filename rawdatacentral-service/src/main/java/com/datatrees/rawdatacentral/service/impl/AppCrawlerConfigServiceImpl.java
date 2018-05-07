@@ -80,7 +80,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     private List<AppCrawlerConfig> selectListByAppId(String appId) {
         AppCrawlerConfigCriteria criteria = new AppCrawlerConfigCriteria();
         criteria.createCriteria().andAppIdEqualTo(appId);
-        criteria.setOrderByClause("website_type desc");
+        criteria.setOrderByClause("website_type asc");
         return appCrawlerConfigDao.selectByExample(criteria);
     }
 
@@ -143,7 +143,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         List<String> projectNames = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(results)) {
             List<AppCrawlerConfig> configs = selectListByAppId(merchant.getAppId());
-            Iterator<AppCrawlerConfig> iterator = configs.iterator();
+            logger.debug("已知的业务标签配置 size: {}", configs.size());
             for (AppBizLicenseSimpleResult result : results) {
                 if (result.getIsValid() == 1) {
                     logger.debug("业务标签类型，bizType: {}, bizName: {}", result.getBizType(), result.getBizName());
@@ -155,8 +155,10 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     if (CollectionUtils.isEmpty(businessTypes)) continue;
 
                     Map<String, ProjectParam> map = new HashMap<>();
+                    Iterator<AppCrawlerConfig> iterator = configs.iterator();
                     while (iterator.hasNext()) {
                         AppCrawlerConfig config = iterator.next();
+                        logger.debug("业务标签设置 websiteType: {}, project: {}, status: {}", config.getWebsiteType(), config.getProject(), config.getCrawlerStatus());
                         if (websiteType.val() == config.getWebsiteType()) {
                             BusinessType businessType = BusinessType.getBusinessType(config.getProject());
                             if (businessType == null || !businessType.isEnable()) {
