@@ -92,7 +92,7 @@ public class WeightUtils {
     public void clear(String group) {
         String key = QUEUE_PRE + group;
         RQueue<Object> rQueue = client.getQueue(key);
-        if (!rQueue.isEmpty()) {
+        if (!rQueue.isExists() || rQueue.isEmpty()) {
             return;
         }
         rQueue.clear();
