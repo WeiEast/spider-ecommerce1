@@ -134,7 +134,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
     private AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(MerchantAppLicenseResult merchant) {
         if (logger.isDebugEnabled()) {
-            logger.info("查询业务标签，merchant: {}", JSON.toJSONString(merchant));
+            logger.debug("查询业务标签，merchant: {}", JSON.toJSONString(merchant));
         }
         AppCrawlerConfigParam param = new AppCrawlerConfigParam(merchant.getAppId(), merchant.getAppName());
         List<AppBizLicenseSimpleResult> results = merchant.getAppBizLicenseResults();
@@ -183,7 +183,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName).collect(Collectors.toList());
                     projectNames.addAll(names);
 
-                    logger.info("appId: {}, websiteType: {}, projects: {}", param.getAppId(), websiteType.getType(), projects);
+                    logger.debug("appId: {}, websiteType: {}, projects: {}", param.getAppId(), websiteType.getType(), projects);
 
                     projectConfigInfos.add(new CrawlerProjectParam(websiteType.val(), projects));
                 }
