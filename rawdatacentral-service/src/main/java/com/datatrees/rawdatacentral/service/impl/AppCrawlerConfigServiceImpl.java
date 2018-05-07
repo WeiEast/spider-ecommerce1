@@ -160,6 +160,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         if (websiteType.val() == config.getWebsiteType()) {
                             BusinessType businessType = BusinessType.getBusinessType(config.getProject());
                             if (businessType == null || !businessType.isEnable()) {
+                                iterator.remove();
                                 continue;
                             }
 
@@ -169,6 +170,10 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
                             iterator.remove();
                         }
+                    }
+
+                    if(logger.isDebugEnabled()){
+                        logger.debug("已知的业务标签配置：{}", JSON.toJSONString(map));
                     }
 
                     for (BusinessType businessType : businessTypes) {
