@@ -133,7 +133,9 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     }
 
     private AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(MerchantAppLicenseResult merchant) {
-        logger.debug("查询业务标签，appId: {}, appName: {}", merchant.getAppId(), merchant.getAppName());
+        if (logger.isDebugEnabled()) {
+            logger.info("查询业务标签，merchant: {}", JSON.toJSONString(merchant));
+        }
         AppCrawlerConfigParam param = new AppCrawlerConfigParam(merchant.getAppId(), merchant.getAppName());
         List<AppBizLicenseSimpleResult> results = merchant.getAppBizLicenseResults();
 
@@ -147,7 +149,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 if (result.getIsValid() == 1) {
                     logger.debug("业务标签类型，bizType: {}, bizName: {}", result.getBizType(), result.getBizName());
                     WebsiteType websiteType = WebsiteType.getWebsiteType(String.valueOf(result.getBizType()));
-                    if (websiteType == null) continue;
+                    List<BusinessType> businessTypes = BusinessType.getBusinessTypeList(websiteType);
+                    if (websiteType == null || businessTypes == null) continue;
 
                     Map<String, ProjectParam> map = new HashMap<>();
                     while (iterator.hasNext()) {
@@ -166,8 +169,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         }
                     }
 
-                    List<BusinessType> businessTypes = BusinessType.getBusinessTypeList(websiteType);
-                    if (CollectionUtils.isNotEmpty(businessTypes)) {
+                    if (!businessTypes.isEmpty()) {
                         for (BusinessType businessType : businessTypes) {
                             if (!businessType.isEnable()) {
                                 continue;
