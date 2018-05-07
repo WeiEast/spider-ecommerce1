@@ -24,13 +24,6 @@ public interface AppCrawlerConfigService {
     List<AppCrawlerConfigParam> getAppCrawlerConfigList();
 
     /**
-     * 获取一个商户的爬取信息
-     * @param appId
-     * @return
-     */
-    AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(String appId);
-
-    /**
      * 修改商户配置信息
      * @param appId
      * @param projectConfigInfos
