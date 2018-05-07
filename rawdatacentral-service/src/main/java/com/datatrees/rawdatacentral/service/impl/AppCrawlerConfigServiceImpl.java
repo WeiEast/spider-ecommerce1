@@ -139,12 +139,11 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         AppCrawlerConfigParam param = new AppCrawlerConfigParam(merchant.getAppId(), merchant.getAppName());
         List<AppBizLicenseSimpleResult> results = merchant.getAppBizLicenseResults();
 
+        List<CrawlerProjectParam> projectConfigInfos = new ArrayList<>();
+        List<String> projectNames = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(results)) {
             List<AppCrawlerConfig> configs = selectListByAppId(merchant.getAppId());
             Iterator<AppCrawlerConfig> iterator = configs.iterator();
-
-            List<CrawlerProjectParam> projectConfigInfos = new ArrayList<>();
-            List<String> projectNames = new ArrayList<>();
             for (AppBizLicenseSimpleResult result : results) {
                 if (result.getIsValid() == 1) {
                     logger.debug("业务标签类型，bizType: {}, bizName: {}", result.getBizType(), result.getBizName());
@@ -189,7 +188,11 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     projectConfigInfos.add(new CrawlerProjectParam(websiteType.val(), projects));
                 }
             }
-            param.setProjectNames(projectNames);
+        }
+        param.setProjectNames(projectNames);
+        if (projectConfigInfos.isEmpty()) {
+            param.setProjectConfigInfos(projectConfigInfos);
+        } else {
             param.setProjectConfigInfos(projectConfigInfos.stream().sorted(Comparator.comparing(CrawlerProjectParam::getWebsiteType)).collect(Collectors.toList()));
         }
 
@@ -260,6 +263,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     logger.info("更新业务标签. appId: {}, 标签：{}", appId, JSON.toJSONString(map));
                     redisService.putMap(CACHE_PREFIX + appId, map);
                 }
+                localCache.invalidate(appId);
             });
         } catch (InterruptedException e) {
             throw new UnexpectedException("The thread is interrupted unexpectedly", e);
