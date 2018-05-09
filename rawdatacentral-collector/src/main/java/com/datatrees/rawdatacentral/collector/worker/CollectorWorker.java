@@ -209,7 +209,7 @@ public class CollectorWorker {
     }
 
     private List<Future<Object>> startCrawler(TaskMessage taskMessage, Task task, SearchProcessorContext context) throws ConfigException, ResultEmptyException {
-        Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig().getSearchTemplateConfigList();
+        Collection<SearchTemplateConfig> templateList = context.getSearchTemplates();
         if (CollectionUtils.isEmpty(templateList)) {
             throw new ConfigException("Search template in config is empty!");
         }
@@ -223,8 +223,8 @@ public class CollectorWorker {
         for (SearchTemplateConfig templateConfig : templateList) {
             LOGGER.info("Start search template: {}", templateConfig.getId());
 
-            if (TemplateFilter.isFilter(templateConfig, templateId) || businessTypeFilter.isFilter(templateConfig, taskMessage.getTask().getTaskId())) {
-                LOGGER.info("Skip search template: {}, taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+            if (TemplateFilter.isFilter(templateConfig, templateId) || businessTypeFilter.isFilter(templateConfig.getBusinessType(), context)) {
+                LOGGER.info("Skip search template: {}, taskId: {}, websiteName: {}, businessType: {}", templateConfig.getId(), context.getTaskId(), context.getWebsiteName(), templateConfig.getBusinessType());
                 continue;
             }
 

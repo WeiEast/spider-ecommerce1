@@ -7,17 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
-import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
-import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
 import com.alibaba.rocketmq.common.message.MessageExt;
-import com.alibaba.rocketmq.common.protocol.heartbeat.MessageModel;
+import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
+import com.datatrees.rawdatacentral.common.utils.DateUtils;
+import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,8 +33,6 @@ public class MessageListener implements MessageListenerConcurrently, Initializin
     private static final Map<String, AbstractMessageHandler> handlers        = new HashMap<>();
     @Resource
     private ApplicationContext    applicationContext;
-    @Resource
-    private DefaultMQPushConsumer loginInfoConsumer;
 
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
@@ -105,13 +99,5 @@ public class MessageListener implements MessageListenerConcurrently, Initializin
         } else {
             logger.warn("no message handler found");
         }
-
-        loginInfoConsumer.subscribe(TopicEnum.RAWDATA_INPUT.getCode(), "*");
-        loginInfoConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        loginInfoConsumer.setMessageModel(MessageModel.CLUSTERING);
-        loginInfoConsumer.setConsumeMessageBatchMaxSize(1);
-        loginInfoConsumer.registerMessageListener(this);
-        loginInfoConsumer.start();
-
     }
 }

@@ -51,7 +51,7 @@ public abstract class AbstractProcessorContext {
 
     public AbstractProcessorContext(Website website, Long taskId) {
         this.website = Objects.requireNonNull(website);
-        this.taskId = taskId;
+        this.taskId = Objects.requireNonNull(taskId);
         context = new SynchronizedMap<>();
         pluginMaps = new SynchronizedMap<>();
         statusContext = new SynchronizedMap<>();

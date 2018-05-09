@@ -18,7 +18,6 @@ import com.datatrees.crawler.core.domain.config.extractor.ResultType;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
@@ -26,6 +25,7 @@ import com.datatrees.crawler.core.processor.extractor.FieldExtractorImpl;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -52,15 +52,11 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
         Preconditions.checkNotNull(request.getInput(), "page content in segment should not be null!");
     }
 
-    private boolean support(String businessType, AbstractProcessorContext context){
-        return context instanceof ExtractorProcessorContext || !businessTypeFilterhandler.isFilter(businessType, context.getTaskId());
-    }
-
     @Override
     public void process(Request request, Response response) throws Exception {
         context = RequestUtil.getProcessorContext(request);
         String businessType = segment.getBusinessType();
-        if (support(businessType, context)) {
+        if (BusinessTypeDecider.support(businessType, context)) {
             String original = RequestUtil.getContent(request);
             processExtractor(request, response);
             request.setInput(original);
@@ -120,7 +116,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
             if (CollectionUtils.isNotEmpty(fieldExtractors)) {
                 List<Processor> fieldExtractorProcessors = new ArrayList<Processor>(fieldExtractors.size());
                 for (FieldExtractor fieldExtractor : fieldExtractors) {
-                    if (support(fieldExtractor.getBusinessType(), context)) {
+                    if (BusinessTypeDecider.support(fieldExtractor.getBusinessType(), context)) {
                         FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl();
                         fieldExtractorImpl.setFieldExtractor(fieldExtractor);
                         fieldExtractorProcessors.add(fieldExtractorImpl);

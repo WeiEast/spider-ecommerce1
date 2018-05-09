@@ -13,8 +13,6 @@ import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.pipeline.ValveBase;
-import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandler;
-import com.datatrees.crawler.core.util.SpringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +25,6 @@ public abstract class Processor extends ValveBase implements Configurable {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected Configuration conf;
-    protected BusinessTypeFilterHandler businessTypeFilterhandler = (BusinessTypeFilterHandler) SpringUtil.getBeanByBeanName("businessTypeFilter");
 
     @Override
     public void invoke(Request request, Response response) throws Exception {

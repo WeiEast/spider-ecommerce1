@@ -1,16 +1,18 @@
 package com.datatrees.rawdatacentral.collector.worker.filter;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.crawler.core.domain.config.search.BusinessType;
-import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
-import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandler;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.treefinance.crawler.framework.context.control.IBusinessTypeFilter;
 import com.treefinance.saas.grapserver.facade.model.TaskRO;
 import com.treefinance.saas.grapserver.facade.service.TaskFacade;
 import com.treefinance.saas.knife.result.SaasResult;
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Service;
  * Date: 2018/4/9
  */
 @Service("businessTypeFilter")
-public class BusinessTypeFilter implements BusinessTypeFilterHandler {
+public class BusinessTypeFilter implements IBusinessTypeFilter {
 
     private static final Logger                 logger     = LoggerFactory.getLogger(BusinessTypeFilter.class);
     private final        Cache<String, Boolean> localCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).expireAfterAccess(1, TimeUnit.MINUTES).softValues().build();
@@ -34,14 +36,16 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
     private AppCrawlerConfigService appCrawlerConfigService;
 
     @Override
-    public Boolean isFilter(String businessType, long taskId) {
+    public boolean isFilter(String businessType, @Nonnull AbstractProcessorContext context) {
+        Objects.requireNonNull(context);
+
         if (StringUtils.isBlank(businessType)) {
             return Boolean.FALSE;
         }
 
-        Boolean filtered = isFiltered(businessType, taskId);
+        Boolean filtered = isFiltered(businessType, context.getTaskId());
 
-        logger.info("crawling-business decider >> taskId: {}, businessType: {}, filter: {}", taskId, businessType, filtered);
+        logger.info("crawling-business decider >> taskId: {}, businessType: {}, filter: {}", context.getTaskId(), businessType, filtered);
 
         return filtered;
     }
@@ -74,15 +78,6 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
         } catch (ExecutionException e) {
             throw new UncheckedExecutionException(e);
         }
-    }
-
-    public boolean isFilter(SearchTemplateConfig templateConfig, Long taskId) {
-        if (templateConfig.getBusinessType() == null) {
-            logger.info("Empty businessType with search templateId[{}]", templateConfig.getId());
-            return false;
-        }
-
-        return isFilter(templateConfig.getBusinessType().getCode(), taskId);
     }
 
 }
