@@ -26,7 +26,7 @@ abstract class FetchLinkNodeFilter implements Filter {
         try {
             filtered = doInternalFilter(fetchLinkNode, searchProcessor, context);
         } catch (Exception e) {
-            logger.error("Error doing filter: {}", getClass(), e);
+            logger.error("Error invoking filter", e);
         }
 
         if (filtered) {

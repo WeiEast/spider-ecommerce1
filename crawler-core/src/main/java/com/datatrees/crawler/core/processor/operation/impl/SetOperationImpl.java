@@ -32,9 +32,7 @@ public class SetOperationImpl extends Operation<SetOperation> {
             output = StringUtils.EMPTY;
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Set value : {}", output);
-        }
+        logger.debug("Set value : {}", output);
 
         response.setOutPut(output);
     }

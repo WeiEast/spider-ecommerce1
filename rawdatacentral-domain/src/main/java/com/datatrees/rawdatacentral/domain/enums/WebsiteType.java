@@ -51,12 +51,7 @@ public enum WebsiteType {
         return type;
     }
 
-    public static void main(String[] args){
-        System.out.println(WebsiteType.ECOMMERCE.getValue());
+    public byte val(){
+        return Byte.parseByte(value);
     }
-
-
-
-
-
 }

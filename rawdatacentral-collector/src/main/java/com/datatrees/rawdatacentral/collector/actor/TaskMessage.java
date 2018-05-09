@@ -10,6 +10,7 @@ package com.datatrees.rawdatacentral.collector.actor;
 
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.model.Task;
 
 /**
@@ -144,14 +145,17 @@ public class TaskMessage {
         return collectorMessage.getTaskId();
     }
 
-    /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#toString()
-         */
     @Override
     public String toString() {
         return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" + parentTaskID + "]";
+    }
+
+    public void setErrorCode(ErrorCode errorCode) {
+        task.setErrorCode(errorCode);
+    }
+
+    public void setErrorCode(ErrorCode errorCode, String message) {
+        task.setErrorCode(errorCode, message);
     }
 
 }

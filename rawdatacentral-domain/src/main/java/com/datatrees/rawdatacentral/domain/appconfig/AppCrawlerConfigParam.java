@@ -27,6 +27,14 @@ public class AppCrawlerConfigParam {
      */
     private List<CrawlerProjectParam> projectConfigInfos;
 
+    public AppCrawlerConfigParam() {
+    }
+
+    public AppCrawlerConfigParam(String appId, String appName) {
+        this.appId = appId;
+        this.appName = appName;
+    }
+
     public String getAppId() {
         return appId;
     }

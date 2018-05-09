@@ -62,6 +62,10 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
         CheckUtils.checkNotBlank(className, "className is blank");
         try {
             String version = pluginService.getPluginVersionFromCache(pluginName);
+            if(StringUtils.isBlank(version)){
+                logger.error("not found plugin version for:{} ",pluginName);
+                return null;
+            }
             Class mainClass = getClassFromCache(pluginName, version, className, taskId);
             return mainClass;
         } catch (Throwable e) {

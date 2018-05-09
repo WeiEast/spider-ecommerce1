@@ -23,16 +23,14 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
-import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * parser segment content and send request or extract urls
@@ -42,20 +40,18 @@ import org.slf4j.LoggerFactory;
  */
 public class ParserImpl extends Operation {
 
-    private static final Logger  log               = LoggerFactory.getLogger(ParserImpl.class);
     private              boolean needRequest       = false;
     private              boolean needReturnUrlList = false;
     private Parser parser;
 
     public ParserImpl(boolean needRequest, Parser parser) {
-        super();
         this.needRequest = needRequest;
         this.parser = parser;
     }
 
     /**
-     * @param needRequest2
-     * @param parser2
+     * @param needRequest
+     * @param parser
      * @param needReturnUrlList
      */
     public ParserImpl(boolean needRequest, Parser parser, boolean needReturnUrlList) {
@@ -78,21 +74,21 @@ public class ParserImpl extends Operation {
 
         String template = parser.getUrlTemplate();
         Preconditions.checkState(StringUtils.isNotEmpty(template), "input for parser template  should not be empty!");
-        log.info("parser template: " + template);
+        logger.info("parser template: {}", template);
 
         // split by need requset and need ReturnUrlList
         Map<String, FieldExtractorWarpper> fieldResultMap = ResponseUtil.getResponseFieldResult(response);
         List<String> results = new ArrayList<String>(getParserResult(request, fieldResultMap, content));
 
-        log.info("after template combine: " + results.size());
+        logger.info("after template combine: {}", results.size());
         String result = results.get(0);
         if (needRequest) {
             if (parser.getSleepSecond() != null && parser.getSleepSecond() > 0) {
                 try {
-                    log.info("do sleep " + parser.getSleepSecond() + "s before parser request.");
+                    logger.info("sleep {}s before parser request.", parser.getSleepSecond());
                     Thread.sleep(parser.getSleepSecond() * 1000);
                 } catch (Exception e) {
-                    log.error(e.getMessage(), e);
+                    logger.warn("Error thread sleeping.", e);
                 }
             }
             Request newRequest = new Request();
@@ -105,7 +101,7 @@ public class ParserImpl extends Operation {
             response.setOutPut(result);
         } else {
             if (needReturnUrlList) {
-                // support muti parsers
+                // support multi parsers
                 response.setOutPut(results);
             } else {
                 response.setOutPut(result);
@@ -127,9 +123,6 @@ public class ParserImpl extends Operation {
     /**
      * first replace from field context second replace by regex third replace by user defined
      * context;
-     * @param fieldResultMap
-     * @param parser2
-     * @return
      */
     private Set<String> getParserResult(Request request, Map<String, FieldExtractorWarpper> fieldResultMap, String source) {
 
@@ -169,7 +162,7 @@ public class ParserImpl extends Operation {
                     try {
                         indexFieldMap.put(indexMapping.getPlaceholder(), m.group(indexMapping.getGroupIndex()));
                     } catch (Exception e) {
-                        log.error("group index error!", e);
+                        logger.error("group index error!", e);
                     }
                 }
                 if (first) {
@@ -179,7 +172,7 @@ public class ParserImpl extends Operation {
                     if (map != null) {
                         map.putAll(indexFieldMap);
                     } else {
-                        log.warn("parser pattern size not the same!");
+                        logger.warn("parser pattern size not the same!");
                     }
                 }
                 index++;
@@ -190,7 +183,7 @@ public class ParserImpl extends Operation {
         if (CollectionUtils.isNotEmpty(fieldListResult)) {
             int totalSize = fieldListResult.size();
             needReplaced = ReplaceUtils.getReplaceList(complexSource);
-            log.info("total size...." + totalSize);
+            logger.info("total size: {}", totalSize);
             for (int i = 0; i < totalSize; i++) {
                 Map<String, Object> fieldMap = fieldListResult.get(i);
                 String url = replaceFromContext(complexSource, needReplaced, fieldMap, context);
@@ -218,12 +211,6 @@ public class ParserImpl extends Operation {
         return result;
     }
 
-    /**
-     * @param result
-     * @param refererTemplate
-     * @param headers
-     * @return
-     */
     private String getResponseByWebRequest(Request newResquest, Response newResponse, String complexUrl) {
         String datas[] = ParserURLCombiner.decodeParserUrl(complexUrl);
         String url = datas[0];
@@ -232,7 +219,7 @@ public class ParserImpl extends Operation {
 
         List<String> urls = UrlExtractor.extract(url);
         if (urls.size() != 1) {
-            log.info("url is not format in parser request! " + url);
+            logger.info("url was not formatted in parser request! >> {}", url);
             return url;
         }
 
@@ -253,7 +240,7 @@ public class ParserImpl extends Operation {
             ServiceBase serviceProcessor = ProcessorFactory.getService(service);
             serviceProcessor.invoke(newResquest, newResponse);
         } catch (Exception e) {
-            log.error("execute request error! " + e.getMessage(), e);
+            logger.warn("error requesting url: {}", url, e);
             return StringUtils.EMPTY;
         }
         return StringUtils.defaultString(RequestUtil.getContent(newResquest));
@@ -283,26 +270,4 @@ public class ParserImpl extends Operation {
         this.needReturnUrlList = needReturnUrlList;
     }
 
-    @Deprecated
-    static class ParserPatternResult {
-
-        List<Map<String, String>> fieldListResultMap = new LinkedList<Map<String, String>>();
-
-        public List<Map<String, String>> getFieldListResultMap() {
-            return fieldListResultMap;
-        }
-
-        public void addFieldListResultMap(Map<String, String> patternResults) {
-            this.fieldListResultMap.add(patternResults);
-        }
-
-        public void addAllFieldListResultMap(List<Map<String, String>> patternResults) {
-            this.fieldListResultMap.addAll(patternResults);
-        }
-
-        public int size() {
-            return fieldListResultMap.size();
-        }
-
-    }
 }

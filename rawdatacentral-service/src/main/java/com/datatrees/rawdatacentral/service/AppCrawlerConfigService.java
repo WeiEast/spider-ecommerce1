@@ -1,11 +1,9 @@
 package com.datatrees.rawdatacentral.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.appconfig.AppCrawlerConfigParam;
 import com.datatrees.rawdatacentral.domain.appconfig.CrawlerProjectParam;
-import com.datatrees.rawdatacentral.domain.model.AppCrawlerConfig;
 
 /**
  * User: yand
@@ -26,21 +24,10 @@ public interface AppCrawlerConfigService {
     List<AppCrawlerConfigParam> getAppCrawlerConfigList();
 
     /**
-     * 获取一个商户的爬取信息
-     * @param appId
-     * @return
-     */
-    AppCrawlerConfigParam getOneAppCrawlerConfigParam(String appId);
-
-    /**
      * 修改商户配置信息
-     * @param projectConfigInfos
      * @param appId
+     * @param projectConfigInfos
      */
-    void updateAppConfig(List<CrawlerProjectParam> projectConfigInfos, String appId);
-
-
-    AppCrawlerConfig getOneAppCrawlerConfig(String appId, String project);
-
+    void updateAppConfig(String appId,List<CrawlerProjectParam> projectConfigInfos);
 
 }

@@ -1,5 +1,8 @@
 package com.datatrees.rawdatacentral.plugin.operator.china_10086_shop;
 
+import javax.script.Invocable;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Base64;
 import java.util.Map;
 
@@ -10,6 +13,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -259,7 +263,7 @@ public class China10086ForShop implements OperatorPluginService {
             //用post或者参数错误提示{\"retCode\":\"400000\",\"retMsg\":\"parameter illegal!\"}
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
                     .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis()).setReferer(referer).invoke();
-            if (response.getStatusCode() == 403) {
+            if (response.getStatusCode() == 403 || response.getStatusCode() == 555) {
                 logger.error("中国移动-->使用代理获取详单短信-->失败,将使用本地重试一次,taskId={},proxy={},statusCode={}", param.getTaskId(), response.getRequest().getProxy(),
                         response.getStatusCode());
                 response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
@@ -342,13 +346,16 @@ public class China10086ForShop implements OperatorPluginService {
         }
         Response response = null;
         try {
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
+            String encryptPwd = invocable.invokeFunction("encrypt", param.getPassword()).toString();
             String templateUrl
                     = "https://login.10086.cn/login.htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode={}&backUrl=http://shop.10086.cn/i/&rememberMe=0&channelID={}&protocol=https:&timestamp={}";
             //没有referer提示:Connection reset
             String referer = "https://login.10086.cn/html/login/login.html";
             String channelID = TaskUtils.getTaskShare(param.getTaskId(), "channelID");
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004")
-                    .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode(), channelID,
+                    .setFullUrl(templateUrl, param.getMobile(), URLEncoder.encode(encryptPwd,"UTF-8"), param.getSmsCode(), param.getPicCode(),
+                            channelID,
                             System.currentTimeMillis()).setReferer(referer).invoke();
             /**
              * 结果枚举:
@@ -361,6 +368,7 @@ public class China10086ForShop implements OperatorPluginService {
              新输入","islocal":false,"result":"2"}
              重复登陆:{"islocal":false,"result":"9"}
              */
+            logger.info("帮助查询问题{},响应：{}",param.getTaskId(),response.getPageContent());
             //没有设置referer会出现connect reset
             JSONObject json = response.getPageContentForJSON();
             //重复登陆:{"islocal":false,"result":"9"}
@@ -374,7 +382,7 @@ public class China10086ForShop implements OperatorPluginService {
 
                 //获取权限信息,必须访问下主页,否则详单有些cookie没用
                 String artifact = json.getString("artifact");
-                templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?artifact={}";
+                templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/&artifact={}";
                 TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_005").setFullUrl(templateUrl, artifact).invoke();
                 String provinceCode = TaskUtils.getCookieValue(param.getTaskId(), "ssologinprovince");
                 String provinceName = getProvinceName(provinceCode);

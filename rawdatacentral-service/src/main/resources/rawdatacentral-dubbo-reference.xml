@@ -8,9 +8,10 @@
     <dubbo:monitor protocol="registry"/>
 
     <!-- 使用multicast广播注册中心暴露发现服务地址 -->
-    <dubbo:registry address="${dubbo.zookeeper.address}"/>
+    <dubbo:registry address="${dubbo.zookeeper.address}" file="${user.home}/.dubbo/rawdatacentral.cache"/>
 
     <dubbo:protocol name="dubbo" port="20192"/>
+
 
     <!--代理-->
     <dubbo:reference interface="com.treefinance.proxy.api.ProxyProvider" id="proxyProvider" check="false"/>

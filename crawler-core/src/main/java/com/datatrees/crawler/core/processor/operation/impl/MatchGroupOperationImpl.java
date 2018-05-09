@@ -36,7 +36,7 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
         if (matcher != null) {
             result = matcher.group(op.getGroupIndex());
         }
-        logger.debug("MatchGroupOperationImpl: after match group index:" + op.getGroupIndex() + ",result:" + result);
+        logger.debug("After match group. index: {}, result: {}", op.getGroupIndex(), result);
         response.setOutPut(result);
     }
 

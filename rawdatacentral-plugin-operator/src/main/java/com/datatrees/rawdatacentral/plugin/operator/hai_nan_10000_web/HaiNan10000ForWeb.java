@@ -2,8 +2,10 @@ package com.datatrees.rawdatacentral.plugin.operator.hai_nan_10000_web;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -17,6 +19,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -78,8 +81,12 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
 
     @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
-        logger.warn("defineProcess fail,params={}", param);
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case "BILL_DETAIL":
+                return processForBill(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
@@ -140,7 +147,7 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
                     "><string>{}</string><string>TYPE</string><string>8</string><string>PRODUCTID</string><string>{}</string><string>CODE</string" +
                     "><string>{}</string><string>USERID</string><string>{}</string></map></buffalo-call>";
             String data = TemplateUtils.format(templateData, prodnum, citycode, format.format(new Date()), prodid, param.getSmsCode(), userid);
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_008").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_009").setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.TEXT_XML).invoke();
             String pageContent = response.getPageContent();
 
@@ -169,6 +176,10 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10022&toStUrl=http://hi.189.cn/service/thesame/billing.jsp?TABNAME=zdcx&fastcode=02091576&cityCode=hi";
             response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_005").setFullUrl(templateUrl).invoke();
 
+            templateUrl
+                    = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10022&toStUrl=http://hi.189.cn/service/thesame/balanceChanges.jsp?TABNAME=yecx&fastcode=02091574&cityCode=hi";
+            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_006").setFullUrl(templateUrl).invoke();
+
             templateUrl = "http://hi.189.cn/service/bill/feequery.jsp?TABNAME=xdcx&fastcode=02091577&cityCode=hi";
             response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_006").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
@@ -185,11 +196,37 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
             TaskUtils.addTaskShare(param.getTaskId(), "prodnum", prodnum);
             TaskUtils.addTaskShare(param.getTaskId(), "userid", userid);
 
+            templateUrl = "http://hi.189.cn/webgo/thesame/myBill";
+            String data = "objectNum=" + param.getMobile().toString() + "&objectType=%E6%89%8B%E6%9C%BA&queryType=2";
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            TaskUtils.addTaskShare(param.getTaskId(), "balancePageContent", response.getPageContent());
+
             logger.info("登陆成功,param={}", param);
             return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
+        }
+    }
+
+    private HttpResult<Object> processForBill(OperatorParam param) {
+        HttpResult<Object> result = new HttpResult<>();
+        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
+                .fromJson(param.getArgs()[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        String billMonth = paramMap.get("page_content");
+        Response response = null;
+        try {
+            /**
+             * 获取月账单
+             */
+            String templateUrl = "http://hi.189.cn/webgo/thesame/billing";
+            String templateData = "objectNum={}&queryMonth={}";
+            String data = TemplateUtils.format(templateData, param.getMobile(), billMonth);
+            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_010").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            return result.success(response.getPageContent());
+        } catch (Exception e) {
+            logger.error("账单页访问失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
         }
     }
 }

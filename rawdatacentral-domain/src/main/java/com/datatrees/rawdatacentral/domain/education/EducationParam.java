@@ -1,13 +1,14 @@
 package com.datatrees.rawdatacentral.domain.education;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 
 import java.io.Serializable;
 
 /**
  * Created by zhangyanjia on 2017/11/30.
  */
-public class EducationParam implements Serializable {
+public class EducationParam extends CommonPluginParam implements Serializable {
     /**
      * 任务id 必填
      */

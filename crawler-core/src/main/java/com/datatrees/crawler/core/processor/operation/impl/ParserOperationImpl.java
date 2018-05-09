@@ -34,11 +34,11 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
     public void process(Request request, Response response) throws Exception {
         ParserOperation op = getOperation();
         Parser parser = op.getParser();
+        Preconditions.checkNotNull(parser, "ParserOperation parser element should not be null!");
         boolean needRequest = false;
         boolean needReturnUrlList = false;
-        Preconditions.checkNotNull(parser, "ParserOperation parser element should not be null!");
         FieldExtractor field = getExtractor();
-        logger.debug("field name:\t" + field);
+        logger.debug("field name: {}", field);
         String fieldResult = fieldFilter.filter(field.getField());
         String urlList = parserUrlListFilter.filter(field.getField());
         if (StringUtils.isNotEmpty(fieldResult)) {
@@ -47,10 +47,10 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
         if (StringUtils.isNotEmpty(urlList)) {
             needReturnUrlList = true;
         }
-        logger.debug("invoke parser process :\t" + field);
+        logger.debug("invoke parser process: {}", field);
         ParserImpl parserImpl = new ParserImpl(needRequest, parser, needReturnUrlList);
         parserImpl.invoke(request, response);
-        logger.debug("success invoke parser process :\t" + field);
+        logger.debug("success invoke parser process: {}", field);
     }
 
 }

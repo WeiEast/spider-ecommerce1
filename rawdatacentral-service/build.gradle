@@ -33,7 +33,7 @@ dependencies {
     compile 'org.projectlombok:lombok:1.16.18'
     compile 'com.google.zxing:core:3.3.1'
     compile 'com.treefinance.saas:grap-server-facade:1.0.0-SNAPSHOT'
-    compile 'com.treefinance.saas:merchant-center-facade:1.0.2-SNAPSHOT'
+    compile 'com.treefinance.saas:merchant-center-facade:1.0.3-SNAPSHOT'
 }
 
 apply from: rootProject.file('printLib.gradle')

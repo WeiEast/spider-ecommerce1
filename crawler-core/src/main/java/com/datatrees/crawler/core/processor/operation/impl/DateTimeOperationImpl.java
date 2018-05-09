@@ -52,7 +52,7 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
         }
 
         DateTimeFieldType dateTimeFieldType = operation.getDateTimeFieldType();
-        logger.debug(String.format("baseType:%s, dateTimeFieldType:%s, offset:%s", baseType, dateTimeFieldType != null ? dateTimeFieldType : "", offset));
+        logger.debug("baseType: {}, dateTimeFieldType: {}, offset: {}", baseType, dateTimeFieldType, offset);
 
         Object result = null;
 
@@ -87,9 +87,8 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
                 break;
             }
             case CUSTOM: {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("custom src:%s", src != null ? src : ""));
-                }
+                logger.debug("custom src: {}", src);
+
                 if (src instanceof String) {
                     String sourceFormat = StringUtils.isBlank(operation.getSourceFormat()) ? "yyyy-MM-dd" : operation.getSourceFormat();
                     DateTimeFormatter df = DateTimeFormat.forPattern(sourceFormat);
@@ -159,7 +158,7 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
         } else {
             result = rawResultObj != null ? rawResultObj.toDate() : "";
         }
-        logger.debug("raw result in date format: " + result);
+        logger.debug("raw result in date format: {}", result);
         response.setOutPut(result);
     }
 

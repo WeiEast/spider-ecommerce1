@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 
 /**
  * 运营商配置
@@ -12,21 +13,19 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 public interface WebsiteOperatorService {
 
     /**
-     *根据环境和站点名获取运营商配置
+     * 根据环境和站点名获取运营商配置
      * @param websiteName
-     * @param env
      * @return
      */
-
     WebsiteOperator getByWebsiteName(String websiteName);
-    WebsiteOperator getByWebsiteNameAndEnv(String websiteName,String env);
+
+    WebsiteOperator getByWebsiteNameAndEnv(String websiteName, String env);
 
     /**
      * 获取运营商配置
      * @param groupCode
      * @return
      */
-
     List<WebsiteOperator> queryByGroupCode(String groupCode);
 
     /**
@@ -64,7 +63,7 @@ public interface WebsiteOperatorService {
     /**
      * 保存运营商配置
      */
-//    void saveConfig(WebsiteOperator websiteOperator);
+    //    void saveConfig(WebsiteOperator websiteOperator);
 
     /**
      * 启用/禁用
@@ -97,5 +96,12 @@ public interface WebsiteOperatorService {
      * @return
      */
     Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto);
+
+    /**
+     * 获取登陆配置
+     * @param websiteName
+     * @return
+     */
+    OperatorLoginConfig getLoginConfig(String websiteName);
 
 }

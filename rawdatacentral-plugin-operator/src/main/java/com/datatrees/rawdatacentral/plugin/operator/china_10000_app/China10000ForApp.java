@@ -168,6 +168,7 @@ public class China10000ForApp implements OperatorPluginService {
             switch (resultCode) {
                 case "0000":
                     logger.info("详单-->校验成功,param={}", param);
+                    TaskUtils.addTaskShare(param.getTaskId(), "smsCodeTemp", param.getSmsCode());
                     return result.success();
                 case "149":
                     logger.warn("详单-->短信验证码错误,param={}", param);
@@ -356,7 +357,10 @@ public class China10000ForApp implements OperatorPluginService {
                     ">{}</UserLoginName></HeaderInfos><Content><Attach>test</Attach><FieldData><StartTime>{}</StartTime><Type>{}</Type><Random" +
                     ">{}</Random><PhoneNum>{}</PhoneNum><EndTime>{}</EndTime></FieldData></Content></Request>";
 
-            Object smsCode = param.getExtral().get(AttributeKey.SMS_CODE);
+            String smsCode = param.getExtral().get(AttributeKey.SMS_CODE) + "";
+            if (StringUtils.isEmpty(smsCode) || StringUtils.equals(smsCode, "null")) {
+                smsCode = TaskUtils.getTaskShare(param.getTaskId(), "smsCodeTemp");
+            }
             String data = TemplateUtils
                     .format(templateData, format.format(new Date()), token, param.getMobile(), times[0], queryType, smsCode, param.getMobile(),
                             times[1]);

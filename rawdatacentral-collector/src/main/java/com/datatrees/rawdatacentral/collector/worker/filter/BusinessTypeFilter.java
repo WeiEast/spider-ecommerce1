@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.page.handler.BusinessTypeFilterHandler;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
@@ -38,17 +39,33 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
             return Boolean.FALSE;
         }
 
+        Boolean filtered = isFiltered(businessType, taskId);
+
+        logger.info("crawling-business decider >> taskId: {}, businessType: {}, filter: {}", taskId, businessType, filtered);
+
+        return filtered;
+    }
+
+    private Boolean isFiltered(String businessType, long taskId) {
+        BusinessType type = BusinessType.getBusinessType(businessType);
+        if (type == null || !type.isEnable()) {
+            logger.warn("Disabled crawling-business type >>> {}, taskId: {}", businessType, taskId);
+            return Boolean.FALSE;
+        }
+
         try {
-            return localCache.get(taskId + "_" + businessType, () -> {
+            return localCache.get(taskId + "_" + type.getCode(), () -> {
                 SaasResult<TaskRO> taskRO = taskFacade.getById(taskId);
-                logger.debug("taskRO is {}", taskRO.getData());
+                TaskRO data = taskRO.getData();
 
-                if (taskRO.getData() != null) {
-                    String appId = taskRO.getData().getAppId();
-                    String result = appCrawlerConfigService.getFromRedis(appId, businessType);
-                    logger.info("appCrawlerConfig result from redis is {},appId is {},project is {}", result, appId, businessType);
+                logger.debug("taskRO is {}", data);
 
-                    //result为null，该业务未配置，默认为抓取
+                if (data != null) {
+                    String appId = data.getAppId();
+                    String result = appCrawlerConfigService.getFromRedis(appId, type.getCode());
+
+                    logger.info("appId: {}, projectCode: {}, crawlBizConfig: {} ", appId, type.getCode(), result);
+
                     return Boolean.FALSE.toString().equalsIgnoreCase(result);
                 }
 
@@ -61,10 +78,10 @@ public class BusinessTypeFilter implements BusinessTypeFilterHandler {
 
     public boolean isFilter(SearchTemplateConfig templateConfig, Long taskId) {
         if (templateConfig.getBusinessType() == null) {
-            logger.info("search businessType is null and search templateId is {}", templateConfig.getId());
+            logger.info("Empty businessType with search templateId[{}]", templateConfig.getId());
             return false;
         }
-        logger.debug("bushinessType from searchTemplate is {}", templateConfig.getBusinessType());
+
         return isFilter(templateConfig.getBusinessType().getCode(), taskId);
     }
 

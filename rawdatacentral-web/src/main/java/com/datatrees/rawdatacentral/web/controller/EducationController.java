@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.web.controller;
 
 import com.datatrees.rawdatacentral.api.RpcEducationService;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.rawdatacentral.service.EducationService;
+import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;

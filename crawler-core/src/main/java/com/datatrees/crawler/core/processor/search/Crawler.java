@@ -51,14 +51,14 @@ public class Crawler {
     public static CrawlResponse crawl(CrawlRequest request) throws ResultEmptyException {
         CrawlResponse response = CrawlResponse.build();
         try {
-            LOGGER.info("request handling ... " + request);
+            LOGGER.info("request handling ... {}", request);
 
             SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
             String templateId = request.getSearchTemplateId();
             LinkNode url = request.getUrl();
 
             // check
-            Preconditions.checkNotNull(context, "webconfig should not be null!");
+            Preconditions.checkNotNull(context, "crawler's context should not be null!");
             Preconditions.checkNotNull(url, "url should not be null!");
             Preconditions.checkArgument(StringUtils.isNotEmpty(templateId), "template id should not be null!");
 
@@ -91,7 +91,7 @@ public class Crawler {
                 response.setOutPut(null);
 
                 if (url.isNeedRequeue()) {
-                    LOGGER.info("need requeue linknode: " + url);
+                    LOGGER.info("need requeue linkNode: {}", url);
                 } else {
                     // parser
                     AbstractPage pageProcessor = ProcessorFactory.getPage(page);
@@ -99,11 +99,11 @@ public class Crawler {
                 }
             } else {
                 ResponseUtil.setResponseStatus(response, Status.FILTERED);
-                LOGGER.info("no avliable page found for linknode:" + url + ",template:" + templateId + ",set filtered.");
+                LOGGER.info("no available page found for linkNode: {}, template: {},set filtered.", url, templateId);
             }
 
         } catch (Exception e) {
-            LOGGER.error("crawl url error: [" + e.getMessage() + "], " + request.getUrl(), e);
+            LOGGER.error("Error crawling url : {}", request.getUrl(), e);
             response.setErrorMsg(e.toString()).setStatus(-2005);
             response.setAttribute(Constants.CRAWLER_EXCEPTION, e);
             if (e instanceof ResultEmptyException) {

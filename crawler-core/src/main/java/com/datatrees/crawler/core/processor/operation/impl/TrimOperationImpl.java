@@ -29,9 +29,7 @@ public class TrimOperationImpl extends Operation<TrimOperation> {
 
         String output = StringUtils.trim(input);
         output = CharMatcher.whitespace().trimFrom(output);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Trim operation, input: {}, out: {}", input, output);
-        }
+        logger.debug("Trim operation, input: {}, out: {}", input, output);
         response.setOutPut(output);
     }
 
