@@ -35,18 +35,16 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
         TemplateOperation op = getOperation();
         String template = op.getTemplate();
         Set<String> replaceList = ReplaceUtils.getReplaceList(template);
-        logger.debug("TemplateOperationImpl: replace list" + replaceList);
+        logger.debug("replace list: {}", replaceList);
         @SuppressWarnings("unchecked") Map<String, FieldExtractorWarpper> fieldMap = ResponseUtil.getResponseFieldResult(response);
-        if (logger.isDebugEnabled()) {
-            logger.debug("TemplateOperationImpl: field values " + fieldMap);
-        }
+        logger.debug("field stack: {}", fieldMap);
         Object output;
         if (BooleanUtils.isTrue(op.getReturnObject())) {
             output = ReplaceUtils.getReplaceObject(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), template);
         } else {
             output = ReplaceUtils.replaceMap(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), template);
         }
-        logger.debug("TemplateOperationImpl: after templdate combine " + output);
+        logger.debug("after template combine >> {}", output);
         if (output != null && output.equals(template) && CollectionUtils.isNotEmpty(ReplaceUtils.getReplaceList(template))) {
             logger.warn("template ops failed,set null...");
             output = null;

@@ -10,6 +10,10 @@
  * encrypt the string to string made up of hex
  * return the encrypted string
  */
+function strEncForNew(data,tokenId){
+    return strEnc(data,tokenId,tokenId,tokenId);
+}
+
 function strEnc(data,firstKey,secondKey,thirdKey){
 
     var leng = data.length;

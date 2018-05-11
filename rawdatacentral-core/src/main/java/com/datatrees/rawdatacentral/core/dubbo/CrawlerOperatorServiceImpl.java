@@ -1,10 +1,7 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
@@ -18,11 +15,11 @@ import com.datatrees.rawdatacentral.common.retry.RetryHandler;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.enums.StepEnum;
+import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
+import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
+import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.*;
@@ -33,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
+import sun.security.x509.CertificatePolicyMap;
 
 /**
  * Created by zhouxinghai on 2017/7/17.
@@ -40,38 +38,39 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
+    private static final org.slf4j.Logger                              logger                 = LoggerFactory
+            .getLogger(CrawlerOperatorServiceImpl.class);
 
-    private LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
+    private static final String                                        OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
 
-    @Resource
-    private ClassLoaderService                            classLoaderService;
-
-    @Resource
-    private RedisService                                  redisService;
+    private              LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
 
     @Resource
-    private MessageService                                messageService;
+    private              ClassLoaderService                            classLoaderService;
 
     @Resource
-    private MonitorService                                monitorService;
+    private              RedisService                                  redisService;
 
     @Resource
-    private WebsiteConfigService                          websiteConfigService;
+    private              MessageService                                messageService;
 
     @Resource
-    private WebsiteGroupService                           websiteGroupService;
+    private              MonitorService                                monitorService;
 
     @Resource
-    private WebsiteOperatorService                        websiteOperatorService;
+    private              WebsiteConfigService                          websiteConfigService;
 
     @Resource
-    private ThreadPoolService                             threadPoolService;
+    private              WebsiteGroupService                           websiteGroupService;
 
     @Resource
-    private ProxyService                                  proxyService;
+    private              WebsiteOperatorService                        websiteOperatorService;
 
-    private static final String OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
+    @Resource
+    private              ThreadPoolService                             threadPoolService;
+
+    @Resource
+    private              ProxyService                                  proxyService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -416,6 +415,85 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
             logger.error("checkParams error,param={}", JSON.toJSONString(param), e);
             return result.failure();
         }
+    }
+
+    @Override
+    public HttpResult<OperatorLoginConfig> preLogin(OperatorParam param) {
+        HttpResult<OperatorLoginConfig> result = new HttpResult<>();
+        try {
+            if (null == param || BooleanUtils.isNotPositiveNumber(param.getTaskId())) {
+                return result.failure(ErrorCode.EMPTY_TASK_ID);
+            }
+            if (StringUtils.isBlank(param.getGroupCode())) {
+                return result.failure(ErrorCode.EMPTY_GROUP_CODE);
+            }
+            if (BooleanUtils.isNotPositiveNumber(param.getMobile())) {
+                return result.failure(ErrorCode.EMPTY_MOBILE);
+            }
+
+            String websiteName = websiteGroupService.selectOperator(param.getGroupCode());
+            logger.info("select website : {} for taskId : {}", websiteName, param.getTaskId());
+
+            param.setWebsiteName(websiteName);
+            param.setFormType(FormType.LOGIN);
+            param.setGroupName(GroupEnum.getGroupName(param.getGroupCode()));
+            init(param);
+
+            OperatorLoginConfig config = websiteOperatorService.getLoginConfig(websiteName);
+            config.setTaskId(param.getTaskId());
+            config.setMobile(param.getMobile());
+            config.setGroupCode(param.getGroupCode());
+            config.setGroupName(param.getGroupName());
+
+            return result.success(config);
+        } catch (Throwable e) {
+            logger.error("checkParams error,param={}", JSON.toJSONString(param), e);
+            return result.failure();
+        }
+    }
+
+    @Override
+    public HttpResult<List<Map<String, List<OperatorGroup>>>> queryGroups() {
+        List<Map<String, List<OperatorGroup>>> list = new ArrayList<>();
+        List<OperatorGroup> group10086 = new ArrayList<>();
+        List<OperatorGroup> group10000 = new ArrayList<>();
+        List<OperatorGroup> group10010 = new ArrayList<>();
+        for (GroupEnum group : GroupEnum.values()) {
+            if (group.getWebsiteType() != WebsiteType.OPERATOR | group == GroupEnum.CHINA_10000 || group == GroupEnum.CHINA_10086) {
+                continue;
+            }
+            OperatorGroup config = new OperatorGroup();
+            config.setGroupCode(group.getGroupCode());
+            config.setGroupName(group.getGroupName());
+
+            if (group.getGroupName().contains("移动")) {
+                group10086.add(config);
+                continue;
+            }
+            if (group.getGroupName().contains("联通")) {
+                group10010.add(config);
+                continue;
+            }
+            if (group.getGroupName().contains("电信")) {
+                group10000.add(config);
+                continue;
+            }
+        }
+        Map<String, List<OperatorGroup>> map10086 = new HashMap<>();
+        map10086.put("移动", group10086);
+        list.add(map10086);
+
+        Map<String, List<OperatorGroup>> map10010 = new HashMap<>();
+        map10010.put("联通", group10010);
+        list.add(map10010);
+
+        Map<String, List<OperatorGroup>> map10000 = new HashMap<>();
+        map10000.put("电信", group10000);
+        list.add(map10000);
+
+
+
+        return new HttpResult<List<Map<String, List<OperatorGroup>>>>().success(list);
     }
 
     /**

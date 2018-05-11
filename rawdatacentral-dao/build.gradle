@@ -1,23 +1,23 @@
-buildscript {
-    repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
-    dependencies {
-        classpath "gradle.plugin.com.arenagod.gradle:mybatis-generator-plugin:1.4"
-    }
-}
+//buildscript {
+//    repositories {
+//        maven { url "https://plugins.gradle.org/m2/" }
+//    }
+//    dependencies {
+//        classpath "gradle.plugin.com.arenagod.gradle:mybatis-generator-plugin:1.4"
+//    }
+//}
 
-apply plugin: "com.arenagod.gradle.MybatisGenerator"
+//apply plugin: "com.arenagod.gradle.MybatisGenerator"
 
-configurations {
-    mybatisGenerator
-}
-
-mybatisGenerator {
-    verbose = true
-    overwrite = true
-    configFile = 'src/mybatis-generator/config/generatorConfig.xml'
-}
+//configurations {
+//    mybatisGenerator
+//}
+//
+//mybatisGenerator {
+//    verbose = true
+//    overwrite = true
+//    configFile = 'src/mybatis-generator/config/generatorConfig.xml'
+//}
 
 dependencies {
     compile project(":rawdatacentral-domain")
@@ -31,6 +31,6 @@ dependencies {
     compile "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
     //spring-boot-devtools不兼容
     //compile("org.springframework.boot:spring-boot-devtools:${springBootVersion}")
-    mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.6'
-    mybatisGenerator 'mysql:mysql-connector-java:5.1.45'
+//    mybatisGenerator 'org.mybatis.generator:mybatis-generator-core:1.3.6'
+//    mybatisGenerator 'mysql:mysql-connector-java:5.1.45'
 }

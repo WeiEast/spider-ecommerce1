@@ -39,7 +39,7 @@ public class ResponseStatusFilter extends ResponsesFilter {
             }
 
             if (Status.BLOCKED == codeStatus) {
-                log.info("Access block, the system will early quit ,workingTaskEntity_id : " + task.getId());
+                log.info("Access block, the system will early quit ,workingTaskEntity_id : {}", task.getId());
                 task.setErrorCode(ErrorCode.BLOCKED_ERROR_CODE);
                 searchProcessor.setNeedEarlyQuit(true);
             }
@@ -49,7 +49,7 @@ public class ResponseStatusFilter extends ResponsesFilter {
             }
 
             if (Status.NO_PROXY == codeStatus) {
-                log.info("no proxy get from wiseproxy ,workingTaskEntity_id : " + task.getId());
+                log.info("no proxy get from wiseproxy ,workingTaskEntity_id : {}", task.getId());
                 task.setErrorCode(ErrorCode.NO_ACTIVE_PROXY);
             }
 

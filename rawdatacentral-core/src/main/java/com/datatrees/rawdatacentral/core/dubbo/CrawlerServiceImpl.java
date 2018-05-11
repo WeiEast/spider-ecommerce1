@@ -126,7 +126,7 @@ public class CrawlerServiceImpl implements CrawlerService {
                     directiveType = DirectiveType.LOGIN_SECOND_PASSWORD;
                     Long processId = Long.parseLong(extra.get("processId"));
                     ProcessResult<Object> processResult = ProcessResultUtils.queryProcessResult(processId);
-                    if (StringUtils.equals(processResult.getProcessStatus(),ProcessStatus.REQUIRE_SECOND_PASSWORD)) {
+                    if (StringUtils.equals(processResult.getProcessStatus(), ProcessStatus.REQUIRE_SECOND_PASSWORD)) {
                         processResult.setProcessStatus(ProcessStatus.PROCESSING);
                         ProcessResultUtils.saveProcessResult(processResult);
                         TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.WAITING);
@@ -288,7 +288,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     public HttpResult<Boolean> cancel(long taskId, Map<String, String> extra) {
         HttpResult<Boolean> result = new HttpResult<Boolean>();
         String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
-        if (StringUtils.equals(websiteName, "alipay.com") || StringUtils.equals(websiteName, "taobao.com")) {
+        if (StringUtils.equals(websiteName, "alipay.com") || StringUtils.equals(websiteName, "taobao.com") ||
+                StringUtils.equals(websiteName, "taobao.com.h5")) {
             logger.info("电商拒绝取消,哈哈.......taskId={},websiteName={}", taskId, websiteName);
             return result.success();
         }

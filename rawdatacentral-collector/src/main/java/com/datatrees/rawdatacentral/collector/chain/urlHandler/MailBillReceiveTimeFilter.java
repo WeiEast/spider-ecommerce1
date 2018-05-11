@@ -37,11 +37,11 @@ public class MailBillReceiveTimeFilter extends RemovedFetchLinkNodeFilter {
         LinkNode currentLinkNode = ContextUtil.getCurrentLinkNode(context);
 
         if (searchProcessor.isLastLink() && currentLinkNode != null && currentLinkNode.getpNum() > 0) {
-            logger.info("filter pageNode:" + fetchLinkNode + " as LastPageLink marked ,receiveAt:" + receiveAt);
+            logger.info("filter pageNode: {} as LastPageLink marked ,receiveAt: {}", fetchLinkNode, receiveAt);
             fetchLinkNode.setRemoved(true);
         } else if (mailReceiveTimeFilterSwitch && receiveAt != null && receiveAt instanceof Date && websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
             if ((UnifiedSysTime.INSTANCE.getSystemTime().getTime() - ((Date) receiveAt).getTime() > maxMailReceiveInterval)) {
-                logger.info("Node:" + fetchLinkNode + ",receiveAt:" + receiveAt + " receive time filtered...");
+                logger.info("Node: {},receiveAt: {} receive time filtered...", fetchLinkNode, receiveAt);
                 fetchLinkNode.setRemoved(true);
                 if (currentLinkNode != null && currentLinkNode.getpNum() > 0) {
                     logger.info("receive time come to threshold, mark as the LastPageLink ...");

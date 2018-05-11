@@ -20,8 +20,6 @@ import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -29,8 +27,6 @@ import org.slf4j.LoggerFactory;
  * @since Feb 25, 2014 10:03:41 AM
  */
 public class XpathSegmentImpl extends SegmentBase<XpathSegment> {
-
-    private static final Logger log = LoggerFactory.getLogger(XpathSegmentImpl.class);
 
     @Override
     public List<String> getSplit(Request request) {
@@ -46,7 +42,7 @@ public class XpathSegmentImpl extends SegmentBase<XpathSegment> {
             xpath = ReplaceUtils.replaceMap(sourceMap, xpath);
 
             List<String> segments = XPathUtil.getXpath(xpath, content);
-            log.info("segment count@" + segments.size() + " by using xpath.." + xpath);
+            logger.info("segment count@{} by using xpath: {}", segments.size(), xpath);
             if (CollectionUtils.isNotEmpty(segments)) {
                 result.addAll(segments);
             }

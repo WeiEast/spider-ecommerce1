@@ -52,13 +52,11 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
             }
         } else {
             int index = operation.getGroupIndex();
-            if (logger.isDebugEnabled()) {
-                logger.debug("RegexOperation input: " + String.format("regex: %s, index: %d", regex, index));
-            }
+            logger.debug("regex: {}, index: {}", regex, index);
+
             result = RegExp.group(orginal, regex, index, null);
-            if (logger.isDebugEnabled()) {
-                logger.debug("RegexOperation content: " + String.format("orginal: %s , dest: %s", orginal, result));
-            }
+
+            logger.debug("original: {}, dest: {}", orginal, result);
         }
         response.setOutPut(result);
     }

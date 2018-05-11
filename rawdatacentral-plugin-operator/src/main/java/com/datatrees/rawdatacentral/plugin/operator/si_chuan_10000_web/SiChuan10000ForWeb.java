@@ -1,18 +1,12 @@
 package com.datatrees.rawdatacentral.plugin.operator.si_chuan_10000_web;
 
-import javax.script.Invocable;
-import java.io.InputStream;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
 
-import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -20,7 +14,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,10 +23,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 17/9/18.
  */
-public class SiChuan10000ForWeb implements OperatorPluginService {
+public class SiChuan10000ForWeb implements OperatorPluginPostService {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(SiChuan10000ForWeb.class);
-    private                  LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
+    private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
+
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         return loginUtils.init(param);
@@ -89,26 +84,8 @@ public class SiChuan10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-
-            String referer = "http://www.189.cn/sc/";
-            String templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01881189";
-            response = TaskHttpClient.create(param, RequestType.GET, "si_chuan_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
-
-            referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01881189";
-            templateUrl = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10023&toStUrl=http://sc.189.cn/service/bill/myQueryBalance" +
-                    ".jsp?fastcode=01881189&cityCode=sc";
-            response = TaskHttpClient.create(param, RequestType.GET, "si_chuan_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
-
-            referer = "http://sc.189.cn/service/bill/myQueryBalance.jsp?fastcode=01881189&cityCode=sc";
-            templateUrl = "http://sc.189.cn/common/ajax.jsp";
-            response = TaskHttpClient.create(param, RequestType.GET, "si_chuan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
-            if (StringUtils.contains(response.getPageContent(), "\"ISLOGIN\":\"true\"")) {
-                logger.info("登陆成功,param={}", param);
-                return result.success();
-            } else {
-                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
+            logger.info("登陆成功,param={}", param);
+            return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
@@ -167,6 +144,36 @@ public class SiChuan10000ForWeb implements OperatorPluginService {
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> loginPost(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String referer = "http://www.189.cn/sc/";
+            String templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01881189";
+            response = TaskHttpClient.create(param, RequestType.GET, "si_chuan_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+
+            referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01881189";
+            templateUrl = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10023&toStUrl=http://sc.189.cn/service/bill/myQueryBalance" +
+                    ".jsp?fastcode=01881189&cityCode=sc";
+            response = TaskHttpClient.create(param, RequestType.GET, "si_chuan_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
+
+            referer = "http://sc.189.cn/service/bill/myQueryBalance.jsp?fastcode=01881189&cityCode=sc";
+            templateUrl = "http://sc.189.cn/common/ajax.jsp";
+            response = TaskHttpClient.create(param, RequestType.GET, "si_chuan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
+            if (StringUtils.contains(response.getPageContent(), "\"ISLOGIN\":\"true\"")) {
+                logger.info("登陆成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            }
+        } catch (Exception e) {
+            logger.error("登陆失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.LOGIN_ERROR);
         }
     }
 }

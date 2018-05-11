@@ -35,13 +35,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/operator")
 public class OperatorController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperatorController.class);
+    private static final Logger                 logger = LoggerFactory.getLogger(OperatorController.class);
+
     @Resource
-    private CrawlerOperatorService crawlerOperatorService;
+    private              CrawlerOperatorService crawlerOperatorService;
+
     @Resource
-    private RedisService           redisService;
+    private              RedisService           redisService;
+
     @Resource
-    private WebsiteGroupService    websiteGroupService;
+    private              WebsiteGroupService    websiteGroupService;
 
     @RequestMapping("/queryAllOperatorConfig")
     public Object queryAllOperatorConfig() {
@@ -127,4 +130,13 @@ public class OperatorController {
         return new HttpResult<>().success();
     }
 
+    @RequestMapping("/preLogin")
+    public Object preLogin(OperatorParam param) {
+        return crawlerOperatorService.preLogin(param);
+    }
+
+    @RequestMapping("/queryGroups")
+    public Object queryGroups() {
+        return crawlerOperatorService.queryGroups();
+    }
 }

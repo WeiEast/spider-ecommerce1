@@ -8,8 +8,6 @@ import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.domain.model.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -23,9 +21,8 @@ public class RetryRequestFilter extends LinkNodesFilter {
         Task task = searchProcessor.getTask();
         for (LinkNode linkNode : linkNodes) {
             if (!linkNode.isNeedRequeue()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("add new retry Count :" + linkNode.getRetryCount());
-                }
+                log.debug("add new retry Count : {}", linkNode.getRetryCount());
+
                 task.getRetryCount().addAndGet(linkNode.getRetryCount());
             } else {
                 // requeue linknode

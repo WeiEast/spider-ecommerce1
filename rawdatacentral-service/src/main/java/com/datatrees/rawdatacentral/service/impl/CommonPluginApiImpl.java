@@ -10,11 +10,13 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
+import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.rawdatacentral.domain.education.EducationParam;
 import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
@@ -273,6 +275,42 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         try {
             return ((QRPluginService) (classLoaderService.getCommonPluginService(param))).queryQRStatus(param);
         } catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> registerInit(EducationParam param) {
+        try {
+            return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerInit(param);
+        }catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> registerRefreshPicCode(EducationParam param) {
+        try {
+            return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerRefreshPicCode(param);
+        }catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
+        try {
+            return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerValidatePicCodeAndSendSmsCode(param);
+        }catch (Throwable e) {
+            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> registerSubmit(EducationParam param) {
+        try {
+            return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerSubmit(param);
+        }catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
         }
     }

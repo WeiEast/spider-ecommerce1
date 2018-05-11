@@ -2,7 +2,6 @@ package com.datatrees.rawdatacentral.plugin.operator.zhe_jiang_10086_web;
 
 import javax.script.Invocable;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ZheJiang10086ForWeb implements OperatorPluginService {
 
-    private static final Logger logger     = LoggerFactory.getLogger(ZheJiang10086ForWeb.class);
+    private static final Logger logger = LoggerFactory.getLogger(ZheJiang10086ForWeb.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -185,32 +184,34 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = null;
             String bid = TaskUtils.getTaskShare(param.getTaskId(), "bid");
-            if (StringUtils.isBlank(bid)) {
-                templateUrl = "http://service.zj.10086.cn/yw/detail/queryHisDetailBill.do?menuId=13009";
-                response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007").setFullUrl(templateUrl).invoke();
-                pageContent = response.getPageContent();
-                if (!StringUtils.contains(pageContent, "postartifact")) {
-                    return result.failure(ErrorCode.REFESH_SMS_FAIL);
-                }
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_008", pageContent);
-
-                if (!StringUtils.contains(pageContent, "postartifact")) {
-                    return result.failure(ErrorCode.REFESH_SMS_FAIL);
-                }
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_009", pageContent);
-
-                bid = RegexpUtils.select(pageContent, "\"bid\":\"(.*)\"", 1);
+            for (int i = 0; i <= 1; i++) {
                 if (StringUtils.isBlank(bid)) {
-                    logger.warn("详单-->短信验证码-->刷新失败,bid not found,param={},pateContent={}", param, response.getPageContent());
-                    return result.failure(ErrorCode.REFESH_SMS_FAIL);
-                }
-                TaskUtils.addTaskShare(param.getTaskId(), "bid", bid);
-            }
-            logger.info("frefeshSmsCodeForBillDetail find bid={},param={}", bid, param);
+                    templateUrl = "http://service.zj.10086.cn/yw/detail/queryHisDetailBill.do?menuId=13009";
+                    response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007").setFullUrl(templateUrl).invoke();
+                    pageContent = response.getPageContent();
+                    if (!StringUtils.contains(pageContent, "postartifact")) {
+                        return result.failure(ErrorCode.REFESH_SMS_FAIL);
+                    }
+                    pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_008", pageContent);
 
-            templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?bid={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_010").setFullUrl(templateUrl, bid).invoke();
-            pageContent = response.getPageContent();
+                    if (!StringUtils.contains(pageContent, "postartifact")) {
+                        return result.failure(ErrorCode.REFESH_SMS_FAIL);
+                    }
+                    pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_009", pageContent);
+
+                    bid = RegexpUtils.select(pageContent, "\"bid\":\"(.*)\"", 1);
+                    if (StringUtils.isBlank(bid)) {
+                        logger.warn("详单-->短信验证码-->刷新失败,bid not found,param={},pateContent={}", param, response.getPageContent());
+                        return result.failure(ErrorCode.REFESH_SMS_FAIL);
+                    }
+                    TaskUtils.addTaskShare(param.getTaskId(), "bid", bid);
+                }
+                logger.info("frefeshSmsCodeForBillDetail find bid={},param={}", bid, param);
+
+                templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?bid={}";
+                response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_010").setFullUrl(templateUrl, bid).invoke();
+                pageContent = response.getPageContent();
+            }
             switch (pageContent) {
                 case "1":
                     logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -264,7 +265,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             String type = TaskUtils.getTaskShare(param.getTaskId(), "type");
             String warnurl = TaskUtils.getTaskShare(param.getTaskId(), "warnurl");
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(),"des.js","GBK");
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encryptMobile = (String) invocable.invokeFunction("enString", param.getMobile().toString());
             String encryptPassword = (String) invocable.invokeFunction("enString", param.getPassword());
             String templateUrl = "https://zj.ac.10086.cn/Login";
@@ -277,8 +278,8 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
 
-            if (StringUtils.contains(response.getPageContent(),"location.replace")) {
-                templateUrl = PatternUtils.group(response.getPageContent(),"replace\\('([^']+)'\\)",1);
+            if (StringUtils.contains(response.getPageContent(), "location.replace")) {
+                templateUrl = PatternUtils.group(response.getPageContent(), "replace\\('([^']+)'\\)", 1);
                 response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
             }
             //出现错误返回304

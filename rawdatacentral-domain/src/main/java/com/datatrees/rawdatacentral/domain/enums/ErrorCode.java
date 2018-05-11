@@ -18,6 +18,7 @@ public enum ErrorCode {
     EMPTY_TASK_ID(-110, "taskId不能为空"),
     EMPTY_FORM_TYPE(-111, "formType不能为空"),
     EMPTY_WEBSITE_NAME(-112, "websiteName不能为空"),
+    EMPTY_GROUP_CODE(-113, "groupCode不能为空"),
     EMPTY_MOBILE(-200, "手机号不能为空"),
     EMPTY_PASSWORD(-210, "密码不能为空"),
     EMPTY_PIC_CODE(-220, "图片验证码不能为空"),

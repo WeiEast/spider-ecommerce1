@@ -16,8 +16,6 @@ import com.datatrees.crawler.core.domain.config.segment.impl.CalculateSegment;
 import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -26,7 +24,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
 
-    private static final Logger log = LoggerFactory.getLogger(CalculateSegmentImpl.class);
 
     // private String sourceExpression(Request request, String expression) {
     // Set<String> replaceList = ReplaceUtils.getReplaceList(expression);
@@ -51,10 +48,11 @@ public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
     @Override
     protected List<String> getSplit(Request request) {
         List<String> result = new LinkedList<>();
+        CalculateSegment segment = getSegment();
+        String expression = segment.getExpression();
+        logger.info("start do calculate segment with expression: {}", expression);
+
         try {// 1,3,1,+  从2开始到3(包含3)
-            CalculateSegment segment = getSegment();
-            String expression = segment.getExpression();
-            log.info("start do calculate segment with expression:" + expression);
             String[] arrays = expression.split(",");
             double start = CalculateUtil.sourceCalculate(request, arrays[0], 0d);
             double end = CalculateUtil.sourceCalculate(request, arrays[1], 0d);
@@ -65,7 +63,7 @@ public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
                 result.add(start + "");
             }
         } catch (Exception e) {
-            log.error("do CalculateSegmentImpl error" + e.getMessage(), e);
+            logger.error("error calculating for segment: {}, expression: {}", segment.getName(), expression, e);
         }
 
         return result;

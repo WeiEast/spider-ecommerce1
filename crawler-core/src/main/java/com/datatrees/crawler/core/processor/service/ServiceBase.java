@@ -84,7 +84,7 @@ public abstract class ServiceBase extends Processor {
             }
         }
         current.setBaseUrl(baseDomainUrl);
-        log.debug("originUrl: " + current.getUrl() + ", baseDomainUrl: " + baseDomainUrl);
+        log.debug("originUrl: {}, baseDomainUrl: {}", current.getUrl(), baseDomainUrl);
         return baseDomainUrl;
     }
 

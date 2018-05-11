@@ -13,17 +13,25 @@ public class CrawlerProjectParam {
     /**
      * 业务类型 {WebsiteType}
      */
-    private Integer            websiteType;
+    private Byte            websiteType;
     /**
      * 具体业务
      */
     private List<ProjectParam> projects;
 
-    public Integer getWebsiteType() {
+    public CrawlerProjectParam() {
+    }
+
+    public CrawlerProjectParam(Byte websiteType, List<ProjectParam> projects) {
+        this.websiteType = websiteType;
+        this.projects = projects;
+    }
+
+    public Byte getWebsiteType() {
         return websiteType;
     }
 
-    public void setWebsiteType(Integer websiteType) {
+    public void setWebsiteType(Byte websiteType) {
         this.websiteType = websiteType;
     }
 

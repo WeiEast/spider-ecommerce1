@@ -29,15 +29,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class PluginServiceImpl implements PluginService, InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger("plugin_log");
+    private static final Logger                       logger = LoggerFactory.getLogger("plugin_log");
+
     /**
      * 文件版本号缓存
      */
-    private static LoadingCache<String, String> fileVersionCache;
+    private static       LoadingCache<String, String> fileVersionCache;
+
     @Resource
-    private        RedisService                 redisService;
+    private              RedisService                 redisService;
+
     @Value("${plugin.local.store.path}")
-    private        String                       pluginPath;
+    private              String                       pluginPath;
 
     @Override
     public String savePlugin(String sassEnv, String fileName, byte[] bytes, String version) {
@@ -59,6 +62,9 @@ public class PluginServiceImpl implements PluginService, InitializingBean {
     public PluginUpgradeResult getPluginFromRedisNew(String pluginName) throws IOException {
         String sassEnv = TaskUtils.getSassEnv();
         String version = RedisUtils.hget(RedisKeyPrefixEnum.PLUGIN_VERSION.getRedisKey(sassEnv), pluginName);
+        if (StringUtils.isBlank(version)) {
+            logger.error("not found plugin version from redis,plugin name is {}", pluginName);
+        }
         File file = getPluginFile(pluginName, version);
         boolean forceReload = !file.exists();
         if (forceReload) {

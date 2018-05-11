@@ -8,6 +8,9 @@
 
 package com.datatrees.rawdatacentral.domain.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 爬虫分组
  * Created by zhouxinghai on 2017/6/22
@@ -20,16 +23,13 @@ public enum GroupEnum {
     MAIL_163_H5("MAIL_163_H5", "163邮箱H5", WebsiteType.MAIL, "163.com.h5"),
     MAIL_126_H5("MAIL_126_H5", "126邮箱H5", WebsiteType.MAIL, "126.com.h5"),
     TAOBAO_COM_H5("TAOBAO_COM_H5", "淘宝H5", WebsiteType.ECOMMERCE, "taobao.com.h5"),
-
     MAIL_QQ("MAIL_QQ", "QQ邮箱", WebsiteType.MAIL, "qq.com"),
     MAIL_163("MAIL_163", "163邮箱", WebsiteType.MAIL, "163.com"),
     MAIL_126("MAIL_126", "126邮箱", WebsiteType.MAIL, "126.com"),
     MAIL_SINA("MAIL_SINA", "新浪邮箱", WebsiteType.MAIL, "sina.com"),
     MAIL_139("MAIL_139", "139邮箱", WebsiteType.MAIL, "139.com"),
-
     ALIPAY_COM("ALIPAY_COM", "支付宝", WebsiteType.ECOMMERCE, "alipay.com"),
     TAOBAO_COM("TAOBAO_COM", "淘宝", WebsiteType.ECOMMERCE, "taobao.com"),
-
     CHINA_10086("CHINA_10086", "中国移动", WebsiteType.OPERATOR, ""),
     CHINA_10000("CHINA_10000", "中国电信", WebsiteType.OPERATOR, ""),
     CHINA_10010("CHINA_10010", "中国联通", WebsiteType.OPERATOR, ""),
@@ -88,20 +88,32 @@ public enum GroupEnum {
     GUI_ZHOU_10086("GUI_ZHOU_10086", "贵州移动", WebsiteType.OPERATOR, ""),
     QING_HAI_10086("QING_HAI_10086", "青海移动", WebsiteType.OPERATOR, ""),
     NING_XIA_10086("NING_XIA_10086", "宁夏移动", WebsiteType.OPERATOR, ""),
-    EDUCATION("EDUCATION","学信网",WebsiteType.EDUCATION,"chsi.com.cn");
+    EDUCATION("EDUCATION", "学信网", WebsiteType.EDUCATION, "chsi.com.cn");
+
+    private static final Map<String, String> groupMap = new HashMap<>();
+
+    static {
+        for (GroupEnum e : GroupEnum.values()) {
+            groupMap.put(e.groupCode, e.groupName);
+        }
+
+    }
 
     /**
      * 分组代码
      */
     private final String      groupCode;
+
     /**
      * 分组名称
      */
     private final String      groupName;
+
     /**
      * 默认爬虫配置,权重里没有大于0的配置,启用默认
      */
     private final String      websiteName;
+
     /**
      * 配置类型
      */
@@ -130,6 +142,10 @@ public enum GroupEnum {
             }
         }
         return null;
+    }
+
+    public static String getGroupName(String groupCode) {
+        return groupMap.get(groupCode);
     }
 
     public String getGroupCode() {

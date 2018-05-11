@@ -27,9 +27,7 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
 
         String orginal = OperationHelper.getStringInput(request, response);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("TripleOperation input: " + String.format("value: %s", expression));
-        }
+        logger.debug("triple expression: {}", expression);
 
         String firstParams = StringUtils.substringBefore(expression, type.getExpression());
         String secondParams = StringUtils.substringBetween(expression, type.getExpression(), "?");
@@ -43,9 +41,7 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
 
         String result = this.doTriple(type, firstParams, secondParams, firstResult, secondResult);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("TripleOperation content: " + String.format("orginal: %s,expression: %s , dest: %s", orginal, expression, result));
-        }
+        logger.debug("original: {}, dest: {}", orginal, result);
 
         response.setOutPut(result);
     }

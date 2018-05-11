@@ -6,10 +6,12 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -166,7 +168,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             //{"userName":"{}","passWord":"{}","pwdType":"01","clientIP":"{}"}
             Map<String, Object> params = new HashMap<>();
             params.put("userName", param.getMobile());
-            params.put("passWord", getEncryptPwd(param));
+            params.put("passWord", getEncryptPwdNew(param));
             params.put("pwdType", "01");
             params.put("clientIP", param.getPicCode());
             String data = JSON.toJSONString(params);
@@ -307,6 +309,38 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
              */
             Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encryptPwd = invocable.invokeFunction("encrypt", param.getPassword(), key).toString();
+            return encryptPwd;
+        } catch (Exception e) {
+            logger.error("加密失败,param={},response={}", param, response, e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取加密密码 2018.3.9 更新
+     * @return 加密之后的密码
+     */
+    private String getEncryptPwdNew(OperatorParam param) {
+        Response response = null;
+        try {
+            String modulus
+                    = "AJUBsfNgY8oBztH06scAJATI5a6OkDSr8DE3Lhv5F+0lyXEB4naYet1az8LV/StH94z0rJXX791YlVgzXusVpEc4nxOqpPu4qsM8ZpQMq/ryvAcLP5YNRIbfoqcuSJhrKWvfAW/qMS/vb0yPxfd7xmjvReO8H2ZK+ufF6yAfPleZ";
+            String exponent = "AQAB";
+            String templateUrl = "http://hl.10086.cn/rest/rsa/new-key?_={}";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_003")
+                    .setFullUrl(templateUrl, System.currentTimeMillis())
+                    .addHeader(HttpHeadKey.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()).invoke();
+            JSONObject json = response.getPageContentForJSON();
+            if (StringUtils.isNotBlank(json.getString("data"))) {
+                modulus = (String) JSONPath.eval(json, "$.data.modulus");
+                exponent = (String) JSONPath.eval(json, "$.data.exponent");
+            }
+
+            /**
+             * 加载js加密脚本
+             */
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des_new.js", "GBK");
+            String encryptPwd = invocable.invokeFunction("paramEncrypt", param.getPassword(), modulus, exponent).toString();
             return encryptPwd;
         } catch (Exception e) {
             logger.error("加密失败,param={},response={}", param, response, e);

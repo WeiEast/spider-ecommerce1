@@ -48,13 +48,13 @@ public class CrawlExecutor {
         LinkQueue linkQueue = null;
         LinkNode linkNode = null;
         try {
-            log.info("Rowdate collector start ... searchTemplate : " + searchProcessor.getSearchTemplate());
+            log.info("Rowdata collector start ... searchTemplate : {}", searchProcessor.getSearchTemplate());
             Task task = searchProcessor.getTask();
             SearchTemplateConfig searchTemplateConfig = searchProcessor.getSearchTemplateConfig();
             linkQueue = new LinkQueue(searchProcessor.getSearchTemplateConfig());
             if (!linkQueue.init()) {
                 task.setErrorCode(ErrorCode.INIT_QUEUE_FAILED_ERROR_CODE);
-                log.info(searchTemplateConfig.getType() + "--" + "The queue is empty, the system will exit ." + "Template: " + searchProcessor.getSearchTemplate());
+                log.info("{} -- The queue is empty, the system will exit. Template: {}", searchTemplateConfig.getType(), searchProcessor.getSearchTemplate());
                 return;
             }
 
@@ -75,13 +75,13 @@ public class CrawlExecutor {
             }
 
         } catch (Exception e) {
-            this.exceptionHandle(e, "crawlExecutor encountered a problem .");
+            this.exceptionHandle(e, "crawlExecutor encountered a problem.");
         } finally {
             if (searchProcessor.getCrawlExecutorPool() != null) {
                 searchProcessor.getCrawlExecutorPool().shutdownNow();
                 log.info("shutdownNow crawlExecutorPool success.");
             }
-            if (null != linkNode && null != linkQueue) {
+            if (null != linkNode) {
                 linkQueue.closeLinkQueue();
             }
         }
@@ -91,7 +91,7 @@ public class CrawlExecutor {
         long currentTime = UnifiedSysTime.INSTANCE.getSystemTime().getTime();
         boolean timeout = searchProcessor.isTimeout(currentTime);
 
-        if (timeout && log.isDebugEnabled()) {
+        if (timeout) {
             log.debug("Crawl task is time out! taskId : {}, startTime: {}, now: {}", searchProcessor.getTaskId(), searchProcessor.getStartTime(), currentTime);
         }
 
@@ -100,7 +100,7 @@ public class CrawlExecutor {
 
     private void doLoopCrawl(SearchProcessor searchProcessor, LinkQueue linkQueue, LinkNode linkNode, Integer threadCount) throws ResultEmptyException {
         Task task = searchProcessor.getTask();
-        log.info("Start doLoopCrawl , Task id:" + task.getId() + ",linkNode:" + linkNode);
+        log.info("Start doLoopCrawl , Task id: {}, linkNode: {}", task.getId(), linkNode);
         if (linkNode != null && StringUtils.isNotBlank(linkNode.getUrl())) {
             linkQueue.addLink(linkNode);
         }
@@ -129,7 +129,7 @@ public class CrawlExecutor {
                         // Time Out Logic
                         if (isTimeOutOfTask(searchProcessor)) {
                             task.setErrorCode(ErrorCode.TASK_TIMEOUT_ERROR_CODE);
-                            log.warn("TaskWorker has been Time Out.The program will exit");
+                            log.warn("TaskWorker has been timeout. The program will exit");
                             break outer;
                         }
 
@@ -153,7 +153,7 @@ public class CrawlExecutor {
                                         nextLink.addFirst(link);
                                         Thread.sleep(300);
                                     } else {
-                                        log.error("submit linked cause unknow exception " + e.getMessage(), e);
+                                        log.error("submit linked cause unknown exception", e);
                                     }
                                 }
                             } else {
@@ -163,9 +163,9 @@ public class CrawlExecutor {
                                  */
                                 List<LinkNode> findLinks = searchProcessor.crawlOneURL(link);
                                 linkQueue.addLinks(findLinks);
-                                log.info("get crawlExecutorPool with threadCount:" + threadCount);
+                                log.info("get crawlExecutorPool with threadCount: {}", threadCount);
                                 crawlExecutorPool = searchProcessor.getCrawlExecutorPool(threadCount);
-                                futureList = new ArrayList<Future<Boolean>>();
+                                futureList = new ArrayList<>();
                             }
                         } else {
                             // Url Request
@@ -180,7 +180,7 @@ public class CrawlExecutor {
                         }
 
                     } catch (Exception e) {
-                        this.exceptionHandle(e, "TaskWorker crawlOneURL  encountered a problem .");
+                        this.exceptionHandle(e, "TaskWorker crawlOneURL encountered a problem .");
                     }
                 }
             }

@@ -17,9 +17,9 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
-import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.crawler.framework.util.UrlExtractor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -55,9 +55,9 @@ public class ExtractOperationImpl extends Operation<ExtractOperation> {
             List<String> textUrls = UrlExtractor.extract(content);
             url = CollectionUtils.isNotEmpty(textUrls) ? textUrls.get(0) : "";
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("Extract operation result:" + url + " , content:" + content);
-        }
+
+        logger.debug("Extracted result: {}, content: {}", url, content);
+
         response.setOutPut(url);
     }
 }
