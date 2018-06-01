@@ -10,7 +10,6 @@
 package com.datatrees.common.protocol;
 
 import com.datatrees.common.conf.Configurable;
-import crawlercommons.robots.BaseRobotRules;
 
 /** A retriever of url content. Implemented by protocol extensions. */
 public interface Protocol extends Configurable {
@@ -40,14 +39,6 @@ public interface Protocol extends Configurable {
     ProtocolOutput getProtocolOutput(String url);
 
     ProtocolOutput getProtocolOutput(String url, long lastModified);
-
-    /**
-     * Retrieve robot rules applicable for this url.
-     * 
-     * @param url url to check
-     * @return robot rules (specific for this url or default), never null
-     */
-    BaseRobotRules getRobotRules(String url);
 
     ProtocolOutput getProtocolOutput(ProtocolInput input);
 }

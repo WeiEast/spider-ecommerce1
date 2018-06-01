@@ -8,25 +8,23 @@
  */
 package com.datatrees.common.protocol.http;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.protocol.*;
+import com.datatrees.common.protocol.Constant;
 import com.datatrees.common.protocol.NameValuePair;
-import com.datatrees.common.protocol.ProtocolException;
+import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.ProtocolInput.Action;
 import com.datatrees.common.protocol.ProtocolInput.CookieScope;
+import com.datatrees.common.protocol.Response;
 import com.datatrees.common.protocol.https.EasySSLProtocolSocketFactory;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.*;
@@ -47,11 +45,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * This class is a protocol plugin that configures an HTTP client for Basic, Digest and NTLM
@@ -69,21 +62,15 @@ public class WebClient extends HttpBase {
     // Since the Configuration has not yet been set,
     // then an unconfigured client is returned.
     private              HttpClient                         client            = new ProtocalHttpClient(connectionManager);
-    private String defaultUsername;
-    private String defaultPassword;
-    private String defaultRealm;
-    private String defaultScheme;
-    private String authFile;
-    private String agentHost;
-    private boolean authRulesRead = false;
 
-    int maxThreadsTotal = 400;
-    int maxThreadsPerHost = 200;
-    int maxRedirect = 10;
+    private int maxThreadsTotal = 400;
+    private int maxThreadsPerHost = 200;
+    private int maxRedirect = 10;
 
     private String proxyUsername;
     private String proxyPassword;
     private String proxyRealm;
+    private String agentHost;
 
     /**
      * Returns the configured HTTP client.
@@ -116,27 +103,7 @@ public class WebClient extends HttpBase {
         this.proxyRealm = conf.get("http.proxy.realm", "");
 
         agentHost = conf.get("http.agent.host", "");
-        authFile = conf.get("http.auth.file", "");
         configureClient();
-        try {
-            // setCredentials();
-        } catch (Exception ex) {
-            LOG.error("Could not read " + authFile + " : " + ex.getMessage());
-
-        }
-    }
-
-    /**
-     * Fetches the <code>url</code> with a configured HTTP client and gets the response.
-     * 
-     * @param url URL to be fetched
-     * @param datum Crawl data
-     * @param redirect Follow redirects if and only if true
-     * @return HTTP response
-     */
-    protected Response getResponse(URL url, long lastModified, boolean redirect) throws ProtocolException, IOException {
-        resolveCredentials(url);
-        return getResponse(new ProtocolInput().setUrl(url.toString()).setLastModify(lastModified).setFollowRedirect(redirect));
     }
 
     /**
@@ -222,140 +189,6 @@ public class WebClient extends HttpBase {
         }
         if (retryHandler != null) {
             client.getParams().setParameter(HTTPConstants.RETRY_HANDLER, retryHandler);
-        }
-    }
-
-    /**
-     * Reads authentication configuration file (defined as 'http.auth.file' in Nutch configuration
-     * file) and sets the credentials for the configured authentication scopes in the HTTP client
-     * object.
-     * 
-     * @throws ParserConfigurationException If a document builder can not be created.
-     * @throws SAXException If any parsing error occurs.
-     * @throws IOException If any I/O error occurs.
-     */
-    private synchronized void setCredentials() throws ParserConfigurationException, SAXException, IOException {
-
-        if (authRulesRead) return;
-
-        authRulesRead = true; // Avoid re-attempting to read
-
-        InputStream is = conf.getConfResourceAsInputStream(authFile);
-        if (is != null) {
-            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
-
-            Element rootElement = doc.getDocumentElement();
-            if (!"auth-configuration".equals(rootElement.getTagName())) {
-                LOG.warn("Bad auth conf file: root element <" + rootElement.getTagName() + "> found in " + authFile
-                        + " - must be <auth-configuration>");
-            }
-
-            // For each set of credentials
-            NodeList credList = rootElement.getChildNodes();
-            for (int i = 0; i < credList.getLength(); i++) {
-                Node credNode = credList.item(i);
-                if (!(credNode instanceof Element)) continue;
-
-                Element credElement = (Element) credNode;
-                if (!"credentials".equals(credElement.getTagName())) {
-                    LOG.warn("Bad auth conf file: Element <" + credElement.getTagName() + "> not recognized in " + authFile
-                            + " - expected <credentials>");
-                    continue;
-                }
-
-                String username = credElement.getAttribute("username");
-                String password = credElement.getAttribute("password");
-
-                // For each authentication scope
-                NodeList scopeList = credElement.getChildNodes();
-                for (int j = 0; j < scopeList.getLength(); j++) {
-                    Node scopeNode = scopeList.item(j);
-                    if (!(scopeNode instanceof Element)) continue;
-
-                    Element scopeElement = (Element) scopeNode;
-
-                    if ("default".equals(scopeElement.getTagName())) {
-
-                        // Determine realm and scheme, if any
-                        String realm = scopeElement.getAttribute("realm");
-                        String scheme = scopeElement.getAttribute("scheme");
-
-                        // Set default credentials
-                        defaultUsername = username;
-                        defaultPassword = password;
-                        defaultRealm = realm;
-                        defaultScheme = scheme;
-
-                        LOG.trace("Credentials - username: " + username + "; set as default" + " for realm: " + realm + "; scheme: " + scheme);
-
-                    } else if ("authscope".equals(scopeElement.getTagName())) {
-
-                        // Determine authentication scope details
-                        String host = scopeElement.getAttribute("host");
-                        int port = -1; // For setting port to AuthScope.ANY_PORT
-                        try {
-                            port = Integer.parseInt(scopeElement.getAttribute("port"));
-                        } catch (Exception ex) {
-                            // do nothing, port is already set to any port
-                        }
-                        String realm = scopeElement.getAttribute("realm");
-                        String scheme = scopeElement.getAttribute("scheme");
-
-                        // Set credentials for the determined scope
-                        AuthScope authScope = getAuthScope(host, port, realm, scheme);
-                        NTCredentials credentials = new NTCredentials(username, password, agentHost, realm);
-
-                        client.getState().setCredentials(authScope, credentials);
-
-                        LOG.trace("Credentials - username: " + username + "; set for AuthScope - " + "host: " + host + "; port: " + port
-                                + "; realm: " + realm + "; scheme: " + scheme);
-
-                    } else {
-                        LOG.warn("Bad auth conf file: Element <" + scopeElement.getTagName() + "> not recognized in " + authFile
-                                + " - expected <authscope>");
-                    }
-                }
-                is.close();
-            }
-        }
-    }
-
-    /**
-     * If credentials for the authentication scope determined from the specified <code>url</code> is
-     * not already set in the HTTP client, then this method sets the default credentials to fetch
-     * the specified <code>url</code>. If credentials are found for the authentication scope, the
-     * method returns without altering the client.
-     * 
-     * @param url URL to be fetched
-     */
-    private void resolveCredentials(URL url) {
-
-        if (defaultUsername != null && defaultUsername.length() > 0) {
-
-            int port = url.getPort();
-            if (port == -1) {
-                if ("https".equals(url.getProtocol()))
-                    port = 443;
-                else
-                    port = 80;
-            }
-
-            AuthScope scope = new AuthScope(url.getHost(), port);
-
-            if (client.getState().getCredentials(scope) != null) {
-                LOG.trace("Pre-configured credentials with scope - host: " + url.getHost() + "; port: " + port + "; found for url: " + url);
-
-                // Credentials are already configured, so do nothing and return
-                return;
-            }
-
-            LOG.trace("Pre-configured credentials with scope -  host: " + url.getHost() + "; port: " + port + "; not found for url: " + url);
-
-            AuthScope serverAuthScope = getAuthScope(url.getHost(), port, defaultRealm, defaultScheme);
-
-            NTCredentials serverCredentials = new NTCredentials(defaultUsername, defaultPassword, agentHost, defaultRealm);
-
-            client.getState().setCredentials(serverAuthScope, serverCredentials);
         }
     }
 

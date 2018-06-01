@@ -8,16 +8,11 @@
  */
 package com.datatrees.common.protocol;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.protocol.file.FileClient;
-import com.datatrees.common.protocol.ftp.FtpClient;
 import com.datatrees.common.protocol.http.WebClient;
-import com.datatrees.common.protocol.sftp.SFtpClient;
 import com.datatrees.common.util.CacheUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,92 +40,24 @@ public class ProtocolFactory {
         return CACHE.get(conf);
     }
 
-    /**
-     * Returns the appropriate {@link Protocol} implementation for a url.
-     * 
-     * @param urlString Url String
-     * @return The appropriate {@link Protocol} implementation for a given {@link URL}.
-     * @throws ProtocolNotFound when Protocol can not be found for urlString
-     */
-    public synchronized Protocol getProtocol(String urlString) throws ProtocolNotFound {
-        try {
-            URL url = new URL(urlString);
-            String protocolName = url.getProtocol();
-            if (protocolName == null) throw new ProtocolNotFound(urlString);
-
-            String cacheId = Protocol.X_POINT_ID + this.hashCode() + protocolName;
-            Protocol protocol = (Protocol) CacheUtil.getInstance().getNoExpiredObject(cacheId);
-            if (protocol != null) {
-                return protocol;
-            }
-
-            protocol = createProtocol(protocolName);
-            if (protocol == null) {
-                throw new ProtocolNotFound(protocolName);
-            }
-
-            CacheUtil.getInstance().insertObject(cacheId, protocol);
-            return protocol;
-        } catch (MalformedURLException e) {
-            throw new ProtocolNotFound(urlString, e.toString());
-        }
-    }
-
-    public synchronized Protocol getProtocol(ProtocolType type) throws ProtocolNotFound {
+    public synchronized Protocol getProtocol(ProtocolType type) {
         String cacheId = Protocol.X_POINT_ID + this.hashCode() + type.name();
         Protocol protocol = (Protocol) CacheUtil.getInstance().getNoExpiredObject(cacheId);
-        if (protocol != null) {
-            return protocol;
-        }
-
-        protocol = createProtocol(type);
         if (protocol == null) {
-            throw new ProtocolNotFound(type.name());
+            protocol = createProtocol(type);
+            CacheUtil.getInstance().insertObject(cacheId, protocol);
         }
 
-        CacheUtil.getInstance().insertObject(cacheId, protocol);
         return protocol;
-    }
-
-    private Protocol createProtocol(String name) {
-        Protocol protocol = null;
-
-        if ("http".equalsIgnoreCase(name) || "https".equalsIgnoreCase(name)) {
-            protocol = new WebClient();
-        } else if ("ftp".equalsIgnoreCase(name)) {
-            protocol = new FtpClient();
-        } else if ("file".equalsIgnoreCase(name)) {
-            protocol = new FileClient();
-        } else if ("sftp".equalsIgnoreCase(name)) {
-            protocol = new SFtpClient();
-        }
-        protocol.setConf(conf);
-        return protocol;
-
     }
 
     private Protocol createProtocol(ProtocolType type) {
-        Protocol protocol = null;
-
-        switch (type) {
-            case HTTP:
-                protocol = new WebClient();
-                break;
-            case FTP:
-                protocol = new FtpClient();
-                break;
-            case FILE:
-                protocol = new FileClient();
-                break;
-            case SFTP:
-                protocol = new SFtpClient();
-                break;
-            default:
-                break;
+        if (ProtocolType.HTTP.equals(type)) {
+            Protocol protocol = new WebClient();
+            protocol.setConf(conf);
+            return protocol;
         }
-        protocol.setConf(conf);
-        return protocol;
-
+        throw new UnsupportedOperationException("Unsupported protocol type: " + type);
     }
 
     static class Cache {
@@ -147,7 +74,7 @@ public class ProtocolFactory {
         }
     }
 
-    public static enum ProtocolType {
+    public enum ProtocolType {
         HTTP, FTP, FILE, SFTP;
     }
 

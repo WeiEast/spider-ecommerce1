@@ -24,27 +24,6 @@ import com.datatrees.crawler.core.processor.segment.SegmentBase;
  */
 public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
 
-
-    // private String sourceExpression(Request request, String expression) {
-    // Set<String> replaceList = ReplaceUtils.getReplaceList(expression);
-    // return ReplaceUtils.replaceMap(replaceList, RequestUtil.getSourceMap(request), expression);
-    // }
-    //
-    //
-    // private double sourceCalculate(Request request, String expression) {
-    // expression = this.sourceExpression(request, expression);
-    // String result = PatternUtils.group(expression, "([\\d\\.]+)", 1);
-    // if (result != null && expression.equals(result)) {
-    // return Double.parseDouble(expression);
-    // } else if (!expression.contains("$")) {
-    // log.info("do sourceCalculate with expression:" + expression);
-    // return Arithmetic.arithmetic(expression);
-    // } else {
-    // log.info("return 0 ,with expression:" + expression);
-    // return 0;
-    // }
-    // }
-
     @Override
     protected List<String> getSplit(Request request) {
         List<String> result = new LinkedList<>();

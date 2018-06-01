@@ -18,7 +18,6 @@ import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.protocol.*;
 import com.datatrees.common.protocol.util.DeflateUtils;
 import com.datatrees.common.protocol.util.GZIPUtils;
-import crawlercommons.robots.BaseRobotRules;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +29,6 @@ public abstract class HttpBase implements Protocol {
     public static final int BUFFER_SIZE = 8 * 1024;
 
     private static final byte[] EMPTY_CONTENT = new byte[0];
-
-    // private HttpRobotRulesParser robots = null;
 
     /** The proxy hostname. */
     protected String proxyHost = null;
@@ -147,8 +144,6 @@ public abstract class HttpBase implements Protocol {
 
             if (code == 200) { // got a good response
                 return new ProtocolOutput(c, ProtocolStatusCodes.SUCCESS, response); // return it
-            } else if (code == 410) { // page is gone
-                return new ProtocolOutput(c, ProtocolStatusCodes.GONE, response);
             } else if (code >= 300 && code < 400) { // handle redirect
                 String location = response.getHeader("Location");
                 // some broken servers, such as MS IIS, use lowercase header name...
@@ -308,12 +303,5 @@ public abstract class HttpBase implements Protocol {
 
         return content;
     }
-
-    protected abstract Response getResponse(URL url, long lastModified, boolean followRedirects) throws ProtocolException, IOException;
-
-    public BaseRobotRules getRobotRules(String url) {
-        return null;
-    }
-
 
 }
