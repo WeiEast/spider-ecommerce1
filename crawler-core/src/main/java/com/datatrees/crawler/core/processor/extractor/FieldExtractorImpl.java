@@ -26,12 +26,12 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ExtractorException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
+import com.treefinance.crawler.framework.format.Formatter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -231,8 +231,8 @@ public class FieldExtractorImpl extends Processor {
             try {
                 input = (String) fieldResult;
                 if (StringUtils.isNotEmpty(input)) {
-                    AbstractFormat formater = ProcessorFactory.getFormat(type, conf);
-                    fieldResult = formater.format(request, response, input, fieldExtractor.getFormat());
+                    Formatter formatter = ProcessorFactory.getFormatter(type, conf);
+                    fieldResult = formatter.format(input, fieldExtractor.getFormat(), request, response);
                 } else if (!type.equals(ResultType.String)) {
                     fieldResult = null;
                 }

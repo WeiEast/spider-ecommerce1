@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.format.unit;
+package com.treefinance.crawler.framework.format.number;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

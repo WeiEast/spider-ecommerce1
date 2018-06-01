@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.datatrees.common.conf.Configurable;
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.crawler.core.domain.config.extractor.ResultType;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
@@ -20,8 +21,6 @@ import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.domain.config.segment.SegmentType;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.domain.config.service.ServiceType;
-import com.datatrees.crawler.core.processor.format.AbstractFormat;
-import com.datatrees.crawler.core.processor.format.impl.*;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.impl.*;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
@@ -32,6 +31,19 @@ import com.datatrees.crawler.core.processor.service.impl.GrabServiceImpl;
 import com.datatrees.crawler.core.processor.service.impl.PluginServiceImpl;
 import com.datatrees.crawler.core.processor.service.impl.TaskHttpServiceImpl;
 import com.treefinance.crawler.exception.UnexpectedException;
+import com.treefinance.crawler.framework.format.Formatter;
+import com.treefinance.crawler.framework.format.base.BooleanFormatter;
+import com.treefinance.crawler.framework.format.base.IntegerFormatter;
+import com.treefinance.crawler.framework.format.base.LongFormatter;
+import com.treefinance.crawler.framework.format.base.StringFormatter;
+import com.treefinance.crawler.framework.format.datetime.DateFormatter;
+import com.treefinance.crawler.framework.format.money.CurrencyFormatter;
+import com.treefinance.crawler.framework.format.money.CurrencyPaymentFormatter;
+import com.treefinance.crawler.framework.format.money.PaymentFormatter;
+import com.treefinance.crawler.framework.format.money.RmbFormatter;
+import com.treefinance.crawler.framework.format.number.NumberFormatter;
+import com.treefinance.crawler.framework.format.special.FileFormatter;
+import com.treefinance.crawler.framework.format.special.ResourceStringFormatter;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -79,21 +91,18 @@ public final class ProcessorFactory {
         register(ServiceType.Task_Http_Service, TaskHttpServiceImpl.class);
         register(ServiceType.Default, DefaultService.class);
 
-
-            // format
-        register(ResultType.DATE, DateFormatImpl.class);
-        register(ResultType.String, StringFormatImpl.class);
-        register(ResultType.NUMBER, NumberFormatImpl.class);
-        register(ResultType.PAYMENT, PaymentFormatImpl.class);
-        register(ResultType.FILE, FileFormatImpl.class);
-        register(ResultType.RESOURCESTRING, ResourceStringFormatImpl.class);
-
-        register(ResultType.CURRENCY, CurrencyFormatImpl.class);
-        register(ResultType.CURRENCYPAYMENT, CurrencyPaymentFormatImpl.class);
-        register(ResultType.RMB, RMBFormatImpl.class);
-        register(ResultType.BOOLEAN, BooleanFormatImpl.class);
-        register(ResultType.INT, IntFormatImpl.class);
-        register(ResultType.LONG, LongFormatImpl.class);
+        register(ResultType.DATE, DateFormatter.class);
+        register(ResultType.String, StringFormatter.class);
+        register(ResultType.NUMBER, NumberFormatter.class);
+        register(ResultType.PAYMENT, PaymentFormatter.class);
+        register(ResultType.FILE, FileFormatter.class);
+        register(ResultType.RESOURCESTRING, ResourceStringFormatter.class);
+        register(ResultType.CURRENCY, CurrencyFormatter.class);
+        register(ResultType.CURRENCYPAYMENT, CurrencyPaymentFormatter.class);
+        register(ResultType.RMB, RmbFormatter.class);
+        register(ResultType.BOOLEAN, BooleanFormatter.class);
+        register(ResultType.INT, IntegerFormatter.class);
+        register(ResultType.LONG, LongFormatter.class);
     }
 
     private ProcessorFactory() {
@@ -161,18 +170,20 @@ public final class ProcessorFactory {
         return base;
     }
 
-    public static AbstractFormat getFormat(ResultType type, Configuration conf) {
-        Class<AbstractFormat> clazz = searchRegister(type, "formatter");
+    public static Formatter getFormatter(ResultType type, Configuration conf) {
+        Class<Formatter> clazz = searchRegister(type, "formatter");
 
-        AbstractFormat format;
+        Formatter formatter;
         try {
-            format = clazz.newInstance();
+            formatter = clazz.newInstance();
         } catch (Exception e) {
             throw new UnexpectedException("Error new instance for class: " + clazz, e);
         }
-        format.setConf(conf);
-        format.setType(type);
 
-        return format;
+        if (formatter instanceof Configurable) {
+            ((Configurable) formatter).setConf(conf);
+        }
+
+        return formatter;
     }
 }

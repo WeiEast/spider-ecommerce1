@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.Consts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,11 @@ import org.slf4j.LoggerFactory;
  */
 public class CharsetUtil {
     private static final Logger LOGGER  = LoggerFactory.getLogger(CharsetUtil.class);
-    public static final  String DEFAULT = "UTF-8";
+    public static final  Charset ASCII      = Consts.ASCII;
+    public static final  Charset ISO_8859_1 = Consts.ISO_8859_1;
+    public static final  Charset UTF_8      = Consts.UTF_8;
+    public static final  String  UTF_8_NAME = UTF_8.name();
+    public static final  String  DEFAULT    = UTF_8_NAME;
 
     public static Charset getCharset(String charsetName, String defaultCharset) {
         Charset charset = null;

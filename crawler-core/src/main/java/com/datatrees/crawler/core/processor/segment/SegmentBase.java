@@ -23,9 +23,9 @@ import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorImpl;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
-import com.datatrees.crawler.core.processor.format.AbstractFormat;
 import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
+import com.treefinance.crawler.framework.format.Formatter;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -195,9 +195,9 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
                 // convert to basic result type
                 ResultType type = ResultType.getResultType(segment.getResultClass());
                 Configuration conf = RequestUtil.getConf(request);
-                AbstractFormat formater = ProcessorFactory.getFormat(type, conf);
+                Formatter formatter = ProcessorFactory.getFormatter(type, conf);
                 Collection values = resultMap.values();
-                if (CollectionUtils.isNotEmpty(values) && formater.isResultType(values.toArray()[0])) {
+                if (CollectionUtils.isNotEmpty(values) && formatter.supportResultType(values.toArray()[0])) {
                     logger.debug("{} format to {} with type: {}", resultMap, values.toArray()[0], type);
 
                     resultList.add(values.toArray()[0]);
