@@ -12,7 +12,6 @@ import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -29,16 +28,16 @@ public class AddPagingUrlLinkFilter implements Filter {
 
     @Override
     public void doFilter(Context context, FilterChain filterChain) {
-        LinkNode linkNode = ContextUtil.getCurrentLinkNode(context);
-        SearchProcessor searchProcessor = ContextUtil.getSearchProcessor(context);
+        LinkNode linkNode = context.getCurrentLinkNode();
+        SearchProcessor searchProcessor = context.getSearchProcessor();
         String lastPagingUrl = linkNode.getUrl();
 
         int pNum = linkNode.getpNum();
         if (pNum != -1) {
             log.info("current PageNum: {},pageLinkUrl: {}", pNum, lastPagingUrl);
             searchProcessor.getTask().getOpenPageCount().getAndIncrement();
-            CrawlRequest request = ContextUtil.getCrawlRequest(context);
-            CrawlResponse response = ContextUtil.getCrawlResponse(context);
+            CrawlRequest request = context.getCrawlRequest();
+            CrawlResponse response = context.getCrawlResponse();
             if (needAddPagingUrl(request, response)) {
                 int newpNum = pNum + 1;
                 String pageLinkUrl = getPageLinkUrl(newpNum, searchProcessor);
@@ -48,7 +47,7 @@ public class AddPagingUrlLinkFilter implements Filter {
                     log.info("add newpNum: {},pageLinkUrl: {}", newpNum, pageLinkUrl);
                     pageNumUrlLink.setpNum(newpNum);
 
-                    List<LinkNode> linkNodeList = ContextUtil.getFetchedLinkNodeList(context);
+                    List<LinkNode> linkNodeList = context.getFetchedLinkNodeList();
                     linkNodeList.add(pageNumUrlLink);
                 }
             }

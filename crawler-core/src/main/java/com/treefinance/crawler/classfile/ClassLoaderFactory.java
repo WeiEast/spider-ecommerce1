@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.treefinance.crawler.framework.classfile;
+package com.treefinance.crawler.classfile;
 
 import java.io.File;
 import java.net.MalformedURLException;

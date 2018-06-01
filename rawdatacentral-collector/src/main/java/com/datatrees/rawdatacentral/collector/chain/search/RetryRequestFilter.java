@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.chain.Context;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.domain.model.Task;
 
@@ -27,7 +26,7 @@ public class RetryRequestFilter extends LinkNodesFilter {
             } else {
                 // requeue linknode
                 linkNode.setNeedRequeue(false);
-                List<LinkNode> linkNodeList = ContextUtil.getFetchedLinkNodeList(context);
+                List<LinkNode> linkNodeList = context.getFetchedLinkNodeList();
                 linkNodeList.add(linkNode);
             }
         }

@@ -7,7 +7,6 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.rawdatacentral.collector.chain.Context;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.search.URLHandlerImpl;
 
@@ -27,7 +26,7 @@ public class AddParserTemplateUrlFilter extends RemovedFetchLinkNodeFilter {
 
             if (!currentParserLinkUrl.equals(fetchLinkNode.getUrl())) {
                 logger.info("currentParserLinkUrl : {}", currentParserLinkUrl);
-                URLHandlerImpl handler = ContextUtil.getURLHandlerImpl(context);
+                URLHandlerImpl handler = context.getURLHandlerImpl();
                 List<LinkNode> parserTemplatelinkNodeList = handler.getTempLinkNodes();
 
                 LinkNode firsetLinkNode = GsonUtils.fromJson(GsonUtils.toJson(fetchLinkNode), LinkNode.class);

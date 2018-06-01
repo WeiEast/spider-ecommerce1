@@ -14,7 +14,6 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.config.search.SearchType;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.chain.Context;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
@@ -34,7 +33,7 @@ public class MailBillReceiveTimeFilter extends RemovedFetchLinkNodeFilter {
     protected void doProcess(LinkNode fetchLinkNode, SearchProcessor searchProcessor, Context context) {
         String websiteType = searchProcessor.getProcessorContext().getWebsite().getWebsiteType();
         Object receiveAt = fetchLinkNode.getPropertys().get(MailBillData.RECEIVED);
-        LinkNode currentLinkNode = ContextUtil.getCurrentLinkNode(context);
+        LinkNode currentLinkNode = context.getCurrentLinkNode();
 
         if (searchProcessor.isLastLink() && currentLinkNode != null && currentLinkNode.getpNum() > 0) {
             logger.info("filter pageNode: {} as LastPageLink marked ,receiveAt: {}", fetchLinkNode, receiveAt);

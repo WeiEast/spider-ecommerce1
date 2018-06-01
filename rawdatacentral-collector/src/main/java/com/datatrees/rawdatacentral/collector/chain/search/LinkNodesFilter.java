@@ -8,7 +8,6 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -24,7 +23,7 @@ abstract class LinkNodesFilter implements Filter {
 
     @Override
     public void doFilter(Context context, FilterChain filterChain) {
-        SearchProcessor searchProcessor = ContextUtil.getSearchProcessor(context);
+        SearchProcessor searchProcessor = context.getSearchProcessor();
         List<LinkNode> linkNodes = ProcessorContextUtil.getThreadLocalLinkNode(searchProcessor.getProcessorContext());
         if (CollectionUtils.isNotEmpty(linkNodes)) {
             doInternalFilter(linkNodes, searchProcessor, context);
