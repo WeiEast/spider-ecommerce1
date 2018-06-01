@@ -10,10 +10,7 @@ package com.datatrees.crawler.core.processor.common;
 
 import java.util.List;
 
-import com.datatrees.common.pipeline.ContextBase;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
-import com.google.common.base.Preconditions;
+import com.datatrees.common.pipeline.*;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -21,37 +18,23 @@ import org.apache.commons.collections.CollectionUtils;
  * @version 1.0
  * @since Feb 20, 2014 7:50:10 PM
  */
-public class ProcessorRunner extends ContextBase {
+public class ProcessorRunner {
 
-    private List<Processor> processors;
-
-    public ProcessorRunner() {
-    }
+    private final Pipeline pipeline = new StandardPipeline();
 
     public ProcessorRunner(List<Processor> processors) {
-        this.processors = processors;
-    }
-
-    public List<Processor> getProcessors() {
-        return processors;
-    }
-
-    public void setProcessors(List<Processor> processors) {
-        this.processors = processors;
+        if (CollectionUtils.isNotEmpty(processors)) {
+            for (Processor processor : processors) {
+                pipeline.addValve(processor);
+            }
+        }
     }
 
     public void run(Request request, Response response) throws Exception {
-        initProcessor();
-        invoke(request, response);
-    }
+        Valve valve = pipeline.getFirst();
 
-    /**
-     *
-     */
-    private void initProcessor() {
-        Preconditions.checkState(CollectionUtils.isNotEmpty(processors), "processors should not be null!");
-        for (Processor processor : processors) {
-            addValve(processor);
+        if (valve != null) {
+            valve.invoke(request, response);
         }
     }
 

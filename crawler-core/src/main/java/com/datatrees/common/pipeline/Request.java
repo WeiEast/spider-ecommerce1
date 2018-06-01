@@ -8,6 +8,8 @@
  */
 package com.datatrees.common.pipeline;
 
+import com.treefinance.crawler.lang.AtomicAttributes;
+import com.treefinance.crawler.lang.Copyable;
 
 /**
  * 
@@ -15,7 +17,7 @@ package com.datatrees.common.pipeline;
  * @version 1.0
  * @since Feb 18, 2014 2:08:31 PM
  */
-public class Request extends ContextBase {
+public class Request extends AtomicAttributes implements Copyable<Request> {
 
     private static String INPUT = "Request.input";
 
@@ -37,9 +39,14 @@ public class Request extends ContextBase {
     }
 
     public static Request clone(Request request) {
-        Request newRepuest = new Request();
-        newRepuest.context.putAll(request.context);
-        return newRepuest;
+        return request.copy();
+    }
+
+    @Override
+    public Request copy() {
+        Request req = new Request();
+        req.addAttributes(this.getAttributes());
+        return req;
     }
 
     /*

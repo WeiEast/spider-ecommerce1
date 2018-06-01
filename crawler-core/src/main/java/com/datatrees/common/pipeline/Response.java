@@ -8,13 +8,15 @@
  */
 package com.datatrees.common.pipeline;
 
+import com.treefinance.crawler.lang.AtomicAttributes;
+
 /**
  * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:08:43 PM
  */
-public class Response extends ContextBase {
+public class Response extends AtomicAttributes {
 
     private final static String OUTPUT = "Response.Output";
 
