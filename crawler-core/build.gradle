@@ -16,10 +16,13 @@ dependencies {
     compile project(':rawdatacentral-common')
     compile "com.treefinance.toolkit:toolkit:${toolkit}"
     compile "com.google.guava:guava:${guavaVersion}"
-    compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocolVersion}", changing: true) {
+    compile 'commons-httpclient:commons-httpclient:3.1'
+    compile 'com.ibm.icu:icu4j:59.1'
+    compile 'com.google.code.crawler-commons:crawler-commons:0.5'
+    compile(group: "com.datatrees.common", name: "common-conf", version: "${commonConfVersion}", changing: true) {
         exclude module: 'guava'
     }
-    compile(group: "com.datatrees.common", name: "common-pipeline", version: "${commonPipelineVersion}", changing: true) {
+    compile(group: "com.datatrees.common", name: "common-util", version: "${commonUtilVersion}", changing: true) {
         exclude module: 'guava'
     }
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true) {
