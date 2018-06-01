@@ -9,6 +9,7 @@ import java.util.Map;
  * @since Jan 9, 2014 7:18:24 PM
  */
 public enum ServiceType {
+    Default("default"),
     Grab_Service("grab"),
     Task_Http_Service("task_http"),
     Plugin_Service("plugin");

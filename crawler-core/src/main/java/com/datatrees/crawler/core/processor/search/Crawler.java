@@ -24,7 +24,7 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.page.AbstractPage;
+import com.datatrees.crawler.core.processor.page.PageImpl;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
@@ -94,7 +94,8 @@ public class Crawler {
                     LOGGER.info("need requeue linkNode: {}", url);
                 } else {
                     // parser
-                    AbstractPage pageProcessor = ProcessorFactory.getPage(page);
+                    PageImpl pageProcessor = new PageImpl();
+                    pageProcessor.setPage(page);
                     pageProcessor.invoke(request, response);
                 }
             } else {
