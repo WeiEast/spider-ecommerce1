@@ -1,6 +1,4 @@
 ext {
-    commonMessage = "2.0.0-SNAPSHOT"
-    javassist = "3.20.0-GA"
     userCenterApi = "1.3.2"
     pdfbox = "2.0.2"
     fontverter = "1.2.18"
@@ -13,7 +11,7 @@ dependencies {
     compile project(':rawdatacentral-common')
     compile project(':crawler-core')
 
-    compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessage}", changing: true) {
+    compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessageVersion}", changing: true) {
         exclude(module: 'spring-amqp')
         exclude(module: 'spring-rabbit')
         exclude(module: "guava")
@@ -21,7 +19,7 @@ dependencies {
     compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: 'spring')
     }
-    compile "org.javassist:javassist:${javassist}"
+    compile "org.javassist:javassist:${javassistVersion}"
     compile "com.github.sgroschupf:zkclient:0.1"
     compile "com.datatrees.usercenter:user-center-api:${userCenterApi}"
     compile "org.apache.pdfbox:pdfbox:${pdfbox}"

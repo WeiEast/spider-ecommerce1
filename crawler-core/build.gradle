@@ -1,6 +1,4 @@
 ext {
-    commonProtocol = "2.1.0"
-    commonPipeline = "2.1.0"
     dsiutils = "2.0.14"
     htmlcleaner = "2.13"
     jdom2 = "2.0.4"
@@ -10,8 +8,7 @@ ext {
     commonsExec = "1.1"
     jodaTime = "2.7"
     apacheMime4j = "0.6.1"
-    javassist = "3.20.0-GA"
-    toolkit = "1.0.9"
+    toolkit = "1.0.11"
 }
 
 dependencies {
@@ -19,10 +16,10 @@ dependencies {
     compile project(':rawdatacentral-common')
     compile "com.treefinance.toolkit:toolkit:${toolkit}"
     compile "com.google.guava:guava:${guavaVersion}"
-    compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocol}", changing: true) {
+    compile(group: "com.datatrees.common", name: "common-protocol", version: "${commonProtocolVersion}", changing: true) {
         exclude module: 'guava'
     }
-    compile(group: "com.datatrees.common", name: "common-pipeline", version: "${commonPipeline}", changing: true) {
+    compile(group: "com.datatrees.common", name: "common-pipeline", version: "${commonPipelineVersion}", changing: true) {
         exclude module: 'guava'
     }
     compile(group: "com.datatrees.common", name: "common-zookeeper", version: "${commonZookeeperVersion}", changing: true) {
@@ -45,7 +42,7 @@ dependencies {
         exclude(module: "spring")
         exclude(module: "netty")
     }
-    compile "org.javassist:javassist:${javassist}"
+    compile "org.javassist:javassist:${javassistVersion}"
     compile "com.101tec:zkclient:${zkclientVersion}"
     compile ("org.seleniumhq.selenium:selenium-java:${seleniumVersion}"){
         exclude(module: "guava")
