@@ -8,17 +8,12 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import java.util.Map;
-
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReturnMatchOperation;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 
 /**
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
@@ -33,10 +28,7 @@ public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
         String value = operation.getValue();
         String orginal = OperationHelper.getStringInput(request, response);
 
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
-        Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
-
-        value = ReplaceUtils.replaceMap(fieldContext, sourceMap, value);
+        value = StandardExpression.eval(value, request, response);
 
         logger.debug("input: {}", value);
 

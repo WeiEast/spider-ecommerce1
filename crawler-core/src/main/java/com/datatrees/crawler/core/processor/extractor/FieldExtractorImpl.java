@@ -30,6 +30,8 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.treefinance.crawler.framework.format.Formatter;
 import org.apache.commons.collections.CollectionUtils;
@@ -244,26 +246,28 @@ public class FieldExtractorImpl extends Processor {
     }
 
     private Object fieldDefaultValue(Request request, Response response, Map<String, FieldExtractorWarpper> resultMap, Object fieldResult, ResultType type) {
-        if (fieldExtractor.getDefaultValue() != null && (fieldResult == null || (fieldResult instanceof String && StringUtils.isEmpty((String) fieldResult)))) {
-            fieldResult = this.fieldDefaultValue(request, resultMap, fieldResult);
+        String defaultValue = fieldExtractor.getDefaultValue();
+        if (defaultValue != null && (fieldResult == null || (fieldResult instanceof String && StringUtils.isEmpty((String) fieldResult)))) {
+            Object result;
+            if (ResultType.String.equals(type)) {
+                result = StandardExpression.eval(defaultValue, ImmutableList.of(FieldExtractorWarpperUtil.fieldWrapperMapToField(resultMap), RequestUtil.getSourceMap(request)));
+            } else {
+                String val;
+                if (type != null) {
+                    val = StringUtils.trim(defaultValue);
+                } else {
+                    val = defaultValue;
+                }
+                result = StandardExpression.evalWithObject(val, ImmutableList.of(FieldExtractorWarpperUtil.fieldWrapperMapToField(resultMap), RequestUtil.getSourceMap(request)));
+            }
             try {
-                return this.format(request, response, fieldResult, type);
+                return this.format(request, response, result, type);
             } catch (Exception e) {
                 logger.warn("Error formatting default value for field: {}", fieldExtractor, e);
                 return null;
             }
-        } else {
-            return fieldResult;
         }
-    }
-
-    private Object fieldDefaultValue(Request request, Map<String, FieldExtractorWarpper> resultMap, Object fieldResult) {
-        Set<String> replaceList = ReplaceUtils.getReplaceList(fieldExtractor.getDefaultValue());
-        if (CollectionUtils.isEmpty(replaceList)) {
-            return fieldExtractor.getDefaultValue();
-        } else {
-            return ReplaceUtils.getReplaceObject(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(resultMap), RequestUtil.getSourceMap(request), fieldExtractor.getDefaultValue());
-        }
+        return fieldResult;
     }
 
     /**

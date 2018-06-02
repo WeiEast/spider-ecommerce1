@@ -10,14 +10,13 @@ package com.datatrees.crawler.core.processor.segment.impl;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.domain.config.segment.impl.XpathSegment;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,8 +37,7 @@ public class XpathSegmentImpl extends SegmentBase<XpathSegment> {
         String xpath = segment.getXpath();
 
         if (StringUtils.isNotBlank(xpath)) {
-            Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
-            xpath = ReplaceUtils.replaceMap(sourceMap, xpath);
+            xpath = StandardExpression.eval(xpath, request, null);
 
             List<String> segments = XPathUtil.getXpath(xpath, content);
             logger.info("segment count@{} by using xpath: {}", segments.size(), xpath);

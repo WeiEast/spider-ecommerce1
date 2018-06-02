@@ -1,17 +1,12 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import java.util.Map;
-
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.JsonPathOperation;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 
 /**
  * @author Jerry
@@ -26,11 +21,8 @@ public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
         JsonPathOperation operation = getOperation();
 
         String jsonpath = operation.getJsonpath();
-        // replace from context
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
-        Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
 
-        jsonpath = ReplaceUtils.replaceMap(fieldContext, sourceMap, jsonpath);
+        jsonpath = StandardExpression.eval(jsonpath, request, response);
 
         try {
             original = JsonPathUtil.readAsString(original, jsonpath);

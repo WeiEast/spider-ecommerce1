@@ -9,18 +9,14 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.XpathOperation;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,10 +33,7 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
         XpathOperation operation = getOperation();
         String xpath = operation.getXpath();
 
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
-        Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
-
-        xpath = ReplaceUtils.replaceMap(fieldContext, sourceMap, xpath);
+        xpath = StandardExpression.eval(xpath, request, response);
 
         String orginal = OperationHelper.getStringInput(request, response);
         String resultStirng = "";

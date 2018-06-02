@@ -9,7 +9,6 @@
 package com.datatrees.crawler.core.processor.common;
 
 import java.util.Map;
-import java.util.Set;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -40,22 +39,6 @@ public class SourceUtil {
             log.debug("source from sourceId:" + sourceId + ",result:" + result);
         }
         return result;
-    }
-
-    public static String sourceExpression(Request request, String expression) {
-        Set<String> replaceList = ReplaceUtils.getReplaceList(expression);
-        return ReplaceUtils.replaceMap(replaceList, RequestUtil.getSourceMap(request), expression);
-    }
-
-    public static String sourceExpression(Request request, Response response, String expression) {
-        Set<String> replaceList = ReplaceUtils.getReplaceList(expression);
-        Map<String, FieldExtractorWarpper> fieldMap = ResponseUtil.getResponseFieldResult(response);
-        return ReplaceUtils.replaceMap(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), expression);
-    }
-
-    public static String sourceExpression(Map<String, Object> map, String expression) {
-        Set<String> replaceList = ReplaceUtils.getReplaceList(expression);
-        return ReplaceUtils.replaceMap(replaceList, map, expression);
     }
 
 }

@@ -1,15 +1,15 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
-import com.datatrees.crawler.core.processor.common.*;
+import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 
@@ -106,16 +106,8 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
     }
 
     private String replaceFromContext(String params, String orginal, Request request, Response response) {
-        if (StringUtils.isNotBlank(params) && params.contains("${this}")) {
-            params = ReplaceUtils.replace("${this}", orginal, params);
-        }
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
-        Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
-        String result = ReplaceUtils.replaceMap(fieldContext, sourceMap, params);
-        if (result == params && result != null && result.startsWith("${") && result.endsWith("}")) {
-            return "";
-        } else {
-            return result;
-        }
+        String val = StringUtils.replace(params, "${this}", orginal);
+
+        return StandardExpression.eval(val, request, response);
     }
 }

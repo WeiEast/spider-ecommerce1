@@ -11,6 +11,7 @@ package com.datatrees.crawler.core.processor.common;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.StringUtils;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.expression.ExpressionParser;
@@ -27,7 +28,7 @@ public class CalculateUtil {
     private static final ExpressionParser parser = new SpelExpressionParser();
 
     public static Double sourceCalculate(Request request, String expression, Double defaultValue) {
-        expression = SourceUtil.sourceExpression(request, expression);
+        expression = StandardExpression.eval(expression, request, null);
         return CalculateUtil.calculate(expression, defaultValue);
     }
 
@@ -50,7 +51,7 @@ public class CalculateUtil {
     }
 
     public static Object sourceCalculate(Request request, Response response, String expression, Object defaultValue) {
-        expression = SourceUtil.sourceExpression(request, response, expression);
+        expression = StandardExpression.eval(expression, request, response);
         return CalculateUtil.calculate(expression, defaultValue);
     }
 

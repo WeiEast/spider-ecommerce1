@@ -21,6 +21,7 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.net.HttpHeaders;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -58,7 +59,7 @@ public class LoginUtil {
     public String doLogin(LoginConfig config, SearchProcessorContext context) {
         try {
             String jsonHeader = config.getHeaders();
-            String loginUrl = ReplaceUtils.replaceMap(context.getContext(), config.getUrlTemplate());
+            String loginUrl = StandardExpression.eval(config.getUrlTemplate(), context.getContext());
             LinkNode linkNode = new LinkNode(loginUrl);
             // // add json headers
             if (StringUtils.isNotEmpty(jsonHeader)) {
@@ -113,8 +114,8 @@ public class LoginUtil {
         try {
             LoginCheckConfig loginCheckConfig = config.getLoginCheckConfig();
 
-            String checkUrl = ReplaceUtils.replaceMap(context.getContext(), loginCheckConfig.getCheckUrl());
-            logger.info("do login check, url:" + checkUrl);
+            String checkUrl = StandardExpression.eval(loginCheckConfig.getCheckUrl(), context.getContext());
+            logger.info("do login check, url: {}", checkUrl);
             LinkNode linkNode = new LinkNode(checkUrl);
 
             // // add json headers
@@ -143,7 +144,7 @@ public class LoginUtil {
                 return false;
             }
 
-            String successPattern = ReplaceUtils.replaceMap(context.getContext(), loginCheckConfig.getSuccessPattern());
+            String successPattern = StandardExpression.eval(loginCheckConfig.getSuccessPattern(), context.getContext());
             // match by page content or cookieString
             if (isSuccess(responseBody, context, successPattern)) {
                 callSegments(loginCheckConfig.getSegmentList(), context, responseBody);

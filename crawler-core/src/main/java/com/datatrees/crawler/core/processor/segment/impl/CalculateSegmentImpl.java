@@ -14,8 +14,8 @@ import java.util.List;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.domain.config.segment.impl.CalculateSegment;
 import com.datatrees.crawler.core.processor.common.CalculateUtil;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -36,7 +36,7 @@ public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
             double start = CalculateUtil.sourceCalculate(request, arrays[0], 0d);
             double end = CalculateUtil.sourceCalculate(request, arrays[1], 0d);
             double interval = CalculateUtil.sourceCalculate(request, arrays[2], 0d);
-            String formula = SourceUtil.sourceExpression(request, arrays[3]);
+            String formula = StandardExpression.eval(arrays[3], request, null);
             while (start < end) {
                 start = CalculateUtil.calculate(start + " " + formula + " " + interval, end);
                 result.add(start + "");

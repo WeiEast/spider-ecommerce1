@@ -21,8 +21,6 @@ import com.datatrees.crawler.core.domain.config.search.Request;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.login.Login;
@@ -45,6 +43,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.exception.ConfigException;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.spider.Spiders;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -305,7 +304,7 @@ public class CollectorWorker {
     private void addDefaultHeaders(SearchProcessorContext context, Request request) {
         String headerString = request.getDefaultHeader();
         if (StringUtils.isNotBlank(headerString)) {
-            headerString = SourceUtil.sourceExpression(context.getContext(), headerString);
+            headerString = StandardExpression.eval(headerString, context.getContext());
             Map<String, String> defaultHeader = GsonUtils.fromJson(headerString, new TypeToken<Map<String, String>>() {}.getType());
             if (MapUtils.isNotEmpty(defaultHeader)) {
                 context.getDefaultHeader().putAll(defaultHeader);
@@ -324,11 +323,7 @@ public class CollectorWorker {
             seedUrl = request.getSearchTemplateList().get(0);
         }
 
-        if (StringUtils.isNotEmpty(seedUrl)) {
-            seedUrl = ReplaceUtils.replaceMap(context.getContext(), seedUrl);
-        }
-
-        return seedUrl;
+        return StandardExpression.eval(seedUrl, context.getContext());
     }
 
     public Map<String, Object> mergeSubTaskResult(int taskid, Map<String, Object> resultMap) {
