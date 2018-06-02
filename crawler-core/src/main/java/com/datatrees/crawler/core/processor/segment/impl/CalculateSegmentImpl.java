@@ -33,12 +33,12 @@ public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
 
         try {// 1,3,1,+  从2开始到3(包含3)
             String[] arrays = expression.split(",");
-            double start = CalculateUtil.sourceCalculate(request, arrays[0], 0d);
-            double end = CalculateUtil.sourceCalculate(request, arrays[1], 0d);
-            double interval = CalculateUtil.sourceCalculate(request, arrays[2], 0d);
+            double start = CalculateUtil.calculate(arrays[0], request);
+            double end = CalculateUtil.calculate(arrays[1], request);
+            double interval = CalculateUtil.calculate(arrays[2], request);
             String formula = StandardExpression.eval(arrays[3], request, null);
             while (start < end) {
-                start = CalculateUtil.calculate(start + " " + formula + " " + interval, end);
+                start = CalculateUtil.calculate(start + formula + interval, null, Double.TYPE);
                 result.add(start + "");
             }
         } catch (Exception e) {

@@ -12,10 +12,8 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.treefinance.crawler.framework.expression.special.PageExpParser;
 import com.treefinance.crawler.framework.expression.special.SearchUrlExpParser;
-import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,25 +54,6 @@ public class SearchTemplateCombine {
         return encodedKeyword;
     }
 
-    public static String constructSearchEngineURL(String searchURLTemplate, String keyword, String urlCharset, int pageNum, boolean notOverloadMax, String domain, Map<String, Object> fieldMap) {
-        String encodedDomain = null;
-        if (StringUtils.isNotEmpty(keyword)) {
-            encodedDomain = encodeKeyword(domain, urlCharset);
-            log.debug("original domain: " + domain + ", encoded domain: " + domain);
-        }
-        try {
-            String searchURL = SearchTemplateCombine.constructSearchURL(searchURLTemplate, keyword, urlCharset, pageNum, notOverloadMax, fieldMap);
-            if (StringUtils.isNotEmpty(encodedDomain)) {
-                searchURL = searchURL.replace("${domain}", encodedDomain);
-            }
-            log.debug("final SearchEngine URL: " + searchURL);
-            return searchURL;
-        } catch (Exception e) {
-            log.error(e.toString(), e);
-        }
-        return null;
-    }
-
     /**
      * construct search url from template with keyword, charset and page num.
      * @param searchURLTemplate
@@ -100,22 +79,6 @@ public class SearchTemplateCombine {
             log.error(e.toString(), e);
         }
         return null;
-    }
-
-    private static int arithmetic(String param) {
-        String result = RegExp.group(param, "(\\d+)", 1);
-        if (result != null && param.equals(result)) {
-            return Integer.parseInt(param);
-        } else if (RegExp.find(param,"[\\d\\.\\+\\-\\*/]+")) {
-            double num = CalculateUtil.calculate(param);
-            if (num > (int) num) {
-                num = num + 1;
-            }
-            return (int) num;
-        } else {
-            log.warn("error input for arithmetic...");
-            return 0;
-        }
     }
 
     /**

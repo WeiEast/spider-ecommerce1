@@ -10,63 +10,38 @@ package com.datatrees.crawler.core.processor.common;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.StringUtils;
 import com.treefinance.crawler.framework.expression.StandardExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
+import com.treefinance.crawler.framework.expression.spring.SpelExpParser;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月21日 下午1:47:57
  */
-public class CalculateUtil {
+public final class CalculateUtil {
 
-    private static final Logger           log    = LoggerFactory.getLogger(CalculateUtil.class);
-    private static final ExpressionParser parser = new SpelExpressionParser();
-
-    public static Double sourceCalculate(Request request, String expression, Double defaultValue) {
-        expression = StandardExpression.eval(expression, request, null);
-        return CalculateUtil.calculate(expression, defaultValue);
+    private CalculateUtil() {
     }
 
     public static Double calculate(String expression) {
-        return calculate(expression, 0d);
+        return calculate(expression, 0d, Double.class);
     }
 
-    public static Double calculate(String expression, Double defaultValue) {
-        try {
-            if (StringUtils.isNotBlank(expression) && !expression.contains("$")) {
-                Double calculateResult = Double.valueOf(parser.parseExpression(expression).getValue().toString());
-                log.debug("do calculate with expression:" + expression + ",result:" + calculateResult);
-                return calculateResult;
-            }
-        } catch (Exception e) {
-            log.error("calculate error with expression:" + expression + " ," + e.getMessage(), e);
-        }
-        log.warn("return defaultValue " + defaultValue + ",with expression:" + expression);
-        return defaultValue;
+    public static <T> T calculate(String expression, T defaultValue, Class<T> clazz) {
+        return SpelExpParser.parse(expression, defaultValue, clazz);
     }
 
-    public static Object sourceCalculate(Request request, Response response, String expression, Object defaultValue) {
-        expression = StandardExpression.eval(expression, request, response);
-        return CalculateUtil.calculate(expression, defaultValue);
+    public static <T> T calculate(String expression, Request request, Response response, T defaultValue, Class<T> clazz) {
+        String exp = StandardExpression.eval(expression, request, response);
+        return calculate(exp, defaultValue, clazz);
     }
 
-    public static Object calculate(String expression, Object defaultValue) {
-        try {
-            if (StringUtils.isNotBlank(expression) && !expression.contains("$")) {
-                Object calculateResult = parser.parseExpression(expression).getValue();
-                log.debug("do calculate with expression:" + expression + ",result:" + calculateResult);
-                return calculateResult;
-            }
-        } catch (Exception e) {
-            log.error("calculate error with expression:" + expression + " ," + e.getMessage(), e);
-        }
-        log.warn("return defaultValue " + defaultValue + ",with expression:" + expression);
-        return defaultValue;
+    public static Double calculate(String expression, Request request, Double defaultValue) {
+        return calculate(expression, request, null, defaultValue, Double.class);
+    }
+
+    public static double calculate(String expression, Request request) {
+        return calculate(expression, request, 0d);
     }
 
 }

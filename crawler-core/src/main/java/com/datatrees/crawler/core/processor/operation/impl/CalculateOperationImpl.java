@@ -30,7 +30,7 @@ public class CalculateOperationImpl extends Operation<CalculateOperation> {
         Object result = null;
         // regex support get value from context
         if (StringUtils.isNotEmpty(expression)) {
-            result = CalculateUtil.sourceCalculate(request, response, expression, null);
+            result = CalculateUtil.calculate(expression, request, response, null, null);
         }
         logger.debug("calculate input: {}, result: {}", expression, result);
 

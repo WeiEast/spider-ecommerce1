@@ -8,8 +8,13 @@
 
 package com.datatrees.crawler.core.domain.config.operation.impl.triple;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+
+import com.datatrees.crawler.core.processor.common.CalculateUtil;
+import com.treefinance.toolkit.util.RegExp;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -17,14 +22,88 @@ import java.util.Map;
  * @since 2015年10月21日 上午11:07:36
  */
 public enum TripleType {
-    EQ("eq", "="),
-    NE("ne", "!="),
-    GT("gt", ">"),
-    LT("lt", "<"),
-    GE("ge", ">="),
-    LE("le", "<="),
-    REGEX("regex", " matches:"),
-    CONTAINS("contains", " contains:");// contains：正则不区分大小写
+    EQ("eq", "=") {
+        @Override
+        public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
+            return firstParams.trim().equals(secondParams.trim()) ? firstResult : secondResult;
+        }
+    },
+    NE("ne", "!=") {
+        @Override
+        public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
+            return !firstParams.equals(secondParams) ? firstResult : secondResult;
+        }
+    },
+    GT("gt", ">") {
+        @Override
+        public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
+            String result;
+
+            if (CalculateUtil.calculate(firstParams) > CalculateUtil.calculate(secondParams)) {
+                result = CalculateUtil.calculate(firstResult, "0", String.class);
+            } else {
+                result = CalculateUtil.calculate(secondResult, "0", String.class);
+            }
+
+            return result;
+        }
+    },
+    LT("lt", "<") {
+        @Override
+        public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
+            String result;
+
+            if (CalculateUtil.calculate(firstParams) < CalculateUtil.calculate(secondParams)) {
+                result = CalculateUtil.calculate(firstResult, "0", String.class);
+            } else {
+                result = CalculateUtil.calculate(secondResult, "0", String.class);
+            }
+
+            return result;
+        }
+    },
+    GE("ge", ">=") {
+        @Override
+        public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
+            String result;
+
+            if (CalculateUtil.calculate(firstParams) >= CalculateUtil.calculate(secondParams)) {
+                result = CalculateUtil.calculate(firstResult, "0", String.class);
+            } else {
+                result = CalculateUtil.calculate(secondResult, "0", String.class);
+            }
+
+            return result;
+        }
+    },
+    LE("le", "<=") {
+        @Override
+        public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
+            String result;
+
+            if (CalculateUtil.calculate(firstParams) <= CalculateUtil.calculate(secondParams)) {
+                result = CalculateUtil.calculate(firstResult, "0", String.class);
+            } else {
+                result = CalculateUtil.calculate(secondResult, "0", String.class);
+            }
+
+            return result;
+        }
+    },
+    REGEX("regex", " matches:") {
+        @Override
+        public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
+            return RegExp.find(firstParams, secondParams) ? firstResult : secondResult;
+        }
+    },
+    CONTAINS("contains", " contains:") {
+        @Override
+        public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
+            return RegExp.find(firstParams, secondParams, Pattern.CASE_INSENSITIVE) ? firstResult : secondResult;
+        }
+    };// contains：正则不区分大小写
+
+
     private static Map<String, TripleType> OperationTypeMap = new HashMap<String, TripleType>();
 
     static {
@@ -52,6 +131,8 @@ public enum TripleType {
     public String getExpression() {
         return expression;
     }
+
+    public abstract String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult);
 
     @Override
     public String toString() {
