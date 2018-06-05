@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
@@ -42,7 +43,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by guimeichao on 18/4/8.
@@ -62,38 +62,92 @@ public class TaoBaoPlugin implements QRPluginService,CommonPluginService {
     private static final String UAB_COLLINA_CACHE_PREFIX = "TAOBAO_QRCODE_AUTH_LOGIN_UAB_COLLINA_";
     private static final String UMID_PARAM               = "umid_token";
     private static final String UAB_COLLINA_COOKIE       = "uab_collina";
-    @Autowired
     private MonitorService monitorService;
-    @Autowired
     private MessageService messageService;
+
+    public MonitorService getMonitorService() {
+        if (monitorService == null) {
+            monitorService = BeanFactoryUtils.getBean(MonitorService.class);
+        }
+        return monitorService;
+    }
+
+    public MessageService getMessageService() {
+        if (messageService == null) {
+            messageService = BeanFactoryUtils.getBean(MessageService.class);
+        }
+        return messageService;
+    }
+
+    private void notifyLogger(CommonPluginParam param, String taskMsg, String monitorMsg, ErrorCode monitorErrorCode, String monitorError) {
+        getMessageService().sendTaskLog(param.getTaskId(), taskMsg);
+
+        String msg = TemplateUtils.format("{}-->{}", FormType.getName(FormType.LOGIN), monitorMsg);
+        if (monitorErrorCode == null) {
+            getMonitorService().sendTaskLog(param.getTaskId(), param.getWebsiteName(), msg);
+        } else if (monitorError == null) {
+            getMonitorService().sendTaskLog(param.getTaskId(), param.getWebsiteName(), msg, monitorErrorCode);
+        } else {
+            getMonitorService().sendTaskLog(param.getTaskId(), param.getWebsiteName(), msg, monitorErrorCode, monitorError);
+        }
+    }
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
-        messageService = BeanFactoryUtils.getBean(MessageService.class);
-        monitorService = BeanFactoryUtils.getBean(MonitorService.class);
-        /**
-         * 默认区域为 浙江杭州
-         */
-        IpLocale locale = new IpLocale();
-        locale.setProvinceName("浙江");
-        locale.setCityName("杭州");
-        String key = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(param.getTaskId());
-        RedisUtils.setnx(key, JSON.toJSONString(locale));
-
-        // 设置请求使用代理
-        ProxyUtils.setProxyEnable(param.getTaskId(), true);
-
         HttpResult<Object> result = new HttpResult<>();
-        Response response = null;
+
         try {
+            /**
+             * 默认区域为 浙江杭州
+             */
+            IpLocale locale = new IpLocale();
+            locale.setProvinceName("浙江");
+            locale.setCityName("杭州");
+            String key = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(param.getTaskId());
+            RedisUtils.setnx(key, JSON.toJSONString(locale));
+
+            // 设置请求使用代理
+            ProxyUtils.setProxyEnable(param.getTaskId(), true);
+
             String isInit = RedisUtils.get(IS_INIT + param.getTaskId());
-            if (StringUtils.isEmpty(isInit) || StringUtils.equals(isInit, "false")) {
-                if (!iniit(param)) {
+            if (!StringUtils.equals(isInit, Boolean.TRUE.toString())) {
+                if (prepareQRCodePage(param)) {
+                    RedisUtils.set(IS_INIT + param.getTaskId(), Boolean.TRUE.toString(), 60 * 5);
+                } else {
+                    logger.warn("刷新二维码失败，param={}", param);
+
+                    notifyLogger(param, "刷新二维码失败", "刷新二维码-->失败", ErrorCode.REFESH_QR_CODE_ERROR, "二维码刷新失败,请重试");
+
                     return result.success("刷新二维码失败");
                 }
             }
 
-            TaoBaoPlugin.UMID umid = getUMID(true, param);
+            Map<String, String> dataMap = getQRCode(param);
+
+            RedisUtils.set(QR_STATUS_QUERY_TIME + param.getTaskId(), System.currentTimeMillis() + "", 60 * 2);
+            String isRunning = RedisUtils.get(IS_RUNNING + param.getTaskId());
+            if (!StringUtils.equals(isRunning, Boolean.TRUE.toString())) {
+                new Thread(new QRCodeStatusQuery(param)).start();
+            }
+
+            logger.info("刷新二维码成功，taskId={}", param.getTaskId());
+
+            notifyLogger(param, "刷新二维码成功", "刷新二维码-->成功", null, null);
+
+            return result.success(dataMap);
+        } catch (Exception e) {
+            logger.error("刷新二维码失败，param={}", param, e);
+
+            notifyLogger(param, "刷新二维码失败", "刷新二维码-->失败", ErrorCode.REFESH_QR_CODE_ERROR, "二维码刷新失败,请重试");
+
+            return result.success("刷新二维码失败");
+        }
+    }
+
+    private Map<String, String> getQRCode(CommonPluginParam param) throws RuntimeException {
+        Response response = null;
+        try {
+            UMID umid = getUMID(true, param);
 
             String templateUrl =
                     "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&_ksTS={}&callback=json&" +
@@ -104,6 +158,7 @@ public class TaoBaoPlugin implements QRPluginService,CommonPluginService {
             JSONObject json = JSON.parseObject(jsonString);
             String imgUrl = json.getString("url");
             String lgToken = json.getString("lgToken");
+            logger.debug("refresh lgToken: {}", lgToken);
             TaskUtils.addTaskShare(param.getTaskId(), "lgToken", lgToken);
             if (!StringUtils.contains(imgUrl, "https:")) {
                 imgUrl = "https:" + imgUrl;
@@ -117,32 +172,29 @@ public class TaoBaoPlugin implements QRPluginService,CommonPluginService {
             Map<String, String> dataMap = new HashMap<>();
             dataMap.put("qrBase64", qrBase64);
             dataMap.put("qrText", qrText);
-            String isRunning = RedisUtils.get(IS_RUNNING + param.getTaskId());
-            RedisUtils.set(QR_STATUS_QUERY_TIME + param.getTaskId(), System.currentTimeMillis() + "", 60 * 2);
-            if (!StringUtils.equals(isRunning, "true")) {
-                Thread t = new Thread(() -> {
-                    try {
-                        doProcess(param);
-                    } catch (InterruptedException e) {
-                        logger.error("QRCode status checking process was interrupted!", e);
-                    }
-                });
-                t.start();
-            }
-            RedisUtils.set(QR_STATUS + param.getTaskId(), QRCodeVerification.QRCodeStatus.WAITING.name(), 60 * 2);
-            logger.info("刷新二维码成功，taskId={}", param.getTaskId());
-            messageService.sendTaskLog(param.getTaskId(), "刷新二维码成功");
-            monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(),
-                    TemplateUtils.format("{}-->刷新二维码-->成功", FormType.getName(FormType.LOGIN)));
-            return result.success(dataMap);
+            return dataMap;
         } catch (Exception e) {
-            logger.error("刷新二维码失败，param={},response={}", param, response, e);
-            messageService.sendTaskLog(param.getTaskId(), "刷新二维码失败");
-            monitorService
-                    .sendTaskLog(param.getTaskId(), param.getWebsiteName(), TemplateUtils.format("{}-->刷新二维码-->失败", FormType.getName(FormType.LOGIN)),
-                            ErrorCode.REFESH_QR_CODE_ERROR, "二维码刷新失败,请重试");
-            return result.success("刷新二维码失败");
+            throw new RuntimeException("请求二维码失败，response= " + response, e);
         }
+    }
+
+    private boolean prepareQRCodePage(CommonPluginParam param) {
+        Response response = null;
+        try {
+            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "淘宝");
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(preLoginUrl).invoke();
+            logger.info("淘宝二维码登录-->初始化成功，taskId={}", param.getTaskId());
+
+            notifyLogger(param, "初始化二维码成功", "初始化-->成功", null, null);
+
+            return true;
+        } catch (Exception e) {
+            logger.error("淘宝二维码登录-->初始化失败，taskId={},response={}", param.getTaskId(), response, e);
+
+            notifyLogger(param, "初始化二维码失败", "初始化-->失败", ErrorCode.TASK_INIT_ERROR, "初始化失败");
+        }
+
+        return false;
     }
 
     @Override
@@ -153,164 +205,6 @@ public class TaoBaoPlugin implements QRPluginService,CommonPluginService {
         }
         RedisUtils.set(QR_STATUS_QUERY_TIME + param.getTaskId(), System.currentTimeMillis() + "", 60 * 5);
         return new HttpResult<>().success(status);
-    }
-
-    private void doProcess(CommonPluginParam param) throws InterruptedException {
-        while (true) {
-            RedisUtils.set(IS_RUNNING + param.getTaskId(), "true", 10);
-            String time = RedisUtils.get(QR_STATUS_QUERY_TIME + param.getTaskId());
-            long now = System.currentTimeMillis();
-            if (now - Long.parseLong(time) > 1000 * 30) {
-                break;
-            }
-
-            QRCodeVerification.QRCodeStatus status = queryQRCodeStatus(param);
-
-            logger.info("状态更新成功,当前二维码状态：{},taskId={}", status, param.getTaskId());
-            if (QRCodeVerification.QRCodeStatus.CONFIRMED.equals(status)) {
-                String loginUrl = TaskUtils.getTaskShare(param.getTaskId(), "loginUrl");
-
-                String accountNo = getAccountNo(loginUrl);
-                if (accountNo != null) {
-                    String redisKey = RedisKeyPrefixEnum.TASK_INFO_ACCOUNT_NO.getRedisKey(param.getTaskId());
-                    RedisUtils.setnx(redisKey, accountNo);
-                }
-
-                TaoBaoPlugin.UMID umid = getUMID(false, param);
-
-                loginUrl += "&" + UMID_PARAM + "=" + umid.token;
-
-                Response response = null;
-                try {
-                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(loginUrl)
-                            .setReferer(preLoginUrl).invoke();
-                    String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
-                    String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
-                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(redirectUrl)
-                            .setReferer(referer).invoke();
-                    processCertCheck(param.getTaskId(), param.getWebsiteName(), "", response.getPageContent());
-                } catch (Exception e) {
-                    RedisUtils.set(QR_STATUS + param.getTaskId(), QRCodeVerification.QRCodeStatus.FAILED.name(), 60 * 2);
-
-                    logger.error("淘宝二维码登录处理失败，taskId={},response={}", param.getTaskId(), response, e);
-                    messageService.sendTaskLog(param.getTaskId(), "登录失败");
-                    monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(),
-                            TemplateUtils.format("{}-->校验-->失败", FormType.getName(FormType.LOGIN)), ErrorCode.LOGIN_FAIL, "登陆失败,请重试");
-                    break;
-                }
-
-                RedisUtils.set(QR_STATUS + param.getTaskId(), QRCodeVerification.QRCodeStatus.CONFIRMED.name(), 60 * 2);
-
-                logger.info("用户已扫码并确认，准备发送登录消息，taskId={}", param.getTaskId());
-                String cookieString = TaskUtils.getCookieString(param.getTaskId());
-                LoginMessage loginMessage = new LoginMessage();
-                loginMessage.setTaskId(param.getTaskId());
-                loginMessage.setWebsiteName(param.getWebsiteName());
-                loginMessage.setCookie(cookieString);
-                loginMessage.setAccountNo(StringUtils.defaultString(accountNo));
-                TaskUtils.addTaskShare(param.getTaskId(), "username", accountNo);
-                logger.info("登陆成功,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
-                monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(),
-                        TemplateUtils.format("{}-->校验-->成功", FormType.getName(FormType.LOGIN)));
-                BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
-                break;
-            }
-
-            RedisUtils.set(QR_STATUS + param.getTaskId(), status.name(), 60 * 2);
-            Thread.sleep(2000);
-        }
-    }
-
-    /**
-     * 处理跳转服务
-     */
-    private void processCertCheck(Long taskId, String websiteName, String remark, String pageContent) {
-        String url = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
-        if (StringUtils.isEmpty(url)) throw new IllegalArgumentException("Error find form action when redirecting to alipay auth.");
-
-        String params = null;
-        List<Element> list = JsoupXpathUtils.selectElements(pageContent, "//form//input[@name]|//form//textarea[@name]");
-        if (null != list && !list.isEmpty()) {
-            List<NameValuePair> pairs = new ArrayList<>(list.size());
-            for (Element element : list) {
-                pairs.add(new BasicNameValuePair(element.attr("name"), element.val()));
-            }
-            params = pairs.stream().map(pair -> pair.getName() + "=" + pair.getValue()).collect(Collectors.joining("&"));
-        }
-        Response response = TaskHttpClient.create(taskId, websiteName, RequestType.POST, remark).setUrl(url).setRequestBody(params).invoke();
-        if (HttpStatus.SC_OK != response.getStatusCode()) {
-            throw new IllegalStateException("Something is wrong when request '" + url + "'");
-        }
-    }
-
-    private String getAccountNo(String loginUrl) {
-        try {
-            String accountNoTemp = PatternUtils.group(loginUrl, "cntaobao(.*)&token", 1);
-            return URLDecoder.decode(accountNoTemp, "UTF-8");
-        } catch (Exception e) {
-            logger.warn("淘宝会员名抓取失败", e);
-        }
-
-        return null;
-    }
-
-    private QRCodeVerification.QRCodeStatus queryQRCodeStatus(CommonPluginParam param) {
-        String code = getQRStatusCode(param);
-        switch (code) {
-            case "10000":
-                return QRCodeVerification.QRCodeStatus.WAITING;
-            case "10001":
-                return QRCodeVerification.QRCodeStatus.SCANNED;
-            case "10004":
-                return QRCodeVerification.QRCodeStatus.EXPIRE;
-            case "10006":
-                return QRCodeVerification.QRCodeStatus.CONFIRMED;
-            default:
-                return QRCodeVerification.QRCodeStatus.FAILED;
-        }
-    }
-
-    private String getQRStatusCode(CommonPluginParam param) {
-        Response response = null;
-        try {
-            String lgToken = TaskUtils.getTaskShare(param.getTaskId(), "lgToken");
-            String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
-                    .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
-            String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
-            JSONObject json = JSON.parseObject(resultJson);
-            String code = json.getString("code");
-            if (StringUtils.equals(code, "10006")) {
-                TaskUtils.addTaskShare(param.getTaskId(), "loginUrl", json.getString("url"));
-            }
-            return code;
-        } catch (Exception e) {
-            logger.error("获取二维码状态失败，param={},response={}", param, response, e);
-        }
-        return StringUtils.EMPTY;
-    }
-
-    private boolean iniit(CommonPluginParam param) {
-        Response response = null;
-        try {
-            TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "淘宝");
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(preLoginUrl).invoke();
-            logger.info("淘宝二维码登录-->初始化成功，taskId={}", param.getTaskId());
-            messageService.sendTaskLog(param.getTaskId(), "初始化二维码成功");
-            monitorService
-                    .sendTaskLog(param.getTaskId(), param.getWebsiteName(), TemplateUtils.format("{}-->初始化-->成功", FormType.getName(FormType.LOGIN)));
-            RedisUtils.set(IS_INIT + param.getTaskId(), "true", 60 * 5);
-            return true;
-        } catch (Exception e) {
-            logger.error("淘宝二维码登录-->初始化失败，taskId={},response={}", param.getTaskId(), response, e);
-            messageService.sendTaskLog(param.getTaskId(), "初始化二维码失败");
-            monitorService
-                    .sendTaskLog(param.getTaskId(), param.getWebsiteName(), TemplateUtils.format("{}-->初始化-->失败", FormType.getName(FormType.LOGIN)),
-                            ErrorCode.TASK_INIT_ERROR, "初始化失败");
-            RedisUtils.set(IS_INIT + param.getTaskId(), "false", 60 * 5);
-            return false;
-        }
-
     }
 
     @Override
@@ -343,6 +237,172 @@ public class TaoBaoPlugin implements QRPluginService,CommonPluginService {
         return null;
     }
 
+    private class QRCodeStatusQuery implements Runnable {
+
+        private final CommonPluginParam param;
+
+        public QRCodeStatusQuery(CommonPluginParam param) {
+            this.param = param;
+        }
+
+        @Override
+        public void run() {
+            try {
+                doProcess(param);
+            } catch (InterruptedException e) {
+                logger.error("QRCode status checking process was interrupted!", e);
+            }
+        }
+
+        private void doProcess(CommonPluginParam param) throws InterruptedException {
+            while (true) {
+                RedisUtils.set(IS_RUNNING + param.getTaskId(), Boolean.TRUE.toString(), 10);
+                String time = RedisUtils.get(QR_STATUS_QUERY_TIME + param.getTaskId());
+                if (System.currentTimeMillis() - Long.parseLong(time) > TimeUnit.SECONDS.toMillis(30)) {
+                    markQRStatus(param, QRCodeVerification.QRCodeStatus.EXPIRE);
+                    notifyLogger(param, "登录超时", "校验-->超时", ErrorCode.LOGIN_TIMEOUT_ERROR, "登陆超时,请重试");
+                    break;
+                }
+
+                String lgToken = TaskUtils.getTaskShare(param.getTaskId(), "lgToken");
+                QRCodeVerification.QRCodeStatus status = queryQRCodeStatus(param, lgToken);
+
+                logger.info("状态更新成功,当前二维码状态：{},taskId={}", status, param.getTaskId());
+                if (QRCodeVerification.QRCodeStatus.CONFIRMED.equals(status)) {
+                    String loginUrl = TaskUtils.getTaskShare(param.getTaskId(), "loginUrl");
+
+                    String accountNo = getAccountNo(loginUrl);
+                    if (accountNo != null) {
+                        String redisKey = RedisKeyPrefixEnum.TASK_INFO_ACCOUNT_NO.getRedisKey(param.getTaskId());
+                        RedisUtils.setnx(redisKey, accountNo);
+                    }
+
+                    TaoBaoPlugin.UMID umid = getUMID(false, param);
+
+                    loginUrl += "&" + UMID_PARAM + "=" + umid.token;
+
+                    Response response = null;
+                    try {
+                        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(loginUrl).setReferer(preLoginUrl).invoke();
+                        String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
+                        String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
+                        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(redirectUrl).setReferer(referer).invoke();
+                        processCertCheck(param.getTaskId(), param.getWebsiteName(), "", response.getPageContent());
+                    } catch (Exception e) {
+                        markQRStatus(param, QRCodeVerification.QRCodeStatus.FAILED);
+
+                        logger.error("淘宝二维码登录处理失败，taskId={},response={}", param.getTaskId(), response, e);
+
+                        notifyLogger(param, "登录失败", "校验-->失败", ErrorCode.LOGIN_FAIL, "登陆失败,请重试");
+
+                        break;
+                    }
+
+                    markQRStatus(param, QRCodeVerification.QRCodeStatus.CONFIRMED);
+
+                    logger.info("用户已确认二维码，发送登录消息，taskId={}, website={}", param.getTaskId(), param.getWebsiteName());
+
+                    notifyLogger(param, "二维码确认成功", "校验-->成功", null, null);
+
+                    String cookieString = TaskUtils.getCookieString(param.getTaskId());
+                    LoginMessage loginMessage = new LoginMessage();
+                    loginMessage.setTaskId(param.getTaskId());
+                    loginMessage.setWebsiteName(param.getWebsiteName());
+                    loginMessage.setCookie(cookieString);
+                    loginMessage.setAccountNo(StringUtils.defaultString(accountNo));
+                    TaskUtils.addTaskShare(param.getTaskId(), "username", accountNo);
+
+                    BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                    break;
+                }
+
+                if (RedisUtils.incr(QR_STATUS + param.getTaskId() + "_" + lgToken + "_" + status.name()) == 1) {
+                    if (QRCodeVerification.QRCodeStatus.SCANNED == status) {
+                        notifyLogger(param, "二维码已扫描", "扫描二维码-->已扫描", null, null);
+                    } else if (QRCodeVerification.QRCodeStatus.EXPIRE == status) {
+                        notifyLogger(param, "二维码已过期", "扫描二维码-->已过期", null, null);
+                    } else if (QRCodeVerification.QRCodeStatus.FAILED == status) {
+                        notifyLogger(param, "二维码扫描失败", "扫描二维码-->失败", null, null);
+                    }
+                }
+                markQRStatus(param, status);
+
+                Thread.sleep(2000);
+            }
+        }
+
+        /**
+         * 处理跳转服务
+         */
+        private void processCertCheck(Long taskId, String websiteName, String remark, String pageContent) {
+            String url = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
+            if (StringUtils.isEmpty(url)) throw new IllegalArgumentException("Error find form action when redirecting to alipay auth.");
+
+            String params = null;
+            List<Element> list = JsoupXpathUtils.selectElements(pageContent, "//form//input[@name]|//form//textarea[@name]");
+            if (null != list && !list.isEmpty()) {
+                List<NameValuePair> pairs = new ArrayList<>(list.size());
+                for (Element element : list) {
+                    pairs.add(new BasicNameValuePair(element.attr("name"), element.val()));
+                }
+                params = pairs.stream().map(pair -> pair.getName() + "=" + pair.getValue()).collect(Collectors.joining("&"));
+            }
+            Response response = TaskHttpClient.create(taskId, websiteName, RequestType.POST, remark).setUrl(url).setRequestBody(params).invoke();
+            if (HttpStatus.SC_OK != response.getStatusCode()) {
+                throw new IllegalStateException("Something is wrong when request '" + url + "'");
+            }
+        }
+
+        private String getAccountNo(String loginUrl) {
+            try {
+                String accountNoTemp = PatternUtils.group(loginUrl, "cntaobao(.*)&token", 1);
+                return URLDecoder.decode(accountNoTemp, "UTF-8");
+            } catch (Exception e) {
+                logger.warn("淘宝会员名抓取失败", e);
+            }
+
+            return null;
+        }
+
+        private QRCodeVerification.QRCodeStatus queryQRCodeStatus(CommonPluginParam param, String lgToken) {
+            String code = getQRStatusCode(param, lgToken);
+            switch (code) {
+                case "10000":
+                    return QRCodeVerification.QRCodeStatus.WAITING;
+                case "10001":
+                    return QRCodeVerification.QRCodeStatus.SCANNED;
+                case "10004":
+                    return QRCodeVerification.QRCodeStatus.EXPIRE;
+                case "10006":
+                    return QRCodeVerification.QRCodeStatus.CONFIRMED;
+                default:
+                    return QRCodeVerification.QRCodeStatus.FAILED;
+            }
+        }
+
+        private String getQRStatusCode(CommonPluginParam param, String lgToken) {
+            Response response = null;
+            try {
+                String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
+                String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
+                JSONObject json = JSON.parseObject(resultJson);
+                String code = json.getString("code");
+                if (StringUtils.equals(code, "10006")) {
+                    TaskUtils.addTaskShare(param.getTaskId(), "loginUrl", json.getString("url"));
+                }
+                return code;
+            } catch (Exception e) {
+                logger.error("获取二维码状态失败，param={},response={}", param, response, e);
+            }
+            return StringUtils.EMPTY;
+        }
+    }
+
+    private static void markQRStatus(CommonPluginParam param, QRCodeVerification.QRCodeStatus qrCodeStatus) {
+        RedisUtils.set(QR_STATUS + param.getTaskId(), qrCodeStatus.name(), 60 * 2);
+    }
+
     private static String encodeUrl(String queryString) {
         try {
             return URLEncoder.encode(queryString, "UTF-8");
@@ -353,22 +413,11 @@ public class TaoBaoPlugin implements QRPluginService,CommonPluginService {
         return queryString;
     }
 
-    private static class UMID {
-
-        private final String token;
-        private final String uab;
-
-        public UMID(String token, String uab) {
-            this.token = token;
-            this.uab = uab;
-        }
-    }
-
-    private String timestampFlag() {
+    private static String timestampFlag() {
         return System.currentTimeMillis() + "_" + (int) (Math.random() * 1000);
     }
 
-    private TaoBaoPlugin.UMID getUMID(boolean init, CommonPluginParam param) {
+    private static TaoBaoPlugin.UMID getUMID(boolean init, CommonPluginParam param) {
         String uabCollina = RedisUtils.get(UAB_COLLINA_CACHE_PREFIX + param.getTaskId());
         long timestamp = System.currentTimeMillis();
         if (init && StringUtils.isEmpty(uabCollina)) {
@@ -391,5 +440,16 @@ public class TaoBaoPlugin implements QRPluginService,CommonPluginService {
             text.append(String.valueOf(Math.random()).substring(2));
         }
         return text.substring(text.length() - length);
+    }
+
+    private static class UMID {
+
+        private final String token;
+        private final String uab;
+
+        public UMID(String token, String uab) {
+            this.token = token;
+            this.uab = uab;
+        }
     }
 }
