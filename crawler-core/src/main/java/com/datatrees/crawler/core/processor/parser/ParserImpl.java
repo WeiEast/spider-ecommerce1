@@ -24,7 +24,6 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
@@ -34,6 +33,8 @@ import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * parser segment content and send request or extract urls
@@ -41,8 +42,8 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 20, 2014 8:57:12 PM
  */
-public class ParserImpl extends Operation {
-
+public class ParserImpl {
+    private static final Logger logger = LoggerFactory.getLogger(ParserImpl.class);
     private boolean needRequest       = false;
     private boolean needReturnUrlList = false;
     private Parser parser;
@@ -62,15 +63,10 @@ public class ParserImpl extends Operation {
         setNeedReturnUrlList(needReturnUrlList);
     }
 
-    protected void preProcess(Request request, Response response) throws Exception {}
-
-    protected void postProcess(Request request, Response response) throws Exception {}
-
     /*
      * (non-Javadoc)
      */
-    @Override
-    public void process(Request request, Response response) throws Exception {
+    public void invoke(Request request, Response response) throws Exception {
         Preconditions.checkNotNull(parser);
         String content = OperationHelper.getStringInput(request, response);
         Preconditions.checkState(StringUtils.isNotEmpty(content), "input for parser should not be empty!");

@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReplaceOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
@@ -23,6 +26,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
 
+    public ReplaceOperationImpl(@Nonnull ReplaceOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

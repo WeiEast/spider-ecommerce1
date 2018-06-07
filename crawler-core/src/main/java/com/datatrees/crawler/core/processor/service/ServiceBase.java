@@ -8,7 +8,9 @@
 
 package com.datatrees.crawler.core.processor.service;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.datatrees.common.pipeline.Request;
@@ -32,22 +34,21 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since Mar 7, 2014 7:43:14 PM
  */
-public abstract class ServiceBase extends Processor {
+public abstract class ServiceBase<S extends AbstractService> extends Processor {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceBase.class);
-    protected AbstractService service;
+    protected final S service;
 
-    public AbstractService getService() {
+    public ServiceBase() {
+        this.service = null;
+    }
+
+    public ServiceBase(@Nonnull S service) {
+        this.service = Objects.requireNonNull(service);
+    }
+
+    public S getService() {
         return service;
-    }
-
-    public void setService(AbstractService service) {
-        this.service = service;
-    }
-
-    @Override
-    protected void preProcess(Request request, Response response) throws Exception {
-        super.preProcess(request, response);
     }
 
     // resolve base url
@@ -58,34 +59,24 @@ public abstract class ServiceBase extends Processor {
             String content = RequestUtil.getContent(request);
             if (StringUtils.isNotEmpty(content)) {
                 String baseContent = RegExp.group(content, "<base(.*)>", Pattern.CASE_INSENSITIVE, 1);
-                getBaseUrl(baseContent, current);
+                String baseDomainUrl = null;
+                if (StringUtils.isNotEmpty(baseContent)) {
+                    List<String> urlsInText = UrlExtractor.extract(baseContent);
+                    if (CollectionUtils.isNotEmpty(urlsInText)) {
+                        baseDomainUrl = urlsInText.get(0);
+                    }
+                }
+                if (StringUtils.isEmpty(baseDomainUrl)) {
+                    if (StringUtils.isNotEmpty(current.getRedirectUrl())) {
+                        baseDomainUrl = current.getRedirectUrl();
+                    } else {
+                        baseDomainUrl = current.getUrl();
+                    }
+                }
+                current.setBaseUrl(baseDomainUrl);
+                log.debug("originUrl: {}, baseDomainUrl: {}", current.getUrl(), baseDomainUrl);
             }
         }
-    }
-
-    /**
-     * @param baseContent
-     * @param current
-     * @return
-     */
-    public String getBaseUrl(String baseContent, LinkNode current) {
-        String baseDomainUrl = null;
-        if (StringUtils.isNotEmpty(baseContent)) {
-            List<String> urlsInText = UrlExtractor.extract(baseContent);
-            if (CollectionUtils.isNotEmpty(urlsInText)) {
-                baseDomainUrl = urlsInText.get(0);
-            }
-        }
-        if (StringUtils.isEmpty(baseDomainUrl)) {
-            if (StringUtils.isNotEmpty(current.getRedirectUrl())) {
-                baseDomainUrl = current.getRedirectUrl();
-            } else {
-                baseDomainUrl = current.getUrl();
-            }
-        }
-        current.setBaseUrl(baseDomainUrl);
-        log.debug("originUrl: {}, baseDomainUrl: {}", current.getUrl(), baseDomainUrl);
-        return baseDomainUrl;
     }
 
     /**

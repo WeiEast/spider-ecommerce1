@@ -8,10 +8,12 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.XpathOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
@@ -27,6 +29,10 @@ import org.apache.commons.lang.StringUtils;
  * @since Feb 18, 2014 2:58:48 PM
  */
 public class XpathOperationImpl extends Operation<XpathOperation> {
+
+    public XpathOperationImpl(@Nonnull XpathOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

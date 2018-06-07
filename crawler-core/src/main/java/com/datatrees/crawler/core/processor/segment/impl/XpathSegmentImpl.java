@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.segment.impl;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,6 +27,10 @@ import org.apache.commons.lang3.StringUtils;
  * @since Feb 25, 2014 10:03:41 AM
  */
 public class XpathSegmentImpl extends SegmentBase<XpathSegment> {
+
+    public XpathSegmentImpl(@Nonnull XpathSegment segment) {
+        super(segment);
+    }
 
     @Override
     public List<String> getSplit(Request request) {

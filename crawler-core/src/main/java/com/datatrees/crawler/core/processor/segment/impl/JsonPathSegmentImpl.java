@@ -1,5 +1,6 @@
 package com.datatrees.crawler.core.processor.segment.impl;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,6 +17,10 @@ import org.apache.commons.lang3.StringUtils;
  * @datetime 2015-07-17 19:45
  */
 public class JsonPathSegmentImpl extends SegmentBase<JsonPathSegment> {
+
+    public JsonPathSegmentImpl(@Nonnull JsonPathSegment segment) {
+        super(segment);
+    }
 
     @Override
     protected List<String> getSplit(Request request) {

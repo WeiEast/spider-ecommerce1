@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.segment.impl;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +24,10 @@ import com.treefinance.crawler.framework.expression.StandardExpression;
  * @since 2015年9月5日 下午8:16:43
  */
 public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
+
+    public CalculateSegmentImpl(@Nonnull CalculateSegment segment) {
+        super(segment);
+    }
 
     @Override
     protected List<String> getSplit(Request request) {

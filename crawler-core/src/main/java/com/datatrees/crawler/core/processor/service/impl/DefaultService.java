@@ -56,7 +56,6 @@ public class DefaultService extends ServiceBase {
     private static final int DEFAULT_MAX_RETRIES   = PropertiesConfiguration.getInstance().getInt("default.request.max.retrycount", 3);
     private static final int DEFAULT_WAIT_INTERVAL = PropertiesConfiguration.getInstance().getInt("default.wait.interval", 500);
 
-
     @Override
     public void process(Request request, Response response) throws Exception {
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);

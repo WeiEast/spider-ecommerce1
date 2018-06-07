@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.CalculateOperation;
 import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
@@ -21,6 +24,10 @@ import org.apache.commons.lang.StringUtils;
  * @since 2015年10月21日 上午10:29:59
  */
 public class CalculateOperationImpl extends Operation<CalculateOperation> {
+
+    public CalculateOperationImpl(@Nonnull CalculateOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

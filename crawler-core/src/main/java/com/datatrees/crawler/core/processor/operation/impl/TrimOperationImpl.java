@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TrimOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
@@ -22,6 +25,10 @@ import org.apache.commons.lang3.StringUtils;
  * @since Feb 18, 2014 2:58:34 PM
  */
 public class TrimOperationImpl extends Operation<TrimOperation> {
+
+    public TrimOperationImpl(@Nonnull TrimOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

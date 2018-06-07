@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReturnOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
@@ -20,6 +23,10 @@ import com.datatrees.crawler.core.processor.operation.OperationHelper;
  * @since Feb 18, 2014 2:58:34 PM
  */
 public class ReturnOperationImpl extends Operation<ReturnOperation> {
+
+    public ReturnOperationImpl(@Nonnull ReturnOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

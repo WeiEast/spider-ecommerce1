@@ -9,11 +9,13 @@
 package com.datatrees.crawler.core.processor.common;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.conf.Configurable;
 import com.datatrees.common.conf.Configuration;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.extractor.ResultType;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
 import com.datatrees.crawler.core.domain.config.operation.OperationType;
@@ -113,7 +115,7 @@ public final class ProcessorFactory {
     }
 
     @Nonnull
-    private static <R> Class<R> searchRegister(Enum type, String name) {
+    private static <R> Class<R> searchRegister(@Nonnull Enum type, String name) {
         Class<R> clazz = REGISTER.get(type);
         if (clazz == null) {
             throw new UnexpectedException("Not found the " + name + " processor in register. " + name + "-type: " + type);
@@ -121,53 +123,48 @@ public final class ProcessorFactory {
         return clazz;
     }
 
-    public static <T extends AbstractSegment, R extends SegmentBase<T>> R getSegment(T segment) {
+    public static <T extends AbstractSegment, R extends SegmentBase<T>> R getSegment(@Nonnull T segment) {
         SegmentType type = segment.getType();
 
         Class<R> clazz = searchRegister(type, "segment");
 
-        R bean;
         try {
-            bean = clazz.newInstance();
+            Constructor<R> constructor = clazz.getConstructor(segment.getClass());
+            return constructor.newInstance(segment);
         } catch (Exception e) {
             throw new UnexpectedException("Error new instance for class: " + clazz, e);
         }
-        bean.setSegment(segment);
-
-        return bean;
     }
 
-    public static <T extends AbstractOperation, R extends Operation<T>> R getOperation(T op) {
+    public static <T extends AbstractOperation, R extends Operation<T>> R getOperation(@Nonnull T op, @Nonnull FieldExtractor fieldExtractor) {
         OperationType type = op.getType();
 
         Class<R> clazz = searchRegister(type, "segment");
 
-        R bean;
         try {
-            bean = clazz.newInstance();
+            Constructor<R> constructor = clazz.getConstructor(op.getClass(), FieldExtractor.class);
+            return constructor.newInstance(op, fieldExtractor);
         } catch (Exception e) {
             throw new UnexpectedException("Error new instance for class: " + clazz, e);
         }
-        bean.setOperation(op);
-
-        return bean;
     }
 
-    public static ServiceBase getService(AbstractService service) {
+    public static <T extends AbstractService, R extends ServiceBase<T>> R getService(T service) {
         boolean isDefault = service == null;
         ServiceType type = isDefault ? ServiceType.Default : service.getServiceType();
 
-        Class<ServiceBase> clazz = searchRegister(type, "service");
+        Class<R> clazz = searchRegister(type, "service");
 
-        ServiceBase base;
         try {
-            base = clazz.newInstance();
+            if (isDefault) {
+                return clazz.newInstance();
+            } else {
+                Constructor<R> constructor = clazz.getConstructor(service.getClass());
+                return constructor.newInstance(service);
+            }
         } catch (Exception e) {
             throw new UnexpectedException("Error new instance for class: " + clazz, e);
         }
-        base.setService(service);
-
-        return base;
     }
 
     public static Formatter getFormatter(ResultType type, Configuration conf) {

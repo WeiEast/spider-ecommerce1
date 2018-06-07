@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.segment.impl;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +25,10 @@ import com.treefinance.toolkit.util.RegExp;
  * @since Feb 25, 2014 10:03:15 AM
  */
 public class RegexSegmentImpl extends SegmentBase<RegexSegment> {
+
+    public RegexSegmentImpl(@Nonnull RegexSegment segment) {
+        super(segment);
+    }
 
     @Override
     public List<String> getSplit(Request request) {

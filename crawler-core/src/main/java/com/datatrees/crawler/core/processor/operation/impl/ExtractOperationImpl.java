@@ -8,12 +8,14 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
@@ -31,6 +33,10 @@ import org.apache.commons.lang.StringUtils;
  * @since Mar 27, 2014 12:30:43 PM
  */
 public class ExtractOperationImpl extends Operation<ExtractOperation> {
+
+    public ExtractOperationImpl(@Nonnull ExtractOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     private String extractHtmlLink(String content, String baseURL) {
         // parser url from html

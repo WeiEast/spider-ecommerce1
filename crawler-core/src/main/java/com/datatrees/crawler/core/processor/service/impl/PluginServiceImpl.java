@@ -1,5 +1,6 @@
 package com.datatrees.crawler.core.processor.service.impl;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,14 +25,18 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PluginServiceImpl extends ServiceBase {
+public class PluginServiceImpl extends ServiceBase<PluginService> {
 
     private static final Logger log        = LoggerFactory.getLogger(PluginServiceImpl.class);
     private final        int    retryCount = PropertiesConfiguration.getInstance().getInt("pluginService.retry.count", 3);
 
+    public PluginServiceImpl(@Nonnull PluginService service) {
+        super(service);
+    }
+
     @Override
     public void process(Request request, Response response) throws Exception {
-        PluginService service = (PluginService) getService();
+        PluginService service = getService();
         LinkNode current = RequestUtil.getCurrentUrl(request);
         String url = current.getUrl();
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);

@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DecodeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.decode.DecodeType;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
@@ -30,6 +33,10 @@ import org.slf4j.LoggerFactory;
 public class DecodeOperationImpl extends Operation<DecodeOperation> {
 
     private static final Logger log = LoggerFactory.getLogger(DecodeOperationImpl.class);
+
+    public DecodeOperationImpl(@Nonnull DecodeOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

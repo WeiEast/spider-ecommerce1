@@ -1,5 +1,6 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -7,6 +8,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MappingOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
@@ -40,6 +42,10 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
         }
 
         return null;
+    }
+
+    public MappingOperationImpl(@Nonnull MappingOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
     }
 
     @Override

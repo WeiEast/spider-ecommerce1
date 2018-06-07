@@ -8,10 +8,12 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.io.UnsupportedEncodingException;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.CodecOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.codec.CodecType;
 import com.datatrees.crawler.core.domain.config.operation.impl.codec.HandlingType;
@@ -31,6 +33,10 @@ import org.apache.commons.lang.StringUtils;
  * @since Mar 27, 2014 12:30:43 PM
  */
 public class CodecOperationImpl extends Operation<CodecOperation> {
+
+    public CodecOperationImpl(@Nonnull CodecOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

@@ -1,7 +1,10 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
 import com.datatrees.crawler.core.processor.operation.Operation;
@@ -11,6 +14,10 @@ import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang3.StringUtils;
 
 public class TripleOperationImpl extends Operation<TripleOperation> {
+
+    public TripleOperationImpl(@Nonnull TripleOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

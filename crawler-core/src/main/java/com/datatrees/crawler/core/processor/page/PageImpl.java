@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.page;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -32,10 +33,7 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.bean.StatusUtil;
-import com.datatrees.crawler.core.processor.common.DecodeUtil;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
 import com.datatrees.crawler.core.processor.common.html.urlspliter.URLSplitter;
@@ -56,15 +54,20 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 24, 2014 6:35:43 PM
  */
-public class PageImpl extends AbstractPage {
+public class PageImpl extends Processor {
 
     private static final String titleRegex     = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
     private static final int    URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
 
+    private final Page page ;
+
+    public PageImpl(@Nonnull Page page) {
+        this.page = Objects.requireNonNull(page);
+    }
+
+
     @Override
     public void process(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(page, "Page should not be null!");
-
         LinkNode current = RequestUtil.getCurrentUrl(request);
 
         String content = RequestUtil.getContent(request);
@@ -481,10 +484,6 @@ public class PageImpl extends AbstractPage {
 
     public Page getPage() {
         return page;
-    }
-
-    public void setPage(Page page) {
-        this.page = page;
     }
 
     protected void extractTextUrls(String currentUrl, String content, Map<String, LinkNode> linkNodeMap) {

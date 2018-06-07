@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.segment;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 import com.datatrees.common.conf.Configuration;
@@ -42,14 +43,16 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
 
-    protected       T            segment = null;
-    private         List<String> splits  = null;
-    private AbstractProcessorContext context;
+    private final T                        segment;
+    private       List<String>             splits = null;
+    private       AbstractProcessorContext context;
+
+    public SegmentBase(@Nonnull T segment) {
+        this.segment = Objects.requireNonNull(segment);
+    }
 
     @Override
     protected void preProcess(Request request, Response response) throws Exception {
-        super.preProcess(request, response);
-        Preconditions.checkNotNull(getSegment(), "segment config should not be null!");
         Preconditions.checkNotNull(request.getInput(), "page content in segment should not be null!");
     }
 
@@ -117,9 +120,10 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
             if (CollectionUtils.isNotEmpty(fieldExtractors)) {
                 List<Processor> fieldExtractorProcessors = new ArrayList<Processor>(fieldExtractors.size());
                 for (FieldExtractor fieldExtractor : fieldExtractors) {
+                    if (fieldExtractor == null) continue;
+
                     if (BusinessTypeDecider.support(fieldExtractor.getBusinessType(), context)) {
-                        FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl();
-                        fieldExtractorImpl.setFieldExtractor(fieldExtractor);
+                        FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl(fieldExtractor);
                         fieldExtractorProcessors.add(fieldExtractorImpl);
                     } else {
                         logger.info("FieldExtractor skip businessType is {},taskId is {}", fieldExtractor.getBusinessType(), context.getTaskId());
@@ -331,10 +335,6 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
 
     public T getSegment() {
         return segment;
-    }
-
-    public void setSegment(T segment) {
-        this.segment = segment;
     }
 
     /**

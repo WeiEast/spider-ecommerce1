@@ -8,6 +8,9 @@
 
 package com.datatrees.crawler.core.processor.operation;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.pipeline.Valve;
@@ -24,23 +27,24 @@ import com.google.common.base.Preconditions;
  */
 public abstract class Operation<T extends AbstractOperation> extends Processor {
 
-    protected            T operation = null;
-    protected            FieldExtractor    extractor = null;
+    protected final T              operation;
+    protected final FieldExtractor extractor;
+
+    public Operation(@Nonnull T operation, @Nonnull FieldExtractor extractor) {
+        this.operation = Objects.requireNonNull(operation);
+        this.extractor = Objects.requireNonNull(extractor);
+    }
 
     public T getOperation() {
         return operation;
-    }
-
-    public void setOperation(T operation) {
-        this.operation = operation;
     }
 
     public FieldExtractor getExtractor() {
         return extractor;
     }
 
-    public void setExtractor(FieldExtractor extractor) {
-        this.extractor = extractor;
+    protected void preProcess(Request request, Response response) throws Exception {
+        Preconditions.checkNotNull(request.getInput(), "input content should not be empty!");
     }
 
     protected void postProcess(Request request, Response response) throws Exception {
@@ -62,12 +66,5 @@ public abstract class Operation<T extends AbstractOperation> extends Processor {
         }
 
     }
-
-    protected void preProcess(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(operation, "operation should not be empty!");
-        Preconditions.checkNotNull(request.getInput(), "input content should not be empty!");
-    }
-
-    public abstract void process(Request request, Response response) throws Exception;
 
 }

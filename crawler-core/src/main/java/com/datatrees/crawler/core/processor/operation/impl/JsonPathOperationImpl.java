@@ -1,7 +1,10 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.JsonPathOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
@@ -13,6 +16,10 @@ import com.treefinance.crawler.framework.expression.StandardExpression;
  * @datetime 2015-07-17 20:02
  */
 public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
+
+    public JsonPathOperationImpl(@Nonnull JsonPathOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

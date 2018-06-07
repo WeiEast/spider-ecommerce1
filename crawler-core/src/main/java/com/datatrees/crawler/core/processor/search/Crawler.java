@@ -94,8 +94,7 @@ public class Crawler {
                     LOGGER.info("need requeue linkNode: {}", url);
                 } else {
                     // parser
-                    PageImpl pageProcessor = new PageImpl();
-                    pageProcessor.setPage(page);
+                    PageImpl pageProcessor = new PageImpl(page);
                     pageProcessor.invoke(request, response);
                 }
             } else {

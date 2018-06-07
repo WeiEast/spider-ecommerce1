@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.extractor;
 
+import javax.annotation.Nonnull;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -46,14 +47,14 @@ import org.apache.commons.lang.StringUtils;
  */
 public class FieldExtractorImpl extends Processor {
 
-    private FieldExtractor fieldExtractor;
+    private final FieldExtractor fieldExtractor;
+
+    public FieldExtractorImpl(@Nonnull FieldExtractor fieldExtractor) {
+        this.fieldExtractor = Objects.requireNonNull(fieldExtractor);
+    }
 
     public FieldExtractor getFieldExtractor() {
         return fieldExtractor;
-    }
-
-    public void setFieldExtractor(FieldExtractor fieldExtractor) {
-        this.fieldExtractor = fieldExtractor;
     }
 
     private Object extractWithPlugin(Request request, String content, AbstractPlugin pluginDesc) throws Exception {
@@ -84,15 +85,11 @@ public class FieldExtractorImpl extends Processor {
         List<AbstractOperation> operations = fieldExtractor.getOperationList();
         List<Operation> operationsList = new ArrayList<>(operations.size());
         if (CollectionUtils.isNotEmpty(operations)) {
-            Operation op = null;
+            Operation op;
             for (AbstractOperation operation : operations) {
-                op = ProcessorFactory.getOperation(operation);
-                if (op != null) {
-                    op.setExtractor(fieldExtractor);
-                    operationsList.add(op);
-                } else {
-                    logger.warn("unknown operation: {}", operation.getType());
-                }
+                if (operation == null) continue;
+                op = ProcessorFactory.getOperation(operation, fieldExtractor);
+                operationsList.add(op);
             }
             ProcessorRunner runner = new ProcessorRunner(new ArrayList<>(operationsList));
             Response resp = new Response();

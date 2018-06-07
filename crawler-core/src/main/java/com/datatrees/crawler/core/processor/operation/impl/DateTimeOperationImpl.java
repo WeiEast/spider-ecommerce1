@@ -4,9 +4,12 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.StringUtils;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.BaseType;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.DateTimeFieldType;
@@ -25,6 +28,10 @@ import org.joda.time.format.DateTimeFormatter;
  * @version $Id: DateTimeOperationImpl.java, v 0.1 Jul 22, 2015 11:57:20 AM likun Exp $
  */
 public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
+
+    public DateTimeOperationImpl(@Nonnull DateTimeOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

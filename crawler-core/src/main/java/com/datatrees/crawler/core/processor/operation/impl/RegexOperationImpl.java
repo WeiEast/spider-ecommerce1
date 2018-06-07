@@ -8,10 +8,12 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.RegexOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.operation.OperationHelper;
@@ -24,6 +26,10 @@ import com.treefinance.toolkit.util.RegExp;
  * @since Feb 18, 2014 2:57:53 PM
  */
 public class RegexOperationImpl extends Operation<RegexOperation> {
+
+    public RegexOperationImpl(@Nonnull RegexOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {

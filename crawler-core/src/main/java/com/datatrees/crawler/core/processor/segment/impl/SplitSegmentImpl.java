@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.segment.impl;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,10 @@ import org.apache.commons.lang3.StringUtils;
  * @since Feb 25, 2014 10:03:56 AM
  */
 public class SplitSegmentImpl extends SegmentBase<SplitSegment> {
+
+    public SplitSegmentImpl(@Nonnull SplitSegment segment) {
+        super(segment);
+    }
 
     @Override
     public List<String> getSplit(Request request) {

@@ -8,6 +8,8 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
@@ -29,6 +31,10 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
 
     private static final FieldRequestFilter  fieldFilter         = new FieldRequestFilter();
     private static final ParserUrlListFilter parserUrlListFilter = new ParserUrlListFilter();
+
+    public ParserOperationImpl(@Nonnull ParserOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
     public void process(Request request, Response response) throws Exception {
