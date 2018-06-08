@@ -8,11 +8,10 @@
 
 package com.datatrees.crawler.core.processor.common;
 
-import java.util.Map;
-
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
+import com.datatrees.crawler.core.processor.extractor.FieldExtractResult;
+import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,21 +22,24 @@ import org.slf4j.LoggerFactory;
  */
 public class SourceUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(SourceUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourceUtil.class);
 
     public static Object getSourceMap(String sourceId, Request request, Response response) {
         Object result = null;
-        Map<String, FieldExtractorWarpper> fieldMap = ResponseUtil.getResponseFieldResult(response);
-        FieldExtractorWarpper fieldWrapper = null;
-        if (fieldMap != null && (fieldWrapper = fieldMap.get(sourceId)) != null && fieldWrapper.getResult() != null) {
-            result = fieldWrapper.getResult();
+        FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
+        if (fieldExtractResultSet != null) {
+            FieldExtractResult extractResult = fieldExtractResultSet.get(sourceId);
+            if (extractResult != null) {
+                result = extractResult.getResult();
+            }
         }
+
         if (result == null) {
             result = RequestUtil.getSourceMap(request).get(sourceId);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("source from sourceId:" + sourceId + ",result:" + result);
-        }
+
+        LOGGER.debug("source from sourceId: {}, result: {}", sourceId, result);
+
         return result;
     }
 

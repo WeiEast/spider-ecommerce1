@@ -99,12 +99,10 @@ public class PageExtractorImpl extends Processor {
 
                 this.segResultConvert(segmentResultMap, segResult, abstractSegment);
 
+            } catch (ResultEmptyException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof ResultEmptyException) {
-                    throw (ResultEmptyException) e;
-                } else {
-                    log.error("invoke segment processor error!", e);
-                }
+                log.error("invoke segment processor error!", e);
             }
         }
 

@@ -1,5 +1,7 @@
 package com.treefinance.crawler.lang;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -11,30 +13,42 @@ import java.util.function.Function;
  */
 public interface Attributes {
 
-    void setAttribute(String name, Object attribute);
+    void setAttribute(@Nonnull String name, @Nullable Object attribute);
 
-    Object getAttribute(String name);
+    Object getAttribute(@Nonnull String name);
 
-    default <T> T getAttribute(String name, Class<T> type) {
+    default <T> T getAttribute(@Nonnull String name, @Nonnull Class<T> type) {
         Object value = getAttribute(name);
         return value == null ? null : type.cast(value);
     }
 
-    default Object getOrDefaultAttribute(String name, Object defaultValue) {
+    default Object getOrDefaultAttribute(@Nonnull String name, @Nullable Object defaultValue) {
         Object value = getAttribute(name);
         return value == null ? defaultValue : value;
     }
 
-    default <T> T getOrDefaultAttribute(String name, T defaultValue, Class<T> type) {
+    default <T> T getOrDefaultAttribute(@Nonnull String name, @Nullable T defaultValue, @Nonnull Class<T> type) {
         T value = getAttribute(name, type);
         return value == null ? defaultValue : value;
     }
 
-    Object computeAttribute(String name, BiFunction<String, Object, Object> mappingFunction);
+    Object computeAttribute(@Nonnull String name, @Nonnull BiFunction<String, Object, Object> mappingFunction);
 
-    Object computeAttributeIfAbsent(String name, Function<String, Object> mappingFunction);
+    default <T> T computeAttribute(@Nonnull String name, @Nonnull BiFunction<String, Object, Object> mappingFunction, @Nonnull Class<T> type) {
+        Object value = computeAttribute(name, mappingFunction);
 
-    void removeAttribute(String name);
+        return value == null ? null : type.cast(value);
+    }
+
+    Object computeAttributeIfAbsent(@Nonnull String name, @Nonnull Function<String, Object> mappingFunction);
+
+    default <T> T computeAttributeIfAbsent(@Nonnull String name, @Nonnull Function<String, Object> mappingFunction, @Nonnull Class<T> type) {
+        Object value = computeAttributeIfAbsent(name, mappingFunction);
+
+        return value == null ? null : type.cast(value);
+    }
+
+    void removeAttribute(@Nonnull String name);
 
     Map<String, Object> getAttributes();
 
@@ -42,9 +56,9 @@ public interface Attributes {
 
     void clearAttributes();
 
-    void addAttributes(Map<String, Object> attributes);
+    void addAttributes(@Nullable Map<String, Object> attributes);
 
-    default void addAttributes(Attributes attributes) {
+    default void addAttributes(@Nullable Attributes attributes) {
         if (attributes != null) {
             Enumeration<String> e = attributes.getAttributeNames();
             while (e.hasMoreElements()) {

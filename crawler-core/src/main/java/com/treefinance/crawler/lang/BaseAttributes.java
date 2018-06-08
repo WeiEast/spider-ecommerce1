@@ -1,5 +1,7 @@
 package com.treefinance.crawler.lang;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -13,10 +15,10 @@ import java.util.function.Function;
  */
 public class BaseAttributes implements Attributes {
 
-    private Map<String, Object> map = new HashMap<>();
+    private final Map<String, Object> map = new HashMap<>();
 
     @Override
-    public void setAttribute(String name, Object attribute) {
+    public void setAttribute(@Nonnull String name, @Nullable Object attribute) {
         if (attribute == null) {
             removeAttribute(name);
         } else {
@@ -25,30 +27,32 @@ public class BaseAttributes implements Attributes {
     }
 
     @Override
-    public Object getAttribute(String name) {
+    public Object getAttribute(@Nonnull String name) {
         return map.get(name);
     }
 
     @Override
-    public Object computeAttribute(String name, BiFunction<String, Object, Object> mappingFunction) {
+    public Object computeAttribute(@Nonnull String name, @Nonnull BiFunction<String, Object, Object> mappingFunction) {
         return map.compute(name, mappingFunction);
     }
 
     @Override
-    public Object computeAttributeIfAbsent(String name, Function<String, Object> mappingFunction) {
+    public Object computeAttributeIfAbsent(@Nonnull String name, @Nonnull Function<String, Object> mappingFunction) {
         return map.computeIfAbsent(name, mappingFunction);
     }
 
     @Override
-    public void removeAttribute(String name) {
+    public void removeAttribute(@Nonnull String name) {
         map.remove(name);
     }
 
+    @Nonnull
     @Override
     public Map<String, Object> getAttributes() {
         return Collections.unmodifiableMap(map);
     }
 
+    @Nonnull
     @Override
     public Enumeration<String> getAttributeNames() {
         return Collections.enumeration(Collections.unmodifiableSet(map.keySet()));
@@ -60,12 +64,13 @@ public class BaseAttributes implements Attributes {
     }
 
     @Override
-    public void addAttributes(Map<String, Object> attributes) {
+    public void addAttributes(@Nullable Map<String, Object> attributes) {
         if (attributes != null) map.putAll(attributes);
     }
 
+    @Nonnull
     @Override
     public String toString() {
-        return map == null ? "{}" : map.toString();
+        return map.toString();
     }
 }

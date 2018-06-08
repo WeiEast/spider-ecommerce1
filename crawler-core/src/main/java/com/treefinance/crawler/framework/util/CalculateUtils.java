@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.common;
+package com.treefinance.crawler.framework.util;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -18,9 +18,9 @@ import com.treefinance.crawler.framework.expression.spring.SpelExpParser;
  * @version 1.0
  * @since 2015年10月21日 下午1:47:57
  */
-public final class CalculateUtil {
+public final class CalculateUtils {
 
-    private CalculateUtil() {
+    private CalculateUtils() {
     }
 
     public static Double calculate(String expression) {

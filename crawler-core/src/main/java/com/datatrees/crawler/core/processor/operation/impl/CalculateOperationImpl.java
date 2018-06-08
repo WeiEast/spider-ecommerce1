@@ -14,7 +14,7 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.CalculateOperation;
-import com.datatrees.crawler.core.processor.common.CalculateUtil;
+import com.treefinance.crawler.framework.util.CalculateUtils;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
 
@@ -37,7 +37,7 @@ public class CalculateOperationImpl extends Operation<CalculateOperation> {
         Object result = null;
         // regex support get value from context
         if (StringUtils.isNotEmpty(expression)) {
-            result = CalculateUtil.calculate(expression, request, response, null, null);
+            result = CalculateUtils.calculate(expression, request, response, null, null);
         }
         logger.debug("calculate input: {}, result: {}", expression, result);
 

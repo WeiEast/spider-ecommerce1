@@ -14,7 +14,7 @@ import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.domain.config.segment.impl.CalculateSegment;
-import com.datatrees.crawler.core.processor.common.CalculateUtil;
+import com.treefinance.crawler.framework.util.CalculateUtils;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 
@@ -38,12 +38,12 @@ public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
 
         try {// 1,3,1,+  从2开始到3(包含3)
             String[] arrays = expression.split(",");
-            double start = CalculateUtil.calculate(arrays[0], request);
-            double end = CalculateUtil.calculate(arrays[1], request);
-            double interval = CalculateUtil.calculate(arrays[2], request);
+            double start = CalculateUtils.calculate(arrays[0], request);
+            double end = CalculateUtils.calculate(arrays[1], request);
+            double interval = CalculateUtils.calculate(arrays[2], request);
             String formula = StandardExpression.eval(arrays[3], request, null);
             while (start < end) {
-                start = CalculateUtil.calculate(start + formula + interval, null, Double.TYPE);
+                start = CalculateUtils.calculate(start + formula + interval, null, Double.TYPE);
                 result.add(start + "");
             }
         } catch (Exception e) {

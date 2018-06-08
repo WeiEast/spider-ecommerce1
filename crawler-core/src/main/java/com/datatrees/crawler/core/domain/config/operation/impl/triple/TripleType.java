@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.datatrees.crawler.core.processor.common.CalculateUtil;
+import com.treefinance.crawler.framework.util.CalculateUtils;
 import com.treefinance.toolkit.util.RegExp;
 
 /**
@@ -39,10 +39,10 @@ public enum TripleType {
         public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
             String result;
 
-            if (CalculateUtil.calculate(firstParams) > CalculateUtil.calculate(secondParams)) {
-                result = CalculateUtil.calculate(firstResult, "0", String.class);
+            if (CalculateUtils.calculate(firstParams) > CalculateUtils.calculate(secondParams)) {
+                result = CalculateUtils.calculate(firstResult, "0", String.class);
             } else {
-                result = CalculateUtil.calculate(secondResult, "0", String.class);
+                result = CalculateUtils.calculate(secondResult, "0", String.class);
             }
 
             return result;
@@ -53,10 +53,10 @@ public enum TripleType {
         public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
             String result;
 
-            if (CalculateUtil.calculate(firstParams) < CalculateUtil.calculate(secondParams)) {
-                result = CalculateUtil.calculate(firstResult, "0", String.class);
+            if (CalculateUtils.calculate(firstParams) < CalculateUtils.calculate(secondParams)) {
+                result = CalculateUtils.calculate(firstResult, "0", String.class);
             } else {
-                result = CalculateUtil.calculate(secondResult, "0", String.class);
+                result = CalculateUtils.calculate(secondResult, "0", String.class);
             }
 
             return result;
@@ -67,10 +67,10 @@ public enum TripleType {
         public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
             String result;
 
-            if (CalculateUtil.calculate(firstParams) >= CalculateUtil.calculate(secondParams)) {
-                result = CalculateUtil.calculate(firstResult, "0", String.class);
+            if (CalculateUtils.calculate(firstParams) >= CalculateUtils.calculate(secondParams)) {
+                result = CalculateUtils.calculate(firstResult, "0", String.class);
             } else {
-                result = CalculateUtil.calculate(secondResult, "0", String.class);
+                result = CalculateUtils.calculate(secondResult, "0", String.class);
             }
 
             return result;
@@ -81,10 +81,10 @@ public enum TripleType {
         public String calculate(@Nonnull String firstParams, @Nonnull String secondParams, @Nonnull String firstResult, @Nonnull String secondResult) {
             String result;
 
-            if (CalculateUtil.calculate(firstParams) <= CalculateUtil.calculate(secondParams)) {
-                result = CalculateUtil.calculate(firstResult, "0", String.class);
+            if (CalculateUtils.calculate(firstParams) <= CalculateUtils.calculate(secondParams)) {
+                result = CalculateUtils.calculate(firstResult, "0", String.class);
             } else {
-                result = CalculateUtil.calculate(secondResult, "0", String.class);
+                result = CalculateUtils.calculate(secondResult, "0", String.class);
             }
 
             return result;

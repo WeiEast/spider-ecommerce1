@@ -8,9 +8,7 @@
 
 package com.datatrees.crawler.core.processor.common;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.ProtocolOutput;
@@ -18,7 +16,7 @@ import com.datatrees.crawler.core.domain.config.page.AbstractPage;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
+import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -61,13 +59,18 @@ public class ResponseUtil {
         response.setOutPut(content);
     }
 
-    public static void setResponseFieldResult(Response response, Map<String, FieldExtractorWarpper> resultMap) {
+    public static void setFieldExtractResultSet(Response response, FieldExtractResultSet resultMap) {
         response.setAttribute(Constants.FIELDS_RESULT_MAP, resultMap);
     }
 
-    @SuppressWarnings("unchecked")
-    public static Map<String, FieldExtractorWarpper> getResponseFieldResult(Response response) {
-        return (Map<String, FieldExtractorWarpper>) response.getAttribute(Constants.FIELDS_RESULT_MAP);
+    public static FieldExtractResultSet getFieldExtractResultSet(Response response) {
+        return response.getAttribute(Constants.FIELDS_RESULT_MAP, FieldExtractResultSet.class);
+    }
+
+    public static Map<String, Object> getFieldExtractResultMap(Response response) {
+        FieldExtractResultSet fieldExtractResultSet = getFieldExtractResultSet(response);
+
+        return fieldExtractResultSet == null?Collections.emptyMap():fieldExtractResultSet.resultMap();
     }
 
     public static String getResponseErrorMsg(Response response) {
@@ -108,6 +111,11 @@ public class ResponseUtil {
 
     public static void setSegmentsResultMap(Response response, Map<String, LinkNode> map) {
         response.setAttribute(Constants.SEGMENTS_RESULT_MAP, map);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Object> prepareSegmentsResults(Response response) {
+        return (List<Object>)response.computeAttributeIfAbsent(Constants.SEGMENTS_RESULTS, k -> new ArrayList<>());
     }
 
     public static Object getSegmentsResults(Response response) {

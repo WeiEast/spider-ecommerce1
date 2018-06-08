@@ -1,5 +1,7 @@
 package com.treefinance.crawler.lang;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
@@ -40,39 +42,42 @@ public class AtomicAttributes implements Attributes {
     }
 
     @Override
-    public void setAttribute(String name, Object attribute) {
+    public void setAttribute(@Nonnull String name, @Nullable Object attribute) {
         if (attribute == null) removeAttribute(name);
         else ensureMap().put(name, attribute);
     }
 
+    @Nullable
     @Override
-    public Object getAttribute(String name) {
+    public Object getAttribute(@Nonnull String name) {
         Map<String, Object> map = map();
         return map == null ? null : map.get(name);
     }
 
     @Override
-    public Object computeAttribute(String name, BiFunction<String, Object, Object> mappingFunction) {
+    public Object computeAttribute(@Nonnull String name, @Nonnull BiFunction<String, Object, Object> mappingFunction) {
         return ensureMap().compute(name, mappingFunction);
     }
 
     @Override
-    public Object computeAttributeIfAbsent(String name, Function<String, Object> mappingFunction) {
+    public Object computeAttributeIfAbsent(@Nonnull String name, @Nonnull Function<String, Object> mappingFunction) {
         return ensureMap().computeIfAbsent(name, mappingFunction);
     }
 
     @Override
-    public void removeAttribute(String name) {
+    public void removeAttribute(@Nonnull String name) {
         Map<String, Object> map = map();
         if (map != null) map.remove(name);
     }
 
+    @Nonnull
     @Override
     public Map<String, Object> getAttributes() {
         ConcurrentMap<String, Object> map = map();
         return map == null ? Collections.emptyMap() : Collections.unmodifiableMap(map);
     }
 
+    @Nonnull
     @Override
     public Enumeration<String> getAttributeNames() {
         Map<String, Object> map = map();
@@ -86,7 +91,7 @@ public class AtomicAttributes implements Attributes {
     }
 
     @Override
-    public void addAttributes(Map<String, Object> attributes) {
+    public void addAttributes(@Nullable Map<String, Object> attributes) {
         if (attributes != null) ensureMap().putAll(attributes);
     }
 

@@ -402,27 +402,8 @@ public class PageImpl extends Processor {
 
         List<Map<String, Object>> segmentResult = new ArrayList<>();
         logger.info("URL: {}, segment-size: {}", baseURL, segments.size());
-        //SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
         for (AbstractSegment abstractSegment : segments) {
             try {
-
-                //List<FieldExtractor> fieldExtractors = abstractSegment.getFieldExtractorList();
-                //log.info("fieldExtractors is {}", fieldExtractors);
-                //List<FieldExtractor> list = new ArrayList<>(fieldExtractors);
-                //log.info("list is {}", list);
-                //
-                //if (CollectionUtils.isNotEmpty(list)) {
-                //    Iterator<FieldExtractor> iterator = list.iterator();
-                //    while (iterator.hasNext()) {
-                //        FieldExtractor elem = iterator.next();
-                //        logger.info("elem businessType is {}", elem.getBusinessType());
-                //        if (businessTypeFilterhandler.isFilter(elem.getBusinessType(), context.getTaskId())) {
-                //            iterator.remove();
-                //            logger.info("elem businessType skip crawler is {}", elem.getBusinessType());
-                //        }
-                //    }
-                //}
-
                 Response segResponse = Response.build();
                 SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
 

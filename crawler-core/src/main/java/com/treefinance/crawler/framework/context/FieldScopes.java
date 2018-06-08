@@ -5,10 +5,10 @@ import java.util.*;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
+import com.datatrees.crawler.core.processor.extractor.FieldExtractResult;
+import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +29,13 @@ public final class FieldScopes {
     }
 
     public static Map<String, Object> getExtractFields(Response response) {
-        return FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
+        return ResponseUtil.getFieldExtractResultMap(response);
     }
 
     public static Object getVisibleField(String name, Request request, Response response) {
         Object result = null;
-        Map<String, FieldExtractorWarpper> map = ResponseUtil.getResponseFieldResult(response);
-        FieldExtractorWarpper fieldExtractResult = map.get(name);
+        FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
+        FieldExtractResult fieldExtractResult = fieldExtractResultSet.get(name);
         if (fieldExtractResult != null) {
             result = fieldExtractResult.getResult();
         }

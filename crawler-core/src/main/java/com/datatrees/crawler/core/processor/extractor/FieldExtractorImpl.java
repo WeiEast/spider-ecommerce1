@@ -30,7 +30,6 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
@@ -80,7 +79,7 @@ public class FieldExtractorImpl extends Processor {
         return pluginResultMap.get(PluginConstants.FIELD);
     }
 
-    private Object extractWithOperation(Request request, String content, Map<String, FieldExtractorWarpper> resultMap) throws Exception {
+    private Object extractWithOperation(Request request, String content, FieldExtractResultSet fieldExtractResultSet) throws Exception {
         Object fieldResult = null;
         List<AbstractOperation> operations = fieldExtractor.getOperationList();
         List<Operation> operationsList = new ArrayList<>(operations.size());
@@ -93,7 +92,7 @@ public class FieldExtractorImpl extends Processor {
             }
             ProcessorRunner runner = new ProcessorRunner(new ArrayList<>(operationsList));
             Response resp = new Response();
-            ResponseUtil.setResponseFieldResult(resp, resultMap);
+            ResponseUtil.setFieldExtractResultSet(resp, fieldExtractResultSet);
             String orignal = RequestUtil.getContent(request);
             try {
                 request.setInput(content);
@@ -112,22 +111,16 @@ public class FieldExtractorImpl extends Processor {
         return fieldResult;
     }
 
-    private boolean isValid(Object obj) {
-        // Check whether the data is valid
-        if (obj instanceof FieldExtractorWarpper) {
-            Object result = ((FieldExtractorWarpper) (obj)).getResult();
-            return result != null && isResultValid(result);
-        } else {
-            return isResultValid(obj);
-        }
-    }
+    private boolean isValid(FieldExtractResult obj) {
+        if (obj == null) return false;
 
-    private boolean isResultValid(Object obj) {
         // Check whether the data is valid
-        if (obj instanceof String && StringUtils.isEmpty((String) obj)) {
-            return false;
+        Object result = obj.getResult();
+
+        if (result instanceof String) {
+            return StringUtils.isNotEmpty((String) result);
         }
-        return true;
+        return result != null;
     }
 
     /**
@@ -138,20 +131,21 @@ public class FieldExtractorImpl extends Processor {
     @SuppressWarnings("unchecked")
     @Override
     public void process(Request request, Response response) throws Exception {
+        logger.debug("start field extractor >>  {}, ", fieldExtractor);
+
         Object fieldResult = null;
-        Map<String, FieldExtractorWarpper> resultMap = initMap(response);
+        FieldExtractResultSet fieldExtractResultSet = initMap(response);
         String content = "";
         try {
             // precheck
-            Preconditions.checkNotNull(fieldExtractor, "field extractor should not be null");
-            if (BooleanUtils.isTrue(fieldExtractor.getStandBy()) && resultMap.get(fieldExtractor.getId()) != null && isValid(resultMap.get(fieldExtractor.getId()))) {
+            if (BooleanUtils.isTrue(fieldExtractor.getStandBy()) && isValid(fieldExtractResultSet.get(fieldExtractor.getId()))) {
                 logger.debug("no need use stand by fieldExtractor: {}", fieldExtractor);
                 return;
             }
 
             content = RequestUtil.getContent(request);
             String sourceId = fieldExtractor.getSourceId();
-            printExtractorInfo(fieldExtractor);
+
             if (StringUtils.isNotEmpty(sourceId)) {
                 Object result = SourceUtil.getSourceMap(sourceId, request, response);
                 if (result != null) {
@@ -171,7 +165,7 @@ public class FieldExtractorImpl extends Processor {
                 if (plugin != null) {
                     fieldResult = this.extractWithPlugin(request, content, plugin);
                 } else {
-                    fieldResult = this.extractWithOperation(request, content, resultMap);
+                    fieldResult = this.extractWithOperation(request, content, fieldExtractResultSet);
                 }
                 // format
                 fieldResult = this.format(request, response, fieldResult, fieldExtractor.getResultType());
@@ -184,28 +178,24 @@ public class FieldExtractorImpl extends Processor {
             }
             fieldResult = null;
         }
-        fieldResult = this.fieldDefaultValue(request, response, resultMap, fieldResult, fieldExtractor.getResultType());
+        fieldResult = this.fieldDefaultValue(request, response, fieldExtractResultSet, fieldResult, fieldExtractor.getResultType());
         try {
-            if (fieldResult != null && needResolveUrl() && fieldResult instanceof String) {
+            if (needResolveUrl() && fieldResult instanceof String) {
                 fieldResult = resolveUrl((String) fieldResult, request);
             }
         } catch (Exception e) {
             logger.warn("error resolving url for field result: {} ", fieldResult, e);
             fieldResult = null;
         }
-        if (BooleanUtils.isTrue(fieldExtractor.getNotEmpty()) && (fieldResult == null || StringUtils.isEmpty(fieldResult.toString()))) {
+
+        boolean notEmpty = BooleanUtils.isTrue(fieldExtractor.getNotEmpty());
+        if (notEmpty && (fieldResult == null || StringUtils.isEmpty(fieldResult.toString()))) {
             throw new ResultEmptyException(fieldExtractor + " >> result should not be Empty!");
         }
 
         String id = fieldExtractor.getId();
-        FieldExtractorWarpper warpper = new FieldExtractorWarpper(fieldExtractor, fieldResult);
-
-        if (BooleanUtils.isTrue(fieldExtractor.getNotEmpty())) {
-            logger.info("end not-empty field extractor result: {}", warpper);
-        } else {
-            logger.debug("end field extractor result: {}", warpper);
-        }
-        resultMap.put(id, warpper);
+        FieldExtractResult fieldExtractResult = new FieldExtractResult(fieldExtractor, fieldResult);
+        fieldExtractResultSet.put(id, fieldExtractResult);
 
         // set field result visible
         FieldVisibleType fieldVisibleType = fieldExtractor.getFieldVisibleType();
@@ -220,6 +210,12 @@ public class FieldExtractorImpl extends Processor {
                 RequestUtil.getProcessorContext(request).getContext().put(id, fieldResult);
                 RequestUtil.getProcessorContext(request).getProcessorResult().put(id, fieldResult);
             }
+        }
+
+        if (notEmpty) {
+            logger.info("end not-empty field extractor result: {}", fieldExtractResult);
+        } else {
+            logger.debug("end field extractor result: {}", fieldExtractResult);
         }
     }
 
@@ -242,12 +238,12 @@ public class FieldExtractorImpl extends Processor {
         return fieldResult;
     }
 
-    private Object fieldDefaultValue(Request request, Response response, Map<String, FieldExtractorWarpper> resultMap, Object fieldResult, ResultType type) {
+    private Object fieldDefaultValue(Request request, Response response, FieldExtractResultSet fieldExtractResultSet, Object fieldResult, ResultType type) {
         String defaultValue = fieldExtractor.getDefaultValue();
         if (defaultValue != null && (fieldResult == null || (fieldResult instanceof String && StringUtils.isEmpty((String) fieldResult)))) {
             Object result;
             if (ResultType.String.equals(type)) {
-                result = StandardExpression.eval(defaultValue, ImmutableList.of(FieldExtractorWarpperUtil.fieldWrapperMapToField(resultMap), RequestUtil.getSourceMap(request)));
+                result = StandardExpression.eval(defaultValue, ImmutableList.of(fieldExtractResultSet.resultMap(), RequestUtil.getSourceMap(request)));
             } else {
                 String val;
                 if (type != null) {
@@ -255,7 +251,7 @@ public class FieldExtractorImpl extends Processor {
                 } else {
                     val = defaultValue;
                 }
-                result = StandardExpression.evalWithObject(val, ImmutableList.of(FieldExtractorWarpperUtil.fieldWrapperMapToField(resultMap), RequestUtil.getSourceMap(request)));
+                result = StandardExpression.evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), RequestUtil.getSourceMap(request)));
             }
             try {
                 return this.format(request, response, result, type);
@@ -317,22 +313,13 @@ public class FieldExtractorImpl extends Processor {
 
     }
 
-    /**
-     * @param response
-     * @return
-     */
-    private Map<String, FieldExtractorWarpper> initMap(Response response) {
-
-        @SuppressWarnings("unchecked") Map<String, FieldExtractorWarpper> resultMap = ResponseUtil.getResponseFieldResult(response);
-        if (resultMap == null) {
-            resultMap = new HashMap<>();
-            ResponseUtil.setResponseFieldResult(response, resultMap);
+    private FieldExtractResultSet initMap(Response response) {
+        FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
+        if (fieldExtractResultSet == null) {
+            fieldExtractResultSet = new FieldExtractResultSet();
+            ResponseUtil.setFieldExtractResultSet(response, fieldExtractResultSet);
         }
-        return resultMap;
-    }
-
-    private void printExtractorInfo(FieldExtractor ex) {
-        logger.debug("start field extractor >> field: {}, id: {}", ex.getField(), ex.getId());
+        return fieldExtractResultSet;
     }
 
 }
