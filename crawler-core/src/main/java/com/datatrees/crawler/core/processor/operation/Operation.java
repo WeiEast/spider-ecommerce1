@@ -11,21 +11,20 @@ package com.datatrees.crawler.core.processor.operation;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
+import com.datatrees.common.pipeline.ProcessingException;
+import com.datatrees.common.pipeline.ProcessorValve;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.pipeline.Valve;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
-import com.datatrees.crawler.core.processor.common.Processor;
-import com.datatrees.crawler.core.processor.common.exception.OperationException;
-import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.json.Jackson;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 1:45:54 PM
  */
-public abstract class Operation<T extends AbstractOperation> extends Processor {
+public abstract class Operation<T extends AbstractOperation> extends ProcessorValve {
 
     protected final T              operation;
     protected final FieldExtractor extractor;
@@ -43,28 +42,64 @@ public abstract class Operation<T extends AbstractOperation> extends Processor {
         return extractor;
     }
 
-    protected void preProcess(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(request.getInput(), "input content should not be empty!");
-    }
+    @Override
+    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+        Object operatingData = getOperatingData(request, response);
 
-    protected void postProcess(Request request, Response response) throws Exception {
-        AbstractOperation nextOperation = null;
-        try {
-            Preconditions.checkNotNull(response.getOutPut(), operation + " output should not empty!");
-            Valve next = getNext();
-            if (next != null) {
-                nextOperation = next instanceof Operation ? ((Operation) next).getOperation() : null;
-                next.invoke(request, response);
-            }
-        } catch (Exception e) {
-            if (e instanceof OperationException) {
-                throw e;
-            } else {
-                String messageString = nextOperation != null ? nextOperation + " operate error " + e.getMessage() : e.getMessage();
-                throw new OperationException(messageString, e);
-            }
+        if (operatingData != null) {
+            return isSkipped(operation, request, response);
         }
 
+        return true;
+    }
+
+    protected boolean isSkipped(T operation, Request request, Response response) {
+        return false;
+    }
+
+    @Override
+    protected void triggerAfterSkipped(@Nonnull Request request, @Nonnull Response response) {
+        logger.warn("Skipped operation processor : {}", Jackson.toJSONString(operation));
+
+        getOperatingData(request, response);
+    }
+
+    @Override
+    protected final void preProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {
+        logger.info("Starting operation processing >> {}", Jackson.toJSONString(operation));
+    }
+
+    @Override
+    public final void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+        Object operatingData = getOperatingData(request, response);
+
+        logger.debug("Operating data: {}", operatingData);
+        try {
+            doOperation(operation, operatingData, request, response);
+        } catch (Exception e) {
+            throw new ProcessingException("Error doing operation[ " + Jackson.toJSONString(operation) + "]", e);
+        }
+    }
+
+    protected abstract void doOperation(@Nonnull T operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception;
+
+    @Override
+    protected final void postProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {
+        logger.info("Completed operation processing >> {}", Jackson.toJSONString(operation));
+    }
+
+    @Override
+    protected final boolean isEnd(@Nonnull Request request, @Nonnull Response response) {
+        return getOperatingData(request, response) == null;
+    }
+
+    protected final Object getOperatingData(Request request, Response response) {
+        Object data = response.getOutPut();
+        if (data == null) {
+            data = request.getInput();
+            response.setOutPut(data);
+        }
+        return data;
     }
 
 }

@@ -8,7 +8,6 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang3.StringUtils;
@@ -20,9 +19,8 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        String input = OperationHelper.getStringInput(request, response);
-        TripleOperation operation = getOperation();
+    protected void doOperation(@Nonnull TripleOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
         String expression = operation.getValue();
         logger.debug("triple expression: {}", expression);
 

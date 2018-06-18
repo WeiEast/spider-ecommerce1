@@ -31,12 +31,11 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        TemplateOperation op = getOperation();
-        String template = op.getTemplate();
+    protected void doOperation(@Nonnull TemplateOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String template = operation.getTemplate();
 
         Object output;
-        if (BooleanUtils.isTrue(op.getReturnObject())) {
+        if (BooleanUtils.isTrue(operation.getReturnObject())) {
             output = StandardExpression.evalWithObject(StringUtils.trim(template), request, response);
         } else {
             output = StandardExpression.eval(template, request, response);

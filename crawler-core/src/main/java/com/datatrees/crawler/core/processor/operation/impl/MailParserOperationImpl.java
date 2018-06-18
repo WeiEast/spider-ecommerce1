@@ -17,7 +17,6 @@ import com.datatrees.crawler.core.domain.config.operation.impl.MailParserOperati
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.mail.MailParserImpl;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.BooleanUtils;
 
 /**
@@ -32,11 +31,8 @@ public class MailParserOperationImpl extends Operation<MailParserOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        String result = OperationHelper.getStringInput(request, response);
-        MailParserOperation operation = getOperation();
-
-        logger.debug("mail parser input: {}", result);
+    protected void doOperation(@Nonnull MailParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String result = (String) operatingData;
 
         response.setOutPut(MailParserImpl.INSTANCE.parseMessage(RequestUtil.getProcessorContext(request).getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser())));
     }

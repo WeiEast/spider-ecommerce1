@@ -15,7 +15,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReplaceOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.treefinance.crawler.framework.expression.ExpressionEngine;
 import org.apache.commons.lang.StringUtils;
 
@@ -31,10 +30,9 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        ReplaceOperation op = getOperation();
-        String from = op.getFrom();
-        String to = op.getTo();
+    protected void doOperation(@Nonnull ReplaceOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String from = operation.getFrom();
+        String to = operation.getTo();
 
         ExpressionEngine expressionEngine = null;
         if (StringUtils.isNotBlank(from)) {
@@ -49,7 +47,7 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
             to = expressionEngine.eval(to);
         }
 
-        String orginal = OperationHelper.getStringInput(request, response);
+        String orginal = (String) operatingData;
 
         String dest = orginal.replaceAll(from, to); // change replace to regex
 

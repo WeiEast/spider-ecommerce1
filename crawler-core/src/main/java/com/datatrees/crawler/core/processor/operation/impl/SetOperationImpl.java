@@ -31,8 +31,7 @@ public class SetOperationImpl extends Operation<SetOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        SetOperation operation = getOperation();
+    protected void doOperation(@Nonnull SetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String output = operation.getValue();
 
         if(EMPTY_TAG.equals(output)){

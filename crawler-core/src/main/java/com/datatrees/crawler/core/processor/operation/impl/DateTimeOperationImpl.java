@@ -14,7 +14,6 @@ import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.BaseType;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.DateTimeFieldType;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.treefinance.crawler.framework.expression.ExpressionEngine;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
@@ -34,8 +33,7 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        DateTimeOperation operation = getOperation();
+    protected void doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
 
         BaseType baseType = operation.getBaseType();
 
@@ -47,7 +45,7 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
             offset = Integer.valueOf(offsetString);
         }
 
-        Object src = OperationHelper.getInput(request, response);
+        Object src = operatingData;
         if (src instanceof String) {
             src = expressionEngine.eval((String) src);
         }

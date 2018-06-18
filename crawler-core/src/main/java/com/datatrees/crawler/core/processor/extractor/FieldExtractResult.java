@@ -9,6 +9,7 @@
 package com.datatrees.crawler.core.processor.extractor;
 
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -49,6 +50,13 @@ public class FieldExtractResult {
 
     public void setResult(Object result) {
         this.result = result;
+    }
+
+    public boolean isNotEmpty(){
+        if (result instanceof String) {
+            return StringUtils.isNotEmpty((String) result);
+        }
+        return result != null;
     }
 
     /* (non-Javadoc)

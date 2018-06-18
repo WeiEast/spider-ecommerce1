@@ -16,7 +16,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.RegexOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.toolkit.util.RegExp;
 
@@ -32,10 +31,9 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        RegexOperation operation = getOperation();
+    protected void doOperation(@Nonnull RegexOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String regex = operation.getRegex();
-        String orginal = OperationHelper.getStringInput(request, response);
+        String orginal = (String)operatingData;
 
         regex = StandardExpression.eval(regex, request, response);
 

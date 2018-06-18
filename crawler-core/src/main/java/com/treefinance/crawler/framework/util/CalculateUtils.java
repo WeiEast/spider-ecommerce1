@@ -36,12 +36,12 @@ public final class CalculateUtils {
         return calculate(exp, defaultValue, clazz);
     }
 
-    public static Double calculate(String expression, Request request, Double defaultValue) {
-        return calculate(expression, request, null, defaultValue, Double.class);
+    public static Double calculate(String expression, Request request, Response response, Double defaultValue) {
+        return calculate(expression, request, response, defaultValue, Double.class);
     }
 
-    public static double calculate(String expression, Request request) {
-        return calculate(expression, request, 0d);
+    public static double calculate(String expression, Request request, Response response) {
+        return calculate(expression, request, response, 0d);
     }
 
 }

@@ -28,8 +28,14 @@ public class ProxySetOperationImpl extends Operation<ProxySetOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        logger.warn("Proxy setting operation is not supported!");
+    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+        logger.warn("Unsupported proxy-setting operation and skip!");
+        return true;
+    }
+
+    @Override
+    protected void doOperation(@Nonnull ProxySetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        throw new UnsupportedOperationException("Unsupported proxy-set operation!");
     }
 
 }

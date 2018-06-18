@@ -7,7 +7,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.JsonPathOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 
@@ -22,10 +21,8 @@ public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        String original = OperationHelper.getStringInput(request, response);
-
-        JsonPathOperation operation = getOperation();
+    protected void doOperation(@Nonnull JsonPathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String original = (String) operatingData;
 
         String jsonpath = operation.getJsonpath();
 

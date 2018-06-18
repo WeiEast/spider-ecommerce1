@@ -12,9 +12,9 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 import com.datatrees.common.conf.Configuration;
+import com.datatrees.common.pipeline.FailureSkipProcessorValve;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.extractor.ResultType;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
@@ -23,8 +23,7 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractorImpl;
-import com.google.common.base.Preconditions;
+import com.datatrees.crawler.core.processor.extractor.FieldExtractorPipeline;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.format.Formatter;
@@ -41,7 +40,7 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 24, 2014 5:19:42 PM
  */
-public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
+public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkipProcessorValve {
 
     private final T                        segment;
     private       List<String>             splits = null;
@@ -52,13 +51,13 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
     }
 
     @Override
-    protected void preProcess(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(request.getInput(), "page content in segment should not be null!");
+    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+        return request.getInput() == null;
     }
 
     @Override
-    public final void process(Request request, Response response) throws Exception {
-        List<String> splits = getSplits(request);
+    public final void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+        List<String> splits = getSplits(request, response);
 
         if (CollectionUtils.isEmpty(splits)) {
             if (Boolean.TRUE.equals(segment.getNotEmpty())) {
@@ -68,7 +67,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
             context = RequestUtil.getProcessorContext(request);
             String businessType = segment.getBusinessType();
             if (BusinessTypeDecider.support(businessType, context)) {
-                String original = RequestUtil.getContent(request);
+                String original = (String) request.getInput();
                 try {
                     doProcess(request, response);
                 } finally {
@@ -103,31 +102,10 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
         }
     }
 
-    @Nonnull
-    private List<String> getSplits(Request request) {
-        if (splits == null) {
-            splits = getSplit(request);
-            if (splits == null) {
-                splits = Collections.emptyList();
-            }
-        }
-        return splits;
-    }
-
-    protected abstract List<String> getSplit(Request request);
-
-    private boolean matches(String content, String pattern, Integer patternFlag, boolean reverse) {
-        if (StringUtils.isBlank(pattern)) {
-            return false;
-        }
-
-        return reverse ^ RegExp.find(content, pattern, patternFlag != null ? patternFlag : 0);
-    }
-
     private void doProcess(Request request, Response response) throws Exception {
         List<Object> resultList = ResponseUtil.prepareSegmentsResults(response);
 
-        List<String> splits = getSplits(request);
+        List<String> splits = getSplits(request, response);
 
         logger.info("{} begin process, split size: {}", segment, splits.size());
 
@@ -166,30 +144,9 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
             Map<String, Object> resultMap = new HashMap<String, Object>();
             request.setInput(split);
             // extract field
-            List<FieldExtractor> fieldExtractors = segment.getFieldExtractorList();
-            if (CollectionUtils.isNotEmpty(fieldExtractors)) {
-                List<Processor> fieldExtractorProcessors = new ArrayList<Processor>(fieldExtractors.size());
-                for (FieldExtractor fieldExtractor : fieldExtractors) {
-                    if (fieldExtractor == null) continue;
 
-                    if (BusinessTypeDecider.support(fieldExtractor.getBusinessType(), context)) {
-                        FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl(fieldExtractor);
-                        fieldExtractorProcessors.add(fieldExtractorImpl);
-                    } else {
-                        logger.info("FieldExtractor skip businessType is {},taskId is {}", fieldExtractor.getBusinessType(), context.getTaskId());
-                    }
-
-                }
-
-                ProcessorRunner fieldProcessRunner = new ProcessorRunner(fieldExtractorProcessors);
-                try {
-                    fieldProcessRunner.run(request, response);
-                } catch (ResultEmptyException e) {
-                    throw e;
-                } catch (Exception e) {
-                    logger.error("Error invoking field extractor!", e);
-                }
-            }
+            FieldExtractorPipeline pipeline = new FieldExtractorPipeline(segment.getFieldExtractorList(), context);
+            pipeline.invokeQuietly(request, response);
 
             // extract segment object
             List<AbstractSegment> segments = segment.getSegmentList();
@@ -288,6 +245,27 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
         this.segmentsResultsConvert(request, response);
     }
 
+    @Nonnull
+    private List<String> getSplits(Request request, Response response) {
+        if (splits == null) {
+            splits = splitInputContent((String) request.getInput(), segment, request, response);
+            if (splits == null) {
+                splits = Collections.emptyList();
+            }
+        }
+        return splits;
+    }
+
+    protected abstract List<String> splitInputContent(String content, T segment, Request request, Response response);
+
+    private boolean matches(String content, String pattern, Integer patternFlag, boolean reverse) {
+        if (StringUtils.isBlank(pattern)) {
+            return false;
+        }
+
+        return reverse ^ RegExp.find(content, pattern, patternFlag != null ? patternFlag : 0);
+    }
+
     private void segmentsResultsConvert(Request request, Response response) {
         List results = new ArrayList();
         LinkNode current = RequestUtil.getCurrentUrl(request);
@@ -363,15 +341,4 @@ public abstract class SegmentBase<T extends AbstractSegment> extends Processor {
         return !(obj instanceof Collection) || !CollectionUtils.isEmpty((Collection) obj);
     }
 
-    @Override
-    protected void postProcess(Request request, Response response) throws Exception {
-        // invoke next valve
-        if (getNext() != null) {
-            try {
-                getNext().invoke(request, response);
-            } catch (Exception e) {
-                logger.error("invoke next segment error!", e);
-            }
-        }
-    }
 }

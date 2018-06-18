@@ -57,7 +57,7 @@ public class DefaultService extends ServiceBase {
     private static final int DEFAULT_WAIT_INTERVAL = PropertiesConfiguration.getInstance().getInt("default.wait.interval", 500);
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
 
         Assert.notNull(context, "Search context for default service must not be null!");

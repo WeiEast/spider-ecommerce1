@@ -20,7 +20,6 @@ import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -52,9 +51,9 @@ public class ExtractOperationImpl extends Operation<ExtractOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    protected void doOperation(@Nonnull ExtractOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         // get input
-        String content = OperationHelper.getStringInput(request, response);
+        String content = (String) operatingData;
         String baseURL = RequestUtil.getCurrentUrl(request).getUrl();
         String url = this.extractHtmlLink(content, baseURL);
         if (StringUtils.isBlank(url)) {

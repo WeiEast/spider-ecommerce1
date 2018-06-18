@@ -16,7 +16,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.XpathOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.collections.CollectionUtils;
@@ -35,13 +34,12 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        XpathOperation operation = getOperation();
+    protected void doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String xpath = operation.getXpath();
 
         xpath = StandardExpression.eval(xpath, request, response);
 
-        String orginal = OperationHelper.getStringInput(request, response);
+        String orginal = (String) operatingData;
         String resultStirng = "";
         List<String> result = XPathUtil.getXpath(xpath, orginal);
         if (CollectionUtils.isNotEmpty(result)) {
@@ -55,7 +53,6 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
         resultStirng = StringUtils.isEmpty(resultStirng) && BooleanUtils.isTrue(operation.getEmptyToNull()) ? null : resultStirng;
         logger.debug("xpath extracted result: {}", resultStirng);
         response.setOutPut(resultStirng);
-
     }
 
 }

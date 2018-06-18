@@ -10,9 +10,12 @@ package com.datatrees.crawler.core.processor.extractor;
 
 import javax.annotation.Nonnull;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import com.datatrees.common.conf.Configuration;
+import com.datatrees.common.pipeline.FailureSkipProcessorValve;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.util.CharsetUtil;
@@ -20,21 +23,23 @@ import com.datatrees.common.protocol.util.UrlUtils;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.extractor.FieldVisibleType;
 import com.datatrees.crawler.core.domain.config.extractor.ResultType;
-import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.*;
+import com.datatrees.crawler.core.processor.common.ProcessorFactory;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.common.exception.ExtractorException;
+import com.datatrees.crawler.core.processor.common.exception.OperationException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.operation.Operation;
+import com.datatrees.crawler.core.processor.operation.OperationPipeline;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.google.common.collect.ImmutableList;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.treefinance.crawler.framework.format.Formatter;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -44,7 +49,7 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 18, 2014 1:45:17 PM
  */
-public class FieldExtractorImpl extends Processor {
+public class FieldExtractorImpl extends FailureSkipProcessorValve {
 
     private final FieldExtractor fieldExtractor;
 
@@ -52,75 +57,19 @@ public class FieldExtractorImpl extends Processor {
         this.fieldExtractor = Objects.requireNonNull(fieldExtractor);
     }
 
-    public FieldExtractor getFieldExtractor() {
-        return fieldExtractor;
-    }
+    @Override
+    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+        boolean skipped = super.isSkipped(request, response);
 
-    private Object extractWithPlugin(Request request, String content, AbstractPlugin pluginDesc) throws Exception {
-        AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
-
-        Object fieldResult = PluginCaller.call(pluginDesc, context, () -> {
-            Map<String, String> params = new LinkedHashMap<>();
-
-            params.put(PluginConstants.PAGE_CONTENT, content);
-            LinkNode requestLinkNode = RequestUtil.getCurrentUrl(request);
-            if (requestLinkNode != null) {
-                params.put(PluginConstants.CURRENT_URL, requestLinkNode.getUrl());
-                params.put(PluginConstants.REDIRECT_URL, requestLinkNode.getRedirectUrl());
+        if (!skipped) {
+            FieldExtractResultSet fieldExtractResultSet = initMap(response);
+            if (Boolean.TRUE.equals(fieldExtractor.getStandBy()) && fieldExtractResultSet.isNotEmptyResult(fieldExtractor.getId())) {
+                logger.debug("Skip field extractor with matching the stand-by flag. Field-Extractor: {}", fieldExtractor);
+                return true;
             }
-            params.put(PluginConstants.FIELD, fieldExtractor.getField());
-
-            return params;
-        });
-
-        // get pluginDesc json result
-        Map<String, Object> pluginResultMap = PluginUtil.checkPluginResult((String) fieldResult);
-
-        return pluginResultMap.get(PluginConstants.FIELD);
-    }
-
-    private Object extractWithOperation(Request request, String content, FieldExtractResultSet fieldExtractResultSet) throws Exception {
-        Object fieldResult = null;
-        List<AbstractOperation> operations = fieldExtractor.getOperationList();
-        List<Operation> operationsList = new ArrayList<>(operations.size());
-        if (CollectionUtils.isNotEmpty(operations)) {
-            Operation op;
-            for (AbstractOperation operation : operations) {
-                if (operation == null) continue;
-                op = ProcessorFactory.getOperation(operation, fieldExtractor);
-                operationsList.add(op);
-            }
-            ProcessorRunner runner = new ProcessorRunner(new ArrayList<>(operationsList));
-            Response resp = new Response();
-            ResponseUtil.setFieldExtractResultSet(resp, fieldExtractResultSet);
-            String orignal = RequestUtil.getContent(request);
-            try {
-                request.setInput(content);
-                runner.run(request, resp);
-                fieldResult = resp.getOutPut();
-            } catch (Exception e) {
-                throw e;
-            } finally {
-                request.setInput(orignal);
-            }
-
-        } else {
-            logger.warn("operation list is empty for field: {}", getFieldExtractor().getField());
-            fieldResult = content;
         }
-        return fieldResult;
-    }
 
-    private boolean isValid(FieldExtractResult obj) {
-        if (obj == null) return false;
-
-        // Check whether the data is valid
-        Object result = obj.getResult();
-
-        if (result instanceof String) {
-            return StringUtils.isNotEmpty((String) result);
-        }
-        return result != null;
+        return skipped;
     }
 
     /**
@@ -137,12 +86,6 @@ public class FieldExtractorImpl extends Processor {
         FieldExtractResultSet fieldExtractResultSet = initMap(response);
         String content = "";
         try {
-            // precheck
-            if (BooleanUtils.isTrue(fieldExtractor.getStandBy()) && isValid(fieldExtractResultSet.get(fieldExtractor.getId()))) {
-                logger.debug("no need use stand by fieldExtractor: {}", fieldExtractor);
-                return;
-            }
-
             content = RequestUtil.getContent(request);
             String sourceId = fieldExtractor.getSourceId();
 
@@ -163,19 +106,18 @@ public class FieldExtractorImpl extends Processor {
                 }
                 AbstractPlugin plugin = fieldExtractor.getPlugin();
                 if (plugin != null) {
-                    fieldResult = this.extractWithPlugin(request, content, plugin);
+                    fieldResult = this.extractWithPlugin(content, request, plugin);
                 } else {
-                    fieldResult = this.extractWithOperation(request, content, fieldExtractResultSet);
+                    fieldResult = this.extractWithOperation(content, request, fieldExtractResultSet);
                 }
                 // format
                 fieldResult = this.format(request, response, fieldResult, fieldExtractor.getResultType());
             }
+        } catch (ResultEmptyException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("Error processing field extractor: {}", fieldExtractor, e);
 
-            if (e instanceof ResultEmptyException) {
-                throw new ResultEmptyException(e.getMessage());
-            }
             fieldResult = null;
         }
         fieldResult = this.fieldDefaultValue(request, response, fieldExtractResultSet, fieldResult, fieldExtractor.getResultType());
@@ -217,6 +159,34 @@ public class FieldExtractorImpl extends Processor {
         } else {
             logger.debug("end field extractor result: {}", fieldExtractResult);
         }
+    }
+
+    private Object extractWithOperation(String content, Request request, FieldExtractResultSet fieldExtractResultSet) throws ResultEmptyException, OperationException {
+        OperationPipeline pipeline = new OperationPipeline(fieldExtractor);
+        return pipeline.start(content, request, fieldExtractResultSet);
+    }
+
+    private Object extractWithPlugin(String content, Request request, AbstractPlugin pluginDesc) throws Exception {
+        AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
+
+        Object fieldResult = PluginCaller.call(pluginDesc, context, () -> {
+            Map<String, String> params = new LinkedHashMap<>();
+
+            params.put(PluginConstants.PAGE_CONTENT, content);
+            LinkNode requestLinkNode = RequestUtil.getCurrentUrl(request);
+            if (requestLinkNode != null) {
+                params.put(PluginConstants.CURRENT_URL, requestLinkNode.getUrl());
+                params.put(PluginConstants.REDIRECT_URL, requestLinkNode.getRedirectUrl());
+            }
+            params.put(PluginConstants.FIELD, fieldExtractor.getField());
+
+            return params;
+        });
+
+        // get pluginDesc json result
+        Map<String, Object> pluginResultMap = PluginUtil.checkPluginResult((String) fieldResult);
+
+        return pluginResultMap.get(PluginConstants.FIELD);
     }
 
     private Object format(Request request, Response response, Object fieldResult, ResultType type) throws ExtractorException {

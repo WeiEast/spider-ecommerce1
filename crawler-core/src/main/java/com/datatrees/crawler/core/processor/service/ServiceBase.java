@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.BeanResourceFactory;
-import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -26,17 +26,14 @@ import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 7, 2014 7:43:14 PM
  */
-public abstract class ServiceBase<S extends AbstractService> extends Processor {
+public abstract class ServiceBase<S extends AbstractService> extends ProcessorInvokerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(ServiceBase.class);
     protected final S service;
 
     public ServiceBase() {
@@ -53,7 +50,7 @@ public abstract class ServiceBase<S extends AbstractService> extends Processor {
 
     // resolve base url
     @Override
-    protected void postProcess(Request request, Response response) throws Exception {
+    protected void postProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {
         LinkNode current = RequestUtil.getCurrentUrl(request);
         if (current != null) {
             String content = RequestUtil.getContent(request);
@@ -74,7 +71,7 @@ public abstract class ServiceBase<S extends AbstractService> extends Processor {
                     }
                 }
                 current.setBaseUrl(baseDomainUrl);
-                log.debug("originUrl: {}, baseDomainUrl: {}", current.getUrl(), baseDomainUrl);
+                logger.debug("originUrl: {}, baseDomainUrl: {}", current.getUrl(), baseDomainUrl);
             }
         }
     }
@@ -93,15 +90,6 @@ public abstract class ServiceBase<S extends AbstractService> extends Processor {
      */
     protected MessageService getMessageService() {
         return BeanResourceFactory.getInstance().getBean(MessageService.class);
-    }
-
-    @Override
-    public void process(Request request, Response response) throws Exception {
-    }
-
-    @Override
-    public String getInfo() {
-        return "service: " + getClass().getCanonicalName();
     }
 
 }

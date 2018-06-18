@@ -15,7 +15,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReturnMatchOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 
 /**
@@ -30,10 +29,9 @@ public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        ReturnMatchOperation operation = getOperation();
+    protected void doOperation(@Nonnull ReturnMatchOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String value = operation.getValue();
-        String orginal = OperationHelper.getStringInput(request, response);
+        String orginal = (String) operatingData;
 
         value = StandardExpression.eval(value, request, response);
 

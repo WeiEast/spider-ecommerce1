@@ -8,7 +8,9 @@
 
 package com.datatrees.crawler.core.processor.parser;
 
+import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -24,12 +26,11 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.treefinance.crawler.framework.expression.ExpressionParser;
 import com.treefinance.crawler.framework.util.UrlExtractor;
+import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,36 +44,27 @@ import org.slf4j.LoggerFactory;
  * @since Feb 20, 2014 8:57:12 PM
  */
 public class ParserImpl {
-    private static final Logger logger = LoggerFactory.getLogger(ParserImpl.class);
-    private boolean needRequest       = false;
-    private boolean needReturnUrlList = false;
-    private Parser parser;
 
-    public ParserImpl(boolean needRequest, Parser parser) {
-        this.needRequest = needRequest;
+    private static final Logger  logger            = LoggerFactory.getLogger(ParserImpl.class);
+    private final        Parser  parser;
+    private              boolean needRequest       = false;
+    private              boolean needReturnUrlList = false;
+
+    public ParserImpl(Parser parser, boolean needRequest) {
+        this(parser, needRequest, false);
+    }
+
+    public ParserImpl(Parser parser, boolean needRequest, boolean needReturnUrlList) {
         this.parser = parser;
+        this.needRequest = needRequest;
+        this.needReturnUrlList = needReturnUrlList;
     }
 
-    /**
-     * @param needRequest
-     * @param parser
-     * @param needReturnUrlList
-     */
-    public ParserImpl(boolean needRequest, Parser parser, boolean needReturnUrlList) {
-        this(needRequest, parser);
-        setNeedReturnUrlList(needReturnUrlList);
-    }
-
-    /*
-     * (non-Javadoc)
-     */
-    public void invoke(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(parser);
-        String content = OperationHelper.getStringInput(request, response);
-        Preconditions.checkState(StringUtils.isNotEmpty(content), "input for parser should not be empty!");
+    public Object parse(@Nonnull String content, @Nonnull Request request, @Nonnull Response response) throws InterruptedException {
+        Preconditions.notEmpty("content", content);
 
         String template = parser.getUrlTemplate();
-        Preconditions.checkState(StringUtils.isNotEmpty(template), "input for parser template  should not be empty!");
+        Preconditions.notEmpty("url-template", template);
 
         logger.info("parser's url-template: {}", template);
 
@@ -86,14 +78,10 @@ public class ParserImpl {
 
         logger.info("after template combine: {}", results.size());
         String result = results.get(0);
-        if (needRequest) {
+        if (isNeedRequest()) {
             if (parser.getSleepSecond() != null && parser.getSleepSecond() > 0) {
-                try {
-                    logger.info("sleep {}s before parser request.", parser.getSleepSecond());
-                    Thread.sleep(parser.getSleepSecond() * 1000);
-                } catch (Exception e) {
-                    logger.warn("Error thread sleeping.", e);
-                }
+                logger.info("sleep {}s before parser request.", parser.getSleepSecond());
+                TimeUnit.SECONDS.sleep(parser.getSleepSecond());
             }
             Request newRequest = new Request();
             RequestUtil.setProcessorContext(newRequest, RequestUtil.getProcessorContext(request));
@@ -101,12 +89,12 @@ public class ParserImpl {
             RequestUtil.setContext(newRequest, RequestUtil.getContext(request));
             Response newResponse = new Response();
             result = getResponseByWebRequest(newRequest, newResponse, result);
-            response.setOutPut(result);
-        } else if (needReturnUrlList) {
+            return result;
+        } else if (isNeedReturnUrlList()) {
             // support multi parsers
-            response.setOutPut(results);
+            return results;
         } else {
-            response.setOutPut(result);
+            return result;
         }
     }
 
@@ -223,10 +211,6 @@ public class ParserImpl {
 
     public Parser getParser() {
         return parser;
-    }
-
-    public void setParser(Parser parser) {
-        this.parser = parser;
     }
 
     public boolean isNeedReturnUrlList() {

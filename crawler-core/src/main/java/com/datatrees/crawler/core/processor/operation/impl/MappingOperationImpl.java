@@ -11,7 +11,6 @@ import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MappingOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -35,6 +34,10 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
         }
     });
 
+    public MappingOperationImpl(@Nonnull MappingOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     private String getMappingValue(String group, String key) {
         Map<String, String> mapping = CACHE.getUnchecked(group);
         if (mapping != null) {
@@ -44,18 +47,13 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
         return null;
     }
 
-    public MappingOperationImpl(@Nonnull MappingOperation operation, @Nonnull FieldExtractor extractor) {
-        super(operation, extractor);
-    }
-
     @Override
-    public void process(Request request, Response response) throws Exception {
-        String input = OperationHelper.getStringInput(request, response);
-        MappingOperation operation = getOperation();
+    protected void doOperation(@Nonnull MappingOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
 
         String result = null;
         try {
-            if (input != null && StringUtils.isNotEmpty(operation.getGroupName())) {
+            if (StringUtils.isNotEmpty(operation.getGroupName())) {
                 result = getMappingValue(operation.getGroupName(), input);
             }
         } catch (Exception e) {

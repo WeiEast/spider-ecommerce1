@@ -9,15 +9,15 @@
 package com.datatrees.crawler.core.processor.segment.impl;
 
 import javax.annotation.Nonnull;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.util.StringUtils;
+import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.RegexSegment;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.treefinance.toolkit.util.RegExp;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -31,22 +31,16 @@ public class RegexSegmentImpl extends SegmentBase<RegexSegment> {
     }
 
     @Override
-    public List<String> getSplit(Request request) {
-        String content = RequestUtil.getContent(request);
+    public List<String> splitInputContent(String content, RegexSegment segment, Request request, Response response) {
+        String regex = StringUtils.defaultString(segment.getRegex());
 
-        List<String> result = new LinkedList<String>();
+        logger.debug("RegExp pattern: {}, group: {}", regex, segment.getGroupIndex());
 
-        RegexSegment segment = getSegment();
-        String regex = segment.getRegex();
-
-        if (StringUtils.isNotEmpty(regex)) {
-            List<String> regexResult = RegExp.findAll(content, regex, segment.getGroupIndex());
-            result.addAll(regexResult);
-        } else {
-            result.add(content);
+        if (!regex.isEmpty()) {
+            return RegExp.findAll(content, regex, segment.getGroupIndex());
         }
 
-        return result;
+        return Collections.singletonList(content);
     }
 
 }

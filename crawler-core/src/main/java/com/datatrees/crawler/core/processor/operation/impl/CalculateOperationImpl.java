@@ -30,8 +30,7 @@ public class CalculateOperationImpl extends Operation<CalculateOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        CalculateOperation operation = getOperation();
+    protected void doOperation(@Nonnull CalculateOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String expression = operation.getValue();
 
         Object result = null;

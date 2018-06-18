@@ -70,7 +70,7 @@ public class ResponseUtil {
     public static Map<String, Object> getFieldExtractResultMap(Response response) {
         FieldExtractResultSet fieldExtractResultSet = getFieldExtractResultSet(response);
 
-        return fieldExtractResultSet == null?Collections.emptyMap():fieldExtractResultSet.resultMap();
+        return fieldExtractResultSet == null ? Collections.emptyMap() : fieldExtractResultSet.resultMap();
     }
 
     public static String getResponseErrorMsg(Response response) {
@@ -115,7 +115,7 @@ public class ResponseUtil {
 
     @SuppressWarnings("unchecked")
     public static List<Object> prepareSegmentsResults(Response response) {
-        return (List<Object>)response.computeAttributeIfAbsent(Constants.SEGMENTS_RESULTS, k -> new ArrayList<>());
+        return (List<Object>) response.computeAttributeIfAbsent(Constants.SEGMENTS_RESULTS, k -> new ArrayList<>());
     }
 
     public static Object getSegmentsResults(Response response) {

@@ -4,11 +4,9 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.AppendOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,12 +17,7 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        AppendOperation operation = getOperation();
-        if (logger.isDebugEnabled()) {
-            logger.debug("AppendOperation : {}", GsonUtils.toJson(operation));
-        }
-
+    protected void doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         int index = operation.getIndex();
         String value = operation.getValue();
 
@@ -32,18 +25,14 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
 
         logger.debug("Actual append text: {}", value);
 
-        String input = OperationHelper.getStringInput(request, response);
+        String input = (String) operatingData;
 
-        logger.debug("AppendOperation, input : {}", input);
-
-        StringBuilder result = new StringBuilder();
+        String outPut;
         if (index < 0) {
-            result.append(input).append(value);
+            outPut = input + value;
         } else {
-            result.append(StringUtils.substring(input, 0, index)).append(value).append(StringUtils.substring(input, index, input.length()));
+            outPut = StringUtils.substring(input, 0, index) + value + StringUtils.substring(input, index, input.length());
         }
-
-        String outPut = result.toString();
 
         logger.debug("AppendOperation, output: {}", outPut);
 

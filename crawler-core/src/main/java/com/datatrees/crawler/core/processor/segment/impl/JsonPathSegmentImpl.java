@@ -1,15 +1,15 @@
 package com.datatrees.crawler.core.processor.segment.impl;
 
 import javax.annotation.Nonnull;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
+import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.JsonPathSegment;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
-import org.apache.commons.collections.CollectionUtils;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -23,24 +23,24 @@ public class JsonPathSegmentImpl extends SegmentBase<JsonPathSegment> {
     }
 
     @Override
-    protected List<String> getSplit(Request request) {
-        String content = RequestUtil.getContent(request);
-
-        List<String> result = new LinkedList<>();
-
-        JsonPathSegment segment = getSegment();
+    protected List<String> splitInputContent(String content, JsonPathSegment segment, Request request, Response response) {
         String jsonPath = segment.getJsonpath();
 
-        if (StringUtils.isNotBlank(jsonPath)) {
+        logger.debug("Json path: {}", jsonPath);
+
+        jsonPath = StringUtils.trimToEmpty(jsonPath);
+
+        if (!jsonPath.isEmpty()) {
+            jsonPath = StandardExpression.eval(jsonPath, request, response);
+
+            logger.debug("Actual json path: {}", jsonPath);
+
             List<String> segments = JsonPathUtil.readAsList(content, jsonPath);
-            logger.info("segment count@{} by using jsonPath: {}", segments.size(), jsonPath);
-            if (CollectionUtils.isNotEmpty(segments)) {
-                result.addAll(segments);
-            }
-        } else {
-            result.add(content);
+            logger.info("jsonpath: {}, segments size: {}", jsonPath, segments.size());
+
+            return segments;
         }
 
-        return result;
+        return Collections.singletonList(content);
     }
 }

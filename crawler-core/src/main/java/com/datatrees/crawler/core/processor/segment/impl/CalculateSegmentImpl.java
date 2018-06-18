@@ -13,10 +13,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
+import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.CalculateSegment;
-import com.treefinance.crawler.framework.util.CalculateUtils;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.treefinance.crawler.framework.expression.StandardExpression;
+import com.treefinance.crawler.framework.util.CalculateUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -30,24 +31,20 @@ public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
     }
 
     @Override
-    protected List<String> getSplit(Request request) {
+    protected List<String> splitInputContent(String content, CalculateSegment segment, Request request, Response response) {
         List<String> result = new LinkedList<>();
-        CalculateSegment segment = getSegment();
         String expression = segment.getExpression();
-        logger.info("start do calculate segment with expression: {}", expression);
+        logger.info("start calculate segment processor with expression: {}", expression);
 
-        try {// 1,3,1,+  从2开始到3(包含3)
-            String[] arrays = expression.split(",");
-            double start = CalculateUtils.calculate(arrays[0], request);
-            double end = CalculateUtils.calculate(arrays[1], request);
-            double interval = CalculateUtils.calculate(arrays[2], request);
-            String formula = StandardExpression.eval(arrays[3], request, null);
-            while (start < end) {
-                start = CalculateUtils.calculate(start + formula + interval, null, Double.TYPE);
-                result.add(start + "");
-            }
-        } catch (Exception e) {
-            logger.error("error calculating for segment: {}, expression: {}", segment.getName(), expression, e);
+        // 1,3,1,+  从2开始到3(包含3)
+        String[] arrays = expression.split(",");
+        double start = CalculateUtils.calculate(arrays[0], request, response);
+        double end = CalculateUtils.calculate(arrays[1], request, response);
+        double interval = CalculateUtils.calculate(arrays[2], request, response);
+        String formula = StandardExpression.eval(arrays[3], request, response);
+        while (start < end) {
+            start = CalculateUtils.calculate(start + formula + interval, null, Double.TYPE);
+            result.add(start + "");
         }
 
         return result;

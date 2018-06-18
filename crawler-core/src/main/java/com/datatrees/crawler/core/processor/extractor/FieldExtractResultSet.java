@@ -1,6 +1,8 @@
 package com.datatrees.crawler.core.processor.extractor;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jerry
@@ -8,6 +10,14 @@ import java.util.*;
  */
 public class FieldExtractResultSet extends HashMap<String, FieldExtractResult> {
 
+    public boolean isNotEmptyResult(String name) {
+        FieldExtractResult obj = get(name);
+
+        if (obj == null) return false;
+
+        return obj.isNotEmpty();
+    }
+    
     public Map<String, Object> resultMap(){
         if (this.isEmpty()) {
             return Collections.emptyMap();

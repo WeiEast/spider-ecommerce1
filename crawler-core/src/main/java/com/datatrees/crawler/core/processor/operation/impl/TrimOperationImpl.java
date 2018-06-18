@@ -15,7 +15,6 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TrimOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,8 +30,8 @@ public class TrimOperationImpl extends Operation<TrimOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        String input = OperationHelper.getStringInput(request, response);
+    protected void doOperation(@Nonnull TrimOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
 
         String output = StringUtils.trim(input);
         output = CharMatcher.whitespace().trimFrom(output);

@@ -22,12 +22,9 @@ import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PluginServiceImpl extends ServiceBase<PluginService> {
 
-    private static final Logger log        = LoggerFactory.getLogger(PluginServiceImpl.class);
     private final        int    retryCount = PropertiesConfiguration.getInstance().getInt("pluginService.retry.count", 3);
 
     public PluginServiceImpl(@Nonnull PluginService service) {
@@ -35,12 +32,12 @@ public class PluginServiceImpl extends ServiceBase<PluginService> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         PluginService service = getService();
         LinkNode current = RequestUtil.getCurrentUrl(request);
         String url = current.getUrl();
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
-        log.info("handler request using plugin " + url);
+        logger.info("handling request using plugin : {}", url);
         AbstractPlugin plugin = service.getPlugin();
         if (plugin != null) {
             for (int i = 0; i < retryCount; i++) {
@@ -53,14 +50,14 @@ public class PluginServiceImpl extends ServiceBase<PluginService> {
                         if (context.needProxyByUrl(url)) {
                             Proxy proxy = context.getProxy();
                             Preconditions.checkNotNull(proxy);
-                            log.info("set proxy to: " + url + "\tproxy:\t" + proxy.format());
+                            logger.info("set proxy to: " + url + "\tproxy:\t" + proxy.format());
                             params.put(PluginConstants.PROXY, proxy.format());
                         }
 
                         return params;
                     }).toString();
 
-                    log.debug("PluginServiceImpl output content : {} url : {}", serviceResult, url);
+                    logger.debug("PluginServiceImpl output content : {} url : {}", serviceResult, url);
                     // get plugin json result
                     Map<String, Object> pluginResultMap = PluginUtil.checkPluginResult(serviceResult);
                     serviceResult = StringUtils.defaultIfEmpty((String) pluginResultMap.get(PluginConstants.SERVICE_RESULT), "");
@@ -72,7 +69,7 @@ public class PluginServiceImpl extends ServiceBase<PluginService> {
                     ProcessorContextUtil.addThreadLocalResponse(context, response);
                     break;
                 } catch (Exception e) {
-                    log.error("do plugin service error url:" + url + " , do revisit ... " + e.getMessage(), e);
+                    logger.error("do plugin service error url:" + url + " , do revisit ... " + e.getMessage(), e);
                     if (i == retryCount - 1) {
                         ResponseUtil.setResponseStatus(response, ProtocolStatusCodes.EXCEPTION);
                         throw e;

@@ -10,6 +10,7 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractResult;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,16 +52,20 @@ public final class FieldScopes {
      * 获取当前上下文可见的值栈，包含解析出的字段值，共享的值。其中解析值优先于共享值。
      */
     public static Map<String, Object> getVisibleFields(Request request, Response response) {
-        List<Map<String, Object>> fieldScopes = new ArrayList<>();
+        List<Map<String, Object>> fieldScopes = new ArrayList<>(2);
 
         if (response != null) {
             Map<String, Object> extractFields = getExtractFields(response);
-            fieldScopes.add(extractFields);
+            if (MapUtils.isNotEmpty(extractFields)) {
+                fieldScopes.add(extractFields);
+            }
         }
 
         if (request != null) {
             Map<String, Object> sharedFields = getSharedFields(request);
-            fieldScopes.add(sharedFields);
+            if (MapUtils.isNotEmpty(sharedFields)) {
+                fieldScopes.add(sharedFields);
+            }
         }
 
         return merge(fieldScopes);

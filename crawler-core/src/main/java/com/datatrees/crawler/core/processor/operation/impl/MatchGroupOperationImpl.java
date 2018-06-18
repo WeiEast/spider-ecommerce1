@@ -31,18 +31,17 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        MatchGroupOperation op = getOperation();
-        String sourceId = op.getSourceId();
+    protected void doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String sourceId = operation.getSourceId();
         Matcher matcher = null;
         String result = null;
         if (StringUtils.isNotEmpty(sourceId)) {
             matcher = (Matcher) SourceUtil.getSourceMap(sourceId, request, response);
         }
         if (matcher != null) {
-            result = matcher.group(op.getGroupIndex());
+            result = matcher.group(operation.getGroupIndex());
         }
-        logger.debug("After match group. index: {}, result: {}", op.getGroupIndex(), result);
+        logger.debug("After match group. index: {}, result: {}", operation.getGroupIndex(), result);
         response.setOutPut(result);
     }
 

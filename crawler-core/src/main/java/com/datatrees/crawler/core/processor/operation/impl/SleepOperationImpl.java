@@ -28,8 +28,7 @@ public class SleepOperationImpl extends Operation<SleepOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        SleepOperation operation = getOperation();
+    protected void doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         Integer sleepTime = operation.getValue();
         if (sleepTime != null) {
             logger.debug("Start to Sleep: {}", sleepTime);

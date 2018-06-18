@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
@@ -54,7 +55,7 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 24, 2014 6:35:43 PM
  */
-public class PageImpl extends Processor {
+public class PageImpl extends ProcessorInvokerAdapter {
 
     private static final String titleRegex     = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
     private static final int    URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
@@ -67,7 +68,7 @@ public class PageImpl extends Processor {
 
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         LinkNode current = RequestUtil.getCurrentUrl(request);
 
         String content = RequestUtil.getContent(request);

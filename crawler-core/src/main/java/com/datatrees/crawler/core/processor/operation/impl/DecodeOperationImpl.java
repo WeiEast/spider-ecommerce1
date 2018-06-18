@@ -20,7 +20,6 @@ import com.datatrees.crawler.core.processor.decode.impl.BasicDecode;
 import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import com.datatrees.crawler.core.processor.decode.impl.StandardDecode;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +38,9 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        // get input
-        String orginal = OperationHelper.getStringInput(request, response);
-
-        DecodeOperation operation = getOperation();
+    protected void doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+      // get input
+        String orginal = (String) operatingData;
 
         String charSet = StringUtils.isEmpty(operation.getCharset()) ? (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil.getContentCharset(request)) : operation.getCharset();
 
