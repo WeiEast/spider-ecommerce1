@@ -15,6 +15,8 @@ public interface Attributes {
 
     void setAttribute(@Nonnull String name, @Nullable Object attribute);
 
+    boolean containsAttribute(@Nonnull String name);
+
     Object getAttribute(@Nonnull String name);
 
     default <T> T getAttribute(@Nonnull String name, @Nonnull Class<T> type) {

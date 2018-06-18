@@ -27,6 +27,11 @@ public class DefaultAttributes implements Attributes {
     }
 
     @Override
+    public boolean containsAttribute(@Nonnull String name) {
+        return map.containsKey(name);
+    }
+
+    @Override
     public Object getAttribute(@Nonnull String name) {
         return map.get(name);
     }

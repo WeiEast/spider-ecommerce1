@@ -47,6 +47,12 @@ public class AtomicAttributes implements Attributes {
         else ensureMap().put(name, attribute);
     }
 
+    @Override
+    public boolean containsAttribute(@Nonnull String name) {
+        Map<String, Object> map = map();
+        return map != null && map.containsKey(name);
+    }
+
     @Nullable
     @Override
     public Object getAttribute(@Nonnull String name) {
