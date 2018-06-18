@@ -16,62 +16,39 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
-import com.datatrees.crawler.core.domain.config.properties.Properties;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
-import com.datatrees.crawler.core.util.SynchronizedMap;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.treefinance.crawler.framework.extension.manager.PluginManager;
+import com.treefinance.crawler.framework.context.ProcessContext;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月7日 下午7:09:02
  */
-public abstract class AbstractProcessorContext {
+public abstract class AbstractProcessorContext extends ProcessContext {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    protected final Website                     website;
     protected final Long                        taskId;
     protected final Map<String, Object>         context;
-    protected final Map<String, AbstractPlugin> pluginMaps;
     private final   Map<String, Object>         statusContext;
     private final   Map<Thread, Object>         threadContext;
     private final   ProcessorResult             processorResult;
     private final   ProcessorResult             processorLog;
-    private         PluginManager               pluginManager;
 
 
     public AbstractProcessorContext(Website website, Long taskId) {
-        this.website = Objects.requireNonNull(website);
+        super(website);
         this.taskId = Objects.requireNonNull(taskId);
-        context = new SynchronizedMap<>();
-        pluginMaps = new SynchronizedMap<>();
-        statusContext = new SynchronizedMap<>();
-        threadContext = new ConcurrentHashMap<>();
-        processorResult = new ProcessorResult();
-        processorLog = new ProcessorResult();
+        this.context = new ConcurrentHashMap<>();
+        this.statusContext = new ConcurrentHashMap<>();
+        this.threadContext = new ConcurrentHashMap<>();
+        this.processorResult = new ProcessorResult();
+        this.processorLog = new ProcessorResult();
     }
 
     public abstract void init();
-
-    /**
-     * @return the website
-     */
-    public Website getWebsite() {
-        return website;
-    }
-
-    public String getWebsiteName() {
-        return website.getWebsiteName();
-    }
 
     public Long getTaskId() {
         return taskId;
@@ -84,8 +61,9 @@ public abstract class AbstractProcessorContext {
         return context;
     }
 
+    @Deprecated
     public AbstractPlugin getPluginDescByID(String pid) {
-        return pluginMaps.get(pid);
+        return super.getPluginMetadataById(pid);
     }
 
     /**
@@ -137,7 +115,7 @@ public abstract class AbstractProcessorContext {
             context.put(key, null);
             return;
         }
-        context.put(key, String.valueOf(value));
+        context.put(key, value.toString());
     }
 
     /**
@@ -146,14 +124,14 @@ public abstract class AbstractProcessorContext {
      * @return
      */
     public String getString(String key) {
-        if (StringUtils.isBlank(key) || !context.containsKey(key)) {
+        if (StringUtils.isEmpty(key)) {
             return null;
         }
         Object v = context.get(key);
         if (null == v) {
             return null;
         }
-        return String.valueOf(context.get(key));
+        return v.toString();
     }
 
     /**
@@ -162,14 +140,18 @@ public abstract class AbstractProcessorContext {
      * @return
      */
     public Long getLong(String key) {
-        if (StringUtils.isBlank(key) || !context.containsKey(key)) {
+        if (StringUtils.isEmpty(key)) {
             return null;
         }
         Object v = context.get(key);
         if (null == v) {
             return null;
+        } else if (v instanceof Long) {
+            return (Long) v;
+        } else if (v instanceof String) {
+            return Long.valueOf((String) v);
         }
-        return Long.valueOf(getString(key));
+        return Long.valueOf(v.toString());
     }
 
     /**
@@ -178,22 +160,18 @@ public abstract class AbstractProcessorContext {
      * @return
      */
     public Boolean getBoolean(String key) {
-        if (StringUtils.isBlank(key) || !context.containsKey(key)) {
+        if (StringUtils.isEmpty(key)) {
             return null;
         }
         Object v = context.get(key);
         if (null == v) {
             return null;
+        }else if (v instanceof Boolean) {
+            return (Boolean) v;
+        } else if (v instanceof String) {
+            return Boolean.valueOf((String) v);
         }
-        return Boolean.valueOf(getString(key));
-    }
-
-    public PluginManager getPluginManager() {
-        return pluginManager;
-    }
-
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
+        throw new ClassCastException("Can not cast class '"+v.getClass()+"' to 'Boolean'.");
     }
 
     public <T> WrappedExtension<T> loadExtension(AbstractPlugin pluginMetadata, Class<T> extensionType) {
@@ -210,18 +188,5 @@ public abstract class AbstractProcessorContext {
         Long taskId = getLong(AttributeKey.TASK_ID);
 
         return getPluginManager().loadPlugin(fileName, mainClass, taskId);
-    }
-
-    public AbstractService getDefaultService() {
-        AbstractService service = null;
-        if (null != website && null != website.getSearchConfig() && null != website.getSearchConfig().getProperties()) {
-            Properties properties = website.getSearchConfig().getProperties();
-            Boolean useTaskHttp = properties.getUseTaskHttp();
-            if (BooleanUtils.isTrue(useTaskHttp)) {
-                service = new TaskHttpService();
-                service.setServiceType("task_http");
-            }
-        }
-        return service;
     }
 }
