@@ -13,7 +13,7 @@ import java.util.function.Function;
  * @author Jerry
  * @since 15:01 2018/5/8
  */
-public class BaseAttributes implements Attributes {
+public class DefaultAttributes implements Attributes {
 
     private final Map<String, Object> map = new HashMap<>();
 
