@@ -36,7 +36,7 @@ public class ResultMapConverter {
             Map<String, Object> resultMap = (Map<String, Object>) input;
             String className = null;
             try {
-                if (resultMap == null || resultMap.isEmpty() || StringUtils.isBlank((className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
+                if (resultMap.isEmpty() || StringUtils.isBlank(className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
                     results.add(resultMap);
                     return;
                 }
