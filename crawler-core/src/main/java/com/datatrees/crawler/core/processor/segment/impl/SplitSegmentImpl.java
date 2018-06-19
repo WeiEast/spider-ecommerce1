@@ -35,27 +35,29 @@ public class SplitSegmentImpl extends SegmentBase<SplitSegment> {
 
     @Override
     protected List<String> splitInputContent(String content, SplitSegment segment, Request request, Response response) {
-        String split = StringUtils.defaultString(segment.getSplitString());
+        if(StringUtils.isNotEmpty(content)){
+            String split = StringUtils.defaultString(segment.getSplitString());
 
-        logger.debug("Splitter separate: {}", split);
+            logger.debug("Splitter separate: {}", split);
 
-        if (!split.isEmpty()) {
-            String[] regexResult = content.split(split);
-            Matcher m = RegExp.getMatcher(split, content);
-            int count = 0;
-            while (count < regexResult.length) {
-                if (BooleanUtils.isTrue(segment.getAppend())) {
-                    if (m.find()) {
-                        regexResult[count] = regexResult[count] + m.group();
+            if (!split.isEmpty()) {
+                String[] regexResult = content.split(split);
+                Matcher m = RegExp.getMatcher(split, content);
+                int count = 0;
+                while (count < regexResult.length) {
+                    if (BooleanUtils.isTrue(segment.getAppend())) {
+                        if (m.find()) {
+                            regexResult[count] = regexResult[count] + m.group();
+                        }
+                    } else {
+                        if (count > 0 && m.find()) {
+                            regexResult[count] = m.group() + regexResult[count];
+                        }
                     }
-                } else {
-                    if (count > 0 && m.find()) {
-                        regexResult[count] = m.group() + regexResult[count];
-                    }
+                    count++;
                 }
-                count++;
+                return Arrays.asList(regexResult);
             }
-            return Arrays.asList(regexResult);
         }
 
         return Collections.singletonList(content);

@@ -24,6 +24,10 @@ public class JsonPathSegmentImpl extends SegmentBase<JsonPathSegment> {
 
     @Override
     protected List<String> splitInputContent(String content, JsonPathSegment segment, Request request, Response response) {
+        if(StringUtils.isEmpty(content)){
+            return Collections.emptyList();
+        }
+
         String jsonPath = segment.getJsonpath();
 
         logger.debug("Json path: {}", jsonPath);

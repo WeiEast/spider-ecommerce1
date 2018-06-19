@@ -32,6 +32,10 @@ public class RegexSegmentImpl extends SegmentBase<RegexSegment> {
 
     @Override
     public List<String> splitInputContent(String content, RegexSegment segment, Request request, Response response) {
+        if(StringUtils.isEmpty(content)){
+            return Collections.emptyList();
+        }
+
         String regex = StringUtils.defaultString(segment.getRegex());
 
         logger.debug("RegExp pattern: {}, group: {}", regex, segment.getGroupIndex());

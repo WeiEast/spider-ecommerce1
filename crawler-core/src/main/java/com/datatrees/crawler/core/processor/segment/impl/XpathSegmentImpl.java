@@ -33,6 +33,10 @@ public class XpathSegmentImpl extends SegmentBase<XpathSegment> {
 
     @Override
     public List<String> splitInputContent(String content, XpathSegment segment, Request request, Response response) {
+        if(StringUtils.isEmpty(content)){
+            return Collections.emptyList();
+        }
+
         String xpath = segment.getXpath();
 
         logger.debug("Xpath: {}", xpath);
