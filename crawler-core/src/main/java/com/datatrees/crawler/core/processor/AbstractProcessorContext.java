@@ -11,13 +11,13 @@ package com.datatrees.crawler.core.processor;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
+import com.datatrees.crawler.core.util.SynchronizedMap;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.treefinance.crawler.framework.context.ProcessContext;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
@@ -41,9 +41,9 @@ public abstract class AbstractProcessorContext extends ProcessContext {
     public AbstractProcessorContext(Website website, Long taskId) {
         super(website);
         this.taskId = Objects.requireNonNull(taskId);
-        this.context = new ConcurrentHashMap<>();
-        this.statusContext = new ConcurrentHashMap<>();
-        this.threadContext = new ConcurrentHashMap<>();
+        this.context = new SynchronizedMap<>();
+        this.statusContext = new SynchronizedMap<>();
+        this.threadContext = new SynchronizedMap<>();
         this.processorResult = new ProcessorResult();
         this.processorLog = new ProcessorResult();
     }
