@@ -62,7 +62,7 @@ public class DefaultCookieContext extends AtomicAttributes implements CookieCont
     }
 
     @Override
-    public void copyCookies(@Nonnull CrawlerContext context) {
+    public void copyCookies(@Nonnull CookieContext context) {
         Objects.requireNonNull(context);
         addCookieString(context.getCookiesAsString());
         addCookieMap(context.getCookies());
