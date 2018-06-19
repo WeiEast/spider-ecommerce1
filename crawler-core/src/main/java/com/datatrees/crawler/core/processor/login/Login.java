@@ -76,7 +76,7 @@ public enum Login {
             cookie = resultMap.get(PluginConstants.COOKIE).toString();
             // set other params from login to context
             resultMap.remove(PluginConstants.COOKIE);
-            if (resultMap.size() > 0) context.getContext().putAll(resultMap);
+            if (resultMap.size() > 0) context.addAttributes(resultMap);
         } else {
             logger.warn("doPluginLogin with no plugin ...");
         }
@@ -166,7 +166,7 @@ public enum Login {
             cookie = resultMap.get(PluginConstants.COOKIE) != null ? resultMap.get(PluginConstants.COOKIE).toString() : null;
             // set other params from login to context
             resultMap.remove(PluginConstants.COOKIE);
-            if (resultMap.size() > 0) context.getContext().putAll(resultMap);
+            if (resultMap.size() > 0) context.addAttributes(resultMap);
         } else {// httpclient
             cookie = LoginUtil.getInstance().doLogin(loginConfig, context);
         }

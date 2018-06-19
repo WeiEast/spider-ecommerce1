@@ -84,7 +84,7 @@ public class ExtractWorker {
     @SuppressWarnings({"rawtypes"})
     private Map doExtract(ExtractMessage extractMessage, ExtractorProcessorContext context, AbstractExtractResult result) {
         // set StoragePath to context
-        context.getContext().put("StoragePath", result.getStoragePath());
+        context.addAttribute("StoragePath", result.getStoragePath());
         ExtractorRepuest request = ExtractorRepuest.build().setProcessorContext(context);
         request.setInput(extractMessage.getMessageObject());
         Response response = Extractor.extract(request.contextInit());

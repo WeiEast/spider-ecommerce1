@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Jerry
  * @since 13:54 25/01/2018
  */
-public abstract class ProcessContext extends DefaultCookieContext implements CrawlerContext {
+public abstract class ProcessContext implements CrawlerContext {
 
     protected final Logger                      logger = LoggerFactory.getLogger(getClass());
     private final   Website                     website;
@@ -57,7 +57,11 @@ public abstract class ProcessContext extends DefaultCookieContext implements Cra
     }
 
     public String getWebsiteName() {
-        return website.getWebsiteName();
+        return getWebsite().getWebsiteName();
+    }
+
+    public String getWebsiteType() {
+        return getWebsite().getWebsiteType();
     }
 
     @Override
@@ -112,4 +116,5 @@ public abstract class ProcessContext extends DefaultCookieContext implements Cra
         }
         return service;
     }
+
 }

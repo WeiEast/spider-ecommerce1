@@ -143,7 +143,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                 break;
             }
 
-            Map<String, Object> resultMap = new HashMap<String, Object>();
+            Map<String, Object> resultMap = new HashMap<>();
             request.setInput(split);
             // extract field
 

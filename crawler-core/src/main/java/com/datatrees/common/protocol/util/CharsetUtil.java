@@ -50,13 +50,34 @@ public class CharsetUtil {
             }
         }
 
-        LOGGER.warn("Can not find charset '{}' or default '{}'.", charsetName, defaultCharset);
+        if (charset == null) {
+            LOGGER.warn("Can not find charset '{}' or default '{}'.", charsetName, defaultCharset);
+        }
+
+        return charset;
+    }
+
+    private static Charset getCharset(String charsetName, Charset defaultCharset) {
+        Charset charset = null;
+
+        if (StringUtils.isNotEmpty(charsetName)) {
+            try {
+                charset = Charset.forName(charsetName);
+            } catch (UnsupportedCharsetException e) {
+                LOGGER.warn("Charset '{}' is not supported. And use default charset '{}' instead.", charsetName, defaultCharset);
+            }
+        }
+
+        if (charset == null) {
+            LOGGER.warn("Can not find charset '{}',use default '{}'.", charsetName, defaultCharset);
+            charset = defaultCharset;
+        }
 
         return charset;
     }
 
     public static Charset getCharset(String charsetName) {
-        return getCharset(charsetName, DEFAULT);
+        return getCharset(charsetName, UTF_8);
     }
 
     public static String getDefaultCharsetName() {

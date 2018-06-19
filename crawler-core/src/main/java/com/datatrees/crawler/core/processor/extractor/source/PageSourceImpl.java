@@ -72,7 +72,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
             }
 
             // set source field to context
-            RequestUtil.getProcessorContext(request).getContext().put(source.getField(), result);
+            RequestUtil.getProcessorContext(request).addAttribute(source.getField(), result);
 
             builder.append(result);
         }

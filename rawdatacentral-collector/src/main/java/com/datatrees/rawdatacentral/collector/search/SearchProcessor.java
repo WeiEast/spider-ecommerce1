@@ -12,6 +12,7 @@ import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
+import com.datatrees.crawler.core.domain.config.search.SearchType;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.CrawlRequest;
 import com.datatrees.crawler.core.processor.bean.CrawlResponse;
@@ -84,8 +85,12 @@ public class SearchProcessor {
      *
      */
     public void init(String keyword) {
-        this.keyword = keyword;
         this.init();
+
+        if(keyword != null){
+            this.keyword = keyword;
+            ProcessorContextUtil.setKeyword(getProcessorContext(), keyword);
+        }
     }
 
     public void init() {
@@ -334,5 +339,13 @@ public class SearchProcessor {
 
     public SearchProcessorContext getProcessorContext() {
         return taskMessage.getContext();
+    }
+
+    public boolean isKeywordSearch() {
+        return SearchType.KEYWORD_SEARCH.equals(searchTemplateConfig.getType());
+    }
+
+    public Integer getWebsiteType(){
+        return Integer.valueOf(getProcessorContext().getWebsiteType());
     }
 }

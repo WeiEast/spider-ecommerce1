@@ -158,7 +158,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
                     try {
                         int pNum = Integer.valueOf(pNumber);
                         logger.info("add paging number: {},  match-text: {}", pNum, matcher.group(0));
-                        String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, ((SearchProcessorContext) RequestUtil.getProcessorContext(request)).getContext());
+                        String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false,  RequestUtil.getProcessorContext(request).getContext());
                         if (StringUtils.isNotEmpty(pageUrl)) {
                             logger.info("add page url: {}", pageUrl);
                             LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());

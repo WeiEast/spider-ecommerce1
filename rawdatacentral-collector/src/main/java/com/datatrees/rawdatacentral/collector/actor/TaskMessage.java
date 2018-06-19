@@ -8,10 +8,14 @@
 
 package com.datatrees.rawdatacentral.collector.actor;
 
+import java.util.Map;
+
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -158,4 +162,13 @@ public class TaskMessage {
         task.setErrorCode(errorCode, message);
     }
 
+    public void completeSearch(HttpResult<Map<String, Object>> searchResult) {
+        Task task = getTask();
+        task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
+        task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
+        //释放代理
+        if (searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
+            context.release();
+        }
+    }
 }
