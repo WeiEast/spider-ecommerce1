@@ -76,14 +76,14 @@ public class XPathUtil {
             } else {
                 resList.addAll(useJsoupSelect(select, content));
             }
-            log.debug("route to jsoup " + select);
+            log.debug("route to jsoup {}", select);
 
         } else {
             resList.addAll(useXpathSelect(select, content, extractText, split));
-            log.debug("route to xpath " + select);
+            log.debug("route to xpath {}", select);
         }
         if (CollectionUtils.isEmpty(resList)) {
-            log.warn("empty select content!" + select);
+            log.warn("empty select content! - {}", select);
         }
         return resList;
     }

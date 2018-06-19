@@ -51,9 +51,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
 
         StringBuilder builder = new StringBuilder();
         for (PageSource source : pageSources) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Search source : {}", source);
-            }
+            logger.debug("Search source : {}", source);
 
             String result = getPageContent(source, input, request);
 
@@ -67,9 +65,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
                 result = PageHelper.getTextByRegexp(result, regexp);
             }
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Actual source content:", result);
-            }
+            logger.debug("Actual source content: {}", result);
 
             // set source field to context
             RequestUtil.getProcessorContext(request).addAttribute(source.getField(), result);
@@ -78,9 +74,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         }
 
         String content = builder.toString();
-        if (logger.isDebugEnabled()) {
-            logger.debug("Actual extracting content: {}", content);
-        }
+        logger.debug("Actual extracting content: {}", content);
 
         RequestUtil.setContent(request, content);
     }
@@ -89,9 +83,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         String separator = StringUtils.defaultString(source.getSeparator());
         AbstractPlugin plugin = source.getPlugin();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Get page content. <<< source-ref: {}, separator: {}, plugin-ref: {}", source.getField(), separator, plugin != null ? plugin.getId() : null);
-        }
+        logger.debug("Get page content. <<< source-ref: {}, separator: {}, plugin-ref: {}", source.getField(), separator, plugin != null ? plugin.getId() : null);
 
         if (plugin != null) {
             Object value = SourceFieldUtils.getFieldValue(input, source.getField());
@@ -140,9 +132,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
             logger.error("incorrect input content to call plugin to get source content. <<< {}", value);
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Source content : {}", content);
-        }
+        logger.debug("Source content : {}", content);
 
         return content;
     }

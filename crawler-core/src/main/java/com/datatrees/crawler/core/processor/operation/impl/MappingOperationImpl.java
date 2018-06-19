@@ -48,7 +48,7 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull MappingOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull MappingOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String input = (String) operatingData;
 
         String result = null;
@@ -62,6 +62,6 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
 
         logger.debug("Mapping field value, group: {}, input: {}, output: {}", operation.getGroupName(), input, result);
 
-        response.setOutPut(result);
+        return result;
     }
 }

@@ -31,7 +31,7 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String sourceId = operation.getSourceId();
         Matcher matcher = null;
         String result = null;
@@ -42,7 +42,7 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
             result = matcher.group(operation.getGroupIndex());
         }
         logger.debug("After match group. index: {}, result: {}", operation.getGroupIndex(), result);
-        response.setOutPut(result);
+        return result;
     }
 
 }

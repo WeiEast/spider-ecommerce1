@@ -31,10 +31,10 @@ public class MailParserOperationImpl extends Operation<MailParserOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull MailParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull MailParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String result = (String) operatingData;
 
-        response.setOutPut(MailParserImpl.INSTANCE.parseMessage(RequestUtil.getProcessorContext(request).getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser())));
+        return MailParserImpl.INSTANCE.parseMessage(RequestUtil.getProcessorContext(request).getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser()));
     }
 
 }

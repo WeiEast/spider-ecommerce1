@@ -29,7 +29,7 @@ public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull ReturnMatchOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ReturnMatchOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String value = operation.getValue();
         String orginal = (String) operatingData;
 
@@ -50,7 +50,7 @@ public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
             }
         }
 
-        response.setOutPut(result.toString());
+        return result.toString();
     }
 
 }

@@ -269,9 +269,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
         String pattern = proxyConf.getPattern();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Proxy-conf >>> pattern: {}, proxy: {}, url: {}", pattern, proxyConf.getProxy(), url);
-        }
+        logger.debug("Proxy-conf >>> pattern: {}, proxy: {}, url: {}", pattern, proxyConf.getProxy(), url);
 
         if (StringUtils.isEmpty(pattern)) {
             // If not, will maintain the original logic

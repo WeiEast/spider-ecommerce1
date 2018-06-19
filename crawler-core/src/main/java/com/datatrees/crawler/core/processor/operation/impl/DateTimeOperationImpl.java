@@ -33,7 +33,7 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
 
         BaseType baseType = operation.getBaseType();
 
@@ -157,8 +157,8 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
         } else {
             result = rawResultObj != null ? rawResultObj.toDate() : "";
         }
-        logger.debug("raw result in date format: {}", result);
-        response.setOutPut(result);
+
+        return result;
     }
 
     private DateTime timeCalibrate(DateTime baseDateTime, BaseType baseType) {

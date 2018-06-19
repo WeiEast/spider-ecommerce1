@@ -51,7 +51,7 @@ public class ExtractOperationImpl extends Operation<ExtractOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull ExtractOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ExtractOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         // get input
         String content = (String) operatingData;
         String baseURL = RequestUtil.getCurrentUrl(request).getUrl();
@@ -61,8 +61,6 @@ public class ExtractOperationImpl extends Operation<ExtractOperation> {
             url = CollectionUtils.isNotEmpty(textUrls) ? textUrls.get(0) : "";
         }
 
-        logger.debug("Extracted result: {}, content: {}", url, content);
-
-        response.setOutPut(url);
+        return url;
     }
 }

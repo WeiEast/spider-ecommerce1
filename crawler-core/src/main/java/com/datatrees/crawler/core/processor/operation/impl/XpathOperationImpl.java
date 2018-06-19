@@ -34,7 +34,7 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String xpath = operation.getXpath();
 
         xpath = StandardExpression.eval(xpath, request, response);
@@ -51,8 +51,8 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
             resultStirng = "";
         }
         resultStirng = StringUtils.isEmpty(resultStirng) && BooleanUtils.isTrue(operation.getEmptyToNull()) ? null : resultStirng;
-        logger.debug("xpath extracted result: {}", resultStirng);
-        response.setOutPut(resultStirng);
+
+        return resultStirng;
     }
 
 }

@@ -28,11 +28,8 @@ public class ReturnOperationImpl extends Operation<ReturnOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull ReturnOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
-        String input = (String) operatingData;
-
-        logger.debug("Return current input : {}", input);
-        response.setOutPut(input);
+    protected Object doOperation(@Nonnull ReturnOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        return operatingData;
     }
 
 }

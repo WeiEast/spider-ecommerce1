@@ -54,15 +54,11 @@ public final class PageHelper {
             return content;
         }
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Extract content by regexp[pattern: {}, index: {}] <<< {}", regexp.getRegex(), regexp.getIndex(), content);
-        }
+        LOGGER.debug("Extract content by regexp[pattern: {}, index: {}] <<< {}", regexp.getRegex(), regexp.getIndex(), content);
 
         String result = RegExp.group(content, regexp.getRegex(), regexp.getIndex());
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Extracted result >>> {}", result);
-        }
+        LOGGER.debug("Extracted result >>> {}", result);
 
         return result;
     }

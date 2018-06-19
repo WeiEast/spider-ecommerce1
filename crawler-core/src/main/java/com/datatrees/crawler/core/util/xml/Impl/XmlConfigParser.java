@@ -141,7 +141,7 @@ public class XmlConfigParser implements ConfigParser {
     private void defaultTypeProcess(Object element, Class<?> setClassType, Object parent, Method method) {
         Object value = processValue(element, setClassType);
         if (value != null) {
-            logger.debug("invoke method : " + method.getName() + " for target : " + parent + " with value : " + value);
+            logger.trace("invoke method : {} for target : {} with value : {}", method.getName(), parent, value);
             ReflectionUtils.invokeMethod(method, parent, value);
         }
     }
@@ -161,7 +161,7 @@ public class XmlConfigParser implements ConfigParser {
 
     private void methodinvoke(Object value, Object parent, Method method, Node node) throws ParseException {
         if (value != null) {
-            logger.debug("invoke method : " + method.getName() + " for target : " + parent + " with value : " + value);
+            logger.trace("invoke method : {} for target : {} with value : {}" ,method.getName(), parent,value);
             ReflectionUtils.invokeMethod(method, parent, value);
             if (node.registered()) {
                 String id = value.toString();

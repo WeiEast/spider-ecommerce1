@@ -30,7 +30,7 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull ReplaceOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ReplaceOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String from = operation.getFrom();
         String to = operation.getTo();
 
@@ -49,10 +49,6 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
 
         String orginal = (String) operatingData;
 
-        String dest = orginal.replaceAll(from, to); // change replace to regex
-
-        logger.debug("replace result: {}", dest);
-        response.setOutPut(dest);
-        // finally invoke next valve
+        return orginal.replaceAll(from, to);
     }
 }

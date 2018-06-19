@@ -37,7 +37,7 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull ParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         Parser parser = operation.getParser();
         Preconditions.checkNotNull(parser, "ParserOperation parser element should not be null!");
         boolean needRequest = false;
@@ -53,10 +53,12 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
             needReturnUrlList = true;
         }
         logger.debug("invoke parser process: {}", field);
-        ParserImpl parserImpl = new ParserImpl(parser, needRequest, needReturnUrlList);
-        Object result = parserImpl.parse((String) operatingData, request, response);
-        response.setOutPut(result);
-        logger.debug("success invoke parser process: {}", field);
+        try {
+            ParserImpl parserImpl = new ParserImpl(parser, needRequest, needReturnUrlList);
+            return parserImpl.parse((String) operatingData, request, response);
+        } finally {
+            logger.debug("success invoke parser process: {}", field);
+        }
     }
 
 }

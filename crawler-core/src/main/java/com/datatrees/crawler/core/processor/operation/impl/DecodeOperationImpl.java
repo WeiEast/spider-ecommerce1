@@ -38,7 +38,7 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
       // get input
         String orginal = (String) operatingData;
 
@@ -48,8 +48,7 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
 
         log.debug("decode-type: {}", decodeType);
 
-        String result = decode(orginal, decodeType, charSet);
-        response.setOutPut(result);
+        return decode(orginal, decodeType, charSet);
     }
 
     /**

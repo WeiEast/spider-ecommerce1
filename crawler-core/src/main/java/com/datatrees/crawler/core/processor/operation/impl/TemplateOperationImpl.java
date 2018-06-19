@@ -31,7 +31,7 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull TemplateOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull TemplateOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String template = operation.getTemplate();
 
         Object output;
@@ -41,7 +41,7 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
             output = StandardExpression.eval(template, request, response);
         }
 
-        response.setOutPut(output);
+        return output;
     }
 
 }

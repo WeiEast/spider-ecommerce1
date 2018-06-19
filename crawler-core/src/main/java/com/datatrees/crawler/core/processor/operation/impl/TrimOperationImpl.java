@@ -30,13 +30,13 @@ public class TrimOperationImpl extends Operation<TrimOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull TrimOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull TrimOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String input = (String) operatingData;
 
         String output = StringUtils.trim(input);
         output = CharMatcher.whitespace().trimFrom(output);
-        logger.debug("Trim operation, input: {}, out: {}", input, output);
-        response.setOutPut(output);
+
+        return output;
     }
 
 }
