@@ -14,7 +14,7 @@ import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
+import com.datatrees.crawler.core.domain.config.segment.impl.BaseSegment;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 
 /**
@@ -22,14 +22,14 @@ import com.datatrees.crawler.core.processor.segment.SegmentBase;
  * @version 1.0
  * @since Mar 3, 2014 10:37:37 AM
  */
-public class BaseSegmentImpl extends SegmentBase<AbstractSegment> {
+public class BaseSegmentImpl extends SegmentBase<BaseSegment> {
 
-    public BaseSegmentImpl(@Nonnull AbstractSegment segment) {
+    public BaseSegmentImpl(@Nonnull BaseSegment segment) {
         super(segment);
     }
 
     @Override
-    public List<String> splitInputContent(String content, AbstractSegment segment, Request request, Response response) {
+    public List<String> splitInputContent(String content, BaseSegment segment, Request request, Response response) {
         return Collections.singletonList(content);
     }
 
