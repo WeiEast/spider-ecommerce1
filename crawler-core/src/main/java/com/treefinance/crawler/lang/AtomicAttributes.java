@@ -41,6 +41,10 @@ public class AtomicAttributes implements Attributes {
         }
     }
 
+    protected Map<String, Object> attributes() {
+        return ensureMap();
+    }
+
     @Override
     public void setAttribute(@Nonnull String name, @Nullable Object attribute) {
         if (attribute == null) removeAttribute(name);
