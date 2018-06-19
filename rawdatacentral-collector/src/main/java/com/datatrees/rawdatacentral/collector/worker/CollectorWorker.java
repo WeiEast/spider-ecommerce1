@@ -31,7 +31,6 @@ import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.rawdatacentral.collector.worker.filter.TemplateFilter;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
@@ -125,9 +124,8 @@ public class CollectorWorker {
     public HttpResult<Map<String, Object>> doSearch(TaskMessage taskMessage) {
         HttpResult<Map<String, Object>> searchResult = new HttpResult<>();
         Task task = taskMessage.getTask();
-        SearchProcessorContext context = taskMessage.getContext();
         try {
-            List<Future<Object>> futureList = this.startCrawler(taskMessage, task, context);
+            List<Future<Object>> futureList = this.startCrawler(taskMessage, task);
 
             Map<String, Object> resultMap = this.awaitDone(futureList, taskMessage);
 
@@ -149,12 +147,7 @@ public class CollectorWorker {
             LOGGER.error("Something is wrong when searching! taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
             return searchResult.failure();
         } finally {
-            task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
-            task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
-            //释放代理
-            if (searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
-                context.release();
-            }
+            taskMessage.completeSearch(searchResult);
         }
     }
 
@@ -207,7 +200,8 @@ public class CollectorWorker {
         }
     }
 
-    private List<Future<Object>> startCrawler(TaskMessage taskMessage, Task task, SearchProcessorContext context) throws ConfigException, ResultEmptyException {
+    private List<Future<Object>> startCrawler(TaskMessage taskMessage, Task task) throws ConfigException, ResultEmptyException {
+        SearchProcessorContext context = taskMessage.getContext();
         Collection<SearchTemplateConfig> templateList = context.getSearchTemplates();
         if (CollectionUtils.isEmpty(templateList)) {
             throw new ConfigException("Search template in config is empty!");
@@ -288,7 +282,7 @@ public class CollectorWorker {
                 searchProcessor.setTimeout(request.getMaxExecuteMinutes(), TimeUnit.MINUTES);
             }
 
-            crawlExecutor.crawlExecutor(searchProcessor);
+            crawlExecutor.execute(searchProcessor);
 
             return searchProcessor.getFutureList();
         } catch (ResultEmptyException e) {
@@ -323,7 +317,7 @@ public class CollectorWorker {
             seedUrl = request.getSearchTemplateList().get(0);
         }
 
-        return StandardExpression.eval(seedUrl, context.getContext(), false);
+        return seedUrl;
     }
 
     public Map<String, Object> mergeSubTaskResult(int taskid, Map<String, Object> resultMap) {

@@ -57,7 +57,11 @@ public abstract class ProcessContext extends DefaultCookieContext implements Cra
     }
 
     public String getWebsiteName() {
-        return website.getWebsiteName();
+        return getWebsite().getWebsiteName();
+    }
+
+    public String getWebsiteType() {
+        return getWebsite().getWebsiteType();
     }
 
     @Override
