@@ -323,7 +323,7 @@ public class CollectorWorker {
             seedUrl = request.getSearchTemplateList().get(0);
         }
 
-        return StandardExpression.eval(seedUrl, context.getContext());
+        return StandardExpression.eval(seedUrl, context.getContext(), false);
     }
 
     public Map<String, Object> mergeSubTaskResult(int taskid, Map<String, Object> resultMap) {

@@ -1,8 +1,10 @@
 package com.treefinance.crawler.framework.expression;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
@@ -45,6 +47,10 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExp(value, fieldStack);
     }
 
+    public static String eval(String value, Map<String, Object> fieldStack, boolean failOnUnKnown) {
+        return ExpressionExecutor.evalExp(value, new ExpEvalContext(fieldStack, failOnUnKnown));
+    }
+
     public static Object evalWithObject(String value, List<Map<String, Object>> fieldScopes) {
         return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.merge(fieldScopes));
     }
@@ -74,4 +80,17 @@ public final class StandardExpression {
     public static String evalUrl(String value, Map<String, Object> fieldStack, String charset) {
         return ExpressionExecutor.evalExp(value, fieldStack, URL_ENCODED_KEYS, charset);
     }
+
+    public static String evalExp(@Nonnull String value, @Nonnull ExpEvalContext context) {
+        return ExpressionExecutor.evalExp(value, context);
+    }
+
+    public static String evalExp(@Nonnull String value, @Nonnull ExpEvalContext context, BiFunction<String, String, String> mappingFunction) {
+        return ExpressionExecutor.evalExp(value, context, mappingFunction);
+    }
+
+    public static Object evalExpWithObject(@Nonnull String value, @Nonnull ExpEvalContext context) {
+        return ExpressionExecutor.evalExpWithObject(value, context);
+    }
+
 }
