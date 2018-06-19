@@ -32,7 +32,7 @@ class PlaceholderResolver {
     }
 
     public String resolveAsString(@Nonnull String placeholder) {
-        Object value = resolve(placeholder);
+        Object value = findValue(placeholderMapping, placeholder);
 
         if (value == null) {
             if (!allowNull) {
