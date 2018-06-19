@@ -226,7 +226,7 @@ public class Collector {
             CollectorWorker collectorWorker = collectorWorkerFactory.getCollectorWorker(taskMessage);
 
             // set status level 1 status
-            taskMessage.getContext().getStatusContext().put(ResultMessage.LEVAL_1_STATUS, message.isLevel1Status());
+            taskMessage.getContext().addStatusAttr(ResultMessage.LEVAL_1_STATUS, message.isLevel1Status());
 
             boolean needLogin = context.needLogin();
             LoginType loginType = context.getLoginConfig() != null ? context.getLoginConfig().getType() : null;

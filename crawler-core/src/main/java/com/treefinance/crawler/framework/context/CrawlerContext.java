@@ -26,7 +26,7 @@ import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
  * @author Jerry
  * @since 13:54 25/01/2018
  */
-public interface CrawlerContext extends CookieContext {
+public interface CrawlerContext {
 
     Map<String, AbstractPlugin> getPluginMetadataMap();
 

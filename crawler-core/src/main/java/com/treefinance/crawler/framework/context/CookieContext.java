@@ -20,7 +20,7 @@ public interface CookieContext extends Context {
 
     void deleteCookies();
 
-    void copyCookies(@Nonnull final CrawlerContext context);
+    void copyCookies(@Nonnull final CookieContext context);
 
     /**
      * if not to add,update or delete the cookies directly, recommend to use {@link #getCookiesAsMap()}

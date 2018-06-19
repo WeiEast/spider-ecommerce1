@@ -79,12 +79,12 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void process(Request request, Response response) throws Exception {
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         logger.debug("start field extractor >>  {}, ", fieldExtractor);
 
         Object fieldResult = null;
         FieldExtractResultSet fieldExtractResultSet = initMap(response);
-        String content = "";
+        String content;
         try {
             content = RequestUtil.getContent(request);
             String sourceId = fieldExtractor.getSourceId();
@@ -146,11 +146,11 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
                 RequestUtil.getRequestVisibleFields(request).put(id, fieldResult);
             } else if (FieldVisibleType.CONTEXT.equals(fieldVisibleType)) {
                 RequestUtil.getContext(request).put(id, fieldResult);
-                RequestUtil.getProcessorContext(request).getContext().put(id, fieldResult);
+                RequestUtil.getProcessorContext(request).addAttribute(id, fieldResult);
             } else if (FieldVisibleType.PROCESSOR_RESULT.equals(fieldVisibleType)) {
                 RequestUtil.getContext(request).put(id, fieldResult);
-                RequestUtil.getProcessorContext(request).getContext().put(id, fieldResult);
-                RequestUtil.getProcessorContext(request).getProcessorResult().put(id, fieldResult);
+                RequestUtil.getProcessorContext(request).addAttribute(id, fieldResult);
+                RequestUtil.getProcessorContext(request).addProcessorResult(id, fieldResult);
             }
         }
 

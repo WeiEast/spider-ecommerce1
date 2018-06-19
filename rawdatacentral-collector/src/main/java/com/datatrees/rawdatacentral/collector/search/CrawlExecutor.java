@@ -65,7 +65,7 @@ public class CrawlExecutor {
                 doExecute(searchProcessor, linkQueue, null, threadCount);
             }
         } catch (Exception e) {
-            this.exceptionHandle(e, "crawlExecutor encountered a problem.");
+            this.exceptionHandle(e, "Crawler executor encountered a problem.");
         } finally {
             if (searchProcessor.getCrawlExecutorPool() != null) {
                 searchProcessor.getCrawlExecutorPool().shutdownNow();

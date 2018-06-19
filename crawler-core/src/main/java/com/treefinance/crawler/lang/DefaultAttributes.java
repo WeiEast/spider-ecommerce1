@@ -17,6 +17,10 @@ public class DefaultAttributes implements Attributes {
 
     private final Map<String, Object> map = new HashMap<>();
 
+    protected Map<String, Object> attributes() {
+        return map;
+    }
+
     @Override
     public void setAttribute(@Nonnull String name, @Nullable Object attribute) {
         if (attribute == null) {
