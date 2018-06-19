@@ -145,7 +145,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
                 } catch (Throwable e) {
                     logger.error("save to back redis error ", e);
                 }
-            } else {
+            } else if(entry.getValue() != null){
                 redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 30, TimeUnit.MINUTES);
                 try {
                     BackRedisUtils.set(backKey, JSON.toJSONString(entry.getValue()));

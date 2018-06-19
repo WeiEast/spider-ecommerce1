@@ -270,19 +270,6 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         return content;
     }
 
-    protected void postProcess(Request request, Response response) throws ResultEmptyException {
-        try {
-            if (getNext() != null) {
-                getNext().invoke(request, response);
-            }
-        } catch (ResultEmptyException e) {
-            throw e;
-        } catch (Exception e) {
-            logger.error("invoke next error!", e);
-        }
-
-    }
-
     private FieldExtractResultSet initMap(Response response) {
         FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
         if (fieldExtractResultSet == null) {

@@ -93,9 +93,11 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
 
         // get pop return
         if (Boolean.TRUE.equals(segment.getPopReturn())) {
-            Object result = null;
+            Object result;
             if (CollectionUtils.isNotEmpty(resultList)) {
                 result = resultList.get(0);
+            } else {
+                result = new HashMap<String, Object>();
             }
             // result reset
             ResponseUtil.setSegmentsResults(response, result);
@@ -219,14 +221,14 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
             } else {
                 // obj-seg --> obj-seg with the same name
                 Object resultObject = resultMap.get(segment.getName());
-                if (resultObject != null && resultObject instanceof Map) {
+                if (resultObject instanceof Map) {
                     resultMap.remove(segment.getName());
                     ((Map) resultObject).putAll(resultMap);
                     resultList.add(resultObject);
-                } else if (resultObject != null && resultObject instanceof Collection) {
+                } else if (resultObject instanceof Collection) {
                     resultMap.remove(segment.getName());
                     for (Object map : (Collection) resultObject) {
-                        if (map != null && map instanceof Map) {
+                        if (map instanceof Map) {
                             ((Map) map).putAll(resultMap);
                         }
                     }
