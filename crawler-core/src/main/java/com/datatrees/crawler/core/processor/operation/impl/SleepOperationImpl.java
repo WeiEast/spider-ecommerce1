@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.SleepOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 
@@ -20,9 +23,12 @@ import com.datatrees.crawler.core.processor.operation.Operation;
  */
 public class SleepOperationImpl extends Operation<SleepOperation> {
 
+    public SleepOperationImpl(@Nonnull SleepOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        SleepOperation operation = getOperation();
+    protected void doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         Integer sleepTime = operation.getValue();
         if (sleepTime != null) {
             logger.debug("Start to Sleep: {}", sleepTime);

@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DecodeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.decode.DecodeType;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
@@ -17,7 +20,6 @@ import com.datatrees.crawler.core.processor.decode.impl.BasicDecode;
 import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import com.datatrees.crawler.core.processor.decode.impl.StandardDecode;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +33,14 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
 
     private static final Logger log = LoggerFactory.getLogger(DecodeOperationImpl.class);
 
-    @Override
-    public void process(Request request, Response response) throws Exception {
-        // get input
-        String orginal = OperationHelper.getStringInput(request, response);
+    public DecodeOperationImpl(@Nonnull DecodeOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
-        DecodeOperation operation = getOperation();
+    @Override
+    protected void doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+      // get input
+        String orginal = (String) operatingData;
 
         String charSet = StringUtils.isEmpty(operation.getCharset()) ? (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil.getContentCharset(request)) : operation.getCharset();
 

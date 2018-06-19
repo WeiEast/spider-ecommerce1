@@ -8,11 +8,13 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReturnOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -21,9 +23,13 @@ import com.datatrees.crawler.core.processor.operation.OperationHelper;
  */
 public class ReturnOperationImpl extends Operation<ReturnOperation> {
 
+    public ReturnOperationImpl(@Nonnull ReturnOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        String input = OperationHelper.getStringInput(request, response);
+    protected void doOperation(@Nonnull ReturnOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
 
         logger.debug("Return current input : {}", input);
         response.setOutPut(input);

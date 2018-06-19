@@ -8,16 +8,17 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.io.UnsupportedEncodingException;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.CodecOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.codec.CodecType;
 import com.datatrees.crawler.core.domain.config.operation.impl.codec.HandlingType;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -32,9 +33,12 @@ import org.apache.commons.lang.StringUtils;
  */
 public class CodecOperationImpl extends Operation<CodecOperation> {
 
+    public CodecOperationImpl(@Nonnull CodecOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        CodecOperation operation = getOperation();
+    protected void doOperation(@Nonnull CodecOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String charSet = RequestUtil.getContentCharset(request);
         // check default charset
         charSet = StringUtils.defaultIfEmpty(charSet, "UTF-8");
@@ -45,7 +49,7 @@ public class CodecOperationImpl extends Operation<CodecOperation> {
         logger.debug("codec-type: {}, handling-type: {}", cdType, handlType);
 
         // get input
-        String input = OperationHelper.getStringInput(request, response);
+        String input = (String) operatingData;
         String result = handlerCodec(input, cdType, handlType, charSet);
 
         response.setOutPut(result);

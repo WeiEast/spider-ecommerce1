@@ -4,7 +4,6 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +18,8 @@ abstract class FetchLinkNodeFilter implements Filter {
 
     @Override
     public void doFilter(Context context, FilterChain filterChain) {
-        LinkNode fetchLinkNode = ContextUtil.getFetchLinkNode(context);
-        SearchProcessor searchProcessor = ContextUtil.getSearchProcessor(context);
+        LinkNode fetchLinkNode = context.getFetchLinkNode();
+        SearchProcessor searchProcessor = context.getSearchProcessor();
 
         boolean filtered = false;
         try {

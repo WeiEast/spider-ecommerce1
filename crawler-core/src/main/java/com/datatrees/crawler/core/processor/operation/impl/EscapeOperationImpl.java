@@ -8,13 +8,15 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.EscapeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.escape.EscapeType;
 import com.datatrees.crawler.core.domain.config.operation.impl.escape.HandlingType;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -24,11 +26,15 @@ import org.apache.commons.lang.StringEscapeUtils;
  */
 public class EscapeOperationImpl extends Operation<EscapeOperation> {
 
+    public EscapeOperationImpl(@Nonnull EscapeOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
+    protected void doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+
         // get input
-        String orginal = OperationHelper.getStringInput(request, response);
-        EscapeOperation operation = getOperation();
+        String orginal = (String) operatingData;
         EscapeType escapeType = operation.getEscapeType();
         HandlingType handlType = operation.getHandlingType();
 

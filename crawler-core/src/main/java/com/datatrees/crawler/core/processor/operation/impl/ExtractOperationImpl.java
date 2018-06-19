@@ -8,17 +8,18 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -31,6 +32,10 @@ import org.apache.commons.lang.StringUtils;
  * @since Mar 27, 2014 12:30:43 PM
  */
 public class ExtractOperationImpl extends Operation<ExtractOperation> {
+
+    public ExtractOperationImpl(@Nonnull ExtractOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     private String extractHtmlLink(String content, String baseURL) {
         // parser url from html
@@ -46,9 +51,9 @@ public class ExtractOperationImpl extends Operation<ExtractOperation> {
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    protected void doOperation(@Nonnull ExtractOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         // get input
-        String content = OperationHelper.getStringInput(request, response);
+        String content = (String) operatingData;
         String baseURL = RequestUtil.getCurrentUrl(request).getUrl();
         String url = this.extractHtmlLink(content, baseURL);
         if (StringUtils.isBlank(url)) {

@@ -8,10 +8,12 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MatchGroupOperation;
 import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
@@ -24,19 +26,22 @@ import org.apache.commons.lang.StringUtils;
  */
 public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
 
+    public MatchGroupOperationImpl(@Nonnull MatchGroupOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        MatchGroupOperation op = getOperation();
-        String sourceId = op.getSourceId();
+    protected void doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String sourceId = operation.getSourceId();
         Matcher matcher = null;
         String result = null;
         if (StringUtils.isNotEmpty(sourceId)) {
             matcher = (Matcher) SourceUtil.getSourceMap(sourceId, request, response);
         }
         if (matcher != null) {
-            result = matcher.group(op.getGroupIndex());
+            result = matcher.group(operation.getGroupIndex());
         }
-        logger.debug("After match group. index: {}, result: {}", op.getGroupIndex(), result);
+        logger.debug("After match group. index: {}, result: {}", operation.getGroupIndex(), result);
         response.setOutPut(result);
     }
 

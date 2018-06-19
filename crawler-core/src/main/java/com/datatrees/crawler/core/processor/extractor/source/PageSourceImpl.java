@@ -8,10 +8,12 @@
 
 package com.datatrees.crawler.core.processor.extractor.source;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.PageSource;
@@ -20,7 +22,6 @@ import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
@@ -35,16 +36,16 @@ import org.apache.commons.lang3.StringUtils;
  * @version 1.0
  * @since 2015年7月14日 下午10:23:47
  */
-public class PageSourceImpl extends Processor {
+public class PageSourceImpl extends ProcessorInvokerAdapter {
 
-    private List<PageSource> pageSources;
+    private final List<PageSource> pageSources;
 
-    public PageSourceImpl(List<PageSource> pageSources) {
+    public PageSourceImpl(@Nonnull List<PageSource> pageSources) {
         this.pageSources = Objects.requireNonNull(pageSources);
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         Object input = request.getInput();
         Preconditions.checkNotNull(input, "input should not be null!");
 

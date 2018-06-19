@@ -8,17 +8,16 @@
 
 package com.datatrees.crawler.core.processor.segment.impl;
 
-import java.util.LinkedList;
+import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
+import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.XpathSegment;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import org.apache.commons.collections.CollectionUtils;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -28,29 +27,31 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class XpathSegmentImpl extends SegmentBase<XpathSegment> {
 
+    public XpathSegmentImpl(@Nonnull XpathSegment segment) {
+        super(segment);
+    }
+
     @Override
-    public List<String> getSplit(Request request) {
-        String content = RequestUtil.getContent(request);
-
-        List<String> result = new LinkedList<>();
-
-        XpathSegment segment = getSegment();
+    public List<String> splitInputContent(String content, XpathSegment segment, Request request, Response response) {
         String xpath = segment.getXpath();
 
-        if (StringUtils.isNotBlank(xpath)) {
-            Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
-            xpath = ReplaceUtils.replaceMap(sourceMap, xpath);
+        logger.debug("Xpath: {}", xpath);
+
+        xpath = StringUtils.trimToEmpty(xpath);
+
+        if (!xpath.isEmpty()) {
+            xpath = StandardExpression.eval(xpath, request, response);
+
+            logger.debug("Actual xpath: {}", xpath);
 
             List<String> segments = XPathUtil.getXpath(xpath, content);
-            logger.info("segment count@{} by using xpath: {}", segments.size(), xpath);
-            if (CollectionUtils.isNotEmpty(segments)) {
-                result.addAll(segments);
-            }
-        } else {
-            result.add(content);
+
+            logger.info("jsonpath: {}, segments size: {}", xpath, segments.size());
+
+            return segments;
         }
 
-        return result;
+        return Collections.singletonList(content);
     }
 
 }

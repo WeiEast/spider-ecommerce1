@@ -8,17 +8,14 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import java.util.Map;
+import javax.annotation.Nonnull;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReplaceOperation;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.crawler.framework.expression.ExpressionEngine;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -28,25 +25,29 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
 
+    public ReplaceOperationImpl(@Nonnull ReplaceOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        ReplaceOperation op = getOperation();
-        String from = op.getFrom();
-        String to = op.getTo();
-        Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
+    protected void doOperation(@Nonnull ReplaceOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String from = operation.getFrom();
+        String to = operation.getTo();
 
-        // result context
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
-
+        ExpressionEngine expressionEngine = null;
         if (StringUtils.isNotBlank(from)) {
-            from = ReplaceUtils.replaceMap(ReplaceUtils.getReplaceList(from), fieldContext, sourceMap, from);
-        }
-        if (StringUtils.isNotBlank(to)) {
-            to = ReplaceUtils.replaceMap(ReplaceUtils.getReplaceList(to), fieldContext, sourceMap, to);
+            expressionEngine = new ExpressionEngine(request, response);
+            from = expressionEngine.eval(from);
         }
 
-        String orginal = OperationHelper.getStringInput(request, response);
+        if (StringUtils.isNotBlank(to)) {
+            if (expressionEngine == null) {
+                expressionEngine = new ExpressionEngine(request, response);
+            }
+            to = expressionEngine.eval(to);
+        }
+
+        String orginal = (String) operatingData;
 
         String dest = orginal.replaceAll(from, to); // change replace to regex
 

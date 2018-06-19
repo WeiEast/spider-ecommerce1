@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 
-import com.treefinance.crawler.framework.classfile.ClassLoaderUtils;
+import com.treefinance.crawler.classfile.ClassLoaderUtils;
 import com.treefinance.crawler.framework.exception.ExtensionException;
 
 /**

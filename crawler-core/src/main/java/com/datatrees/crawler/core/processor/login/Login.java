@@ -136,12 +136,12 @@ public enum Login {
     private void doClientLogin(SearchProcessorContext context) throws Exception {
         LoginConfig loginConfig = context.getLoginConfig();
         WebsiteAccount account = context.getLoginResource().getAccount(ProcessorContextUtil.getAccountKey(context));
-        ProcessorContextUtil.setAccount(context, account);
-
         if (account == null) {
             logger.error("no active accountlist while do client login for " + ProcessorContextUtil.getAccountKey(context));
             throw new LoginException("no active accountlist while do client login for " + ProcessorContextUtil.getAccountKey(context));
         }
+
+        ProcessorContextUtil.setAccount(context, account);
 
         Cookie objCookie = new Cookie();
         objCookie.setUserName(account.getUserName());

@@ -8,12 +8,13 @@
 
 package com.datatrees.crawler.core.processor.segment.impl;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
+import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 
 /**
@@ -23,14 +24,13 @@ import com.datatrees.crawler.core.processor.segment.SegmentBase;
  */
 public class BaseSegmentImpl extends SegmentBase<AbstractSegment> {
 
-    /*
-     * (non-Javadoc)
-     * empty imple
-     * @see
-     */
+    public BaseSegmentImpl(@Nonnull AbstractSegment segment) {
+        super(segment);
+    }
+
     @Override
-    public List<String> getSplit(Request request) {
-        return Collections.singletonList(RequestUtil.getContent(request));
+    public List<String> splitInputContent(String content, AbstractSegment segment, Request request, Response response) {
+        return Collections.singletonList(content);
     }
 
 }

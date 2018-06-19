@@ -7,7 +7,6 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.Filters;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +38,11 @@ public class URLHandlerImpl implements URLHandler {
     public boolean handle(LinkNode current, LinkNode fetched) {
         try {
             Context context = new Context();
-            ContextUtil.setFetchLinkNode(context, fetched);
-            ContextUtil.setCurrentLinkNode(context, current);
-            ContextUtil.setURLHandlerImpl(context, this);
-            ContextUtil.setSearchProcessor(context, searchProcessor);
-            ContextUtil.setDuplicateChecker(context, duplicateChecker);
+            context.setFetchLinkNode(fetched);
+            context.setCurrentLinkNode(current);
+            context.setURLHandlerImpl(this);
+            context.setSearchProcessor(searchProcessor);
+            context.setDuplicateChecker(duplicateChecker);
 
             Filters.LINKNODE.doFilter(context);
         } catch (Exception e) {

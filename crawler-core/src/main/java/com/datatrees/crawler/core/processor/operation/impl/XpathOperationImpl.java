@@ -8,19 +8,16 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.XpathOperation;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,17 +29,17 @@ import org.apache.commons.lang.StringUtils;
  */
 public class XpathOperationImpl extends Operation<XpathOperation> {
 
+    public XpathOperationImpl(@Nonnull XpathOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        XpathOperation operation = getOperation();
+    protected void doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String xpath = operation.getXpath();
 
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
-        Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
+        xpath = StandardExpression.eval(xpath, request, response);
 
-        xpath = ReplaceUtils.replaceMap(fieldContext, sourceMap, xpath);
-
-        String orginal = OperationHelper.getStringInput(request, response);
+        String orginal = (String) operatingData;
         String resultStirng = "";
         List<String> result = XPathUtil.getXpath(xpath, orginal);
         if (CollectionUtils.isNotEmpty(result)) {
@@ -56,7 +53,6 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
         resultStirng = StringUtils.isEmpty(resultStirng) && BooleanUtils.isTrue(operation.getEmptyToNull()) ? null : resultStirng;
         logger.debug("xpath extracted result: {}", resultStirng);
         response.setOutPut(resultStirng);
-
     }
 
 }

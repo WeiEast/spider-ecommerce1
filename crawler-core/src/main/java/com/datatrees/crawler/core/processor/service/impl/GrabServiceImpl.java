@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.service.impl;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -20,26 +21,24 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by zhouxinghai on 2017/5/26
  */
-public class GrabServiceImpl extends ServiceBase {
+public class GrabServiceImpl extends ServiceBase<GrabService> {
 
-    private static final Logger logger = LoggerFactory.getLogger(GrabServiceImpl.class);
+    public GrabServiceImpl(@Nonnull GrabService service) {
+        super(service);
+    }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
-        GrabService service = (GrabService) getService();
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
         LinkNode linkNode = RequestUtil.getCurrentUrl(request);
         String url = linkNode.getUrl();
