@@ -90,7 +90,7 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
 
     @Override
     protected final boolean isEnd(@Nonnull Request request, @Nonnull Response response) {
-        return getOperatingData(request, response) == null;
+        return response.getOutPut() == null;
     }
 
     protected final Object getOperatingData(Request request, Response response) {
