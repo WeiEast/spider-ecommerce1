@@ -119,6 +119,11 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
                         TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
 
+                        if (!StringUtils.isAnyBlank(websiteName, param.getGroupCode())){
+                            WebsiteUtils.cacheNickGroupCodeWebsites(param.getGroupCode(), websiteName);
+                        }
+
+
                         //设置代理
                         ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
 
@@ -563,7 +568,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     private HttpResult<Map<String, Object>> checkHttpResult(HttpResult<Map<String, Object>> result, OperatorParam param) {
         HttpResult<Map<String, Object>> newResult = result;
         try {
-            if (!newResult.getStatus() && (newResult.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode())) {
+            if (!newResult.getStatus() && !(newResult.getResponseCode() == ErrorCode.NOT_SUPORT_METHOD.getErrorCode())) {
                 String groupCode = param.getGroupCode();
                 String property = PropertiesConfiguration.getInstance().get(OPERATOR_FAIL_USER_MAX);
                 int maxFailUser = 5;
