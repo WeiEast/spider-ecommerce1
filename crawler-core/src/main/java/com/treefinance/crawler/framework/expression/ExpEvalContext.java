@@ -1,13 +1,17 @@
 package com.treefinance.crawler.framework.expression;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+
+import com.treefinance.crawler.lang.Copyable;
+import com.treefinance.toolkit.util.kryo.KryoUtils;
 
 /**
  * @author Jerry
  * @since 13:34 2018/5/30
  */
-public class ExpEvalContext {
+public class ExpEvalContext implements Serializable,Copyable<ExpEvalContext> {
 
     public static final ExpEvalContext DEFAULT = new ExpEvalContext();
     private final Map<String, Object> placeholderMapping;
@@ -61,4 +65,8 @@ public class ExpEvalContext {
         this.nullToEmpty = nullToEmpty;
     }
 
+    @Override
+    public ExpEvalContext copy() {
+        return KryoUtils.copy(this);
+    }
 }

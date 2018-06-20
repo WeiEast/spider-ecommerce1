@@ -8,9 +8,9 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.treefinance.crawler.framework.util.UrlUtils;
-import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +21,14 @@ import org.slf4j.LoggerFactory;
  */
 class ExpressionMatcher {
 
-    private static final Logger LOGGER             = LoggerFactory.getLogger(ExpressionMatcher.class);
-    private static final String EXPRESSION_PATTERN = "\\$\\{\\s*([^\\s]+?)\\s*}";
-    private static final int    MATCH_GROUP        = 1;
-    private String  text;
-    private boolean empty;
-    private Matcher matcher;
-    private Boolean find;
+    private static final Logger  LOGGER             = LoggerFactory.getLogger(ExpressionMatcher.class);
+    private static final String  EXPRESSION_REGEXP  = "(\\s*)\\$\\{\\s*([^}]+)\\s*}(\\s*)";
+    private static final Pattern EXPRESSION_PATTERN = Pattern.compile(EXPRESSION_REGEXP);
+    private static final int     PLACEHOLDER_GROUP  = 2;
+    private              String  text;
+    private              boolean empty;
+    private              Matcher matcher;
+    private              Boolean find;
 
     private ExpressionMatcher() {
     }
@@ -36,7 +37,7 @@ class ExpressionMatcher {
         this.text = StringUtils.defaultString(text);
         this.empty = this.text.isEmpty();
         if (!this.empty) {
-            this.matcher = getMatcher(this.text);
+            this.matcher = makeMatcher(this.text);
             this.find = null;
         } else {
             this.matcher = null;
@@ -49,12 +50,12 @@ class ExpressionMatcher {
     }
 
     @Nonnull
-    private Matcher getMatcher(String value) {
-        return RegExp.getMatcher(EXPRESSION_PATTERN, value);
+    private Matcher makeMatcher(String value) {
+        return EXPRESSION_PATTERN.matcher(value);
     }
 
     private String getPlaceholder() {
-        return matcher.group(MATCH_GROUP);
+        return matcher.group(PLACEHOLDER_GROUP);
     }
 
     public void reset(String newText) {
@@ -64,7 +65,7 @@ class ExpressionMatcher {
             this.matcher = null;
             this.find = false;
         } else if (matcher == null) {
-            this.matcher = getMatcher(this.text);
+            this.matcher = makeMatcher(this.text);
             this.find = null;
         } else {
             this.matcher.reset(this.text);
@@ -131,8 +132,10 @@ class ExpressionMatcher {
 
         StringBuffer sb = new StringBuffer();
         do {
-            String placeholder = getPlaceholder();
+            String prefix = StringUtils.defaultString(matcher.group(1));
+            String suffix = StringUtils.defaultString(matcher.group(3));
 
+            String placeholder = getPlaceholder();
             String replacement = resolver.resolveAsString(placeholder);
             if (replacement != null) {
                 if (mappingFunction != null) {
@@ -141,7 +144,7 @@ class ExpressionMatcher {
                         replacement = newValue;
                     }
                 }
-                matcher.appendReplacement(sb, replacement);
+                matcher.appendReplacement(sb, prefix + replacement + suffix);
             }
         } while (matcher.find());
         matcher.appendTail(sb);
@@ -229,6 +232,8 @@ class ExpressionMatcher {
             return result;
         }
 
+        matcher.reset();
+
         return evalExp(context);
     }
 
@@ -255,14 +260,15 @@ class ExpressionMatcher {
         return findOrEvalExpSpecial(context);
     }
 
-    public String findOrEvalExpSpecial(ExpEvalContext context) {
+    private String findOrEvalExpSpecial(ExpEvalContext context) {
         if (matcher.matches()) {
             find = true;
 
-            context.setFailOnUnknown(false);
-            context.setAllowNull(true);
-            return new PlaceholderResolver(context).resolveAsString(getPlaceholder());
+            ExpEvalContext ctx = new ExpEvalContext(context.getPlaceholderMapping(), false, true);
+            return new PlaceholderResolver(ctx).resolveAsString(getPlaceholder());
         }
+
+        matcher.reset();
 
         return evalExp(context);
     }

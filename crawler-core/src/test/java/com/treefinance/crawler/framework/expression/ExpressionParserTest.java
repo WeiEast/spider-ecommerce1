@@ -68,7 +68,7 @@ public class ExpressionParserTest {
 
         result = parser.evalExpWithObject(map);
 
-        Assert.assertEquals(" Joy ", result);
+        Assert.assertEquals("Joy", result);
 
         parser.reset("${name}");
 
@@ -82,8 +82,8 @@ public class ExpressionParserTest {
 
         result = parser.evalExpWithObject(map);
 
-        Assert.assertEquals(String.class, result.getClass());
-        Assert.assertEquals(" 10 ", result);
+        Assert.assertEquals(Integer.class, result.getClass());
+        Assert.assertEquals(10, result);
 
         parser.reset("${date}");
 
@@ -91,5 +91,12 @@ public class ExpressionParserTest {
 
         Assert.assertEquals(Integer.class, result.getClass());
         Assert.assertEquals(10, result);
+
+        parser.reset("-${date}_");
+
+        result = parser.evalExpWithObject(map);
+
+        Assert.assertEquals(String.class, result.getClass());
+        Assert.assertEquals("-10_", result);
     }
 }
