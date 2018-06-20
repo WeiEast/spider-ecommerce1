@@ -37,6 +37,7 @@ import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.IpUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
@@ -64,7 +65,7 @@ import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -317,11 +318,13 @@ public class Collector {
                     if (task.getStatus() != 0) {
                         String newRemark = null;
                         try {
-                            newRemark = OperatorUtils.getRemarkForTaskFail(task.getTaskId());
+                            if(WebsiteUtils.isOperator(task.getWebsiteName())){
+                                newRemark = OperatorUtils.getRemarkForTaskFail(task.getTaskId());
+                            }
                         } catch (Exception e) {
                             logger.error("更新remark失败，taskId={}", task.getTaskId(), e);
                         }
-                        messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), newRemark);
+                        messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), StringUtils.defaultString(newRemark));
                     }
                 }
                 logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={},status={}", task.getTaskId(), task.isSubTask(), task.getStatus(), task.getRemark(), task.getWebsiteName(), task.getStatus());
