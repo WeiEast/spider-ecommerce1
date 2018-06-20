@@ -1,8 +1,10 @@
 package com.datatrees.rawdatacentral.common.utils;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -19,6 +21,8 @@ import org.slf4j.LoggerFactory;
 public class WebsiteUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(WebsiteUtils.class);
+
+    private static       Map<String, Set<String>> NICK_GROU_WEBSITE      = new ConcurrentHashMap<>();
 
     /**
      * 是否是运营商
@@ -37,14 +41,13 @@ public class WebsiteUtils {
      * @return
      */
     public static boolean isNormal(String nickGroupCode, Integer maxFailUser) {
-        String keyword = RedisKeyPrefixEnum.WEBSITE_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(nickGroupCode));
-        Set<String> keySet = RedisUtils.keys(keyword + "*");
+        Set<String> keySet = getWebsitesByNickGroupCode(nickGroupCode);
         if (keySet.isEmpty()) {
             logger.error("nickGroupCode not found,nickGroupCode={}", nickGroupCode);
             return true;
         } else {
-            for (String redisKey : keySet) {
-                Map<String, String> result = RedisUtils.hgetAll(redisKey);
+            for (String websiteName : keySet) {
+                Map<String, String> result = RedisUtils.hgetAll(WebsiteUtils.getRedisKeyForWebsiteGroupLastInfo(websiteName, nickGroupCode));
                 String failUserCount = result.get(AttributeKey.FAIL_USER_COUNT);
                 if (Integer.parseInt(failUserCount) <= maxFailUser) {
                     logger.info("nickGroupCode is normal,nickGroupCode={}", nickGroupCode);
@@ -66,25 +69,28 @@ public class WebsiteUtils {
      * @return
      */
     public static boolean isSteadied(String nickGroupCode, Integer maxFailUser) {
-        String keyword = RedisKeyPrefixEnum.WEBSITE_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(nickGroupCode));
-        Set<String> keySet = RedisUtils.keys(keyword + "*");
+        Set<String> keySet = getWebsitesByNickGroupCode(nickGroupCode);
         if (keySet.isEmpty()) {
             logger.error("nickGroupCode not found,nickGroupCode={}", nickGroupCode);
             return true;
         } else {
-            for (String redisKey : keySet) {
-                Map<String, String> result = RedisUtils.hgetAll(redisKey);
+            int duration = 30;
+            for (String websiteName : keySet) {
+                Map<String, String> result = RedisUtils.hgetAll(WebsiteUtils.getRedisKeyForWebsiteGroupLastInfo(websiteName, nickGroupCode));
                 String failUserCount = result.get(AttributeKey.FAIL_USER_COUNT);
                 if (Integer.parseInt(failUserCount) <= maxFailUser) {
                     String successTimestamp = result.get(AttributeKey.SUCCESS_TIMESTAMP);
+                    if (StringUtils.isBlank(successTimestamp)) {
+                        successTimestamp = "0";
+                    }
                     long now = System.currentTimeMillis();
-                    boolean b = (now - Long.parseLong(successTimestamp)) >= TimeUnit.MINUTES.toMillis(30);
+                    boolean b = (now - Long.parseLong(successTimestamp)) >= TimeUnit.MINUTES.toMillis(duration);
                     if (b) {
                         logger.info("nickGroupCode is normal,nickGroupCode={}", nickGroupCode);
                         return true;
                     }
                     logger.error("nickGroupCode is normal not more than 30 minutes,nickGroupCode={}", nickGroupCode);
-                    return false;
+                    continue;
                 } else {
                     continue;
                 }
@@ -442,4 +448,21 @@ public class WebsiteUtils {
         return RedisKeyPrefixEnum.NICK_GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(nickGroupCode));
     }
 
+    public static Set<String> getWebsitesByNickGroupCode(String nickGroupCode) {
+        if (!NICK_GROU_WEBSITE.containsKey(nickGroupCode)) {
+            NICK_GROU_WEBSITE.put(nickGroupCode, new HashSet<>());
+        }
+        return NICK_GROU_WEBSITE.get(nickGroupCode);
+    }
+
+    public static void cacheNickGroupCodeWebsites(String nickGroupCode, String websiteName) {
+        if (!NICK_GROU_WEBSITE.containsKey(nickGroupCode)) {
+            NICK_GROU_WEBSITE.put(nickGroupCode, new HashSet<>());
+        }
+        Set<String> websites = NICK_GROU_WEBSITE.get(nickGroupCode);
+        if (!websites.contains(websiteName)) {
+            logger.info("add new website : {} for nick group code : {}", websiteName, nickGroupCode);
+            websites.add(websiteName);
+        }
+    }
 }
