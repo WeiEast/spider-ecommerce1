@@ -98,5 +98,12 @@ public class ExpressionParserTest {
 
         Assert.assertEquals(String.class, result.getClass());
         Assert.assertEquals("-10_", result);
+
+        parser.reset("- ${date} _");
+
+        result = parser.evalExpWithObject(map);
+
+        Assert.assertEquals(String.class, result.getClass());
+        Assert.assertEquals("- 10 _", result);
     }
 }
