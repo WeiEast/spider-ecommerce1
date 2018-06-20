@@ -3,7 +3,8 @@ package com.datatrees.rawdatacentral.core.oss;
 import java.io.*;
 import java.util.List;
 
-import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.*;
 import com.datatrees.rawdatacentral.core.common.StreamUtils;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
@@ -11,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class OssService {
 
-    private OSSClient ossClient;
+    private OSS ossClient;
 
     /**
      * 使用指定的OSS Endpoint、阿里云颁发的Access Id/Access Key构造一个新的{@link OssService}对象。
@@ -20,7 +21,7 @@ public class OssService {
      * @param secretAccessKey 访问OSS的Secret Access Key。
      */
     OssService(String endpoint, String accessKeyId, String secretAccessKey) {
-        ossClient = new OSSClient(endpoint, accessKeyId, secretAccessKey);
+        ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, secretAccessKey);
     }
 
     /**
@@ -32,7 +33,7 @@ public class OssService {
      * @param securityToken   STS提供的安全令牌。
      */
     OssService(String endpoint, String accessKeyId, String secretAccessKey, String securityToken) {
-        ossClient = new OSSClient(endpoint, accessKeyId, secretAccessKey, securityToken);
+        ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, secretAccessKey, securityToken);
     }
 
     /**
