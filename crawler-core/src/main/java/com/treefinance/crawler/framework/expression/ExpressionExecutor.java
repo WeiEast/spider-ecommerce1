@@ -36,6 +36,10 @@ final class ExpressionExecutor {
         return ExpressionMatcher.match(value).evalExpWithObject(placeholder);
     }
 
+    public static String evalExpSpecial(@Nonnull String value, @Nullable Map<String, Object> placeholder) {
+        return ExpressionMatcher.match(value).evalExpSpecial(placeholder);
+    }
+
     public static String evalExp(@Nonnull String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier) {
         return ExpressionMatcher.match(value).evalExp(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
     }
@@ -48,6 +52,10 @@ final class ExpressionExecutor {
         return ExpressionMatcher.match(value).evalExpWithObject(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
     }
 
+    public static String evalExpSpecial(@Nonnull String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier) {
+        return ExpressionMatcher.match(value).evalExpSpecial(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
+    }
+
     public static String evalExp(@Nonnull String value, @Nonnull ExpEvalContext context) {
         return ExpressionMatcher.match(value).evalExp(context);
     }
@@ -58,6 +66,10 @@ final class ExpressionExecutor {
 
     public static Object evalExpWithObject(@Nonnull String value, @Nonnull ExpEvalContext context) {
         return ExpressionMatcher.match(value).evalExpWithObject(context);
+    }
+
+    public static String evalExpSpecial(@Nonnull String value, @Nonnull ExpEvalContext context) {
+        return ExpressionMatcher.match(value).evalExpSpecial(context);
     }
 
 }

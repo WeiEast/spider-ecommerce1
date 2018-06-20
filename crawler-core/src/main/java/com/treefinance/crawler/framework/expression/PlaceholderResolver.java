@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jerry
@@ -13,10 +15,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 class PlaceholderResolver {
 
-    private final Map<String, Object> placeholderMapping;
-    private final boolean             failOnUnknown;
-    private final boolean             allowNull;
-    private final boolean             nullToEmpty;
+    private static final Logger              LOGGER = LoggerFactory.getLogger(PlaceholderResolver.class);
+    private final        Map<String, Object> placeholderMapping;
+    private final        boolean             failOnUnknown;
+    private final        boolean             allowNull;
+    private final        boolean             nullToEmpty;
 
     PlaceholderResolver(@Nonnull ExpEvalContext context) {
         this.placeholderMapping = context.getPlaceholderMapping();
@@ -38,6 +41,8 @@ class PlaceholderResolver {
             if (!allowNull) {
                 throw new PlaceholderResolveException("Placeholder[" + placeholder + "] value must not be null.");
             }
+            LOGGER.warn("Can not resolve placeholder '{}'", placeholder);
+
             return nullToEmpty ? StringUtils.EMPTY : null;
         }
 
@@ -47,8 +52,12 @@ class PlaceholderResolver {
     public Object resolve(@Nonnull String placeholder) {
         Object value = findValue(placeholderMapping, placeholder);
 
-        if (value == null && !allowNull) {
-            throw new PlaceholderResolveException("Placeholder[" + placeholder + "] value must not be null.");
+        if (value == null) {
+            if (!allowNull) {
+                throw new PlaceholderResolveException("Placeholder[" + placeholder + "] value must not be null.");
+            }
+
+            LOGGER.warn("Can not resolve placeholder '{}'", placeholder);
         }
 
         return value;

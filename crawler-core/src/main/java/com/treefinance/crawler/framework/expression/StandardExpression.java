@@ -63,6 +63,18 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExpWithObject(value, fieldStack);
     }
 
+    public static String evalSpecial(String value, List<Map<String, Object>> fieldScopes) {
+        return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.merge(fieldScopes));
+    }
+
+    public static String evalSpecial(String value, Request request, Response response) {
+        return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.getVisibleFields(request, response));
+    }
+
+    public static String evalSpecial(String value, Map<String, Object> fieldStack) {
+        return ExpressionExecutor.evalExpSpecial(value, fieldStack);
+    }
+
     public static String evalUrl(String value, List<Map<String, Object>> fieldScopes, String charset) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.merge(fieldScopes), URL_ENCODED_KEYS, charset);
     }
@@ -81,16 +93,20 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExp(value, fieldStack, URL_ENCODED_KEYS, charset);
     }
 
-    public static String evalExp(@Nonnull String value, @Nonnull ExpEvalContext context) {
+    public static String eval(@Nonnull String value, @Nonnull ExpEvalContext context) {
         return ExpressionExecutor.evalExp(value, context);
     }
 
-    public static String evalExp(@Nonnull String value, @Nonnull ExpEvalContext context, BiFunction<String, String, String> mappingFunction) {
+    public static String eval(@Nonnull String value, @Nonnull ExpEvalContext context, BiFunction<String, String, String> mappingFunction) {
         return ExpressionExecutor.evalExp(value, context, mappingFunction);
     }
 
-    public static Object evalExpWithObject(@Nonnull String value, @Nonnull ExpEvalContext context) {
+    public static Object evalWithObject(@Nonnull String value, @Nonnull ExpEvalContext context) {
         return ExpressionExecutor.evalExpWithObject(value, context);
+    }
+
+    public static String evalSpecial(@Nonnull String value, @Nonnull ExpEvalContext context) {
+        return ExpressionExecutor.evalExpSpecial(value, context);
     }
 
 }

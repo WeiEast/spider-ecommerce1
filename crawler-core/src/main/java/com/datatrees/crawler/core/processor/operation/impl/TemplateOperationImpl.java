@@ -38,7 +38,7 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
         if (BooleanUtils.isTrue(operation.getReturnObject())) {
             output = StandardExpression.evalWithObject(StringUtils.trim(template), request, response);
         } else {
-            output = StandardExpression.eval(template, request, response);
+            output = StandardExpression.evalSpecial(template, request, response);
         }
 
         return output;
