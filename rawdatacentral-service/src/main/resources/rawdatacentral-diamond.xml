@@ -3,33 +3,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <!-- BeanFactoryPostProcessor use for eager initialize -->
-    <bean class="com.github.diamond.client.extend.init.DRMInitBeanFactoryPostProcessor"/>
+    <!-- BeanFactoryPostProcessor  use for eager initialize-->
+    <bean class="com.github.diamond.client.extend.init.DRMInitBeanFactoryPostProcessor" />
 
-    <!-- FactoryBean启动netty客户端 -->
-    <bean id="propertiesConfiguration" class="com.github.diamond.client.PropertiesConfigurationFactoryBean"
-          destroy-method="close">
+    <!-- FactoryBean启动netty客户端   -->
+    <bean id="propertiesConfiguration" class="com.github.diamond.client.PropertiesConfigurationFactoryBean" destroy-method="close">
         <constructor-arg index="0">
             <list>
                 <!-- 监听器，用于触发资源的动态切换 -->
-                <bean class="com.github.diamond.client.extend.listener.ConfigurationChangeListener"/>
+                <bean class="com.github.diamond.client.extend.listener.ResourceChangeListener" />
             </list>
         </constructor-arg>
     </bean>
-
-    <!--<bean id="propertySourcesPlaceholderConfigurer"-->
-          <!--class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">-->
-        <!--&lt;!&ndash; true:优先加载super diamond 配置 &ndash;&gt;-->
-        <!--<property name="localOverride" value="true"/>-->
-        <!--&lt;!&ndash;否则*.properties文件中文乱码&ndash;&gt;-->
-        <!--<property name="fileEncoding" value="UTF-8"/>-->
-        <!--<property name="properties" ref="propertiesConfiguration"/>-->
-        <!--<property name="locations">-->
-            <!--<list>-->
-                <!--<value>classpath*:server.properties</value>-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
 
     <bean id="propertiesLoader" class="com.datatrees.common.conf.PropertiesLoader">
         <!-- true:优先加载super diamond 配置 -->
