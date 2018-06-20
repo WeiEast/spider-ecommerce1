@@ -65,4 +65,6 @@ logger("com.alibaba.dubbo.monitor.dubbo", OFF)
 logger("com.alibaba.dubbo.rpc.protocol.dubbo", OFF)
 logger("com.datatrees.rawdatacentral.submitter.filestore.FileStoreServiceImpl", OFF)
 logger("com.datatrees.rawdatacentral.service.impl.AppCrawlerConfigServiceImpl", DEBUG)
+logger("com.datatrees.crawler.core.processor.operation", DEBUG)
+logger("com.datatrees.crawler.core.processor.extractor", DEBUG)
 
