@@ -34,7 +34,7 @@ public class ProxySetOperationImpl extends Operation<ProxySetOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull ProxySetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ProxySetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         throw new UnsupportedOperationException("Unsupported proxy-set operation!");
     }
 

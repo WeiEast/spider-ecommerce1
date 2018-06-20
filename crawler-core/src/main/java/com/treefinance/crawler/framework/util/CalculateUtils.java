@@ -12,6 +12,8 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.expression.spring.SpelExpParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -19,6 +21,7 @@ import com.treefinance.crawler.framework.expression.spring.SpelExpParser;
  * @since 2015年10月21日 下午1:47:57
  */
 public final class CalculateUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CalculateUtils.class);
 
     private CalculateUtils() {
     }
@@ -33,6 +36,9 @@ public final class CalculateUtils {
 
     public static <T> T calculate(String expression, Request request, Response response, T defaultValue, Class<T> clazz) {
         String exp = StandardExpression.eval(expression, request, response);
+
+        LOGGER.debug("Actual calculate expression: {}", exp);
+
         return calculate(exp, defaultValue, clazz);
     }
 

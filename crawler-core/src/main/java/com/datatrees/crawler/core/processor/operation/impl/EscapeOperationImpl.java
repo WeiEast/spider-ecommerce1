@@ -31,7 +31,7 @@ public class EscapeOperationImpl extends Operation<EscapeOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
 
         // get input
         String orginal = (String) operatingData;
@@ -40,9 +40,7 @@ public class EscapeOperationImpl extends Operation<EscapeOperation> {
 
         logger.debug("escape-Type: {}, handling-Type: {}", escapeType, handlType);
 
-        String result = handlerEscape(orginal, escapeType, handlType);
-
-        response.setOutPut(result);
+        return handlerEscape(orginal, escapeType, handlType);
     }
 
     private String handlerEscape(String orginal, EscapeType escapeType, HandlingType handlType) {

@@ -1,14 +1,11 @@
 ext {
     dsiutils = "2.0.14"
     htmlcleaner = "2.13"
-    jdom2 = "2.0.4"
     jaxen = "1.1.4"
-    jsonPath = "2.0.0"
     jsoup = "1.7.2"
-    commonsExec = "1.1"
     jodaTime = "2.7"
     apacheMime4j = "0.6.1"
-    toolkit = "1.0.11"
+    toolkit = "1.0.12.1"
 }
 
 dependencies {
@@ -30,44 +27,17 @@ dependencies {
     compile("it.unimi.dsi:dsiutils:${dsiutils}"){
         exclude module: 'guava'
     }
-    compile "org.slf4j:log4j-over-slf4j:1.7.25"
-    compile "org.slf4j:jcl-over-slf4j:1.7.25"
+    compile "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+    compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     compile "net.sourceforge.htmlcleaner:htmlcleaner:${htmlcleaner}"
-    compile "org.jdom:jdom2:${jdom2}"
+    compile "org.jdom:jdom2:${jdom2Version}"
     compile "jaxen:jaxen:${jaxen}"
-    compile "com.jayway.jsonpath:json-path:${jsonPath}"
+    compile "com.jayway.jsonpath:json-path:${jsonPathVersion}"
     compile "org.jsoup:jsoup:${jsoup}"
-    compile "org.apache.commons:commons-exec:${commonsExec}"
+    compile "org.apache.commons:commons-exec:${commonsExecVersion}"
     compile "joda-time:joda-time:${jodaTime}"
     compile "org.apache.james:apache-mime4j:${apacheMime4j}"
-    compile("com.alibaba:dubbo:${dubboVersion}") {
-        exclude(module: "spring")
-        exclude(module: "netty")
-    }
-    compile "org.javassist:javassist:${javassistVersion}"
-    compile "com.101tec:zkclient:${zkclientVersion}"
     compile ("org.seleniumhq.selenium:selenium-java:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-remote-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-firefox-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-chrome-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-ie-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-safari-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-support:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-api:${seleniumVersion}"){
         exclude(module: "guava")
     }
     testCompile "junit:junit:${junitVersion}"

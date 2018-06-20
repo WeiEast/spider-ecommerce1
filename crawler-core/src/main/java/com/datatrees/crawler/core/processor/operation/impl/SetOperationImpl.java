@@ -31,16 +31,14 @@ public class SetOperationImpl extends Operation<SetOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull SetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull SetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String output = operation.getValue();
 
         if(EMPTY_TAG.equals(output)){
             output = StringUtils.EMPTY;
         }
 
-        logger.debug("Set value : {}", output);
-
-        response.setOutPut(output);
+        return output;
     }
 
 }

@@ -31,7 +31,7 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull RegexOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull RegexOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String regex = operation.getRegex();
         String orginal = (String)operatingData;
 
@@ -51,6 +51,6 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
 
             logger.debug("original: {}, dest: {}", orginal, result);
         }
-        response.setOutPut(result);
+        return result;
     }
 }

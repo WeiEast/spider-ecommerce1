@@ -41,8 +41,16 @@ public class OperationPipeline extends ProcessPipeline {
             String lastContent = RequestUtil.getContent(request);
             try {
                 request.setInput(content);
+
                 super.invoke(request, resp);
-                return resp.getOutPut();
+
+                OperationEntity outPut = (OperationEntity) resp.getOutPut();
+                logger.debug("operations result: {}", outPut);
+                if (outPut != null) {
+                    return outPut.getData();
+                } else {
+                    logger.warn("Unexpected operation result! No operations processed for field: {}", fieldExtractor.getField());
+                }
             } catch (ResultEmptyException e) {
                 throw e;
             } catch (Exception e) {

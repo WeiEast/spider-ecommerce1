@@ -51,12 +51,12 @@ public class URLCookieFetchHandler extends CookieFetchHandler {
             ProtocolInput input = new ProtocolInput().setUrl(url).setFollowRedirect(true).setCookieScope(CookieScope.REQUEST);
             ProtocolOutput output = client.getProtocolOutput(input);
             int responseCode = output.getContent().getResponseCode();
-            log.debug("url cookie fetcher.." + url + " response: " + responseCode);
+            log.debug("url cookie fetcher.. {} response: {}", url, responseCode);
             Metadata metadata = output.getContent().getMetadata();
             //
             String[] cookieVals = (String[]) ArrayUtils.addAll(metadata.getValues(HttpHeaders.SET_COOKIE), metadata.getValues(HttpHeaders.SET_COOKIE2));
             if (cookieVals != null) {
-                log.debug("url cookie fetcher.." + url + "cookie " + cookieVals);
+                log.debug("url cookie fetcher.. {} cookie: {}", url, cookieVals);
                 return CookieFormater.INSTANCE.parserCookie(cookieVals, false);
             }
         } else {

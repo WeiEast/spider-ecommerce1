@@ -19,7 +19,7 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull TripleOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull TripleOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String input = (String) operatingData;
         String expression = operation.getValue();
         logger.debug("triple expression: {}", expression);
@@ -70,7 +70,7 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
 
         logger.debug("input: {}, output: {}", input, result);
 
-        response.setOutPut(result);
+        return result;
     }
 
     private String evalExp(String value, String operatingData, Request request, Response response) {

@@ -58,9 +58,7 @@ public class ResultMapConverter {
                                     f.setAccessible(true); // set Accessible
                                     Object value = resultMap.get(f.getName());
                                     f.set(instance, value);// set value
-                                    if (log.isDebugEnabled()) {
-                                        log.debug("set name:" + f.getName() + "\t value = " + resultMap.get(f.getName()));
-                                    }
+                                    log.debug("set name: {}\t value = {}", f.getName(), resultMap.get(f.getName()));
                                 }
                             }
                             results.add(instance);
@@ -71,9 +69,7 @@ public class ResultMapConverter {
                     }
                 }
             } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.error(resultMap + " convert to " + className + " error.", e);
-                }
+                log.error(resultMap + " convert to " + className + " error.", e);
             }
             results.add(resultMap);
         } else {
@@ -89,7 +85,7 @@ public class ResultMapConverter {
         Object urlObj = linkNodeMap.remove(Constants.CRAWLER_URL_FIELD);
         if (urlObj != null) {
             if (urlObj instanceof String) {
-                log.debug("normal string url " + urlObj);
+                log.debug("normal string url {}", urlObj);
                 String url = (String) urlObj;
                 String resolvedUrl = UrlUtils.resolveUrl(baseURL, url);
                 LinkNode tmp = new LinkNode(resolvedUrl);
@@ -97,15 +93,15 @@ public class ResultMapConverter {
                 tmp.setFromParser(true);
                 tmp.addPropertys(linkNodeMap);
                 if (StringUtils.isNotBlank(resolvedUrl) && linkNodes.put(resolvedUrl, tmp) == null) {
-                    log.debug("new url extracted in field: " + resolvedUrl);
+                    log.debug("new url extracted in field: {}", resolvedUrl);
                 } else {
-                    log.debug("url exists in field: " + resolvedUrl);
+                    log.debug("url exists in field: {}", resolvedUrl);
                 }
             }
 
             if (urlObj instanceof List) {
                 List<String> urlsList = (List<String>) urlObj;
-                log.debug("segment url size..." + urlsList.size() + baseURL);
+                log.debug("segment url size... {} {}", urlsList.size(), baseURL);
                 for (String url : urlsList) {
                     String[] pairs = ParserURLCombiner.decodeParserUrl(url);
                     String u = pairs[0];
@@ -124,14 +120,14 @@ public class ResultMapConverter {
                         tmp.addHeaders(HeaderParser.getHeaderMaps(headers));
                     }
                     if (StringUtils.isNotBlank(resolvedUrl) && linkNodes.put(resolvedUrl, tmp) == null) {
-                        log.debug("new url extracted in field: " + resolvedUrl);
+                        log.debug("new url extracted in field: {}", resolvedUrl);
                     } else {
-                        log.debug("field extractor url exists: " + resolvedUrl);
+                        log.debug("field extractor url exists: {}", resolvedUrl);
                     }
                 }
             }
         } else {
-            log.warn("field url is not a list! in field combine " + baseURL);
+            log.warn("field url is not a list! in field combine : {}", baseURL);
         }
         return linkNodes.values();
     }

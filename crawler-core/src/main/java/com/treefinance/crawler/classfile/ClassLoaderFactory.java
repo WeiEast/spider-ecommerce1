@@ -47,9 +47,7 @@ public final class ClassLoaderFactory {
     public static ClassLoader create(final File[] files, final ClassLoader parent) throws MalformedURLException {
         List<URL> urls = toURL(files);
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Instantiate URLClassLoader. Url size: {}, parent: {}", files.length, parent);
-        }
+        LOGGER.debug("Instantiate URLClassLoader. Url size: {}, parent: {}", files.length, parent);
 
         if (CollectionUtils.isEmpty(urls)) {
             LOGGER.warn("Can not instantiate URLClassLoader because files is empty!");

@@ -51,18 +51,15 @@ public class ExtractorSelectorImpl extends ProcessorInvokerAdapter {
                 RequestUtil.setAttribute(request, selector.getField(), value);
             }
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Filter extractor selector[{}] >>> {}", selector.getPageExtractor().getId(), value);
-            }
+            logger.debug("Filter extractor selector[{}] >>> {}", selector.getPageExtractor().getId(), value);
 
             if (value == null) continue;
 
             if (match(value, selector.getDisContainRegex())) {
                 blackPageExtractorIds.add(selector.getPageExtractor().getId());
             } else if (match(value, selector.getContainRegex())) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Filter extractor selector[{}] >>> matched", selector.getPageExtractor().getId());
-                }
+                logger.debug("Filter extractor selector[{}] >>> matched", selector.getPageExtractor().getId());
+
                 matchedPageExtractors.add(selector.getPageExtractor());
             }
         }

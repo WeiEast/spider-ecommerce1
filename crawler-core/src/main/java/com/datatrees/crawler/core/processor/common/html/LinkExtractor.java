@@ -151,7 +151,7 @@ public class LinkExtractor extends DefaultCallback {
                     String[] splittedStrings = str.split("'|\"");
                     if (splittedStrings.length >= 2) {
                         str = splittedStrings[1];
-                        log.debug("window open url: " + str);
+                        log.debug("window open url: {}", str);
                         nextURL = str;
                     }
                 } else {

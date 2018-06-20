@@ -15,6 +15,7 @@ import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.treefinance.crawler.exception.UnsupportedWebsiteException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,14 +48,17 @@ public class LoginInfoMessageHandler extends LoginStartMessageHandler {
         LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
         Long taskId = loginInfo.getTaskId();
         TaskUtils.addStep(taskId, StepEnum.REC_INIT_MSG);
-        String websiteName = loginInfo.getWebsiteName();
         Boolean initStatus = TaskUtils.isDev() ||
                 RedisUtils.setnx(RedisKeyPrefixEnum.TASK_RUN_COUNT.getRedisKey(taskId), "0", RedisKeyPrefixEnum.TASK_RUN_COUNT.toSeconds());
         //第一次收到启动消息
         if (initStatus) {
             TaskUtils.addStep(taskId, StepEnum.INIT);
+            String websiteName = loginInfo.getWebsiteName();
             //这里电商,邮箱,老运营商
             Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
+            if (website == null) {
+                throw new UnsupportedWebsiteException("Unsupported website: " + websiteName);
+            }
             redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
             //缓存task基本信息
             TaskUtils.initTaskShare(taskId, loginInfo.getWebsiteName());

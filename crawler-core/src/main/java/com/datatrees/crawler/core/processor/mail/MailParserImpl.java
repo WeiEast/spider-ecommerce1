@@ -113,11 +113,10 @@ public enum MailParserImpl {
                 List<String> ipList = RegExp.findAll(receivedList.toString(), MAIL_SERVER_IP_REGEX, 1);
                 for (String ip : ipList) {
                     if (StringUtils.isNotBlank(ip)) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("extract mail server ip:" + ip);
-                        }
+                        logger.debug("extract mail server ip: {}", ip);
+
                         if (IPAddressUtil.internalIp(ip)) {
-                            logger.debug("drop internalIp " + ip);
+                            logger.debug("drop internalIp : {}", ip);
                         } else {
                             result.put(Constants.MAIL_SERVER_IP, ip);
                             break;

@@ -41,11 +41,11 @@ public class SearchTemplateCombine {
             // encodedKeyword = encodedKeyword.replace('/', ' ');
             // encodedKeyword = encodedKeyword.replace('\'', ' ');
             encodedKeyword = encodedKeyword.replaceAll("[ ]+", " ");
-            log.debug("new encoded keyword after replacement: " + encodedKeyword);
+            log.debug("new encoded keyword after replacement: {}", encodedKeyword);
             if (StringUtils.isNotBlank(urlCharset) && Charset.isSupported(urlCharset)) {
                 encodedKeyword = URLEncoder.encode(encodedKeyword, urlCharset);
             } else {
-                log.warn("Charset unsupported, use UTF-8 as default, url charset: " + urlCharset);
+                log.warn("Charset unsupported, use UTF-8 as default, url charset: {}", urlCharset);
                 encodedKeyword = URLEncoder.encode(encodedKeyword, "UTF-8");
             }
         } catch (Exception e) {
@@ -67,7 +67,7 @@ public class SearchTemplateCombine {
             String encodedKeyword = null;
             if (StringUtils.isNotEmpty(keyword)) {
                 encodedKeyword = encodeKeyword(keyword, urlCharset);
-                log.debug("original keyword: " + keyword + ",urlCharset: " + urlCharset + ", encoded keyword: " + encodedKeyword);
+                log.debug("original keyword: {},urlCharset: {}, encoded keyword: {}" ,keyword,urlCharset, encodedKeyword);
             }
 
             String searchURL = SearchUrlExpParser.eval(searchURLTemplate, pageNum, notOverloadMax, encodedKeyword, fieldMap);

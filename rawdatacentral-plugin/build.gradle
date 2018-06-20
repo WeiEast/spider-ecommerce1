@@ -16,16 +16,18 @@ dependencies {
         exclude(module: 'spring-rabbit')
         exclude(module: "guava")
     }
-    compile("com.alibaba:dubbo:${dubboVersion}") {
-        exclude(module: 'spring')
+    compile("com.alibaba:dubbo:${dubboVersion}"){
+        exclude(module: 'nettty')
     }
     compile "org.javassist:javassist:${javassistVersion}"
-    compile "com.github.sgroschupf:zkclient:0.1"
+    compile "com.101tec:zkclient:${zkclientVersion}"
     compile "com.datatrees.usercenter:user-center-api:${userCenterApi}"
     compile "org.apache.pdfbox:pdfbox:${pdfbox}"
     compile "net.mabboud.fontverter:FontVerter:${fontverter}"
     compile "com.datatrees.loan:loan-provider-api:${loanProviderApi}"
-    compile "com.treefinance:risk-service-api:${riskServiceApi}"
+    compile ("com.treefinance:risk-service-api:${riskServiceApi}"){
+        exclude(module: 'mybatis')
+    }
     compile "net.sourceforge.jexcelapi:jxl:${jxl}"
     compile ("com.sun.mail:javax.mail:${javaxMailVersion}")
     compile ("com.datatrees.crawler.plugin:plugin-utils:${pluginUtilsVersion}"){
@@ -34,7 +36,6 @@ dependencies {
 
     compile ("net.sourceforge.htmlunit:htmlunit:${htmlunitVersion}")
     compile ("ant:ant:${antVersion}")
-
 }
 
 apply from: rootProject.file('upload.gradle')

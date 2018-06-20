@@ -17,7 +17,7 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
     }
 
     @Override
-    protected void doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         int index = operation.getIndex();
         String value = operation.getValue();
 
@@ -34,9 +34,7 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
             outPut = StringUtils.substring(input, 0, index) + value + StringUtils.substring(input, index, input.length());
         }
 
-        logger.debug("AppendOperation, output: {}", outPut);
-
-        response.setOutPut(outPut);
+        return outPut;
     }
 
 }

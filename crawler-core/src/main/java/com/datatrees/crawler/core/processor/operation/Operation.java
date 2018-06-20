@@ -17,6 +17,7 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
+import com.treefinance.toolkit.util.json.GsonUtils;
 import com.treefinance.toolkit.util.json.Jackson;
 
 /**
@@ -28,10 +29,16 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
 
     protected final T              operation;
     protected final FieldExtractor extractor;
+    private boolean needReturn = true;
 
     public Operation(@Nonnull T operation, @Nonnull FieldExtractor extractor) {
+        this(operation, extractor, true);
+    }
+
+    public Operation(T operation, FieldExtractor extractor, boolean needReturn) {
         this.operation = Objects.requireNonNull(operation);
         this.extractor = Objects.requireNonNull(extractor);
+        this.needReturn = needReturn;
     }
 
     public T getOperation() {
@@ -44,13 +51,10 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
 
     @Override
     protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
-        Object operatingData = getOperatingData(request, response);
+        boolean skipped = getOperatingEntity(request, response).isEmpty();
 
-        if (operatingData != null) {
-            return isSkipped(operation, request, response);
-        }
-
-        return true;
+        // invalid operation and skip
+        return skipped || isSkipped(operation, request, response);
     }
 
     protected boolean isSkipped(T operation, Request request, Response response) {
@@ -59,47 +63,68 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
 
     @Override
     protected void triggerAfterSkipped(@Nonnull Request request, @Nonnull Response response) {
-        logger.warn("Skipped operation processor : {}", Jackson.toJSONString(operation));
+        logger.warn("Skipped operation processor : {}", GsonUtils.toJson(operation));
 
-        getOperatingData(request, response);
+        OperationEntity entity = getOperatingEntity(request, response);
+        entity.skip(operation);
     }
 
     @Override
     protected final void preProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {
-        logger.debug("Starting operation processing >> {}", Jackson.toJSONString(operation));
+        if (logger.isDebugEnabled()) {
+            logger.debug("Starting operation processing >> {}", Jackson.toJSONString(operation));
+        }
+
+        validate(operation, request, response);
+    }
+
+    protected void validate(T operation, Request request, Response response) throws Exception {
+
     }
 
     @Override
     public final void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
-        Object operatingData = getOperatingData(request, response);
+        OperationEntity entity = getOperatingEntity(request, response);
 
-        logger.debug("Operating data: {}", operatingData);
+        Object data = entity.getData();
+        logger.debug("Operating data: {}", data);
+
         try {
-            doOperation(operation, operatingData, request, response);
+            Object result = doOperation(operation, data, request, response);
+
+            if (needReturn) {
+                logger.debug("Operating result: {}", result);
+                entity.update(result, operation);
+            } else {
+                entity.update(operation);
+            }
         } catch (Exception e) {
             throw new ProcessingException("Error doing operation[ " + Jackson.toJSONString(operation) + "]", e);
         }
     }
 
-    protected abstract void doOperation(@Nonnull T operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception;
+    protected abstract Object doOperation(@Nonnull T operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception;
 
     @Override
     protected final void postProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {
-        logger.debug("Completed operation processing >> {}", Jackson.toJSONString(operation));
+        if (logger.isDebugEnabled()) {
+            logger.debug("Completed operation processing >> {}", Jackson.toJSONString(operation));
+        }
     }
 
     @Override
     protected final boolean isEnd(@Nonnull Request request, @Nonnull Response response) {
-        return response.getOutPut() == null;
+        return getOperatingEntity(request, response).isEmpty();
     }
 
-    protected final Object getOperatingData(Request request, Response response) {
-        Object data = response.getOutPut();
-        if (data == null) {
-            data = request.getInput();
-            response.setOutPut(data);
+    protected final OperationEntity getOperatingEntity(Request request, Response response) {
+        OperationEntity entity = (OperationEntity) response.getOutPut();
+        if (entity == null) {
+            String content = (String) request.getInput();
+            entity = OperationEntity.wrap(content);
+            response.setOutPut(entity);
         }
-        return data;
+        return entity;
     }
 
 }

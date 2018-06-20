@@ -24,16 +24,18 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 public class SleepOperationImpl extends Operation<SleepOperation> {
 
     public SleepOperationImpl(@Nonnull SleepOperation operation, @Nonnull FieldExtractor extractor) {
-        super(operation, extractor);
+        super(operation, extractor, false);
     }
 
     @Override
-    protected void doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         Integer sleepTime = operation.getValue();
         if (sleepTime != null) {
             logger.debug("Start to Sleep: {}", sleepTime);
             Thread.sleep(sleepTime);
         }
+
+        return null;
     }
 
 }
