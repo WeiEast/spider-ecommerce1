@@ -10,6 +10,7 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -20,7 +21,7 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -39,20 +40,19 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
 
         xpath = StandardExpression.eval(xpath, request, response);
 
-        String orginal = (String) operatingData;
-        String resultStirng = "";
-        List<String> result = XPathUtil.getXpath(xpath, orginal);
-        if (CollectionUtils.isNotEmpty(result)) {
-            for (String temp : result) {
-                resultStirng = resultStirng + temp;
-            }
+        String result;
+        List<String> segments = XPathUtil.getXpath(xpath, (String) operatingData);
+        if (CollectionUtils.isNotEmpty(segments)) {
+            result = segments.stream().collect(Collectors.joining());
         } else {
             logger.warn("xpath extract empty content! - {}", xpath);
-            resultStirng = "";
+            result = StringUtils.EMPTY;
         }
-        resultStirng = StringUtils.isEmpty(resultStirng) && BooleanUtils.isTrue(operation.getEmptyToNull()) ? null : resultStirng;
 
-        return resultStirng;
+        if (result.isEmpty() && BooleanUtils.isTrue(operation.getEmptyToNull())) {
+            result = null;
+        }
+
+        return result;
     }
-
 }
