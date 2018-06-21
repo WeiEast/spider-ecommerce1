@@ -19,7 +19,7 @@ import com.datatrees.crawler.core.processor.filter.FieldRequestFilter;
 import com.datatrees.crawler.core.processor.filter.ParserUrlListFilter;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.parser.ParserImpl;
-import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -37,21 +37,33 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
     }
 
     @Override
+    protected void validate(ParserOperation operation, Request request, Response response) throws Exception {
+        super.validate(operation, request, response);
+
+        if (operation.getParser() == null) {
+            throw new InvalidOperationException("Invalid parser operation! - Reference 'parser' must not be null.");
+        }
+    }
+
+    @Override
     protected Object doOperation(@Nonnull ParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         Parser parser = operation.getParser();
-        Preconditions.checkNotNull(parser, "ParserOperation parser element should not be null!");
-        boolean needRequest = false;
-        boolean needReturnUrlList = false;
+
         FieldExtractor field = getExtractor();
         logger.debug("field name: {}", field);
+
+        boolean needRequest = false;
         String fieldResult = fieldFilter.filter(field.getField());
-        String urlList = parserUrlListFilter.filter(field.getField());
         if (StringUtils.isNotEmpty(fieldResult)) {
             needRequest = true;
         }
+
+        boolean needReturnUrlList = false;
+        String urlList = parserUrlListFilter.filter(field.getField());
         if (StringUtils.isNotEmpty(urlList)) {
             needReturnUrlList = true;
         }
+
         logger.debug("invoke parser process: {}", field);
         try {
             ParserImpl parserImpl = new ParserImpl(parser, needRequest, needReturnUrlList);

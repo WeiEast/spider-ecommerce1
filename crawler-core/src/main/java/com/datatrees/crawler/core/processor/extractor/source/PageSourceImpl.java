@@ -129,7 +129,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
             });
         } else {
             content = StringUtils.EMPTY;
-            logger.error("incorrect input content to call plugin to get source content. <<< {}", value);
+            logger.warn("incorrect input content to call plugin to get source content. <<< {}", value);
         }
 
         logger.debug("Source content : {}", content);

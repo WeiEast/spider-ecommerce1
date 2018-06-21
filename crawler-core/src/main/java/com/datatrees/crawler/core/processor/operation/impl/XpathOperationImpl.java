@@ -18,6 +18,7 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.XpathOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -35,10 +36,25 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
     }
 
     @Override
+    protected void validate(XpathOperation operation, Request request, Response response) throws Exception {
+        super.validate(operation, request, response);
+
+        if (StringUtils.isEmpty(operation.getXpath())) {
+            throw new InvalidOperationException("Invalid xpath operation! - 'xpath/text()' must not be empty.");
+        }
+    }
+
+    @Override
     protected Object doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String xpath = operation.getXpath();
 
         xpath = StandardExpression.eval(xpath, request, response);
+
+        logger.debug("Actual xpath: {}", xpath);
+
+        if (StringUtils.isBlank(xpath)) {
+            throw new InvalidOperationException("Incorrect xpath! \nOriginal Xpath: " + operation.getXpath() + "\nActual Xpath: " + xpath);
+        }
 
         String result;
         List<String> segments = XPathUtil.getXpath(xpath, (String) operatingData);

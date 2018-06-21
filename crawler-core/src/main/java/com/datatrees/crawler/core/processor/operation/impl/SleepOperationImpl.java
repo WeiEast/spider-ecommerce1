@@ -28,12 +28,17 @@ public class SleepOperationImpl extends Operation<SleepOperation> {
     }
 
     @Override
+    protected boolean isSkipped(SleepOperation operation, Request request, Response response) {
+        // invalid sleep operation and skip
+        logger.warn("invalid sleep operation and skip");
+        return operation.getValue() == null;
+    }
+
+    @Override
     protected Object doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         Integer sleepTime = operation.getValue();
-        if (sleepTime != null) {
-            logger.debug("Start to Sleep: {}", sleepTime);
-            Thread.sleep(sleepTime);
-        }
+        logger.debug("Start to Sleep: {}", sleepTime);
+        Thread.sleep(sleepTime);
 
         return null;
     }

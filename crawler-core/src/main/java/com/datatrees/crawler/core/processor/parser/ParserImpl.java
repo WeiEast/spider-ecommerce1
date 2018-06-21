@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
+import com.datatrees.common.pipeline.InvokeException;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
@@ -26,11 +28,13 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.ExpressionParser;
 import com.treefinance.crawler.framework.util.UrlExtractor;
-import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -60,11 +64,11 @@ public class ParserImpl {
         this.needReturnUrlList = needReturnUrlList;
     }
 
-    public Object parse(@Nonnull String content, @Nonnull Request request, @Nonnull Response response) throws InterruptedException {
-        Preconditions.notEmpty("content", content);
-
+    public Object parse(@Nonnull String content, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String template = parser.getUrlTemplate();
-        Preconditions.notEmpty("url-template", template);
+        if (StringUtils.isEmpty(template)) {
+            throw new InvalidOperationException("Invalid parser operation! - 'parser/url-template' must not be empty!");
+        }
 
         logger.info("parser's url-template: {}", template);
 
@@ -77,7 +81,6 @@ public class ParserImpl {
         List<String> results = evalExp(complexSource, request, response, content);
 
         logger.info("after template combine: {}", results.size());
-        String result = results.get(0);
         if (isNeedRequest()) {
             if (parser.getSleepSecond() != null && parser.getSleepSecond() > 0) {
                 logger.info("sleep {}s before parser request.", parser.getSleepSecond());
@@ -88,13 +91,13 @@ public class ParserImpl {
             RequestUtil.setConf(newRequest, RequestUtil.getConf(request));
             RequestUtil.setContext(newRequest, RequestUtil.getContext(request));
             Response newResponse = new Response();
-            result = getResponseByWebRequest(newRequest, newResponse, result);
-            return result;
+
+            return getResponseByWebRequest(newRequest, newResponse, results.get(0));
         } else if (isNeedReturnUrlList()) {
             // support multi parsers
             return results;
         } else {
-            return result;
+            return results.get(0);
         }
     }
 
@@ -113,7 +116,18 @@ public class ParserImpl {
 
             Map<String, Object> context = RequestUtil.getSourceMap(request);
             if (CollectionUtils.isNotEmpty(fieldScopes)) {
-                return fieldScopes.stream().map(fieldScope -> parser.evalExp(ImmutableList.of(fieldScope, context), true, false)).distinct().collect(Collectors.toList());
+                List<String> list = fieldScopes.stream().map(fieldScope -> {
+                    try {
+                        return parser.evalExp(ImmutableList.of(fieldScope, context), true, false);
+                    } catch (Exception e) {
+                        logger.warn("Error eval expression with url: {}, fieldScope: {}", expUrl, JSON.toJSONString(fieldScope));
+                    }
+                    return StringUtils.EMPTY;
+                }).filter(item -> !item.isEmpty()).distinct().collect(Collectors.toList());
+
+                if (!list.isEmpty()) {
+                    return list;
+                }
             }
 
             // if not find field result using default input context
@@ -132,7 +146,7 @@ public class ParserImpl {
         List<Map<String, Object>> fieldScopes = new ArrayList<>();
         for (ParserPattern parserPattern : mappings) {
             String regex = parserPattern.getRegex();
-            if (regex == null) continue;
+            if (StringUtils.isEmpty(regex)) continue;
 
             List<IndexMapping> indexMappings = parserPattern.getIndexMappings();
             if (CollectionUtils.isEmpty(indexMappings)) continue;
@@ -166,7 +180,7 @@ public class ParserImpl {
         return fieldScopes;
     }
 
-    private String getResponseByWebRequest(Request newResquest, Response newResponse, String complexUrl) {
+    private String getResponseByWebRequest(Request newRequest, Response newResponse, String complexUrl) throws InvokeException, ResultEmptyException {
         String datas[] = ParserURLCombiner.decodeParserUrl(complexUrl);
         String url = datas[0];
         String referer = datas[1];
@@ -178,27 +192,23 @@ public class ParserImpl {
             return url;
         }
 
-        try {
-            LinkNode currentLinkNode = new LinkNode(url);
-            // add referer
-            if (StringUtils.isNotEmpty(referer)) {
-                currentLinkNode.getHeaders().put(Constants.HTTP_HEADER_REFERER, referer);
-            }
-            // // add json headers
-            if (StringUtils.isNotEmpty(headers)) {
-                Map<String, String> headersMap = (Map<String, String>) GsonUtils.fromJson(headers, Map.class);
-                currentLinkNode.addHeaders(headersMap);
-            }
-            RequestUtil.setCurrentUrl(newResquest, currentLinkNode);
-            AbstractProcessorContext context = RequestUtil.getProcessorContext(newResquest);
-            AbstractService service = context.getDefaultService();
-            ServiceBase serviceProcessor = ProcessorFactory.getService(service);
-            serviceProcessor.invoke(newResquest, newResponse);
-        } catch (Exception e) {
-            logger.warn("error requesting url: {}", url, e);
-            return StringUtils.EMPTY;
+        LinkNode currentLinkNode = new LinkNode(url);
+        // add referer
+        if (StringUtils.isNotEmpty(referer)) {
+            currentLinkNode.getHeaders().put(Constants.HTTP_HEADER_REFERER, referer);
         }
-        return StringUtils.defaultString(RequestUtil.getContent(newResquest));
+        // // add json headers
+        if (StringUtils.isNotEmpty(headers)) {
+            Map<String, String> headersMap = GsonUtils.fromJson(headers, new TypeToken<Map<String, String>>() {}.getType());
+            currentLinkNode.addHeaders(headersMap);
+        }
+        RequestUtil.setCurrentUrl(newRequest, currentLinkNode);
+        AbstractProcessorContext context = RequestUtil.getProcessorContext(newRequest);
+        AbstractService service = context.getDefaultService();
+        ServiceBase serviceProcessor = ProcessorFactory.getService(service);
+        serviceProcessor.invoke(newRequest, newResponse);
+
+        return StringUtils.defaultString(RequestUtil.getContent(newRequest));
     }
 
     public boolean isNeedRequest() {

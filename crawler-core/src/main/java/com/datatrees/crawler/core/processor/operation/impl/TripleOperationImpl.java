@@ -19,58 +19,53 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
     }
 
     @Override
+    protected boolean isSkipped(TripleOperation operation, Request request, Response response) {
+        // invalid xpath operation and skip
+        return StringUtils.isBlank(operation.getValue());
+    }
+
+    @Override
     protected Object doOperation(@Nonnull TripleOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
-        String input = (String) operatingData;
         String expression = operation.getValue();
-        logger.debug("triple expression: {}", expression);
 
-        String result;
-        if (StringUtils.isBlank(operation.getValue())) {
-            result = input;
-        } else {
-            // ${this}=${a}?${b}:${c}
-            TripleType type = operation.getTripleType();
-            if (type == null) {
-                type = TripleType.EQ;
-            }
-
-            String exp = type.getExpression();
-            int i = expression.indexOf(exp);
-            if (i == -1) {
-                throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
-            }
-
-            String param1 = expression.substring(0, i);
-
-            i = i + exp.length();
-            int j = expression.indexOf("?", i);
-            if (i == -1) {
-                throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
-            }
-
-            String param2 = expression.substring(i, j);
-
-            i = j + 1;
-            j = expression.indexOf(":", i);
-            if (j == -1) {
-                throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
-            }
-
-            String result1 = expression.substring(i, j);
-            String result2 = expression.substring(j + 1);
-
-            param1 = evalExp(param1, input, request, response);
-            param2 = evalExp(param2, input, request, response);
-            result1 = evalExp(result1, input, request, response);
-            result2 = evalExp(result2, input, request, response);
-
-             result = type.calculate(param1, param2, result1, result2);
+        // ${this}=${a}?${b}:${c}
+        TripleType type = operation.getTripleType();
+        if (type == null) {
+            type = TripleType.EQ;
         }
 
+        String exp = type.getExpression();
+        int i = expression.indexOf(exp);
+        if (i == -1) {
+            throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
+        }
 
-        logger.debug("input: {}, output: {}", input, result);
+        String param1 = expression.substring(0, i);
 
-        return result;
+        i = i + exp.length();
+        int j = expression.indexOf("?", i);
+        if (i == -1) {
+            throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
+        }
+
+        String param2 = expression.substring(i, j);
+
+        i = j + 1;
+        j = expression.indexOf(":", i);
+        if (j == -1) {
+            throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
+        }
+
+        String result1 = expression.substring(i, j);
+        String result2 = expression.substring(j + 1);
+
+        String input = (String) operatingData;
+        param1 = evalExp(param1, input, request, response);
+        param2 = evalExp(param2, input, request, response);
+        result1 = evalExp(result1, input, request, response);
+        result2 = evalExp(result2, input, request, response);
+
+        return type.calculate(param1, param2, result1, result2);
     }
 
     private String evalExp(String value, String operatingData, Request request, Response response) {

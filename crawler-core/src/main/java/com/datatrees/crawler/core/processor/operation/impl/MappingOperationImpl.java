@@ -15,6 +15,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -38,30 +39,24 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
         super(operation, extractor);
     }
 
-    private String getMappingValue(String group, String key) {
-        Map<String, String> mapping = CACHE.getUnchecked(group);
-        if (mapping != null) {
-            return mapping.get(key);
-        }
+    @Override
+    protected void validate(MappingOperation operation, Request request, Response response) throws Exception {
+        super.validate(operation, request, response);
 
-        return null;
+        if (StringUtils.isEmpty(operation.getGroupName())) {
+            throw new InvalidOperationException("Invalid mapping operation! - Attribute 'group-name' must not be empty!");
+        }
     }
 
     @Override
     protected Object doOperation(@Nonnull MappingOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
-        String input = (String) operatingData;
-
-        String result = null;
-        try {
-            if (StringUtils.isNotEmpty(operation.getGroupName())) {
-                result = getMappingValue(operation.getGroupName(), input);
-            }
-        } catch (Exception e) {
-            logger.error("Error mapping field value, group: {}, input: {}, error: {}", operation.getGroupName(), input, e.getMessage());
+        String group = operation.getGroupName();
+        Map<String, String> mapping = CACHE.getUnchecked(group);
+        if (mapping != null) {
+            String input = (String) operatingData;
+            return mapping.get(input);
         }
 
-        logger.debug("Mapping field value, group: {}, input: {}, output: {}", operation.getGroupName(), input, result);
-
-        return result;
+        return null;
     }
 }

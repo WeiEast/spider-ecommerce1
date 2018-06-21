@@ -16,7 +16,6 @@ import java.util.List;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.*;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
@@ -172,14 +171,9 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
         this.businessType = businessType;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "FieldExtractor [id =" + getId() + ",field=" + field + ",businessType=" + businessType + "]";
+        return "FieldExtractor [id =" + getId() + ",field=" + field + (businessType != null ? ",businessType=" + businessType : "") + "]";
     }
 
 }

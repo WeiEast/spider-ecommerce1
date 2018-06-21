@@ -36,9 +36,11 @@ public final class FieldScopes {
     public static Object getVisibleField(String name, Request request, Response response) {
         Object result = null;
         FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
-        FieldExtractResult fieldExtractResult = fieldExtractResultSet.get(name);
-        if (fieldExtractResult != null) {
-            result = fieldExtractResult.getResult();
+        if (fieldExtractResultSet != null) {
+            FieldExtractResult fieldExtractResult = fieldExtractResultSet.get(name);
+            if (fieldExtractResult != null) {
+                result = fieldExtractResult.getResult();
+            }
         }
         if (result == null) {
             result = RequestUtil.getSourceMap(request).get(name);
