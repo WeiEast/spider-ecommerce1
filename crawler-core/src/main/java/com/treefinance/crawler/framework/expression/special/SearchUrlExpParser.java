@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 public final class SearchUrlExpParser {
 
     private static final Logger  LOGGER  = LoggerFactory.getLogger(PageExpParser.class);
-    private static final String  REGEX   = "$\\{\\s*page\\s*,\\s*([\\d]+)\\s*,\\s*([\\d]+)\\s*,\\s*([\\d]+)\\s*\\+\\s*}";
+    private static final String  REGEX   = "\\$\\{\\s*page\\s*,\\s*([\\d]+)\\s*,\\s*([\\d]+)\\s*,\\s*([\\d]+)\\s*\\+\\s*}";
     private static final Pattern PATTERN = Pattern.compile(REGEX);
 
     private SearchUrlExpParser() {
