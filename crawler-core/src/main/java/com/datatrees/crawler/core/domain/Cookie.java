@@ -19,16 +19,21 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Cookie implements Serializable {
 
+    public static final Cookie EMPTY = new Cookie();
     /**
      *
      */
     private static final long serialVersionUID = -3894508724345166182L;
     @SerializedName("username")
-    String userName;
-    String cookie;
+    private String userName;
+    private String cookie;
 
     public Cookie() {
         super();
+    }
+
+    public Cookie(String cookie) {
+        this.cookie = cookie;
     }
 
     public Cookie(String userName, String cookie) {

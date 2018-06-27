@@ -45,7 +45,7 @@ public final class FieldScopes {
         if (result == null) {
             result = RequestUtil.getSourceMap(request).get(name);
         }
-        LOGGER.debug("Search visible field in extracted field scope or global field scope. - name: {},result: {}", name, result);
+        LOGGER.debug("Search field in extracted fields or global fields. - name: {}, value: {}", name, result);
 
         return result;
     }
