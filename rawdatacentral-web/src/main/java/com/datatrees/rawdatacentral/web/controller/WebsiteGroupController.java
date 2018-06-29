@@ -52,18 +52,12 @@ public class WebsiteGroupController {
      * @return
      */
     @RequestMapping("/configGroup")
-    public HttpResult<Object> configGroup(@RequestBody Map<String, Object> map) {
-        HttpResult<Object> result = new HttpResult<>();
-        try {
-            String groupCode = (String) map.get("groupCode");
-            Map<String, Integer> config = (LinkedHashMap<String, Integer>) map.get("config");
-            List<WebsiteGroup> list = websiteGroupService.configGroup(groupCode, config);
-            logger.info("configGroup success config={}", JSON.toJSONString(map));
-            return result.success(list);
-        } catch (Exception e) {
-            logger.error("configGroup error config={}", JSON.toJSONString(map), e);
-            return result.failure();
-        }
+    public SaasResult configGroup(@RequestBody Map<String, Object> map) {
+        String groupCode = (String) map.get("groupCode");
+        Map<String, Integer> config = (LinkedHashMap<String, Integer>) map.get("config");
+        List<WebsiteGroup> list = websiteGroupService.configGroup(groupCode, config);
+        logger.info("configGroup success config={}", JSON.toJSONString(map));
+        return Results.newSuccessResult(list);
     }
 
     /**
@@ -185,8 +179,8 @@ public class WebsiteGroupController {
      * @return
      */
     @RequestMapping("/queryByGroupCode")
-    public List<WebsiteGroup> queryByGroupCode(String groupCode) {
-        return websiteGroupService.queryByGroupCode(groupCode);
+    public SaasResult queryByGroupCode(String groupCode) {
+        return Results.newSuccessResult(websiteGroupService.queryByGroupCode(groupCode));
     }
 
     /**
