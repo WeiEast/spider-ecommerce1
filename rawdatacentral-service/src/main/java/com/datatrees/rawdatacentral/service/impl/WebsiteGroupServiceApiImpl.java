@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.WebsiteGroupServiceApi;
 import com.datatrees.rawdatacentral.dao.WebsiteGroupDAO;
@@ -15,11 +16,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebsiteGroupServiceApiImpl implements WebsiteGroupServiceApi {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebsiteGroupServiceApiImpl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(WebsiteGroupServiceApiImpl.class);
+
     @Resource
-    private WebsiteGroupDAO     websiteGroupDAO;
+    private              WebsiteGroupDAO     websiteGroupDAO;
+
     @Resource
-    private WebsiteGroupService websiteGroupService;
+    private              WebsiteGroupService websiteGroupService;
 
     @Override
     public Integer enableCount(String groupCode) {
@@ -65,5 +68,15 @@ public class WebsiteGroupServiceApiImpl implements WebsiteGroupServiceApi {
     @Override
     public List<String> getWebsiteNameList(String enable, String operatorType, String groupCode) {
         return websiteGroupService.getWebsiteNameList(enable, operatorType, groupCode);
+    }
+
+    @Override
+    public List<WebsiteGroup> queryByGroupCode(String groupCode) {
+        return websiteGroupService.queryByGroupCode(groupCode);
+    }
+
+    @Override
+    public List<WebsiteGroup> configGroup(String groupCode, Map<String, Integer> config) {
+        return websiteGroupService.configGroup(groupCode, config);
     }
 }
