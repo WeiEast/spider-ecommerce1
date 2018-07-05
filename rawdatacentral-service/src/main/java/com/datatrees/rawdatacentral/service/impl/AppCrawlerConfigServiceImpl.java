@@ -123,16 +123,11 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     }
 
     @Override
-    public List<AppCrawlerConfigParam> getAppCrawlerConfigList() {
-        MerchantResult<List<MerchantAppLicenseResult>> merchantResult = merchantBaseInfoFacade.queryAllMerchantAppLicense(new BaseRequest());
-        List<MerchantAppLicenseResult> appList = merchantResult.getData();
-        logger.debug("Merchant list: {}, size: {}", appList, appList.size());
-
-        if (CollectionUtils.isEmpty(appList)) {
+    public List<AppCrawlerConfigParam> getAppCrawlerConfigList(List<MerchantAppLicenseResult> appIds) {
+        if (CollectionUtils.isEmpty(appIds)) {
             return Collections.emptyList();
         }
-
-        return appList.parallelStream().map(this::getAppCrawlerConfigParamByAppId).sorted(Comparator.comparing(AppCrawlerConfigParam::getAppId)).collect(Collectors.toList());
+        return appIds.parallelStream().map(this::getAppCrawlerConfigParamByAppId).collect(Collectors.toList());
     }
 
     private AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(MerchantAppLicenseResult merchant) {
@@ -177,7 +172,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         }
                     }
 
-                    if(logger.isDebugEnabled()){
+                    if (logger.isDebugEnabled()) {
                         logger.debug("已知的业务标签配置：{}", JSON.toJSONString(map));
                     }
 
