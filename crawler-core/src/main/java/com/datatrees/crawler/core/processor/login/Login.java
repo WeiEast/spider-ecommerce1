@@ -76,7 +76,7 @@ public enum Login {
             cookie = resultMap.get(PluginConstants.COOKIE).toString();
             // set other params from login to context
             resultMap.remove(PluginConstants.COOKIE);
-            if (resultMap.size() > 0) context.getContext().putAll(resultMap);
+            if (resultMap.size() > 0) context.addAttributes(resultMap);
         } else {
             logger.warn("doPluginLogin with no plugin ...");
         }
@@ -136,12 +136,12 @@ public enum Login {
     private void doClientLogin(SearchProcessorContext context) throws Exception {
         LoginConfig loginConfig = context.getLoginConfig();
         WebsiteAccount account = context.getLoginResource().getAccount(ProcessorContextUtil.getAccountKey(context));
-        ProcessorContextUtil.setAccount(context, account);
-
         if (account == null) {
             logger.error("no active accountlist while do client login for " + ProcessorContextUtil.getAccountKey(context));
             throw new LoginException("no active accountlist while do client login for " + ProcessorContextUtil.getAccountKey(context));
         }
+
+        ProcessorContextUtil.setAccount(context, account);
 
         Cookie objCookie = new Cookie();
         objCookie.setUserName(account.getUserName());
@@ -166,7 +166,7 @@ public enum Login {
             cookie = resultMap.get(PluginConstants.COOKIE) != null ? resultMap.get(PluginConstants.COOKIE).toString() : null;
             // set other params from login to context
             resultMap.remove(PluginConstants.COOKIE);
-            if (resultMap.size() > 0) context.getContext().putAll(resultMap);
+            if (resultMap.size() > 0) context.addAttributes(resultMap);
         } else {// httpclient
             cookie = LoginUtil.getInstance().doLogin(loginConfig, context);
         }

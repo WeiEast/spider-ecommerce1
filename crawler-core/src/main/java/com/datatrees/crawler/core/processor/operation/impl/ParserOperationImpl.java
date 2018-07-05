@@ -8,6 +8,8 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
@@ -30,10 +32,13 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
     private static final FieldRequestFilter  fieldFilter         = new FieldRequestFilter();
     private static final ParserUrlListFilter parserUrlListFilter = new ParserUrlListFilter();
 
+    public ParserOperationImpl(@Nonnull ParserOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        ParserOperation op = getOperation();
-        Parser parser = op.getParser();
+    protected Object doOperation(@Nonnull ParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        Parser parser = operation.getParser();
         Preconditions.checkNotNull(parser, "ParserOperation parser element should not be null!");
         boolean needRequest = false;
         boolean needReturnUrlList = false;
@@ -48,9 +53,12 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
             needReturnUrlList = true;
         }
         logger.debug("invoke parser process: {}", field);
-        ParserImpl parserImpl = new ParserImpl(needRequest, parser, needReturnUrlList);
-        parserImpl.invoke(request, response);
-        logger.debug("success invoke parser process: {}", field);
+        try {
+            ParserImpl parserImpl = new ParserImpl(parser, needRequest, needReturnUrlList);
+            return parserImpl.parse((String) operatingData, request, response);
+        } finally {
+            logger.debug("success invoke parser process: {}", field);
+        }
     }
 
 }

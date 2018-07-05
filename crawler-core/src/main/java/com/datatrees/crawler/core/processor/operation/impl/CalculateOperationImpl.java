@@ -8,11 +8,14 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.CalculateOperation;
-import com.datatrees.crawler.core.processor.common.CalculateUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.util.CalculateUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -22,23 +25,21 @@ import org.apache.commons.lang.StringUtils;
  */
 public class CalculateOperationImpl extends Operation<CalculateOperation> {
 
+    public CalculateOperationImpl(@Nonnull CalculateOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        CalculateOperation operation = getOperation();
+    protected Object doOperation(@Nonnull CalculateOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String expression = operation.getValue();
 
         Object result = null;
         // regex support get value from context
         if (StringUtils.isNotEmpty(expression)) {
-            result = CalculateUtil.sourceCalculate(request, response, expression, null);
+            result = CalculateUtils.calculate(expression, request, response, null, null);
         }
-        logger.debug("calculate input: {}, result: {}", expression, result);
 
-        if (result != null) {
-            response.setOutPut(result.toString());
-        } else {
-            response.setOutPut(null);
-        }
+        return result == null ? null : result.toString();
     }
 
 }

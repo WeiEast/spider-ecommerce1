@@ -1,8 +1,11 @@
 package com.datatrees.crawler.core.processor.service.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
+import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
@@ -16,15 +19,15 @@ import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TaskHttpServiceImpl extends ServiceBase {
+public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaskHttpServiceImpl.class);
+    public TaskHttpServiceImpl(@Nonnull TaskHttpService service) {
+        super(service);
+    }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         String websiteName = context.getWebsiteName();

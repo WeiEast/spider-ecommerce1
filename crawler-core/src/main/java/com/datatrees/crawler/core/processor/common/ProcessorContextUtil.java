@@ -35,116 +35,96 @@ public class ProcessorContextUtil {
         if (StringUtils.isBlank(cookieString)) {
             return;
         }
-        context.getContext().put(Constants.COOKIE_STRING, cookieString);
+        context.addAttribute(Constants.COOKIE_STRING, cookieString);
         boolean retainQuote = context instanceof SearchProcessorContext && ((SearchProcessorContext) context).getCookieConf() != null ? ((SearchProcessorContext) context).getCookieConf().getRetainQuote() : false;
         Map<String, String> cookieMap = CookieFormater.INSTANCE.parserCookieToMap(cookieString, retainQuote);
-        context.getContext().put(Constants.COOKIE, cookieMap);
+        context.addAttribute(Constants.COOKIE, cookieMap);
     }
 
     public static Map<String, String> getCookieMap(AbstractProcessorContext context) {
-        Map<String, String> cookieMap = (Map<String, String>) context.getContext().get(Constants.COOKIE);
+        Map<String, String> cookieMap = (Map<String, String>) context.getAttribute(Constants.COOKIE);
         return cookieMap == null ? new HashMap<String, String>() : cookieMap;
     }
 
     public static String getCookieString(AbstractProcessorContext context) {
-        return (String) context.getContext().get(Constants.COOKIE_STRING);
+        return (String) context.getAttribute(Constants.COOKIE_STRING);
     }
 
     public static void setCookieObject(AbstractProcessorContext context, Cookie cookie) {
-        context.getContext().put(Constants.USERNAME, cookie.getUserName());
+        context.addAttribute(Constants.USERNAME, cookie.getUserName());
         ProcessorContextUtil.setCookieString(context, cookie.getCookie());
     }
 
     public static void setAccountKey(AbstractProcessorContext context, String accountKey) {
-        context.getContext().put(Constants.ACCOUNT_KEY, accountKey);
+        context.addAttribute(Constants.ACCOUNT_KEY, accountKey);
     }
 
     public static String getAccountKey(AbstractProcessorContext context) {
-        return (String) context.getContext().get(Constants.ACCOUNT_KEY);
+        return (String) context.getAttribute(Constants.ACCOUNT_KEY);
     }
 
     public static void setAccount(AbstractProcessorContext context, WebsiteAccount account) {
-        context.getContext().put(Constants.USERNAME, account.getUserName());
-        context.getContext().put(Constants.PASSWORD, account.getPassword());
+        context.addAttribute(Constants.USERNAME, account.getUserName());
+        context.addAttribute(Constants.PASSWORD, account.getPassword());
     }
 
     public static void setValue(AbstractProcessorContext context, String key, Object value) {
-        context.getContext().put(key, value);
+        context.addAttribute(key, value);
     }
 
     public static void addValues(AbstractProcessorContext context, Map values) {
-        context.getContext().putAll(values);
+        context.addAttributes(values);
     }
 
     public static Object getValue(AbstractProcessorContext context, String key) {
-        return context.getContext().get(key);
+        return context.getAttribute(key);
     }
 
     public static void setKeyword(AbstractProcessorContext context, String keyword) {
-        context.getContext().put(Constants.PAGE_REQUEST_CONTEXT_KEYWORD, keyword);
-        context.getContext().put(Constants.PAGE_REQUEST_CONTEXT_ORIGINAL_KEYWORD, keyword);
+        context.addAttribute(Constants.PAGE_REQUEST_CONTEXT_KEYWORD, keyword);
+        context.addAttribute(Constants.PAGE_REQUEST_CONTEXT_ORIGINAL_KEYWORD, keyword);
     }
 
     public static void setTaskUnique(AbstractProcessorContext context, Object obj) {
-        context.getContext().put(Constants.TASK_UNIQUE_SIGN, obj);
+        context.addAttribute(Constants.TASK_UNIQUE_SIGN, obj);
     }
 
     public static Object getTaskUnique(AbstractProcessorContext context) {
-        return context.getContext().get(Constants.TASK_UNIQUE_SIGN);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, Object> getThreadLocalContext(AbstractProcessorContext context) {
-        Map<String, Object> threadLocalContext = (Map<String, Object>) context.getThreadContext().get(Thread.currentThread());
-        if (threadLocalContext == null) {
-            threadLocalContext = new HashMap<String, Object>();
-            context.getThreadContext().put(Thread.currentThread(), threadLocalContext);
-        }
-        return threadLocalContext;
+        return context.getAttribute(Constants.TASK_UNIQUE_SIGN);
     }
 
     public static void addThreadLocalResponse(AbstractProcessorContext context, Response response) {
-        Map<String, Object> threadLocalContext = getThreadLocalContext(context);
-        Object responseList = threadLocalContext.get(Constants.THREAD_LOCAL_RESPONSE);
-        if (responseList == null) {
-            responseList = new ArrayList<Response>();
-            threadLocalContext.put(Constants.THREAD_LOCAL_RESPONSE, responseList);
-        }
+        Object responseList = context.computeThreadAttrIfAbsent(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE,k -> new ArrayList<Response>());
         ((List) responseList).add(response);
     }
 
     public static List<Response> getThreadLocalResponseList(AbstractProcessorContext context) {
-        return (List<Response>) getThreadLocalContext(context).get(Constants.THREAD_LOCAL_RESPONSE);
+        return (List<Response>) context.getThreadAttr(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE);
     }
 
     public static void clearThreadLocalResponseList(AbstractProcessorContext context) {
-        getThreadLocalContext(context).put(Constants.THREAD_LOCAL_RESPONSE, null);
+        context.removeThreadAttr(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE);
     }
 
     public static void addThreadLocalLinkNode(AbstractProcessorContext context, LinkNode linkNode) {
-        Map<String, Object> threadLocalContext = getThreadLocalContext(context);
-        Object linkNodeList = threadLocalContext.get(Constants.THREAD_LOCAL_LINKNODE);
-        if (linkNodeList == null) {
-            linkNodeList = new ArrayList<LinkNode>();
-            threadLocalContext.put(Constants.THREAD_LOCAL_LINKNODE, linkNodeList);
-        }
+        Object linkNodeList = context.computeThreadAttrIfAbsent(Thread.currentThread(), Constants.THREAD_LOCAL_LINKNODE, k -> new ArrayList<LinkNode>());
         ((List) linkNodeList).add(linkNode);
     }
 
-    public static void clearThreadLocalLinkNode(AbstractProcessorContext context) {
-        getThreadLocalContext(context).put(Constants.THREAD_LOCAL_LINKNODE, null);
+    public static List<LinkNode> getThreadLocalLinkNode(AbstractProcessorContext context) {
+        return (List<LinkNode>) context.getThreadAttr(Thread.currentThread(), Constants.THREAD_LOCAL_LINKNODE);
     }
 
-    public static List<LinkNode> getThreadLocalLinkNode(AbstractProcessorContext context) {
-        return (List<LinkNode>) getThreadLocalContext(context).get(Constants.THREAD_LOCAL_LINKNODE);
+    public static void clearThreadLocalLinkNode(AbstractProcessorContext context) {
+        context.removeThreadAttr(Thread.currentThread(), Constants.THREAD_LOCAL_LINKNODE);
     }
 
     public static void setHttpState(AbstractProcessorContext context, HttpState state) {
-        context.getContext().put(Constants.HTTP_STATE, state);
+        context.addAttribute(Constants.HTTP_STATE, state);
     }
 
     public static HttpState getHttpState(AbstractProcessorContext context) {
-        return (HttpState) context.getContext().get(Constants.HTTP_STATE);
+        return (HttpState) context.getAttribute(Constants.HTTP_STATE);
     }
 
 }

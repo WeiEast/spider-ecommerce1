@@ -8,22 +8,16 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import java.util.Map;
-import java.util.Set;
+import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.RegexOperation;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.toolkit.util.RegExp;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -32,18 +26,17 @@ import org.apache.commons.lang.StringUtils;
  */
 public class RegexOperationImpl extends Operation<RegexOperation> {
 
-    @Override
-    public void process(Request request, Response response) throws Exception {
-        RegexOperation operation = getOperation();
-        String regex = operation.getRegex();
-        String orginal = OperationHelper.getStringInput(request, response);
+    public RegexOperationImpl(@Nonnull RegexOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
 
-        //regex support get value from context
-        if (StringUtils.isNotEmpty(regex)) {
-            Set<String> replaceList = ReplaceUtils.getReplaceList(regex);
-            Map<String, FieldExtractorWarpper> fieldMap = ResponseUtil.getResponseFieldResult(response);
-            regex = ReplaceUtils.replaceMap(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), regex);
-        }
+    @Override
+    protected Object doOperation(@Nonnull RegexOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String regex = operation.getRegex();
+        String orginal = (String)operatingData;
+
+        regex = StandardExpression.eval(regex, request, response);
+
         Object result = null;
         if (operation.getGroupIndex() == null || operation.getGroupIndex() < 0) {
             result = RegExp.getMatcher(regex, orginal);
@@ -58,6 +51,6 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
 
             logger.debug("original: {}, dest: {}", orginal, result);
         }
-        response.setOutPut(result);
+        return result;
     }
 }

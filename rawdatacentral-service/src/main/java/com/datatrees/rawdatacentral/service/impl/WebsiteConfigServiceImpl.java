@@ -66,8 +66,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         parentConfigHandler = new ParentConfigHandler() {
             @Override
             public <T> T parse(T type) throws Exception {
-                if (type != null && type instanceof AbstractWebsiteConfig &&
-                        StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
+                if (type instanceof AbstractWebsiteConfig && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
                     String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
                     logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class " + type.getClass());
                     Website website = getWebsiteByWebsiteName(parentWebsiteName);
@@ -127,8 +126,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public Website getFromWebsiteConfig(WebsiteConfig websiteConfig) {
         CheckUtils.checkNotNull(websiteConfig, "websiteConfig is null");
-        Website website = buildWebsite(websiteConfig);
-        return website;
+        return buildWebsite(websiteConfig);
     }
 
     @Override
@@ -384,7 +382,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         if (StringUtils.isBlank(websiteConfig.getGroupCode())) {
             GroupEnum group = GroupEnum.getByWebsiteName(websiteConfig.getWebsiteName());
             if (null == group) {
-                logger.error("not found group code for webisteName={}", websiteConfig.getWebsiteName());
+                logger.warn("not found group code for webisteName={}", websiteConfig.getWebsiteName());
                 //throw new RuntimeException("not found group code for webisteName=" + websiteConfig.getWebsiteName());
             } else {
                 website.setGroupCode(group.getGroupCode());
@@ -402,15 +400,13 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public Website buildWebsite(WebsiteOperator websiteOperator) {
         WebsiteConfig config = buildWebsiteConfig(websiteOperator);
-        Website website = buildWebsite(config);
-        return website;
+        return buildWebsite(config);
     }
 
     @Override
     public Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo) {
         WebsiteConfig config = buildWebsiteConfigFromWebsiteInfo(websiteInfo);
-        Website website = buildWebsite(config);
-        return website;
+        return buildWebsite(config);
     }
 
     @Override

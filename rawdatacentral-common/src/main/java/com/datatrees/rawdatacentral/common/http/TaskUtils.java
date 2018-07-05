@@ -322,7 +322,7 @@ public class TaskUtils {
 
     public static void initTaskContext(Long taskId, Map<String, Object> context) {
         String redisKey = RedisKeyPrefixEnum.TASK_CONTEXT.getRedisKey(taskId);
-        if (null == context && context.isEmpty()) {
+        if (null == context || context.isEmpty()) {
             logger.warn("initTaskContext fail,context is empty,taskId={}", taskId);
             return;
         }
@@ -376,7 +376,6 @@ public class TaskUtils {
                 if (!StringUtils.equals(entry.getKey(), find.getValue())) {
                     logger.info("变更了cookie,taskId={},name={},value:{}-->{}", taskId, entry.getKey(), find.getValue(), entry.getValue());
                     find.setValue(entry.getValue());
-                    continue;
                 }
             }
         }

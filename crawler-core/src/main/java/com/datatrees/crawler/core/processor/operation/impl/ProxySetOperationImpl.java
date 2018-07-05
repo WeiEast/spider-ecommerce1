@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ProxySetOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 
@@ -20,9 +23,19 @@ import com.datatrees.crawler.core.processor.operation.Operation;
  */
 public class ProxySetOperationImpl extends Operation<ProxySetOperation> {
 
+    public ProxySetOperationImpl(@Nonnull ProxySetOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        logger.warn("Proxy setting operation is not supported!");
+    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+        logger.warn("Unsupported proxy-setting operation and skip!");
+        return true;
+    }
+
+    @Override
+    protected Object doOperation(@Nonnull ProxySetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        throw new UnsupportedOperationException("Unsupported proxy-set operation!");
     }
 
 }

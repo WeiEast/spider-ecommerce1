@@ -15,7 +15,6 @@ import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.login.LoginConfig;
 import com.datatrees.crawler.core.domain.config.login.LoginType;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.properties.Proxy;
 import com.datatrees.crawler.core.domain.config.properties.Scope;
@@ -31,13 +30,12 @@ import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.page.DummyPage;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -63,7 +61,8 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
     public SearchProcessorContext(Website website, Long taskId) {
         super(website, taskId);
-        Preconditions.checkNotNull(website.getSearchConfig(), "website search config should not be empty!");
+
+        Preconditions.notNull("search-config", website.getSearchConfig());
     }
 
     public void release() {
@@ -84,7 +83,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
      */
     public void init() {
         // init search template map
-        List<SearchTemplateConfig> searchTemplateConfigs = website.getSearchConfig().getSearchTemplateConfigList();
+        List<SearchTemplateConfig> searchTemplateConfigs = getSearchConfig().getSearchTemplateConfigList();
         for (SearchTemplateConfig searchTemplateConfig : searchTemplateConfigs) {
             searchTemplateConfigMap.put(searchTemplateConfig.getId(), searchTemplateConfig);
             SearchType taskType = searchTemplateConfig.getType();
@@ -114,7 +113,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         }
 
         // init page Map
-        List<Page> pageList = website.getSearchConfig().getPageList();
+        List<Page> pageList = getSearchConfig().getPageList();
         if (CollectionUtils.isNotEmpty(pageList)) {
             for (Page p : pageList) {
                 pageMap.put(p.getId(), p);
@@ -122,24 +121,18 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         }
 
         // init plugin
-        List<AbstractPlugin> plugins = getSearchConfig().getPluginList();
-        if (CollectionUtils.isNotEmpty(plugins)) {
-            for (AbstractPlugin plugin : plugins) {
-                pluginMaps.put(plugin.getId(), plugin);
+        registerPlugins(getSearchConfig().getPluginList());
+
+        Properties searchProperties = getSearchProperties();
+        if(searchProperties != null){
+            try {
+                // init cookie conf
+                cookieConf = searchProperties.getCookie().clone();
+            } catch (Exception e) {
+                // ignore
             }
-        }
-
-        // init cookie conf
-        try {
-            cookieConf = website.getSearchConfig().getProperties().getCookie().clone();
-        } catch (Exception e) {
-            // ignore
-        }
-
-        //init proxy
-        Properties properties = getSearchConfig().getProperties();
-        if (properties != null) {
-            proxyConf = properties.getProxy();
+            //init proxy
+            proxyConf = searchProperties.getProxy();
         }
     }
 
@@ -276,9 +269,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
         String pattern = proxyConf.getPattern();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Proxy-conf >>> pattern: {}, proxy: {}, url: {}", pattern, proxyConf.getProxy(), url);
-        }
+        logger.debug("Proxy-conf >>> pattern: {}, proxy: {}, url: {}", pattern, proxyConf.getProxy(), url);
 
         if (StringUtils.isEmpty(pattern)) {
             // If not, will maintain the original logic
@@ -421,12 +412,12 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
     public boolean isRedirectUriEscaped() {
         Properties properties = this.getSearchProperties();
-        return properties != null && BooleanUtils.isTrue(properties.getRedirectUriEscaped());
+        return properties != null && (properties.getRedirectUriEscaped() == null || properties.getRedirectUriEscaped());
     }
 
     public boolean isAllowCircularRedirects() {
         Properties properties = this.getSearchProperties();
-        return properties != null && BooleanUtils.isTrue(properties.getAllowCircularRedirects());
+        return properties != null && (properties.getAllowCircularRedirects() == null || properties.getAllowCircularRedirects());
     }
 
     public Integer getCaptchaCode() {

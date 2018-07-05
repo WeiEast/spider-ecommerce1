@@ -8,40 +8,38 @@
 
 package com.datatrees.crawler.core.processor.plugin;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
 import org.apache.commons.collections.MapUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 1:10:48 PM
  */
-public abstract class Plugin<T extends AbstractPlugin> extends Processor {
+public abstract class Plugin<T extends AbstractPlugin> extends ProcessorInvokerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(Plugin.class);
     private final T                        metadata;
     private final AbstractProcessorContext context;
 
-    public Plugin(T metadata, AbstractProcessorContext context) {
+    public Plugin(@Nonnull T metadata, @Nonnull AbstractProcessorContext context) {
         this.metadata = Objects.requireNonNull(metadata);
         this.context = Objects.requireNonNull(context);
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         try {
             String args = getPhaseInput(request);
 

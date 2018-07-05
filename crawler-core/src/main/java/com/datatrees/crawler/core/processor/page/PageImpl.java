@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.page;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
@@ -32,10 +34,7 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.bean.StatusUtil;
-import com.datatrees.crawler.core.processor.common.DecodeUtil;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
 import com.datatrees.crawler.core.processor.common.html.urlspliter.URLSplitter;
@@ -56,15 +55,20 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 24, 2014 6:35:43 PM
  */
-public class PageImpl extends AbstractPage {
+public class PageImpl extends ProcessorInvokerAdapter {
 
     private static final String titleRegex     = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
     private static final int    URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
 
-    @Override
-    public void process(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(page, "Page should not be null!");
+    private final Page page ;
 
+    public PageImpl(@Nonnull Page page) {
+        this.page = Objects.requireNonNull(page);
+    }
+
+
+    @Override
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         LinkNode current = RequestUtil.getCurrentUrl(request);
 
         String content = RequestUtil.getContent(request);
@@ -154,7 +158,7 @@ public class PageImpl extends AbstractPage {
                     try {
                         int pNum = Integer.valueOf(pNumber);
                         logger.info("add paging number: {},  match-text: {}", pNum, matcher.group(0));
-                        String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, ((SearchProcessorContext) RequestUtil.getProcessorContext(request)).getContext());
+                        String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false,  RequestUtil.getProcessorContext(request).getContext());
                         if (StringUtils.isNotEmpty(pageUrl)) {
                             logger.info("add page url: {}", pageUrl);
                             LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
@@ -399,27 +403,8 @@ public class PageImpl extends AbstractPage {
 
         List<Map<String, Object>> segmentResult = new ArrayList<>();
         logger.info("URL: {}, segment-size: {}", baseURL, segments.size());
-        //SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
         for (AbstractSegment abstractSegment : segments) {
             try {
-
-                //List<FieldExtractor> fieldExtractors = abstractSegment.getFieldExtractorList();
-                //log.info("fieldExtractors is {}", fieldExtractors);
-                //List<FieldExtractor> list = new ArrayList<>(fieldExtractors);
-                //log.info("list is {}", list);
-                //
-                //if (CollectionUtils.isNotEmpty(list)) {
-                //    Iterator<FieldExtractor> iterator = list.iterator();
-                //    while (iterator.hasNext()) {
-                //        FieldExtractor elem = iterator.next();
-                //        logger.info("elem businessType is {}", elem.getBusinessType());
-                //        if (businessTypeFilterhandler.isFilter(elem.getBusinessType(), context.getTaskId())) {
-                //            iterator.remove();
-                //            logger.info("elem businessType skip crawler is {}", elem.getBusinessType());
-                //        }
-                //    }
-                //}
-
                 Response segResponse = Response.build();
                 SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
 
@@ -481,10 +466,6 @@ public class PageImpl extends AbstractPage {
 
     public Page getPage() {
         return page;
-    }
-
-    public void setPage(Page page) {
-        this.page = page;
     }
 
     protected void extractTextUrls(String currentUrl, String content, Map<String, LinkNode> linkNodeMap) {

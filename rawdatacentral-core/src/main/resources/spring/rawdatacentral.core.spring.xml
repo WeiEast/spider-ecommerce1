@@ -6,7 +6,6 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<import resource="classpath*:rawdatacentral-service.xml" />
 
-	<!--<import resource="classpath:spring/core.diamond.xml" />-->
 	<bean id="beanResourceFactory" class="com.datatrees.crawler.core.processor.common.BeanResourceFactory" factory-method="getInstance">
 		<property name="beanResource" ref="beansFactory" />
 	</bean>

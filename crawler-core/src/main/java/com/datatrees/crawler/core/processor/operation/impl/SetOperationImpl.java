@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.SetOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang3.StringUtils;
@@ -23,18 +26,19 @@ public class SetOperationImpl extends Operation<SetOperation> {
 
     private static final String EMPTY_TAG = "${empty}";
 
+    public SetOperationImpl(@Nonnull SetOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        SetOperation operation = getOperation();
+    protected Object doOperation(@Nonnull SetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String output = operation.getValue();
 
         if(EMPTY_TAG.equals(output)){
             output = StringUtils.EMPTY;
         }
 
-        logger.debug("Set value : {}", output);
-
-        response.setOutPut(output);
+        return output;
     }
 
 }

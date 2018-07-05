@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.api;
 
 import java.util.List;
+import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
 
@@ -51,5 +52,19 @@ public interface WebsiteGroupServiceApi {
      * @return
      */
     List<String> getWebsiteNameList(String enable, String operatorType, String groupCode);
+
+    /**
+     * 根据运营商查询groupCode
+     * @param groupCode 分组
+     * @return
+     */
+    List<WebsiteGroup> queryByGroupCode(String groupCode);
+
+    /**
+     * 配置运营商分组和权重
+     * @param groupCode 分组
+     * @param config    运营商-->权重
+     */
+    List<WebsiteGroup> configGroup(String groupCode, Map<String, Integer> config);
 
 }

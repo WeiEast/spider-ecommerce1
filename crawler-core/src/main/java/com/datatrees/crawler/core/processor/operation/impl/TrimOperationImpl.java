@@ -8,11 +8,13 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TrimOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
 import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,14 +25,18 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TrimOperationImpl extends Operation<TrimOperation> {
 
+    public TrimOperationImpl(@Nonnull TrimOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        String input = OperationHelper.getStringInput(request, response);
+    protected Object doOperation(@Nonnull TrimOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
 
         String output = StringUtils.trim(input);
         output = CharMatcher.whitespace().trimFrom(output);
-        logger.debug("Trim operation, input: {}, out: {}", input, output);
-        response.setOutPut(output);
+
+        return output;
     }
 
 }

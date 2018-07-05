@@ -7,7 +7,6 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.chain.Filter;
 import com.datatrees.rawdatacentral.collector.chain.FilterChain;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +22,10 @@ public class SleepModeFilter implements Filter {
 
     @Override
     public void doFilter(Context context, FilterChain filterChain) {
-        CrawlResponse response = ContextUtil.getCrawlResponse(context);
+        CrawlResponse response = context.getCrawlResponse();
         int codeStatus = ResponseUtil.getResponseStatus(response);
         if (Status.FILTERED != codeStatus) {
-            SearchProcessor searchProcessor = ContextUtil.getSearchProcessor(context);
+            SearchProcessor searchProcessor = context.getSearchProcessor();
             long waitIntervalMillis = searchProcessor.getWaitIntervalMillis();
             if (0 != waitIntervalMillis) {
                 try {

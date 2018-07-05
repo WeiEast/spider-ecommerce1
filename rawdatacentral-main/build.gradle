@@ -5,38 +5,18 @@ bootRepackage {
     mainClass = "com.datatrees.rawdatacentral.web.Application"
 }
 
-processResources {
-    from "src/main/resources/env/$env"
-    into "src/main/resources"
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources", "src/main/profile/$env"]
+        }
+    }
 }
 
 dependencies {
-
-
     compile project(":rawdatacentral-web")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     compile ("org.seleniumhq.selenium:selenium-java:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-remote-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-firefox-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-chrome-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-ie-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-safari-driver:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-support:${seleniumVersion}"){
-        exclude(module: "guava")
-    }
-    compile ("org.seleniumhq.selenium:selenium-api:${seleniumVersion}"){
         exclude(module: "guava")
     }
 }

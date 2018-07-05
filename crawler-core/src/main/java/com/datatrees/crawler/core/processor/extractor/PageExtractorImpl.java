@@ -8,17 +8,18 @@
 
 package com.datatrees.crawler.core.processor.extractor;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.ReflectionUtils;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.common.Processor;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
@@ -26,29 +27,22 @@ import com.datatrees.crawler.core.processor.extractor.source.PageSourceImpl;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月14日 下午9:14:20
  */
-public class PageExtractorImpl extends Processor {
+public class PageExtractorImpl extends ProcessorInvokerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(PageExtractorImpl.class);
-    private PageExtractor pageExtractor;
+    private final PageExtractor pageExtractor;
 
-    /**
-     * @param pageExtractor
-     */
-    public PageExtractorImpl(PageExtractor pageExtractor) {
-        super();
-        this.pageExtractor = pageExtractor;
+    public PageExtractorImpl(@Nonnull PageExtractor pageExtractor) {
+        this.pageExtractor = Objects.requireNonNull(pageExtractor);
     }
 
     @Override
-    public void process(Request request, Response response) throws Exception {
+    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
         PageSourceImpl pageSourceImpl = new PageSourceImpl(pageExtractor.getPageSourceList());
         pageSourceImpl.invoke(request, response);
 
@@ -61,6 +55,10 @@ public class PageExtractorImpl extends Processor {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void segResultConvert(Map segmentResultMap, Object segResult, AbstractSegment abstractSegment) {
+        if(segResult == null){
+            return;
+        }
+
         Object value = segmentResultMap.get(abstractSegment.getName());
         if (value == null) {
             segmentResultMap.put(abstractSegment.getName(), segResult);
@@ -86,7 +84,7 @@ public class PageExtractorImpl extends Processor {
 
     @SuppressWarnings("rawtypes")
     private void extractObjectsWithSegments(List<AbstractSegment> segments, Request req, Response resp) throws ResultEmptyException {
-        log.info("extractObjectsWithSegments: segment size.." + segments.size());
+        logger.info("extractObjectsWithSegments: segment size.." + segments.size());
         Map segmentResultMap = new HashMap();
         for (AbstractSegment abstractSegment : segments) {
             try {
@@ -99,12 +97,10 @@ public class PageExtractorImpl extends Processor {
 
                 this.segResultConvert(segmentResultMap, segResult, abstractSegment);
 
+            } catch (ResultEmptyException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof ResultEmptyException) {
-                    throw (ResultEmptyException) e;
-                } else {
-                    log.error("invoke segment processor error!", e);
-                }
+                logger.error("invoke segment processor error!", e);
             }
         }
 
@@ -125,7 +121,7 @@ public class PageExtractorImpl extends Processor {
                     ((Map) instance).putAll(resultMap);
                     return instance;
                 }
-                Class userClass = (Class) instance.getClass();
+                Class userClass = instance.getClass();
                 Field[] fs = userClass.getDeclaredFields();
                 for (int i = 0; i < fs.length; i++) {
                     Field f = fs[i];
@@ -140,14 +136,12 @@ public class PageExtractorImpl extends Processor {
                     }
 
                     f.set(instance, value);// set value
-                    if (log.isDebugEnabled()) {
-                        log.debug("set name:" + f.getName() + "\t value = " + resultMap.get(f.getName()));
-                    }
+                    logger.debug("set name: {}\t value = {}", f.getName(), resultMap.get(f.getName()));
                 }
                 return instance;
             }
         } catch (Exception e) {
-            log.error(resultMap + " convert to " + className + " error " + e.getMessage());
+            logger.error(resultMap + " convert to " + className + " error " + e.getMessage());
             return resultMap;
         }
     }
