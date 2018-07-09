@@ -8,6 +8,7 @@
 
 package com.datatrees.crawler.core.processor.common;
 
+import javax.annotation.Nonnull;
 import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +21,9 @@ import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.format.container.NumberMapContainer;
+import com.treefinance.crawler.framework.format.number.NumberUnit;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -157,16 +159,14 @@ public class RequestUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, DateFormat> getDateFormat(Request req) {
-        return (Map<String, DateFormat>) req.getAttribute(Constants.CRAWLER_DATE_FROMAT);
+    public static Map<String, DateFormat>  getDateFormat(Request req) {
+        return (Map<String, DateFormat>) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new HashMap<>());
     }
 
-    public static void setNumberFormat(Request req, NumberMapContainer container) {
-        req.setAttribute(Constants.CRAWLER_REQUEST_NUMBER_MAP, container);
-    }
-
-    public static NumberMapContainer getNumberFormat(Request req) {
-        return (NumberMapContainer) req.getAttribute(Constants.CRAWLER_REQUEST_NUMBER_MAP);
+    @SuppressWarnings("unchecked")
+    @Nonnull
+    public static Map<String, NumberUnit> getNumberFormat(Request req, Configuration configuration) {
+        return (Map<String, NumberUnit>) req.computeAttributeIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(configuration));
     }
 
     public static String getSearchTemplate(Request req) {

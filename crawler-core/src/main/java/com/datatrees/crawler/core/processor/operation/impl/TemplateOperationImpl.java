@@ -8,20 +8,16 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import java.util.Map;
-import java.util.Set;
+import javax.annotation.Nonnull;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TemplateOperation;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import org.apache.commons.collections.CollectionUtils;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -30,26 +26,22 @@ import org.apache.commons.lang.BooleanUtils;
  */
 public class TemplateOperationImpl extends Operation<TemplateOperation> {
 
+    public TemplateOperationImpl(@Nonnull TemplateOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        TemplateOperation op = getOperation();
-        String template = op.getTemplate();
-        Set<String> replaceList = ReplaceUtils.getReplaceList(template);
-        logger.debug("replace list: {}", replaceList);
-        @SuppressWarnings("unchecked") Map<String, FieldExtractorWarpper> fieldMap = ResponseUtil.getResponseFieldResult(response);
-        logger.debug("field stack: {}", fieldMap);
+    protected Object doOperation(@Nonnull TemplateOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String template = operation.getTemplate();
+
         Object output;
-        if (BooleanUtils.isTrue(op.getReturnObject())) {
-            output = ReplaceUtils.getReplaceObject(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), template);
+        if (BooleanUtils.isTrue(operation.getReturnObject())) {
+            output = StandardExpression.evalWithObject(StringUtils.trim(template), request, response);
         } else {
-            output = ReplaceUtils.replaceMap(replaceList, FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldMap), RequestUtil.getSourceMap(request), template);
+            output = StandardExpression.evalSpecial(template, request, response);
         }
-        logger.debug("after template combine >> {}", output);
-        if (output != null && output.equals(template) && CollectionUtils.isNotEmpty(ReplaceUtils.getReplaceList(template))) {
-            logger.warn("template ops failed,set null...");
-            output = null;
-        }
-        response.setOutPut(output);
+
+        return output;
     }
 
 }

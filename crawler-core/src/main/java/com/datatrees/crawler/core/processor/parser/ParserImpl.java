@@ -8,8 +8,11 @@
 
 package com.datatrees.crawler.core.processor.parser;
 
+import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -21,16 +24,18 @@ import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.*;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractorWarpper;
-import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.datatrees.crawler.core.processor.common.ProcessorFactory;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.treefinance.crawler.framework.expression.ExpressionParser;
 import com.treefinance.crawler.framework.util.UrlExtractor;
+import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * parser segment content and send request or extract urls
@@ -38,177 +43,127 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Feb 20, 2014 8:57:12 PM
  */
-public class ParserImpl extends Operation {
+public class ParserImpl {
 
+    private static final Logger  logger            = LoggerFactory.getLogger(ParserImpl.class);
+    private final        Parser  parser;
     private              boolean needRequest       = false;
     private              boolean needReturnUrlList = false;
-    private Parser parser;
 
-    public ParserImpl(boolean needRequest, Parser parser) {
-        this.needRequest = needRequest;
+    public ParserImpl(Parser parser, boolean needRequest) {
+        this(parser, needRequest, false);
+    }
+
+    public ParserImpl(Parser parser, boolean needRequest, boolean needReturnUrlList) {
         this.parser = parser;
+        this.needRequest = needRequest;
+        this.needReturnUrlList = needReturnUrlList;
     }
 
-    /**
-     * @param needRequest
-     * @param parser
-     * @param needReturnUrlList
-     */
-    public ParserImpl(boolean needRequest, Parser parser, boolean needReturnUrlList) {
-        this(needRequest, parser);
-        setNeedReturnUrlList(needReturnUrlList);
-    }
-
-    protected void preProcess(Request request, Response response) throws Exception {}
-
-    protected void postProcess(Request request, Response response) throws Exception {}
-
-    /*
-     * (non-Javadoc)
-     */
-    @Override
-    public void process(Request request, Response response) throws Exception {
-        Preconditions.checkNotNull(parser);
-        String content = OperationHelper.getStringInput(request, response);
-        Preconditions.checkState(StringUtils.isNotEmpty(content), "input for parser should not be empty!");
+    public Object parse(@Nonnull String content, @Nonnull Request request, @Nonnull Response response) throws InterruptedException {
+        Preconditions.notEmpty("content", content);
 
         String template = parser.getUrlTemplate();
-        Preconditions.checkState(StringUtils.isNotEmpty(template), "input for parser template  should not be empty!");
-        logger.info("parser template: {}", template);
+        Preconditions.notEmpty("url-template", template);
 
-        // split by need requset and need ReturnUrlList
-        Map<String, FieldExtractorWarpper> fieldResultMap = ResponseUtil.getResponseFieldResult(response);
-        List<String> results = new ArrayList<String>(getParserResult(request, fieldResultMap, content));
+        logger.info("parser's url-template: {}", template);
+
+        String refererTemplate = StringUtils.defaultString(parser.getLinkUrlTemplate());
+        logger.info("parser's referer-template: {}", refererTemplate);
+        String headers = StringUtils.defaultString(parser.getHeaders());
+        logger.info("parser's header: {}", headers);
+        String complexSource = ParserURLCombiner.encodeUrl(template, refererTemplate, headers);
+
+        List<String> results = evalExp(complexSource, request, response, content);
 
         logger.info("after template combine: {}", results.size());
         String result = results.get(0);
-        if (needRequest) {
+        if (isNeedRequest()) {
             if (parser.getSleepSecond() != null && parser.getSleepSecond() > 0) {
-                try {
-                    logger.info("sleep {}s before parser request.", parser.getSleepSecond());
-                    Thread.sleep(parser.getSleepSecond() * 1000);
-                } catch (Exception e) {
-                    logger.warn("Error thread sleeping.", e);
-                }
+                logger.info("sleep {}s before parser request.", parser.getSleepSecond());
+                TimeUnit.SECONDS.sleep(parser.getSleepSecond());
             }
             Request newRequest = new Request();
             RequestUtil.setProcessorContext(newRequest, RequestUtil.getProcessorContext(request));
-
             RequestUtil.setConf(newRequest, RequestUtil.getConf(request));
             RequestUtil.setContext(newRequest, RequestUtil.getContext(request));
             Response newResponse = new Response();
             result = getResponseByWebRequest(newRequest, newResponse, result);
-            response.setOutPut(result);
+            return result;
+        } else if (isNeedReturnUrlList()) {
+            // support multi parsers
+            return results;
         } else {
-            if (needReturnUrlList) {
-                // support multi parsers
-                response.setOutPut(results);
-            } else {
-                response.setOutPut(result);
-            }
+            return result;
         }
-
     }
 
-    //
-    // private void urlListReturn(Response response, List<String> newResults) {
-    // List<String> results = ResponseUtil.getResponseList(response);
-    // if (results == null) {
-    // ResponseUtil.setResponseList(response, newResults);
-    // } else {
-    // results.addAll(newResults);
-    // }
-    // }
-
     /**
-     * first replace from field context second replace by regex third replace by user defined
-     * context;
+     * First: replaced from visible field scope;
+     * Second: replaced by the matched string in input content by regexp
+     * Third: replaced by global visible field context;
      */
-    private Set<String> getParserResult(Request request, Map<String, FieldExtractorWarpper> fieldResultMap, String source) {
+    private List<String> evalExp(String url, Request request, Response response, String content) {
+        ExpressionParser parser = ExpressionParser.parse(url);
+        String expUrl = parser.evalUrl(request, response, false, true);
+        parser.reset(expUrl);
 
-        Set<String> urlList = new HashSet<String>();
+        if (parser.findExp()) {
+            List<Map<String, Object>> fieldScopes = findByRegex(content);
 
+            Map<String, Object> context = RequestUtil.getSourceMap(request);
+            if (CollectionUtils.isNotEmpty(fieldScopes)) {
+                return fieldScopes.stream().map(fieldScope -> parser.evalExp(ImmutableList.of(fieldScope, context), true, false)).distinct().collect(Collectors.toList());
+            }
+
+            // if not find field result using default input context
+            return Collections.singletonList(parser.evalExp(context, true, false));
+        }
+
+        return Collections.singletonList(expUrl);
+    }
+
+    private List<Map<String, Object>> findByRegex(String content) {
         List<ParserPattern> mappings = parser.getPatterns();
-        String template = parser.getUrlTemplate();
-        String refererTemplate = parser.getLinkUrlTemplate();
-        String headers = parser.getHeaders();
-        // set empty string
-        refererTemplate = StringUtils.defaultIfEmpty(refererTemplate, "");
-        headers = StringUtils.defaultIfEmpty(headers, "");
+        if (CollectionUtils.isEmpty(mappings)) {
+            return Collections.emptyList();
+        }
 
-        String complexSource = ParserURLCombiner.encodeUrl(template, refererTemplate, headers);
-        // result context
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(fieldResultMap);
-
-        Map<String, Object> context = RequestUtil.getSourceMap(request);
-
-        Set<String> needReplaced = ReplaceUtils.getReplaceList(complexSource);
-
-        String charset = RequestUtil.getContentCharset(request);
-
-        complexSource = ReplaceUtils.replaceURLMap(needReplaced, fieldContext, context, complexSource, charset);
-
-        // group by index
-        List<Map<String, Object>> fieldListResult = new ArrayList<Map<String, Object>>();
-        boolean first = true;
+        List<Map<String, Object>> fieldScopes = new ArrayList<>();
         for (ParserPattern parserPattern : mappings) {
             String regex = parserPattern.getRegex();
-            Matcher m = RegExp.getMatcher(regex, source);
+            if (regex == null) continue;
+
             List<IndexMapping> indexMappings = parserPattern.getIndexMappings();
-            int index = 0;
+            if (CollectionUtils.isEmpty(indexMappings)) continue;
+
+            Matcher m = RegExp.getMatcher(regex, content);
+            int i = 0;
             while (m.find()) {
-                Map<String, Object> indexFieldMap = new HashMap<String, Object>();
+                Map<String, Object> indexFieldMap;
+                if (fieldScopes.size() > i) {
+                    indexFieldMap = fieldScopes.get(i);
+                } else {
+                    indexFieldMap = new HashMap<>();
+                    fieldScopes.add(indexFieldMap);
+                }
+
                 for (IndexMapping indexMapping : indexMappings) {
+                    if (StringUtils.isEmpty(indexMapping.getPlaceholder())) continue;
+
                     try {
                         indexFieldMap.put(indexMapping.getPlaceholder(), m.group(indexMapping.getGroupIndex()));
                     } catch (Exception e) {
-                        logger.error("group index error!", e);
+                        logger.error("Error mapping with the parser regex. - regex: {}", regex, e);
                     }
                 }
-                if (first) {
-                    fieldListResult.add(indexFieldMap);
-                } else {
-                    Map<String, Object> map = fieldListResult.get(index);
-                    if (map != null) {
-                        map.putAll(indexFieldMap);
-                    } else {
-                        logger.warn("parser pattern size not the same!");
-                    }
-                }
-                index++;
+                i++;
             }
-            first = false;
         }
 
-        if (CollectionUtils.isNotEmpty(fieldListResult)) {
-            int totalSize = fieldListResult.size();
-            needReplaced = ReplaceUtils.getReplaceList(complexSource);
-            logger.info("total size: {}", totalSize);
-            for (int i = 0; i < totalSize; i++) {
-                Map<String, Object> fieldMap = fieldListResult.get(i);
-                String url = replaceFromContext(complexSource, needReplaced, fieldMap, context);
-                urlList.add(url);
-            }
-        } else {
-            // fix bug if not find field result using default input context
-            needReplaced = ReplaceUtils.getReplaceList(complexSource);
-            String url = replaceFromContext(complexSource, needReplaced, new HashMap<String, Object>(), context);
-            urlList.add(url);
-        }
-        return urlList;
-    }
+        logger.debug("Field scope size: {}", fieldScopes.size());
 
-    /**
-     * @param fieldResultMap
-     * @return
-     */
-    private String replaceFromContext(String source, Set<String> needReplaced, Map<String, Object> fieldResultMap, Map<String, Object> defaultMap) {
-
-        if (StringUtils.isEmpty(source)) {
-            return source;
-        }
-        String result = ReplaceUtils.replaceMap(needReplaced, fieldResultMap, defaultMap, source);
-        return result;
+        return fieldScopes;
     }
 
     private String getResponseByWebRequest(Request newResquest, Response newResponse, String complexUrl) {
@@ -256,10 +211,6 @@ public class ParserImpl extends Operation {
 
     public Parser getParser() {
         return parser;
-    }
-
-    public void setParser(Parser parser) {
-        this.parser = parser;
     }
 
     public boolean isNeedReturnUrlList() {

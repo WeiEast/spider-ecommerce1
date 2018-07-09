@@ -1,121 +1,81 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import java.util.Map;
-import java.util.regex.Pattern;
+import javax.annotation.Nonnull;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
-import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
-import com.treefinance.toolkit.util.RegExp;
-import org.apache.commons.lang.StringUtils;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
+import com.treefinance.crawler.framework.expression.StandardExpression;
+import org.apache.commons.lang3.StringUtils;
 
 public class TripleOperationImpl extends Operation<TripleOperation> {
 
-    @Override
-    public void process(Request request, Response response) throws Exception {
-        TripleOperation operation = getOperation();
-        // ${this}=${a}?${b}:${c}
-        String expression = operation.getValue();
-        TripleType type = operation.getTripleType();
-        if (type == null) {
-            type = TripleType.EQ;
-        }
-
-        String orginal = OperationHelper.getStringInput(request, response);
-
-        logger.debug("triple expression: {}", expression);
-
-        String firstParams = StringUtils.substringBefore(expression, type.getExpression());
-        String secondParams = StringUtils.substringBetween(expression, type.getExpression(), "?");
-        String firstResult = StringUtils.substringBetween(expression, "?", ":");
-        String secondResult = StringUtils.substringAfterLast(expression, ":");
-
-        firstParams = replaceFromContext(firstParams, orginal, request, response);
-        secondParams = replaceFromContext(secondParams, orginal, request, response);
-        firstResult = replaceFromContext(firstResult, orginal, request, response);
-        secondResult = replaceFromContext(secondResult, orginal, request, response);
-
-        String result = this.doTriple(type, firstParams, secondParams, firstResult, secondResult);
-
-        logger.debug("original: {}, dest: {}", orginal, result);
-
-        response.setOutPut(result);
+    public TripleOperationImpl(@Nonnull TripleOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
     }
 
-    private String doTriple(TripleType type, String firstParams, String secondParams, String firstResult, String secondResult) {
-        String result = secondResult;
-        if (firstParams != null && secondParams != null) {
-            switch (type) {
-                case EQ:
-                    if (firstParams.trim().equals(secondParams.trim())) {
-                        result = firstResult;
-                    }
-                    break;
-                case NE:
-                    if (!firstParams.equals(secondParams)) {
-                        result = firstResult;
-                    }
-                    break;
-                case GT:
-                    if (CalculateUtil.calculate(firstParams, 0d) > CalculateUtil.calculate(secondParams, 0d)) {
-                        result = CalculateUtil.calculate(firstResult, 0) + "";
-                    } else {
-                        result = CalculateUtil.calculate(secondResult, 0) + "";
-                    }
-                    break;
-                case LT:
-                    if (CalculateUtil.calculate(firstParams, 0d) < CalculateUtil.calculate(secondParams, 0d)) {
-                        result = CalculateUtil.calculate(firstResult, 0) + "";
-                    } else {
-                        result = CalculateUtil.calculate(secondResult, 0) + "";
-                    }
-                    break;
-                case GE:
-                    if (CalculateUtil.calculate(firstParams, 0d) >= CalculateUtil.calculate(secondParams, 0d)) {
-                        result = CalculateUtil.calculate(firstResult, 0) + "";
-                    } else {
-                        result = CalculateUtil.calculate(secondResult, 0) + "";
-                    }
-                    break;
-                case LE:
-                    if (CalculateUtil.calculate(firstParams, 0d) <= CalculateUtil.calculate(secondParams, 0d)) {
-                        result = CalculateUtil.calculate(firstResult, 0) + "";
-                    } else {
-                        result = CalculateUtil.calculate(secondResult, 0) + "";
-                    }
-                    break;
-                case REGEX:
-                    if (RegExp.find(firstParams, secondParams)) {
-                        result = firstResult;
-                    }
-                    break;
-                case CONTAINS:
-                    if (RegExp.find(firstParams, secondParams, Pattern.CASE_INSENSITIVE)) {
-                        result = firstResult;
-                    }
-                    break;
-                default:
-                    break;
+    @Override
+    protected Object doOperation(@Nonnull TripleOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
+        String expression = operation.getValue();
+        logger.debug("triple expression: {}", expression);
+
+        String result;
+        if (StringUtils.isBlank(operation.getValue())) {
+            result = input;
+        } else {
+            // ${this}=${a}?${b}:${c}
+            TripleType type = operation.getTripleType();
+            if (type == null) {
+                type = TripleType.EQ;
             }
+
+            String exp = type.getExpression();
+            int i = expression.indexOf(exp);
+            if (i == -1) {
+                throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
+            }
+
+            String param1 = expression.substring(0, i);
+
+            i = i + exp.length();
+            int j = expression.indexOf("?", i);
+            if (i == -1) {
+                throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
+            }
+
+            String param2 = expression.substring(i, j);
+
+            i = j + 1;
+            j = expression.indexOf(":", i);
+            if (j == -1) {
+                throw new InvalidOperationException("Invalid triple operation! - Triple expression was incorrect.");
+            }
+
+            String result1 = expression.substring(i, j);
+            String result2 = expression.substring(j + 1);
+
+            param1 = evalExp(param1, input, request, response);
+            param2 = evalExp(param2, input, request, response);
+            result1 = evalExp(result1, input, request, response);
+            result2 = evalExp(result2, input, request, response);
+
+             result = type.calculate(param1, param2, result1, result2);
         }
+
+
+        logger.debug("input: {}, output: {}", input, result);
+
         return result;
     }
 
-    private String replaceFromContext(String params, String orginal, Request request, Response response) {
-        if (StringUtils.isNotBlank(params) && params.contains("${this}")) {
-            params = ReplaceUtils.replace("${this}", orginal, params);
-        }
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
-        Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
-        String result = ReplaceUtils.replaceMap(fieldContext, sourceMap, params);
-        if (result == params && result != null && result.startsWith("${") && result.endsWith("}")) {
-            return "";
-        } else {
-            return result;
-        }
+    private String evalExp(String value, String operatingData, Request request, Response response) {
+        String val = StringUtils.replace(value, "${this}", operatingData);
+
+        return StandardExpression.eval(val, request, response);
     }
 }

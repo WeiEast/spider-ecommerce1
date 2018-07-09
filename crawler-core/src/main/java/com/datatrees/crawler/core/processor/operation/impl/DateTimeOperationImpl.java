@@ -4,20 +4,17 @@
 
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import java.util.Map;
+import javax.annotation.Nonnull;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.StringUtils;
+import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.BaseType;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.DateTimeFieldType;
-import com.datatrees.crawler.core.processor.common.FieldExtractorWarpperUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import com.datatrees.crawler.core.processor.operation.OperationHelper;
+import com.treefinance.crawler.framework.expression.ExpressionEngine;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
@@ -31,24 +28,26 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
 
+    public DateTimeOperationImpl(@Nonnull DateTimeOperation operation, @Nonnull FieldExtractor extractor) {
+        super(operation, extractor);
+    }
+
     @Override
-    public void process(Request request, Response response) throws Exception {
-        DateTimeOperation operation = getOperation();
+    protected Object doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
 
         BaseType baseType = operation.getBaseType();
-        // replace from context
-        Map<String, Object> fieldContext = FieldExtractorWarpperUtil.fieldWrapperMapToField(ResponseUtil.getResponseFieldResult(response));
-        Map<String, Object> sourceMap = RequestUtil.getSourceMap(request);
+
+        ExpressionEngine expressionEngine = new ExpressionEngine(request, response);
 
         int offset = 0;
         if (StringUtils.isNotBlank(operation.getOffset())) {
-            String offsetString = ReplaceUtils.replaceMap(fieldContext, sourceMap, operation.getOffset());
+            String offsetString = expressionEngine.eval(operation.getOffset());
             offset = Integer.valueOf(offsetString);
         }
 
-        Object src = OperationHelper.getInput(request, response);
+        Object src = operatingData;
         if (src instanceof String) {
-            src = ReplaceUtils.replaceMap(fieldContext, sourceMap, src.toString());
+            src = expressionEngine.eval((String) src);
         }
 
         DateTimeFieldType dateTimeFieldType = operation.getDateTimeFieldType();
@@ -158,8 +157,8 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
         } else {
             result = rawResultObj != null ? rawResultObj.toDate() : "";
         }
-        logger.debug("raw result in date format: {}", result);
-        response.setOutPut(result);
+
+        return result;
     }
 
     private DateTime timeCalibrate(DateTime baseDateTime, BaseType baseType) {

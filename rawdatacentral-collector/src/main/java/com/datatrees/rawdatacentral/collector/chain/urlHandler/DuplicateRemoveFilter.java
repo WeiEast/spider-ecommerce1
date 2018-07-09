@@ -3,7 +3,6 @@ package com.datatrees.rawdatacentral.collector.chain.urlHandler;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.chain.Context;
-import com.datatrees.rawdatacentral.collector.chain.common.ContextUtil;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
 import com.datatrees.rawdatacentral.core.model.data.AbstractData;
@@ -20,7 +19,7 @@ public class DuplicateRemoveFilter extends RemovedFetchLinkNodeFilter {
     @Override
     protected void doProcess(LinkNode fetchLinkNode, SearchProcessor searchProcessor, Context context) {
         String websiteType = searchProcessor.getProcessorContext().getWebsite().getWebsiteType();
-        DuplicateChecker checker = ContextUtil.getDuplicateChecker(context);
+        DuplicateChecker checker = context.getDuplicateChecker();
         Object uniqueKey = fetchLinkNode.getProperty(AbstractData.UNIQUESIGN);
         if (deduplicateRemoveSwitch && uniqueKey != null && checker != null && searchProcessor.isDuplicateRemoval()) {
             if (checker.isDuplicate(websiteType, uniqueKey.toString())) {

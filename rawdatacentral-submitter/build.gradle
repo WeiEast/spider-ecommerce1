@@ -3,7 +3,7 @@ dependencies {
     compile "ant:ant:${antVersion}"
     compile "javax.mail:mail:${mailVersion}"
     testCompile "junit:junit:${junitVersion}"
-    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}") {
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
         exclude(module: 'commons-logging')
     }
 }

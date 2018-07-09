@@ -12,6 +12,7 @@ import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
+import com.datatrees.crawler.core.domain.config.search.SearchType;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.CrawlRequest;
 import com.datatrees.crawler.core.processor.bean.CrawlResponse;
@@ -23,7 +24,6 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.search.Crawler;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.chain.Context;
-import com.datatrees.rawdatacentral.collector.chain.FilterConstant;
 import com.datatrees.rawdatacentral.collector.chain.Filters;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.collector.worker.ResultDataHandler;
@@ -84,14 +84,18 @@ public class SearchProcessor {
     /**
      *
      */
-    public void init(String keyword) {
-        this.keyword = keyword;
+    public void initWithKeyword(String keyword) {
         this.init();
+
+        if (keyword != null) {
+            this.keyword = keyword;
+            ProcessorContextUtil.setKeyword(getProcessorContext(), keyword);
+        }
     }
 
     public void init() {
-        needEarlyQuit = false;
-        isLastLink = false;
+        this.needEarlyQuit = false;
+        this.isLastLink = false;
     }
 
     private URLHandlerImpl initURLHandlerImpl() {
@@ -121,11 +125,11 @@ public class SearchProcessor {
             linkNodeList.addAll(handler.getTempLinkNodes());
 
             Context context = new Context();
-            context.setAttribute(FilterConstant.CURRENT_LINK_NODE, url);
-            context.setAttribute(FilterConstant.SEARCH_PROCESSOR, this);
-            context.setAttribute(FilterConstant.CURRENT_REQUEST, request);
-            context.setAttribute(FilterConstant.CURRENT_RESPONSE, response);
-            context.setAttribute(FilterConstant.FETCHED_LINK_NODE_LIST, linkNodeList);
+            context.setCurrentLinkNode(url);
+            context.setSearchProcessor(this);
+            context.setCrawlRequest(request);
+            context.setCrawlResponse(response);
+            context.setFetchedLinkNodeList(linkNodeList);
 
             Filters.SEARCH.doFilter(context);
         } catch (ResultEmptyException e) {
@@ -335,5 +339,13 @@ public class SearchProcessor {
 
     public SearchProcessorContext getProcessorContext() {
         return taskMessage.getContext();
+    }
+
+    public boolean isKeywordSearch() {
+        return SearchType.KEYWORD_SEARCH.equals(searchTemplateConfig.getType());
+    }
+
+    public Integer getWebsiteType(){
+        return Integer.valueOf(getProcessorContext().getWebsiteType());
     }
 }

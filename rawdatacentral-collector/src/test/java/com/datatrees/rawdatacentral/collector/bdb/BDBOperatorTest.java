@@ -1,11 +1,10 @@
 package com.datatrees.rawdatacentral.collector.bdb;
 
-import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.classloader.ClassLoaderFactory;
-import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.rawdatacentral.collector.bdb.operator.BDBOperator;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,45 +60,4 @@ public class BDBOperatorTest {
         }
     }
 
-    @Test
-    public void testPluginFactory() throws Exception {
-        ClassLoader loader = null;
-        for (int i = 0; i < 3; i++) {
-            File file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/target/plugin-tj189Plugin-1.0.10-SNAPSHOT.jar");
-            List<File> paked = new ArrayList<File>();
-            paked.add(file);
-            loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
-            Class clazz = loader.loadClass("com.datatrees.crawler.plugin.web.PluginMain");
-            AbstractClientPlugin pluginMain = (AbstractClientPlugin) clazz.newInstance();
-            System.out.println(pluginMain.process("dd"));
-
-            file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/src/web/resources/tj189Plugin.jar_version2");
-            paked = new ArrayList<File>();
-            paked.add(file);
-            loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
-            clazz = loader.loadClass("com.datatrees.crawler.plugin.web.PluginMain");
-            pluginMain = (AbstractClientPlugin) clazz.newInstance();
-            System.out.println(pluginMain.process("ddewfwe"));
-            Thread.sleep(5000);
-        }
-
-        File file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/plugin-tj189Plugin.jar3");
-        List<File> paked = new ArrayList<File>();
-        paked.add(file);
-        loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
-        Class clazz = loader.loadClass("com.datatrees.crawler.plugin.web.PluginMain");
-        AbstractClientPlugin pluginMain = (AbstractClientPlugin) clazz.newInstance();
-        System.out.println(pluginMain.process("dd"));
-        System.out.println("waitng for jar replace...");
-
-        Thread.sleep(15000);
-
-        file = new File("/Users/wangcheng/Documents/newworkspace/plugins_new/rawdatacentral-plugin/tj189Plugin/target/plugin-tj189Plugin-1.0.10-SNAPSHOT.jar");
-        paked = new ArrayList<File>();
-        paked.add(file);
-        loader = ClassLoaderFactory.createClassLoader(null, paked.toArray(new File[paked.size()]), this.getClass().getClassLoader());
-        clazz = loader.loadClass("com.datatrees.crawler.plugin.web.PluginMain");
-        pluginMain = (AbstractClientPlugin) clazz.newInstance();
-        System.out.println(pluginMain.process("dd"));
-    }
 }

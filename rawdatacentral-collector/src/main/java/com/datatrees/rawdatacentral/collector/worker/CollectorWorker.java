@@ -21,8 +21,6 @@ import com.datatrees.crawler.core.domain.config.search.Request;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.common.ReplaceUtils;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.login.Login;
@@ -33,7 +31,6 @@ import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.rawdatacentral.collector.worker.filter.TemplateFilter;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
@@ -45,6 +42,7 @@ import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.exception.ConfigException;
+import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.spider.Spiders;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -126,9 +124,8 @@ public class CollectorWorker {
     public HttpResult<Map<String, Object>> doSearch(TaskMessage taskMessage) {
         HttpResult<Map<String, Object>> searchResult = new HttpResult<>();
         Task task = taskMessage.getTask();
-        SearchProcessorContext context = taskMessage.getContext();
         try {
-            List<Future<Object>> futureList = this.startCrawler(taskMessage, task, context);
+            List<Future<Object>> futureList = this.startCrawler(taskMessage, task);
 
             Map<String, Object> resultMap = this.awaitDone(futureList, taskMessage);
 
@@ -150,12 +147,7 @@ public class CollectorWorker {
             LOGGER.error("Something is wrong when searching! taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName(), e);
             return searchResult.failure();
         } finally {
-            task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
-            task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
-            //释放代理
-            if (searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
-                context.release();
-            }
+            taskMessage.completeSearch(searchResult);
         }
     }
 
@@ -208,8 +200,9 @@ public class CollectorWorker {
         }
     }
 
-    private List<Future<Object>> startCrawler(TaskMessage taskMessage, Task task, SearchProcessorContext context) throws ConfigException, ResultEmptyException {
-        Collection<SearchTemplateConfig> templateList = context.getWebsite().getSearchConfig().getSearchTemplateConfigList();
+    private List<Future<Object>> startCrawler(TaskMessage taskMessage, Task task) throws ConfigException, ResultEmptyException {
+        SearchProcessorContext context = taskMessage.getContext();
+        Collection<SearchTemplateConfig> templateList = context.getSearchTemplates();
         if (CollectionUtils.isEmpty(templateList)) {
             throw new ConfigException("Search template in config is empty!");
         }
@@ -223,8 +216,8 @@ public class CollectorWorker {
         for (SearchTemplateConfig templateConfig : templateList) {
             LOGGER.info("Start search template: {}", templateConfig.getId());
 
-            if (TemplateFilter.isFilter(templateConfig, templateId) || businessTypeFilter.isFilter(templateConfig, taskMessage.getTask().getTaskId())) {
-                LOGGER.info("Skip search template: {}, taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+            if (TemplateFilter.isFilter(templateConfig, templateId) || businessTypeFilter.isFilter(templateConfig.getBusinessType(), context)) {
+                LOGGER.info("Skip search template: {}, taskId: {}, websiteName: {}, businessType: {}", templateConfig.getId(), context.getTaskId(), context.getWebsiteName(), templateConfig.getBusinessType());
                 continue;
             }
 
@@ -289,7 +282,7 @@ public class CollectorWorker {
                 searchProcessor.setTimeout(request.getMaxExecuteMinutes(), TimeUnit.MINUTES);
             }
 
-            crawlExecutor.crawlExecutor(searchProcessor);
+            crawlExecutor.execute(searchProcessor);
 
             return searchProcessor.getFutureList();
         } catch (ResultEmptyException e) {
@@ -305,7 +298,7 @@ public class CollectorWorker {
     private void addDefaultHeaders(SearchProcessorContext context, Request request) {
         String headerString = request.getDefaultHeader();
         if (StringUtils.isNotBlank(headerString)) {
-            headerString = SourceUtil.sourceExpression(context.getContext(), headerString);
+            headerString = StandardExpression.eval(headerString, context.getContext());
             Map<String, String> defaultHeader = GsonUtils.fromJson(headerString, new TypeToken<Map<String, String>>() {}.getType());
             if (MapUtils.isNotEmpty(defaultHeader)) {
                 context.getDefaultHeader().putAll(defaultHeader);
@@ -322,10 +315,6 @@ public class CollectorWorker {
             seedUrl = templateUrl.toString();
         } else if (CollectionUtils.isNotEmpty(request.getSearchTemplateList())) {
             seedUrl = request.getSearchTemplateList().get(0);
-        }
-
-        if (StringUtils.isNotEmpty(seedUrl)) {
-            seedUrl = ReplaceUtils.replaceMap(context.getContext(), seedUrl);
         }
 
         return seedUrl;

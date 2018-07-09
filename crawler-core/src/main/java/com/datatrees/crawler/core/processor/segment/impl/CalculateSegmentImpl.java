@@ -8,14 +8,16 @@
 
 package com.datatrees.crawler.core.processor.segment.impl;
 
+import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.datatrees.common.pipeline.Request;
+import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.CalculateSegment;
-import com.datatrees.crawler.core.processor.common.CalculateUtil;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.treefinance.crawler.framework.expression.StandardExpression;
+import com.treefinance.crawler.framework.util.CalculateUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -24,46 +26,25 @@ import com.datatrees.crawler.core.processor.segment.SegmentBase;
  */
 public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
 
-
-    // private String sourceExpression(Request request, String expression) {
-    // Set<String> replaceList = ReplaceUtils.getReplaceList(expression);
-    // return ReplaceUtils.replaceMap(replaceList, RequestUtil.getSourceMap(request), expression);
-    // }
-    //
-    //
-    // private double sourceCalculate(Request request, String expression) {
-    // expression = this.sourceExpression(request, expression);
-    // String result = PatternUtils.group(expression, "([\\d\\.]+)", 1);
-    // if (result != null && expression.equals(result)) {
-    // return Double.parseDouble(expression);
-    // } else if (!expression.contains("$")) {
-    // log.info("do sourceCalculate with expression:" + expression);
-    // return Arithmetic.arithmetic(expression);
-    // } else {
-    // log.info("return 0 ,with expression:" + expression);
-    // return 0;
-    // }
-    // }
+    public CalculateSegmentImpl(@Nonnull CalculateSegment segment) {
+        super(segment);
+    }
 
     @Override
-    protected List<String> getSplit(Request request) {
+    protected List<String> splitInputContent(String content, CalculateSegment segment, Request request, Response response) {
         List<String> result = new LinkedList<>();
-        CalculateSegment segment = getSegment();
         String expression = segment.getExpression();
-        logger.info("start do calculate segment with expression: {}", expression);
+        logger.info("start calculate segment processor with expression: {}", expression);
 
-        try {// 1,3,1,+  从2开始到3(包含3)
-            String[] arrays = expression.split(",");
-            double start = CalculateUtil.sourceCalculate(request, arrays[0], 0d);
-            double end = CalculateUtil.sourceCalculate(request, arrays[1], 0d);
-            double interval = CalculateUtil.sourceCalculate(request, arrays[2], 0d);
-            String formula = SourceUtil.sourceExpression(request, arrays[3]);
-            while (start < end) {
-                start = CalculateUtil.calculate(start + " " + formula + " " + interval, end);
-                result.add(start + "");
-            }
-        } catch (Exception e) {
-            logger.error("error calculating for segment: {}, expression: {}", segment.getName(), expression, e);
+        // 1,3,1,+  从2开始到3(包含3)
+        String[] arrays = expression.split(",");
+        double start = CalculateUtils.calculate(arrays[0], request, response);
+        double end = CalculateUtils.calculate(arrays[1], request, response);
+        double interval = CalculateUtils.calculate(arrays[2], request, response);
+        String formula = StandardExpression.eval(arrays[3], request, response);
+        while (start < end) {
+            start = CalculateUtils.calculate(start + formula + interval, null, Double.TYPE);
+            result.add(start + "");
         }
 
         return result;

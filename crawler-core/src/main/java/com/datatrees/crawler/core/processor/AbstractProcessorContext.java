@@ -9,72 +9,56 @@
 
 package com.datatrees.crawler.core.processor;
 
+import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
-import com.datatrees.crawler.core.domain.config.properties.Properties;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.util.SynchronizedMap;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.treefinance.crawler.framework.extension.manager.PluginManager;
+import com.treefinance.crawler.framework.context.ProcessContext;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月7日 下午7:09:02
  */
-public abstract class AbstractProcessorContext {
+public abstract class AbstractProcessorContext extends ProcessContext {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    protected final Website                     website;
     protected final Long                        taskId;
     protected final Map<String, Object>         context;
-    protected final Map<String, AbstractPlugin> pluginMaps;
     private final   Map<String, Object>         statusContext;
     private final   Map<Thread, Object>         threadContext;
     private final   ProcessorResult             processorResult;
     private final   ProcessorResult             processorLog;
-    private         PluginManager               pluginManager;
 
 
     public AbstractProcessorContext(Website website, Long taskId) {
-        this.website = Objects.requireNonNull(website);
-        this.taskId = taskId;
-        context = new SynchronizedMap<>();
-        pluginMaps = new SynchronizedMap<>();
-        statusContext = new SynchronizedMap<>();
-        threadContext = new ConcurrentHashMap<>();
-        processorResult = new ProcessorResult();
-        processorLog = new ProcessorResult();
+        super(website);
+        this.taskId = Objects.requireNonNull(taskId);
+        this.context = new SynchronizedMap<>();
+        this.statusContext = new SynchronizedMap<>();
+        this.threadContext = new SynchronizedMap<>();
+        this.processorResult = new ProcessorResult();
+        this.processorLog = new ProcessorResult();
     }
 
     public abstract void init();
 
-    /**
-     * @return the website
-     */
-    public Website getWebsite() {
-        return website;
-    }
-
-    public String getWebsiteName() {
-        return website.getWebsiteName();
-    }
-
     public Long getTaskId() {
         return taskId;
+    }
+
+    @Deprecated
+    public AbstractPlugin getPluginDescByID(String pid) {
+        return super.getPluginMetadataById(pid);
     }
 
     /**
@@ -84,8 +68,16 @@ public abstract class AbstractProcessorContext {
         return context;
     }
 
-    public AbstractPlugin getPluginDescByID(String pid) {
-        return pluginMaps.get(pid);
+    public void addAttribute(String name, Object value) {
+        getContext().put(name, value);
+    }
+
+    public Object getAttribute(String name) {
+        return getContext().get(name);
+    }
+
+    public void addAttributes(Map<String, Object> attributes) {
+        getContext().putAll(attributes);
     }
 
     /**
@@ -95,6 +87,10 @@ public abstract class AbstractProcessorContext {
         return statusContext;
     }
 
+    public void addStatusAttr(String name, Object value) {
+        getStatusContext().put(name, value);
+    }
+
     /**
      * @return the threadContext
      */
@@ -102,11 +98,37 @@ public abstract class AbstractProcessorContext {
         return threadContext;
     }
 
+    public Object getThreadAttr(Thread thread, String key) {
+        Map<String, Object> map = threadAttributes(thread);
+        return map.get(key);
+    }
+
+    public Object computeThreadAttrIfAbsent(Thread thread, String key, Function<String, Object> mappingFunction) {
+        Map<String, Object> map = threadAttributes(thread);
+
+        return map.computeIfAbsent(key, mappingFunction);
+    }
+
+    public void removeThreadAttr(Thread thread, String key) {
+        Map<String, Object> map = threadAttributes(thread);
+        map.remove(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nonnull
+    private Map<String, Object> threadAttributes(Thread thread) {
+        return (Map<String, Object>) getThreadContext().computeIfAbsent(thread, t -> new HashMap<String, Object>());
+    }
+
     /**
      * @return the processorResult
      */
     public ProcessorResult getProcessorResult() {
         return processorResult;
+    }
+
+    public void addProcessorResult(String name, Object value) {
+        getProcessorResult().put(name, value);
     }
 
     /**
@@ -123,7 +145,7 @@ public abstract class AbstractProcessorContext {
      * @return
      */
     public void set(String key, Object value) {
-        context.put(key, value);
+        addAttribute(key, value);
     }
 
     /**
@@ -134,10 +156,10 @@ public abstract class AbstractProcessorContext {
      */
     public void setString(String key, Object value) {
         if (null == value) {
-            context.put(key, null);
+            getContext().put(key, null);
             return;
         }
-        context.put(key, String.valueOf(value));
+        getContext().put(key, value.toString());
     }
 
     /**
@@ -146,14 +168,14 @@ public abstract class AbstractProcessorContext {
      * @return
      */
     public String getString(String key) {
-        if (StringUtils.isBlank(key) || !context.containsKey(key)) {
+        if (StringUtils.isEmpty(key)) {
             return null;
         }
-        Object v = context.get(key);
+        Object v = getContext().get(key);
         if (null == v) {
             return null;
         }
-        return String.valueOf(context.get(key));
+        return v.toString();
     }
 
     /**
@@ -162,14 +184,18 @@ public abstract class AbstractProcessorContext {
      * @return
      */
     public Long getLong(String key) {
-        if (StringUtils.isBlank(key) || !context.containsKey(key)) {
+        if (StringUtils.isEmpty(key)) {
             return null;
         }
-        Object v = context.get(key);
+        Object v = getContext().get(key);
         if (null == v) {
             return null;
+        } else if (v instanceof Long) {
+            return (Long) v;
+        } else if (v instanceof String) {
+            return Long.valueOf((String) v);
         }
-        return Long.valueOf(getString(key));
+        return Long.valueOf(v.toString());
     }
 
     /**
@@ -178,50 +204,31 @@ public abstract class AbstractProcessorContext {
      * @return
      */
     public Boolean getBoolean(String key) {
-        if (StringUtils.isBlank(key) || !context.containsKey(key)) {
+        if (StringUtils.isEmpty(key)) {
             return null;
         }
-        Object v = context.get(key);
+        Object v = getContext().get(key);
         if (null == v) {
             return null;
+        }else if (v instanceof Boolean) {
+            return (Boolean) v;
+        } else if (v instanceof String) {
+            return Boolean.valueOf((String) v);
         }
-        return Boolean.valueOf(getString(key));
+        throw new ClassCastException("Can not cast class '"+v.getClass()+"' to 'Boolean'.");
     }
 
-    public PluginManager getPluginManager() {
-        return pluginManager;
-    }
-
-    public void setPluginManager(PluginManager pluginManager) {
-        this.pluginManager = pluginManager;
-    }
-
-    public <T> WrappedExtension<T> loadExtension(AbstractPlugin pluginMetadata, Class<T> extensionType) {
+    public <T> WrappedExtension<T> loadExtension(@Nonnull AbstractPlugin pluginMetadata, @Nonnull Class<T> extensionType) {
         Objects.requireNonNull(pluginMetadata);
-        Long taskId = getLong(AttributeKey.TASK_ID);
 
         return getPluginManager().loadExtension(pluginMetadata, extensionType, taskId);
     }
 
-    public AbstractClientPlugin loadPlugin(JavaPlugin pluginMetadata) {
+    public AbstractClientPlugin loadPlugin(@Nonnull JavaPlugin pluginMetadata) {
         Objects.requireNonNull(pluginMetadata);
         String fileName = pluginMetadata.getFileName();
         String mainClass = pluginMetadata.getMainClass();
-        Long taskId = getLong(AttributeKey.TASK_ID);
 
         return getPluginManager().loadPlugin(fileName, mainClass, taskId);
-    }
-
-    public AbstractService getDefaultService() {
-        AbstractService service = null;
-        if (null != website && null != website.getSearchConfig() && null != website.getSearchConfig().getProperties()) {
-            Properties properties = website.getSearchConfig().getProperties();
-            Boolean useTaskHttp = properties.getUseTaskHttp();
-            if (BooleanUtils.isTrue(useTaskHttp)) {
-                service = new TaskHttpService();
-                service.setServiceType("task_http");
-            }
-        }
-        return service;
     }
 }

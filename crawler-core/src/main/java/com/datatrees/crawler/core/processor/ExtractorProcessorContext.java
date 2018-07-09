@@ -8,14 +8,15 @@
 
 package com.datatrees.crawler.core.processor;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.datatrees.crawler.core.domain.Website;
+import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -25,35 +26,37 @@ import org.apache.commons.collections.CollectionUtils;
  */
 public class ExtractorProcessorContext extends AbstractProcessorContext {
 
-    private final Map<String, PageExtractor> pageExtractorMap = new HashMap<String, PageExtractor>();
+    private final Map<String, PageExtractor> pageExtractorMap = new HashMap<>();
 
     public ExtractorProcessorContext(Website website, Long taskId) {
         super(website, taskId);
-        Preconditions.checkNotNull(website.getExtractorConfig(), "website extractor config should not be empty!");
+
+        Preconditions.notNull("extractor-config", website.getExtractorConfig());
     }
 
     @Override
     public void init() {
-        List<PageExtractor> PageExtractorList = this.website.getExtractorConfig().getPageExtractors();
+        List<PageExtractor> PageExtractorList = getExtractorConfig().getPageExtractors();
         if (CollectionUtils.isNotEmpty(PageExtractorList)) {
             for (PageExtractor p : PageExtractorList) {
                 pageExtractorMap.put(p.getId(), p);
             }
         }
+
         // init plugin
-        List<AbstractPlugin> plugins = website.getExtractorConfig().getPluginList();
-        if (CollectionUtils.isNotEmpty(plugins)) {
-            for (AbstractPlugin plugin : plugins) {
-                pluginMaps.put(plugin.getId(), plugin);
-            }
-        }
+        registerPlugins(getExtractorConfig().getPluginList());
+    }
+
+    public ExtractorConfig getExtractorConfig() {
+        return getWebsite().getExtractorConfig();
     }
 
     /**
      * @return the pageExtractorMap
      */
     public Map<String, PageExtractor> getPageExtractorMap() {
-        return pageExtractorMap;
+        return Collections.unmodifiableMap(pageExtractorMap);
     }
+
 
 }

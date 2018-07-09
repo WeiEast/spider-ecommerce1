@@ -24,7 +24,7 @@ public final class PluginCaller {
     public static Object call(String pluginId, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
         Objects.requireNonNull(context);
 
-        AbstractPlugin pluginDesc = context.getPluginDescByID(pluginId);
+        AbstractPlugin pluginDesc = context.getPluginMetadataById(pluginId);
 
         return call(pluginDesc, context, parametersSupplier);
     }

@@ -8,14 +8,15 @@
 
 package com.datatrees.crawler.core.processor.segment.impl;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
 import com.datatrees.common.pipeline.Request;
+import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.SplitSegment;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.BooleanUtils;
@@ -28,17 +29,19 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class SplitSegmentImpl extends SegmentBase<SplitSegment> {
 
+    public SplitSegmentImpl(@Nonnull SplitSegment segment) {
+        super(segment);
+    }
+
     @Override
-    public List<String> getSplit(Request request) {
-        String content = RequestUtil.getContent(request);
+    protected List<String> splitInputContent(String content, SplitSegment segment, Request request, Response response) {
+        if(StringUtils.isNotEmpty(content)){
+            String split = StringUtils.defaultString(segment.getSplitString());
 
-        List<String> result = new LinkedList<>();
-        SplitSegment segment = getSegment();
-        String split = segment.getSplitString();
+            logger.debug("Splitter separate: {}", split);
 
-        if (StringUtils.isNotEmpty(split)) {
-            String[] regexResult = content.split(split);
-            if (regexResult.length > 0) {
+            if (!split.isEmpty()) {
+                String[] regexResult = content.split(split);
                 Matcher m = RegExp.getMatcher(split, content);
                 int count = 0;
                 while (count < regexResult.length) {
@@ -53,12 +56,10 @@ public class SplitSegmentImpl extends SegmentBase<SplitSegment> {
                     }
                     count++;
                 }
-                result.addAll(Arrays.asList(regexResult));
+                return Arrays.asList(regexResult);
             }
-        } else {
-            result.add(content);
         }
 
-        return result;
+        return Collections.singletonList(content);
     }
 }
