@@ -1,19 +1,18 @@
 package com.treefinance.crawler.framework.format.datetime;
 
 import javax.annotation.Nonnull;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.DateUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.exception.FormatException;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * @author Jerry
@@ -23,7 +22,6 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
 
     @Override
     protected Date toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
-        Date result = null;
         String input = value.trim();
         String actualPattern = StringUtils.trim(pattern);
         if (StringUtils.isEmpty(actualPattern)) {
@@ -34,16 +32,24 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
             actualPattern = StringUtils.trim(getConf().get("DEFAULT_DATE_PATTERN", Constants.DEFAULT_DATE_PATTERN));
         }
 
+        if (StringUtils.isEmpty(actualPattern)) {
+            throw new FormatException("Empty date pattern used to parse datetime.");
+        }
+
         String separator = getConf().get("DEFAULT_DATE_PATTERN_SEPARATOR", ";");
         String[] patterns = actualPattern.split(separator);
-
+        Date result = null;
         for (String item : patterns) {
             if (item.isEmpty()) {
                 continue;
             }
 
-            DateFormat dateFormat = getDateFormat(request, item);
-            result = DateUtils.parseDate(input, dateFormat);
+            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(request).computeIfAbsent(item, DateTimeFormat::forPattern);
+            try {
+                result = dateFormat.parseDateTime(input).toDate();
+            } catch (Exception e) {
+                logger.warn("Error parsing datetime with pattern: {}, input: {}", item, input);
+            }
             if (result != null) {
                 // handle pattern has no year
                 if (!item.toLowerCase().contains("yy")) {
@@ -54,19 +60,9 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
         }
 
         if (result == null) {
-            logger.warn("Parse Date failed! - input: {}, pattern: {}", value, pattern);
+            throw new FormatException("There was no matched date pattern to parse datetime. input: " + value + ", patterns: " + actualPattern);
         }
 
         return result;
-    }
-
-    private DateFormat getDateFormat(Request request, String pattern) {
-        Map<String, DateFormat> formatMap = RequestUtil.getDateFormat(request);
-
-        return formatMap.computeIfAbsent(pattern, p -> {
-            SimpleDateFormat format = new SimpleDateFormat(p);
-            format.setLenient(true);
-            return format;
-        });
     }
 }
