@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class XmlConfigParser implements ConfigParser {
 
     private static final Logger                      logger           = LoggerFactory.getLogger(XmlConfigParser.class);
-    private static final List<Class<?>>              valueTypes       = Arrays.asList(new Class<?>[]{String.class, Boolean.class, Integer.class, Float.class, Double.class});
+    private static final List<Class<?>>              valueTypes       = Arrays.asList(new Class<?>[]{String.class, Boolean.class, Short.class, Integer.class, Long.class, Float.class, Double.class});
     private final        Map<String, Object>         contentMap       = new HashMap<>();
     private final        Map<Class<?>, List<Method>> typeSetMethodMap = new HashMap<>();
 
@@ -109,8 +109,8 @@ public class XmlConfigParser implements ConfigParser {
     }
 
     private void processNodeMethod(Element e, Object parent, Method method) throws Exception {
-        Node node = method.getAnnotation(Node.class);
         Class<?> setClassType = method.getParameterTypes()[0];
+        Node node = method.getAnnotation(Node.class);
         List<Object> elements;
         if (StringUtils.isNotBlank(node.value())) {
             elements = XmlParser.getElementsByXPath(e, node.value());
@@ -118,30 +118,34 @@ public class XmlConfigParser implements ConfigParser {
             elements = Collections.singletonList(e);
         }
 
+        Class<?>[] nodeTypes = node.types();
+        int length = nodeTypes.length;
+        if (length <= 0) {
+            nodeTypes = new Class[]{setClassType};
+        }
+
+        if (valueTypes.contains(nodeTypes[0])) {
+            setBaseValue(elements, method, nodeTypes[0], parent);
+        } else {
+            setNodeValue(elements, method, nodeTypes, parent);
+        }
+    }
+
+    private void setNodeValue(List<Object> elements, Method method, Class<?>[] nodeTypes, Object parent) throws Exception {
         for (Object element : elements) {
-            if (node.types().length == 0) {// default use setClassType
-                if (valueTypes.contains(setClassType)) {
-                    this.defaultTypeProcess(element, setClassType, parent, method);
-                } else {
-                    this.customTypeProcess(element, setClassType, parent, method);
-                }
-            } else {// get from node.types
-                if (node.types().length > 0 && valueTypes.contains(node.types()[0])) {// base type
-                    this.defaultTypeProcess(element, node.types()[0], parent, method);
-                } else {// custom class
-                    for (Class<?> type : node.types()) {
-                        if (this.customTypeProcess(element, type, parent, method) != null) break;
-                    }
-                }
+            for (Class<?> type : nodeTypes) {
+                if (this.customTypeProcess(element, type, parent, method) != null) break;
             }
         }
     }
 
-    private void defaultTypeProcess(Object element, Class<?> setClassType, Object parent, Method method) {
-        Object value = processValue(element, setClassType);
-        if (value != null) {
-            logger.trace("invoke method : {} for target : {} with value : {}", method.getName(), parent, value);
-            ReflectionUtils.invokeMethod(method, parent, value);
+    private void setBaseValue(List<Object> elements, Method method, Class<?> paramType, Object parent) {
+        for (Object element : elements) {
+            Object value = processValue(element, paramType);
+            if (value != null) {
+                logger.trace("invoke method : {} for target : {} with value : {}", method.getName(), parent, value);
+                ReflectionUtils.invokeMethod(method, parent, value);
+            }
         }
     }
 
@@ -154,11 +158,7 @@ public class XmlConfigParser implements ConfigParser {
         } else {
             value = processNodes((Element) element, setClassType);
         }
-        this.methodinvoke(value, parent, method, node);
-        return value;
-    }
 
-    private void methodinvoke(Object value, Object parent, Method method, Node node) throws ParseException {
         if (value != null) {
             logger.trace("invoke method : {} for target : {} with value : {}", method.getName(), parent, value);
             ReflectionUtils.invokeMethod(method, parent, value);
@@ -166,12 +166,14 @@ public class XmlConfigParser implements ConfigParser {
                 String id = value.toString();
                 Object oldBeanDefinition = contentMap.get(id);
                 if (oldBeanDefinition != null) {
-                    throw new ParseException("exist the same BeanDefinition named" + id);
+                    throw new ParseException("exist the same BeanDefinition named " + id);
                 } else {
                     contentMap.put(id, value);
                 }
             }
         }
+
+        return value;
     }
 
     private Object processValue(Object obj, Class<?> type) {
@@ -187,8 +189,12 @@ public class XmlConfigParser implements ConfigParser {
 
         if (Boolean.class.equals(type)) {
             return Boolean.valueOf(value);
+        } else if (Short.class.equals(type)) {
+            return Short.valueOf(value);
         } else if (Integer.class.equals(type)) {
             return Integer.valueOf(value);
+        } else if (Long.class.equals(type)) {
+            return Long.valueOf(value);
         } else if (Float.class.equals(type)) {
             return Float.valueOf(value);
         } else if (Double.class.equals(type)) {

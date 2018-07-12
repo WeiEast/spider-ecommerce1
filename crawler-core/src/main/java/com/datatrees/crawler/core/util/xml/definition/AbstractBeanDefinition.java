@@ -10,7 +10,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Node;
  */
 public class AbstractBeanDefinition {
 
-    String id;
+    private String id;
 
     @Attr("id")
     public String getId() {
