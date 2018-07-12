@@ -35,11 +35,53 @@ public class XmlParser {
     }
 
     public XmlParser(String xml) throws JDOMException, IOException {
-        StringReader reader = new StringReader(xml);
-        SAXBuilder saxBuilder = new SAXBuilder();
-        document = saxBuilder.build(reader);
+        document = createDocument(xml);
         root = document.getRootElement();
-        reader.close();
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public Element getRoot() {
+        return root;
+    }
+
+    public static Document createDocument(String xml) throws JDOMException, IOException {
+        try (StringReader reader = new StringReader(xml)) {
+            SAXBuilder saxBuilder = new SAXBuilder();
+            return saxBuilder.build(reader);
+        }
+    }
+
+    public Element getElementByXPath(String path) {
+        return (Element) evaluateFirst(root, path);
+    }
+
+    public List<Object> getElementsByXPath(String path) {
+        return evaluate(root, path);
+    }
+
+    public static XPathExpression<Object> compileXpath(String path) {
+        return XPathFactory.instance().compile(path);
+    }
+
+    public static Object evaluateFirst(Element element, String path) {
+        XPathExpression<Object> xpath = compileXpath(path);
+        return xpath.evaluateFirst(element);
+    }
+
+    public static List<Object> evaluate(Element element, String path) {
+        XPathExpression<Object> xpath = compileXpath(path);
+        return xpath.evaluate(element);
+    }
+
+    public static Element getElementByXPath(Element context, String path) {
+        return (Element) evaluateFirst(context, path);
+    }
+
+    public static List<Object> getElementsByXPath(Element context, String path) {
+        return evaluate(context, path);
     }
 
     public static String getElementValue(Object obj) {
@@ -56,49 +98,16 @@ public class XmlParser {
         }
     }
 
-    public Document getDocument() {
-        return document;
-    }
-
-    public Element getRoot() {
-        return root;
-    }
-
-    private XPathExpression<Object> complieXpath(String path) {
-        return XPathFactory.instance().compile(path);
-    }
-
-    public Element getElementByXPath(String path) throws JDOMException {
-        XPathExpression<Object> xpath = complieXpath(path);
-        return (Element) xpath.evaluateFirst(root);
-    }
-
-    public Element getElementByXPath(Element context, String path) throws JDOMException {
-        XPathExpression<Object> xpath = complieXpath(path);
-        return (Element) xpath.evaluateFirst(context);
-    }
-
-    public List<Object> getElementsByXPath(String path) throws JDOMException {
-        XPathExpression<Object> xpath = complieXpath(path);
-        return xpath.evaluate(root);
-    }
-
-    public List<Object> getElementsByXPath(Element context, String path) throws JDOMException {
-        XPathExpression<Object> xpath = complieXpath(path);
-        return xpath.evaluate(context);
-    }
-
-    public String getStringValue(Element context, String path) {
+    public static String getStringValue(Element context, String path) {
         if (context == null) {
             return null;
         }
-        XPathExpression<Object> xpath = complieXpath(path);
-        Object obj = xpath.evaluateFirst(context);
+        Object obj = evaluateFirst(context, path);
         return getElementValue(obj);
     }
 
-    public Integer getIntValue(Element context, String path) {
-        String value = this.getStringValue(context, path);
+    public static Integer getIntValue(Element context, String path) {
+        String value = getStringValue(context, path);
         if (StringUtils.isBlank(value)) {
             return null;
         }
