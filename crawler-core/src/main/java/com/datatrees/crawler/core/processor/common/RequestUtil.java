@@ -9,7 +9,6 @@
 package com.datatrees.crawler.core.processor.common;
 
 import javax.annotation.Nonnull;
-import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +20,10 @@ import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.treefinance.crawler.framework.format.number.NumberUnit;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.treefinance.crawler.framework.format.number.NumberUnit;
 import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -154,13 +154,9 @@ public class RequestUtil {
         req.setAttribute(Constants.PARSER_WEBSITE_CONFIG, website);
     }
 
-    public static void setDateFormat(Request req, Map<String, DateFormat> format) {
-        req.setAttribute(Constants.CRAWLER_DATE_FROMAT, format);
-    }
-
     @SuppressWarnings("unchecked")
-    public static Map<String, DateFormat>  getDateFormat(Request req) {
-        return (Map<String, DateFormat>) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new HashMap<>());
+    public static Map<String, DateTimeFormatter>  getDateFormat(Request req) {
+        return (Map<String, DateTimeFormatter>) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new HashMap<>());
     }
 
     @SuppressWarnings("unchecked")
