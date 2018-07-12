@@ -160,7 +160,7 @@ public class XmlConfigParser implements ConfigParser {
 
     private void methodinvoke(Object value, Object parent, Method method, Node node) throws ParseException {
         if (value != null) {
-            logger.trace("invoke method : {} for target : {} with value : {}" ,method.getName(), parent,value);
+            logger.trace("invoke method : {} for target : {} with value : {}", method.getName(), parent, value);
             ReflectionUtils.invokeMethod(method, parent, value);
             if (node.registered()) {
                 String id = value.toString();

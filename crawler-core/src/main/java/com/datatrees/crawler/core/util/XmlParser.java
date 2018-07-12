@@ -89,8 +89,7 @@ public class XmlParser {
             return StringUtils.EMPTY;
         }
         if (obj instanceof Attribute) {
-            Attribute attribute = (Attribute) obj;
-            return attribute.getValue();
+            return ((Attribute) obj).getValue();
         } else if (obj instanceof Text) {
             return ((Text) obj).getText();
         } else {
