@@ -168,7 +168,7 @@ public class TaskMessage {
         task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
         //释放代理
         if (searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
-            context.release();
+            getContext().release();
         }
     }
 }

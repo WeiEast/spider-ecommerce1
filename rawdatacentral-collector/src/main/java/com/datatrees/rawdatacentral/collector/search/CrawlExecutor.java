@@ -64,7 +64,6 @@ public class CrawlExecutor {
             } else {
                 doExecute(searchProcessor, linkQueue, null, threadCount);
             }
-
         } catch (Exception e) {
             this.exceptionHandle(e, "Crawler executor encountered a problem.");
         } finally {
@@ -79,22 +78,13 @@ public class CrawlExecutor {
     }
 
     private void doExecute(SearchProcessor searchProcessor, LinkQueue linkQueue, String keyword, Integer threadCount) throws ResultEmptyException {
-        searchProcessor.init(keyword);
-
+        searchProcessor.initWithKeyword(keyword);
         String url = SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), keyword, searchProcessor.getEncoding(), 0, true, searchProcessor.getProcessorContext().getContext());
+
+        log.info("Actual search seed url: {}", url);
+
         LinkNode linkNode = new LinkNode(url).setDepth(0);
         this.doLoopCrawl(searchProcessor, linkQueue, linkNode, threadCount);
-    }
-
-    private boolean isTimeOutOfTask(SearchProcessor searchProcessor) {
-        long currentTime = UnifiedSysTime.INSTANCE.getSystemTime().getTime();
-        boolean timeout = searchProcessor.isTimeout(currentTime);
-
-        if (timeout) {
-            log.debug("Crawl task is time out! taskId : {}, startTime: {}, now: {}", searchProcessor.getTaskId(), searchProcessor.getStartTime(), currentTime);
-        }
-
-        return timeout;
     }
 
     private void doLoopCrawl(SearchProcessor searchProcessor, LinkQueue linkQueue, LinkNode linkNode, Integer threadCount) throws ResultEmptyException {
@@ -186,6 +176,17 @@ public class CrawlExecutor {
         } catch (Exception e) {
             this.exceptionHandle(e, "doLoopCrawl error ");
         }
+    }
+
+    private boolean isTimeOutOfTask(SearchProcessor searchProcessor) {
+        long currentTime = UnifiedSysTime.INSTANCE.getSystemTime().getTime();
+        boolean timeout = searchProcessor.isTimeout(currentTime);
+
+        if (timeout) {
+            log.debug("Crawl task is time out! taskId : {}, startTime: {}, now: {}", searchProcessor.getTaskId(), searchProcessor.getStartTime(), currentTime);
+        }
+
+        return timeout;
     }
 
     private void exceptionHandle(Exception e, String remark) throws ResultEmptyException {

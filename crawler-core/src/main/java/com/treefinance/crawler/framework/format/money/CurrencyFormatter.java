@@ -44,6 +44,7 @@ public class CurrencyFormatter extends CommonFormatter<String> {
         DEFAULT_CURRENCY_MAP.put("瑞典克朗|SEK", "SEK");
         DEFAULT_CURRENCY_MAP.put("澳门元|MOP", "MOP");
         DEFAULT_CURRENCY_MAP.put("人民币|￥|RMB|CNY|元", "RMB");
+        DEFAULT_CURRENCY_MAP.put("印尼卢比|印尼盾|IDR", "IDR");
 
         String json = PropertiesConfiguration.getInstance().get("custom.currency.map.json");
         if (StringUtils.isNotBlank(json)) {

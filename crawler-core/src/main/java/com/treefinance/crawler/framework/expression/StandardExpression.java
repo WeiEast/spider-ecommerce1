@@ -1,6 +1,7 @@
 package com.treefinance.crawler.framework.expression;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,81 +32,81 @@ public final class StandardExpression {
     private StandardExpression() {
     }
 
-    public static boolean find(String value) {
+    public static boolean find(@Nullable String value) {
         return ExpressionExecutor.findExp(value);
     }
 
-    public static String eval(String value, List<Map<String, Object>> fieldScopes) {
+    public static String eval(@Nullable String value, @Nullable List<Map<String, Object>> fieldScopes) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static String eval(String value, Request request, Response response) {
+    public static String eval(@Nullable String value, @Nullable Request request, @Nullable Response response) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 
-    public static String eval(String value, Map<String, Object> fieldStack) {
+    public static String eval(@Nullable String value, @Nullable Map<String, Object> fieldStack) {
         return ExpressionExecutor.evalExp(value, fieldStack);
     }
 
-    public static String eval(String value, Map<String, Object> fieldStack, boolean failOnUnKnown) {
+    public static String eval(@Nullable String value, @Nullable Map<String, Object> fieldStack, boolean failOnUnKnown) {
         return ExpressionExecutor.evalExp(value, new ExpEvalContext(fieldStack, failOnUnKnown));
     }
 
-    public static Object evalWithObject(String value, List<Map<String, Object>> fieldScopes) {
+    public static Object evalWithObject(@Nullable String value, @Nullable List<Map<String, Object>> fieldScopes) {
         return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static Object evalWithObject(String value, Request request, Response response) {
+    public static Object evalWithObject(@Nullable String value, @Nullable Request request, @Nullable Response response) {
         return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 
-    public static Object evalWithObject(String value, Map<String, Object> fieldStack) {
+    public static Object evalWithObject(@Nullable String value, @Nullable Map<String, Object> fieldStack) {
         return ExpressionExecutor.evalExpWithObject(value, fieldStack);
     }
 
-    public static String evalSpecial(String value, List<Map<String, Object>> fieldScopes) {
+    public static String evalSpecial(@Nullable String value, @Nullable List<Map<String, Object>> fieldScopes) {
         return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static String evalSpecial(String value, Request request, Response response) {
+    public static String evalSpecial(@Nullable String value, @Nullable Request request, @Nullable Response response) {
         return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 
-    public static String evalSpecial(String value, Map<String, Object> fieldStack) {
+    public static String evalSpecial(@Nullable String value, @Nullable Map<String, Object> fieldStack) {
         return ExpressionExecutor.evalExpSpecial(value, fieldStack);
     }
 
-    public static String evalUrl(String value, List<Map<String, Object>> fieldScopes, String charset) {
+    public static String evalUrl(@Nullable String value, @Nullable List<Map<String, Object>> fieldScopes, @Nullable String charset) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.merge(fieldScopes), URL_ENCODED_KEYS, charset);
     }
 
-    public static String evalUrl(String value, Request request, Response response) {
+    public static String evalUrl(@Nullable String value, @Nonnull Request request, @Nullable Response response) {
         String charset = RequestUtil.getContentCharset(request);
 
         return evalUrl(value, request, response, charset);
     }
 
-    public static String evalUrl(String value, Request request, Response response, String charset) {
+    public static String evalUrl(@Nullable String value, @Nullable Request request, @Nullable Response response, @Nullable String charset) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.getVisibleFields(request, response), URL_ENCODED_KEYS, charset);
     }
 
-    public static String evalUrl(String value, Map<String, Object> fieldStack, String charset) {
+    public static String evalUrl(@Nullable String value, @Nullable Map<String, Object> fieldStack, @Nullable String charset) {
         return ExpressionExecutor.evalExp(value, fieldStack, URL_ENCODED_KEYS, charset);
     }
 
-    public static String eval(@Nonnull String value, @Nonnull ExpEvalContext context) {
+    public static String eval(@Nullable String value, @Nonnull ExpEvalContext context) {
         return ExpressionExecutor.evalExp(value, context);
     }
 
-    public static String eval(@Nonnull String value, @Nonnull ExpEvalContext context, BiFunction<String, String, String> mappingFunction) {
+    public static String eval(@Nullable String value, @Nonnull ExpEvalContext context, @Nullable BiFunction<String, String, String> mappingFunction) {
         return ExpressionExecutor.evalExp(value, context, mappingFunction);
     }
 
-    public static Object evalWithObject(@Nonnull String value, @Nonnull ExpEvalContext context) {
+    public static Object evalWithObject(@Nullable String value, @Nonnull ExpEvalContext context) {
         return ExpressionExecutor.evalExpWithObject(value, context);
     }
 
-    public static String evalSpecial(@Nonnull String value, @Nonnull ExpEvalContext context) {
+    public static String evalSpecial(@Nullable String value, @Nonnull ExpEvalContext context) {
         return ExpressionExecutor.evalExpSpecial(value, context);
     }
 

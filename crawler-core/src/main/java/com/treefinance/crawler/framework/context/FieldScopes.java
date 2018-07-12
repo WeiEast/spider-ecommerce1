@@ -1,6 +1,7 @@
 package com.treefinance.crawler.framework.context;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import com.datatrees.common.pipeline.Request;
@@ -77,7 +78,7 @@ public final class FieldScopes {
      * 合并值栈，优先级按列表由前往后降序。
      */
     @Nonnull
-    public static Map<String, Object> merge(@Nonnull List<Map<String, Object>> fieldScopes) {
+    public static Map<String, Object> merge(@Nullable List<Map<String, Object>> fieldScopes) {
         if (CollectionUtils.isEmpty(fieldScopes)) {
             return Collections.emptyMap();
         }

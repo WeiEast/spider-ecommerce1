@@ -84,18 +84,18 @@ public class SearchProcessor {
     /**
      *
      */
-    public void init(String keyword) {
+    public void initWithKeyword(String keyword) {
         this.init();
 
-        if(keyword != null){
+        if (keyword != null) {
             this.keyword = keyword;
             ProcessorContextUtil.setKeyword(getProcessorContext(), keyword);
         }
     }
 
     public void init() {
-        needEarlyQuit = false;
-        isLastLink = false;
+        this.needEarlyQuit = false;
+        this.isLastLink = false;
     }
 
     private URLHandlerImpl initURLHandlerImpl() {
