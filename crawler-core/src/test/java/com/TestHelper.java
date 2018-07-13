@@ -25,9 +25,9 @@ import java.nio.charset.Charset;
 import java.util.Objects;
 
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
-import com.datatrees.crawler.core.util.xml.exception.ParseException;
 import com.treefinance.crawler.exception.UnexpectedException;
+import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
 import org.springframework.util.StreamUtils;
 
 /**
@@ -39,10 +39,10 @@ public final class TestHelper {
     private TestHelper() {
     }
 
-    public static <T> T getConfig(String filepath, Class<T> configClass) throws ParseException {
+    public static <T extends CrawlerConfig> T getConfig(String filepath, Class<T> configClass) {
         String content = getFileContent(filepath);
 
-        return XmlConfigParser.getInstance().parse(content, configClass);
+        return CrawlerConfigFactory.build(content, configClass);
     }
 
     public static String getFileContent(String filePath) {

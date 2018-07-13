@@ -20,13 +20,17 @@ import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.*;
+import com.datatrees.crawler.core.processor.common.ProcessorFactory;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.common.ResultMapConverter;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorPipeline;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.format.Formatter;
+import com.treefinance.crawler.framework.util.SourceUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -162,7 +166,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                     String content = split;
                     String sourceId = abstractSegment.getSourceId();
                     if (StringUtils.isNotEmpty(sourceId)) {
-                        Object result = SourceUtil.getSourceMap(sourceId, request, response);
+                        Object result = SourceUtils.getSourceValue(sourceId, request, response);
                         if (result != null) {
                             content = result.toString();
                         }

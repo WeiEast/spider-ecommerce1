@@ -14,8 +14,6 @@ import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
-import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -25,7 +23,10 @@ import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
-import com.datatrees.rawdatacentral.domain.model.*;
+import com.datatrees.rawdatacentral.domain.model.Bank;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
+import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.*;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
@@ -33,6 +34,8 @@ import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
+import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
+import com.treefinance.crawler.framework.config.factory.ParentConfigHandler;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -63,23 +66,20 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     private ParentConfigHandler parentConfigHandler;
 
     public WebsiteConfigServiceImpl() {
-        parentConfigHandler = new ParentConfigHandler() {
-            @Override
-            public <T> T parse(T type) throws Exception {
-                if (type instanceof AbstractWebsiteConfig && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
-                    String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
-                    logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class " + type.getClass());
-                    Website website = getWebsiteByWebsiteName(parentWebsiteName);
-                    if (website != null) {
-                        if (type instanceof SearchConfig) {
-                            ((SearchConfig) type).clone(website.getSearchConfig());
-                        } else if (type instanceof ExtractorConfig) {
-                            ((ExtractorConfig) type).clone(website.getExtractorConfig());
-                        }
+        parentConfigHandler = (ParentConfigHandler<AbstractWebsiteConfig>) type -> {
+            String parentWebsiteName = type.getParentWebsiteName();
+            if (StringUtils.isNotBlank(parentWebsiteName)) {
+                logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class " + type.getClass());
+                Website website = getWebsiteByWebsiteName(parentWebsiteName);
+                if (website != null) {
+                    if (type instanceof SearchConfig) {
+                        ((SearchConfig) type).clone(website.getSearchConfig());
+                    } else if (type instanceof ExtractorConfig) {
+                        ((ExtractorConfig) type).clone(website.getExtractorConfig());
                     }
                 }
-                return type;
             }
+            return type;
         };
     }
 
@@ -353,8 +353,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         Website website = new Website();
         if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
             try {
-                SearchConfig searchConfig = XmlConfigParser.getInstance()
-                        .parse(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
+                SearchConfig searchConfig = CrawlerConfigFactory.build(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
                 website.setSearchConfig(searchConfig);
                 website.setSearchConfigSource(websiteConfig.getSearchConfig());
             } catch (Exception e) {
@@ -364,8 +363,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
             try {
-                ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
-                        .parse(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
+                ExtractorConfig extractorConfig = CrawlerConfigFactory.build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
                 website.setExtractorConfig(extractorConfig);
                 website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
             } catch (Exception e) {
@@ -416,8 +414,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         if (website != null) {
             if (StringUtils.isNotEmpty(website.getSearchConfigSource())) {
                 try {
-                    SearchConfig searchConfig = XmlConfigParser.getInstance()
-                            .parse(website.getSearchConfigSource(), SearchConfig.class, parentConfigHandler);
+                    SearchConfig searchConfig = CrawlerConfigFactory.build(website.getSearchConfigSource(), SearchConfig.class, parentConfigHandler);
                     website.setSearchConfig(searchConfig);
                 } catch (Exception e) {
                     logger.error("parse searchConfig  error websiteId={},websiteName={}", website.getId(), website.getWebsiteName(), e);
@@ -425,8 +422,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             }
             if (StringUtils.isNotEmpty(website.getExtractorConfigSource())) {
                 try {
-                    ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
-                            .parse(website.getExtractorConfigSource(), ExtractorConfig.class, parentConfigHandler);
+                    ExtractorConfig extractorConfig = CrawlerConfigFactory.build(website.getExtractorConfigSource(), ExtractorConfig.class, parentConfigHandler);
                     website.setExtractorConfig(extractorConfig);
                 } catch (Exception e) {
                     logger.error("parse extractorConfig  error websiteId={},websiteName={}", website.getId(), website.getWebsiteName(), e);

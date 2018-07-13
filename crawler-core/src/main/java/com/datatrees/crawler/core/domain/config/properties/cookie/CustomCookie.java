@@ -8,10 +8,10 @@
 
 package com.datatrees.crawler.core.domain.config.properties.cookie;
 
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.annotation.Path;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import com.treefinance.crawler.framework.config.annotation.Attr;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Path;
+import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

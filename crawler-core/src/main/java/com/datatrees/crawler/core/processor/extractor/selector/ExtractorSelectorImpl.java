@@ -19,7 +19,7 @@ import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.google.common.base.Preconditions;
-import com.treefinance.crawler.framework.util.SourceFieldUtils;
+import com.treefinance.crawler.framework.util.FieldUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 
@@ -47,7 +47,7 @@ public class ExtractorSelectorImpl extends ProcessorInvokerAdapter {
         for (ExtractorSelector selector : extractorSelectors) {
             String value = RequestUtil.getAttribute(request, selector.getField());
             if (value == null) {
-                value = SourceFieldUtils.getFieldValueAsString(input, selector.getField(), null);
+                value = FieldUtils.getFieldValueAsString(input, selector.getField(), null);
                 RequestUtil.setAttribute(request, selector.getField(), value);
             }
 

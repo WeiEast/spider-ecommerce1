@@ -14,10 +14,10 @@ import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.domain.config.segment.impl.*;
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import com.treefinance.crawler.framework.config.annotation.Attr;
+import com.treefinance.crawler.framework.config.annotation.ChildTag;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

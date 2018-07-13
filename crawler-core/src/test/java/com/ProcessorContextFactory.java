@@ -23,7 +23,6 @@ import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.util.xml.exception.ParseException;
 
 /**
  * @author Jerry
@@ -34,7 +33,7 @@ public final class ProcessorContextFactory {
     private ProcessorContextFactory() {
     }
 
-    public static SearchProcessorContext createSearchProcessorContext(String website, String filePath) throws ParseException {
+    public static SearchProcessorContext createSearchProcessorContext(String website, String filePath) {
         Objects.requireNonNull(filePath);
         SearchConfig websiteConfig = TestHelper.getConfig(filePath, SearchConfig.class);
 
@@ -50,7 +49,7 @@ public final class ProcessorContextFactory {
         return context;
     }
 
-    public static ExtractorProcessorContext createExtractorProcessorContext(String website, String filePath) throws ParseException {
+    public static ExtractorProcessorContext createExtractorProcessorContext(String website, String filePath) {
         Objects.requireNonNull(filePath);
         ExtractorConfig extractorConfig = TestHelper.getConfig(filePath, ExtractorConfig.class);
 

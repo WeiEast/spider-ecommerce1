@@ -9,8 +9,8 @@
 package com.datatrees.crawler.core.domain.config.operation.impl;
 
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
-import com.datatrees.crawler.core.util.xml.annotation.Path;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import com.treefinance.crawler.framework.config.annotation.Path;
+import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

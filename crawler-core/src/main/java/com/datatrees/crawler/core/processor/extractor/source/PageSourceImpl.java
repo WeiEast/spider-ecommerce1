@@ -27,7 +27,7 @@ import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
-import com.treefinance.crawler.framework.util.SourceFieldUtils;
+import com.treefinance.crawler.framework.util.FieldUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -86,7 +86,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         logger.debug("Get page content. <<< source-ref: {}, separator: {}, plugin-ref: {}", source.getField(), separator, plugin != null ? plugin.getId() : null);
 
         if (plugin != null) {
-            Object value = SourceFieldUtils.getFieldValue(input, source.getField());
+            Object value = FieldUtils.getFieldValue(input, source.getField());
             if (value instanceof Collection) {
                 Stream<String> stream = ((Collection) value).stream().map(obj -> this.getSourceContent(obj, plugin, request));
 
@@ -98,7 +98,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
 
         String value = RequestUtil.getAttribute(request, source.getField());
         if (StringUtils.isNotBlank(separator) || value == null) {
-            value = SourceFieldUtils.getFieldValueAsString(input, source.getField(), separator);
+            value = FieldUtils.getFieldValueAsString(input, source.getField(), separator);
         }
 
         return value;

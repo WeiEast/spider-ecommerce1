@@ -1,7 +1,7 @@
-package com.datatrees.crawler.core.util.xml.definition;
+package com.treefinance.crawler.framework.config.xml;
 
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Attr;
+import com.treefinance.crawler.framework.config.annotation.Node;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

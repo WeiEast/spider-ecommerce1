@@ -16,7 +16,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.treefinance.crawler.framework.util.SourceFieldUtils;
+import com.treefinance.crawler.framework.util.FieldUtils;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
@@ -132,7 +132,7 @@ public class MailBillMessageNormalizer implements DataNormalizer {
 
         String pageContent;
         try {
-            pageContent = SourceFieldUtils.getFieldValueAsString(data, MailBillData.PAGECONTENT);
+            pageContent = FieldUtils.getFieldValueAsString(data, MailBillData.PAGECONTENT);
         } catch (InterruptedException e) {
             logger.warn(e.getMessage(), e);
             pageContent = StringUtils.EMPTY;

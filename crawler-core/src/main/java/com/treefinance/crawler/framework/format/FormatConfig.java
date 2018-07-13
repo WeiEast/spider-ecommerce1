@@ -11,9 +11,9 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
 import com.treefinance.crawler.framework.format.number.NumberUnit;
+import com.treefinance.crawler.framework.util.SourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -74,7 +74,7 @@ public class FormatConfig implements Serializable {
     }
 
     public Object getSourceFieldValue(String fieldName) {
-        return SourceUtil.getSourceMap(fieldName, request, response);
+        return SourceUtils.getSourceValue(fieldName, request, response);
     }
 
     public LinkNode getCurrentLinkNode() {

@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
  * @version 1.0
  * @since Mar 13, 2014 10:10:55 AM
  */
+@Deprecated
 public class CrawlerConfiguration extends DefaultConfiguration {
 
     private Configuration defaultConf = null;

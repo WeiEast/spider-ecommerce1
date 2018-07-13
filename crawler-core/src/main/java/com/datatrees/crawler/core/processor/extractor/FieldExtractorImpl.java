@@ -29,7 +29,6 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.common.exception.ExtractorException;
 import com.datatrees.crawler.core.processor.common.exception.OperationException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
@@ -40,6 +39,7 @@ import com.google.common.collect.ImmutableList;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.treefinance.crawler.framework.format.Formatter;
+import com.treefinance.crawler.framework.util.SourceUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -90,7 +90,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
             String sourceId = fieldExtractor.getSourceId();
 
             if (StringUtils.isNotEmpty(sourceId)) {
-                Object result = SourceUtil.getSourceMap(sourceId, request, response);
+                Object result = SourceUtils.getSourceValue(sourceId, request, response);
                 if (result != null) {
                     content = result.toString();
                 }

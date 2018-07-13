@@ -11,9 +11,9 @@ package com.datatrees.crawler.core.domain.config.search;
 import java.io.Serializable;
 
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import com.treefinance.crawler.framework.config.annotation.Attr;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

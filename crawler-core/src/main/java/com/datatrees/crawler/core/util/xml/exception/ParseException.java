@@ -12,6 +12,7 @@ package com.datatrees.crawler.core.util.xml.exception;
  * @version 1.0
  * @since Jan 4, 2013 8:28:45 PM
  */
+@Deprecated
 public class ParseException extends Exception {
 
     private static final long serialVersionUID = 1402629003842283884L;

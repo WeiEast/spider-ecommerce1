@@ -14,9 +14,9 @@ import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.domain.config.segment.impl.*;
-import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
+import com.treefinance.crawler.framework.config.annotation.ChildTag;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

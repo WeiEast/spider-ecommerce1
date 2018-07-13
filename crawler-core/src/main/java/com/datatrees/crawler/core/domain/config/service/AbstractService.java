@@ -6,9 +6,9 @@ import com.datatrees.common.util.json.annotation.Description;
 import com.datatrees.crawler.core.domain.config.service.impl.GrabService;
 import com.datatrees.crawler.core.domain.config.service.impl.PluginService;
 import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
+import com.treefinance.crawler.framework.config.annotation.Attr;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

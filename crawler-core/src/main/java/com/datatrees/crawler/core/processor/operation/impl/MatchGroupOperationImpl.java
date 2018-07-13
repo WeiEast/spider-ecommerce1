@@ -15,9 +15,9 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MatchGroupOperation;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
+import com.treefinance.crawler.framework.util.SourceUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -42,7 +42,7 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
 
     @Override
     protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
-        Matcher matcher = (Matcher) SourceUtil.getSourceMap(operation.getSourceId(), request, response);
+        Matcher matcher = (Matcher) SourceUtils.getSourceValue(operation.getSourceId(), request, response);
 
         String result = null;
         if (matcher != null) {

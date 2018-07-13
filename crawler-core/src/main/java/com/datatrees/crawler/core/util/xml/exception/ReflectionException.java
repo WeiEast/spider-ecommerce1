@@ -12,6 +12,7 @@ package com.datatrees.crawler.core.util.xml.exception;
  * @version 1.0
  * @since Jan 5, 2013 9:58:07 AM
  */
+@Deprecated
 public class ReflectionException extends RuntimeException {
 
     private static final long serialVersionUID = 350421172069238874L;
