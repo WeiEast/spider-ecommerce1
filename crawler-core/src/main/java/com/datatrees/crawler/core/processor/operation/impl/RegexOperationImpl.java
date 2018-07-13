@@ -49,7 +49,8 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
 
         String input = (String) operatingData;
 
-        if (operation.getGroupIndex() == null || operation.getGroupIndex() < 0) {
+        Integer groupIndex = operation.getGroupIndex();
+        if (groupIndex == null || groupIndex < 0) {
             Matcher result = RegExp.getMatcher(regex, input);
             if (result.find()) {
                 return result;
@@ -58,10 +59,8 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
             return null;
         }
 
-        int index = operation.getGroupIndex();
+        logger.debug("regex: {}, index: {}", regex, groupIndex);
 
-        logger.debug("regex: {}, index: {}", regex, index);
-
-        return RegExp.group(input, regex, index, null);
+        return RegExp.group(input, regex, groupIndex, null);
     }
 }
