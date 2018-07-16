@@ -12,6 +12,7 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.SourceUtil;
+import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
 import com.treefinance.crawler.framework.format.number.NumberUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -24,9 +25,9 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class FormatConfig implements Serializable {
 
-    private final Request  request;
-    private final Response response;
-    private final String   pattern;
+    private final       Request  request;
+    private final       Response response;
+    private final       String   pattern;
 
     public FormatConfig(@Nonnull Request request, @Nonnull Response response, @Nonnull FieldExtractor fieldExtractor) {
         this(request, response, fieldExtractor.getFormat());
@@ -55,8 +56,12 @@ public class FormatConfig implements Serializable {
     }
 
     @Nonnull
-    public Map<String, DateTimeFormatter> getDateFormatMap() {
+    public DateTimeFormats getDateTimeFormats() {
         return RequestUtil.getDateFormat(request);
+    }
+
+    public DateTimeFormatter getDateTimeFormatter(String pattern) {
+        return getDateTimeFormats().getFormatter(pattern);
     }
 
     @Nonnull

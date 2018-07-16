@@ -21,9 +21,9 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
 import com.treefinance.crawler.framework.format.number.NumberUnit;
 import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -155,8 +155,8 @@ public class RequestUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, DateTimeFormatter>  getDateFormat(Request req) {
-        return (Map<String, DateTimeFormatter>) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new HashMap<>());
+    public static DateTimeFormats getDateFormat(Request req) {
+        return (DateTimeFormats) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
     }
 
     @SuppressWarnings("unchecked")
