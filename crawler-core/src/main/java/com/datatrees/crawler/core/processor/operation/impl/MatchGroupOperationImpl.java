@@ -42,7 +42,7 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
 
     @Override
     protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
-        Matcher matcher = (Matcher) SourceUtils.getSourceValue(operation.getSourceId(), request, response);
+        Matcher matcher = (Matcher) SourceUtils.getSourceFieldValue(operation.getSourceId(), request, response);
 
         String result = null;
         if (matcher != null) {

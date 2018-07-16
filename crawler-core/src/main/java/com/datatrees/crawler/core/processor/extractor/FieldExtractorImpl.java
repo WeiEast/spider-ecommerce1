@@ -90,7 +90,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
             String sourceId = fieldExtractor.getSourceId();
 
             if (StringUtils.isNotEmpty(sourceId)) {
-                Object result = SourceUtils.getSourceValue(sourceId, request, response);
+                Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
                 if (result != null) {
                     content = result.toString();
                 }

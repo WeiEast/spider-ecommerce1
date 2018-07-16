@@ -74,7 +74,7 @@ public class FormatConfig implements Serializable {
     }
 
     public Object getSourceFieldValue(String fieldName) {
-        return SourceUtils.getSourceValue(fieldName, request, response);
+        return SourceUtils.getSourceFieldValue(fieldName, request, response);
     }
 
     public LinkNode getCurrentLinkNode() {

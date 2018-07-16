@@ -127,7 +127,7 @@ public class DefaultService extends ServiceBase {
 
                 String content = output.getContent().getContentAsString();
 
-                Page page = RequestUtil.getCurrenPage(request);
+                Page page = RequestUtil.getCurrentPage(request);
 
                 // check if need retry
                 if (page != null && StringUtils.isNotBlank(page.getPageRetryPattern()) && RegExp.find(content, page.getPageRetryPattern())) {

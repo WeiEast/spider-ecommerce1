@@ -166,7 +166,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                     String content = split;
                     String sourceId = abstractSegment.getSourceId();
                     if (StringUtils.isNotEmpty(sourceId)) {
-                        Object result = SourceUtils.getSourceValue(sourceId, request, response);
+                        Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
                         if (result != null) {
                             content = result.toString();
                         }

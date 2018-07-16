@@ -29,7 +29,7 @@ public final class SourceUtil {
     }
 
     public static Object getSourceMap(String sourceId, Request request, Response response) {
-        return SourceUtils.getSourceValue(sourceId, request, response);
+        return SourceUtils.getSourceFieldValue(sourceId, request, response);
     }
 
 }

@@ -17,7 +17,7 @@ public final class SourceUtils {
     private SourceUtils() {
     }
 
-    public static Object getSourceValue(String sourceId, Request request, Response response) {
+    public static Object getSourceFieldValue(String sourceId, Request request, Response response) {
         Object result = FieldScopes.getVisibleField(sourceId, request, response);
 
         LOGGER.debug("Field value from sourceId: {}, result: {}", sourceId, result);
