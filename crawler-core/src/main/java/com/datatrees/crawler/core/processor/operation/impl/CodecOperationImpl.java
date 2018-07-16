@@ -41,8 +41,11 @@ public class CodecOperationImpl extends Operation<CodecOperation> {
     @Override
     protected boolean isSkipped(CodecOperation operation, Request request, Response response) {
         // invalid codec operation and skip
-        logger.warn("Invalid codec operation and skip. 'codec-type' or 'handling-type' was null.");
-        return operation.getCodecType() == null || operation.getHandlingType() == null;
+        boolean flag = operation.getCodecType() == null || operation.getHandlingType() == null;
+        if (flag) {
+            logger.warn("Invalid codec operation and skip. 'codec-type' or 'handling-type' was null.");
+        }
+        return flag;
     }
 
     @Override
