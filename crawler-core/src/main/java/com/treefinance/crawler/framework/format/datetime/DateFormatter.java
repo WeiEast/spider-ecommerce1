@@ -13,6 +13,7 @@ import com.datatrees.crawler.core.processor.common.exception.FormatException;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -23,7 +24,7 @@ import org.joda.time.format.DateTimeFormatter;
 public class DateFormatter extends ConfigurableFormatter<Date> {
 
     private static final Pattern HOUR_PATTERN = Pattern.compile("(\\b|[^0-9a-zA-Z])hh(\\b|[^0-9a-zA-Z])");
-
+    private static final int     BASE_YEAR    = 1970;
 
     @Override
     protected Date toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
@@ -43,36 +44,45 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
 
         String separator = getConf().get("DEFAULT_DATE_PATTERN_SEPARATOR", ";");
         String[] patterns = actualPattern.split(separator);
-        Date result = null;
+        DateTime dateTime;
         for (String item : patterns) {
             if (item.isEmpty()) {
                 continue;
             }
 
-            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(request).computeIfAbsent(item, DateTimeFormat::forPattern);
+            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(request).computeIfAbsent(item, p -> DateTimeFormat.forPattern(p).withDefaultYear(BASE_YEAR));
             try {
-                result = dateFormat.parseDateTime(input).toDate();
+                dateTime = dateFormat.parseDateTime(input);
             } catch (Exception e) {
                 logger.warn("Error parsing datetime with pattern: {}, input: {}", item, input);
-                result = adaptPatternFormat(item, input, request);
+                dateTime = adaptPatternFormat(item, input, request);
             }
-            if (result != null) {
-                // handle pattern has no year
-                if (!item.toLowerCase().contains("yy")) {
-                    result.setYear(new Date().getYear());
-                }
-                break;
+            if (dateTime != null) {
+                return adaptYear(dateTime, item).toDate();
             }
         }
 
-        if (result == null) {
-            throw new FormatException("There was no matched date pattern to parse datetime. input: " + value + ", patterns: " + actualPattern);
-        }
-
-        return result;
+        throw new FormatException("There was no matched date pattern to parse datetime. input: " + value + ", patterns: " + actualPattern);
     }
 
-    private Date adaptPatternFormat(String item, String input, Request request) {
+    private static DateTime adaptYear(DateTime dateTime, String pattern) {
+        if (pattern.toLowerCase().contains("yy") || dateTime.getYear() != BASE_YEAR) {
+            return dateTime;
+        }
+
+        DateTime now = DateTime.now();
+        if (!dateTime.isAfter(now.withYear(BASE_YEAR))) {
+            if (!pattern.contains("MM") && dateTime.getMonthOfYear() == 1 && dateTime.getDayOfMonth() == 1) {
+                return dateTime.withDate(now.toLocalDate());
+            } else {
+                return dateTime.withYear(now.getYear());
+            }
+        } else {
+            return dateTime.withYear(now.minusYears(1).getYear());
+        }
+    }
+
+    private DateTime adaptPatternFormat(String item, String input, Request request) {
         Matcher matcher = HOUR_PATTERN.matcher(item);
         if (matcher.find()) {
             StringBuffer buffer = new StringBuffer();
@@ -85,7 +95,7 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
             logger.info("Find adapted possible pattern: {}", adaptPattern);
             DateTimeFormatter dateFormat = RequestUtil.getDateFormat(request).computeIfAbsent(adaptPattern, DateTimeFormat::forPattern);
             try {
-                return dateFormat.parseDateTime(input).toDate();
+                return dateFormat.parseDateTime(input);
             } catch (Exception e) {
                 logger.warn("Error parsing datetime with adapted possible pattern: {}, input: {}", adaptPattern, input);
             }
