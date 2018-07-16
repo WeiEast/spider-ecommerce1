@@ -44,7 +44,7 @@ public class FileFormatter extends CommonFormatter<FileWapper> {
             }
             fileWapper.setSize(file.length());
 
-            Object result = config.getSourceFieldValue();
+            Object result = config.getSourceFieldValue("fileName");
             fileWapper.setName(result != null ? result.toString() : file.getName());
 
             fileWapper.setFile(file);
