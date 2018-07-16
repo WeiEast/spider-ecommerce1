@@ -27,7 +27,7 @@ public class ResourceStringFormatter extends CommonFormatter<String> {
         String output;
         if (UrlUtils.isUrl(value)) {
             Request newRequest = new Request();
-            AbstractProcessorContext processorContext = RequestUtil.getProcessorContext(config.getRequest());
+            AbstractProcessorContext processorContext = config.getProcessorContext();
             RequestUtil.setProcessorContext(newRequest, processorContext);
             RequestUtil.setConf(newRequest, PropertiesConfiguration.getInstance());
             RequestUtil.setCurrentUrl(newRequest, new LinkNode(value));

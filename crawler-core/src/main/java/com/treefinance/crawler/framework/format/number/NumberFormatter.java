@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
 import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.toolkit.util.RegExp;
@@ -20,7 +19,7 @@ public class NumberFormatter extends ConfigurableFormatter<Number> {
     protected Number toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String val = value.replaceAll("\\s+", "");
 
-        Map<String, NumberUnit> numberMap = RequestUtil.getNumberFormat(config.getRequest(), getConf());
+        Map<String, NumberUnit> numberMap = config.getNumberFormatMap(this.getConf());
         NumberUnit unit = findTimeUnitForNumber(numberMap, val);
         Number result = null;
         if (unit != null) {

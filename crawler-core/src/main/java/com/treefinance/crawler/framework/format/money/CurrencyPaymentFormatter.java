@@ -27,8 +27,8 @@ public class CurrencyPaymentFormatter extends CommonFormatter<String> {
                 currencyPattern = patterns[1];
             }
         }
-        String currency = currencyFormat.format(value, currencyPattern, config.getRequest(), config.getResponse());
-        Number number = paymentFormat.format(value, paymentPattern, config.getRequest(), config.getResponse());
+        String currency = currencyFormat.format(value, config.withPattern(currencyPattern));
+        Number number = paymentFormat.format(value, config.withPattern(paymentPattern));
         String result = null;
         if (number != null && currency != null) {
             result = number + " " + currency;

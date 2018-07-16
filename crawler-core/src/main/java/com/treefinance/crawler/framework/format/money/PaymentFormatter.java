@@ -26,7 +26,7 @@ public class PaymentFormatter extends ConfigurableFormatter<Number> {
         String numPart = RegExp.group(value, PAYMENT_NUM_REGEX, 1);
         // replace ,to
         boolean needNegate = false;
-        String actualPattern = StringUtils.trimToEmpty(config.getPattern());
+        String actualPattern = config.trimmedPattern();
         if (StringUtils.isNotEmpty(actualPattern) && actualPattern.startsWith(NEGATE_FLAG)) {
             actualPattern = actualPattern.replaceFirst(NEGATE_FLAG, "");
             needNegate = true;

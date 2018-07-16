@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.FormatException;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
 import com.treefinance.crawler.framework.format.FormatConfig;
@@ -28,7 +27,7 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
     @Override
     protected Date toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String input = value.trim();
-        String actualPattern = StringUtils.trim(config.getPattern());
+        String actualPattern = config.trimmedPattern();
         if (StringUtils.isEmpty(actualPattern)) {
             if (RegExp.matches(input, "\\d+")) {
                 return new Date(Long.parseLong(input));
@@ -49,7 +48,7 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
                 continue;
             }
 
-            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(config.getRequest()).computeIfAbsent(item, p -> DateTimeFormat.forPattern(p).withDefaultYear(BASE_YEAR));
+            DateTimeFormatter dateFormat = config.getDateFormatMap().computeIfAbsent(item, p -> DateTimeFormat.forPattern(p).withDefaultYear(BASE_YEAR));
             try {
                 dateTime = dateFormat.parseDateTime(input);
             } catch (Exception e) {
@@ -92,7 +91,7 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
             String adaptPattern = buffer.toString();
 
             logger.info("Find adapted possible pattern: {}", adaptPattern);
-            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(config.getRequest()).computeIfAbsent(adaptPattern, DateTimeFormat::forPattern);
+            DateTimeFormatter dateFormat = config.getDateFormatMap().computeIfAbsent(adaptPattern, DateTimeFormat::forPattern);
             try {
                 return dateFormat.parseDateTime(input);
             } catch (Exception e) {

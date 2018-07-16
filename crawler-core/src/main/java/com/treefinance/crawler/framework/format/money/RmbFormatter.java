@@ -22,7 +22,7 @@ public class RmbFormatter extends ConfigurableFormatter<Number> {
     protected Number toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String numPart = RegExp.group(value, PAYMENT_NUM_REGEX, 1);
 
-        String actualPattern = StringUtils.trim(config.getPattern());
+        String actualPattern = config.trimmedPattern();
         Map<String, RMBUnit> rmbMapper = buildRMPUnitMapping(actualPattern);
         RMBUnit unit = findRMBUnit(rmbMapper, value);
 

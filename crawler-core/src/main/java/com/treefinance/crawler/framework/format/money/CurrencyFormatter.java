@@ -78,7 +78,7 @@ public class CurrencyFormatter extends CommonFormatter<String> {
     @Override
     protected String toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String val = value.toUpperCase();
-        String actualPattern = StringUtils.trim(config.getPattern());
+        String actualPattern = config.trimmedPattern();
 
         Map<String, String> unitMap = ensureCurrencyMap(actualPattern);
         for (Map.Entry<String, String> entry : unitMap.entrySet()) {
