@@ -5,17 +5,15 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.FormatException;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeParserBucket;
 
 /**
  * @author Jerry
@@ -24,12 +22,11 @@ import org.joda.time.format.DateTimeFormatter;
 public class DateFormatter extends ConfigurableFormatter<Date> {
 
     private static final Pattern HOUR_PATTERN = Pattern.compile("(\\b|[^0-9a-zA-Z])hh(\\b|[^0-9a-zA-Z])");
-    private static final int     BASE_YEAR    = 1970;
 
     @Override
-    protected Date toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected Date toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String input = value.trim();
-        String actualPattern = StringUtils.trim(pattern);
+        String actualPattern = config.trimmedPattern();
         if (StringUtils.isEmpty(actualPattern)) {
             if (RegExp.matches(input, "\\d+")) {
                 return new Date(Long.parseLong(input));
@@ -44,34 +41,42 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
 
         String separator = getConf().get("DEFAULT_DATE_PATTERN_SEPARATOR", ";");
         String[] patterns = actualPattern.split(separator);
+        DateTimeFormats dateTimeFormats = config.getDateTimeFormats();
         DateTime dateTime;
-        for (String item : patterns) {
-            if (item.isEmpty()) {
+        for (String pattern : patterns) {
+            if (pattern.isEmpty()) {
                 continue;
             }
 
-            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(request).computeIfAbsent(item, p -> DateTimeFormat.forPattern(p).withDefaultYear(BASE_YEAR));
+            DateTimeFormatter dateFormat = dateTimeFormats.getFormatter(pattern);
             try {
                 dateTime = dateFormat.parseDateTime(input);
+            } catch (IllegalArgumentException e) {
+                logger.warn("Incorrect datetime pattern: {}, input: {}", pattern, input);
+                dateTime = adaptPatternFormat(pattern, input, dateTimeFormats);
             } catch (Exception e) {
-                logger.warn("Error parsing datetime with pattern: {}, input: {}", item, input);
-                dateTime = adaptPatternFormat(item, input, request);
+                logger.warn("Unexpected exception when parsing datetime with pattern: {}, input: {}", pattern, input);
+                dateTime = null;
             }
+
             if (dateTime != null) {
-                return adaptYear(dateTime, item).toDate();
+                return adaptDate(dateTime, pattern).toDate();
             }
         }
 
         throw new FormatException("There was no matched date pattern to parse datetime. input: " + value + ", patterns: " + actualPattern);
     }
 
-    private static DateTime adaptYear(DateTime dateTime, String pattern) {
-        if (pattern.toLowerCase().contains("yy") || dateTime.getYear() != BASE_YEAR) {
+    /**
+     * 适配日期。如果时间缺少日期，那么按一定规则补上年月日。
+     */
+    private static DateTime adaptDate(DateTime dateTime, String pattern) {
+        if (pattern.toLowerCase().contains("yy") || dateTime.getYear() != DateTimeFormats.BASE_YEAR) {
             return dateTime;
         }
 
         DateTime now = DateTime.now();
-        if (!dateTime.isAfter(now.withYear(BASE_YEAR))) {
+        if (!dateTime.isAfter(now.withYear(DateTimeFormats.BASE_YEAR))) {
             if (!pattern.contains("MM") && dateTime.getMonthOfYear() == 1 && dateTime.getDayOfMonth() == 1) {
                 return dateTime.withDate(now.toLocalDate());
             } else {
@@ -82,23 +87,42 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
         }
     }
 
-    private DateTime adaptPatternFormat(String item, String input, Request request) {
-        Matcher matcher = HOUR_PATTERN.matcher(item);
+    /**
+     * 由于一些历史遗留的问题，对格式进行一定程度的适配。
+     * 1. hh 等同于 HH。比如：yyyy-MM-dd hh:mm 等同 yyyy-MM-dd HH:mm
+     * 2. 局部匹配。比如：输入：2018-07-16 23:38，格式：yyyy-MM-dd，输出：2018-07-16
+     */
+    private DateTime adaptPatternFormat(String pattern, String input, @Nonnull DateTimeFormats dateTimeFormats) {
+        String newPattern = pattern;
+        Matcher matcher = HOUR_PATTERN.matcher(newPattern);
         if (matcher.find()) {
             StringBuffer buffer = new StringBuffer();
             do {
                 matcher.appendReplacement(buffer, matcher.group().toUpperCase());
             } while (matcher.find());
             matcher.appendTail(buffer);
-            String adaptPattern = buffer.toString();
+            newPattern = buffer.toString();
 
-            logger.info("Find adapted possible pattern: {}", adaptPattern);
-            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(request).computeIfAbsent(adaptPattern, DateTimeFormat::forPattern);
+            logger.warn("Adapted datetime parsing. pattern: {}, datetime: {}", newPattern, input);
+            DateTimeFormatter formatter = dateTimeFormats.getFormatter(newPattern);
             try {
-                return dateFormat.parseDateTime(input);
+                return formatter.parseDateTime(input);
+            } catch (IllegalArgumentException e) {
+                logger.warn("Incorrect adapted datetime pattern: {}, input: {}", newPattern, input);
             } catch (Exception e) {
-                logger.warn("Error parsing datetime with adapted possible pattern: {}, input: {}", adaptPattern, input);
+                logger.warn("Error parsing datetime with possible adapted-pattern: {}, input: {}", newPattern, input);
+                return null;
             }
+        }
+
+        DateTimeFormatter formatter = dateTimeFormats.getFormatter(newPattern);
+        DateTimeParserBucket bucket = new DateTimeParserBucket(0, null, formatter.getLocale(), formatter.getPivotYear(), formatter.getDefaultYear());
+        int errorPos = formatter.getParser().parseInto(bucket, input, 0);
+        if (errorPos > 0 && errorPos < input.length()) {
+            String subText = input.substring(0, errorPos);
+
+            logger.warn("Adapted datetime parsing. pattern: {}, datetime: {}, origin-input: {}", newPattern, subText, input);
+            return formatter.parseDateTime(subText);
         }
 
         return null;
