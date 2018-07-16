@@ -33,8 +33,11 @@ public class EscapeOperationImpl extends Operation<EscapeOperation> {
     @Override
     protected boolean isSkipped(EscapeOperation operation, Request request, Response response) {
         // invalid escape operation and skip
-        logger.warn("Invalid escape operation and skip. 'escape-type' or 'handling-type' was null.");
-        return operation.getEscapeType() == null || operation.getHandlingType() == null;
+        boolean flag = operation.getEscapeType() == null || operation.getHandlingType() == null;
+        if (flag) {
+            logger.warn("Invalid escape operation and skip. 'escape-type' or 'handling-type' was null.");
+        }
+        return flag;
     }
 
     @Override

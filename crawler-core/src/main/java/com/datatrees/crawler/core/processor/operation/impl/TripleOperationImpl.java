@@ -21,7 +21,11 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
     @Override
     protected boolean isSkipped(TripleOperation operation, Request request, Response response) {
         // invalid xpath operation and skip
-        return StringUtils.isBlank(operation.getValue());
+        boolean flag = StringUtils.isBlank(operation.getValue());
+        if (flag) {
+            logger.warn("Empty expression of triple operation and skip.");
+        }
+        return flag;
     }
 
     @Override

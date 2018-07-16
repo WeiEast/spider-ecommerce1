@@ -37,8 +37,11 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
     @Override
     protected boolean isSkipped(DecodeOperation operation, Request request, Response response) {
         // invalid decode operation and skip
-        logger.warn("Invalid decode operation and skip. 'decode-type' was null.");
-        return operation.getDecodeType() == null;
+        boolean flag = operation.getDecodeType() == null;
+        if (flag) {
+            logger.warn("Invalid decode operation and skip. 'decode-type' was null.");
+        }
+        return flag;
     }
 
     @Override

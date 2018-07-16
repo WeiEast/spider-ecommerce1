@@ -30,8 +30,11 @@ public class SleepOperationImpl extends Operation<SleepOperation> {
     @Override
     protected boolean isSkipped(SleepOperation operation, Request request, Response response) {
         // invalid sleep operation and skip
-        logger.warn("invalid sleep operation and skip");
-        return operation.getValue() == null;
+        boolean flag = operation.getValue() == null;
+        if (flag) {
+            logger.warn("invalid sleep operation and skip");
+        }
+        return flag;
     }
 
     @Override

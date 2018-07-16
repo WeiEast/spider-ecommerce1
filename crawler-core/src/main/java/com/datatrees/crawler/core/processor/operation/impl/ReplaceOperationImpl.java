@@ -31,8 +31,11 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
 
     @Override
     protected boolean isSkipped(ReplaceOperation operation, Request request, Response response) {
-        logger.warn("empty 'from' value in replace operation and skip.");
-        return StringUtils.isEmpty(operation.getFrom());
+        boolean empty = StringUtils.isEmpty(operation.getFrom());
+        if (empty) {
+            logger.warn("empty 'from' value in replace operation and skip.");
+        }
+        return empty;
     }
 
     @Override
