@@ -6,11 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.format.CommonFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -77,9 +76,9 @@ public class CurrencyFormatter extends CommonFormatter<String> {
     }
 
     @Override
-    protected String toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected String toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String val = value.toUpperCase();
-        String actualPattern = StringUtils.trim(pattern);
+        String actualPattern = StringUtils.trim(config.getPattern());
 
         Map<String, String> unitMap = ensureCurrencyMap(actualPattern);
         for (Map.Entry<String, String> entry : unitMap.entrySet()) {

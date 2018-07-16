@@ -13,6 +13,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.treefinance.crawler.framework.format.CommonFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -22,11 +23,11 @@ import org.apache.commons.lang.StringUtils;
 public class ResourceStringFormatter extends CommonFormatter<String> {
 
     @Override
-    protected String toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected String toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String output;
         if (UrlUtils.isUrl(value)) {
             Request newRequest = new Request();
-            AbstractProcessorContext processorContext = RequestUtil.getProcessorContext(request);
+            AbstractProcessorContext processorContext = RequestUtil.getProcessorContext(config.getRequest());
             RequestUtil.setProcessorContext(newRequest, processorContext);
             RequestUtil.setConf(newRequest, PropertiesConfiguration.getInstance());
             RequestUtil.setCurrentUrl(newRequest, new LinkNode(value));

@@ -6,9 +6,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -23,11 +22,11 @@ public class PaymentFormatter extends ConfigurableFormatter<Number> {
     private static final String PAYMENT_NUM_REGEX = "([\\.,\\d]+)";
 
     @Override
-    protected Number toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected Number toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String numPart = RegExp.group(value, PAYMENT_NUM_REGEX, 1);
         // replace ,to
         boolean needNegate = false;
-        String actualPattern = StringUtils.trimToEmpty(pattern);
+        String actualPattern = StringUtils.trimToEmpty(config.getPattern());
         if (StringUtils.isNotEmpty(actualPattern) && actualPattern.startsWith(NEGATE_FLAG)) {
             actualPattern = actualPattern.replaceFirst(NEGATE_FLAG, "");
             needNegate = true;
@@ -42,7 +41,7 @@ public class PaymentFormatter extends ConfigurableFormatter<Number> {
         }
 
         if (unit == null) {
-            logger.debug("can't find current payment conf! input: {}, numPart: {}, pattern: {}", value, numPart, pattern);
+            logger.debug("can't find current payment conf! input: {}, numPart: {}, pattern: {}", value, numPart, actualPattern);
             unit = PaymentUnit.OUT;
         }
         // save to .00

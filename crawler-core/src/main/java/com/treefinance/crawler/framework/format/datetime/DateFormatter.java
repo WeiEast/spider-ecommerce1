@@ -5,12 +5,11 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.FormatException;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -27,9 +26,9 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
     private static final int     BASE_YEAR    = 1970;
 
     @Override
-    protected Date toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected Date toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String input = value.trim();
-        String actualPattern = StringUtils.trim(pattern);
+        String actualPattern = StringUtils.trim(config.getPattern());
         if (StringUtils.isEmpty(actualPattern)) {
             if (RegExp.matches(input, "\\d+")) {
                 return new Date(Long.parseLong(input));
@@ -50,12 +49,12 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
                 continue;
             }
 
-            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(request).computeIfAbsent(item, p -> DateTimeFormat.forPattern(p).withDefaultYear(BASE_YEAR));
+            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(config.getRequest()).computeIfAbsent(item, p -> DateTimeFormat.forPattern(p).withDefaultYear(BASE_YEAR));
             try {
                 dateTime = dateFormat.parseDateTime(input);
             } catch (Exception e) {
                 logger.warn("Error parsing datetime with pattern: {}, input: {}", item, input);
-                dateTime = adaptPatternFormat(item, input, request);
+                dateTime = adaptPatternFormat(item, input, config);
             }
             if (dateTime != null) {
                 return adaptYear(dateTime, item).toDate();
@@ -82,7 +81,7 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
         }
     }
 
-    private DateTime adaptPatternFormat(String item, String input, Request request) {
+    private DateTime adaptPatternFormat(String item, String input, @Nonnull FormatConfig config) {
         Matcher matcher = HOUR_PATTERN.matcher(item);
         if (matcher.find()) {
             StringBuffer buffer = new StringBuffer();
@@ -93,7 +92,7 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
             String adaptPattern = buffer.toString();
 
             logger.info("Find adapted possible pattern: {}", adaptPattern);
-            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(request).computeIfAbsent(adaptPattern, DateTimeFormat::forPattern);
+            DateTimeFormatter dateFormat = RequestUtil.getDateFormat(config.getRequest()).computeIfAbsent(adaptPattern, DateTimeFormat::forPattern);
             try {
                 return dateFormat.parseDateTime(input);
             } catch (Exception e) {
