@@ -2,9 +2,6 @@ package com.treefinance.crawler.framework.format.special;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.util.CharsetUtil;
@@ -15,7 +12,6 @@ import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.treefinance.crawler.framework.format.CommonFormatter;
 import com.treefinance.crawler.framework.format.FormatConfig;
-import org.apache.commons.io.IOUtils;
 
 /**
  * @author Jerry
@@ -25,39 +21,25 @@ public class FileFormatter extends CommonFormatter<FileWapper> {
 
     @Override
     protected FileWapper toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
-        OutputStream output = null;
-        try {
-            FileWapper fileWapper = new FileWapper();
-            AbstractProcessorContext processorContext = config.getProcessorContext();
-            File file = new File(FileUtils.getFileRandomPath(processorContext.getWebsiteName()));
-            output = new FileOutputStream(file);
-            if (UrlUtils.isUrl(value)) {
-                String cookie = ProcessorContextUtil.getCookieString(processorContext);
-                ProtocolInput input = new ProtocolInput().setUrl(value).setFollowRedirect(true).setCookie(cookie);
-                fileWapper.setInput(input);
-                // set input async to get file while needed
-            } else {// html file
-                IOUtils.write(value.getBytes(CharsetUtil.UTF_8_NAME), output);
-                fileWapper.setMimeType("text/html");
-                fileWapper.setCharSet("UTF-8");
-                fileWapper.setSourceURL(config.getCurrentUrl());
-            }
-            fileWapper.setSize(file.length());
+        AbstractProcessorContext processorContext = config.getProcessorContext();
+        File file = new File(FileUtils.getFileRandomPath(processorContext.getWebsiteName()));
+        FileWapper wrappedFile = new FileWapper(file);
+        Object result = config.getSourceFieldValue("fileName");
+        wrappedFile.setName(result != null ? result.toString() : file.getName());
 
-            Object result = config.getSourceFieldValue("fileName");
-            fileWapper.setName(result != null ? result.toString() : file.getName());
-
-            fileWapper.setFile(file);
-            logger.debug("file format result : {}", fileWapper);
-
-            return fileWapper;
-        } catch (IOException e) {
-            logger.error("File format error", e);
-        } finally {
-            IOUtils.closeQuietly(output);
+        if (UrlUtils.isUrl(value)) {
+            String cookie = ProcessorContextUtil.getCookieString(processorContext);
+            ProtocolInput input = new ProtocolInput().setUrl(value).setFollowRedirect(true).setCookie(cookie);
+            wrappedFile.setInput(input);
+            // set input async to get file while needed
+        } else {
+            wrappedFile.write(value.getBytes(CharsetUtil.UTF_8_NAME));
+            wrappedFile.setMimeType("text/html");
+            wrappedFile.setCharSet("UTF-8");
+            wrappedFile.setSourceURL(config.getCurrentUrl());
         }
 
-        return null;
+        return wrappedFile;
     }
 
 }

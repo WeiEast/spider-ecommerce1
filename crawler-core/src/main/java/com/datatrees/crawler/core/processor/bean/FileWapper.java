@@ -8,15 +8,22 @@
 
 package com.datatrees.crawler.core.processor.bean;
 
+import javax.annotation.Nonnull;
 import java.io.*;
+import java.util.Objects;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.common.protocol.Content;
 import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.common.protocol.WebClientUtil;
+import com.datatrees.common.protocol.util.CharsetUtil;
 import com.treefinance.toolkit.util.RegExp;
+import com.treefinance.toolkit.util.io.Streams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.impl.io.EmptyInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,148 +34,144 @@ import org.slf4j.LoggerFactory;
  */
 public class FileWapper {
 
-    private static final Logger logger                    = LoggerFactory.getLogger(FileWapper.class);
-    private              int    sleepSecond               = PropertiesConfiguration.getInstance().getInt("default.sleep.seconds", 2000);
-    private              int    retryCount                = PropertiesConfiguration.getInstance().getInt("default.file.download.retry.count", 3);
-    private              String textFileNameSuffixPattern = PropertiesConfiguration.getInstance().get("text.filename.suffix.pattern", "htm$|html$|txt$");
-    private              String textMimeTypePattern       = PropertiesConfiguration.getInstance().get("text.mimeType.pattern", "^text/");
-    private String        name;
-    private String        mimeType;
-    private String        charSet;
-    private long          size;
-    private File          file;
-    private String        sourceURL;
-    private ProtocolInput input;
+    private static final Logger        logger                    = LoggerFactory.getLogger(FileWapper.class);
+    private static final byte[]        EMPTY_BYTES               = new byte[0];
+    private static final int           sleepSecond               = PropertiesConfiguration.getInstance().getInt("default.sleep.seconds", 2000);
+    private static final int           retryCount                = PropertiesConfiguration.getInstance().getInt("default.file.download.retry.count", 3);
+    private static final String        textFileNameSuffixPattern = PropertiesConfiguration.getInstance().get("text.filename.suffix.pattern", "htm$|html$|txt$");
+    private static final String        textMimeTypePattern       = PropertiesConfiguration.getInstance().get("text.mimeType.pattern", "^text/");
+    private final        File          file;
+    private              String        name;
+    private              String        mimeType;
+    private              String        charSet;
+    private              long          size;
+    private              String        sourceURL;
+    private              ProtocolInput input;
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
+    public FileWapper(@Nonnull File file) {
+        this.file = Objects.requireNonNull(file);
+        this.size = file.length();
     }
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the mimeType
-     */
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    /**
-     * @param mimeType the mimeType to set
-     */
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
-    /**
-     * @return the size
-     */
-    public long getSize() {
-        return size;
-    }
-
-    /**
-     * @param size the size to set
-     */
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    /**
-     * @return the file
-     * @exception FileNotFoundException
-     * @exception InterruptedException
-     */
-    public FileInputStream getFileInputStream() throws FileNotFoundException, InterruptedException {
-        for (int i = 0; i < retryCount; i++) {
-            if (file.length() == 0 && input != null) {
-                logger.info("do file download input url:" + input.getUrl());
-                OutputStream output = new FileOutputStream(file);
-                try {
-                    ProtocolOutput out = WebClientUtil.getFileClient().getProtocolOutput(input);
-                    this.setMimeType(out.getContent().getMimeType());
-                    this.setSourceURL(input.getUrl());
-                    this.setSize(file.length());
-                    if (this.needDetectContent()) {
-                        IOUtils.write(out.getContent().detectContentAsString().getBytes("UTF-8"), output);
-                    } else {
-                        IOUtils.write(out.getContent().getContent(), output);
-                    }
-                    break;
-                } catch (Exception e) {
-                    logger.error("async get file input stream error " + e.getMessage());
-                    long sleepMillis = sleepSecond + (int) (Math.random() * sleepSecond) * (i + 1);
-                    logger.info("download failed do retry " + (i + 1) + ",sleep " + sleepMillis + "ms...");
-                    Thread.sleep(sleepMillis);
-                } finally {
-                    IOUtils.closeQuietly(output);
-                }
-            } else {
-                break;
-            }
-        }
-        return file.exists() ? new FileInputStream(file) : null;
-    }
-
-    public boolean needDetectContent() {
-        return (this.getMimeType() != null && RegExp.find(this.getMimeType(), textMimeTypePattern)) || (name != null && RegExp.find(name, textFileNameSuffixPattern));
-    }
-
-    /**
-     * @return the file
-     */
     public File getFile() {
         return file;
     }
 
-    /**
-     * @param file the file to set
-     */
-    public void setFile(File file) {
-        this.file = file;
+    public String getName() {
+        return name;
     }
 
-    /**
-     * @return the sourceURL
-     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
     public String getSourceURL() {
         return sourceURL;
     }
 
-    /**
-     * @param sourceURL the sourceURL to set
-     */
     public void setSourceURL(String sourceURL) {
         this.sourceURL = sourceURL;
     }
 
-    /**
-     * @param charSet the charSet to set
-     */
     public void setCharSet(String charSet) {
         this.charSet = charSet;
     }
 
-    /**
-     * @return the input
-     */
     public ProtocolInput getInput() {
         return input;
     }
 
-    /**
-     * @param input the input to set
-     */
     public void setInput(ProtocolInput input) {
         this.input = input;
+    }
+
+    public boolean isEmpty() {
+        return size <= 0 && (!file.exists() || file.length() == 0);
+    }
+
+    public void write(byte[] data) throws IOException {
+        try (OutputStream stream = new FileOutputStream(file)) {
+            Streams.write(data, stream);
+        }
+        this.setSize(file.length());
+    }
+
+    public byte[] readFull() throws IOException, InterruptedException {
+        try (InputStream stream = getInputStream()) {
+            if (stream instanceof EmptyInputStream) {
+                return EMPTY_BYTES;
+            }
+            return IOUtils.toByteArray(stream);
+        }
+    }
+
+    public String readToString() throws IOException, InterruptedException {
+        byte[] bytes = readFull();
+        if (bytes.length == 0) {
+            return StringUtils.EMPTY;
+        }
+
+        return new String(bytes, CharsetUtil.DEFAULT);
+    }
+
+    public InputStream getInputStream() throws FileNotFoundException, InterruptedException {
+        download();
+
+        if (file.exists()) {
+            return new FileInputStream(file);
+        }
+
+        return EmptyInputStream.INSTANCE;
+    }
+
+    public void download() throws InterruptedException {
+        if (isEmpty() && input != null) {
+            for (int i = 0; i < retryCount; i++) {
+                try {
+                    writeToFile(input);
+                    break;
+                } catch (Exception e) {
+                    logger.error("Error downloading with url: {}, error: {}", input.getUrl(), e.getMessage());
+                    long sleepMillis = sleepSecond + (int) (Math.random() * sleepSecond) * (i + 1);
+                    Thread.sleep(sleepMillis);
+                }
+            }
+        }
+    }
+
+    private void writeToFile(ProtocolInput input) throws IOException {
+        String url = input.getUrl();
+        logger.info("downloading file with url: {}", url);
+        this.setSourceURL(url);
+        ProtocolOutput out = WebClientUtil.getFileClient().getProtocolOutput(input);
+        Content content = out.getContent();
+        this.setMimeType(content.getMimeType());
+
+        if (this.needDetectContent()) {
+            write(content.detectContentAsString().getBytes(CharsetUtil.UTF_8_NAME));
+        } else {
+            write(content.getContent());
+        }
+    }
+
+    public boolean needDetectContent() {
+        return (this.mimeType != null && RegExp.find(this.mimeType, textMimeTypePattern)) || (name != null && RegExp.find(name, textFileNameSuffixPattern));
     }
 
     public String getAbsolutePath() {
@@ -179,11 +182,7 @@ public class FileWapper {
         FileUtils.deleteQuietly(file);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         return "FileWapper [name=" + name + ", mimeType=" + mimeType + ", charSet=" + charSet + ", size=" + size + ", file=" + file + ", sourceURL=" + sourceURL + "]";

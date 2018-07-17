@@ -1,7 +1,6 @@
 package com.datatrees.rawdatacentral.submitter.filestore;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.util.*;
 
 import com.datatrees.crawler.core.processor.bean.FileWapper;
@@ -15,7 +14,6 @@ import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,24 +74,6 @@ public class UploadTask implements Runnable {
         return uploadFieldMap;
     }
 
-    private byte[] readFileBytes(FileWapper fileWapper) {
-        byte[] fileBytes = null;
-        if (fileWapper != null) {
-            FileInputStream stream = null;
-            try {
-                stream = fileWapper.getFileInputStream();
-                if (stream != null) {
-                    fileBytes = IOUtils.toByteArray(stream); // remove file
-                    fileWapper.remove();
-                }
-            } catch (Exception e) {
-                LOGGER.error("read fileWapper error " + fileWapper, e);
-            } finally {
-                IOUtils.closeQuietly(stream);
-            }
-        }
-        return fileBytes;
-    }
 
     @SuppressWarnings("unused")
     private void setUploadFieldMap(Map<String, SubmitFile> uploadMap, List<SubmitFile> fileBytesList, String field) {
@@ -132,5 +112,18 @@ public class UploadTask implements Runnable {
             result.add(file);
         }
         return result;
+    }
+
+    private byte[] readFileBytes(FileWapper fileWapper) {
+        byte[] fileBytes = null;
+        if (fileWapper != null) {
+            try {
+                fileBytes = fileWapper.readFull();
+                fileWapper.remove();
+            } catch (Exception e) {
+                LOGGER.error("read fileWapper error " + fileWapper, e);
+            }
+        }
+        return fileBytes;
     }
 }

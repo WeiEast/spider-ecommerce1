@@ -105,14 +105,14 @@ public class MailBillMessageNormalizer implements DataNormalizer {
 
     private void loadFile(Object obj) throws Exception {
         if (obj instanceof FileWapper) {
-            logger.info("need load file before extractor! fileName: " + ((FileWapper) obj).getName());
-            ((FileWapper) obj).getFileInputStream();
+            logger.info("need load file before extractor! fileName: {}", ((FileWapper) obj).getName());
+            ((FileWapper) obj).download();
         } else if (obj instanceof Collection) {
             for (Object sub : (Collection) obj) {
                 loadFile(sub);
             }
         } else {
-            if (logger.isDebugEnabled()) logger.debug("only load file wapper and skip other type!");
+            logger.debug("only load file wrapper and skip other type!");
         }
     }
 

@@ -8,14 +8,11 @@
 
 package com.treefinance.crawler.framework.util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +56,8 @@ public class FieldUtils {
         } else if (value instanceof String) {
             return (String) value;
         } else if (value instanceof FileWapper) {
-            try (FileInputStream inputStream = ((FileWapper) value).getFileInputStream()) {
-                return IOUtils.toString(inputStream, CharsetUtil.DEFAULT);
+            try {
+                return ((FileWapper) value).readToString();
             } catch (IOException e) {
                 LOGGER.error("Error reading file content. - " + value, e);
             }

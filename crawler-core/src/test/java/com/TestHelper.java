@@ -74,9 +74,8 @@ public final class TestHelper {
     }
 
     public static FileWapper getPageContent(File page) {
-        FileWapper file = new FileWapper();
+        FileWapper file = new FileWapper(page);
         file.setMimeType("text/html");
-        file.setFile(page);
         return file;
     }
 }

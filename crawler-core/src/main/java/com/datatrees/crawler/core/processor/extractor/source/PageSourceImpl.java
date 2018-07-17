@@ -111,7 +111,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
             content = (String) PluginCaller.call(pluginDesc, context, () -> {
                 Map<String, String> params = new HashMap<>();
                 FileWapper file = (FileWapper) value;
-                file.getFileInputStream();//download attachment to local
+                file.download();//download attachment to local
                 params.put(PluginConstants.FILE_WAPPER_PATH, file.getAbsolutePath());
                 params.put(PluginConstants.FILE_MIME_TYPE, file.getMimeType());
                 params.put(PluginConstants.FILE_NAME, file.getName());

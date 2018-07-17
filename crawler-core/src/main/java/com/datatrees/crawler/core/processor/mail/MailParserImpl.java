@@ -161,26 +161,25 @@ public final class MailParserImpl {
     }
 
     private static void saveAttachment(Mail mimeMsg, Entity part) throws IOException {
-        FileWapper fileWapper = new FileWapper();
         File file = new File(FileUtils.getFileRandomPath(mimeMsg.getWebsiteName()));
+        FileWapper fileWapper = new FileWapper(file);
+        fileWapper.setName(getAttachmentFileName(part));
+        fileWapper.setMimeType(part.getMimeType());
 
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fileWapper.setName(getAttachmentFileName(part));
-            fileWapper.setMimeType(part.getMimeType());
-            // Get attach stream, write it to file
-            SingleBody body = (SingleBody) part.getBody();
-            try {
-                if (fileWapper.needDetectContent()) {
-                    String content = readContent(body, part.getHeader());
-                    fos.write(content.getBytes(CharsetUtil.UTF_8_NAME));
-                } else {
+        // Get attach stream, write it to file
+        SingleBody body = (SingleBody) part.getBody();
+        try {
+            if (fileWapper.needDetectContent()) {
+                String content = readContent(body, part.getHeader());
+                fileWapper.write(content.getBytes(CharsetUtil.UTF_8_NAME));
+            } else {
+                try (OutputStream fos = new FileOutputStream(fileWapper.getFile())) {
                     body.writeTo(fos);
+                    fileWapper.setSize(file.length());
                 }
-            } finally {
-                body.dispose();
             }
-            fileWapper.setFile(file);
-            fileWapper.setSize(file.length());
+        } finally {
+            body.dispose();
         }
 
         mimeMsg.getAttachments().add(fileWapper);
