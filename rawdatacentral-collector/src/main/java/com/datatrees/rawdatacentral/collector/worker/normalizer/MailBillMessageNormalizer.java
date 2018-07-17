@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
@@ -104,9 +104,9 @@ public class MailBillMessageNormalizer implements DataNormalizer {
     }
 
     private void loadFile(Object obj) throws Exception {
-        if (obj instanceof FileWapper) {
-            logger.info("need load file before extractor! fileName: {}", ((FileWapper) obj).getName());
-            ((FileWapper) obj).download();
+        if (obj instanceof WrappedFile) {
+            logger.info("need load file before extractor! fileName: {}", ((WrappedFile) obj).getName());
+            ((WrappedFile) obj).download();
         } else if (obj instanceof Collection) {
             for (Object sub : (Collection) obj) {
                 loadFile(sub);

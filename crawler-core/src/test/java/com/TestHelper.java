@@ -24,7 +24,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.config.CrawlerConfig;
 import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
@@ -69,12 +69,12 @@ public final class TestHelper {
         return new File(resource.toURI());
     }
 
-    public static FileWapper getPageContent(String path) {
+    public static WrappedFile getPageContent(String path) {
         return getPageContent(new File(path));
     }
 
-    public static FileWapper getPageContent(File page) {
-        FileWapper file = new FileWapper(page);
+    public static WrappedFile getPageContent(File page) {
+        WrappedFile file = new WrappedFile(page);
         file.setMimeType("text/html");
         return file;
     }

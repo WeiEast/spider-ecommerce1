@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 
+import com.treefinance.toolkit.util.io.Streams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipOutputStream;
@@ -15,160 +16,90 @@ import org.slf4j.LoggerFactory;
 public class ZipCompressUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ZipCompressUtils.class);
-    private static final int    BUFFER = 8192;
 
     public static void compress(String zipPathName, String srcPathName) {
-        logger.debug("start compress file: " + srcPathName);
-        File zipFile = new File(zipPathName);
+        logger.debug("start compress file: {}", srcPathName);
         File file = new File(srcPathName);
-        if (!file.exists()) throw new RuntimeException(srcPathName + "not exist！");
-        FileOutputStream fileOutputStream = null;
-        CheckedOutputStream cos = null;
-        ZipOutputStream out = null;
-        try {
-            fileOutputStream = new FileOutputStream(zipFile);
-            cos = new CheckedOutputStream(fileOutputStream, new CRC32());
-            out = new ZipOutputStream(cos);
-            String basedir = "";
-            compress(file, out, basedir);
-        } catch (Exception e) {
-            logger.error("compress unknown exception", e);
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (out != null) out.close();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-            try {
-                if (cos != null) cos.close();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-            try {
-                if (fileOutputStream != null) fileOutputStream.close();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
+        if (!file.exists()) {
+            throw new RuntimeException(srcPathName + "not exist！");
+        }
+
+        File zipFile = new File(zipPathName);
+
+        try (OutputStream output = new FileOutputStream(zipFile); CheckedOutputStream cos = new CheckedOutputStream(output, new CRC32()); ZipOutputStream out = new ZipOutputStream(cos)) {
+            compress(file, out, StringUtils.EMPTY);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error compressing file with zip.", e);
         }
     }
 
     public static void compress(String zipPathName, Map<String, SubmitFile> compressFileMap) {
         File zipFile = new File(zipPathName);
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(zipFile);
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(zipFile)) {
             compress(fileOutputStream, compressFileMap);
-        } catch (Exception e) {
-            logger.error("compress unknown exception", e);
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (fileOutputStream != null) fileOutputStream.close();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error compressing file with zip.", e);
         }
     }
 
-    public static void compress(OutputStream output, Map<String, SubmitFile> compressFileMap) {
-        logger.debug("start compress file: " + compressFileMap.keySet());
-        CheckedOutputStream cos = null;
-        ZipOutputStream out = null;
-        try {
-            cos = new CheckedOutputStream(output, new CRC32());
-            out = new ZipOutputStream(cos);
-            for (Entry<String, SubmitFile> entry : compressFileMap.entrySet()) {
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(entry.getValue().getValue());
-                String basedir = "";
-                try {
-                    String fileName = StringUtils.isNotBlank(entry.getValue().getFileName()) ? entry.getValue().getFileName() : entry.getKey() + ".html";
-                    compressInputStream(inputStream, out, basedir, fileName);
-                } finally {
-                    try {
-                        if (inputStream != null) inputStream.close();
-                    } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
-                    }
+    private static void compress(File file, ZipOutputStream out, String basedir) throws IOException {
+        boolean directory = file.isDirectory();
+        logger.debug("compress file: {}, directory: {}", basedir + file.getName(), directory);
+        if (directory) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File item : files) {
+                    compress(item, out, basedir + file.getName() + "/");
                 }
             }
-        } catch (Exception e) {
-            logger.error("compress unknown exception", e);
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (out != null) out.close();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-            try {
-                if (cos != null) cos.close();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+        } else if (file.exists()) {
+            try (FileInputStream fis = new FileInputStream(file)) {
+                compressInputStream(fis, out, basedir, file.getName());
             }
         }
     }
 
-    private static void compress(File file, ZipOutputStream out, String basedir) {
-        if (file.isDirectory()) {
-            logger.debug("compress dir: " + basedir + file.getName());
-            compressDirectory(file, out, basedir);
-        } else {
-            logger.debug("compress file: " + basedir + file.getName());
-            compressFile(file, out, basedir);
-        }
-    }
+    public static byte[] compress(Map<String, SubmitFile> compressFileMap) {
+        logger.debug("start compressing file: {}", compressFileMap.keySet());
 
-    private static void compressDirectory(File dir, ZipOutputStream out, String basedir) {
-        if (!dir.exists()) return;
-
-        File[] files = dir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            compress(files[i], out, basedir + dir.getName() + "/");
-        }
-    }
-
-    private static void compressFile(File file, ZipOutputStream out, String basedir) {
-        if (!file.exists()) {
-            return;
-        }
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-            compressInputStream(fis, out, basedir, file.getName());
-        } catch (Exception e) {
-            logger.error("compress inputStream error!", e);
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (fis != null) fis.close();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream(); CheckedOutputStream cos = new CheckedOutputStream(output, new CRC32()); ZipOutputStream out = new ZipOutputStream(cos)) {
+            for (Entry<String, SubmitFile> entry : compressFileMap.entrySet()) {
+                compress(out, entry);
             }
+            return output.toByteArray();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error compressing file with zip.", e);
         }
     }
 
-    private static void compressInputStream(InputStream input, ZipOutputStream out, String basedir, String name) {
-        BufferedInputStream bis = null;
-        try {
-            bis = new BufferedInputStream(input);
+
+    public static void compress(OutputStream output, Map<String, SubmitFile> compressFileMap) {
+        logger.debug("start compressing file: {}", compressFileMap.keySet());
+
+        try (CheckedOutputStream cos = new CheckedOutputStream(output, new CRC32()); ZipOutputStream out = new ZipOutputStream(cos)) {
+            for (Entry<String, SubmitFile> entry : compressFileMap.entrySet()) {
+                compress(out, entry);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException("Error compressing file with zip.", e);
+        }
+    }
+
+    private static void compress(ZipOutputStream out, Entry<String, SubmitFile> entry) throws IOException {
+        SubmitFile value = entry.getValue();
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(value.getValue())) {
+            String fileName = StringUtils.defaultIfBlank(value.getFileName(), entry.getKey() + ".html");
+            compressInputStream(inputStream, out, StringUtils.EMPTY, fileName);
+        }
+    }
+
+    private static void compressInputStream(InputStream input, ZipOutputStream out, String basedir, String name) throws IOException {
+        try (BufferedInputStream bis = new BufferedInputStream(input)) {
             ZipEntry entry = new ZipEntry(basedir + name);
             out.putNextEntry(entry);
-            int count;
-            byte data[] = new byte[BUFFER];
-            while ((count = bis.read(data, 0, BUFFER)) != -1) {
-                out.write(data, 0, count);
-            }
-            bis.close();
-        } catch (Exception e) {
-            logger.error("compress inputStream error!", e);
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                if (bis != null) bis.close();
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
+
+            Streams.write(bis, out);
         }
     }
 }

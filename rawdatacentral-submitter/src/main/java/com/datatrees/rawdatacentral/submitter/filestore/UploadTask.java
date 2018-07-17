@@ -1,9 +1,7 @@
 package com.datatrees.rawdatacentral.submitter.filestore;
 
-import java.io.ByteArrayOutputStream;
 import java.util.*;
 
-import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.oss.OssService;
@@ -12,6 +10,7 @@ import com.datatrees.rawdatacentral.core.oss.OssUtils;
 import com.datatrees.rawdatacentral.service.constants.Constants;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
@@ -38,10 +37,9 @@ public class UploadTask implements Runnable {
             Map<String, SubmitFile> uploadMap = this.getSubmitFiles(extractMessage.getMessageObject());
             // after upload complete remove extract message object
             if (MapUtils.isNotEmpty(uploadMap)) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ZipCompressUtils.compress(baos, uploadMap);
+                byte[] data = ZipCompressUtils.compress(uploadMap);
                 OssService service = OssServiceProvider.getDefaultService();
-                service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, baos.toByteArray());
+                service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, data);
                 LOGGER.debug("upload task completed! id: {}, ossKey: {}", extractMessage.getTaskLogId(), ossKey);
             } else {
                 LOGGER.info("no need to upload file for message: {}", extractMessage);
@@ -95,12 +93,12 @@ public class UploadTask implements Runnable {
         if (obj instanceof String) {
             SubmitFile file = new SubmitFile(null, ((String) obj).getBytes(Constants.DEFAULT_ENCODE_CHARSETNAME));
             result.add(file);
-        } else if (obj instanceof FileWapper) {
-            FileWapper fileWapper = (FileWapper) obj;
-            byte[] resultArray = readFileBytes(fileWapper);
+        } else if (obj instanceof WrappedFile) {
+            WrappedFile wrappedFile = (WrappedFile) obj;
+            byte[] resultArray = readFileBytes(wrappedFile);
 
             if (resultArray != null) {
-                SubmitFile file = new SubmitFile(fileWapper.getName(), resultArray);
+                SubmitFile file = new SubmitFile(wrappedFile.getName(), resultArray);
                 result.add(file);
             }
         } else if (obj instanceof Collection) {
@@ -114,14 +112,14 @@ public class UploadTask implements Runnable {
         return result;
     }
 
-    private byte[] readFileBytes(FileWapper fileWapper) {
+    private byte[] readFileBytes(WrappedFile wrappedFile) {
         byte[] fileBytes = null;
-        if (fileWapper != null) {
+        if (wrappedFile != null) {
             try {
-                fileBytes = fileWapper.readFull();
-                fileWapper.remove();
+                fileBytes = wrappedFile.readFull();
+                wrappedFile.remove();
             } catch (Exception e) {
-                LOGGER.error("read fileWapper error " + fileWapper, e);
+                LOGGER.error("read wrappedFile error " + wrappedFile, e);
             }
         }
         return fileBytes;

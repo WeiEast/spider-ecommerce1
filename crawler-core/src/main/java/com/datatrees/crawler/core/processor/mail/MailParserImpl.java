@@ -20,7 +20,7 @@ import com.datatrees.common.protocol.Content;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.IPAddressUtil;
 import com.treefinance.toolkit.util.RegExp;
@@ -162,27 +162,27 @@ public final class MailParserImpl {
 
     private static void saveAttachment(Mail mimeMsg, Entity part) throws IOException {
         File file = new File(FileUtils.getFileRandomPath(mimeMsg.getWebsiteName()));
-        FileWapper fileWapper = new FileWapper(file);
-        fileWapper.setName(getAttachmentFileName(part));
-        fileWapper.setMimeType(part.getMimeType());
+        WrappedFile wrappedFile = new WrappedFile(file);
+        wrappedFile.setName(getAttachmentFileName(part));
+        wrappedFile.setMimeType(part.getMimeType());
 
         // Get attach stream, write it to file
         SingleBody body = (SingleBody) part.getBody();
         try {
-            if (fileWapper.needDetectContent()) {
+            if (wrappedFile.needDetectContent()) {
                 String content = readContent(body, part.getHeader());
-                fileWapper.write(content.getBytes(CharsetUtil.UTF_8_NAME));
+                wrappedFile.write(content.getBytes(CharsetUtil.UTF_8_NAME));
             } else {
-                try (OutputStream fos = new FileOutputStream(fileWapper.getFile())) {
+                try (OutputStream fos = new FileOutputStream(wrappedFile.getFile())) {
                     body.writeTo(fos);
-                    fileWapper.setSize(file.length());
+                    wrappedFile.setSize(file.length());
                 }
             }
         } finally {
             body.dispose();
         }
 
-        mimeMsg.getAttachments().add(fileWapper);
+        mimeMsg.getAttachments().add(wrappedFile);
     }
 
     private static String getTxtPart(Entity part) throws IOException {

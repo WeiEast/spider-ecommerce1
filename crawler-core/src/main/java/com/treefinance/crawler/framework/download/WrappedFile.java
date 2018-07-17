@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.bean;
+package com.treefinance.crawler.framework.download;
 
 import javax.annotation.Nonnull;
 import java.io.*;
@@ -21,20 +21,14 @@ import com.datatrees.common.protocol.util.CharsetUtil;
 import com.treefinance.toolkit.util.RegExp;
 import com.treefinance.toolkit.util.io.Streams;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.io.EmptyInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月9日 下午4:10:25
- */
-public class FileWapper {
+public class WrappedFile {
 
-    private static final Logger        logger                    = LoggerFactory.getLogger(FileWapper.class);
+    private static final Logger        logger                    = LoggerFactory.getLogger(WrappedFile.class);
     private static final byte[]        EMPTY_BYTES               = new byte[0];
     private static final int           sleepSecond               = PropertiesConfiguration.getInstance().getInt("default.sleep.seconds", 2000);
     private static final int           retryCount                = PropertiesConfiguration.getInstance().getInt("default.file.download.retry.count", 3);
@@ -48,7 +42,7 @@ public class FileWapper {
     private              String        sourceURL;
     private              ProtocolInput input;
 
-    public FileWapper(@Nonnull File file) {
+    public WrappedFile(@Nonnull File file) {
         this.file = Objects.requireNonNull(file);
         this.size = file.length();
     }
@@ -117,7 +111,7 @@ public class FileWapper {
             if (stream instanceof EmptyInputStream) {
                 return EMPTY_BYTES;
             }
-            return IOUtils.toByteArray(stream);
+            return Streams.readToByteArray(stream);
         }
     }
 
@@ -185,7 +179,7 @@ public class FileWapper {
 
     @Override
     public String toString() {
-        return "FileWapper [name=" + name + ", mimeType=" + mimeType + ", charSet=" + charSet + ", size=" + size + ", file=" + file + ", sourceURL=" + sourceURL + "]";
+        return "WrappedFile [name=" + name + ", mimeType=" + mimeType + ", charSet=" + charSet + ", size=" + size + ", file=" + file + ", sourceURL=" + sourceURL + "]";
     }
 
 }

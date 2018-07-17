@@ -8,7 +8,6 @@
 package com.datatrees.rawdatacentral.collector.actor;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayOutputStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -64,7 +63,6 @@ import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +77,7 @@ import org.springframework.stereotype.Service;
 public class Collector {
 
     private static final Logger logger                     = LoggerFactory.getLogger(Collector.class);
+    private static final int START_MSG_LENGTH_LIMIT = PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000);
     private static       String duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
     private static       String mqStatusTags               = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
     private static       String mqMessageSendTagPattern    = PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
@@ -355,20 +354,19 @@ public class Collector {
 
             String startMsgJson = GsonUtils.toJson(message);
 
-            if (startMsgJson.length() > PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000)) {
-                String path = "task/" + taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/" + taskMessage.getTask().getId();
-                map.put("startMsgOSSPath", path);
-                SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            if (startMsgJson.length() > START_MSG_LENGTH_LIMIT) {
                 try {
+                    String path = "task/" + taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/" + taskMessage.getTask().getId();
+
+                    SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
                     Map<String, SubmitFile> uploadMap = new HashMap<>();
-                    uploadMap.put("startMsg.json", file);
-                    ZipCompressUtils.compress(baos, uploadMap);
-                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), baos.toByteArray());
+                    uploadMap.put(file.getFileName(), file);
+                    byte[] data = ZipCompressUtils.compress(uploadMap);
+                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), data);
+
+                    map.put("startMsgOSSPath", path);
                 } catch (Exception e) {
-                    logger.error("upload startMsg.json error: {}", e.getMessage(), e);
-                } finally {
-                    IOUtils.closeQuietly(baos);
+                    logger.warn("Error uploading startMsg.json", e);
                 }
             }
             taskMessage.getTask().setResultMessage(JSON.toJSONString(map, SerializerFeature.WriteDateUseDateFormat));

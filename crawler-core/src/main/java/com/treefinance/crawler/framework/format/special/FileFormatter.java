@@ -7,7 +7,7 @@ import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.protocol.util.UrlUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.treefinance.crawler.framework.format.CommonFormatter;
@@ -17,13 +17,13 @@ import com.treefinance.crawler.framework.format.FormatConfig;
  * @author Jerry
  * @since 00:43 2018/6/2
  */
-public class FileFormatter extends CommonFormatter<FileWapper> {
+public class FileFormatter extends CommonFormatter<WrappedFile> {
 
     @Override
-    protected FileWapper toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
+    protected WrappedFile toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         AbstractProcessorContext processorContext = config.getProcessorContext();
         File file = new File(FileUtils.getFileRandomPath(processorContext.getWebsiteName()));
-        FileWapper wrappedFile = new FileWapper(file);
+        WrappedFile wrappedFile = new WrappedFile(file);
         Object result = config.getSourceFieldValue("fileName");
         wrappedFile.setName(result != null ? result.toString() : file.getName());
 

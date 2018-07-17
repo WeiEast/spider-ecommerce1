@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +55,9 @@ public class FieldUtils {
             return StringUtils.EMPTY;
         } else if (value instanceof String) {
             return (String) value;
-        } else if (value instanceof FileWapper) {
+        } else if (value instanceof WrappedFile) {
             try {
-                return ((FileWapper) value).readToString();
+                return ((WrappedFile) value).readToString();
             } catch (IOException e) {
                 LOGGER.error("Error reading file content. - " + value, e);
             }

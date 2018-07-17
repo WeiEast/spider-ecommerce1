@@ -21,7 +21,7 @@ import com.datatrees.crawler.core.domain.config.page.Regexp;
 import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
@@ -106,11 +106,11 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
 
     private String getSourceContent(Object value, AbstractPlugin pluginDesc, Request request) {
         String content;
-        if (value instanceof FileWapper) {
+        if (value instanceof WrappedFile) {
             AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
             content = (String) PluginCaller.call(pluginDesc, context, () -> {
                 Map<String, String> params = new HashMap<>();
-                FileWapper file = (FileWapper) value;
+                WrappedFile file = (WrappedFile) value;
                 file.download();//download attachment to local
                 params.put(PluginConstants.FILE_WAPPER_PATH, file.getAbsolutePath());
                 params.put(PluginConstants.FILE_MIME_TYPE, file.getMimeType());
