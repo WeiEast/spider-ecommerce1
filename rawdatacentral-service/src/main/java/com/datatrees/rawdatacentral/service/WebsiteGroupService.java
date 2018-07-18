@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 
 /**

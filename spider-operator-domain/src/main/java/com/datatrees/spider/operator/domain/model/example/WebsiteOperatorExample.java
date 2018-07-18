@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.model.example;
+package com.datatrees.spider.operator.domain.model.example;
 
 import java.io.Serializable;
 import java.util.ArrayList;

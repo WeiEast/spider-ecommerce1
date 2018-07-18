@@ -33,6 +33,7 @@ import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

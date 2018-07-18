@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.dao.mapper;
 
-import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
-import com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
+import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 

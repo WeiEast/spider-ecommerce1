@@ -16,7 +16,7 @@ import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
-import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
-import sun.security.x509.CertificatePolicyMap;
 
 /**
  * Created by zhouxinghai on 2017/7/17.

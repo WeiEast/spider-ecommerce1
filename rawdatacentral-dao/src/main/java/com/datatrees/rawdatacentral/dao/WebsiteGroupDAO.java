@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import com.datatrees.rawdatacentral.dao.mapper.WebsiteGroupMapper;
-import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import org.apache.ibatis.annotations.Param;
 /** create by system from table website_group(运营商分组) */
 @Resource

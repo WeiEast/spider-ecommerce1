@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.api;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 
 /**
  * 运营商分组和负载

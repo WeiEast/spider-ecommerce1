@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.datatrees.rawdatacentral.dao.WebsiteOperatorDAO">
 
-    <insert id="insertSelectiveWithPrimaryKey" parameterType="com.datatrees.rawdatacentral.domain.model.WebsiteOperator">
+    <insert id="insertSelectiveWithPrimaryKey" parameterType="com.datatrees.spider.operator.domain.model.WebsiteOperator">
         insert into website_operator
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="websiteId != null">

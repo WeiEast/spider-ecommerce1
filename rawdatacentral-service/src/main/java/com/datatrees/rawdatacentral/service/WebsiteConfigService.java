@@ -6,9 +6,8 @@ import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
-import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 

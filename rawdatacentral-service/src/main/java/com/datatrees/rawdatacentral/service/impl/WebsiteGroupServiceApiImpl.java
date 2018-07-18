@@ -6,8 +6,8 @@ import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.WebsiteGroupServiceApi;
 import com.datatrees.rawdatacentral.dao.WebsiteGroupDAO;
-import com.datatrees.rawdatacentral.domain.model.WebsiteGroup;
-import com.datatrees.rawdatacentral.domain.model.example.WebsiteGroupExample;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
+import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

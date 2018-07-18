@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 
 /**
  * 通知消息

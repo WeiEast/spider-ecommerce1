@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.WebsiteOperatorServiceApi;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import org.slf4j.Logger;
