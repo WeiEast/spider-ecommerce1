@@ -21,4 +21,5 @@ include 'spider-operator-service'
 include 'spider-operator-web'
 include 'spider-operator-plugin'
 include 'spider-generator'
+include 'spider-operator-api'
 
