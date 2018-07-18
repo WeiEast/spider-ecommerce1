@@ -1,6 +1,6 @@
 dependencies {
     compile project(":rawdatacentral-domain")
-    compile project(":spider-operator-dao")
+//    compile project(":spider-operator-dao")
     compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}") {
         exclude(module: 'spring-boot-starter')
         exclude(module: 'spring-boot-starter-jdbc')
