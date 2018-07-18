@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.WebsiteGroupServiceApi;
-import com.datatrees.rawdatacentral.dao.WebsiteGroupDAO;
+import com.datatrees.spider.operator.dao.WebsiteGroupDAO;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;

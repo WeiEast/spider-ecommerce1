@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.datatrees.rawdatacentral.dao.WebsiteGroupDAO">
+<mapper namespace="com.datatrees.spider.operator.dao.WebsiteGroupDAO">
   <resultMap id="BaseResultMap" type="com.datatrees.spider.operator.domain.model.WebsiteGroup">
     <result column="group_code" jdbcType="VARCHAR" property="groupCode" />
     <result column="group_name" jdbcType="VARCHAR" property="groupName" />

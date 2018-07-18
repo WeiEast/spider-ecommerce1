@@ -1,8 +1,8 @@
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.operator.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.dao.mapper.WebsiteOperatorMapper;
+import com.datatrees.spider.operator.dao.mapper.WebsiteOperatorMapper;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import org.apache.ibatis.annotations.Param;
 

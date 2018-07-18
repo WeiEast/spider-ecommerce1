@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.dao.mapper;
+package com.datatrees.spider.operator.dao.mapper;
 
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
