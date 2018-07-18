@@ -10,11 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
+import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
@@ -22,8 +18,6 @@ import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
-import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.rawdatacentral.domain.operator.FieldBizType;
 import com.datatrees.rawdatacentral.domain.operator.FieldInitSetting;
 import com.datatrees.rawdatacentral.domain.operator.InputField;
@@ -33,6 +27,9 @@ import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -68,12 +65,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
-        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
-        String env = TaskUtils.getSassEnv();
-        WebsiteOperatorExample example = new WebsiteOperatorExample();
-        example.createCriteria().andWebsiteNameEqualTo(websiteName).andEnvEqualTo(env);
-        List<WebsiteOperator> list = websiteOperatorDAO.selectByExample(example);
-        return list.isEmpty() ? null : list.get(0);
+        return getByWebsiteNameAndEnv(websiteName, EnvUtils.getSassEnv());
     }
 
     @Override
@@ -84,13 +76,6 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         List<WebsiteOperator> list = websiteOperatorDAO.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }
-
-    //    @Override
-    //    public List<WebsiteOperator> queryByGroupCode(String groupCode) {
-    //        WebsiteOperatorExample example = new WebsiteOperatorExample();
-    //        example.createCriteria().andGroupCodeEqualTo(groupCode);
-    //        return websiteOperatorDAO.selectByExample(example);
-    //    }
 
     @Override
     public List<WebsiteOperator> queryByGroupCode(String groupCode) {
@@ -278,45 +263,13 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         saveOrUpdateOperate(config, websiteOperatorDb);
     }
 
-    //    @Override
-    //    public void saveConfig(WebsiteOperator config) {
-    //        CheckUtils.checkNotNull(config, "param is null");
-    //        CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-    //        String env=config.getEnv();
-    //        WebsiteOperator websiteOperatorDb = getByWebsiteNameAndEnv(config.getWebsiteName(),env);
-    //        if (null == websiteOperatorDb) {
-    //            if (null == config.getWebsiteId()) {
-    //                websiteOperatorDAO.insertSelective(config);
-    //            } else {
-    //                websiteOperatorDb = websiteOperatorDAO.selectByPrimaryKey(config.getWebsiteId());
-    //                if (null != websiteOperatorDb) {
-    //                    //放重复websiteId
-    //                    config.setEnv(env);
-    //                    websiteOperatorDAO.insertSelective(config);
-    //                } else {
-    //                    //保持相同的websiteId
-    //
-    //                    websiteOperatorDAO.insertSelectiveWithPrimaryKey(config);
-    //                }
-    //            }
-    //        } else {
-    //            config.setWebsiteId(websiteOperatorDb.getWebsiteId());
-    //            websiteOperatorDAO.updateByPrimaryKeySelective(config);
-    //        }
-    //    }
-
     @Override
     public void updateEnable(String websiteName, Boolean enable) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         CheckUtils.checkNotNull(enable, "enable is null");
-        updateEnable(websiteName, enable, false);
+        websiteOperatorDAO.updateEnable(websiteName, enable ? 1 : 0);
     }
 
-    @Override
-    public String updateEnable(String websiteName, Boolean enable, Boolean auto) {
-        websiteOperatorDAO.updateEnable(websiteName, enable ? 1 : 0);
-        return null;
-    }
 
     @Override
     public List<WebsiteOperator> queryDisable() {

@@ -3,8 +3,8 @@ package com.datatrees.rawdatacentral.service;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 
 /**
  * 运营商配置
@@ -14,11 +14,18 @@ public interface WebsiteOperatorService {
 
     /**
      * 根据环境和站点名获取运营商配置
+     * env:服务器所在环境
      * @param websiteName
      * @return
      */
     WebsiteOperator getByWebsiteName(String websiteName);
 
+    /**
+     * 根据websiteName和env查询运营商
+     * @param websiteName
+     * @param env
+     * @return
+     */
     WebsiteOperator getByWebsiteNameAndEnv(String websiteName, String env);
 
     /**
@@ -61,24 +68,11 @@ public interface WebsiteOperatorService {
     void saveConfigForExport(WebsiteOperator config);
 
     /**
-     * 保存运营商配置
-     */
-    //    void saveConfig(WebsiteOperator websiteOperator);
-
-    /**
      * 启用/禁用
      * @param websiteName
      * @param enable
      */
     void updateEnable(String websiteName, Boolean enable);
-
-    /**
-     * 启用/禁用
-     * @param websiteName
-     * @param enable
-     * @param auto
-     */
-    String updateEnable(String websiteName, Boolean enable, Boolean auto);
 
     /**
      * 查询所有禁用版本
