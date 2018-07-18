@@ -1,6 +1,7 @@
 dependencies {
     compile project(":rawdatacentral-common")
     compile project(":rawdatacentral-dao")
+    compile project(":spider-operator-dao")
     compile project(":crawler-core")
     compile project(":rawdatacentral-plugin")
     compile "com.alibaba:druid:${druidVersion}"

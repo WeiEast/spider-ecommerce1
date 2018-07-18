@@ -1,6 +1,6 @@
 allprojects {
-    group = 'com.datatrees.rawdatacentral'
-    version = '3.2.0'
+    group = 'com.datatrees.spider'
+    version = '1.0.0-SNAPSHOT'
 }
 //buildscript {
 //    repositories {
