@@ -80,6 +80,10 @@ public interface WebsiteOperatorService {
      */
     List<WebsiteOperator> queryDisable();
 
+    /**
+     * 查询所有版本
+     * @return
+     */
     List<WebsiteOperator> queryAll();
 
     /**
@@ -87,7 +91,7 @@ public interface WebsiteOperatorService {
      * @param websiteName 站点
      * @param enable      状态
      * @param auto        true:自动,false:手动
-     * @return
+     * @return from,to
      */
     Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto);
 
