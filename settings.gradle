@@ -1,4 +1,4 @@
-rootProject.name = 'rawdatacentral'
+rootProject.name = 'spider'
 include ':rawdatacentral-domain'
 include ':rawdatacentral-api'
 include ':rawdatacentral-core'
