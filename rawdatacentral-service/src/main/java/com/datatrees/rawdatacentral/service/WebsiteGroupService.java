@@ -3,8 +3,8 @@ package com.datatrees.rawdatacentral.service;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 
 /**
  * 运营商分组和权重
@@ -103,5 +103,24 @@ public interface WebsiteGroupService {
      * @return
      */
     Map<String, String> queryAllGroupCode();
+
+    /**
+     * 查询可用版本数量
+     */
+    Integer queryEnableCount(String groupCode);
+
+    /**
+     * 查询可用版本
+     * @param groupCode
+     * @return
+     */
+    List<WebsiteGroup> queryEnable(String groupCode);
+
+    /**
+     * 查询不可用版本
+     * @param groupCode
+     * @return
+     */
+    List<WebsiteGroup> queryDisable(String groupCode);
 
 }

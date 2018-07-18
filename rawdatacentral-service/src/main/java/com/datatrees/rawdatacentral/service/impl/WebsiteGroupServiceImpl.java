@@ -12,16 +12,16 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.WeightUtils;
-import com.datatrees.spider.operator.dao.WebsiteGroupDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.spider.operator.domain.model.WebsiteGroup;
-import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.dao.WebsiteGroupDAO;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
+import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -181,6 +181,32 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService, Initializin
             map.put(e.getGroupCode(), e.getGroupName());
         });
         return map;
+    }
+
+    @Override
+    public Integer queryEnableCount(String groupCode) {
+        WebsiteGroupExample example = new WebsiteGroupExample();
+        WebsiteGroupExample.Criteria criteria = example.createCriteria();
+        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(true);
+        return websiteGroupDAO.countByExample(example);
+    }
+
+    @Override
+    public List<WebsiteGroup> queryEnable(String groupCode) {
+        WebsiteGroupExample example = new WebsiteGroupExample();
+        WebsiteGroupExample.Criteria criteria = example.createCriteria();
+        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(true);
+        example.setOrderByClause("weight desc");
+        return websiteGroupDAO.selectByExample(example);
+    }
+
+    @Override
+    public List<WebsiteGroup> queryDisable(String groupCode) {
+        WebsiteGroupExample example = new WebsiteGroupExample();
+        WebsiteGroupExample.Criteria criteria = example.createCriteria();
+        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(false);
+        example.setOrderByClause("weight desc");
+        return websiteGroupDAO.selectByExample(example);
     }
 
     @Override

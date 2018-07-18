@@ -13,7 +13,7 @@ public interface WebsiteGroupServiceApi {
     /**
      * 查询可用版本数量
      */
-    Integer enableCount(String groupCode);
+    Integer queryEnableCount(String groupCode);
 
     /**
      * 查询可用版本
@@ -28,13 +28,6 @@ public interface WebsiteGroupServiceApi {
      * @return
      */
     List<WebsiteGroup> queryDisable(String groupCode);
-
-    /**
-     * 根据域名查询版本
-     * @param webSiteName
-     * @return
-     */
-    WebsiteGroup queryWebsiteGroupByWebSiteName(String webSiteName);
 
     /**
      * 更新站点状态

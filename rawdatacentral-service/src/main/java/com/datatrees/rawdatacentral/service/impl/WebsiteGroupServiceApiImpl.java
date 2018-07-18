@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.WebsiteGroupServiceApi;
-import com.datatrees.spider.operator.dao.WebsiteGroupDAO;
-import com.datatrees.spider.operator.domain.model.WebsiteGroup;
-import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,47 +17,24 @@ public class WebsiteGroupServiceApiImpl implements WebsiteGroupServiceApi {
     private static final Logger              logger = LoggerFactory.getLogger(WebsiteGroupServiceApiImpl.class);
 
     @Resource
-    private              WebsiteGroupDAO     websiteGroupDAO;
-
-    @Resource
     private              WebsiteGroupService websiteGroupService;
 
     @Override
-    public Integer enableCount(String groupCode) {
-        WebsiteGroupExample example = new WebsiteGroupExample();
-        WebsiteGroupExample.Criteria criteria = example.createCriteria();
-        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(true);
-        return websiteGroupDAO.countByExample(example);
+    public Integer queryEnableCount(String groupCode) {
+        return websiteGroupService.queryEnableCount(groupCode);
     }
 
     @Override
     public List<WebsiteGroup> queryEnable(String groupCode) {
-        WebsiteGroupExample example = new WebsiteGroupExample();
-        WebsiteGroupExample.Criteria criteria = example.createCriteria();
-        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(true);
-        example.setOrderByClause("weight desc");
-        return websiteGroupDAO.selectByExample(example);
+        return websiteGroupService.queryEnable(groupCode);
     }
 
     @Override
     public List<WebsiteGroup> queryDisable(String groupCode) {
-        WebsiteGroupExample example = new WebsiteGroupExample();
-        WebsiteGroupExample.Criteria criteria = example.createCriteria();
-        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(false);
-        example.setOrderByClause("weight desc");
-        return websiteGroupDAO.selectByExample(example);
+        return websiteGroupService.queryDisable(groupCode);
     }
 
     @Override
-    public WebsiteGroup queryWebsiteGroupByWebSiteName(String webSiteName) {
-        WebsiteGroupExample example = new WebsiteGroupExample();
-        WebsiteGroupExample.Criteria criteria = example.createCriteria();
-        criteria.andWebsiteNameEqualTo(webSiteName);
-        example.setOrderByClause("weight desc");
-        List<WebsiteGroup> list = websiteGroupDAO.selectByExample(example);
-        return list.isEmpty() ? null : list.get(0);
-    }
-
     public int updateEnable(String websiteName, Boolean enable) {
         websiteGroupService.updateEnable(websiteName, enable);
         return 1;
