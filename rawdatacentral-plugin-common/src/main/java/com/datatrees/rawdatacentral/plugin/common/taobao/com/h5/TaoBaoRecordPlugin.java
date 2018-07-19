@@ -1,22 +1,28 @@
 package com.datatrees.rawdatacentral.plugin.common.taobao.com.h5;
 
+import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.datatrees.crawler.plugin.login.AbstractLoginPlugin.ContentType;
 import com.datatrees.crawler.plugin.login.AbstractPicPlugin;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 此插件只能解决淘宝交易记录抓取中出现图片验证码问题
  * User: yand
  * Date: 2018/7/16
  */
@@ -25,10 +31,37 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
     private static final Logger logger = LoggerFactory.getLogger(TaoBaoRecordPlugin.class);
 
     @Override
+    public String process(String... args) throws Exception {
+        logger.info("TaoBaoRecordPlugin  插件启动");
+        Map<String, String> paramMap = GsonUtils.fromJson(args[0], new TypeToken<HashMap<String, String>>() {}.getType());
+        Map<String, String> result;
+        if (isNormalPage(paramMap)) {
+            result = ImmutableMap.of(PluginConstants.FIELD, getPageContent(paramMap));
+        } else {
+            result = doProcess(paramMap);
+        }
+
+        return GsonUtils.toJson(result);
+    }
+
+    private String getPageContent(Map<String, String> paramMap) {
+        return paramMap.get(PluginConstants.PAGE_CONTENT);
+    }
+
+    private boolean isNormalPage(Map<String, String> paramMap) {
+        String pageContent = getPageContent(paramMap);
+        if (pageContent.contains("\"rgv587_flag0\":\"sm\"")) {
+            logger.info("taobao 交易页面 is {}", pageContent);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public String requestPicCode(Map<String, String> parms) {
         AbstractProcessorContext context = PluginFactory.getProcessorContext();
         Map<String, String> resultMap = new LinkedHashMap<String, String>();
-        String str = parms.get("page_content");
+        String str = getPageContent(parms);
         String url = JsonPathUtil.readAsString(str, "$.url");
         LinkNode checkNode = new LinkNode(url);
         checkNode.setReferer(url);
