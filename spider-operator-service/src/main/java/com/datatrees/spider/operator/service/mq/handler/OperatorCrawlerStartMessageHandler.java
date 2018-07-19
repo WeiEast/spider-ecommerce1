@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.collector.listener.handler;
+package com.datatrees.spider.operator.service.mq.handler;
 
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
+import com.datatrees.rawdatacentral.collector.listener.handler.CollectorMessageUtils;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
@@ -44,10 +45,7 @@ public class OperatorCrawlerStartMessageHandler implements MessageHandler {
     public boolean consumeMessage(String msg) {
         LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
         Long taskId = loginInfo.getTaskId();
-        //如果是登录成功消息就启动爬虫
         monitorService.sendTaskLog(taskId, loginInfo.getWebsiteName(), "爬虫-->启动-->成功");
-        //任务10分钟超时
-        //monitorService.sendTaskTimeOutMsg(taskId, 14);
         collector.processMessage(CollectorMessageUtils.buildCollectorMessage(loginInfo));
         return true;
     }

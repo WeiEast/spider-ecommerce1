@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.collector.listener.handler;
+package com.datatrees.spider.operator.service.mq.handler;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -32,20 +32,20 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OperatorLoginPostMessageHandler implements MessageHandler {
-    
-    private static final Logger logger = LoggerFactory.getLogger(OperatorLoginPostMessageHandler.class);
+
+    private static final Logger                 logger = LoggerFactory.getLogger(OperatorLoginPostMessageHandler.class);
 
     @Resource
-    private MonitorService         monitorService;
+    private              MonitorService         monitorService;
 
     @Resource
-    private CrawlerOperatorService crawlerOperatorService;
+    private              CrawlerOperatorService crawlerOperatorService;
 
     @Resource
-    private ClassLoaderService     classLoaderService;
+    private              ClassLoaderService     classLoaderService;
 
     @Resource
-    private MessageService         messageService;
+    private              MessageService         messageService;
 
     @Override
     public String getTag() {
