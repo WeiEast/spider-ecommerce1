@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PicCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger logger = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
+    private static final Logger logger = LoggerFactory.getLogger(PicCheckPlugin.class);
     private CrawlerOperatorService pluginService;
     private MessageService         messageService;
     private RedisService           redisService;

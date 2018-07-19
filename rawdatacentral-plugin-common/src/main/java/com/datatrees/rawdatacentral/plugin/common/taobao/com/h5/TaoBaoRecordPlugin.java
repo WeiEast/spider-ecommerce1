@@ -30,6 +30,11 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
 
     private static final Logger logger = LoggerFactory.getLogger(TaoBaoRecordPlugin.class);
 
+    {
+        this.setTags("ecommerce");
+        this.setTips("请输入图片验证码");
+    }
+
     @Override
     public String process(String... args) throws Exception {
         logger.info("TaoBaoRecordPlugin  插件启动");
