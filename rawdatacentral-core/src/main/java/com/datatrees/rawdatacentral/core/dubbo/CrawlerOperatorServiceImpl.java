@@ -2,13 +2,16 @@ package com.datatrees.rawdatacentral.core.dubbo;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.*;
-import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.retry.RetryHandler;
@@ -16,13 +19,13 @@ import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.*;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -65,8 +68,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     @Resource
     private              WebsiteOperatorService                        websiteOperatorService;
 
-    @Resource
-    private              ThreadPoolService                             threadPoolService;
+    private              ThreadPoolExecutor                            operatorInitExecutors;
 
     @Resource
     private              ProxyService                                  proxyService;
@@ -80,7 +82,7 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         }
         Long taskId = param.getTaskId();
         String websiteName = param.getWebsiteName();
-        threadPoolService.getOperatorInitExecutors().submit(new Runnable() {
+        operatorInitExecutors.submit(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -118,10 +120,9 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                         TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
                         TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
 
-                        if (!StringUtils.isAnyBlank(websiteName, param.getGroupCode())){
+                        if (!StringUtils.isAnyBlank(websiteName, param.getGroupCode())) {
                             WebsiteUtils.cacheNickGroupCodeWebsites(param.getGroupCode(), websiteName);
                         }
-
 
                         //设置代理
                         ProxyUtils.setProxyEnable(taskId, websiteOperator.getProxyEnable());
@@ -495,8 +496,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
         map10000.put("电信", group10000);
         list.add(map10000);
 
-
-
         return new HttpResult<List<Map<String, List<OperatorGroup>>>>().success(list);
     }
 
@@ -536,6 +535,22 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
                     @Override
                     public List<OperatorCatalogue> load(String key) throws Exception {
                         return websiteGroupService.updateCache();
+                    }
+                });
+
+        int corePoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.min", 10);
+        int maximumPoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.max", 100);
+        operatorInitExecutors = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(300),
+                new ThreadFactory() {
+                    private AtomicInteger count = new AtomicInteger(0);
+
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        Thread t = new Thread(r);
+                        String threadName = "operator_init_thread_" + count.addAndGet(1);
+                        t.setName(threadName);
+                        logger.info("create operator init thread :{}", threadName);
+                        return t;
                     }
                 });
 
