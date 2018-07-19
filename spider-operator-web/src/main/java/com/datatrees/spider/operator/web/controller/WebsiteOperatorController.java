@@ -1,11 +1,11 @@
-package com.datatrees.rawdatacentral.web.controller;
+package com.datatrees.spider.operator.web.controller;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/website/operator")
 public class WebsiteOperatorController {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebsiteOperatorController.class);
+    private static final Logger                 logger = LoggerFactory.getLogger(WebsiteOperatorController.class);
+
     @Resource
-    private WebsiteOperatorService websiteOperatorService;
+    private              WebsiteOperatorService websiteOperatorService;
 
     /**
      * 从老运营商导入配置
@@ -98,24 +99,6 @@ public class WebsiteOperatorController {
         }
     }
 
-//    /**
-//     * 保存配置
-//     * @param websiteOperator
-//     * @return
-//     */
-//    @RequestMapping("/saveConfig")
-//    public HttpResult<Object> saveConfig(@RequestBody WebsiteOperator websiteOperator) {
-//        HttpResult<Object> result = new HttpResult<>();
-//        try {
-//            websiteOperatorService.saveConfig(websiteOperator);
-//            logger.info("importConfig success websiteName={}", websiteOperator.getWebsiteName());
-//            return result.success(true);
-//        } catch (Exception e) {
-//            logger.error("importConfig error", e);
-//            return result.failure();
-//        }
-//    }
-
     /**
      * 导出运营商时所需保存的
      * @param websiteOperator
@@ -138,9 +121,9 @@ public class WebsiteOperatorController {
      * 查询配置
      */
     @RequestMapping("/getByWebsiteNameAndEnv")
-    public Object getByWebsiteNameAndEnv(String websiteName,String env) {
+    public Object getByWebsiteNameAndEnv(String websiteName, String env) {
         try {
-            return websiteOperatorService.getByWebsiteNameAndEnv(websiteName,env);
+            return websiteOperatorService.getByWebsiteNameAndEnv(websiteName, env);
         } catch (Exception e) {
             logger.error("getByWebsiteName error websiteName={}", websiteName, e);
             return new HashMap<>();
