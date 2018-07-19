@@ -1,21 +1,29 @@
 package com.datatrees.rawdatacentral.collector.listener.handler;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
+import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
+import com.datatrees.rawdatacentral.service.mq.MessageHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OperatorCrawlerStartMessageHandler extends LoginStartMessageHandler {
+public class OperatorCrawlerStartMessageHandler implements MessageHandler {
+
+    private static final Logger         logger = LoggerFactory.getLogger(OperatorCrawlerStartMessageHandler.class);
 
     @Resource
-    private Collector      collector;
+    private              Collector      collector;
+
     @Resource
-    private MonitorService monitorService;
+    private              MonitorService monitorService;
 
     @Override
     public String getTag() {
@@ -23,8 +31,13 @@ public class OperatorCrawlerStartMessageHandler extends LoginStartMessageHandler
     }
 
     @Override
-    public String getBizType() {
-        return "处理爬虫启动消息";
+    public long getExpireTime() {
+        return TimeUnit.MINUTES.toMillis(10);
+    }
+
+    @Override
+    public String getTitle() {
+        return "运营商登陆成功,启动爬虫";
     }
 
     @Override
@@ -35,8 +48,18 @@ public class OperatorCrawlerStartMessageHandler extends LoginStartMessageHandler
         monitorService.sendTaskLog(taskId, loginInfo.getWebsiteName(), "爬虫-->启动-->成功");
         //任务10分钟超时
         //monitorService.sendTaskTimeOutMsg(taskId, 14);
-        collector.processMessage(buildCollectorMessage(loginInfo));
+        collector.processMessage(CollectorMessageUtils.buildCollectorMessage(loginInfo));
         return true;
+    }
+
+    @Override
+    public int getMaxRetry() {
+        return 0;
+    }
+
+    @Override
+    public String getTopic() {
+        return TopicEnum.RAWDATA_INPUT.getCode();
     }
 
 }

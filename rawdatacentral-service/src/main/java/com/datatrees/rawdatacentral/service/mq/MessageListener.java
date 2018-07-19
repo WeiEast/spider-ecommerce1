@@ -1,19 +1,16 @@
-package com.datatrees.rawdatacentral.service.mq.listener;
+package com.datatrees.rawdatacentral.service.mq;
 
 import javax.annotation.Resource;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import com.alibaba.rocketmq.common.message.MessageExt;
-import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -28,11 +25,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageListener implements MessageListenerConcurrently, InitializingBean {
 
-    private static final Logger                              logger          = LoggerFactory.getLogger(MessageListener.class);
-    private static final Charset                             DEFAULT_CHARSET = Charset.forName("UTF-8");
-    private static final Map<String, AbstractMessageHandler> handlers        = new HashMap<>();
+    private static final Logger                                   logger          = LoggerFactory.getLogger(MessageListener.class);
+
+    private static final Charset                                  DEFAULT_CHARSET = Charset.forName("UTF-8");
+
+    private static final Map<String, Map<String, MessageHandler>> handlers        = new HashMap<>();
+
     @Resource
-    private ApplicationContext    applicationContext;
+    private              ApplicationContext                       applicationContext;
 
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
@@ -45,18 +45,18 @@ public class MessageListener implements MessageListenerConcurrently, Initializin
         int reconsumeTimes = messageExt.getReconsumeTimes();
 
         String body = new String(messageExt.getBody(), DEFAULT_CHARSET);
-        AbstractMessageHandler handler = handlers.get(tag);
+        MessageHandler handler = getMessageHandler(topic, tag);
         if (null == handler) {
             logger.warn("no message handler found,丢弃消息,body={},topic={},tag={},msgId={},keys={}", body, topic, tag, msgId, keys);
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         }
         int maxRetry = handler.getMaxRetry();
-        String bizType = handler.getBizType();
+        String bizType = handler.getTitle();
         if (reconsumeTimes > maxRetry) {
             logger.warn("{}-->失败,丢弃消息,msg={},msgId={},retry={},key={}", bizType, body, msgId, reconsumeTimes, messageExt.getKeys());
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         }
-        if (System.currentTimeMillis() - bornTimestamp > TimeUnit.MINUTES.toMillis(60)) {
+        if (System.currentTimeMillis() - bornTimestamp > handler.getExpireTime()) {
             logger.warn("{}-->失败,已过期,丢弃消息,msg={},msgId={},retry={},key={},bornTimestamp={}", bizType, body, msgId, reconsumeTimes,
                     messageExt.getKeys(), DateUtils.formatYmdhms(bornTimestamp));
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
@@ -86,18 +86,23 @@ public class MessageListener implements MessageListenerConcurrently, Initializin
 
     }
 
+    private MessageHandler getMessageHandler(String topic, String tag) {
+        if (handlers.isEmpty() || !handlers.containsKey(topic)) {
+            return null;
+        }
+        return handlers.get(topic).get(tag);
+    }
+
     @Override
-    public void afterPropertiesSet() throws Exception {
-        Map<String, AbstractMessageHandler> map = applicationContext.getBeansOfType(AbstractMessageHandler.class);
-        if (CollectionUtils.isNotEmpty(map)) {
-            for (Map.Entry<String, AbstractMessageHandler> entry : map.entrySet()) {
-                AbstractMessageHandler handler = entry.getValue();
-                handlers.put(handler.getTag(), handler);
-                logger.info("register message handler topic={},tag={},handler={}", handler.getTopic(), handler.getTag(),
-                        handler.getClass().getName());
+    public void afterPropertiesSet() {
+        Map<String, MessageHandler> map = applicationContext.getBeansOfType(MessageHandler.class);
+        for (Map.Entry<String, MessageHandler> entry : map.entrySet()) {
+            MessageHandler handler = entry.getValue();
+            if (!handlers.containsKey(handler.getTopic())) {
+                handlers.put(handler.getTopic(), new HashMap<>());
             }
-        } else {
-            logger.warn("no message handler found");
+            handlers.get(handler.getTopic()).put(handler.getTag(), handler);
+            logger.info("register message handler topic={},tag={},handler={}", handler.getTopic(), handler.getTag(), handler.getClass().getName());
         }
     }
 }

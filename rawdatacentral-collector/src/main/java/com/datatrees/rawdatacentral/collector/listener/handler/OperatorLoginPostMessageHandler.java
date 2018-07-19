@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.collector.listener.handler;
 
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -13,13 +14,16 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
+import com.datatrees.rawdatacentral.service.mq.MessageHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,14 +31,19 @@ import org.springframework.stereotype.Service;
  * 登陆成功-->登陆后处理-->启动爬虫
  */
 @Service
-public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
+public class OperatorLoginPostMessageHandler implements MessageHandler {
+    
+    private static final Logger logger = LoggerFactory.getLogger(OperatorLoginPostMessageHandler.class);
 
     @Resource
     private MonitorService         monitorService;
+
     @Resource
     private CrawlerOperatorService crawlerOperatorService;
+
     @Resource
     private ClassLoaderService     classLoaderService;
+
     @Resource
     private MessageService         messageService;
 
@@ -44,8 +53,13 @@ public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
     }
 
     @Override
-    public String getBizType() {
-        return "登陆后";
+    public long getExpireTime() {
+        return TimeUnit.MINUTES.toMillis(10);
+    }
+
+    @Override
+    public String getTitle() {
+        return "运营商登陆后,爬虫启动前预处理";
     }
 
     @Override
@@ -106,6 +120,16 @@ public class OperatorLoginPostMessageHandler extends AbstractMessageHandler {
             monitorService.sendTaskCompleteMsg(taskId, websiteName, ErrorCode.LOGIN_FAIL.getErrorCode(), ErrorCode.LOGIN_FAIL.getErrorMsg());
         }
         return true;
+    }
+
+    @Override
+    public int getMaxRetry() {
+        return 0;
+    }
+
+    @Override
+    public String getTopic() {
+        return TopicEnum.RAWDATA_INPUT.getCode();
     }
 
 }

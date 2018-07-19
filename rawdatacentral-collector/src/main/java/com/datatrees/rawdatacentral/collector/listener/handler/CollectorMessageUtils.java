@@ -3,18 +3,16 @@ package com.datatrees.rawdatacentral.collector.listener.handler;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
-import com.datatrees.rawdatacentral.service.mq.handler.AbstractMessageHandler;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * @author Jerry
- * @since 17:32 2018/5/4
- */
-abstract class LoginStartMessageHandler extends AbstractMessageHandler {
+public class CollectorMessageUtils {
 
-    private static final boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance().getBoolean("set.cookie.format.switch", false);
+    private static final Logger logger = LoggerFactory.getLogger(CollectorMessageUtils.class);
 
-    protected CollectorMessage buildCollectorMessage(LoginMessage loginInfo) {
+    public static CollectorMessage buildCollectorMessage(LoginMessage loginInfo) {
+        boolean setCookieFormatSwitch = PropertiesConfiguration.getInstance().getBoolean("set.cookie.format.switch", false);
         CollectorMessage collectorMessage = new CollectorMessage();
         try {
             if (loginInfo != null) {
@@ -29,7 +27,8 @@ abstract class LoginStartMessageHandler extends AbstractMessageHandler {
                     if (StringUtils.isBlank(loginInfo.getCookie())) {
                         collectorMessage.setCookie(loginInfo.getSetCookie());
                     } else {
-                        String cookie = collectorMessage.getCookie().endsWith(";") ? collectorMessage.getCookie() + loginInfo.getSetCookie() : collectorMessage.getCookie() + ";" + loginInfo.getSetCookie();
+                        String cookie = collectorMessage.getCookie().endsWith(";") ? collectorMessage.getCookie() + loginInfo.getSetCookie() :
+                                collectorMessage.getCookie() + ";" + loginInfo.getSetCookie();
                         collectorMessage.setCookie(cookie);
                     }
                 }

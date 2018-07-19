@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.collector.listener.handler;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
@@ -12,26 +13,34 @@ import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.mq.MessageHandler;
 import com.treefinance.crawler.exception.UnsupportedWebsiteException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import static com.datatrees.rawdatacentral.collector.listener.handler.CollectorMessageUtils.buildCollectorMessage;
+
 @Service
-public class LoginInfoMessageHandler extends LoginStartMessageHandler {
+public class LoginInfoMessageHandler implements MessageHandler {
+
+    private static final Logger               logger = LoggerFactory.getLogger(LoginInfoMessageHandler.class);
 
     @Resource
-    private Collector            collector;
+    private              Collector            collector;
 
     @Resource
-    private RedisService         redisService;
+    private              RedisService         redisService;
 
     @Resource
-    private WebsiteConfigService websiteConfigService;
+    private              WebsiteConfigService websiteConfigService;
 
     @Resource
-    private MonitorService       monitorService;
+    private              MonitorService       monitorService;
 
     @Override
     public String getTag() {
@@ -39,7 +48,12 @@ public class LoginInfoMessageHandler extends LoginStartMessageHandler {
     }
 
     @Override
-    public String getBizType() {
+    public long getExpireTime() {
+        return TimeUnit.MINUTES.toMillis(10);
+    }
+
+    @Override
+    public String getTitle() {
         return "准备";
     }
 
@@ -78,6 +92,16 @@ public class LoginInfoMessageHandler extends LoginStartMessageHandler {
         }
         logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, loginInfo.getWebsiteName());
         return true;
+    }
+
+    @Override
+    public int getMaxRetry() {
+        return 0;
+    }
+
+    @Override
+    public String getTopic() {
+        return TopicEnum.RAWDATA_INPUT.getCode();
     }
 
 }
