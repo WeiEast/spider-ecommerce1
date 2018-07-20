@@ -3,6 +3,10 @@ package com.datatrees.spider.operator.web.controller;
 import javax.annotation.Resource;
 import java.util.HashMap;
 
+import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
@@ -24,6 +28,9 @@ public class WebsiteOperatorController {
 
     @Resource
     private              WebsiteOperatorService websiteOperatorService;
+
+    @Resource
+    private              RedisService           redisService;
 
     /**
      * 从老运营商导入配置
@@ -136,6 +143,14 @@ public class WebsiteOperatorController {
     @RequestMapping("/updateEnable")
     public Object updateEnable(String websiteName, Boolean enable) {
         return websiteOperatorService.updateWebsiteStatus(websiteName, enable, false);
+    }
+
+    @RequestMapping("/mappingPluginFile")
+    public Object mappingPluginFile(String websiteName, String fileName) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        CheckUtils.checkNotBlank(fileName, "fileName is empty");
+        redisService.saveString(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME, websiteName, fileName);
+        return new HttpResult<>().success();
     }
 
 }
