@@ -8,11 +8,11 @@
     <!--注册到dubbo -->
     <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerService" ref="crawlerServiceImpl"/>
     <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerTaskService" ref="crawlerTaskServiceImpl"/>
-    <dubbo:service interface="com.datatrees.spider.operator.api.WebsiteGroupServiceApi" ref="websiteGroupServiceApiImpl"/>
+    <dubbo:service interface="com.datatrees.spider.operator.api.WebsiteGroupApi" ref="websiteGroupServiceApiImpl"/>
     <!--运营商-->
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerOperatorService"
+    <dubbo:service interface="com.datatrees.spider.operator.api.OperatorApi"
                    ref="crawlerOperatorServiceImpl"/>
-    <dubbo:service interface="com.datatrees.spider.operator.api.WebsiteOperatorServiceApi"
+    <dubbo:service interface="com.datatrees.spider.operator.api.WebsiteOperatorApi"
                    ref="websiteOperatorServiceApiImpl"/>
     <!--学信网-->
     <dubbo:service interface="com.datatrees.rawdatacentral.api.RpcEducationService" ref="rpcEducationServiceImpl"/>

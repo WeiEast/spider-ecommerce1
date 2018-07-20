@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api;
+package com.datatrees.spider.operator.api;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import com.datatrees.spider.share.domain.HttpResult;
  * 运营商接口
  * Created by zhouxinghai on 2017/7/17.
  */
-public interface CrawlerOperatorService {
+public interface OperatorApi {
 
     /**
      * 登陆初始化,获取基本信息

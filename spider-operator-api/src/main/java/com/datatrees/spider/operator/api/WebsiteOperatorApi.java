@@ -8,7 +8,7 @@ import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 /**
  * website接口
  */
-public interface WebsiteOperatorServiceApi {
+public interface WebsiteOperatorApi {
 
     /**
      * 启用/停用配置

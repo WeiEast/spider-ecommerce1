@@ -13,7 +13,7 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.rawdatacentral.api.CrawlerOperatorService;
+import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -39,20 +39,20 @@ import org.slf4j.LoggerFactory;
  */
 public class SmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger logger = LoggerFactory.getLogger(SmsCheckPlugin.class);
-    private CrawlerOperatorService pluginService;
-    private MessageService         messageService;
-    private RedisService           redisService;
+    private static final Logger                   logger = LoggerFactory.getLogger(SmsCheckPlugin.class);
+    private              OperatorApi              pluginService;
+    private              MessageService           messageService;
+    private              RedisService             redisService;
     //超时时间120秒
-    private long timeOut = 120;
-    private AbstractProcessorContext context;
-    private String                   fromType;
-    private Map<String, String> pluginResult = new HashMap<>();
-    private MonitorService monitorService;
+    private              long                     timeOut = 120;
+    private              AbstractProcessorContext context;
+    private              String                   fromType;
+    private              Map<String, String>      pluginResult = new HashMap<>();
+    private              MonitorService           monitorService;
 
     @Override
     public String process(String... args) throws Exception {
-        pluginService = BeanFactoryUtils.getBean(CrawlerOperatorService.class);
+        pluginService = BeanFactoryUtils.getBean(OperatorApi.class);
         messageService = BeanFactoryUtils.getBean(MessageService.class);
         redisService = BeanFactoryUtils.getBean(RedisService.class);
         context = PluginFactory.getProcessorContext();

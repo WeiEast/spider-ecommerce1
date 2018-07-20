@@ -8,7 +8,7 @@ import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 /**
  * 运营商分组和负载
  */
-public interface WebsiteGroupServiceApi {
+public interface WebsiteGroupApi {
 
     /**
      * 查询可用版本数量

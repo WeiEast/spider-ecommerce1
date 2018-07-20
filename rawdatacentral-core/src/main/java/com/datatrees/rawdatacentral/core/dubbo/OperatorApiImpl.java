@@ -17,6 +17,7 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.retry.RetryHandler;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.model.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
@@ -36,9 +37,9 @@ import org.springframework.stereotype.Service;
  * Created by zhouxinghai on 2017/7/17.
  */
 @Service
-public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
+public class OperatorApiImpl implements OperatorApi, InitializingBean {
 
-    private static final org.slf4j.Logger       logger                   = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
+    private static final org.slf4j.Logger       logger                   = LoggerFactory.getLogger(OperatorApiImpl.class);
 
     private static final String                 OPERATOR_FAIL_USER_MAX   = "operator.fail.usercount.max";
 

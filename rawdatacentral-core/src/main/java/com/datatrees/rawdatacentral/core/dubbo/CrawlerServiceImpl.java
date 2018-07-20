@@ -27,6 +27,7 @@ import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
+import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
 import com.datatrees.rawdatacentral.domain.enums.QRStatus;
@@ -50,25 +51,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrawlerServiceImpl implements CrawlerService {
 
-    private static final Logger                 logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
+    private static final Logger               logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
 
     @Resource
-    private              WebsiteConfigService   websiteConfigService;
+    private              WebsiteConfigService websiteConfigService;
 
     @Resource
-    private              RedisService           redisService;
+    private              RedisService         redisService;
 
     @Resource
-    private              ZooKeeperClient        zooKeeperClient;
+    private              ZooKeeperClient      zooKeeperClient;
 
     @Resource
-    private              CrawlerOperatorService crawlerOperatorService;
+    private              OperatorApi          spiderOperatorApi;
 
     @Resource
-    private              MonitorService         monitorService;
+    private              MonitorService       monitorService;
 
     @Autowired
-    private              ProxyService           proxyService;
+    private              ProxyService         proxyService;
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {

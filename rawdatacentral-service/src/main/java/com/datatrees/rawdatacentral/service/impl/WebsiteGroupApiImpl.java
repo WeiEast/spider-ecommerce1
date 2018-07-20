@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.spider.operator.api.WebsiteGroupServiceApi;
+import com.datatrees.spider.operator.api.WebsiteGroupApi;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import org.slf4j.Logger;
@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WebsiteGroupServiceApiImpl implements WebsiteGroupServiceApi {
+public class WebsiteGroupApiImpl implements WebsiteGroupApi {
 
-    private static final Logger              logger = LoggerFactory.getLogger(WebsiteGroupServiceApiImpl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(WebsiteGroupApiImpl.class);
 
     @Resource
     private              WebsiteGroupService websiteGroupService;
