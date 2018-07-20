@@ -85,4 +85,7 @@ public interface CrawlerOperatorService {
      */
     HttpResult<List<Map<String, List<OperatorGroup>>>> queryGroups();
 
+    //OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
+
+
 }

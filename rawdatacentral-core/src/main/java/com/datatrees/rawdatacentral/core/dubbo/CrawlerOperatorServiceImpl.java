@@ -19,6 +19,7 @@ import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
+import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -36,9 +37,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
-    private static final org.slf4j.Logger       logger                 = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
+    private static final org.slf4j.Logger       logger                   = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
 
-    private static final String                 OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
+    private static final String                 OPERATOR_FAIL_USER_MAX   = "operator.fail.usercount.max";
+
+    private static final String                 OPERATOR_PLUGIN_FILENAME = "rawdatacentral-plugin-operator.jar";
 
     @Resource
     private              ClassLoaderService     classLoaderService;
@@ -333,7 +336,33 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     }
 
     private OperatorPluginService getPluginService(String websiteName, Long taskId) {
-        return classLoaderService.getOperatorPluginService(websiteName, taskId);
+        return getOperatorPluginService(websiteName, taskId);
+    }
+
+    public OperatorPluginService getOperatorPluginService(String websiteName, Long taskId) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
+        if (null == websiteOperator) {
+            logger.error("not found config,websiteName={}", websiteName);
+            throw new CommonException("not found config,websiteName=" + websiteName);
+        }
+        String mainLoginClass = websiteOperator.getPluginClass();
+        String pluginFileName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME.getRedisKey(websiteName));
+        if (StringUtils.isNoneBlank(pluginFileName)) {
+            logger.info("websiteName={},独立映射到了插件pluginFileName={}", websiteName, pluginFileName);
+        } else {
+            pluginFileName = OPERATOR_PLUGIN_FILENAME;
+        }
+        try {
+            Class loginClass = classLoaderService.loadPlugin(pluginFileName, mainLoginClass, taskId);
+            if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
+                throw new RuntimeException("mainLoginClass not impl " + OperatorPluginService.class.getName());
+            }
+            return (OperatorPluginService) loginClass.newInstance();
+        } catch (Throwable e) {
+            logger.error("getOperatorService error websiteName={}", websiteName, e);
+            throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName, e);
+        }
     }
 
     /**
