@@ -1,8 +1,7 @@
 package com.datatrees.rawdatacentral.service;
 
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
-import org.springframework.stereotype.Service;
+import com.datatrees.spider.share.domain.HttpResult;
 
 import java.util.Map;
 

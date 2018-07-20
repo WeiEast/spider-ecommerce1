@@ -23,7 +23,7 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.exception.LoginFailException;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.google.gson.reflect.TypeToken;

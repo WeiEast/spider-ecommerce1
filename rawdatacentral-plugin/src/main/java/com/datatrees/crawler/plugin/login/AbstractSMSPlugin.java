@@ -16,7 +16,7 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;

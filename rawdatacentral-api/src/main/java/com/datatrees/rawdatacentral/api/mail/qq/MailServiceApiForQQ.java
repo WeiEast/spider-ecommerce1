@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.api.mail.qq;
 
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.spider.share.domain.HttpResult;
 
 /**
  * QQ邮箱模拟登陆接口

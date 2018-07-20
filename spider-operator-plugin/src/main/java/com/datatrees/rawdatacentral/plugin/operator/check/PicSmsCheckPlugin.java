@@ -24,12 +24,12 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.spider.operator.domain.model.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

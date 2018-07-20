@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service.impl;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoCriteria;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;

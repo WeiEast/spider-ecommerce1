@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.spider.operator.domain.model.OperatorParam;

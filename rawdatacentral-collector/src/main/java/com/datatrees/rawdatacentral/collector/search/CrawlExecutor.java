@@ -16,7 +16,7 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.model.Keyword;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.service.KeywordService;

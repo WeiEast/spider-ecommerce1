@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.domain.exception;
 
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 
 /**
  * 通用异常

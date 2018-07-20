@@ -5,9 +5,9 @@ import java.util.HashMap;
 
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import org.slf4j.Logger;

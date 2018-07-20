@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;

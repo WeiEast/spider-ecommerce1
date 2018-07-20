@@ -1,11 +1,10 @@
-package com.datatrees.rawdatacentral.domain.result;
+package com.datatrees.spider.share.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 
 /**
  * http接口返回信息 Created by zhouxinghai on 2017/4/27.

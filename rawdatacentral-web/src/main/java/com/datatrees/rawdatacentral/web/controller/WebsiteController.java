@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

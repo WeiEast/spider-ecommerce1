@@ -8,7 +8,7 @@ import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.apache.commons.lang.StringUtils;
 

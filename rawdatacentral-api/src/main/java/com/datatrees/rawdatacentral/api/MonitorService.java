@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.api;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.result.HttpResult;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.HttpResult;
 
 /**
  * 监控

@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.common.utils;
 
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 
 /**

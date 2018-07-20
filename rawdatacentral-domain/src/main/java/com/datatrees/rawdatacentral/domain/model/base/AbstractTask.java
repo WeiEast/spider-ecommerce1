@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.domain.model.base;
 
-import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
+import com.datatrees.spider.share.domain.ErrorCode;
 
 /**
  * Created by zhouxinghai on 2017/7/4.
