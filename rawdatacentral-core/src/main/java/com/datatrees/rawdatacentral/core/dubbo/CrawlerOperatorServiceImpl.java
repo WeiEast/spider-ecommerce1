@@ -19,16 +19,12 @@ import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
-import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.service.*;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -40,38 +36,35 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, InitializingBean {
 
-    private static final org.slf4j.Logger                              logger                 = LoggerFactory
-            .getLogger(CrawlerOperatorServiceImpl.class);
+    private static final org.slf4j.Logger       logger                 = LoggerFactory.getLogger(CrawlerOperatorServiceImpl.class);
 
-    private static final String                                        OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
-
-    private              LoadingCache<String, List<OperatorCatalogue>> operatorConfigCache;
+    private static final String                 OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
 
     @Resource
-    private              ClassLoaderService                            classLoaderService;
+    private              ClassLoaderService     classLoaderService;
 
     @Resource
-    private              RedisService                                  redisService;
+    private              RedisService           redisService;
 
     @Resource
-    private              MessageService                                messageService;
+    private              MessageService         messageService;
 
     @Resource
-    private              MonitorService                                monitorService;
+    private              MonitorService         monitorService;
 
     @Resource
-    private              WebsiteConfigService                          websiteConfigService;
+    private              WebsiteConfigService   websiteConfigService;
 
     @Resource
-    private              WebsiteGroupService                           websiteGroupService;
+    private              WebsiteGroupService    websiteGroupService;
 
     @Resource
-    private              WebsiteOperatorService                        websiteOperatorService;
+    private              WebsiteOperatorService websiteOperatorService;
 
-    private              ThreadPoolExecutor                            operatorInitExecutors;
+    private              ThreadPoolExecutor     operatorInitExecutors;
 
     @Resource
-    private              ProxyService                                  proxyService;
+    private              ProxyService           proxyService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -327,23 +320,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
     }
 
     @Override
-    public HttpResult<List<OperatorCatalogue>> queryAllConfig() {
-        HttpResult<List<OperatorCatalogue>> result = new HttpResult<>();
-        try {
-            List<OperatorCatalogue> list = operatorConfigCache.get(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
-            if (null == list) {
-                logger.warn("not found OperatorCatalogue from cache");
-                list = websiteConfigService.queryAllOperatorConfig();
-                redisService.cache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, list);
-            }
-            return result.success(list);
-        } catch (Exception e) {
-            logger.error("queryAllOperatorConfig error", e);
-            return result.failure();
-        }
-    }
-
-    @Override
     public HttpResult<Object> defineProcess(OperatorParam param) {
         HttpResult<Map<String, Object>> checkParams = checkParams(param);
         if (!checkParams.getStatus()) {
@@ -529,14 +505,6 @@ public class CrawlerOperatorServiceImpl implements CrawlerOperatorService, Initi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-
-        operatorConfigCache = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS).maximumSize(1)
-                .build(new CacheLoader<String, List<OperatorCatalogue>>() {
-                    @Override
-                    public List<OperatorCatalogue> load(String key) throws Exception {
-                        return websiteGroupService.updateCache();
-                    }
-                });
 
         int corePoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.min", 10);
         int maximumPoolSize = PropertiesConfiguration.getInstance().getInt("operator.init.thread.max", 100);

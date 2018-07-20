@@ -23,7 +23,6 @@ import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
-import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
@@ -33,7 +32,6 @@ import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
 import com.datatrees.rawdatacentral.domain.enums.QRStatus;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
@@ -52,19 +50,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrawlerServiceImpl implements CrawlerService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
+    private static final Logger                 logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
+
     @Resource
-    private WebsiteConfigService   websiteConfigService;
+    private              WebsiteConfigService   websiteConfigService;
+
     @Resource
-    private RedisService           redisService;
+    private              RedisService           redisService;
+
     @Resource
-    private ZooKeeperClient        zooKeeperClient;
+    private              ZooKeeperClient        zooKeeperClient;
+
     @Resource
-    private CrawlerOperatorService crawlerOperatorService;
+    private              CrawlerOperatorService crawlerOperatorService;
+
     @Resource
-    private MonitorService         monitorService;
+    private              MonitorService         monitorService;
+
     @Autowired
-    private ProxyService           proxyService;
+    private              ProxyService           proxyService;
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -346,26 +350,6 @@ public class CrawlerServiceImpl implements CrawlerService {
         } catch (Exception e) {
             logger.error("importAppCrawlResult error taskId={},directiveId={}", taskId, directiveId);
             return result.failure();
-        }
-    }
-
-    @Override
-    public HttpResult<List<OperatorCatalogue>> queryAllOperatorConfig() {
-        return crawlerOperatorService.queryAllConfig();
-    }
-
-    private boolean isOperator(Long taskId) {
-        try {
-            String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
-            int retry = 0, maxRetry = 10;
-            while (StringUtils.isBlank(websiteName) && retry++ <= maxRetry) {
-                TimeUnit.MILLISECONDS.sleep(300);
-                websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
-            }
-            return WebsiteUtils.isOperator(websiteName);
-        } catch (Throwable e) {
-            logger.info("isOperator error taskId={}", taskId, e);
-            return false;
         }
     }
 

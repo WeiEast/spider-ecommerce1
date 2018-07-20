@@ -15,7 +15,6 @@ import com.datatrees.rawdatacentral.common.utils.WeightUtils;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
@@ -126,14 +125,11 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService, Initializin
     }
 
     @Override
-    public List<OperatorCatalogue> updateCache() {
+    public void updateCache() {
         for (GroupEnum group : GroupEnum.values()) {
             updateCacheByGroupCode(group.getGroupCode());
         }
         logger.info("update operator group config success");
-        List<OperatorCatalogue> list = websiteConfigService.queryAllOperatorConfig();
-        redisService.cache(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG, list);
-        return list;
     }
 
     @Override

@@ -24,18 +24,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ApiTest extends BaseTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiTest.class);
-    @Resource
-    private CrawlerService crawlerService;
     @Resource
     private Collector      collector;
 
-    @Test
-    public void testQueryAllOperatorConfig() throws Exception {
-        HttpResult<List<OperatorCatalogue>> result = crawlerService.queryAllOperatorConfig();
-        List<OperatorCatalogue> list = result.getData();
-        Assert.assertTrue(!list.isEmpty());
-    }
 
     @Test
     public void startTask() throws Exception {

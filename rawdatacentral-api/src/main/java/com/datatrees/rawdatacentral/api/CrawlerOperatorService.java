@@ -3,7 +3,6 @@ package com.datatrees.rawdatacentral.api;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.operator.OperatorCatalogue;
 import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
 import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
@@ -56,14 +55,6 @@ public interface CrawlerOperatorService {
      * @return
      */
     HttpResult<Map<String, Object>> validatePicCode(OperatorParam param);
-
-    /**
-     * 获取所有运营商登陆配置
-     * 所有的可用的
-     * 每个运营商这里指定了,不可以缓存
-     * @return
-     */
-    HttpResult<List<OperatorCatalogue>> queryAllConfig();
 
     /**
      * 自定义处理

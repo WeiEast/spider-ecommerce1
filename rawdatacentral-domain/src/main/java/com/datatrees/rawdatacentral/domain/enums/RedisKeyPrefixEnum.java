@@ -25,7 +25,6 @@ public enum RedisKeyPrefixEnum {
     TASK_PAGE_CONTENT("task.page.content", 10, TimeUnit.MINUTES, "请求页面"),
     TASK_METHOD_USE_TIME("task.method.use.time", 15, TimeUnit.MINUTES, "任务接口耗时"),
     MAX_WEIGHT_OPERATOR("max.weight.operator", 30, TimeUnit.DAYS, "最大权重运营商"),
-    ALL_OPERATOR_CONFIG("all.operator.config", 60, TimeUnit.MINUTES, "运营商配置"),
     WEBSITE_LAST_INFO("website.last.info", 365, TimeUnit.DAYS, "站点最近记录"),
     WEBSITE_PLUGIN_FILE_NAME("website.plugin.file.name", 60, TimeUnit.MINUTES, "为website制定jar"),
     WEBSITE_OPERATOR("website.operator", 1, TimeUnit.HOURS, "运营商配置"),

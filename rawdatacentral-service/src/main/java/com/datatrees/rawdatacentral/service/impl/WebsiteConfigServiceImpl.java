@@ -1,12 +1,8 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
@@ -18,15 +14,14 @@ import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
-import com.datatrees.rawdatacentral.domain.model.*;
-import com.datatrees.rawdatacentral.domain.operator.*;
+import com.datatrees.rawdatacentral.domain.model.Bank;
+import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
@@ -46,22 +41,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
+    private static final Logger                 logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
+
     @Resource
-    private WebsiteOperatorService websiteOperatorService;
+    private              WebsiteOperatorService websiteOperatorService;
+
     @Resource
-    private WebsiteInfoService websiteInfoService;
+    private              WebsiteInfoService     websiteInfoService;
+
     @Resource
-    private WebsiteInfoDAO websiteInfoDAO;
+    private              WebsiteInfoDAO         websiteInfoDAO;
+
     @Resource
-    private PluginManager pluginManager;
+    private              PluginManager          pluginManager;
+
     @Resource
-    private BankService bankService;
+    private              BankService            bankService;
+
     @Resource
-    private RedisService redisService;
+    private              RedisService           redisService;
+
     @Resource
-    private ProxyService proxyService;
-    private ParentConfigHandler parentConfigHandler;
+    private              ProxyService           proxyService;
+
+    private              ParentConfigHandler    parentConfigHandler;
 
     public WebsiteConfigServiceImpl() {
         parentConfigHandler = new ParentConfigHandler() {
@@ -155,7 +158,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public boolean updateWebsiteConf(String websiteName, String searchConfig, String extractConfig) {
         CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
-//        CheckUtils.checkNotBlank(searchConfig, "searchConfig is blank");
+        //        CheckUtils.checkNotBlank(searchConfig, "searchConfig is blank");
         CheckUtils.checkNotBlank(extractConfig, "extractConfig is blank");
 
         WebsiteConfig websiteConfig = getWebsiteConfigByWebsiteName(websiteName);
@@ -175,101 +178,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             logger.warn("updateWebsiteInfo error websiteName={}", websiteName);
             return false;
         }
-        deleteCacheByWebsiteName(websiteName);
         logger.info("updateWebsiteInfo success websiteName={}", websiteName);
         return true;
-    }
-
-    @Override
-    public void deleteCacheByWebsiteName(String websiteName) {
-        CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
-        //redisService.deleteKey(RedisKeyPrefixEnum.WEBSITE_CONF_WEBSITENAME.getRedisKey(websiteName));
-        redisService.deleteKey(RedisKeyPrefixEnum.ALL_OPERATOR_CONFIG.getRedisKey());
-    }
-
-    @Override
-    public List<OperatorCatalogue> queryAllOperatorConfig() {
-        List<OperatorCatalogue> list = new ArrayList<>();
-        List<OperatorConfig> map10086 = new ArrayList<>();
-        List<OperatorConfig> map10000 = new ArrayList<>();
-        List<OperatorConfig> map10010 = new ArrayList<>();
-        list.add(new OperatorCatalogue("移动", map10086));
-        list.add(new OperatorCatalogue("联通", map10010));
-        list.add(new OperatorCatalogue("电信", map10000));
-        for (GroupEnum group : GroupEnum.values()) {
-            if (group.getWebsiteType() != WebsiteType.OPERATOR | group == GroupEnum.CHINA_10000 || group == GroupEnum.CHINA_10086) {
-                continue;
-            }
-            OperatorConfig config = new OperatorConfig();
-            config.setGroupCode(group.getGroupCode());
-            config.setGroupName(group.getGroupName());
-
-            String websiteName = redisService.getString(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
-            if (StringUtils.isBlank(websiteName)) {
-                logger.error("严重错误,group没有配置,websiteName is blank,groupCode={}", group.getGroupCode());
-                continue;
-            }
-            String env = TaskUtils.getSassEnv();
-            CheckUtils.checkNotNull(env, "env is null");
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-            if (null == websiteOperator) {
-                logger.error("website not found ,webisteName={}，env={}", websiteName, env);
-                continue;
-            }
-            WebsiteConfig websiteConfig = buildWebsiteConfig(websiteOperator);
-            //设置别名
-            websiteConfig.setWebsiteName(websiteName);
-            String initSetting = websiteConfig.getInitSetting();
-            if (org.apache.commons.lang3.StringUtils.isBlank(initSetting)) {
-                throw new RuntimeException("initSetting is blank websiteName=" + websiteName + ",env=" + env);
-            }
-            JSONObject json = JSON.parseObject(initSetting);
-            if (!json.containsKey("fields")) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName + ",env=" + env);
-            }
-            List<FieldInitSetting> fieldInitSettings = JSON.parseArray(json.getString("fields"), FieldInitSetting.class);
-            if (null == fieldInitSettings) {
-                throw new RuntimeException("initSetting fields is blank websiteName=" + websiteName + ",env=" + env);
-            }
-            config.setWebsiteName(websiteConfig.getWebsiteName());
-            config.setLoginTip(websiteConfig.getLoginTip());
-            config.setResetTip(websiteConfig.getResetTip());
-            config.setResetType(websiteConfig.getResetType());
-            config.setResetURL(websiteConfig.getResetURL());
-            config.setSmsReceiver(websiteConfig.getSmsReceiver());
-            config.setSmsTemplate(websiteConfig.getSmsTemplate());
-            config.setVerifyTip(websiteConfig.getVerifyTip());
-
-            for (FieldInitSetting fieldInitSetting : fieldInitSettings) {
-                InputField field = FieldBizType.fields.get(fieldInitSetting.getType());
-                if (null != fieldInitSetting.getDependencies()) {
-                    for (String dependency : fieldInitSetting.getDependencies()) {
-                        field.getDependencies().add(FieldBizType.fields.get(dependency).getName());
-                    }
-                }
-                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.PIC_CODE.getCode(), fieldInitSetting.getType())) {
-                    config.setHasPicCode(true);
-                }
-                if (org.apache.commons.lang3.StringUtils.equals(FieldBizType.SMS_CODE.getCode(), fieldInitSetting.getType())) {
-                    config.setHasSmsCode(true);
-                }
-                config.getFields().add(field);
-            }
-            config.setEnable(true);
-            if (group.getGroupName().contains("移动")) {
-                map10086.add(config);
-                continue;
-            }
-            if (group.getGroupName().contains("联通")) {
-                map10010.add(config);
-                continue;
-            }
-            if (group.getGroupName().contains("电信")) {
-                map10000.add(config);
-                continue;
-            }
-        }
-        return list;
     }
 
     @Override
@@ -295,7 +205,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         } else {
             WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
             website = buildWebsiteFromWebsiteInfo(websiteInfo);
-//            website = getWebsiteByWebsiteName(websiteName);
+            //            website = getWebsiteByWebsiteName(websiteName);
         }
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website, taskId);
@@ -319,7 +229,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         } else {
             WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
             website = buildWebsiteFromWebsiteInfo(websiteInfo);
-//            website = getWebsiteByWebsiteName(websiteName);
+            //            website = getWebsiteByWebsiteName(websiteName);
         }
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
@@ -412,8 +322,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public Website getWebsiteFromCache(Long taskId) {
-        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {
-        });
+        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
         if (website != null) {
             if (StringUtils.isNotEmpty(website.getSearchConfigSource())) {
                 try {

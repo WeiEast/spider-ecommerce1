@@ -55,7 +55,7 @@ public interface WebsiteGroupService {
      * weith>0
      * @return
      */
-    List<OperatorCatalogue> updateCache();
+    void updateCache();
 
     /**
      * 更新配置状态
