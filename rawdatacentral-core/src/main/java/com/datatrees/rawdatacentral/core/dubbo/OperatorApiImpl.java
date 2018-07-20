@@ -18,7 +18,7 @@ import com.datatrees.rawdatacentral.common.retry.RetryHandler;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.spider.operator.api.OperatorApi;
-import com.datatrees.spider.operator.domain.model.constant.FormType;
+import com.datatrees.spider.operator.domain.model.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.spider.operator.domain.model.OperatorGroup;

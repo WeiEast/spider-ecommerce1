@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.service.dubbo.mail.exmail_qq;
 
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.mail.exmail_qq.MailServiceApiForExMailQQ;
-import com.datatrees.spider.operator.domain.model.constant.FormType;
+import com.datatrees.spider.operator.domain.model.FormType;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;

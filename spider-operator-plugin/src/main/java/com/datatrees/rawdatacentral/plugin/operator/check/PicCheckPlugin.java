@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.operator.domain.model.constant.FormType;
+import com.datatrees.spider.operator.domain.model.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
