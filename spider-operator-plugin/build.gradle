@@ -1,3 +1,4 @@
 dependencies {
+    compile project(':spider-operator-service')
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
