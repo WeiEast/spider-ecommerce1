@@ -35,25 +35,8 @@ public class XmlParser {
     }
 
     public XmlParser(String xml) throws JDOMException, IOException {
-        StringReader reader = new StringReader(xml);
-        SAXBuilder saxBuilder = new SAXBuilder();
-        document = saxBuilder.build(reader);
+        document = createDocument(xml);
         root = document.getRootElement();
-        reader.close();
-    }
-
-    public static String getElementValue(Object obj) {
-        if (obj == null) {
-            return StringUtils.EMPTY;
-        }
-        if (obj instanceof Attribute) {
-            Attribute attribute = (Attribute) obj;
-            return attribute.getValue();
-        } else if (obj instanceof Text) {
-            return ((Text) obj).getText();
-        } else {
-            return obj.toString();
-        }
     }
 
     public Document getDocument() {
@@ -64,41 +47,66 @@ public class XmlParser {
         return root;
     }
 
-    private XPathExpression<Object> complieXpath(String path) {
+    public static Document createDocument(String xml) throws JDOMException, IOException {
+        try (StringReader reader = new StringReader(xml)) {
+            SAXBuilder saxBuilder = new SAXBuilder();
+            return saxBuilder.build(reader);
+        }
+    }
+
+    public Element getElementByXPath(String path) {
+        return (Element) evaluateFirst(root, path);
+    }
+
+    public List<Object> getElementsByXPath(String path) {
+        return evaluate(root, path);
+    }
+
+    public static XPathExpression<Object> compileXpath(String path) {
         return XPathFactory.instance().compile(path);
     }
 
-    public Element getElementByXPath(String path) throws JDOMException {
-        XPathExpression<Object> xpath = complieXpath(path);
-        return (Element) xpath.evaluateFirst(root);
+    public static Object evaluateFirst(Element element, String path) {
+        XPathExpression<Object> xpath = compileXpath(path);
+        return xpath.evaluateFirst(element);
     }
 
-    public Element getElementByXPath(Element context, String path) throws JDOMException {
-        XPathExpression<Object> xpath = complieXpath(path);
-        return (Element) xpath.evaluateFirst(context);
+    public static List<Object> evaluate(Element element, String path) {
+        XPathExpression<Object> xpath = compileXpath(path);
+        return xpath.evaluate(element);
     }
 
-    public List<Object> getElementsByXPath(String path) throws JDOMException {
-        XPathExpression<Object> xpath = complieXpath(path);
-        return xpath.evaluate(root);
+    public static Element getElementByXPath(Element context, String path) {
+        return (Element) evaluateFirst(context, path);
     }
 
-    public List<Object> getElementsByXPath(Element context, String path) throws JDOMException {
-        XPathExpression<Object> xpath = complieXpath(path);
-        return xpath.evaluate(context);
+    public static List<Object> getElementsByXPath(Element context, String path) {
+        return evaluate(context, path);
     }
 
-    public String getStringValue(Element context, String path) {
+    public static String getElementValue(Object obj) {
+        if (obj == null) {
+            return StringUtils.EMPTY;
+        }
+        if (obj instanceof Attribute) {
+            return ((Attribute) obj).getValue();
+        } else if (obj instanceof Text) {
+            return ((Text) obj).getText();
+        } else {
+            return obj.toString();
+        }
+    }
+
+    public static String getStringValue(Element context, String path) {
         if (context == null) {
             return null;
         }
-        XPathExpression<Object> xpath = complieXpath(path);
-        Object obj = xpath.evaluateFirst(context);
+        Object obj = evaluateFirst(context, path);
         return getElementValue(obj);
     }
 
-    public Integer getIntValue(Element context, String path) {
-        String value = this.getStringValue(context, path);
+    public static Integer getIntValue(Element context, String path) {
+        String value = getStringValue(context, path);
         if (StringUtils.isBlank(value)) {
             return null;
         }

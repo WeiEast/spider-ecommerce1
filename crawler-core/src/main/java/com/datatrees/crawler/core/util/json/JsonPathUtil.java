@@ -6,16 +6,13 @@ import java.util.List;
 
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Jerry
  * @datetime 2015-07-18 11:18
  */
 public class JsonPathUtil {
-
-    //    private static String filter(String json){
-    //        return json.replaceAll("\\s+", "");
-    //    }
 
     private static Object read(String json, String jsonPath) {
         if (json == null) return null;
@@ -28,16 +25,14 @@ public class JsonPathUtil {
     }
 
     private static String parseAsString(Object jsonObj) {
-        String result = null;
+        String result;
 
         if (jsonObj == null) {
-            result = "";
+            result = StringUtils.EMPTY;
         } else if (jsonObj instanceof String) {
-            result = String.valueOf(jsonObj);
-        } else if (jsonObj instanceof Number) {
-            result = String.valueOf(jsonObj);
-        } else if (jsonObj instanceof Boolean) {
-            result = String.valueOf(jsonObj);
+            result = (String) jsonObj;
+        } else if (jsonObj instanceof Number || jsonObj instanceof Boolean) {
+            result = jsonObj.toString();
         } else if (jsonObj instanceof JSONArray) {
             JSONArray array = (JSONArray) jsonObj;
             if (array.size() == 1) {
@@ -58,18 +53,18 @@ public class JsonPathUtil {
         if (jsonObj == null) {
             result.add("");
         } else if (jsonObj instanceof String) {
-            result.add(String.valueOf(jsonObj));
+            result.add((String) jsonObj);
         } else if (jsonObj instanceof JSONArray) {
             JSONArray array = (JSONArray) jsonObj;
 
             Iterator iterator = array.iterator();
 
-            Object item = null;
+            Object item;
             while (iterator.hasNext()) {
                 item = iterator.next();
 
                 if (item instanceof String) {
-                    result.add(String.valueOf(item));
+                    result.add((String)item);
                 } else {
                     result.add(parse(item));
                 }

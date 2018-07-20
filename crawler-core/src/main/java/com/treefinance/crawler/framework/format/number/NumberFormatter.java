@@ -4,10 +4,8 @@ import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 import java.util.Map;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 
@@ -18,10 +16,10 @@ import org.apache.commons.collections.MapUtils;
 public class NumberFormatter extends ConfigurableFormatter<Number> {
 
     @Override
-    protected Number toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected Number toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String val = value.replaceAll("\\s+", "");
 
-        Map<String, NumberUnit> numberMap = RequestUtil.getNumberFormat(request, getConf());
+        Map<String, NumberUnit> numberMap = config.getNumberFormatMap(this.getConf());
         NumberUnit unit = findTimeUnitForNumber(numberMap, val);
         Number result = null;
         if (unit != null) {

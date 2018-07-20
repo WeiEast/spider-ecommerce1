@@ -2,9 +2,8 @@ package com.treefinance.crawler.framework.format.money;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.treefinance.crawler.framework.format.CommonFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -17,7 +16,8 @@ public class CurrencyPaymentFormatter extends CommonFormatter<String> {
     private final PaymentFormatter  paymentFormat  = new PaymentFormatter();
 
     @Override
-    protected String toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected String toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
+        String pattern = config.getPattern();
         String paymentPattern = null;
         String currencyPattern = null;
         if (StringUtils.isNotEmpty(pattern)) {
@@ -27,8 +27,8 @@ public class CurrencyPaymentFormatter extends CommonFormatter<String> {
                 currencyPattern = patterns[1];
             }
         }
-        String currency = currencyFormat.format(value, currencyPattern, request, response);
-        Number number = paymentFormat.format(value, paymentPattern, request, response);
+        String currency = currencyFormat.format(value, config.withPattern(currencyPattern));
+        Number number = paymentFormat.format(value, config.withPattern(paymentPattern));
         String result = null;
         if (number != null && currency != null) {
             result = number + " " + currency;

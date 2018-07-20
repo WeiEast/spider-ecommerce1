@@ -30,5 +30,9 @@ public class StandardExpressionTest {
 
         value = StandardExpression.evalSpecial("${currentMonth},${lastMonth},${last2Month},${last3Month},${last4Month}", map);
         Assert.assertEquals("201806,201805,201804,201803,201802",value);
+
+
+        value = StandardExpression.evalSpecial(" ${currentMonth}, ${lastMonth}, ${last2Month}, ${last3Month}, ${last4Month} ", map);
+        Assert.assertEquals(" 201806, 201805, 201804, 201803, 201802 ",value);
     }
 }

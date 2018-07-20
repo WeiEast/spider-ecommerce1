@@ -17,9 +17,8 @@ import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.Content;
-import com.datatrees.common.protocol.metadata.Metadata;
+import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.StringUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.FileUtils;
@@ -27,6 +26,7 @@ import com.datatrees.crawler.core.processor.common.IPAddressUtil;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.james.mime4j.field.FieldName;
 import org.apache.james.mime4j.message.*;
 import org.apache.james.mime4j.parser.Field;
@@ -38,55 +38,45 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2015年10月8日 下午3:07:06
  */
-public enum MailParserImpl {
-    INSTANCE;
+public final class MailParserImpl {
     private static final Logger logger                = LoggerFactory.getLogger(MailParserImpl.class);
-    private              String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
-    private              String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
+    private static final String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
+    private static final String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
 
-    public Map parseMessage(String websiteName, String contentString, boolean bodyParser) throws UnsupportedEncodingException {
-        InputStream fis = null;
-        Mail mimeMsg = null;
-        try {
-            fis = IOUtils.toInputStream(contentString);
-            mimeMsg = new Mail(fis);
-            mimeMsg.setWebsiteName(websiteName);
-            if (bodyParser) {
-                // If message contains many parts - parse all parts
-                if (mimeMsg.isMultipart()) {
-                    Multipart multipart = (Multipart) mimeMsg.getBody();
-                    parseBodyParts(mimeMsg, multipart);
-                } else {
-                    // If it's single part message, just get text body
-                    String text = getTxtPart(mimeMsg);
-                    mimeMsg.getTxtBody().append(text);
+    public static Map parseMessage(String websiteName, String contentString, boolean bodyParser) throws IOException {
+        try (InputStream fis = IOUtils.toInputStream(contentString)) {
+            Mail mimeMsg = new Mail(fis);
+            try {
+                mimeMsg.setWebsiteName(websiteName);
+                if (bodyParser) {
+                    // If message contains many parts - parse all parts
+                    if (mimeMsg.isMultipart()) {
+                        Multipart multipart = (Multipart) mimeMsg.getBody();
+                        parseBodyParts(mimeMsg, multipart);
+                    } else {
+                        // If it's single part message, just get text body
+                        String text = getTxtPart(mimeMsg);
+                        mimeMsg.getTxtBody().append(text);
+                    }
                 }
+                return mailTransform(mimeMsg);
+            } finally {
+                mimeMsg.dispose();
             }
-            return this.mailTransform(mimeMsg);
-        } catch (IOException ex) {
-            logger.error("mail parser error,exception:" + ex.getMessage(), ex);
-        } finally {
-            IOUtils.closeQuietly(fis);
-            mimeMsg.dispose();
         }
-        return null;
     }
 
-    private Map mailTransform(Mail mimeMsg) {
-        Map<String, Object> map = new HashMap<String, Object>();
+    private static Map mailTransform(Mail mimeMsg) {
+        Map<String, Object> map = new HashMap<>();
         for (Field field : mimeMsg.getHeader().getFields()) {
-            List<Field> values = (List<Field>) map.get(field.getName().toLowerCase());
-            if (values == null) {
-                values = new LinkedList<Field>();
-                map.put(field.getName().toLowerCase(), values);
-            }
+            List<Field> values = (List<Field>) map.computeIfAbsent(field.getName().toLowerCase(), k -> new LinkedList<>());
             values.add(field);
         }
         map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.DATE, mimeMsg.getDate());
         try {
             map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.FROM, mimeMsg.getFrom().get(0).getAddress());
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.warn("Error reading mail's from address.", e);
         }
         map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.TO, mimeMsg.getTo());
         map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.SUBJECT, mimeMsg.getSubject());
@@ -102,11 +92,11 @@ public enum MailParserImpl {
             mailHeader.put(field.getName(), field.getBody());
         }
         map.put("mailHeader", GsonUtils.toJson(mailHeader));
-        this.receivedFormat(map);
+        receivedFormat(map);
         return map;
     }
 
-    private void receivedFormat(Map<String, Object> result) {
+    private static void receivedFormat(Map<String, Object> result) {
         try {
             List<Field> receivedList = (List<Field>) result.get("received");
             if (CollectionUtils.isNotEmpty(receivedList)) {
@@ -122,12 +112,12 @@ public enum MailParserImpl {
                             break;
                         }
                     } else {
-                        logger.warn("extract mail server ip error with receivedList" + receivedList + " ,MAIL_SERVER_IP_REGEX: " + MAIL_SERVER_IP_REGEX);
+                        logger.warn("extract mail server ip error with receivedList[{}], MAIL_SERVER_IP_REGEX: {}", receivedList, MAIL_SERVER_IP_REGEX);
                     }
                 }
             }
         } catch (Exception e) {
-            logger.error("receivedFormat error with " + result, e);
+            logger.warn("Error formatting mail's received with {}", result, e);
         }
     }
 
@@ -136,12 +126,12 @@ public enum MailParserImpl {
      * @param multipart
      * @exception IOException
      */
-    private void parseBodyParts(Mail mimeMsg, Multipart multipart) throws IOException {
+    private static void parseBodyParts(Mail mimeMsg, Multipart multipart) throws IOException {
         for (BodyPart part : multipart.getBodyParts()) {
             if (part.getDispositionType() != null && RegExp.find(part.getDispositionType().toLowerCase(), attachmentTypePattern)) {
                 // If DispositionType is null or empty, it means that it's multipart, not attached
                 // file
-                this.saveAttachment(mimeMsg, part);
+                saveAttachment(mimeMsg, part);
             } else if (part.isMimeType("text/plain")) {
                 String txt = getTxtPart(part);
                 mimeMsg.getTxtBody().append(txt);
@@ -149,7 +139,7 @@ public enum MailParserImpl {
                 String html = getTxtPart(part);
                 mimeMsg.getHtmlBody().append(html);
             } else {
-                logger.warn("unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + "," + part.getHeader());
+                logger.warn("unsupport part Type: {}, {}, {}, {}", part.getFilename(), part.getMimeType(), part.getCharset(), part.getHeader());
             }
 
             // If current part contains other, parse it again by recursion
@@ -159,7 +149,7 @@ public enum MailParserImpl {
         }
     }
 
-    private String getAttachmentFileName(Entity part) {
+    private static String getAttachmentFileName(Entity part) {
         String fileName = part.getFilename();
         if (StringUtils.isBlank(fileName)) {
             Field field = part.getHeader().getField(FieldName.CONTENT_DISPOSITION);
@@ -170,52 +160,49 @@ public enum MailParserImpl {
         return fileName;
     }
 
-    private void saveAttachment(Mail mimeMsg, Entity part) throws IOException {
+    private static void saveAttachment(Mail mimeMsg, Entity part) throws IOException {
         FileWapper fileWapper = new FileWapper();
         File file = new File(FileUtils.getFileRandomPath(mimeMsg.getWebsiteName()));
-        FileOutputStream fos = new FileOutputStream(file);
-        ByteArrayOutputStream baos = null;
-        try {
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             fileWapper.setName(getAttachmentFileName(part));
             fileWapper.setMimeType(part.getMimeType());
             // Get attach stream, write it to file
             SingleBody body = (SingleBody) part.getBody();
-            if (fileWapper.needDetectContent()) {
-                baos = new ByteArrayOutputStream();
-                body.writeTo(baos);
-                Content content = new Content("", "", baos.toByteArray(), "" + part.getHeader().getField(FieldName.CONTENT_TYPE), new Metadata());
-                IOUtils.write(content.detectContentAsString().getBytes("UTF-8"), fos);
-            } else {
-                body.writeTo(fos);
+            try {
+                if (fileWapper.needDetectContent()) {
+                    String content = readContent(body, part.getHeader());
+                    fos.write(content.getBytes(CharsetUtil.UTF_8_NAME));
+                } else {
+                    body.writeTo(fos);
+                }
+            } finally {
+                body.dispose();
             }
-            body.dispose();
             fileWapper.setFile(file);
             fileWapper.setSize(file.length());
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(baos);
-            IOUtils.closeQuietly(fos);
         }
+
         mimeMsg.getAttachments().add(fileWapper);
     }
 
-    private String getTxtPart(Entity part) {
-        ByteArrayOutputStream baos = null;
+    private static String getTxtPart(Entity part) throws IOException {
+        // Get content from body
+        TextBody tb = (TextBody) part.getBody();
         try {
-            // Get content from body
-            TextBody tb = (TextBody) part.getBody();
-            baos = new ByteArrayOutputStream();
-            tb.writeTo(baos);
-            tb.dispose();
-            String contentType = part.getHeader().getField(FieldName.CONTENT_TYPE) != null ? part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
-            Content content = new Content("", "", baos.toByteArray(), contentType, new Metadata());
-            return content.detectContentAsString();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            return readContent(tb, part.getHeader());
         } finally {
-            IOUtils.closeQuietly(baos);
+            tb.dispose();
         }
-        return null;
+    }
+
+    private static String readContent(SingleBody tb, Header header) throws IOException {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            tb.writeTo(output);
+            Field field = header.getField(FieldName.CONTENT_TYPE);
+            String contentType = field != null ? field.getBody() : StringUtils.EMPTY;
+            Content content = new Content(output.toByteArray(), contentType);
+            return content.detectContentAsString();
+        }
     }
 }

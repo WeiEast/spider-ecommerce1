@@ -13,13 +13,12 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.protocol.util.EncodingDetector;
 import com.datatrees.common.util.PatternUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +29,6 @@ public class Content {
     private static final Pattern CHARSET_PATTERN = Pattern.compile(Constant.HEADER_CHARSET_PATTERN,
         Pattern.CASE_INSENSITIVE);
     static final         Content NULL            = new Null();
-
-    private int      version;
 
     private String   url;
 
@@ -53,8 +50,8 @@ public class Content {
         metadata = new Metadata();
     }
 
-    public Content(String url, String base, byte[] content, String contentType, Metadata metadata, Configuration conf) {
-        this(url, base, content, contentType, metadata);
+    public Content(byte[] content, String contentType) {
+        this(StringUtils.EMPTY, StringUtils.EMPTY, content, contentType,new Metadata());
     }
 
     public Content(String url, String base, byte[] content, String contentType, Metadata metadata) {
@@ -233,7 +230,6 @@ public class Content {
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("Version: ").append(version).append("\n");
         builder.append("url: ").append(url).append("\n");
         builder.append("base: ").append(base).append("\n");
         builder.append("contentType: ").append(contentType).append("\n");

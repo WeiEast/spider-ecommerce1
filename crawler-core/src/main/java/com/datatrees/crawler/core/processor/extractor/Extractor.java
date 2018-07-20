@@ -11,14 +11,11 @@ package com.datatrees.crawler.core.processor.extractor;
 import java.util.*;
 import java.util.Map.Entry;
 
-import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.bean.CrawlRequest;
 import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
@@ -116,18 +113,6 @@ public class Extractor {
             }
         }
         return false;
-    }
-
-    /**
-     * add default conf if not exists
-     * @param request
-     */
-    private static void checkConf(CrawlRequest request) {
-        Configuration conf = request.getConf();
-        if (conf == null) {
-            conf = PropertiesConfiguration.getInstance();
-            RequestUtil.setConf(request, conf);
-        }
     }
 
 }

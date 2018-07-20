@@ -13,6 +13,8 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.OperationException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
+import com.treefinance.crawler.framework.exception.InvalidDataException;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -49,8 +51,13 @@ public class OperationPipeline extends ProcessPipeline {
                 if (outPut != null) {
                     return outPut.getData();
                 } else {
-                    logger.warn("Unexpected operation result! No operations processed for field: {}", fieldExtractor.getField());
+                    logger.warn("Unexpected operation result! No operations processed for {}", fieldExtractor);
                 }
+            } catch (InvalidDataException e) {
+                logger.warn("Error processing {} with operations! >> {}", fieldExtractor, e.getMessage());
+                return null;
+            } catch (InvalidOperationException e) {
+                throw new OperationException("Unexpected exception with operations!", e);
             } catch (ResultEmptyException e) {
                 throw e;
             } catch (Exception e) {
@@ -59,7 +66,7 @@ public class OperationPipeline extends ProcessPipeline {
                 request.setInput(lastContent);
             }
         } else {
-            logger.warn("Not found available operations for field: {}", fieldExtractor.getField());
+            logger.warn("Not found available operations for {}", fieldExtractor);
         }
 
         return content;

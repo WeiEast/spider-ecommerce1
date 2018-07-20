@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.CodecOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.codec.CodecType;
@@ -38,96 +39,74 @@ public class CodecOperationImpl extends Operation<CodecOperation> {
     }
 
     @Override
+    protected boolean isSkipped(CodecOperation operation, Request request, Response response) {
+        // invalid codec operation and skip
+        boolean flag = operation.getCodecType() == null || operation.getHandlingType() == null;
+        if (flag) {
+            logger.warn("Invalid codec operation and skip. 'codec-type' or 'handling-type' was null.");
+        }
+        return flag;
+    }
+
+    @Override
     protected Object doOperation(@Nonnull CodecOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
-        String charSet = RequestUtil.getContentCharset(request);
-        // check default charset
-        charSet = StringUtils.defaultIfEmpty(charSet, "UTF-8");
-
-        CodecType cdType = operation.getCodecType();
-        HandlingType handlType = operation.getHandlingType();
-
-        logger.debug("codec-type: {}, handling-type: {}", cdType, handlType);
-
-        // get input
         String input = (String) operatingData;
 
-        return handlerCodec(input, cdType, handlType, charSet);
-    }
+        String charset = RequestUtil.getContentCharset(request);
+        charset = StringUtils.defaultIfEmpty(charset, CharsetUtil.UTF_8_NAME);
 
-    private String handlerCodec(String orginal, CodecType cdType, HandlingType handlType, String charset) {
-        String result = orginal;
+        CodecType cdType = operation.getCodecType();
+        HandlingType handlingType = operation.getHandlingType();
 
-        try {
-            if (cdType != null && handlType != null) {
-                switch (cdType) {
-                    case MD5:
-                        result = handlerMd5(handlType, orginal, charset);
-                        break;
-                    case BASE64:
-                        result = handlerBase64(handlType, orginal, charset);
-                        break;
-                    case URI:
-                        result = handlerURL(handlType, orginal, charset);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-            logger.error("codec error!", e);
-        }
-        return result;
-    }
-
-    private String handlerURL(HandlingType handlType, String orginal, String charset) throws UnsupportedEncodingException, DecoderException {
-        String result = orginal;
-        byte[] sourceBytes = orginal.getBytes(charset);
-        byte[] dest = null;
-        switch (handlType) {
-            case ENCODE:
-                dest = URLCodec.encodeUrl(null, sourceBytes);
-                result = new String(dest, charset);
+        String result;
+        switch (cdType) {
+            case MD5:
+                result = handleMd5(handlingType, input, charset);
                 break;
-
+            case BASE64:
+                result = handleBase64(handlingType, input, charset);
+                break;
             default:
-                dest = URLCodec.decodeUrl(sourceBytes);
-                result = new String(dest, charset);
+                result = handleURL(handlingType, input, charset);
                 break;
         }
         return result;
     }
 
-    private String handlerBase64(HandlingType handlType, String orginal, String charset) throws Exception {
-        String result = orginal;
-        byte[] sourceBytes = orginal.getBytes(charset);
-        byte[] dest = null;
-        switch (handlType) {
-            case ENCODE:
-                dest = Base64.encodeBase64(sourceBytes);
-                result = new String(dest, charset);
-                break;
+    private String handleURL(HandlingType handlingType, String url, String charset) throws UnsupportedEncodingException, DecoderException {
+        byte[] sourceBytes = url.getBytes(charset);
 
-            default:
-                dest = Base64.decodeBase64(sourceBytes);
-                result = new String(dest, charset);
-                break;
+        byte[] dest;
+        if (HandlingType.ENCODE.equals(handlingType)) {
+            dest = URLCodec.encodeUrl(null, sourceBytes);
+        } else {
+            dest = URLCodec.decodeUrl(sourceBytes);
         }
-        return result;
+
+        return new String(dest, charset);
     }
 
-    private String handlerMd5(HandlingType handlType, String orginal, String charset) throws Exception {
-        String result = orginal;
-        byte[] sourceBytes = orginal.getBytes(charset);
-        switch (handlType) {
-            case ENCODE:
-                result = DigestUtils.md5Hex(sourceBytes);
-                break;
+    private String handleBase64(HandlingType handlingType, String content, String charset) throws Exception {
+        byte[] sourceBytes = content.getBytes(charset);
 
-            default:
-                break;
+        byte[] dest;
+        if (HandlingType.ENCODE.equals(handlingType)) {
+            dest = Base64.encodeBase64(sourceBytes);
+        } else {
+            dest = Base64.decodeBase64(sourceBytes);
         }
+
+        return new String(dest, charset);
+    }
+
+    private String handleMd5(HandlingType handlingType, String content, String charset) throws Exception {
+        String result = content;
+
+        if (HandlingType.ENCODE.equals(handlingType)) {
+            byte[] sourceBytes = content.getBytes(charset);
+            result = DigestUtils.md5Hex(sourceBytes);
+        }
+
         return result;
     }
 }
