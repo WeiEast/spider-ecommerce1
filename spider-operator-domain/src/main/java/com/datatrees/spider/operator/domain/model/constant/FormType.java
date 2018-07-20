@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.constant;
+package com.datatrees.spider.operator.domain.model.constant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,9 +9,13 @@ import java.util.Map;
 public class FormType {
 
     public static final  String              LOGIN                = "LOGIN";//登陆表单
+
     public static final  String              LOGIN_POST           = "LOGIN_POST";//登陆后处理
+
     public static final  String              VALIDATE_BILL_DETAIL = "VALIDATE_BILL_DETAIL";//验证详单
+
     public static final  String              VALIDATE_USER_INFO   = "VALIDATE_USER_INFO";//验证个人信息
+
     private static final Map<String, String> allTypes             = new HashMap<>();
 
     static {

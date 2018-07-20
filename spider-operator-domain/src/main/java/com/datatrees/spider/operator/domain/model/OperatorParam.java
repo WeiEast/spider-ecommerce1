@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.operator;
+package com.datatrees.spider.operator.domain.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.datatrees.rawdatacentral.domain.constant.FormType;
+import com.datatrees.spider.operator.domain.model.constant.FormType;
 
 /**
  * 运营商登陆过程中的参数

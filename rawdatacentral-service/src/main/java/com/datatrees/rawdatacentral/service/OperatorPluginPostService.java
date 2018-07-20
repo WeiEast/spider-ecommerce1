@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.service;
 
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**

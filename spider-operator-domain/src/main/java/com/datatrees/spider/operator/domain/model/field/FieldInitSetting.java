@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.operator;
+package com.datatrees.spider.operator.domain.model.field;
 
 import java.util.List;
 

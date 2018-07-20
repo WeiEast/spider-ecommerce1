@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2017
  */
 
-package com.datatrees.rawdatacentral.domain.operator;
+package com.datatrees.spider.operator.domain.model.field;
 
 import java.util.HashMap;
 import java.util.Map;

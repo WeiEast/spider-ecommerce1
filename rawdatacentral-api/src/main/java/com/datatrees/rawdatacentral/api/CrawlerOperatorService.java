@@ -3,9 +3,9 @@ package com.datatrees.rawdatacentral.api;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.operator.OperatorGroup;
-import com.datatrees.rawdatacentral.domain.operator.OperatorLoginConfig;
-import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
+import com.datatrees.spider.operator.domain.model.OperatorGroup;
+import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 
 /**
