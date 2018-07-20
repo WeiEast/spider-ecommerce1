@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -24,13 +24,12 @@ import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.util.Cookie;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,49 +45,6 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            WebClient webClient = new WebClient();
-            webClient.getCookieManager().setCookiesEnabled(true);
-            webClient.getOptions().setCssEnabled(false);
-            webClient.getOptions().setDownloadImages(false);
-            webClient.getOptions().setJavaScriptEnabled(true);
-            HtmlPage page = webClient.getPage("https://ah.ac.10086.cn/login");
-            String content = page.asXml();
-            Set<Cookie> cookies = webClient.getCookieManager().getCookies();
-            TaskUtils.saveCookie(param.getTaskId(), cookies);
-            webClient.close();
-            String spid = JsoupXpathUtils.selectFirst(content, "//form[@id='oldLogin']/input[@name='spid']/@value");
-            TaskUtils.addTaskShare(param.getTaskId(), "spid", spid);
-
-            //
-            //String backUrl = "http://service.ah.10086.cn/LoginSso";
-            //String backurlflag = "https://ah.ac.10086.cn/4login/backPage.jsp";
-            //String errorurl = "https://ah.ac.10086.cn/4login/errorPage.jsp";
-            //String relayStateId = "type=A;backurl=http://service.ah.10086.cn/LoginSso;nl=3;loginFrom=http://service.ah.10086.cn/LoginSso";
-            //
-            //List<String> backUrlList = XPathUtil.getXpath("//input[@name='backurl']/@value", pageContent);
-            //if (!CollectionUtils.isEmpty(backUrlList)) {
-            //    backUrl = backUrlList.get(0);
-            //}
-            //List<String> backUrlFlagList = XPathUtil.getXpath("//input[@name='backurlflag']/@value", pageContent);
-            //if (!CollectionUtils.isEmpty(backUrlFlagList)) {
-            //    backurlflag = backUrlFlagList.get(0);
-            //}
-            //List<String> errorUrlList = XPathUtil.getXpath("//input[@name='errorurl']/@value", pageContent);
-            //if (!CollectionUtils.isEmpty(errorUrlList)) {
-            //    errorurl = errorUrlList.get(0);
-            //}
-            //String spid = PatternUtils.group(pageContent, "name=\"spid\" value=\"([^\"]+)\"", 1);
-            //List<String> relayStateIdList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
-            //if (!CollectionUtils.isEmpty(relayStateIdList)) {
-            //    relayStateId = relayStateIdList.get(0);
-            //}
-            //
-            //TaskUtils.addTaskShare(param.getTaskId(), "backUrl", backUrl);
-            //TaskUtils.addTaskShare(param.getTaskId(), "backurlflag", backurlflag);
-            //TaskUtils.addTaskShare(param.getTaskId(), "errorurl", errorurl);
-            //TaskUtils.addTaskShare(param.getTaskId(), "spid", spid);
-            //TaskUtils.addTaskShare(param.getTaskId(), "relayStateId", relayStateId);
-
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={},response={}", param, response, e);
@@ -152,6 +108,32 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         HttpResult<String> result = new HttpResult<>();
         Response response = null;
         try {
+            String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
+            if (StringUtils.isBlank(spid)) {
+                RemoteWebDriver driver = null;
+                try {
+                    String currentUrl = "https://ah.ac.10086.cn/login";
+                    driver = SeleniumUtils.createClient(param.getTaskId(), param.getWebsiteName());
+                    long start = System.currentTimeMillis();
+                    driver.get(currentUrl);
+                    String pageContent = driver.getPageSource();
+                    while (!StringUtils.contains(pageContent, "name=\"spid\"")) {
+                        if (System.currentTimeMillis() - start > 5000) {
+                            break;
+                        }
+                        TimeUnit.MILLISECONDS.sleep(200);
+                        pageContent = driver.getPageSource();
+                    }
+                    logger.info("登录页面加载耗时{}毫秒,taskId={}", System.currentTimeMillis() - start, param.getTaskId());
+                    spid = JsoupXpathUtils.selectFirst(pageContent, "//form[@id='oldLogin']/input[@name='spid']/@value");
+                    TaskUtils.addTaskShare(param.getTaskId(), "spid", spid);
+                    TaskUtils.saveCookie(param.getTaskId(), SeleniumUtils.getCookies(driver));
+                } catch (Exception e) {
+                    logger.error("安徽移动登录页面初始化失败,taskId={}", param.getTaskId(), e);
+                } finally {
+                    SeleniumUtils.closeClient(driver);
+                }
+            }
             String templateUrl = "https://ah.ac.10086.cn/common/image.jsp?l={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_003")
                     .setFullUrl(templateUrl, Math.random()).invoke();
@@ -198,11 +180,10 @@ public class AnHui10086ForWeb implements OperatorPluginService {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
 
             String templateUrl = "https://ah.ac.10086.cn/Login";
-            String templateData = "type=B&formertype=B&backurl=http%3A%2F%2Fservice.ah.10086.cn%2FLoginSso&backurlflag=https%3A%2F%2Fah\n" +
-                    ".ac.10086.cn%2F4login%2FbackPage.jsp&errorurl=https%3A%2F%2Fah.ac.10086.cn%2F4login%2FerrorPage.jsp&spid\n" +
-                    "={}&RelayState=&mobileNum={}&login_type_ah=&login_pwd_type=2&loginBackurl\n" +
-                    "=&timestamp={}&smsValidCode=&servicePassword={}&validCode_state\n" +
-                    "=true&loginType=0&servicePassword=&servicePassword_1=&smsValidCode=&validCode={}";
+            String templateData = "type=B&formertype=B&backurl=https%3A%2F%2Fservice.ah.10086.cn%2FLoginSso&backurlflag=https%3A%2F%2Fah" +
+                    ".ac.10086.cn%2F4login%2FbackPage.jsp&errorurl=https%3A%2F%2Fah.ac.10086.cn%2F4login%2FerrorPage" +
+                    ".jsp&spid={}&RelayState=&mobileNum={}&login_type_ah=&login_pwd_type=2&loginBackurl=&timestamp={}&smsValidCode" +
+                    "=&servicePassword={}&validCode_state=false&loginType=0&servicePassword_1=&smsValidCode=&validCode={}";
 
             Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", null);
             String encryptPassword = invocable.invokeFunction("enString", param.getPassword().toString()).toString();
@@ -258,10 +239,16 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String referer = "http://service.ah.10086.cn/pub-page/qry/qryDetail/billDetailIndex.html?kind=200011522&f=200011538&area=cd";
-            String templateUrl = "http://service.ah.10086.cn/pub/sendSmPass?opCode=5868&phone_No=&_={}";
+            String templateUrl = "https://service.ah.10086.cn/busi/broadbandZQ/getSubmitId?type=billDetailIndex_submitId&_={}";
             response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_010").setFullUrl(templateUrl, System.currentTimeMillis())
-                    .setReferer(referer).setRequestContentType(ContentType.APPLICATION_JSON).addHeader("X-Requested-With", "XMLHttpRequest")
-                    .addHeader("Accept", "application/json, text/javascript, */*; q=0.01").invoke();
+                    .setReferer(referer).setRequestContentType(ContentType.APPLICATION_JSON).invoke();
+            JSONObject jsonObject = response.getPageContentForJSON();
+            String submitId = (String) JSONPath.eval(jsonObject, "$.object.yzm_submitId");
+
+            templateUrl = "https://service.ah.10086.cn/pub/sendSmPass?opCode=EC20&phone_No=&type=billDetailIndex_submitId&yanzm_submitId={}&_={}";
+            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_010")
+                    .setFullUrl(templateUrl, submitId, System.currentTimeMillis()).setReferer(referer)
+                    .setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "retMsg\":\"OK")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -281,11 +268,11 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         BigDecimal db = new BigDecimal(Math.random() * (1 - 0) + 0);
         Response response = null;
         try {
-            String referer = "http://service.ah.10086.cn/pub-page/qry/qryDetail/billDetailIndex.html?kind=200011522&f=200011538&area=cd";
-            String templateUrl = "http://service.ah.10086.cn/pub/chkSmPass?smPass={}&phone_No=&_={}";
+            String referer = "https://service.ah.10086.cn/pub-page/qry/qryDetail/billDetailIndex.html?kind=200011522&f=200011538&area=cd";
+            String templateUrl = "https://service.ah.10086.cn/pub/chkSmPass?smPass={}&phone_No=&_={}";
             response = TaskHttpClient.create(param, RequestType.GET, "he_bei_10086_web_014")
                     .setFullUrl(templateUrl, param.getSmsCode(), System.currentTimeMillis()).setReferer(referer)
-                    .setRequestContentType(ContentType.APPLICATION_JSON).addHeader("X-Requested-With", "XMLHttpRequest").setReferer(referer).invoke();
+                    .addHeader("X-Requested-With", "XMLHttpRequest").setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "retMsg\":\"OK")) {
                 logger.info("详单-->校验成功,param={}", param);

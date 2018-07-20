@@ -122,12 +122,12 @@ public class YunNan10000ForWeb implements OperatorPluginService {
         try {
             String proNo = TaskUtils.getTaskContext(param.getTaskId(), "proDid");
             String areaCode = TaskUtils.getTaskContext(param.getTaskId(), "areaCode");
-            String nameStr = TaskUtils.getTaskContext(param.getTaskId(), "name");
-            String name = URLEncoder.encode(nameStr, "utf-8");
-            String identityCard = TaskUtils.getTaskContext(param.getTaskId(), "identityCard");
+            String name = URLEncoder.encode(param.getRealName(), "utf-8");
             String templateUrl = "http://yn.189.cn/public/custValid.jsp";
             String templateData = "_FUNC_ID_=WB_PAGE_PRODPASSWDQRY&NAME={}&CUSTCARDNO={}&PROD_PASS={}&MOBILE_CODE={}&NAME={}&CUSTCARDNO={}";
-            String data = TemplateUtils.format(templateData, name, identityCard, param.getPassword(), param.getSmsCode(), name, identityCard);
+            String data = TemplateUtils.format(templateData, name, param.getIdCard(), param.getPassword(), param
+                            .getSmsCode(),
+                    name, param.getIdCard());
             response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_web_002").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "<rsFlag>1</rsFlag>")) {
@@ -136,7 +136,7 @@ public class YunNan10000ForWeb implements OperatorPluginService {
             }
             templateUrl = "http://yn.189.cn/public/pwValid.jsp";
             templateData = "_FUNC_ID_=WB_PAGE_PRODPASSWDQRY&NAME={}&CUSTCARDNO={}&PROD_PASS={}&MOBILE_CODE={}&ACC_NBR={}&AREA_CODE={}&LOGIN_TYPE=21&PASSWORD={}&MOBILE_FLAG=1&MOBILE_LOGON_NAME={}&MOBILE_CODE={}&PROD_NO={}";
-            data = TemplateUtils.format(templateData, name, identityCard, param.getPassword(), param.getSmsCode(), param.getMobile(), areaCode, param.getPassword(), param.getMobile(), param.getSmsCode(), proNo);
+            data = TemplateUtils.format(templateData, name, param.getIdCard(), param.getPassword(), param.getSmsCode(), param.getMobile(), areaCode, param.getPassword(), param.getMobile(), param.getSmsCode(), proNo);
             response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<rsFlag>2</rsFlag>")) {

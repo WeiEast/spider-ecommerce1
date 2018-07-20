@@ -1,9 +1,7 @@
 package com.datatrees.rawdatacentral.plugin.operator.jiang_su_10086_wap;
 
 import javax.script.Invocable;
-import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -40,7 +38,8 @@ public class JiangSu10086ForWap implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
             //获取imgReqSeq
-            Response response = TaskHttpClient.create(param, RequestType.GET, "jiang_su_10086_wap_001").setFullUrl("http://wap.js.10086.cn/login.thtml").invoke();
+            Response response = TaskHttpClient.create(param, RequestType.GET, "jiang_su_10086_wap_001")
+                    .setFullUrl("http://wap.js.10086.cn/login.thtml").invoke();
             String pageContent = response.getPageContent();
             String imgReqSeq = RegexpUtils.select(pageContent, "id=\\\\\"imgReqSeq\\\\\" value=\\\\\"(.+?)\\\\\"", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "imgReqSeq", imgReqSeq);
@@ -99,7 +98,9 @@ public class JiangSu10086ForWap implements OperatorPluginService {
         try {
             String imgReqSeq = TaskUtils.getTaskShare(param.getTaskId(), "imgReqSeq");
             String templateUrl = "http://wap.js.10086.cn/imageVerifyCode.do?t=0.{}&imgReqSeq={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "jiang_su_10086_wap_002").setFullUrl(templateUrl, System.currentTimeMillis(), imgReqSeq).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "jiang_su_10086_wap_002")
+                    .setFullUrl(templateUrl, System.currentTimeMillis(), imgReqSeq)
+                    .addExtralCookie("wap.js.10086.cn","mywaytoopen","18f7a4cd2b229eb8adbcce7be537c59f79").invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -140,8 +141,11 @@ public class JiangSu10086ForWap implements OperatorPluginService {
 
         try {
             String queryMonth = DateUtils.format(new Date(), "yyyyMM");
-            String templateUrl = "http://wap.js.10086.cn/actionDispatcher" + ".do?reqUrl=billDetailTQry&busiNum=QDCX&currentPage=1&queryMonth={}&password_str=&ver=t&queryItem=1&browserFinger" + "=&confirm_smsPassword={}&confirmFlg=1";
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_su_10086_wap_005").setFullUrl(templateUrl, queryMonth, param.getSmsCode()).invoke();
+            String templateUrl = "http://wap.js.10086.cn/actionDispatcher" +
+                    ".do?reqUrl=billDetailTQry&busiNum=QDCX&currentPage=1&queryMonth={}&password_str=&ver=t&queryItem=1&browserFinger" +
+                    "=&confirm_smsPassword={}&confirmFlg=1";
+            response = TaskHttpClient.create(param, RequestType.POST, "jiang_su_10086_wap_005")
+                    .setFullUrl(templateUrl, queryMonth, param.getSmsCode()).invoke();
             String pageContent = response.getPageContent();
             JSONObject json = response.getPageContentForJSON();
             if (json.getBoolean("success")) {
@@ -168,8 +172,15 @@ public class JiangSu10086ForWap implements OperatorPluginService {
             String encryptPassword = invocable.invokeFunction("encryptByDES", param.getPassword()).toString();
 
             String imgReqSeq = TaskUtils.getTaskShare(param.getTaskId(), "imgReqSeq");
-            String templateUrl = "http://wap.js.10086.cn/actionDispatcher" + ".do?reqUrl=loginTouch&busiNum=login&mobile={}&password={}&isSavePasswordVal=1&verifyCode={}&isSms=0&ver=t&imgReqSeq" + "={}&loginType=0&browserFinger=67be1e5ef791cecddc38fd6990b6ce1f";
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_su_10086_wap_003").setFullUrl(templateUrl, param.getMobile(), URLEncoder.encode(encryptPassword, "UTF-8"), param.getPicCode(), imgReqSeq).invoke();
+
+            String templateUrl = "http://wap.js.10086.cn/actionDispatcher" +
+                    ".do?reqUrl=loginTouch&busiNum=login&mobile={}&password={}&isSavePasswordVal=1&verifyCode={}&isSms=0&ver=t&imgReqSeq" +
+                    "={}&loginType=0&mywaytoopen=18f7a4cd2b229eb8adbcce7be537c59f79&browserUA=Mozilla%2F5.0+" +
+                    "(Macintosh%3B+Intel+Mac+OS+X+10.13%3B+rv%3A52.0)+Gecko%2F20100101+Firefox%2F52.0";
+            response = TaskHttpClient.create(param, RequestType.POST, "jiang_su_10086_wap_003")
+                    .setFullUrl(templateUrl, param.getMobile(), URLEncoder.encode(encryptPassword, "UTF-8"), param.getPicCode(), imgReqSeq)
+                    .addHeader("hgvhv","18f7a4cd2b229eb8adbcce7be537c59f79")
+            .invoke();
             JSONObject json = response.getPageContentForJSON();
             if (json.getBoolean("success")) {
                 logger.warn("登录成功,params={}", param);

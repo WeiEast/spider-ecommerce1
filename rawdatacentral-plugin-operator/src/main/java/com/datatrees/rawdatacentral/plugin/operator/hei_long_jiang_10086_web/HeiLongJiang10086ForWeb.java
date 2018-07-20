@@ -189,8 +189,10 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             if (StringUtils.equals("000000", retCode)) {
                 //获取权限信息
                 data = json.getString("data");
-                templateUrl = "http://hl.10086.cn/rest/login/unified/callBack/?artifact={}&backUrl=";
+                templateUrl = "http://hl.10086.cn/rest/login/unified/callBack/?artifact={}&backUrl=http%3A%2F%2Fhl.10086.cn%2Fmy%2F";
                 TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_005").setFullUrl(templateUrl, data).invoke();
+                templateUrl = "https://login.10086.cn/SSOCheck.action?channelID=12034&backUrl=http://hl.10086.cn/my/";
+                TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_005").setFullUrl(templateUrl).invoke();
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             }
@@ -324,9 +326,9 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String modulus
-                    = "AJUBsfNgY8oBztH06scAJATI5a6OkDSr8DE3Lhv5F+0lyXEB4naYet1az8LV/StH94z0rJXX791YlVgzXusVpEc4nxOqpPu4qsM8ZpQMq/ryvAcLP5YNRIbfoqcuSJhrKWvfAW/qMS/vb0yPxfd7xmjvReO8H2ZK+ufF6yAfPleZ";
-            String exponent = "AQAB";
-            String templateUrl = "http://hl.10086.cn/rest/rsa/new-key?_={}";
+                    = "85592c52c613c934";
+            String exponent = "85592c52c613c934";
+            String templateUrl = "http://hl.10086.cn/rest/rsa/aes-key?_={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_003")
                     .setFullUrl(templateUrl, System.currentTimeMillis())
                     .addHeader(HttpHeadKey.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()).invoke();
@@ -339,8 +341,8 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             /**
              * 加载js加密脚本
              */
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des_new.js", "GBK");
-            String encryptPwd = invocable.invokeFunction("paramEncrypt", param.getPassword(), modulus, exponent).toString();
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des_20180510.js", "GBK");
+            String encryptPwd = invocable.invokeFunction("encrypt", param.getPassword(), modulus, exponent).toString();
             return encryptPwd;
         } catch (Exception e) {
             logger.error("加密失败,param={},response={}", param, response, e);

@@ -15,6 +15,7 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -34,9 +35,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 17/8/30.
  */
-public class HuBei10086ForWeb implements OperatorPluginPostService {
+public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
 
-    private static final Logger logger = LoggerFactory.getLogger(HuBei10086ForWeb.class);
+    private static final Logger logger = LoggerFactory.getLogger(HuBei10086ForWebWithSms.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -63,6 +64,8 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
     @Override
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
         switch (param.getFormType()) {
+            case FormType.LOGIN:
+                return refeshSmsCodeForLogin(param);
             case FormType.VALIDATE_BILL_DETAIL:
                 return refeshSmsCodeForBillDetail(param);
             default:
@@ -119,6 +122,28 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
         }
     }
 
+    private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "https://hb.ac.10086.cn/SSO/sendsms";
+            String templateData = "username={}&service=my&passwordType=2";
+            String data = TemplateUtils.format(templateData,param.getMobile());
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "hu_bei_10086_web_001")
+                    .setFullUrl(templateUrl).setRequestBody(data).invoke();
+            if (StringUtils.contains(response.getPageContent(),"随机短信已经发送到您的手机")) {
+                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("登录-->短信验证码-->刷新失败,param={}", param);
+                return result.failure(ErrorCode.REFESH_SMS_ERROR);
+            }
+        } catch (Exception e) {
+            logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
+    }
+
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
         CheckUtils.checkNotBlank(param.getPicCode(), ErrorCode.EMPTY_PIC_CODE);
@@ -127,11 +152,14 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
         try {
             String referer = "https://hb.ac.10086.cn/SSO/loginbox?service=servicenew&style=mymobile&continue=http://www" +
                     ".hb.10086.cn/servicenew/index.action";
-            String templateUrl = "https://hb.ac.10086.cn/SSO/loginbox?accountType=0&username={}&passwordType=1&password={}" +
-                    "&smsRandomCode=&emailusername=请输入登录帐号&emailpassword=&validateCode={}&action=/SSO/loginbox&style=mymobile&service=servicenew" +
-                    "&continue=http://www.hb.10086.cn/servicenew/index.action&submitMode=login&guestIP=";
+            String templateUrl = "https://hb.ac.10086.cn/SSO/loginbox";
+            String templateData = "accountType=0&username={}&passwordType=2&password={}&smsRandomCode={}&emailusername" +
+                    "=%E8%AF%B7%E8%BE%93%E5%85%A5%E7%99%BB%E5%BD%95%E5%B8%90%E5%8F%B7&emailpassword=&validateCode={}&action" +
+                    "=%2FSSO%2Floginbox&style=mymobile&service=my&continue=http%3A%2F%2Fwww.hb.10086.cn%3A80%2Fmy%2Findex" +
+                    ".action&submitMode=login&guestIP=s&isCompelLogin=0";
+            String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode());
             response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_002")
-                    .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getPicCode()).setReferer(referer).invoke();
+                    .setFullUrl(templateUrl).setRequestBody(data).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("登陆失败,param={},response={}", param, response);
@@ -266,7 +294,6 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
                     .setFullUrl(templateUrl, sf.format(new Date()), encryptPwd, encryptSmsCode).invoke();
             String pageContent = response.getPageContent();
             if (!pageContent.contains("暂时无法为您提供服务") && !pageContent.contains("您输入的服务密码或短信验证码错误或者过期")) {
-                TaskUtils.addTaskShare(param.getTaskId(), "encryptPwd", encryptPwd);
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
@@ -290,13 +317,12 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
             String content = "{\"data\":[";
             StringBuilder stringBuilder = new StringBuilder(content);
             String smsCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(FormType.VALIDATE_BILL_DETAIL));
-            String encryptPwd = TaskUtils.getTaskShare(param.getTaskId(), "encryptPwd");
 
             String templateUrl = "http://www.hb.10086.cn/my/detailbill/generateNewDetailExcel.action?menuid=myDetailBill&detailBean" +
                     ".billcycle={}&detailBean.password={}&detailBean.chkey={}&detailBean.startdate={}&detailBean" +
                     ".enddate={}&detailBean.flag={}&detailBean.selecttype=0";
             response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003")
-                    .setFullUrl(templateUrl, params[0], encryptPwd, smsCode, params[1], params[2], queryType).invoke();
+                    .setFullUrl(templateUrl, params[0], param.getPassword(), smsCode, params[1], params[2], queryType).invoke();
             byte[] bytes = response.getResponse();
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             String str = getJsonBody(in, queryType);

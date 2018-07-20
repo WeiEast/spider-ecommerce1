@@ -272,7 +272,7 @@ public class China10000ForApp implements OperatorPluginService {
                     }
 
                 }
-                if (StringUtils.isBlank(realName)) {
+                if (StringUtils.isBlank(realName) || StringUtils.equals(realName, "null")) {
                     logger.error("获取姓名失败,param={},pageContent={}", param, pageContent);
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }
@@ -290,7 +290,7 @@ public class China10000ForApp implements OperatorPluginService {
                         .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
                 pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
                 String balance = XPathUtil.getXpath("//TotalBalance/text()", pageContent).get(0);
-                if (StringUtils.isBlank(balance)) {
+                if (StringUtils.isBlank(balance) || StringUtils.equals(balance, "null")) {
                     logger.error("获取余额失败,param={},pageContent={}", param, pageContent);
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }

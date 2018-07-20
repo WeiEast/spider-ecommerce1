@@ -1,26 +1,23 @@
-package com.datatrees.rawdatacentral.plugin.operator.china_10010_app;
+package com.datatrees.rawdatacentral.plugin.operator.china_10010_wap;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.rawdatacentral.plugin.operator.common.KpiUtils;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
@@ -30,9 +27,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 17/10/27.
  */
-public class China10010ForApp implements OperatorPluginService {
+public class China10010ForWapWithSMS implements OperatorPluginService {
 
-    private static Logger logger = LoggerFactory.getLogger(China10010ForApp.class);
+    private static Logger logger = LoggerFactory.getLogger(China10010ForWapWithSMS.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -95,15 +92,17 @@ public class China10010ForApp implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            Random T = new Random();
-            String U = T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9);
-            String templateUrl = "http://m.client.10010.com/mobileService/sendRadomNum.htm";
-            String templateData = "keyVersion=&mobile={}&version=android%405.61";
-            String data = TemplateUtils.format(templateData, NewEncryptUtilForChina10010App.encode(param.getMobile().toString(), U));
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_001").setFullUrl(templateUrl).setRequestBody(data).invoke();
-            JSONObject json = response.getPageContentForJSON();
-            String code = json.getString("rsp_code");
-            if (StringUtils.equals(code, "0000")) {
+            String templateUrl = "https://uac.10010.com/oauth2/new_auth?display=wap&page_type=05&app_code=ECS-YH-WAP&redirect_uri=http" +
+                    "://wap.10010.com/t/loginCallBack.htm&state=http://wap.10010.com/t/myunicom.htm&channel_code=113000001";
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_001").setFullUrl(templateUrl).invoke();
+
+            templateUrl = "https://uac.10010.com/portal/Service/CheckNeedVerify?callback=&userName={}&pwdType=01";
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_001").setFullUrl(templateUrl, param.getMobile()).invoke();
+
+            templateUrl = "https://uac.10010.com/portal/Service/SendCkMSG?callback=&req_time={}&mobile={}";
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_001")
+                    .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile()).invoke();
+            if (StringUtils.contains(response.getPageContent(), "resultCode:\"0000\"")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             }
@@ -117,72 +116,54 @@ public class China10010ForApp implements OperatorPluginService {
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
         CheckUtils.checkNotBlank(param.getPassword(), ErrorCode.EMPTY_PASSWORD);
-        CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            Random T = new Random();
-            String U = T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9);
-            String templateUrl = "http://m.client.10010.com/mobileService/radomLogin.htm";
-            String templateData = "loginStyle=0&deviceOS=android7.0&mobile={}&netWay=WIFI&deviceCode=869782021770312&version=android%405.61" +
-                    "&deviceId=869782021770312&password={}&keyVersion=&appId=818f10dfa9b3bb4a8e3f4380602d5f47458a6506bbae525a00b4ed19552ac681&deviceModel=Mi+Note+2&deviceBrand=Xiaomi" +
-                    "&timestamp={}";
-            String data = TemplateUtils.format(templateData, NewEncryptUtilForChina10010App.encode(param.getMobile().toString(), U),
-                    NewEncryptUtilForChina10010App.encode(param.getSmsCode(), U), new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_002").setFullUrl(templateUrl).setRequestBody(data)
-                    .addHeader("User-Agent", "").invoke();
+            String templateUrl = "https://uac.10010.com/oauth2/new_auth?req_time={}";
+            String templateData = "app_code=ECS-YH-WAP&user_id={}&user_pwd={}&user_type=01&pwd_type=01&display=web&response_type" +
+                    "=code&redirect_uri=http%3A%2F%2Fwap.10010.com%2Ft%2FloginCallBack.htm&is_check=1&verifyCKCode={}" +
+                    "&state=http%3A%2F%2Fwap.10010.com%2Ft%2Fmyunicom.htm";
+            String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getSmsCode());
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_001").setFullUrl(templateUrl, System.currentTimeMillis())
+                    .setRequestBody(data).invoke();
             JSONObject json = response.getPageContentForJSON();
-            String code = json.getString("code");
-            if (!StringUtils.equals(code, "0")) {
-                String errorMessage = json.getString("dsc");
+            String code = json.getString("rsp_code");
+            if (!StringUtils.equals(code, "0000")) {
+                String errorMessage = json.getString("rsp_desc");
                 logger.error("登陆失败,{},param={}", errorMessage, param);
                 return result.failure(errorMessage);
             }
+            String code2 = json.getString("code");
+            templateUrl = "http://wap.10010.com/t/loginCallBack.htm?code={}";
+            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_002").setFullUrl(templateUrl, code2).invoke();
 
-            //templateUrl = "https://m.client.10010.com/mobileService/operationservice/getUserinfo" +
-            //        ".htm?menuId=000200020010&mobile_c_from=query&navUrlCode=2201";
-            //data = "timestamp=&desmobile=" + param.getMobile().toString() + "&version=android%405.61";
-            //response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
-            //
-            //RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
-
-            //templateUrl = "https://m.client.10010.com/mobileService/logout.htm";
-            //data = "version=android%405.61&desmobile=" + param.getMobile().toString();
-            //response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data)
-            //        .addHeader("User-Agent", "").invoke();
-
-            //T = new Random();
-            //U = (new StringBuilder()).append(T.nextInt(9)).append("").append(T.nextInt(9)).append("").append(T.nextInt(9)).append("")
-            //        .append(T.nextInt(9)).append("").append(T.nextInt(9)).append("").append(T.nextInt(9)).toString();
-            //mobile = (new StringBuilder()).append(param.getMobile().toString()).append(U).toString();
-
-            //String passWord = param.getPassword();
-            //passWord = (new StringBuilder()).append(passWord).append(U).toString();
-            //T = new Random();
-            //U = T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9) + "" + T.nextInt(9);
-            //templateUrl = "http://m.client.10010.com/mobileService/login.htm";
-            //templateData = "deviceOS=android7.0&mobile={}&netWay=WIFI&deviceCode=869782021770312&isRemberPwd=false&version=android%405.61&deviceId" +
-            //        "=869782021770312&password={}&keyVersion=&pip=192.168.200.184&provinceChanel=general&appId" +
-            //        "=818f10dfa9b3bb4a8e3f4380602d5f47458a6506bbae525a00b4ed19552ac681&deviceModel=Mi+Note+2&deviceBrand=Xiaomi&timestamp={}";
-            //data = TemplateUtils.format(templateData, NewEncryptUtilForChina10010App.encode(param.getMobile().toString(), U),
-            //        NewEncryptUtilForChina10010App.encode(param.getPassword(), U), new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-            //response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_004").setFullUrl(templateUrl).setRequestBody(data)
-            //        .addHeader("User-Agent", "").invoke();
-            //json = response.getPageContentForJSON();
-            //code = json.getString("code");
-            //if (StringUtils.equals(code, "0")) {
-                String provinceName = PatternUtils.group(response.getPageContent(), "proName\":\"([^\"]+)\"", 1);
+            /**
+             * 查询归属地
+             */
+            templateUrl = "http://wap.10010.com/mobileService/customerService/queryAffiliationPlace.htm?desmobile=&version=wap@4.0";
+            templateData = "mobile_id={}";
+            data = TemplateUtils.format(templateData, param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            if (!StringUtils.contains(response.getPageContent(), "很抱歉，暂时无法为您提供服务，请稍后再试")) {
+                String provinceName = XPathUtil.getXpath("th:contains(号码归属地):not(:has(th))+td/text()", response.getPageContent()).get(0).trim();
+                provinceName = PatternUtils.group(provinceName, "^([^ ]+)\\s*", 1);
                 TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
-                logger.info("登陆成功,param={}", param);
-                return result.success();
-            //} else if (StringUtils.isNotBlank(code)) {
-            //    String errorMessage = json.getString("dsc");
-            //    logger.error("登陆失败,{},param={}", errorMessage, param);
-            //    return result.failure(errorMessage);
-            //} else {
-            //    logger.error("登陆失败,param={},pageContent={}", param, response.getPageContent());
-            //    return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            //}
+            } else {
+                templateUrl = "https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?cb=&resource_name=guishudi&query={}&_=";
+                response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_003").setFullUrl(templateUrl, param.getMobile()).invoke();
+                String prov = (String) JSONPath.eval(response.getPageContentForJSON(), "$.data[0].prov");
+                String city = (String) JSONPath.eval(response.getPageContentForJSON(), "$.data[0].city");
+                String provinceName = prov;
+                if (StringUtils.isBlank(prov)) {
+                    provinceName = city;
+                } else if (StringUtils.isBlank(city)) {
+                    logger.info("调用百度归属地查询失败，taskId={}，pageContent={}", param.getTaskId(), response.getPageContent());
+                    return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
+                }
+                TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
+            }
+            logger.info("登陆成功,param={}", param);
+            return result.success();
         } catch (Exception e) {
             logger.error("登录-->校验-->失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
@@ -199,7 +180,7 @@ public class China10010ForApp implements OperatorPluginService {
             /**
              * 获取月账单
              */
-            String templateUrl = "https://m.client.10010.com/mobileService/query/queryRealFeeHistroyDetail" +
+            String templateUrl = "http://wap.10010.com/mobileService/query/queryRealFeeHistroyDetail" +
                     ".htm?desmobile=&version=android@5.5&menuId=000200010005&month={}&randm=";
             response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_002").setFullUrl(templateUrl, billMonth).invoke();
             String pageContent = response.getPageContent();
@@ -222,7 +203,7 @@ public class China10010ForApp implements OperatorPluginService {
             /**
              * 获取通话详单
              */
-            String templateUrl = "https://m.client.10010.com/mobileService/query/getPhoneByDetailContent.htm";
+            String templateUrl = "http://wap.10010.com/mobileService/query/getPhoneByDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
@@ -241,14 +222,13 @@ public class China10010ForApp implements OperatorPluginService {
                     }
                 }
                 logger.info("当月通话详单总条数：{},taskId={}", totalRaw, param.getTaskId());
-                KpiUtils.sendKpi(param, "call_month_real_size", billMonth, totalRaw, null);
                 if (Integer.parseInt(totalRaw) == 0) {
                     logger.info("无通话记录，原始页面为：{},taskId={}", pageContent, param.getTaskId());
                 }
                 int pages = Integer.parseInt(totalRaw) / 40;
                 list = new ArrayList<>();
                 for (int i = 0; i <= pages; i++) {
-                    templateUrl = "https://m.client.10010.com/mobileService/view/client/query/xdcx/thxd_more_list" +
+                    templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/thxd_more_list" +
                             ".jsp?1=1&t={}&beginrow={}&endrow={}&pagenum={}";
                     response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_004")
                             .setFullUrl(templateUrl, System.currentTimeMillis(), (40 * i), (40 * (i + 1)), (i + 1)).invoke();
@@ -256,11 +236,10 @@ public class China10010ForApp implements OperatorPluginService {
                 }
             } else if (StringUtils.contains(pageContent, "id=\"totalNum\"")) {
                 int totalPage = Integer.parseInt(XPathUtil.getXpath("//input[@id='totalNum']/@value", pageContent).get(0));
-                KpiUtils.sendKpi(param, "call_month_real_size", billMonth, totalPage*40+"", "按每页40条计算，可能有误差");
                 list = new ArrayList<>();
                 list.add(pageContent);
                 for (int i = 2; i <= totalPage; i++) {
-                    templateUrl = "https://m.client.10010.com/mobileService/query/getPhoneByDetailContent.htm";
+                    templateUrl = "http://wap.10010.com/mobileService/query/getPhoneByDetailContent.htm";
                     templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=000200010005&currNum={}";
                     data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
                     response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_005").setFullUrl(templateUrl).setRequestBody(data)
@@ -288,7 +267,7 @@ public class China10010ForApp implements OperatorPluginService {
             /**
              * 获取短信详单
              */
-            String templateUrl = "https://m.client.10010.com/mobileService/query/querySmsByDetailContent.htm";
+            String templateUrl = "http://wap.10010.com/mobileService/query/querySmsByDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_006").setFullUrl(templateUrl).setRequestBody(data).invoke();
@@ -306,8 +285,8 @@ public class China10010ForApp implements OperatorPluginService {
             Map<String, Object> map = new HashMap<>();
             List<String> list = new ArrayList<>();
             for (int i = 0; i <= pages; i++) {
-                templateUrl = "https://m.client.10010.com/mobileService/view/client/query/xdcx/sms_more_list.jsp?1=1&t=" +
-                        System.currentTimeMillis() + "&beginrow=" + (100 * i) + "&endrow=" + (100 * (i + 1)) + "&pagenum=" + (i + 1);
+                templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/sms_more_list.jsp?1=1&t=" + System.currentTimeMillis() +
+                        "&beginrow=" + (100 * i) + "&endrow=" + (100 * (i + 1)) + "&pagenum=" + (i + 1);
                 response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_007")
                         .setFullUrl(templateUrl, System.currentTimeMillis(), (100 * i), (100 * (i + 1)), (i + 1)).invoke();
                 list.add(response.getPageContent());
@@ -332,7 +311,7 @@ public class China10010ForApp implements OperatorPluginService {
             /**
              * 获取流量详单
              */
-            String templateUrl = "https://m.client.10010.com/mobileService/query/queryNetWorkDetailContent.htm";
+            String templateUrl = "http://wap.10010.com/mobileService/query/queryNetWorkDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
             response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_008").setFullUrl(templateUrl).setRequestBody(data).invoke();
@@ -347,8 +326,8 @@ public class China10010ForApp implements OperatorPluginService {
             if (totalRaw > 40) {
                 int pages = totalRaw / 40;
                 for (int i = 0; i <= pages; i++) {
-                    templateUrl = "https://m.client.10010.com/mobileService/view/client/query/xdcx/net_more_list.jsp?1=1&t=" +
-                            System.currentTimeMillis() + "&beginrow=" + (40 * i) + "&endrow=" + (40 * (i + 1)) + "&pagenum=" + (i + 1);
+                    templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/net_more_list.jsp?1=1&t=" + System.currentTimeMillis() +
+                            "&beginrow=" + (40 * i) + "&endrow=" + (40 * (i + 1)) + "&pagenum=" + (i + 1);
                     response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_009")
                             .setFullUrl(templateUrl, System.currentTimeMillis(), (40 * i), (40 * (i + 1)), (i + 1)).invoke();
                     list.add(response.getPageContent());

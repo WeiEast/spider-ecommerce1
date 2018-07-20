@@ -201,19 +201,19 @@ public class HuNan10000ForWap implements OperatorPluginService {
                     ".action?tm=&tabIndex=2&queryMonth={}&patitype=2&code={}&accNbr={}&chargeType=";
             response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10000_wap_005")
                     .setFullUrl(templateUrl, queryMonth, param.getSmsCode(), param.getMobile()).setReferer(referer).invoke();
-            if (StringUtils.contains(response.getPageContent(), "客户号码")) {
+            if (!StringUtils.contains(response.getPageContent(), "验证码错误!")) {
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
-                response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10000_wap_006")
-                        .setFullUrl(templateUrl, lastMonth, param.getSmsCode(), param.getMobile()).setReferer(referer).invoke();
-                if (StringUtils.contains(response.getPageContent(), "费用")) {
-                    logger.info("详单-->校验成功,param={}", param);
-                    return result.success();
-                } else {
+                //response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10000_wap_006")
+                //        .setFullUrl(templateUrl, lastMonth, param.getSmsCode(), param.getMobile()).setReferer(referer).invoke();
+                //if (StringUtils.contains(response.getPageContent(), "费用")) {
+                //    logger.info("详单-->校验成功,param={}", param);
+                //    return result.success();
+                //} else {
                     logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPageContent());
                     return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
-                }
+                //}
             }
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);

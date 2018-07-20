@@ -138,7 +138,7 @@ public class BeiJing10000ForWeb implements OperatorPluginService {
                 return result.success();
             } else {
                 logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
-                return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+                return result.failure(ErrorCode.VALIDATE_ERROR);
             }
         } catch (Exception e) {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);

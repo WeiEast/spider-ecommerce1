@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -565,7 +566,7 @@ public class China10086ForApp implements OperatorPluginPostService {
             P_IMEI = "8697" + param.getMobile();
             String cookieString = TaskUtils.getTaskShare(param.getTaskId(), "cookieString");
             List<String> results = new ArrayList<>();
-            for (String billMonth:billMonths) {
+            for (String billMonth : billMonths) {
                 String templateUrl = "https://clientaccess.10086.cn/biz-orange/BN/historyBillsService/getHistoryBills";
                 BillReqBean billObj = new BillReqBean();
                 billObj.setBgnMonth(billMonth);
@@ -603,7 +604,7 @@ public class China10086ForApp implements OperatorPluginPostService {
 
                 String pageContent = response.getPageContent();
                 logger.info("输出(账单)：{},taskId={}", pageContent, param.getTaskId());
-                if (StringUtils.contains(pageContent,"totalBill")) {
+                if (StringUtils.contains(pageContent, "totalBill")) {
                     results.add(pageContent);
                 }
             }
@@ -690,14 +691,24 @@ public class China10086ForApp implements OperatorPluginPostService {
             logger.info("输出(详单)：{},taskId={}", pageContent, param.getTaskId());
             dataList.add(pageContent);
             int pages = 0;
+            String totalCount = "0";
             if (StringUtils.contains(pageContent, "totalCount")) {
-                String totalCount = (String) JSONPath.eval(response.getPageContentForJSON(), "$.rspBody.totalCount");
+                totalCount = (String) JSONPath.eval(response.getPageContentForJSON(), "$.rspBody.totalCount");
                 monitorService.sendTaskLog(param.getTaskId(), "详单-->查询-->成功," + billMonth + "月份,数量-" + totalCount);
                 KpiUtils.sendKpi(param, "call_month_real_size", billMonth, totalCount, null);
                 pages = (Integer.parseInt(totalCount) - 1) / 200 + 1;
             } else {
                 monitorService.sendTaskLog(param.getTaskId(), "详单-->查询-->失败," + billMonth + "月份，原文-" + pageContent);
             }
+            /**
+             * 判断详单是否分页了，若未分页，则直接返回
+             */
+            List<String> total = JsonPathUtil.readAsList(response.getPageContent(),"$.rspBody.callList[*]");
+            if (total.size() == Integer.parseInt(totalCount)) {
+                logger.info("当前月份详单无需分页，直接返回，taskId={}", param.getTaskId());
+                return result.success(JSON.toJSONString(dataList));
+            }
+
             /**
              * 如果超过200条，需翻页
              */

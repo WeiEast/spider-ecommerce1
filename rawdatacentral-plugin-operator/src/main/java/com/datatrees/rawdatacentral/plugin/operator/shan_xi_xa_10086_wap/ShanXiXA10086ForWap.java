@@ -136,7 +136,7 @@ public class ShanXiXA10086ForWap implements OperatorPluginService {
             Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encodeMobile = invocable.invokeFunction("strEncForNew", param.getMobile().toString(), tokenId).toString();
             String referer = "http://wap.sn.10086.cn/h5/personal/html/login.html";
-            String templateUrl = "http://wap.sn.10086.cn/h5/server/login/sendSMSPwd?serialNumber={}&ajaxSubmitType=post&ajax_randomcode={}";
+            String templateUrl = "http://wap.sn.10086.cn/h5/server/authLogin/sendSMSPwd?serialNumber={}&ajaxSubmitType=post&ajax_randomcode={}";
             response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10086_wap_003").setFullUrl(templateUrl, encodeMobile, tokenId)
                     .setReferer(referer).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             if (StringUtils.contains(response.getPageContent(), "短信验证码已经下发到您的手机")) {
@@ -170,10 +170,10 @@ public class ShanXiXA10086ForWap implements OperatorPluginService {
             String encodeLoginMethod = invocable.invokeFunction("strEncForNew", loginMethod, tokenId).toString();
             String encodeMobile = invocable.invokeFunction("strEncForNew", param.getMobile().toString(), tokenId).toString();
             String encodePassword = invocable.invokeFunction("strEncForNew", encodeSmsCode, tokenId).toString();
-            String encodePicCode = invocable.invokeFunction("strEncForNew", param.getPicCode(), tokenId).toString();
+            String encodePicCode = invocable.invokeFunction("strEncForNew", param.getPicCode().toUpperCase(), tokenId).toString();
 
             String referer = "http://wap.sn.10086.cn/h5/personal/html/login.html";
-            String templateUrl = "http://wap.sn.10086.cn/h5/server/login/ssoLogin?loginMethod={}&username={}&password={}&validateCode" +
+            String templateUrl = "http://wap.sn.10086.cn/h5/server/authLogin/ssoLogin?loginMethod={}&username={}&password={}&validateCode" +
                     "={}&ajaxSubmitType=post&ajax_randomcode={}";
             response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10086_wap_004")
                     .setFullUrl(templateUrl, encodeLoginMethod, encodeMobile, encodePassword, encodePicCode, tokenId).setReferer(referer).invoke();

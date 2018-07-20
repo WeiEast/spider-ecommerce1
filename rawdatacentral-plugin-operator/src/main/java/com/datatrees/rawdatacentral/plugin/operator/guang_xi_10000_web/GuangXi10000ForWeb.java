@@ -257,9 +257,10 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
             String pageContent = response.getPageContent();
 
             String bureauCode = "2400";
-            if (StringUtils.isNotBlank(bureauCode)) {
-                bureauCode = PatternUtils.group(pageContent, "BureauCode\" name=\"BureauCode\" value=\"(\\d+)\"", 1);
-            }
+            //if (StringUtils.isNotBlank(bureauCode)) {
+            //    bureauCode = PatternUtils.group(pageContent, "BureauCode\" name=\"BureauCode\" value=\"(\\d+)\"", 1);
+            //    logger.info("taskId={},BureauCode={}",param.getTaskId(),pageContent);
+            //}
 
             Date date = new Date();
             SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
@@ -269,7 +270,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
             templateData = "PRODTYPE=2020966&RAND_TYPE=002&BureauCode={}&ACC_NBR={}&PROD_TYPE=2020966&PROD_PWD=&REFRESH_FLAG=1&BEGIN_DATE=&END_DATE" +
                     "=&SERV_NO=&QRY_FLAG=1&MOBILE_NAME={}&OPER_TYPE=CR1&FIND_TYPE=1031&radioQryType=on&ACCT_DATE={}&ACCT_DATE_1={}&PASSWORD" +
                     "=&CUST_NAME=&CARD_TYPE=1&CARD_NO=";
-            data = TemplateUtils.format(templateData, bureauCode, param.getMobile(), param.getMobile(), currentMonth, currentMonth);
+            data = TemplateUtils.format(templateData, "", param.getMobile(), param.getMobile(), currentMonth, currentMonth);
             response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10000_web_008").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
@@ -279,7 +280,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
+                logger.error("详单-->短信验证码-->刷新失败,response={}", response);
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
@@ -321,11 +322,11 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
                     logger.info("详单-->校验成功,param={}", param);
                     return result.success();
                 } else {
-                    logger.warn("详单-->短信验证码错误,param={}", param);
+                    logger.warn("详单-->短信验证码错误,response={}", response);
                     return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
                 }
             } else {
-                logger.warn("详单-->短信验证码错误,param={}", param);
+                logger.warn("详单-->短信验证码错误,response={}", response);
                 return result.failure(ErrorCode.VALIDATE_SMS_FAIL);
             }
         } catch (Exception e) {

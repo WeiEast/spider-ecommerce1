@@ -8,6 +8,7 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
 import com.datatrees.rawdatacentral.domain.enums.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
@@ -15,7 +16,7 @@ import com.datatrees.rawdatacentral.domain.operator.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * User: yand
  * Date: 2017/9/21
  */
-public class HeNan10000ForWeb implements OperatorPluginService {
+public class HeNan10000ForWeb implements OperatorPluginPostService {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(HeNan10000ForWeb.class);
     private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
@@ -89,27 +90,11 @@ public class HeNan10000ForWeb implements OperatorPluginService {
             if (!result.getStatus()) {
                 return result;
             }
-
             String templateUrl = "http://www.189.cn/ha/";
             response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_002").setFullUrl(templateUrl).invoke();
 
-            String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000354";
-            templateUrl
-                    = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10017&toStUrl=http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
-            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
-
-            referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
-            templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_ye.jsp?ACC_NBR=" + param.getMobile() + "&PROD_TYPE=713058010165&ACCTNBR97=";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
-            String pageContent = response.getPageContent();
-
-            if (StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "可用余额")) {
-                logger.info("登陆成功,param={}", param);
-                return result.success();
-            } else {
-                logger.error("登陆失败,param={},pageContent={}", param, pageContent);
-                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
-            }
+            logger.info("登陆成功,param={}", param);
+            return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
@@ -217,5 +202,44 @@ public class HeNan10000ForWeb implements OperatorPluginService {
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
 
+    }
+
+    @Override
+    public HttpResult<Map<String, Object>> loginPost(OperatorParam param) {
+        HttpResult<Map<String, Object>> result = new HttpResult<>();
+        Response response = null;
+
+        try {
+            String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000354";
+            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_003").setFullUrl(referer).setReferer(referer).invoke();
+            String templateUrl
+                    = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10017&toStUrl=http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-3&fastcode=20000355&cityCode=ha";
+            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
+
+            referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
+            templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inzd.jsp";
+            String dataTemplate = "ACC_NBR={}&PROD_TYPE=713058010165&ACCTNBR97=";
+            String data = TemplateUtils.format(dataTemplate,param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).setRequestBody(data)
+                    .setConnectTimeout(60000).setSocketTimeout(60000).invoke();
+
+            referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
+            templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inzd.jsp";
+            dataTemplate = "ACC_NBR={}&SERV_NO=&REFRESH_FLAG=1&BillingCycle=201804&operateType=2&operateType=2";
+            data = TemplateUtils.format(dataTemplate,param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).setRequestBody(data)
+                    .setConnectTimeout(60000).setSocketTimeout(60000).invoke();
+            String pageContent = response.getPageContent();
+            if (StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "该客户总费用为")) {
+                logger.info("登陆成功,param={}", param);
+                return result.success();
+            } else {
+                logger.error("登陆失败,param={},pageContent={}", param, pageContent);
+                return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
+            }
+        } catch (Exception e) {
+            logger.error("登陆失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.LOGIN_ERROR);
+        }
     }
 }

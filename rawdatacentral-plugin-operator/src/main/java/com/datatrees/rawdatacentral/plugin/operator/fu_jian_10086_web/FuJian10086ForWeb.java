@@ -1,6 +1,7 @@
 package com.datatrees.rawdatacentral.plugin.operator.fu_jian_10086_web;
 
 import javax.script.Invocable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.List;
@@ -11,6 +12,7 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.FormType;
@@ -46,9 +48,11 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
                 return result.failure(ErrorCode.TASK_INIT_ERROR);
             }
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "fu_jian_10086_web_002")
-                    .setFullUrl(templateUrl).invoke();
-            pageContent = response.getPageContent();
+            if (StringUtils.isNotBlank(templateUrl)) {
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "fu_jian_10086_web_002")
+                        .setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+            }
 
             String backUrl = "https://fj.ac.10086.cn/4login/backPage.jsp";
             String errorurl = "https://fj.ac.10086.cn/4login/errorPage.jsp";
@@ -85,6 +89,8 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         switch (param.getFormType()) {
             case FormType.LOGIN:
                 return refeshPicCodeForLogin(param);
+            case FormType.VALIDATE_BILL_DETAIL:
+                return refeshPicCodeForBillDetail(param);
             default:
                 return new HttpResult<String>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -94,7 +100,8 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
     public HttpResult<Map<String, Object>> refeshSmsCode(OperatorParam param) {
         switch (param.getFormType()) {
             case FormType.VALIDATE_BILL_DETAIL:
-                return refeshSmsCodeForBillDetail(param);
+                logger.info("详单-->短信验证码-->刷新成功,param={}", param);
+                return new HttpResult<Map<String, Object>>().success();
             default:
                 return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
@@ -114,7 +121,12 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
 
     @Override
     public HttpResult<Map<String, Object>> validatePicCode(OperatorParam param) {
-        return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.VALIDATE_BILL_DETAIL:
+                return validatePicCodeForBillDetail(param);
+            default:
+                return new HttpResult<Map<String, Object>>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
@@ -189,25 +201,41 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         }
     }
 
-    private HttpResult<Map<String, Object>> refeshSmsCodeForBillDetail(OperatorParam param) {
+    private HttpResult<String> refeshPicCodeForBillDetail(OperatorParam param) {
+        HttpResult<String> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String templateUrl = "https://fj.ac.10086.cn/common/image.jsp?id={}";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_006")
+                    .setFullUrl(templateUrl, Math.random()).invoke();
+            logger.info("详单-->图片验证码-->刷新成功,param={}", param);
+            return result.success(response.getPageContentForBase64());
+        } catch (Exception e) {
+            logger.error("详单-->图片验证码-->刷新失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
+        }
+    }
+
+    private HttpResult<Map<String, Object>> validatePicCodeForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://fj.ac.10086.cn/SMSCodeSend?spid={}&mobileNum={}&validCode=0000&errorurl=http://www" +
+            String templateUrl = "https://fj.ac.10086.cn/SMSCodeSend?spid={}&mobileNum={}&validCode={}&errorurl=http://www" +
                     ".fj.10086.cn:80/my/login/send.jsp";
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_007").setFullUrl(templateUrl, spid, param.getMobile())
-                    .invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_007")
+                    .setFullUrl(templateUrl, spid, param.getMobile(), param.getPicCode()).invoke();
             String pageContent = response.getPageContent();
-            if (pageContent.contains("短信验证码已发送到您的手机")) {
-                logger.info("详单-->短信验证码-->刷新成功,param={}", param);
+            String url = response.getRedirectUrl();
+            if (url.contains("code=0000")) {
+                logger.info("详单-->图片验证码-->校验成功,param={}", param);
                 return result.success();
             } else {
-                logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
+                logger.error("详单-->图片验证码-->校验失败,param={},pateContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
             }
         } catch (Exception e) {
-            logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+            logger.error("详单-->图片验证码-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
     }
@@ -231,9 +259,13 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
 
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "basicInfoReferUrl", templateUrl);
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_009").setFullUrl(templateUrl).invoke();
-            pageContent = response.getPageContent();
-
+            if (StringUtils.isNotBlank(templateUrl)) {
+                response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_009").setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+            }
+            if (StringUtils.contains(pageContent,"postartifact")){
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "fu_jian_10086_web_009", pageContent);
+            }
             templateUrl = PatternUtils.group(pageContent, "href = \"([^\"]+)\"", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "basicInfoUrl", templateUrl);
             response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_010").setFullUrl(templateUrl).invoke();
@@ -250,6 +282,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             }
 
             if (pageContent.contains(param.getMobile().toString())) {
+                TaskUtils.addTaskShare(param.getTaskId(), "basicInfoPage", pageContent);
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
@@ -269,8 +302,13 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         try {
             String pageContent = TaskUtils.getTaskShare(param.getTaskId(), "pageContentTemp");
             String templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_005").setFullUrl(templateUrl).invoke();
-            pageContent = response.getPageContent();
+            if (StringUtils.isNotBlank(templateUrl)) {
+                response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_005").setFullUrl(templateUrl).invoke();
+                pageContent = response.getPageContent();
+            }
+            if (StringUtils.contains(pageContent,"postartifact")){
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "fu_jian_10086_web_006", pageContent);
+            }
 
             String samLart = PatternUtils.group(pageContent, "callBackurlAll\\('([^']+)'", 1);
 
@@ -290,5 +328,39 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             logger.error("爬虫启动前处理失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
         }
+    }
+
+    /**
+     * 处理跳转服务
+     * @param pageContent
+     * @return
+     */
+    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent) {
+        String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
+        String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
+        List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "//input");
+        StringBuilder fullUrl = new StringBuilder(action);
+        if (org.apache.commons.lang3.StringUtils.contains(fullUrl, "?")) {
+            if (!org.apache.commons.lang3.StringUtils.endsWith(fullUrl, "?")) {
+                fullUrl.append("&");
+            }
+        } else {
+            fullUrl.append("?");
+        }
+        if (null != list && !list.isEmpty()) {
+            for (Map<String, String> map : list) {
+                if (map.containsKey("name") && map.containsKey("value")) {
+                    try {
+                        fullUrl.append(map.get("name")).append("=").append(URLEncoder.encode(map.get("value"), "UTF-8")).append("&");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        String url = fullUrl.substring(0, fullUrl.length() - 1);
+        RequestType requestType = org.apache.commons.lang3.StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
+        return response.getPageContent();
     }
 }
