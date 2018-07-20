@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api;
+package com.datatrees.spider.operator.api;
 
 import java.util.List;
 import java.util.Map;

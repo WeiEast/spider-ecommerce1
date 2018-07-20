@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.api.WebsiteGroupServiceApi;
+import com.datatrees.spider.operator.api.WebsiteGroupServiceApi;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import org.slf4j.Logger;
