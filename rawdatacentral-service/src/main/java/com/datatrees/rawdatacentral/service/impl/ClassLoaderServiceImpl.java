@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.ConfigServiceApi;
-import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
@@ -15,7 +14,6 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.PluginService;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.google.common.cache.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -39,12 +37,6 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
 
     @Resource
     private              PluginService                     pluginService;
-
-    @Resource
-    private              RedisService                      redisService;
-
-    @Resource
-    private              WebsiteOperatorService            websiteOperatorService;
 
     @Resource
     private              ConfigServiceApi                  configServiceApi;

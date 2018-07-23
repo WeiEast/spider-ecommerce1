@@ -27,6 +27,7 @@ import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.service.*;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.model.*;
+import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;

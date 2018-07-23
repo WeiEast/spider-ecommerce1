@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.common.utils.WeightUtils;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.rawdatacentral.service.WebsiteGroupService;
+import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.dao.WebsiteGroupDAO;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;

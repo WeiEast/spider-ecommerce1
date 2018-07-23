@@ -27,6 +27,7 @@ import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample
 import com.datatrees.spider.operator.domain.model.field.FieldBizType;
 import com.datatrees.spider.operator.domain.model.field.FieldInitSetting;
 import com.datatrees.spider.operator.domain.model.field.InputField;
+import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
