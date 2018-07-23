@@ -15,7 +15,6 @@ import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -25,8 +24,8 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.WebsiteHolderService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
@@ -41,30 +40,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
-    private static final Logger                 logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
+    private static final Logger               logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
 
     @Resource
-    private              WebsiteOperatorService websiteOperatorService;
+    private              WebsiteInfoService   websiteInfoService;
 
     @Resource
-    private              WebsiteInfoService     websiteInfoService;
+    private              WebsiteInfoDAO       websiteInfoDAO;
 
     @Resource
-    private              WebsiteInfoDAO         websiteInfoDAO;
+    private              PluginManager        pluginManager;
 
     @Resource
-    private              PluginManager          pluginManager;
+    private              BankService          bankService;
 
     @Resource
-    private              BankService            bankService;
+    private              RedisService         redisService;
 
     @Resource
-    private              RedisService           redisService;
+    private              ProxyService         proxyService;
+
+    private              ParentConfigHandler  parentConfigHandler;
 
     @Resource
-    private              ProxyService           proxyService;
-
-    private              ParentConfigHandler    parentConfigHandler;
+    private              WebsiteHolderService websiteHolderService;
 
     public WebsiteConfigServiceImpl() {
         parentConfigHandler = new ParentConfigHandler() {
@@ -197,16 +196,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
-        Website website;
-        if (WebsiteUtils.isOperator(websiteName)) {
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-            //保存taskId对应的website,因为运营过程中用的是
-            website = buildWebsite(websiteOperator);
-        } else {
-            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
-            website = buildWebsiteFromWebsiteInfo(websiteInfo);
-            //            website = getWebsiteByWebsiteName(websiteName);
-        }
+        Website website = websiteHolderService.getWebsite(taskId, websiteName);
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website, taskId);
             searchProcessorContext.setPluginManager(pluginManager);
@@ -221,16 +211,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public ExtractorProcessorContext getExtractorProcessorContext(Long taskId, String websiteName) {
         logger.info("getExtractorProcessorContext start,taskId={},websiteName={}", taskId, websiteName);
-        Website website = null;
-        if (WebsiteUtils.isOperator(websiteName)) {
-            WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-            //保存taskId对应的website,因为运营过程中用的是
-            website = buildWebsite(websiteOperator);
-        } else {
-            WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
-            website = buildWebsiteFromWebsiteInfo(websiteInfo);
-            //            website = getWebsiteByWebsiteName(websiteName);
-        }
+        Website website = websiteHolderService.getWebsite(taskId, websiteName);
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
             extractorProcessorContext.setPluginManager(pluginManager);
