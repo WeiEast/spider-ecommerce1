@@ -209,7 +209,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                 logger.info("frefeshSmsCodeForBillDetail find bid={},param={}", bid, param);
 
                 templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?bid={}";
-                response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_010").setFullUrl(templateUrl, bid).invoke();
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "zhe_jiang_10086_web_010").setFullUrl(templateUrl, bid).invoke();
                 pageContent = response.getPageContent();
             }
             switch (pageContent) {
@@ -233,7 +233,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         try {
             String bid = TaskUtils.getTaskShare(param.getTaskId(), "bid");
             String templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?validateCode={}&bid={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_011").setFullUrl(templateUrl, param.getSmsCode(), bid)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "zhe_jiang_10086_web_011").setFullUrl(templateUrl, param.getSmsCode(), bid)
                     .invoke();
             String pageContent = response.getPageContent();
             switch (pageContent) {
@@ -275,7 +275,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                     URLEncoder.encode(errorurl, "UTF-8"), spid, URLEncoder.encode(relayState, "UTF-8"), encryptMobile, param.getPicCode(),
                     encryptPassword);
 
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "zhe_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
 
             if (StringUtils.contains(response.getPageContent(), "location.replace")) {
@@ -302,7 +302,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
             templateUrl = "http://www.zj.10086.cn/my/servlet/assertion";
             templateData = "SAMLart={}&RelayState={}";
             data = TemplateUtils.format(templateData, sAMLart, URLEncoder.encode(relayState, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_006").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "zhe_jiang_10086_web_006").setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                 logger.info("登陆成功,param={}", param);
@@ -357,7 +357,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         try {
             String smsCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(FormType.VALIDATE_BILL_DETAIL));
             String templateUrl = "http://www.zj.10086.cn/my/userinfo/queryUserYdInfo.do?fromFlag=&secPwd={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10086_web_012").setFullUrl(templateUrl, smsCode).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "zhe_jiang_10086_web_012").setFullUrl(templateUrl, smsCode).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "postartifact") || StringUtils.contains(pageContent, "authnrequestform")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "zhe_jiang_10086_web_013", pageContent);

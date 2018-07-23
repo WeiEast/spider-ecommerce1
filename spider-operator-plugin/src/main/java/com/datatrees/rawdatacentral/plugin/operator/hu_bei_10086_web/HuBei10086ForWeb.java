@@ -130,7 +130,7 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "https://hb.ac.10086.cn/SSO/loginbox?accountType=0&username={}&passwordType=1&password={}" +
                     "&smsRandomCode=&emailusername=请输入登录帐号&emailpassword=&validateCode={}&action=/SSO/loginbox&style=mymobile&service=servicenew" +
                     "&continue=http://www.hb.10086.cn/servicenew/index.action&submitMode=login&guestIP=";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "hu_bei_10086_web_002")
                     .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getPicCode()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -208,7 +208,7 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
             return null;
         }
         String templateUrl = "{}?timeStamp={}&RelayState={}&SAMLart={}&artifact={}&accountType={}&PasswordType={}&errorMsg={}&errFlag={}&telNum={}";
-        Response response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003")
+        Response response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "hu_bei_10086_web_003")
                 .setFullUrl(templateUrl, action, System.currentTimeMillis(), relayState, samLart, artifact, accountType, passwordType, errorMsg,
                         errFlag, telNum).invoke();
 
@@ -226,7 +226,7 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
                 Thread.sleep(waitTime);
             }
             String templateUrl = "http://www.hb.10086.cn/my/balance/smsRandomPass!sendSmsCheckCode.action?menuid=myDetailBill";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "hu_bei_10086_web_003").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("\"result\":\"1\"")) {
                 int newCount = Integer.parseInt(count) + 1;
@@ -262,7 +262,7 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
             String templateUrl
                     = "http://www.hb.10086.cn/my/detailbill/detailBillQry.action?postion=outer&detailBean.billcycle={}&detailBean.selecttype=0&detailBean.flag=GSM&selecttype=%E5%85%A8%E9%83%A8%E6%9F%A5%E8%AF%A2&flag=%E9%80%9A%E8%AF%9D%E8%AF%A6%E5%8D%95&detailBean.password={}&detailBean.chkey={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "hu_bei_10086_web_003")
                     .setFullUrl(templateUrl, sf.format(new Date()), encryptPwd, encryptSmsCode).invoke();
             String pageContent = response.getPageContent();
             if (!pageContent.contains("暂时无法为您提供服务") && !pageContent.contains("您输入的服务密码或短信验证码错误或者过期")) {
@@ -295,7 +295,7 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "http://www.hb.10086.cn/my/detailbill/generateNewDetailExcel.action?menuid=myDetailBill&detailBean" +
                     ".billcycle={}&detailBean.password={}&detailBean.chkey={}&detailBean.startdate={}&detailBean" +
                     ".enddate={}&detailBean.flag={}&detailBean.selecttype=0";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "hu_bei_10086_web_003")
                     .setFullUrl(templateUrl, params[0], encryptPwd, smsCode, params[1], params[2], queryType).invoke();
             byte[] bytes = response.getResponse();
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);

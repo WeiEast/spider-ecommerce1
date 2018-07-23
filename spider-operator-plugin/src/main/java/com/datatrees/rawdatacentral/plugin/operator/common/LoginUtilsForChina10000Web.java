@@ -107,7 +107,7 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
             String templateUrl = "http://login.189.cn/web/login/ajax";
             String templateData = "m=checkphone&phone={}";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             String provinceId = "01";
             if (pageContent.contains("provinceId")) {
@@ -120,7 +120,7 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
             templateData = "Account={}&UType=201&ProvinceID={}&AreaCode=&CityNo=&RandomFlag=0&Password={}&Captcha={}";
             data = TemplateUtils.format(templateData, param.getMobile(), provinceId, URLEncoder.encode(encryptPassword, "UTF-8"),
                     param.getPicCode().toLowerCase());
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10000_web_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_web_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
             pageContent = response.getPageContent();
             String resultCode = PatternUtils.group(pageContent, "data-resultcode=\"(\\d+)\"", 1);
             if (resultCode != null) {

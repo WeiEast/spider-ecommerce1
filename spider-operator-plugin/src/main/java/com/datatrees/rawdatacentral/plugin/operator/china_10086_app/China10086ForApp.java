@@ -871,7 +871,7 @@ public class China10086ForApp implements OperatorPluginPostService {
     private Response httpRequestAndCheck(OperatorParam param, String templateUrl, String remarkId, String xs, Object params, String cookieString) {
         Response response = null;
         for (int i = 0; i < 3; i++) {
-            response = TaskHttpClient.create(param, RequestType.POST, remarkId).setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, remarkId).setFullUrl(templateUrl)
                     .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
                     .invoke();
             if (!StringUtils.equals(response.getStatusCode() + "", "403") && !StringUtils.equals(response.getStatusCode() + "", "500")) {

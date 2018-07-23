@@ -170,7 +170,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
                     "&timestamp={}";
             String data = TemplateUtils
                     .format(templateData, param.getMobile(), passWord, URLEncoder.encode(param.getPicCode(), "UTF-8"), System.currentTimeMillis());
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10086_web_002").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "bei_jing_10086_web_002").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer, System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("code");
@@ -248,7 +248,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             Invocable invocableForMd5 = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "md5.js", "GBK");
             String md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
             String data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
 
             templateUrl = "https://www1.10086.cn/web-Center/interfaceService/realFeeQry.do";
             templateData = "requestJson=%7B%22serviceName%22%3A%22if007_query_fee%22%2C%22header%22%3A%7B%22version%22%3A%221.0%22" +
@@ -257,7 +257,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             timestamp = System.currentTimeMillis() + "";
             md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
             data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "balancePage", response.getPageContent());
 
             templateUrl = "https://www1.10086.cn/web-Center/interfaceService/custInfoQry.do";
@@ -266,14 +266,14 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
                     "%3A%7B%22channelId%22%3A%220001%22%7D%7D";
             md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
             data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "baseInfoPage", response.getPageContent());
             TaskUtils.addTaskShare(param.getTaskId(), "baseInfoUrl", templateUrl);
 
             //详单校验
             templateUrl = "https://service.bj.10086.cn/poffice/package/xdcx/userYzmCheck.action?PACKAGECODE=XD&yzCheckCode={}";
             String validateCallDetailUrl = TemplateUtils.format(templateUrl, param.getPassword());
-            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(validateCallDetailUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(validateCallDetailUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "RelayState")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);

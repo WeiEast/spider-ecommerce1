@@ -131,7 +131,7 @@ public class China10010ForWeb implements OperatorPluginService {
                  * 顺便验证登录是否成功
                  */
                 templateUrl = "http://iservice.10010.com/e3/static/check/checklogin/";
-                TaskHttpClient.create(param, RequestType.POST, "china_10010_web_004").setFullUrl(templateUrl).setSocketTimeout(30000).setMaxRetry(2)
+                TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10010_web_004").setFullUrl(templateUrl).setSocketTimeout(30000).setMaxRetry(2)
                         .invoke();
                 logger.info("登陆成功,param={}", param);
                 return result.success();

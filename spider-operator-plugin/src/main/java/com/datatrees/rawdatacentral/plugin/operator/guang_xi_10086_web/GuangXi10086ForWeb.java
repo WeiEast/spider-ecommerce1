@@ -221,7 +221,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String data = TemplateUtils.format(templateData, URLEncoder.encode(backurl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid,
                     URLEncoder.encode(relayState, "UTF-8"), URLEncoder.encode(imgUrl, "UTF-8"), param.getMobile(), param.getSmsCode(),
                     param.getPicCode(), isValidateCode);
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_005").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "guang_xi_10086_web_005").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("replace")) {
@@ -238,12 +238,12 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
             templateUrl = "http://www.gx.10086.cn/wodeyidong";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_006").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "guang_xi_10086_web_006").setFullUrl(templateUrl).invoke();
 
             //templateUrl = "http://www.gx.10086.cn/wodeyidong/public/QueryBaseBillInfoAction/refreshFee.action";
             //templateData = "ajaxType=json&_tmpDate={}&_buttonId=&_dateTimeToken={}";
             //data = TemplateUtils.format(templateData, System.currentTimeMillis(), dateTimeToken);
-            //response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            //response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "guang_xi_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
             pageContent = response.getPageContent();
             if (pageContent.contains("姓名")) {
                 logger.info("登陆成功,param={}", param);
@@ -265,11 +265,11 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String referer = "http://www.gx.10086.cn/wodeyidong/mymob/xiangdan.jsp";
             String templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/initBusi" +
                     ".menu?is_first_render=true&_menuId=410900003558&=&_lastCombineChild=false&_zoneId=busimain&_tmpDate=&_buttonId=";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "guang_xi_10086_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/sendSecondPsw" +
                     ".menu?ajaxType=json&_tmpDate=&_menuId=410900003558&_buttonId=";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_012").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "guang_xi_10086_web_012").setFullUrl(templateUrl).setReferer(referer).invoke();
             if (response.getPageContent().contains("随机短信验证码已发送成功")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
@@ -291,7 +291,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/checkSecondPsw" +
                     ".menu?input_random_code={}&input_svr_pass={}&is_first_render=true&_zoneId=_sign_errzone&_tmpDate=&_menuId=410900003558" +
                     "&_buttonId=other_sign_btn";
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_xi_10086_web_013")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "guang_xi_10086_web_013")
                     .setFullUrl(templateUrl, param.getSmsCode(), param.getPassword()).setReferer(referer)
                     .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             logger.info(response.getPageContent());

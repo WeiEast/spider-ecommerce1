@@ -92,7 +92,7 @@ public class China10010ForWap implements OperatorPluginService {
             String templateData = "app_code=ECS-YH-WAP&user_id={}&user_pwd={}&user_type=01&pwd_type=01&display=web&response_type=code" +
                     "&redirect_uri=http%3A%2F%2Fwap.10010.com%2Ft%2FloginCallBack.htm&is_check=1&state=http%3A%2F%2Fwap.10010.com%2Ft%2Fmyunicom.htm";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword());
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_001").setFullUrl(templateUrl, System.currentTimeMillis())
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10010_app_001").setFullUrl(templateUrl, System.currentTimeMillis())
                     .setRequestBody(data).addExtralCookie("uac.10010.com", "ckuuid", "0b0f79cb8f972dba7491c400c432a833").invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("rsp_code");
@@ -111,7 +111,7 @@ public class China10010ForWap implements OperatorPluginService {
             templateUrl = "http://wap.10010.com/mobileService/customerService/queryAffiliationPlace.htm?desmobile=&version=wap@4.0";
             templateData = "mobile_id={}";
             data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
             if (!StringUtils.contains(response.getPageContent(), "很抱歉，暂时无法为您提供服务，请稍后再试")) {
                 String provinceName = XPathUtil.getXpath("th:contains(号码归属地):not(:has(th))+td/text()", response.getPageContent()).get(0).trim();
                 provinceName = PatternUtils.group(provinceName, "^([^ ]+)\\s*", 1);
@@ -174,7 +174,7 @@ public class China10010ForWap implements OperatorPluginService {
             String templateUrl = "http://wap.10010.com/mobileService/query/getPhoneByDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10010_app_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
 
             Map<String, Object> map = new HashMap<>();
@@ -210,7 +210,7 @@ public class China10010ForWap implements OperatorPluginService {
                     templateUrl = "http://wap.10010.com/mobileService/query/getPhoneByDetailContent.htm";
                     templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=000200010005&currNum={}";
                     data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
-                    response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_005").setFullUrl(templateUrl).setRequestBody(data)
+                    response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10010_app_005").setFullUrl(templateUrl).setRequestBody(data)
                             .invoke();
                     list.add(response.getPageContent());
                 }
@@ -238,7 +238,7 @@ public class China10010ForWap implements OperatorPluginService {
             String templateUrl = "http://wap.10010.com/mobileService/query/querySmsByDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_006").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10010_app_006").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             String totalRaw = "0";
             List<String> totalRawList = XPathUtil.getXpath("p:contains(总发送):not(:has(p)) span/text()", pageContent);
@@ -282,7 +282,7 @@ public class China10010ForWap implements OperatorPluginService {
             String templateUrl = "http://wap.10010.com/mobileService/query/queryNetWorkDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
-            response = TaskHttpClient.create(param, RequestType.POST, "china_10010_app_008").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10010_app_008").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             int totalRaw = 0;
             String str = PatternUtils.group(pageContent, "点击加载更多（(\\d+)条）", 1);

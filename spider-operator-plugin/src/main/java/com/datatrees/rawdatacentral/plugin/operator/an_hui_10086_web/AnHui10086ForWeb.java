@@ -190,7 +190,7 @@ public class AnHui10086ForWeb implements OperatorPluginService {
 
             String data = TemplateUtils
                     .format(templateData, spid, param.getMobile(), System.currentTimeMillis(), encryptPassword, param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10086_web_005").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "an_hui_10086_web_005").setFullUrl(templateUrl).setRequestBody(data).invoke();
             templateUrl = PatternUtils.group(response.getPageContent(), "replace\\('([^']+)'\\);", 1);
             if (StringUtils.isBlank(templateUrl)) {
                 logger.error("登陆失败,param={},response={}", param, response);
@@ -209,7 +209,7 @@ public class AnHui10086ForWeb implements OperatorPluginService {
             templateUrl = "http://service.ah.10086.cn/LoginSso";
             templateData = "SAMLart={}&RelayState=";
             data = TemplateUtils.format(templateData, sAMLart);
-            response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "an_hui_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
 
             templateUrl = PatternUtils.group(response.getPageContent(), "window.top.location.href=\"([^\"]+)\"", 1);
             response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_008").setFullUrl(templateUrl).invoke();

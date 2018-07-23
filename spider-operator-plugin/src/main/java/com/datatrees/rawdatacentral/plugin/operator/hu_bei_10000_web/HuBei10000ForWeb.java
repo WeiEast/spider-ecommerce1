@@ -117,7 +117,7 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             templateUrl = "http://hb.189.cn/ajaxServlet/getCityCodeAndIsLogin";
             String templateData = "method=getCityCodeAndIsLogin";
             referer = "http://hb.189.cn/hbuserCenter.action";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "hu_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains("LOGIN\":\"true")) {
@@ -141,7 +141,7 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://hb.189.cn/feesquery_sentPwd.action";
             String templateData = "productNumber=" + param.getMobile() + "&cityCode=" + citycode + "&sentType=C&ip=0";
             String referer = "http://hb.189.cn/pages/selfservice/feesquery/detailListQuery.jsp";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_005").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "hu_bei_10000_web_005").setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("随机验证码已经发送")) {
@@ -168,7 +168,7 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://hb.189.cn/feesquery_checkCDMAFindWeb.action";
             String templateData = "random=" + param.getSmsCode() + "&sentType=C";
             String referer = "http://hb.189.cn/pages/selfservice/feesquery/detailListQuery.jsp";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_006").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "hu_bei_10000_web_006").setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("1")) {

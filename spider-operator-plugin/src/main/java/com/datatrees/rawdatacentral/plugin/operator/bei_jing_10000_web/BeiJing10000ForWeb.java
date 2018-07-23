@@ -84,7 +84,7 @@ public class BeiJing10000ForWeb implements OperatorPluginService {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do";
             String templateUrl = "http://www.189.cn/dqmh/my189/checkMy189Session.do";
             String data = "fastcode=01390638";
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10000_web_002").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "bei_jing_10000_web_002").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
 
             templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10001&toStUrl=http://bj.189.cn/iframe/feequery/detailBillIndex" +
@@ -109,7 +109,7 @@ public class BeiJing10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://bj.189.cn/iframe/feequery/detailBillIndex.action?fastcode=01390638&cityCode=bj";
             String templateUrl = "http://bj.189.cn/iframe/feequery/smsRandCodeSend.action?accNum={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10000_web_004").setFullUrl(templateUrl, param.getMobile())
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "bei_jing_10000_web_004").setFullUrl(templateUrl, param.getMobile())
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
@@ -131,7 +131,7 @@ public class BeiJing10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://bj.189.cn/iframe/feequery/detailBillIndex.action?fastcode=01390638&cityCode=bj";
             String templateUrl = "http://bj.189.cn/iframe/feequery/detailValidCode.action?requestFlag=asynchronism&accNum={}&randCode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "bei_jing_10000_web_005")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "bei_jing_10000_web_005")
                     .setFullUrl(templateUrl, param.getMobile(), param.getSmsCode()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"billDetailValidate\":\"true")) {

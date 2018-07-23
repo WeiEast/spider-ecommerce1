@@ -101,7 +101,7 @@ public class JiangSu10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://js.189.cn/nservice/login/doLogin?menuType=0";
             String templteData = "userType=2000004&logonPattern=1&favurl=&newUamType=-1&productId={}&userPwd={}&validateCodeNumber={}";
             String data = TemplateUtils.format(templteData, param.getMobile(), param.getPassword(), param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_su_10000_web_003").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "jiang_su_10000_web_003").setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             String errorMsg = null;
