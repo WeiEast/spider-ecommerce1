@@ -104,7 +104,7 @@ public class WeightUtils {
      * @author zhouxinghai
      * @date 2018/4/23
      */
-    public static interface WeightQueueConfig {
+    public interface WeightQueueConfig {
 
         /**
          * 获取权重

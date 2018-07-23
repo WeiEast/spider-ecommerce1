@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
@@ -15,7 +14,6 @@ import com.datatrees.rawdatacentral.common.utils.WeightUtils;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteGroupService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.dao.WebsiteGroupDAO;
@@ -39,12 +37,6 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService, Initializin
 
     @Resource
     private              WebsiteOperatorService websiteOperatorService;
-
-    @Resource
-    private              RedisService           redisService;
-
-    @Resource
-    private              WebsiteConfigService   websiteConfigService;
 
     @Value("${core.redis.hostName}")
     private              String                 redisIp;
