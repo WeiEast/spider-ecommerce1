@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.datatrees.spider.operator.domain.model.FormType;
+import com.datatrees.spider.share.domain.FormType;
 
 public class CommonPluginParam implements Serializable {
 

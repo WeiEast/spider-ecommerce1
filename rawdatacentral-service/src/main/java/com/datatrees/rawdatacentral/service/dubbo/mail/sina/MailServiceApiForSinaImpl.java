@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.service.dubbo.mail.sina;
 
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.mail.sina.MailServiceApiForSina;
-import com.datatrees.spider.operator.domain.model.FormType;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.enums.*;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.spider.share.domain.HttpResult;

@@ -1,4 +1,4 @@
-package com.datatrees.spider.operator.domain.model;
+package com.datatrees.spider.share.domain;
 
 import java.util.HashMap;
 import java.util.Map;

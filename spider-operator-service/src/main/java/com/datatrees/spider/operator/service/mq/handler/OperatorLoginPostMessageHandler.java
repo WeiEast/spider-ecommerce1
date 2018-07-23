@@ -18,7 +18,7 @@ import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.rawdatacentral.service.mq.MessageHandler;
 import com.datatrees.spider.operator.api.OperatorApi;
-import com.datatrees.spider.operator.domain.model.FormType;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.HttpResult;
