@@ -12,12 +12,12 @@ public abstract class ConfigurableProcessorValve extends ProcessorValve implemen
     private Configuration configuration;
 
     @Override
-    public void setConf(Configuration conf) {
-        this.configuration = conf;
+    public Configuration getConf() {
+        return configuration;
     }
 
     @Override
-    public Configuration getConf() {
-        return configuration;
+    public void setConf(Configuration conf) {
+        this.configuration = conf;
     }
 }

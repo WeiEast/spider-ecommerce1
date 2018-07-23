@@ -16,11 +16,15 @@ import org.slf4j.LoggerFactory;
 public class BDBEnvironmentManager implements EnvironmentManager {
 
     private static final Logger                                      log                    = LoggerFactory.getLogger(BDBEnvironmentManager.class);
+
     private static       BDBEnvironmentManager                       manager                = new BDBEnvironmentManager();
+
     // Save the object needs to be destoryed
     // private ConcurrentLinkedQueue<BDBEnvironmentWapper> toBeDestroyedContainer = new
     // ConcurrentLinkedQueue<BDBEnvironmentWapper>();
-    private final        int                                         max_db_count           = PropertiesConfiguration.getInstance().getInt("collector.bdb.max.db.count", 10);
+    private final        int                                         max_db_count           = PropertiesConfiguration.getInstance()
+            .getInt("collector.bdb.max.db.count", 10);
+
     // Keep only one generation object in this queue
     private              ConcurrentLinkedQueue<BDBEnvironmentWapper> newGenerationContainer = new ConcurrentLinkedQueue<BDBEnvironmentWapper>();
 

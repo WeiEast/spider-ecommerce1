@@ -22,64 +22,91 @@ public class Request implements Serializable {
      * 请求ID随机,不保证重复,重复概率低
      */
     @JSONField(ordinal = 1)
-    private Long   requestId;
+    private Long                requestId;
+
     @JSONField(ordinal = 1)
-    private Long   taskId;
+    private Long                taskId;
+
     @JSONField(ordinal = 2)
-    private String websiteName;
+    private String              websiteName;
+
     @JSONField(ordinal = 2)
-    private boolean isRedirect = false;//是否重定向了
+    private boolean             isRedirect             = false;//是否重定向了
+
     @JSONField(ordinal = 3)
-    private String proxy;
+    private String              proxy;
+
     @JSONField(ordinal = 4)
-    private String fullUrl;
+    private String              fullUrl;
+
     @JSONField(ordinal = 5)
-    private String url;
+    private String              url;
+
     @JSONField(ordinal = 6)
-    private Map<String, Object> params = new HashMap<>();
+    private Map<String, Object> params                 = new HashMap<>();
+
     @JSONField(ordinal = 7)
-    private String remarkId;
+    private String              remarkId;
+
     @JSONField(ordinal = 8)
-    private List<NameValue> headers = new ArrayList<>();
+    private List<NameValue>     headers                = new ArrayList<>();
+
     @JSONField(ordinal = 9)
-    private long requestTimestamp;
+    private long                requestTimestamp;
+
     @JSONField(ordinal = 10)
-    private Map<String, String> requestCookies = new HashMap<>();
+    private Map<String, String> requestCookies         = new HashMap<>();
+
     @JSONField(ordinal = 12)
-    private String              contentType    = "application/x-www-form-urlencoded; charset=UTF-8";
+    private String              contentType            = "application/x-www-form-urlencoded; charset=UTF-8";
+
     @JSONField(ordinal = 12)
-    private Charset             charset        = Charset.forName("ISO-8859-1");
+    private Charset             charset                = Charset.forName("ISO-8859-1");
+
     @JSONField(ordinal = 13)
-    private RequestType         type           = RequestType.GET;
+    private RequestType         type                   = RequestType.GET;
+
     @JSONField(ordinal = 9)
-    private int                 maxRetry       = 1;
+    private int                 maxRetry               = 1;
+
     @JSONField(ordinal = 10)
-    private AtomicInteger       retry          = new AtomicInteger(0);
+    private AtomicInteger       retry                  = new AtomicInteger(0);
+
     @JSONField(ordinal = 11)
-    private int                 connectTimeout = 10000;
+    private int                 connectTimeout         = 10000;
+
     @JSONField(ordinal = 12)
-    private int                 socketTimeout  = 20000;
+    private int                 socketTimeout          = 20000;
+
     @JSONField(ordinal = 13)
-    private String  requestBodyContent;
+    private String              requestBodyContent;
+
     @JSONField(ordinal = 14)
-    private Boolean proxyEnable;
+    private Boolean             proxyEnable;
+
     @JSONField(ordinal = 15)
-    private Map<String, String> extralCookie = new HashMap<>();
+    private Map<String, String> extralCookie           = new HashMap<>();
+
     @JSONField(ordinal = 16)
-    private String host;
+    private String              host;
+
     @JSONField(ordinal = 16)
-    private String protocol;
+    private String              protocol;
+
     @JSONField(ordinal = 16)
-    private String  defaultResponseCharset = "UTF-8";
+    private String              defaultResponseCharset = "UTF-8";
+
     @JSONField(ordinal = 16)
-    private Integer redirectCount          = 0;
+    private Integer             redirectCount          = 0;
+
     @JSONField(ordinal = 16)
-    private Integer maxRedirectCount       = 5;
+    private Integer             maxRedirectCount       = 5;
+
     /**
      * 自动跳转
      */
     @JSONField(ordinal = 16)
-    private Boolean autoRedirect           = true;
+    private Boolean             autoRedirect           = true;
 
     public Request() {
         addHead(HttpHeadKey.USER_AGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:56.0) Gecko/20100101 Firefox/56.0");
@@ -93,7 +120,7 @@ public class Request implements Serializable {
         this.extralCookie = extralCookie;
     }
 
-    public void addExtraCookie(String name, String value){
+    public void addExtraCookie(String name, String value) {
         getExtralCookie().put(name, value);
     }
 

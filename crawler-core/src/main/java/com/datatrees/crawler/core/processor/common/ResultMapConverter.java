@@ -40,7 +40,8 @@ public class ResultMapConverter {
                     results.add(resultMap);
                     return;
                 }
-                if (className.equals("LinkNode") || className.equals("com.datatrees.crawler.core.processer.bean.LinkNode") && current != null) {// linknode
+                if (className.equals("LinkNode") ||
+                        className.equals("com.datatrees.crawler.core.processer.bean.LinkNode") && current != null) {// linknode
                     results.addAll((extractLinkNodes(baseURL, resultMap, current)));
                     return;
                 } else {

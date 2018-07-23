@@ -20,8 +20,11 @@ import org.apache.commons.lang.BooleanUtils;
 public class SubTaskCollectorMessage extends CollectorMessage implements SubTaskAble {
 
     private String  templateId;
+
     private int     parentTaskID;
+
     private boolean synced;
+
     private SubSeed subSeed;
 
     /**
@@ -82,7 +85,7 @@ public class SubTaskCollectorMessage extends CollectorMessage implements SubTask
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see SubTaskAble#noStatusSend()
      */
     @Override

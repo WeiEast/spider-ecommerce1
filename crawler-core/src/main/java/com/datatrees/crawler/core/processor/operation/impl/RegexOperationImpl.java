@@ -31,9 +31,10 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull RegexOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull RegexOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String regex = operation.getRegex();
-        String orginal = (String)operatingData;
+        String orginal = (String) operatingData;
 
         regex = StandardExpression.eval(regex, request, response);
 

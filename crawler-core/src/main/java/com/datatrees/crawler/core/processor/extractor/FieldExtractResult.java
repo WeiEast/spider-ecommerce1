@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 public class FieldExtractResult {
 
     private FieldExtractor extractor;
+
     private Object         result;
 
     public FieldExtractResult() {
@@ -52,7 +53,7 @@ public class FieldExtractResult {
         this.result = result;
     }
 
-    public boolean isNotEmpty(){
+    public boolean isNotEmpty() {
         if (result instanceof String) {
             return StringUtils.isNotEmpty((String) result);
         }

@@ -14,6 +14,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 public final class SpelExpParser {
 
     private static final Logger           LOGGER = LoggerFactory.getLogger(SpelExpParser.class);
+
     private static final ExpressionParser PARSER = new SpelExpressionParser();
 
     private SpelExpParser() {

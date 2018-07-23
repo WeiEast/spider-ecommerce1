@@ -13,7 +13,9 @@ public enum TopicTag {
     WEBSITE_STATISTICS("website_statistics", "站点统计"),
     PUSH_MAIL("push_mail", "邮件推送统计"),
     TASK_LOG("task_log", "task日志"),;
+
     private String tag;
+
     private String remark;
 
     TopicTag(String tag, String remark) {

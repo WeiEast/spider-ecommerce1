@@ -30,8 +30,11 @@ import org.slf4j.LoggerFactory;
 public class DecodeModeContainer {
 
     private static final Logger                   log           = LoggerFactory.getLogger(DecodeModeContainer.class);
+
     private static final Cache                    CACHE         = new Cache();
+
     private              Configuration            conf          = null;
+
     private              Map<UnicodeMode, String> unicodeMapper = new HashMap<UnicodeMode, String>();
 
     private DecodeModeContainer(Configuration conf) {
@@ -57,7 +60,8 @@ public class DecodeModeContainer {
         String unicodeFormat = getConf().get(Constants.UNICODE_FROMAT_CONFIG);
         if (StringUtils.isNotEmpty(unicodeFormat)) {
             try {
-                Map<UnicodeMode, String> decoders = (Map<UnicodeMode, String>) GsonUtils.fromJson(unicodeFormat, new TypeToken<Map<UnicodeMode, String>>() {}.getType());
+                Map<UnicodeMode, String> decoders = (Map<UnicodeMode, String>) GsonUtils
+                        .fromJson(unicodeFormat, new TypeToken<Map<UnicodeMode, String>>() {}.getType());
                 unicodeMapper.putAll(decoders);
             } catch (Exception e) {
                 log.error("unicode json format error!");

@@ -1,53 +1,61 @@
 package com.datatrees.rawdatacentral.domain.education;
 
+import java.io.Serializable;
+
 import com.alibaba.fastjson.annotation.JSONField;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-
-import java.io.Serializable;
 
 /**
  * Created by zhangyanjia on 2017/11/30.
  */
 public class EducationParam extends CommonPluginParam implements Serializable {
+
     /**
      * 任务id 必填
      */
-    private Long taskId;
+    private Long   taskId;
+
     /**
      * website name 必填
      */
     private String websiteName;
+
     /**
      * 手机号
      */
-    private Long mobile;
+    private Long   mobile;
 
     /**
      * 登录用户名参数
      */
-
     private String loginName;
+
     /**
      * 登陆密码
      */
     @JSONField(serialize = false)
     private String password;
+
     /**
      * 图片验证码
      */
     private String picCode;
+
     /**
      * 短信验证码
      */
     private String smsCode;
+
     /**
      * 真实姓名
      */
     private String realName;
+
     /**
      * 身份证号码
      */
     private String idCard;
+
     /**
      * 身份证类型
      */

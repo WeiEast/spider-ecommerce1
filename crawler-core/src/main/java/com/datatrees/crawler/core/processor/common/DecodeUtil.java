@@ -26,7 +26,7 @@ public class DecodeUtil {
 
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
         UnicodeMode unicodeMode = context.getUnicodeMode();
-        if(unicodeMode != null){
+        if (unicodeMode != null) {
             AbstractDecoder decoder = DecodeFactory.instance().getDecoder(unicodeMode, RequestUtil.getConf(request));
             if (decoder != null) {
                 String charset = RequestUtil.getContentCharset(request);

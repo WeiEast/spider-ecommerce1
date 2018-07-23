@@ -6,6 +6,7 @@ import java.util.List;
 import com.datatrees.spider.operator.dao.mapper.WebsiteGroupMapper;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import org.apache.ibatis.annotations.Param;
+
 /** create by system from table website_group(运营商分组) */
 @Resource
 public interface WebsiteGroupDAO extends WebsiteGroupMapper {

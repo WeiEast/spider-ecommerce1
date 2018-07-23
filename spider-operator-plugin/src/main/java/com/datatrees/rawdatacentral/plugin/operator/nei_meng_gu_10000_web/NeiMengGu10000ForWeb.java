@@ -8,14 +8,14 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -27,7 +27,23 @@ import org.slf4j.LoggerFactory;
 public class NeiMengGu10000ForWeb implements OperatorPluginService {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(NeiMengGu10000ForWeb.class);
+
     private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
+
+    //中文转为Unicode
+    public static String unicode(final String gbString) {
+        char[] utfBytes = gbString.toCharArray();
+        String unicodeBytes = "";
+        for (int byteIndex = 0; byteIndex < utfBytes.length; byteIndex++) {
+            String hexB = Integer.toHexString(utfBytes[byteIndex]);   //转换为16进制整型字符串
+            if (hexB.length() <= 2) {
+                hexB = "00" + hexB;
+            }
+            unicodeBytes = unicodeBytes + "%u" + hexB;  //注：此处 "\\u" 应当前运营商需求转为 "%u"
+        }
+        System.out.println("unicodeBytes is: " + unicodeBytes);
+        return unicodeBytes;
+    }
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -284,20 +300,5 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
-    }
-
-    //中文转为Unicode
-    public static String unicode(final String gbString) {
-        char[] utfBytes = gbString.toCharArray();
-        String unicodeBytes = "";
-        for (int byteIndex = 0; byteIndex < utfBytes.length; byteIndex++) {
-            String hexB = Integer.toHexString(utfBytes[byteIndex]);   //转换为16进制整型字符串
-            if (hexB.length() <= 2) {
-                hexB = "00" + hexB;
-            }
-            unicodeBytes = unicodeBytes + "%u" + hexB;  //注：此处 "\\u" 应当前运营商需求转为 "%u"
-        }
-        System.out.println("unicodeBytes is: " + unicodeBytes);
-        return unicodeBytes;
     }
 }

@@ -41,7 +41,7 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans
      * .factory.BeanFactory)
@@ -53,7 +53,7 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.crawler.core.processor.common.resource.BeanResource#getBean(java.lang.String)
      */
@@ -64,7 +64,7 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.crawler.core.processor.common.resource.BeanResource#getBean(java.lang.Class)
      */
@@ -75,7 +75,7 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.crawler.core.processor.common.resource.BeanResource#getBean(java.lang.String,
      * java.lang.Class)
@@ -87,7 +87,7 @@ public class BeansFactory implements BeanFactoryAware, BeanResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.crawler.core.processor.common.resource.BeanResource#containsBean(java.lang.
      * String)

@@ -19,6 +19,7 @@ import java.util.Map;
 public enum FilterType {
     WHITE_LIST("+"),
     BLACK_LIST("-");
+
     private static Map<String, FilterType> FilterTypeMap = new HashMap<String, FilterType>();
 
     static {

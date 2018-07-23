@@ -3,6 +3,7 @@ package com.datatrees.rawdatacentral.plugin.operator.china_10086_app.utils;
 import java.security.MessageDigest;
 
 public class MD5Util {
+
     public static synchronized String MD5(String sourceStr, int flag) {
         String substring;
         synchronized (MD5Util.class) {
@@ -12,7 +13,7 @@ public class MD5Util {
                 byte[] md = mdInst.digest();
                 StringBuffer buf = new StringBuffer();
                 for (int tmp : md) {
-                    int tmp2=tmp;
+                    int tmp2 = tmp;
                     if (tmp2 < 0) {
                         tmp2 += 256;
                     }

@@ -18,8 +18,8 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +29,11 @@ import org.slf4j.LoggerFactory;
  */
 public class DefineCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefineCheckPlugin.class);
-    private MonitorService monitorService;
-    private String         fromType;
+    private static final Logger         logger = LoggerFactory.getLogger(DefineCheckPlugin.class);
+
+    private              MonitorService monitorService;
+
+    private              String         fromType;
 
     @Override
     public String process(String... args) throws Exception {

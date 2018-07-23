@@ -22,9 +22,11 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Tag("plugin")
 public class JavaPlugin extends AbstractPlugin {
 
-    private static final long serialVersionUID = 1361991918844867300L;
-    private String mainClass;
-    private String params;
+    private static final long   serialVersionUID = 1361991918844867300L;
+
+    private              String mainClass;
+
+    private              String params;
 
     @Tag("main-class")
     public String getMainClass() {

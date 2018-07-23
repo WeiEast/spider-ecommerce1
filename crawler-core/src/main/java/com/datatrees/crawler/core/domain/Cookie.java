@@ -23,8 +23,10 @@ public class Cookie implements Serializable {
      *
      */
     private static final long serialVersionUID = -3894508724345166182L;
+
     @SerializedName("username")
     String userName;
+
     String cookie;
 
     public Cookie() {
@@ -55,7 +57,7 @@ public class Cookie implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

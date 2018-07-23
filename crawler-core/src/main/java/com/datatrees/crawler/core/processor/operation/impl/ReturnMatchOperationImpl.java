@@ -29,7 +29,8 @@ public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ReturnMatchOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ReturnMatchOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String value = operation.getValue();
         String orginal = (String) operatingData;
 

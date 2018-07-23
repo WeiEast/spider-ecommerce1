@@ -44,16 +44,23 @@ import org.springframework.stereotype.Service;
 public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, InitializingBean {
 
     private static final Logger                              logger       = LoggerFactory.getLogger(AppCrawlerConfigServiceImpl.class);
+
     private static final String                              CACHE_PREFIX = "com.treefinance.crawler.business.control.";
-    private final        Cache<String, Map<String, Boolean>> localCache   = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.MINUTES).softValues().build();
+
+    private final        Cache<String, Map<String, Boolean>> localCache   = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.MINUTES)
+            .softValues().build();
+
     @Resource
-    private AppCrawlerConfigDao    appCrawlerConfigDao;
+    private              AppCrawlerConfigDao                 appCrawlerConfigDao;
+
     @Resource
-    private RedisService           redisService;
+    private              RedisService                        redisService;
+
     @Resource
-    private MerchantBaseInfoFacade merchantBaseInfoFacade;
+    private              MerchantBaseInfoFacade              merchantBaseInfoFacade;
+
     @Autowired
-    private DistributedLocks       distributedLocks;
+    private              DistributedLocks                    distributedLocks;
 
     @Override
     public void afterPropertiesSet() {
@@ -62,7 +69,9 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             List<AppCrawlerConfig> list = selectAll();
 
             if (CollectionUtils.isNotEmpty(list)) {
-                Map<String, Map<String, Boolean>> map = list.stream().filter(config -> StringUtils.isNotEmpty(config.getAppId())).collect(Collectors.groupingBy(AppCrawlerConfig::getAppId, Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (v1, v2) -> v2)));
+                Map<String, Map<String, Boolean>> map = list.stream().filter(config -> StringUtils.isNotEmpty(config.getAppId())).collect(Collectors
+                        .groupingBy(AppCrawlerConfig::getAppId,
+                                Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (v1, v2) -> v2)));
 
                 map.forEach((appId, configMap) -> {
                     redisService.putMap(CACHE_PREFIX + appId, configMap);
@@ -99,7 +108,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 if (CollectionUtils.isEmpty(map)) {
                     List<AppCrawlerConfig> list = this.selectListByAppId(appId);
                     if (CollectionUtils.isNotEmpty(list)) {
-                        map = list.stream().collect(Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (o1, o2) -> o2));
+                        map = list.stream()
+                                .collect(Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (o1, o2) -> o2));
 
                         try {
                             redisService.putMap(redisKey, map);
@@ -132,7 +142,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             return Collections.emptyList();
         }
 
-        return appList.parallelStream().map(this::getAppCrawlerConfigParamByAppId).sorted(Comparator.comparing(AppCrawlerConfigParam::getAppId)).collect(Collectors.toList());
+        return appList.parallelStream().map(this::getAppCrawlerConfigParamByAppId).sorted(Comparator.comparing(AppCrawlerConfigParam::getAppId))
+                .collect(Collectors.toList());
     }
 
     private AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(MerchantAppLicenseResult merchant) {
@@ -161,7 +172,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     Iterator<AppCrawlerConfig> iterator = configs.iterator();
                     while (iterator.hasNext()) {
                         AppCrawlerConfig config = iterator.next();
-                        logger.debug("业务标签设置 websiteType: {}, project: {}, status: {}", config.getWebsiteType(), config.getProject(), config.getCrawlerStatus());
+                        logger.debug("业务标签设置 websiteType: {}, project: {}, status: {}", config.getWebsiteType(), config.getProject(),
+                                config.getCrawlerStatus());
                         if (websiteType.val() == config.getWebsiteType()) {
                             BusinessType businessType = BusinessType.getBusinessType(config.getProject());
                             if (businessType == null || !businessType.isEnable()) {
@@ -177,7 +189,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         }
                     }
 
-                    if(logger.isDebugEnabled()){
+                    if (logger.isDebugEnabled()) {
                         logger.debug("已知的业务标签配置：{}", JSON.toJSONString(map));
                     }
 
@@ -189,8 +201,10 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         map.computeIfAbsent(uniqueKey(businessType), s -> convertProjectParam(businessType, null));
                     }
 
-                    List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getOrder)).collect(Collectors.toList());
-                    List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName).collect(Collectors.toList());
+                    List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getOrder))
+                            .collect(Collectors.toList());
+                    List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName)
+                            .collect(Collectors.toList());
                     projectNames.addAll(names);
 
                     logger.debug("appId: {}, websiteType: {}, projects: {}", param.getAppId(), websiteType.getType(), projects);
@@ -203,7 +217,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         if (projectConfigInfos.isEmpty()) {
             param.setProjectConfigInfos(projectConfigInfos);
         } else {
-            param.setProjectConfigInfos(projectConfigInfos.stream().sorted(Comparator.comparing(CrawlerProjectParam::getWebsiteType)).collect(Collectors.toList()));
+            param.setProjectConfigInfos(
+                    projectConfigInfos.stream().sorted(Comparator.comparing(CrawlerProjectParam::getWebsiteType)).collect(Collectors.toList()));
         }
 
         return param;
@@ -258,7 +273,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         config.setCrawlerStatus(projectParam.getCrawlerStatus() != 0);
 
                         AppCrawlerConfigCriteria criteria = new AppCrawlerConfigCriteria();
-                        criteria.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(crawlerProjectParam.getWebsiteType()).andProjectEqualTo(projectParam.getCode());
+                        criteria.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(crawlerProjectParam.getWebsiteType())
+                                .andProjectEqualTo(projectParam.getCode());
                         int i = appCrawlerConfigDao.updateByExampleSelective(config, criteria);
                         if (i == 0) {
                             config.setAppId(appId);

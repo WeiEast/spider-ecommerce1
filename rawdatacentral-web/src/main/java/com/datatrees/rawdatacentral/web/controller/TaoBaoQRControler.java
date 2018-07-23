@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/economic/taobao")
 public class TaoBaoQRControler {
 
-    private static final Logger logger = LoggerFactory.getLogger(TaoBaoQRControler.class);
+    private static final Logger                 logger = LoggerFactory.getLogger(TaoBaoQRControler.class);
+
     @Resource
-    private EconomicApiForTaoBaoQR economicApiForTaoBaoQR;
+    private              EconomicApiForTaoBaoQR economicApiForTaoBaoQR;
 
     @RequestMapping("/refeshQRCode")
     public Object refeshQRCode(CommonPluginParam param) {

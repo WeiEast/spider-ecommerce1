@@ -23,6 +23,7 @@ public enum FieldBizType {
     PIC_CODE("PIC_CODE", "图片验证码"),
     REAL_NAME("REAL_NAME", "真实姓名"),
     ID_CARD("ID_CARD", "身份证号码");
+
     /**
      * bizType对应的input标签属性
      */
@@ -73,7 +74,8 @@ public enum FieldBizType {
                 case ID_CARD:
                     field.setName("idCard");
                     field.setType("text");
-                    field.setValidationPattern("^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$");
+                    field.setValidationPattern(
+                            "^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$");
                     field.setValidationMsg("请输入身份证号码");
                     field.setPlaceholder("请输入身份证号码");
                     break;
@@ -88,6 +90,7 @@ public enum FieldBizType {
      * 字段类型
      */
     private final String code;
+
     /**
      * 要显示的label
      */

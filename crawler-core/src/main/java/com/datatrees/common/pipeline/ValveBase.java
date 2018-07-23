@@ -9,37 +9,34 @@ import org.slf4j.LoggerFactory;
  * provide the required functionality, and <strong>MAY</strong> implement the
  * <code>Lifecycle</code> interface to provide configuration management and
  * lifecycle support.
- * 
  * @author Craig R. McClanahan
  * @version $Revision: 467222 $ $Date: 2006-10-24 11:17:11 +0800 (Tue, 24 Oct
- *          2006) $
+ * 2006) $
  */
-
 public abstract class ValveBase implements Valve {
 
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  // ------------------------------------------------------ Instance Variables
-  /**
-   * The next Valve in the pipeline this Valve is a component of.
-   */
-  protected       Valve  next   = null;
+    // ------------------------------------------------------ Instance Variables
 
-  /**
-   * Return the next Valve in this pipeline, or <code>null</code> if this is the
-   * last Valve in the pipeline.
-   */
-  public Valve getNext() {
-    return next;
-  }
+    /**
+     * The next Valve in the pipeline this Valve is a component of.
+     */
+    protected       Valve  next   = null;
 
-  /**
-   * Set the Valve that follows this one in the pipeline it is part of.
-   * 
-   * @param valve
-   *          The new next valve
-   */
-  public void setNext(Valve valve) {
-    this.next = valve;
-  }
+    /**
+     * Return the next Valve in this pipeline, or <code>null</code> if this is the
+     * last Valve in the pipeline.
+     */
+    public Valve getNext() {
+        return next;
+    }
+
+    /**
+     * Set the Valve that follows this one in the pipeline it is part of.
+     * @param valve The new next valve
+     */
+    public void setNext(Valve valve) {
+        this.next = valve;
+    }
 }

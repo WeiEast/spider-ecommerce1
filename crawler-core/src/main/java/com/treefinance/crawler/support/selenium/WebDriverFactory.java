@@ -28,6 +28,7 @@ import org.openqa.selenium.WebDriver;
 public final class WebDriverFactory {
 
     private static final String SERVER_URL;
+
     private static final String USER_AGENT;
 
     static {
@@ -52,6 +53,7 @@ public final class WebDriverFactory {
     }
 
     public static WebDriver makeFirefoxDriver(String serverUrl, String userAgent, String proxy, boolean disableCSS, boolean disableImage) {
-        return FirefoxDriverBuilder.newBuilder(serverUrl).setUserAgent(userAgent).setProxy(proxy).setDisableCSS(disableCSS).setDisableImage(disableImage).build();
+        return FirefoxDriverBuilder.newBuilder(serverUrl).setUserAgent(userAgent).setProxy(proxy).setDisableCSS(disableCSS)
+                .setDisableImage(disableImage).build();
     }
 }

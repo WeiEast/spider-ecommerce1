@@ -20,11 +20,15 @@ import org.slf4j.LoggerFactory;
  */
 public class LinkQueue {
 
-    private static final Logger log = LoggerFactory.getLogger(LinkQueue.class);
-    private BDBOperator          bdbOperator;
-    private SearchTemplateConfig searchTemplateConfig;
-    private int     queueSize = 0;
-    private boolean isFull    = false;
+    private static final Logger               log       = LoggerFactory.getLogger(LinkQueue.class);
+
+    private              BDBOperator          bdbOperator;
+
+    private              SearchTemplateConfig searchTemplateConfig;
+
+    private              int                  queueSize = 0;
+
+    private              boolean              isFull    = false;
 
     public LinkQueue(SearchTemplateConfig searchTemplateConfig) {
         this.searchTemplateConfig = searchTemplateConfig;
@@ -85,7 +89,8 @@ public class LinkQueue {
                 }
             }
 
-            log.info("Added [" + (bdbOperator.getCurrentId() - preId) + "] links to link queue , total [" + (bdbOperator.getCurrentId() - 1) + "] in queue current position is " + bdbOperator.getLastFetchId());
+            log.info("Added [" + (bdbOperator.getCurrentId() - preId) + "] links to link queue , total [" + (bdbOperator.getCurrentId() - 1) +
+                    "] in queue current position is " + bdbOperator.getLastFetchId());
             log.info("New link added into BDB, new link num:" + newLinkNum);
             return newLinkNum;
         }

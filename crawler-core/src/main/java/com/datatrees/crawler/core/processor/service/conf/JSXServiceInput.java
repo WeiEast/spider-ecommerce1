@@ -15,9 +15,12 @@ package com.datatrees.crawler.core.processor.service.conf;
  */
 public class JSXServiceInput {
 
-    private Integer id      = 0;
-    private String  jsonrpc = "2.0";
+    private Integer     id      = 0;
+
+    private String      jsonrpc = "2.0";
+
     private String      method;
+
     private JSXParamsIn params;
 
     public Integer getId() {

@@ -39,9 +39,12 @@ import java.util.Set;
 public class TempFileStorageProvider extends AbstractStorageProvider {
 
     private static final String DEFAULT_PREFIX = "m4j";
-    private final String prefix;
-    private final String suffix;
-    private final File   directory;
+
+    private final        String prefix;
+
+    private final        String suffix;
+
+    private final        File   directory;
 
     /**
      * Equivalent to using constructor
@@ -94,6 +97,7 @@ public class TempFileStorageProvider extends AbstractStorageProvider {
     private static final class TempFileStorageOutputStream extends StorageOutputStream {
 
         private File         file;
+
         private OutputStream out;
 
         public TempFileStorageOutputStream(File file) throws IOException {
@@ -122,7 +126,8 @@ public class TempFileStorageProvider extends AbstractStorageProvider {
     private static final class TempFileStorage implements Storage {
 
         private static final Set<File> filesToDelete = new HashSet<File>();
-        private File file;
+
+        private              File      file;
 
         public TempFileStorage(File file) {
             this.file = file;

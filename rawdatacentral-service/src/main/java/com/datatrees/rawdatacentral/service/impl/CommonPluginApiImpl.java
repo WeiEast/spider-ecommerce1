@@ -15,17 +15,20 @@ import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.rawdatacentral.domain.enums.*;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.StepEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,22 +38,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommonPluginApiImpl implements CommonPluginApi {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommonPluginApiImpl.class);
+    private static final Logger               logger = LoggerFactory.getLogger(CommonPluginApiImpl.class);
 
     @Resource
-    private ClassLoaderService classLoaderService;
+    private              ClassLoaderService   classLoaderService;
 
     @Resource
-    private RedisService redisService;
+    private              RedisService         redisService;
 
     @Resource
-    private WebsiteConfigService websiteConfigService;
+    private              WebsiteConfigService websiteConfigService;
 
     @Resource
-    private MonitorService monitorService;
+    private              MonitorService       monitorService;
 
     @Autowired
-    private ProxyService proxyService;
+    private              ProxyService         proxyService;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
@@ -197,7 +200,8 @@ public class CommonPluginApiImpl implements CommonPluginApi {
             //腾讯企业邮箱h5和新浪邮箱h5时不再发一次mq，防止task_log中记录错误的数据
             if (result.getData() != null) {
                 String str = result.getData().toString();
-                if ((str.contains("directive=login_fail") || str.contains("directive=require_picture") || str.contains("directive=require_picture_again")) && str.contains("information")) {
+                if ((str.contains("directive=login_fail") || str.contains("directive=require_picture") ||
+                        str.contains("directive=require_picture_again")) && str.contains("information")) {
                     return result;
                 }
             }
@@ -284,7 +288,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     public HttpResult<Object> registerInit(EducationParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerInit(param);
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -293,7 +297,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     public HttpResult<Object> registerRefreshPicCode(EducationParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerRefreshPicCode(param);
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -302,7 +306,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerValidatePicCodeAndSendSmsCode(param);
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -311,7 +315,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     public HttpResult<Object> registerSubmit(EducationParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerSubmit(param);
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
         }
     }

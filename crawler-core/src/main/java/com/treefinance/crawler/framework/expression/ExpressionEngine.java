@@ -13,7 +13,9 @@ import com.treefinance.crawler.framework.context.FieldScopes;
 public class ExpressionEngine {
 
     private final Request             request;
+
     private final Response            response;
+
     private       Map<String, Object> visibleFields;
 
     public ExpressionEngine(Request request, Response response) {

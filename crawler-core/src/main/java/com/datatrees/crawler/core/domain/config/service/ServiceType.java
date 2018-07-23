@@ -13,6 +13,7 @@ public enum ServiceType {
     Grab_Service("grab"),
     Task_Http_Service("task_http"),
     Plugin_Service("plugin");
+
     private static Map<String, ServiceType> serviceMap = new HashMap<String, ServiceType>();
 
     static {

@@ -32,13 +32,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class EbankMessageNormalizer implements DataNormalizer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EbankMessageNormalizer.class);
+    private static final Logger      LOGGER = LoggerFactory.getLogger(EbankMessageNormalizer.class);
+
     @Resource
-    private BankService bankService;
+    private              BankService bankService;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
@@ -53,7 +54,8 @@ public class EbankMessageNormalizer implements DataNormalizer {
             ((EBankData) object).setBankId(message.getTypeId());
             ((EBankData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EBankData.class.getSimpleName())) {
+        } else if (object instanceof HashMap &&
+                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EBankData.class.getSimpleName())) {
             EBankData eBankData = new EBankData();
             eBankData.putAll((Map) object);
             eBankData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

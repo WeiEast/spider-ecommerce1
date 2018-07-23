@@ -35,7 +35,9 @@ import org.slf4j.LoggerFactory;
  */
 public enum MailParserImpl {
     INSTANCE;
+
     private static final Logger logger                = LoggerFactory.getLogger(MailParserImpl.class);
+
     private              String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
 
     public Mail parseMessage(String websiteName, InputStream fis, List<OssServiceTest.Replace> list) throws UnsupportedEncodingException {
@@ -79,7 +81,8 @@ public enum MailParserImpl {
                 String html = getTxtPart(part, list);
                 mimeMsg.getHtmlBody().append(html);
             } else {
-                logger.warn("unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + "," + part.getHeader());
+                logger.warn(
+                        "unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + "," + part.getHeader());
             }
 
             // If current part contains other, parse it again by recursion
@@ -94,7 +97,8 @@ public enum MailParserImpl {
         if (StringUtils.isBlank(fileName)) {
             Field field = part.getHeader().getField(FieldName.CONTENT_DISPOSITION);
             if (field != null && field.getBody() != null) {
-                fileName = PatternUtils.group(field.getBody().toLowerCase(), PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
+                fileName = PatternUtils.group(field.getBody().toLowerCase(),
+                        PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
             }
         }
         return fileName;
@@ -137,7 +141,8 @@ public enum MailParserImpl {
             SingleBody tb = ((TextBody) part.getBody());
             baos = new ByteArrayOutputStream();
             tb.writeTo(baos);
-            String contentType = part.getHeader().getField(FieldName.CONTENT_TYPE) != null ? part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
+            String contentType = part.getHeader().getField(FieldName.CONTENT_TYPE) != null ?
+                    part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
             Content content = new Content("", "", baos.toByteArray(), contentType, new Metadata());
             part.removeBody();
             String result = content.detectContentAsString();
@@ -157,6 +162,7 @@ public enum MailParserImpl {
     class StringTextBody extends TextBody {
 
         private final String  text;
+
         private final Charset charset;
 
         public StringTextBody(final String text, Charset charset) {

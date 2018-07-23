@@ -91,12 +91,12 @@ public class OperatorLoginConfig implements Serializable {
     /**
      * 启用/停用
      */
-    private Boolean          enable = true;
+    private Boolean          enable     = true;
 
     /**
      * 字段
      */
-    private List<InputField> fields = new ArrayList<>();
+    private List<InputField> fields     = new ArrayList<>();
 
     public String getGroupCode() {
         return groupCode;

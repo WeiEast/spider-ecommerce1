@@ -3,7 +3,6 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2014
  */
 
@@ -23,7 +22,9 @@ import org.slf4j.LoggerFactory;
 public class GZIPUtils {
 
     private static final Logger LOG                        = LoggerFactory.getLogger(GZIPUtils.class);
+
     private static final int    EXPECTED_COMPRESSION_RATIO = 5;
+
     private static final int    BUF_SIZE                   = 4096;
 
     /**
@@ -43,8 +44,7 @@ public class GZIPUtils {
     public static final byte[] unzipBestEffort(byte[] in, int sizeLimit) {
         try {
             // decompress using GZIPInputStream
-            ByteArrayOutputStream outStream =
-                    new ByteArrayOutputStream(EXPECTED_COMPRESSION_RATIO * in.length);
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream(EXPECTED_COMPRESSION_RATIO * in.length);
 
             CustomGzipStream inStream = new CustomGzipStream(new ByteArrayInputStream(in));
 
@@ -75,16 +75,14 @@ public class GZIPUtils {
         }
     }
 
-
     /**
      * Returns an gunzipped copy of the input array.
-     * 
+     *
      * @throws IOException if the input cannot be properly decompressed
      */
     public static final byte[] unzip(byte[] in) throws IOException {
         // decompress using GZIPInputStream
-        ByteArrayOutputStream outStream =
-                new ByteArrayOutputStream(EXPECTED_COMPRESSION_RATIO * in.length);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream(EXPECTED_COMPRESSION_RATIO * in.length);
 
         CustomGzipStream inStream = new CustomGzipStream(new ByteArrayInputStream(in));
 
@@ -105,8 +103,7 @@ public class GZIPUtils {
     public static final byte[] zip(byte[] in) {
         try {
             // compress using GZIPOutputStream
-            ByteArrayOutputStream byteOut =
-                    new ByteArrayOutputStream(in.length / EXPECTED_COMPRESSION_RATIO);
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream(in.length / EXPECTED_COMPRESSION_RATIO);
 
             GZIPOutputStream outStream = new GZIPOutputStream(byteOut);
 

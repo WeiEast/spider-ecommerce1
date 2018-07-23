@@ -34,12 +34,16 @@ import org.springframework.stereotype.Component;
 public class DefaultSubmitProcessor implements SubmitProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultSubmitProcessor.class);
+
     @Resource
     RedisService      redisService;
+
     @Resource
     FileStoreService  fileStoreService;
+
     @Resource
     NormalizerFactory submitNormalizerFactory;
+
     @Resource
     SubTaskManager    subTaskManager;
 
@@ -145,7 +149,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
                 } catch (Throwable e) {
                     logger.error("save to back redis error ", e);
                 }
-            } else if(entry.getValue() != null){
+            } else if (entry.getValue() != null) {
                 redisService.saveString(redisKey, GsonUtils.toJson(entry.getValue()), 30, TimeUnit.MINUTES);
                 try {
                     BackRedisUtils.set(backKey, JSON.toJSONString(entry.getValue()));

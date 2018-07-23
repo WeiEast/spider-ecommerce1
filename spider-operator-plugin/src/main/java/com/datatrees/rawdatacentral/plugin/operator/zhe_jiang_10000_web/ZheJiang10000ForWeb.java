@@ -9,14 +9,14 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class ZheJiang10000ForWeb implements OperatorPluginPostService {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(ZheJiang10000ForWeb.class);
+
     private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
 
     @Override
@@ -151,10 +152,11 @@ public class ZheJiang10000ForWeb implements OperatorPluginPostService {
 
             String referer = "http://zj.189.cn/zjpr/service/query/query_order.html?menuFlag=1";
             String templateUrl = "http://zj.189.cn/zjpr/cdr/getCdrDetail.htm";
-            String templateData = "flag=1&cdrCondition.pagenum=1&cdrCondition.pagesize=100&cdrCondition.productnbr={}&cdrCondition.areaid={}&cdrCondition" +
-                    ".cdrlevel=&cdrCondition.productid={}&cdrCondition.product_servtype={}&cdrCondition" +
-                    ".recievenbr=%D2%C6%B6%AF%B5%E7%BB%B0&cdrCondition.cdrmonth={}&cdrCondition.cdrtype=11&cdrCondition.usernameyanzheng={}&cdrCondition.idyanzheng={}&cdrCondition" +
-                    ".randpsw={}";
+            String templateData =
+                    "flag=1&cdrCondition.pagenum=1&cdrCondition.pagesize=100&cdrCondition.productnbr={}&cdrCondition.areaid={}&cdrCondition" +
+                            ".cdrlevel=&cdrCondition.productid={}&cdrCondition.product_servtype={}&cdrCondition" +
+                            ".recievenbr=%D2%C6%B6%AF%B5%E7%BB%B0&cdrCondition.cdrmonth={}&cdrCondition.cdrtype=11&cdrCondition.usernameyanzheng={}&cdrCondition.idyanzheng={}&cdrCondition" +
+                            ".randpsw={}";
             String data = TemplateUtils
                     .format(templateData, param.getMobile(), areaid, productid, servtype, billMonth, username, idCard, param.getSmsCode());
             response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_006").setFullUrl(templateUrl).setRequestBody(data)
@@ -178,7 +180,8 @@ public class ZheJiang10000ForWeb implements OperatorPluginPostService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10012&toStUrl=http://zj.189.cn/zjpr/balancep/getBalancep.htm";
+            String templateUrl
+                    = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10012&toStUrl=http://zj.189.cn/zjpr/balancep/getBalancep.htm";
             response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
             logger.info("登陆成功,param={}", param);
             return result.success();

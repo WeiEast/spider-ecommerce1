@@ -6,17 +6,22 @@ import java.util.Date;
 /** create by system from table t_website_template() */
 public class WebsiteTemplate implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long    serialVersionUID = 1L;
+
     /** bank Id */
-    private Integer templateId;
+    private              Integer templateId;
+
     /**  */
-    private String  name;
+    private              String  name;
+
     /**  */
-    private Date    createdAt;
+    private              Date    createdAt;
+
     /**  */
-    private Date    updatedAt;
+    private              Date    updatedAt;
+
     /**  */
-    private String  initSetting;
+    private              String  initSetting;
 
     public Integer getTemplateId() {
         return templateId;

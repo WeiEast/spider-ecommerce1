@@ -16,13 +16,14 @@ import org.springframework.stereotype.Service;
 @Scope("prototype")
 public class ExtractorActor extends AbstractActor {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExtractorActor.class);
+    private static final Logger        logger = LoggerFactory.getLogger(ExtractorActor.class);
+
     @Resource
-    private ExtractWorker extractWorker;
+    private              ExtractWorker extractWorker;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.datatrees.common.actor.AbstractActor#processMessage(java.lang.Object)
      */
     @Override
@@ -37,7 +38,7 @@ public class ExtractorActor extends AbstractActor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.datatrees.common.actor.AbstractActor#processComplete(java.lang.Object)
      */
     @Override

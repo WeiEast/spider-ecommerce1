@@ -20,11 +20,17 @@ import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 public class MailExtractResult extends AbstractExtractResult {
 
     private int     bankId;
+
     private String  sender;
+
     private String  subject;
+
     private Date    receiveAt;
+
     private String  receiver;
+
     private Boolean firstHand;
+
     private String  mailHeader;//邮件头
 
     /**

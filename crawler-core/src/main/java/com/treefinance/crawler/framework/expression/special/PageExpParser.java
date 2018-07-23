@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 public class PageExpParser {
 
     private static final Logger  LOGGER  = LoggerFactory.getLogger(PageExpParser.class);
+
     private static final String  REGEX   = "#\\{\\s*page\\s*,([\\d\\s.*/+-]+),([\\d\\s.*/+-]+),\\s*([\\d.]+)\\s*([+-]?)\\s*}";
+
     private static final Pattern PATTERN = Pattern.compile(REGEX);
 
     private PageExpParser() {

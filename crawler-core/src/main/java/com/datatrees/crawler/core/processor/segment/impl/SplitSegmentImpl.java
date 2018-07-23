@@ -35,7 +35,7 @@ public class SplitSegmentImpl extends SegmentBase<SplitSegment> {
 
     @Override
     protected List<String> splitInputContent(String content, SplitSegment segment, Request request, Response response) {
-        if(StringUtils.isNotEmpty(content)){
+        if (StringUtils.isNotEmpty(content)) {
             String split = StringUtils.defaultString(segment.getSplitString());
 
             logger.debug("Splitter separate: {}", split);

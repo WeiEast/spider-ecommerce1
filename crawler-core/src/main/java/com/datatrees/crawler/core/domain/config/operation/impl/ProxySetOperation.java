@@ -27,8 +27,9 @@ public class ProxySetOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = -4650672405535297595L;
-    private Option option;
+    private static final long   serialVersionUID = -4650672405535297595L;
+
+    private              Option option;
 
     @Attr("option")
     public Option getOption() {

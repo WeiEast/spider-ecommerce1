@@ -20,25 +20,26 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public void handle(HttpServletRequest request, IllegalArgumentException ex, HttpServletResponse response){
+    public void handle(HttpServletRequest request, IllegalArgumentException ex, HttpServletResponse response) {
         responseException(request, CommonStateCode.FAILURE, ex, "websiteName或enable不能为空", HttpStatus.BAD_REQUEST, response);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public void handle(HttpServletRequest request, HttpMessageNotReadableException ex, HttpServletResponse response){
+    public void handle(HttpServletRequest request, HttpMessageNotReadableException ex, HttpServletResponse response) {
         responseException(request, CommonStateCode.FAILURE, ex, "请求body异常", HttpStatus.BAD_REQUEST, response);
     }
 
     @ExceptionHandler(Exception.class)
-    public void handle(HttpServletRequest request, Exception ex, HttpServletResponse response){
+    public void handle(HttpServletRequest request, Exception ex, HttpServletResponse response) {
         responseException(request, CommonStateCode.FAILURE, ex, "系统异常", HttpStatus.BAD_REQUEST, response);
     }
 
-    private void responseException(HttpServletRequest request, StateCode stateCode, Exception ex, String statusText,
-            HttpStatus httpStatus, HttpServletResponse response) {
+    private void responseException(HttpServletRequest request, StateCode stateCode, Exception ex, String statusText, HttpStatus httpStatus,
+            HttpServletResponse response) {
         handleLog(request, ex);
         String responseBody = JSON.toJSONString(Results.newFailedResult(stateCode, statusText));
         ServletResponses.responseJson(response, httpStatus.value(), responseBody);

@@ -4,6 +4,10 @@ import javax.annotation.Resource;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.alibaba.rocketmq.client.producer.SendStatus;
+import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.notify.async.body.mail.MailBody;
 import com.datatrees.notify.async.body.mail.MailEnum;
@@ -19,13 +23,9 @@ import com.datatrees.notify.sms.newservice.entity.message.SmsMessage;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.FormatUtils;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.service.NotifyService;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import org.apache.commons.lang3.StringUtils;
-import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.client.producer.SendStatus;
-import com.alibaba.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,19 +33,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class NotifyServiceImpl implements NotifyService {
 
-    private static final Logger logger       = LoggerFactory.getLogger(NotifyServiceImpl.class);
+    private static final Logger            logger       = LoggerFactory.getLogger(NotifyServiceImpl.class);
+
     /**
      * 预警业务类型
      */
-    private static final String BUSINESS     = "monitor";
+    private static final String            BUSINESS     = "monitor";
+
     /**
      * 预警topic
      */
-    private static final String TOPIC_NOTIFY = "mq_topic_notify";
+    private static final String            TOPIC_NOTIFY = "mq_topic_notify";
+
     @Resource
-    private SmsNewService     smsNewService;
+    private              SmsNewService     smsNewService;
+
     @Resource
-    private DefaultMQProducer defaultMQProducer;
+    private              DefaultMQProducer defaultMQProducer;
 
     @Override
     public Boolean sendMonitorEmail(String subject, String body) {

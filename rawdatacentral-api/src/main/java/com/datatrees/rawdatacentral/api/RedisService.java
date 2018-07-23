@@ -250,10 +250,9 @@ public interface RedisService {
      */
     void unLock(Object redisKey);
 
+    <K, V> Map<K, V> getMap(String redisKey);
 
-    <K,V> Map<K,V> getMap(String redisKey);
+    <K, V> void putMap(String redisKey, Map<K, V> map);
 
-    <K,V> void putMap(String redisKey, Map<K, V> map);
-
-    <K,V> void putMap(String redisKey, K key, V value);
+    <K, V> void putMap(String redisKey, K key, V value);
 }

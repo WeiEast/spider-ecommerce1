@@ -8,13 +8,13 @@ import java.util.Map;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class YunNan10000ForWap implements OperatorPluginService {
 
-    private static final Logger logger     = LoggerFactory.getLogger(YunNan10000ForWap.class);
+    private static final Logger logger = LoggerFactory.getLogger(YunNan10000ForWap.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -95,7 +95,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String url = "http://wapyn.189.cn/vcImage.do";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "yun_nan_10000_wap_001").setResponseContentType(ContentType.create("image/png")).setFullUrl(url).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "yun_nan_10000_wap_001")
+                    .setResponseContentType(ContentType.create("image/png")).setFullUrl(url).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -111,7 +112,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String templateUrl = "http://wapyn.189.cn/sendSms.do";
             String templateData = "accNbr=" + param.getMobile();
             String referer = "http://wapyn.189.cn/initLogin.do";
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_002").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_002").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "\"respCode\":\"0\"")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -135,14 +137,16 @@ public class YunNan10000ForWap implements OperatorPluginService {
         try {
 
             //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("yun_nan_10000_wap/des.js");
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(),"des.js","GBK");
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encodeMobile = invocable.invokeFunction("strEnc", param.getMobile().toString(), "wap_accnbr_2016", "", "").toString();
             Object encodePassword = invocable.invokeFunction("strEnc", param.getSmsCode(), "wap_password_2016", "", "");
 
             String templateUrl = "http://wapyn.189.cn/loginValidate.do";
-            String templateData = "loginPwdType=B&nodeId=72&mode=other&enAccNbr=" + encodeMobile + "&enPassword=" + encodePassword + "&valid=" + param.getPicCode();
+            String templateData = "loginPwdType=B&nodeId=72&mode=other&enAccNbr=" + encodeMobile + "&enPassword=" + encodePassword + "&valid=" +
+                    param.getPicCode();
             String referer = "http://wapyn.189.cn/initLogin.do";
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_003").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_003").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             templateUrl = "http://wapyn.189.cn/self/info/custInfo.do?nodeId=319";
@@ -185,7 +189,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String referer = "http://wapyn.189.cn/self/fee/detailQuery?nodeId=86";
             String templateUrl = "http://wapyn.189.cn/self/fee/sendSms.do";
             String templateData = "accNbr=";
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_005").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_005").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "\"respCode\":\"0\"")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -211,7 +216,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String referer = "http://wapyn.189.cn/self/fee/detailQuery?nodeId=86";
             String templateUrl = "http://wapyn.189.cn/self/fee/detailRecord.do";
             String templateData = "date=" + billMonth + "&cdrtype=10&deailsms=" + param.getSmsCode() + "&nodeId=86";
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_006").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_006").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent)) {
                 logger.info("详单-->校验成功,param={}", param);

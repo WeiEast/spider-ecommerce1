@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.common.protocol.http;
 
 import java.io.ByteArrayOutputStream;
@@ -53,36 +53,32 @@ import org.slf4j.LoggerFactory;
  * This class is a protocol plugin that configures an HTTP client for Basic, Digest and NTLM
  * authentication schemes for web server as well as proxy server. It takes care of HTTPS protocol as
  * well as cookies in a single fetch session.
- * 
+ *
  * @author Susam Pal
  */
 public class WebClient extends HttpBase {
 
     private static final Logger                             LOG               = LoggerFactory.getLogger(WebClient.class);
 
-    private MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+    private              MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
 
     // Since the Configuration has not yet been set,
     // then an unconfigured client is returned.
-    private HttpClient                         client            = new ProtocolHttpClient(connectionManager);
+    private              HttpClient                         client            = new ProtocolHttpClient(connectionManager);
 
-    private int                                maxThreadsTotal   = 400;
-    private int                                maxThreadsPerHost = 200;
-    private int                                maxRedirect       = 10;
+    private              int                                maxThreadsTotal   = 400;
 
-    private String proxyUsername;
-    private String proxyPassword;
-    private String proxyRealm;
-    private String agentHost;
+    private              int                                maxThreadsPerHost = 200;
 
-    /**
-     * Returns the configured HTTP client.
-     * 
-     * @return HTTP client
-     */
-    public HttpClient getClient() {
-        return client;
-    }
+    private              int                                maxRedirect       = 10;
+
+    private              String                             proxyUsername;
+
+    private              String                             proxyPassword;
+
+    private              String                             proxyRealm;
+
+    private              String                             agentHost;
 
     /**
      * Constructs this plugin.
@@ -92,8 +88,58 @@ public class WebClient extends HttpBase {
     }
 
     /**
+     * Returns an authentication scope for the specified <code>host</code>, <code>port</code>,
+     * <code>realm</code> and <code>scheme</code>.
+     *
+     * @param host Host name or address.
+     * @param port Port number.
+     * @param realm Authentication realm.
+     * @param scheme Authentication scheme.
+     */
+    private static AuthScope getAuthScope(String host, int port, String realm, String scheme) {
+
+        if (host.length() == 0) host = null;
+
+        if (port < 0) port = -1;
+
+        if (realm.length() == 0) realm = null;
+
+        if (scheme.length() == 0) scheme = null;
+
+        return new AuthScope(host, port, realm, scheme);
+    }
+
+    /**
+     * Returns an authentication scope for the specified <code>host</code>, <code>port</code> and
+     * <code>realm</code>.
+     *
+     * @param host Host name or address.
+     * @param port Port number.
+     * @param realm Authentication realm.
+     */
+    private static AuthScope getAuthScope(String host, int port, String realm) {
+        return getAuthScope(host, port, realm, "");
+    }
+
+    protected static String[] split(String data, String splitChar) {
+        if (StringUtils.isNotEmpty(data) && StringUtils.isNotEmpty(splitChar)) {
+            return StringUtils.split(data, splitChar);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the configured HTTP client.
+     *
+     * @return HTTP client
+     */
+    public HttpClient getClient() {
+        return client;
+    }
+
+    /**
      * Reads the configuration from the Nutch configuration files and sets the configuration.
-     * 
+     *
      * @param conf Configuration
      */
     public void setConf(Configuration conf) {
@@ -128,7 +174,6 @@ public class WebClient extends HttpBase {
         connectionParams.setDefaultMaxConnectionsPerHost(maxThreadsPerHost);
         // connectionParams.setStaleCheckingEnabled(false);
 
-
         // executeMethod(HttpMethod) seems to ignore the connection timeout on
         // the connection manager.
         // set it explicitly on the HttpClient.
@@ -137,7 +182,6 @@ public class WebClient extends HttpBase {
         client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         // set retry handler
         setRetryHandler();
-
 
         HostConfiguration hostConf = client.getHostConfiguration();
         ArrayList<Header> headers = new ArrayList<Header>();
@@ -156,22 +200,11 @@ public class WebClient extends HttpBase {
 
         client.getParams().setParameter(HostParams.DEFAULT_HEADERS, headers);
 
-        List<String> patterns = new ArrayList<>(Arrays.asList(
-                DateUtil.PATTERN_RFC1123,
-                DateUtil.PATTERN_RFC1036,
-                DateUtil.PATTERN_ASCTIME,
-                "EEE, dd-MMM-yyyy HH:mm:ss z",
-                "EEE, dd-MMM-yyyy HH-mm-ss z",
-                "EEE, dd MMM yy HH:mm:ss z",
-                "EEE dd-MMM-yyyy HH:mm:ss z",
-                "EEE dd MMM yyyy HH:mm:ss z",
-                "EEE dd-MMM-yyyy HH-mm-ss z",
-                "EEE dd-MMM-yy HH:mm:ss z",
-                "EEE dd MMM yy HH:mm:ss z",
-                "EEE,dd-MMM-yy HH:mm:ss z",
-                "EEE,dd-MMM-yyyy HH:mm:ss z",
-                "EEE, dd-MM-yyyy HH:mm:ss z",
-                "EEE MMM dd HH:mm:ss Z yyyy"));
+        List<String> patterns = new ArrayList<>(
+                Arrays.asList(DateUtil.PATTERN_RFC1123, DateUtil.PATTERN_RFC1036, DateUtil.PATTERN_ASCTIME, "EEE, dd-MMM-yyyy HH:mm:ss z",
+                        "EEE, dd-MMM-yyyy HH-mm-ss z", "EEE, dd MMM yy HH:mm:ss z", "EEE dd-MMM-yyyy HH:mm:ss z", "EEE dd MMM yyyy HH:mm:ss z",
+                        "EEE dd-MMM-yyyy HH-mm-ss z", "EEE dd-MMM-yy HH:mm:ss z", "EEE dd MMM yy HH:mm:ss z", "EEE,dd-MMM-yy HH:mm:ss z",
+                        "EEE,dd-MMM-yyyy HH:mm:ss z", "EEE, dd-MM-yyyy HH:mm:ss z", "EEE MMM dd HH:mm:ss Z yyyy"));
 
         client.getParams().setParameter(HttpMethodParams.DATE_PATTERNS, patterns);
         // HTTP proxy server details
@@ -187,9 +220,8 @@ public class WebClient extends HttpBase {
 
     }
 
-
     /**
-     * 
+     *
      */
     private void setRetryHandler() {
         String retryHandlerClass = conf.get(HttpMethodParams.RETRY_HANDLER);
@@ -210,40 +242,6 @@ public class WebClient extends HttpBase {
         }
     }
 
-    /**
-     * Returns an authentication scope for the specified <code>host</code>, <code>port</code>,
-     * <code>realm</code> and <code>scheme</code>.
-     * 
-     * @param host Host name or address.
-     * @param port Port number.
-     * @param realm Authentication realm.
-     * @param scheme Authentication scheme.
-     */
-    private static AuthScope getAuthScope(String host, int port, String realm, String scheme) {
-
-        if (host.length() == 0) host = null;
-
-        if (port < 0) port = -1;
-
-        if (realm.length() == 0) realm = null;
-
-        if (scheme.length() == 0) scheme = null;
-
-        return new AuthScope(host, port, realm, scheme);
-    }
-
-    /**
-     * Returns an authentication scope for the specified <code>host</code>, <code>port</code> and
-     * <code>realm</code>.
-     * 
-     * @param host Host name or address.
-     * @param port Port number.
-     * @param realm Authentication realm.
-     */
-    private static AuthScope getAuthScope(String host, int port, String realm) {
-        return getAuthScope(host, port, realm, "");
-    }
-
     private <T extends EntityEnclosingMethod> void setPostBody(String postData, T method) throws UnsupportedEncodingException {
         if (postData != null) {
             try {
@@ -259,9 +257,8 @@ public class WebClient extends HttpBase {
         }
     }
 
-
     /**
-     * 
+     *
      * @param action
      * @return
      * @throws UnsupportedEncodingException
@@ -283,9 +280,8 @@ public class WebClient extends HttpBase {
                 } catch (Exception e) {
                     LOG.error("url escaped error", e);
                 }
-                method =
-                        new CustomGetMethod(url).setUriEscaped(input.getRedirectUriEscaped()).setCoexist(input.getCoExist())
-                                .setRetainQuote(input.getCookieScope().isRetainQuote());
+                method = new CustomGetMethod(url).setUriEscaped(input.getRedirectUriEscaped()).setCoexist(input.getCoExist())
+                        .setRetainQuote(input.getCookieScope().isRetainQuote());
                 break;
             case POST:
                 String postUrl = StringUtils.substringBefore(url, URLSPLIT);
@@ -310,15 +306,6 @@ public class WebClient extends HttpBase {
         }
         return method;
     }
-
-    protected static String[] split(String data, String splitChar) {
-        if (StringUtils.isNotEmpty(data) && StringUtils.isNotEmpty(splitChar)) {
-            return StringUtils.split(data, splitChar);
-        }
-        return null;
-    }
-
-
 
     /**
      * get response from input s
@@ -442,11 +429,11 @@ public class WebClient extends HttpBase {
     private String processRedirectResponse(final HttpMethod method) {
         // get the location header to find out where to redirect to
         Header locationHeader = method.getResponseHeader(HttpHeaders.LOCATION);
-        if(locationHeader ==null){
+        if (locationHeader == null) {
             locationHeader = method.getResponseHeader("location");
         }
         Header refreshHeader = method.getResponseHeader(HttpHeaders.REFRESH);
-        if(refreshHeader == null){
+        if (refreshHeader == null) {
             refreshHeader = method.getResponseHeader("refresh");
         }
         if (locationHeader == null && refreshHeader == null) {
@@ -460,7 +447,7 @@ public class WebClient extends HttpBase {
                 result = UrlUtils.resolveUrl(method.getURI().toString(), locationHeader.getValue());
             }
 
-            if(result == null){
+            if (result == null) {
                 result = getRedirectURLInRefreshHeader(refreshHeader);
             }
         } catch (Exception e) {
@@ -471,9 +458,9 @@ public class WebClient extends HttpBase {
 
     /**
      * Tests if the {@link HttpMethod method} requires a redirect to another location.
-     * 
+     *
      * @param method HTTP method
-     * 
+     *
      * @return boolean <tt>true</tt> if a retry is needed, <tt>false</tt> otherwise.
      */
     private boolean isRedirectNeeded(final HttpMethod method) {
@@ -550,7 +537,7 @@ public class WebClient extends HttpBase {
     }
 
     /**
-     * 
+     *
      * @param state
      */
     private void printState(HttpState state) {
@@ -564,7 +551,7 @@ public class WebClient extends HttpBase {
     }
 
     /**
-     * 
+     *
      * @param input
      * @param method
      */
@@ -619,13 +606,13 @@ public class WebClient extends HttpBase {
         if (StringUtils.isNotEmpty(input.getCookie()) && (input.getState() == null || ArrayUtils.isEmpty(input.getState().getCookies()))) {
             method.setRequestHeader(HttpHeaders.COOKIE, input.getCookie());
         }
-        
+
         params.setBooleanParameter(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS, input.getAllowCircularRedirects());
     }
 
     /**
      * create httpstate to hold cookie info
-     * 
+     *
      * @param scope
      * @return
      */
@@ -645,8 +632,6 @@ public class WebClient extends HttpBase {
         }
         return state;
     }
-
-
 
     protected HostConfiguration getHostConfiguration(String proxy) {
         HostConfiguration configuration = new HostConfiguration();

@@ -38,14 +38,21 @@ import org.springframework.stereotype.Service;
 public class MutexSupportSubTaskManager implements SubTaskManager {
 
     private static final Logger                             logger                  = LoggerFactory.getLogger(MutexSupportSubTaskManager.class);
+
     // asyncSubTask has no mutex
     private              LinkedBlockingQueue<SubTask>       asyncSubTaskManagerList = new LinkedBlockingQueue<SubTask>();
+
     private              Map<Integer, Queue<SubTaskFuture>> syncSubTaskFutureMap    = new ConcurrentHashMap<Integer, Queue<SubTaskFuture>>();
+
     private              Map<String, SubTaskFuture>         mutexSubTaskFutureMap   = new ConcurrentHashMap<String, SubTaskFuture>();
-    private              int                                maxSubTaskWaitSecond    = PropertiesConfiguration.getInstance().getInt("max.subTask.wait.second", 60 * 2);
+
+    private              int                                maxSubTaskWaitSecond    = PropertiesConfiguration.getInstance()
+            .getInt("max.subTask.wait.second", 60 * 2);
+
     private              Map<String, SubTask>               syncMutexSubTaskMap     = new ConcurrentHashMap<String, SubTask>();
+
     @Resource
-    private SubTaskExecutor taskExecutor;
+    private              SubTaskExecutor                    taskExecutor;
 
     public MutexSupportSubTaskManager() {
         super();
@@ -169,7 +176,9 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
     class SubTaskFuture {
 
         String      mutexKey;
+
         Container   container;
+
         Future<Map> future;
 
         /**
@@ -187,12 +196,19 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
 
     private class AsyncSubTaskScheduleThread extends Thread {
 
-        private final String  waitingOnParentTask     = "parentTask";
-        private       boolean shutdown                = false;
-        private       long    scheduleInterval        = PropertiesConfiguration.getInstance().getLong("subtask.async.schedule.interval", 3000);
-        private       int     subTaskCorePoolSize     = PropertiesConfiguration.getInstance().getInt("subtask.core.pool.size", 50);
-        private       long    maxSubtaskWaitingMillis = PropertiesConfiguration.getInstance().getInt("max.subtask.waiting.minutes", 5) * 60 * 1000;
-        private SubTaskExecutor subTaskExecutor;
+        private final String          waitingOnParentTask     = "parentTask";
+
+        private       boolean         shutdown                = false;
+
+        private       long            scheduleInterval        = PropertiesConfiguration.getInstance()
+                .getLong("subtask.async.schedule.interval", 3000);
+
+        private       int             subTaskCorePoolSize     = PropertiesConfiguration.getInstance().getInt("subtask.core.pool.size", 50);
+
+        private       long            maxSubtaskWaitingMillis = PropertiesConfiguration.getInstance().getInt("max.subtask.waiting.minutes", 5) * 60 *
+                1000;
+
+        private       SubTaskExecutor subTaskExecutor;
 
         /**
          * @param subTaskExecutor

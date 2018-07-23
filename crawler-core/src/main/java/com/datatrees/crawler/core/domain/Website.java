@@ -13,21 +13,33 @@ import com.datatrees.crawler.core.domain.config.SearchConfig;
 public class Website implements Serializable {
 
     private           Integer         id;
+
     private           String          websiteName;
+
     private           String          websiteDomain;
+
     private           String          websiteType;
+
     private           Boolean         isEnabled;
+
     private transient SearchConfig    searchConfig;
+
     private           String          searchConfigSource;
+
     private transient ExtractorConfig extractorConfig;
+
     private           String          extractorConfigSource;
+
     private           String          taskRegion;
+
     /** 配置标题 */
-    private String websiteTitle;
+    private           String          websiteTitle;
+
     /** 分组 */
-    private String groupCode;
+    private           String          groupCode;
+
     /** 分组 */
-    private String groupName;
+    private           String          groupName;
 
     public String getWebsiteTitle() {
         return websiteTitle;
@@ -133,7 +145,7 @@ public class Website implements Serializable {
         this.taskRegion = taskRegion;
     }
 
-    public boolean needProxy(){
-        return searchConfig != null && searchConfig.getProperties()!= null&& searchConfig.getProperties().getProxy() != null;
+    public boolean needProxy() {
+        return searchConfig != null && searchConfig.getProperties() != null && searchConfig.getProperties().getProxy() != null;
     }
 }

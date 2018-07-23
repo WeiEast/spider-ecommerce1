@@ -12,13 +12,13 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +100,7 @@ public class JiangSu10086ForWap implements OperatorPluginService {
             String templateUrl = "http://wap.js.10086.cn/imageVerifyCode.do?t=0.{}&imgReqSeq={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "jiang_su_10086_wap_002")
                     .setFullUrl(templateUrl, System.currentTimeMillis(), imgReqSeq)
-                    .addExtralCookie("wap.js.10086.cn","mywaytoopen","18f7a4cd2b229eb8adbcce7be537c59f79").invoke();
+                    .addExtralCookie("wap.js.10086.cn", "mywaytoopen", "18f7a4cd2b229eb8adbcce7be537c59f79").invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -179,8 +179,7 @@ public class JiangSu10086ForWap implements OperatorPluginService {
                     "(Macintosh%3B+Intel+Mac+OS+X+10.13%3B+rv%3A52.0)+Gecko%2F20100101+Firefox%2F52.0";
             response = TaskHttpClient.create(param, RequestType.POST, "jiang_su_10086_wap_003")
                     .setFullUrl(templateUrl, param.getMobile(), URLEncoder.encode(encryptPassword, "UTF-8"), param.getPicCode(), imgReqSeq)
-                    .addHeader("hgvhv","18f7a4cd2b229eb8adbcce7be537c59f79")
-            .invoke();
+                    .addHeader("hgvhv", "18f7a4cd2b229eb8adbcce7be537c59f79").invoke();
             JSONObject json = response.getPageContentForJSON();
             if (json.getBoolean("success")) {
                 logger.warn("登录成功,params={}", param);

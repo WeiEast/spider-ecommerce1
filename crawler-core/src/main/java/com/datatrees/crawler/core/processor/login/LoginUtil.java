@@ -35,8 +35,9 @@ import org.slf4j.LoggerFactory;
  */
 public class LoginUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginUtil.class);
-    private static LoginUtil loginUtil;
+    private static final Logger    logger = LoggerFactory.getLogger(LoginUtil.class);
+
+    private static       LoginUtil loginUtil;
 
     static {
         loginUtil = new LoginUtil();
@@ -136,7 +137,8 @@ public class LoginUtil {
         return false;
     }
 
-    private boolean checkLoginResult(ProtocolOutput out, LoginCheckConfig loginCheckConfig, SearchProcessorContext context) throws ResultEmptyException {
+    private boolean checkLoginResult(ProtocolOutput out, LoginCheckConfig loginCheckConfig,
+            SearchProcessorContext context) throws ResultEmptyException {
         if (out != null && out.getContent() != null) {
             String responseBody = out.getContent().getContentAsString();
 

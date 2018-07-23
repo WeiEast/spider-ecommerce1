@@ -31,7 +31,8 @@ public class EscapeOperationImpl extends Operation<EscapeOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
 
         // get input
         String orginal = (String) operatingData;

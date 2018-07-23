@@ -34,12 +34,12 @@ import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
 import com.datatrees.rawdatacentral.domain.exception.LoginTimeOutException;
 import com.datatrees.rawdatacentral.domain.model.Task;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.exception.ConfigException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
@@ -57,17 +57,28 @@ import org.slf4j.LoggerFactory;
  */
 public class CollectorWorker {
 
-    private static final Logger  LOGGER                    = LoggerFactory.getLogger(CollectorWorker.class);
-    private final        long    maxLiveTime               = TimeUnit.SECONDS.toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
+    private static final Logger             LOGGER                    = LoggerFactory.getLogger(CollectorWorker.class);
+
     // 爬虫任务超时时间，单位：秒
-    private static final int     DEFAULT_TASK_TIMEOUT      = PropertiesConfiguration.getInstance().getInt("crawler.task.timeout", 7 * 60);
-    private              Integer interactiveTimeoutSeconds = PropertiesConfiguration.getInstance().getInt("interactive.timeout.seconds", 300);
-    private CrawlExecutor     crawlExecutor;
-    private ResultDataHandler resultDataHandler;
-    private SubTaskManager    subTaskManager;
-    private Set<String> resultTagSet = new HashSet<>();
-    private RedisDao           redisDao;
-    private BusinessTypeFilter businessTypeFilter;
+    private static final int                DEFAULT_TASK_TIMEOUT      = PropertiesConfiguration.getInstance().getInt("crawler.task.timeout", 7 * 60);
+
+    private final        long               maxLiveTime               = TimeUnit.SECONDS
+            .toMillis(PropertiesConfiguration.getInstance().getInt("max.live.seconds", 30));
+
+    private              Integer            interactiveTimeoutSeconds = PropertiesConfiguration.getInstance()
+            .getInt("interactive.timeout.seconds", 300);
+
+    private              CrawlExecutor      crawlExecutor;
+
+    private              ResultDataHandler  resultDataHandler;
+
+    private              SubTaskManager     subTaskManager;
+
+    private              Set<String>        resultTagSet              = new HashSet<>();
+
+    private              RedisDao           redisDao;
+
+    private              BusinessTypeFilter businessTypeFilter;
 
     /**
      * 登录
@@ -89,7 +100,9 @@ public class CollectorWorker {
                 }
                 //消息延迟了
                 if ((System.currentTimeMillis() - taskMessage.getCollectorMessage().getBornTimestamp()) > maxLiveTime) {
-                    LOGGER.warn("Message drop! Born at  bornTime = {} ,maxLiveTime ={},taskId={},websiteName={}", DateUtils.formatYmdhms(taskMessage.getCollectorMessage().getBornTimestamp()), maxLiveTime, task.getTaskId(), task.getWebsiteName());
+                    LOGGER.warn("Message drop! Born at  bornTime = {} ,maxLiveTime ={},taskId={},websiteName={}",
+                            DateUtils.formatYmdhms(taskMessage.getCollectorMessage().getBornTimestamp()), maxLiveTime, task.getTaskId(),
+                            task.getWebsiteName());
                     return loginResult.failure(ErrorCode.MESSAGE_DROP);
                 }
                 redisDao.pushMessage(keyString, keyString, interactiveTimeoutSeconds);
@@ -217,7 +230,8 @@ public class CollectorWorker {
             LOGGER.info("Start search template: {}", templateConfig.getId());
 
             if (TemplateFilter.isFilter(templateConfig, templateId) || businessTypeFilter.isFilter(templateConfig.getBusinessType(), context)) {
-                LOGGER.info("Skip search template: {}, taskId: {}, websiteName: {}, businessType: {}", templateConfig.getId(), context.getTaskId(), context.getWebsiteName(), templateConfig.getBusinessType());
+                LOGGER.info("Skip search template: {}, taskId: {}, websiteName: {}, businessType: {}", templateConfig.getId(), context.getTaskId(),
+                        context.getWebsiteName(), templateConfig.getBusinessType());
                 continue;
             }
 
@@ -239,7 +253,8 @@ public class CollectorWorker {
         return futureList;
     }
 
-    private Collection<Future<Object>> crawlByExtension(SearchTemplateConfig templateConfig, SearchProcessorContext context, TaskMessage taskMessage) {
+    private Collection<Future<Object>> crawlByExtension(SearchTemplateConfig templateConfig, SearchProcessorContext context,
+            TaskMessage taskMessage) {
         try {
             AbstractPlugin plugin = templateConfig.getPlugin();
 
@@ -259,24 +274,28 @@ public class CollectorWorker {
      * @exception ResultEmptyException
      * @exception ResponseCheckException
      */
-    private Collection<Future<Object>> crawlByNormal(SearchTemplateConfig templateConfig, SearchProcessorContext context, TaskMessage taskMessage, Task task) throws ResultEmptyException {
+    private Collection<Future<Object>> crawlByNormal(SearchTemplateConfig templateConfig, SearchProcessorContext context, TaskMessage taskMessage,
+            Task task) throws ResultEmptyException {
         try {
             Request request = templateConfig.getRequest();
             if (null == request) {
-                LOGGER.warn("Request in search-template[{}] is empty! taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+                LOGGER.warn("Request in search-template[{}] is empty! taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(),
+                        task.getWebsiteName());
                 return null;
             }
 
             String searchTemplate = getSearchSeedUrl(request, context, templateConfig.getId());
 
             if (StringUtils.isEmpty(searchTemplate)) {
-                LOGGER.warn("Not found seed url in search-template[{}]! taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(), task.getWebsiteName());
+                LOGGER.warn("Not found seed url in search-template[{}]! taskId: {}, websiteName: {}", templateConfig.getId(), task.getTaskId(),
+                        task.getWebsiteName());
                 return null;
             }
 
             addDefaultHeaders(context, request);
 
-            SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate).setSearchTemplateConfig(templateConfig).setResultDataHandler(resultDataHandler);
+            SearchProcessor searchProcessor = new SearchProcessor(taskMessage).setSearchTemplate(searchTemplate)
+                    .setSearchTemplateConfig(templateConfig).setResultDataHandler(resultDataHandler);
             searchProcessor.setDefaultTimeout(DEFAULT_TASK_TIMEOUT, TimeUnit.SECONDS);
             if (request.getMaxExecuteMinutes() != null) {
                 searchProcessor.setTimeout(request.getMaxExecuteMinutes(), TimeUnit.MINUTES);
@@ -392,9 +411,13 @@ public class CollectorWorker {
     class ExtractCount {
 
         int extractedCount      = 0;
+
         int extractSucceedCount = 0;
+
         int extractFailedCount  = 0;
+
         int storeFailedCount    = 0;
+
         int notExtractCount     = 0;
     }
 

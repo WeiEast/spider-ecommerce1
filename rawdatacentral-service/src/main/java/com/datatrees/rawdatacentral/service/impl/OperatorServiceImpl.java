@@ -20,11 +20,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class OperatorServiceImpl implements OperatorService {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperatorServiceImpl.class);
+    private static final Logger       logger = LoggerFactory.getLogger(OperatorServiceImpl.class);
+
     @Resource
-    private RedisService redisService;
+    private              RedisService redisService;
+
     @Resource
-    private OperatorDAO  operatorDAO;
+    private              OperatorDAO  operatorDAO;
 
     @Override
     public Operator getByWebsiteId(Integer websiteId) {

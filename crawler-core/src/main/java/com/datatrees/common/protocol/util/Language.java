@@ -10,31 +10,61 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
- * @author  <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since   2015年9月20日 下午5:30:33 
+ * @since 2015年9月20日 下午5:30:33
  */
 public enum Language {
 
     INSTATNCE;
 
-    private Map<String, Pattern> languagePatternMapping = new LinkedHashMap<String, Pattern>();
+    public final static String               LANGUAGE_JP                  = "JP";
 
-    public final static String LANGUAGE_JP = "JP";
-    public final static String LANGUAGE_CH = "CH";
-    public final static String LANGUAGE_RU = "RU";
-    public final static String LANGUAGE_KO = "KO";
-    public final static String LANGUAGE_AR = "AR";
-    public final static String LANGUAGE_DE = "DE";
-    public final static String LANGUAGE_TH = "TH";
-    public final static String LANGUAGE_EN = "EN";
+    public final static String               LANGUAGE_CH                  = "CH";
 
-    public final static String USER_LANGUAGE_CONFIG = PropertiesConfiguration.getInstance().get("user.language.config", "");
-    public final static String USER_LANGUAGE_PATTERN_PREFIX = "pattern.";
+    public final static String               LANGUAGE_RU                  = "RU";
+
+    public final static String               LANGUAGE_KO                  = "KO";
+
+    public final static String               LANGUAGE_AR                  = "AR";
+
+    public final static String               LANGUAGE_DE                  = "DE";
+
+    public final static String               LANGUAGE_TH                  = "TH";
+
+    public final static String               LANGUAGE_EN                  = "EN";
+
+    public final static String               USER_LANGUAGE_CONFIG         = PropertiesConfiguration.getInstance().get("user.language.config", "");
+
+    public final static String               USER_LANGUAGE_PATTERN_PREFIX = "pattern.";
+
+    private             Map<String, Pattern> languagePatternMapping       = new LinkedHashMap<String, Pattern>();
 
     private Language() {
         init();
+    }
+
+    public static Language getInstance() {
+        return INSTATNCE;
+    }
+
+    public static void main(String[] args) {
+        String word = "中国aja";
+        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
+        word = "初めまして」（はじめまして";
+        System.out.println(word + " " + Language.getInstance().getLanguage(word));
+        word = "Форум";
+        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
+        word = "위키백과, 우리 모두의 백과사전";
+        System.out.println(word + " " + Language.getInstance().getLanguage(word));
+        word = "العربية‎ al-ʻarabīyah";
+        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
+        word = "par an à un patient handicapé";
+        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
+        word = "ervation/roundTripSearchAccess.doแปลหน้านี้";
+        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
+        word = "Guten Tag !, wer er ist.";
+        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
     }
 
     private void init() {
@@ -70,10 +100,6 @@ public enum Language {
         }
     }
 
-    public static Language getInstance() {
-        return INSTATNCE;
-    }
-
     public boolean check(String word, Pattern pattern) {
         Matcher matcher = pattern.matcher(word);
         return matcher.find();
@@ -89,25 +115,5 @@ public enum Language {
             }
         }
         return resultLanguage;
-    }
-
-
-    public static void main(String[] args) {
-        String word = "中国aja";
-        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
-        word = "初めまして」（はじめまして";
-        System.out.println(word + " " + Language.getInstance().getLanguage(word));
-        word = "Форум";
-        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
-        word = "위키백과, 우리 모두의 백과사전";
-        System.out.println(word + " " + Language.getInstance().getLanguage(word));
-        word = "العربية‎ al-ʻarabīyah";
-        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
-        word = "par an à un patient handicapé";
-        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
-        word = "ervation/roundTripSearchAccess.doแปลหน้านี้";
-        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
-        word = "Guten Tag !, wer er ist.";
-        System.out.println(word + "--> " + Language.getInstance().getLanguage(word));
     }
 }

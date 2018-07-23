@@ -26,9 +26,11 @@ public class TemplateOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 2782067152892732984L;
-    private String  template;
-    private Boolean returnObject;
+    private static final long    serialVersionUID = 2782067152892732984L;
+
+    private              String  template;
+
+    private              Boolean returnObject;
 
     @Tag
     public String getTemplate() {

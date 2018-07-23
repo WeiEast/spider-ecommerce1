@@ -21,26 +21,40 @@ import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
  */
 public class CollectorMessage extends MessageInfo {
 
-    private transient String  cookie;
-    private           String  websiteName;
-    private           long    taskId;
-    private           String  accountNo;
-    private           String  serialNum;
-    private           String  endURL;
-    private           boolean needDuplicate;
-    private           boolean level1Status;                            // 标识本网站是否需要发送一级状态
-    private           boolean loginCheckIgnore;
-    private Map<String, Object> property = new HashMap<String, Object>();
-    private Map<String, Object> sendBack = new HashMap<String, Object>();
-    private boolean finish;
+    private transient String              cookie;
+
+    private           String              websiteName;
+
+    private           long                taskId;
+
+    private           String              accountNo;
+
+    private           String              serialNum;
+
+    private           String              endURL;
+
+    private           boolean             needDuplicate;
+
+    private           boolean             level1Status;                            // 标识本网站是否需要发送一级状态
+
+    private           boolean             loginCheckIgnore;
+
+    private           Map<String, Object> property = new HashMap<String, Object>();
+
+    private           Map<String, Object> sendBack = new HashMap<String, Object>();
+
+    private           boolean             finish;
+
     /** 分组代码 */
-    private String  groupCode;
+    private           String              groupCode;
+
     /** 分组名称 */
-    private String  groupName;
+    private           String              groupName;
+
     /**
      * 总共运行次数
      */
-    private long totalRun = 0;
+    private           long                totalRun = 0;
 
     public long getTotalRun() {
         return totalRun;

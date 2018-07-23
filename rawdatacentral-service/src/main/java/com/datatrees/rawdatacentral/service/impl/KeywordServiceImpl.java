@@ -20,11 +20,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class KeywordServiceImpl implements KeywordService {
 
-    private static final Logger logger = LoggerFactory.getLogger(KeywordServiceImpl.class);
+    private static final Logger       logger = LoggerFactory.getLogger(KeywordServiceImpl.class);
+
     @Resource
-    private RedisService redisService;
+    private              RedisService redisService;
+
     @Resource
-    private KeywordDAO   keywordDAO;
+    private              KeywordDAO   keywordDAO;
 
     @Override
     public List<Keyword> queryByWebsiteType(Integer websiteType) {

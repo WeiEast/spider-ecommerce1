@@ -41,6 +41,7 @@ public enum Filters {
             return filterList;
         }
     };
+
     private List<Filter> filters;
 
     Filters() {

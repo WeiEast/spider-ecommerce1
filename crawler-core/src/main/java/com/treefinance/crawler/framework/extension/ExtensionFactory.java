@@ -36,11 +36,13 @@ public final class ExtensionFactory {
     private ExtensionFactory() {
     }
 
-    public static Spider getSpider(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context, final PageProcessor pageProcessor) {
+    public static Spider getSpider(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context,
+            final PageProcessor pageProcessor) {
         return getSpider(pluginMetadata, context, pageProcessor, null);
     }
 
-    public static Spider getSpider(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context, final PageProcessor pageProcessor, final Interrupter interrupter) {
+    public static Spider getSpider(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context,
+            final PageProcessor pageProcessor, final Interrupter interrupter) {
         Objects.requireNonNull(context);
         if (!(pluginMetadata instanceof JavaPlugin)) {
             throw new UnsupportedExtensionException("Unsupported extension type - " + pluginMetadata.getClass());

@@ -30,11 +30,15 @@ public abstract class AbstractPlugin extends AbstractBeanDefinition implements S
     /**
      *
      */
-    private static final long serialVersionUID = -721450264346621071L;
-    private PluginType  type;
-    private PluginPhase phase;
-    private String      extraConfig;
-    private String      fileName;
+    private static final long        serialVersionUID = -721450264346621071L;
+
+    private              PluginType  type;
+
+    private              PluginPhase phase;
+
+    private              String      extraConfig;
+
+    private              String      fileName;
 
     @Attr("file-type")
     public PluginType getType() {

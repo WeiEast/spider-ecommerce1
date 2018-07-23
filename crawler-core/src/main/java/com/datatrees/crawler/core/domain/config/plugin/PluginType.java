@@ -20,6 +20,7 @@ public enum PluginType {
     JAVA("jar"),
     SHELL("sh"),
     PYTHON("py");
+
     private static Map<String, PluginType> PluginTypeMap = new HashMap<String, PluginType>();
 
     static {

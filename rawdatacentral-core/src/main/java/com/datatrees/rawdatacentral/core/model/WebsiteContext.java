@@ -19,6 +19,7 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 public class WebsiteContext {
 
     private ExtractorProcessorContext extractorProcessorContext;
+
     private SearchProcessorContext    searchProcessorContext;
 
     /**

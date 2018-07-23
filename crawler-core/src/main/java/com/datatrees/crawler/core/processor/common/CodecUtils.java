@@ -23,6 +23,7 @@ import org.apache.commons.codec.binary.Base64;
 public class CodecUtils {
 
     public static final  String    CIPHER_ALGORITHM  = "AES/ECB/PKCS5Padding";
+
     private static final SecretKey DEFAULT_SecretKey = new SecretKeySpec("DATATREEDATATREE".getBytes(), "AES");
 
     public static byte[] decrypt(byte[] data) throws Exception {

@@ -2,15 +2,14 @@
  * datatrees.com Inc.
  * Copyright (c) 2004-${year} All Rights Reserved.
  */
+
 package com.datatrees.common.protocol.metadata;
 
 /**
  * A collection of Dublin Core metadata names.
- * 
- * @see <a href="http://dublincore.org">dublincore.org</a>
- * 
  * @author Chris Mattmann
  * @author J&eacute;r&ocirc;me Charron
+ * @see <a href="http://dublincore.org">dublincore.org</a>
  */
 public interface DublinCore {
 
@@ -22,8 +21,7 @@ public interface DublinCore {
      * select a value from a controlled vocabulary (for example, the list of
      * Internet Media Types [MIME] defining computer media formats).
      */
-    public static final String FORMAT = "format";
-
+    public static final String FORMAT      = "format";
     /**
      * Recommended best practice is to identify the resource by means of a
      * string or number conforming to a formal identification system. Example
@@ -31,13 +29,11 @@ public interface DublinCore {
      * (URI) (including the Uniform Resource Locator (URL)), the Digital Object
      * Identifier (DOI) and the International Standard Book Number (ISBN).
      */
-    public static final String IDENTIFIER = "identifier";
-
+    public static final String IDENTIFIER  = "identifier";
     /**
      * Date on which the resource was changed.
      */
-    public static final String MODIFIED = "modified";
-
+    public static final String MODIFIED    = "modified";
     /**
      * An entity responsible for making contributions to the content of the
      * resource. Examples of a Contributor include a person, an organisation, or
@@ -45,7 +41,6 @@ public interface DublinCore {
      * indicate the entity.
      */
     public static final String CONTRIBUTOR = "contributor";
-
     /**
      * The extent or scope of the content of the resource. Coverage will
      * typically include spatial location (a place name or geographic
@@ -56,15 +51,13 @@ public interface DublinCore {
      * named places or time periods be used in preference to numeric identifiers
      * such as sets of coordinates or date ranges.
      */
-    public static final String COVERAGE = "coverage";
-
+    public static final String COVERAGE    = "coverage";
     /**
      * An entity primarily responsible for making the content of the resource.
      * Examples of a Creator include a person, an organisation, or a service.
      * Typically, the name of a Creator should be used to indicate the entity.
      */
-    public static final String CREATOR = "creator";
-
+    public static final String CREATOR     = "creator";
     /**
      * A date associated with an event in the life cycle of the resource.
      * Typically, Date will be associated with the creation or availability of
@@ -72,15 +65,13 @@ public interface DublinCore {
      * defined in a profile of ISO 8601 [W3CDTF] and follows the YYYY-MM-DD
      * format.
      */
-    public static final String DATE = "date";
-
+    public static final String DATE        = "date";
     /**
      * An account of the content of the resource. Description may include but is
      * not limited to: an abstract, table of contents, reference to a graphical
      * representation of content or a free-text account of the content.
      */
     public static final String DESCRIPTION = "description";
-
     /**
      * A language of the intellectual content of the resource. Recommended best
      * practice is to use RFC 3066 [RFC3066], which, in conjunction with ISO 639
@@ -88,22 +79,19 @@ public interface DublinCore {
      * optional subtags. Examples include "en" or "eng" for English, "akk" for
      * Akkadian, and "en-GB" for English used in the United Kingdom.
      */
-    public static final String LANGUAGE = "language";
-
+    public static final String LANGUAGE    = "language";
     /**
      * An entity responsible for making the resource available. Examples of a
      * Publisher include a person, an organisation, or a service. Typically, the
      * name of a Publisher should be used to indicate the entity.
      */
-    public static final String PUBLISHER = "publisher";
-
+    public static final String PUBLISHER   = "publisher";
     /**
      * A reference to a related resource. Recommended best practice is to
      * reference the resource by means of a string or number conforming to a
      * formal identification system.
      */
-    public static final String RELATION = "relation";
-
+    public static final String RELATION    = "relation";
     /**
      * Information about rights held in and over the resource. Typically, a
      * Rights element will contain a rights management statement for the
@@ -113,30 +101,26 @@ public interface DublinCore {
      * no assumptions can be made about the status of these and other rights
      * with respect to the resource.
      */
-    public static final String RIGHTS = "rights";
-
+    public static final String RIGHTS      = "rights";
     /**
      * A reference to a resource from which the present resource is derived. The
      * present resource may be derived from the Source resource in whole or in
      * part. Recommended best practice is to reference the resource by means of
      * a string or number conforming to a formal identification system.
      */
-    public static final String SOURCE = "source";
-
+    public static final String SOURCE      = "source";
     /**
      * The topic of the content of the resource. Typically, a Subject will be
      * expressed as keywords, key phrases or classification codes that describe
      * a topic of the resource. Recommended best practice is to select a value
      * from a controlled vocabulary or formal classification scheme.
      */
-    public static final String SUBJECT = "subject";
-
+    public static final String SUBJECT     = "subject";
     /**
      * A name given to the resource. Typically, a Title will be a name by which
      * the resource is formally known.
      */
-    public static final String TITLE = "title";
-
+    public static final String TITLE       = "title";
     /**
      * The nature or genre of the content of the resource. Type includes terms
      * describing general categories, functions, genres, or aggregation levels
@@ -145,6 +129,6 @@ public interface DublinCore {
      * To describe the physical or digital manifestation of the resource, use
      * the Format element.
      */
-    public static final String TYPE = "type";
+    public static final String TYPE        = "type";
 
 }

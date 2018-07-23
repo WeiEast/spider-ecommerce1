@@ -9,7 +9,9 @@ import com.google.zxing.LuminanceSource;
 public final class BufferedImageLuminanceSource extends LuminanceSource {
 
     private final BufferedImage image;
+
     private final int           left;
+
     private final int           top;
 
     public BufferedImageLuminanceSource(BufferedImage image) {

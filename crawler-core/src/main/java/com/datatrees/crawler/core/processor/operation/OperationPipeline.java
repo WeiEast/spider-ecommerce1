@@ -34,7 +34,8 @@ public class OperationPipeline extends ProcessPipeline {
         }
     }
 
-    public Object start(String content, Request request, FieldExtractResultSet fieldExtractResultSet) throws OperationException, ResultEmptyException {
+    public Object start(String content, Request request,
+            FieldExtractResultSet fieldExtractResultSet) throws OperationException, ResultEmptyException {
         if (isPrepared()) {
             Response resp = new Response();
             ResponseUtil.setFieldExtractResultSet(resp, fieldExtractResultSet);

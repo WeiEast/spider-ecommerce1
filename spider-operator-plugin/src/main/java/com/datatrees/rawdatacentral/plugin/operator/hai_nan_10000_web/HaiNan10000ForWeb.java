@@ -11,14 +11,14 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 public class HaiNan10000ForWeb implements OperatorPluginPostService {
 
     private static final Logger logger = LoggerFactory.getLogger(HaiNan10000ForWeb.class);
+
     LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
 
     @Override

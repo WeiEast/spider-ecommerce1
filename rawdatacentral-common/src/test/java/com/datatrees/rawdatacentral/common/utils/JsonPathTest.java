@@ -24,7 +24,6 @@ public class JsonPathTest {
         read = ctx.read("$");
         System.out.println(read);
 
-
     }
 
 }

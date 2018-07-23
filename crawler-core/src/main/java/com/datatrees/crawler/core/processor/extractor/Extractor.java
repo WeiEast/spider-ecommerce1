@@ -95,7 +95,8 @@ public class Extractor {
         return response;
     }
 
-    private static boolean doPageExtractor(Request request, Response response, Collection<PageExtractor> list, Map<String, PageExtractor> totalPageExtractors) throws Exception {
+    private static boolean doPageExtractor(Request request, Response response, Collection<PageExtractor> list,
+            Map<String, PageExtractor> totalPageExtractors) throws Exception {
         for (PageExtractor pageExtractor : list) {
             log.info("use " + pageExtractor + " to extract page...");
             totalPageExtractors.remove(pageExtractor.getId());

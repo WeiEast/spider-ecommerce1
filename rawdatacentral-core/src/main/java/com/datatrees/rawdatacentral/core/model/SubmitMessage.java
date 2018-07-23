@@ -11,9 +11,12 @@ import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 public class SubmitMessage {
 
     private ExtractMessage        extractMessage;
+
     private Map                   extractResultMap;
+
     private AbstractExtractResult result;
-    private Map<String, String> submitkeyResult = new HashMap<String, String>();
+
+    private Map<String, String>   submitkeyResult = new HashMap<String, String>();
 
     /**
      * @return the result
@@ -54,7 +57,7 @@ public class SubmitMessage {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

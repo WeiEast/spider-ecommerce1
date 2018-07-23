@@ -25,9 +25,11 @@ public class UrlFilter implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 8670172857562280034L;
-    private FilterType type;
-    private String     filter;
+    private static final long       serialVersionUID = 8670172857562280034L;
+
+    private              FilterType type;
+
+    private              String     filter;
 
     @Attr("type")
     public FilterType getType() {

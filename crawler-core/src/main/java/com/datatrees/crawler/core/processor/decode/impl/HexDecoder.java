@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 public class HexDecoder extends AbstractDecoder {
 
     protected static final String pattern = "((\\\\x([\\w\\d]{2}))+)";
+
     private static final   Logger log     = LoggerFactory.getLogger(HexDecoder.class);
 
     @Override
@@ -32,7 +33,7 @@ public class HexDecoder extends AbstractDecoder {
             charset = Charset.defaultCharset();
             log.warn("using default charset! " + charset);
         }
-        
+
         String result = replaceByRegex(content, charset, pattern);
 
         // DecodeModeContainer container = DecodeModeContainer.get(conf);

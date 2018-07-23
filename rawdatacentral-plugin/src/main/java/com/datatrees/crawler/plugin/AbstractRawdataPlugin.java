@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
 
     private Logger logger = LoggerFactory.getLogger(AbstractRawdataPlugin.class);
+
     private String tags;
 
     public String getTags() {

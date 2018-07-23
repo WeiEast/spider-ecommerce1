@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class RpcOssServiceImpl implements RpcOssService {
+
     @Override
-    public void upload(String path,byte[] pageContent) {
+    public void upload(String path, byte[] pageContent) {
         OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), pageContent);
     }
 }

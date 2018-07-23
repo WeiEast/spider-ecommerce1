@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class RedisDaoImpl implements RedisDao {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisDaoImpl.class);
+
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
@@ -74,7 +75,7 @@ public class RedisDaoImpl implements RedisDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see RedisDao#deleteKey(java.lang.String)
      */
     @Override

@@ -40,8 +40,12 @@ import org.slf4j.LoggerFactory;
  */
 public enum MailParserImpl {
     INSTANCE;
+
     private static final Logger logger                = LoggerFactory.getLogger(MailParserImpl.class);
-    private              String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
+
+    private              String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance()
+            .get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
+
     private              String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
 
     public Map parseMessage(String websiteName, String contentString, boolean bodyParser) throws UnsupportedEncodingException {
@@ -122,7 +126,8 @@ public enum MailParserImpl {
                             break;
                         }
                     } else {
-                        logger.warn("extract mail server ip error with receivedList" + receivedList + " ,MAIL_SERVER_IP_REGEX: " + MAIL_SERVER_IP_REGEX);
+                        logger.warn(
+                                "extract mail server ip error with receivedList" + receivedList + " ,MAIL_SERVER_IP_REGEX: " + MAIL_SERVER_IP_REGEX);
                     }
                 }
             }
@@ -149,7 +154,8 @@ public enum MailParserImpl {
                 String html = getTxtPart(part);
                 mimeMsg.getHtmlBody().append(html);
             } else {
-                logger.warn("unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + "," + part.getHeader());
+                logger.warn(
+                        "unsupport  part Type:" + part.getFilename() + "," + part.getMimeType() + "," + part.getCharset() + "," + part.getHeader());
             }
 
             // If current part contains other, parse it again by recursion
@@ -164,7 +170,8 @@ public enum MailParserImpl {
         if (StringUtils.isBlank(fileName)) {
             Field field = part.getHeader().getField(FieldName.CONTENT_DISPOSITION);
             if (field != null && field.getBody() != null) {
-                fileName = RegExp.group(field.getBody().toLowerCase(), PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
+                fileName = RegExp.group(field.getBody().toLowerCase(),
+                        PropertiesConfiguration.getInstance().get("attachment.fileName.pattern", "filename\\s*=\\s*\"([^\"]+)\""), 1);
             }
         }
         return fileName;
@@ -208,7 +215,8 @@ public enum MailParserImpl {
             baos = new ByteArrayOutputStream();
             tb.writeTo(baos);
             tb.dispose();
-            String contentType = part.getHeader().getField(FieldName.CONTENT_TYPE) != null ? part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
+            String contentType = part.getHeader().getField(FieldName.CONTENT_TYPE) != null ?
+                    part.getHeader().getField(FieldName.CONTENT_TYPE).getBody() : "";
             Content content = new Content("", "", baos.toByteArray(), contentType, new Metadata());
             return content.detectContentAsString();
         } catch (Exception e) {

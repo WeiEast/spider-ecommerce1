@@ -20,14 +20,17 @@ import org.apache.commons.lang.BooleanUtils;
  * @version 1.0
  * @since Mar 31, 2014 4:24:13 PM
  */
-@Description(value = "scope", keys = {"REQUEST", "USER_SESSION", "SESSION", "CUSTOM"}, types = {BaseCookie.class, BaseCookie.class, BaseCookie.class, CustomCookie.class})
+@Description(value = "scope", keys = {"REQUEST", "USER_SESSION", "SESSION", "CUSTOM"}, types = {BaseCookie.class, BaseCookie.class, BaseCookie.class,
+        CustomCookie.class})
 public abstract class AbstractCookie implements Serializable, Cloneable {
 
     /**
      *
      */
     private static final long serialVersionUID = 2174790445783602115L;
+
     CookieScope scope;
+
     private Boolean retainQuote;
 
     @Attr("scope")

@@ -40,6 +40,7 @@ public enum OperationType {
     MAPPING("mapping"),
     SLEEP("sleep"),
     RETURNMATCH("returnmatch");
+
     private static Map<String, OperationType> OperationTypeMap = new HashMap<String, OperationType>();
 
     static {

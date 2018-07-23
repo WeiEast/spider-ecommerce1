@@ -14,8 +14,9 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class PathDrawer {
 
-    private static final Logger log = getLogger(PathDrawer.class);
-    private final PDGraphicsState state;
+    private static final Logger          log = getLogger(PathDrawer.class);
+
+    private final        PDGraphicsState state;
 
     public PathDrawer(PDGraphicsState state) {
         this.state = state;

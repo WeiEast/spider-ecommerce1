@@ -11,15 +11,25 @@ import java.util.List;
 public class ParamsOut {
 
     private int          error_code         = 0;
+
     private String       error_extra_info   = "";
+
     private int          http_code          = 200;
+
     private String       image_hash         = "";
+
     private String       last_modified_time = "";
+
     private String       page_title         = "";
+
     private int          total_duration     = -1;
+
     private String       video_download_url = "";
+
     private List<Html>   extracted_htmls    = new ArrayList<Html>();
+
     private List<Links>  extracted_links    = new ArrayList<Links>();
+
     private List<Search> searchFormInfo     = new ArrayList<Search>();
 
     public int getError_code() {
@@ -127,6 +137,7 @@ public class ParamsOut {
     public static class Html {
 
         private String html;
+
         private String url;
 
         Html(String html, String url) {
@@ -155,7 +166,9 @@ public class ParamsOut {
     public static class Links {
 
         private String anchor_text;
+
         private String url;
+
         private String iframe_type;
 
         Links(String anchor_text, String url, String iframe_type) {
@@ -193,7 +206,9 @@ public class ParamsOut {
     public static class Search {
 
         private String searchPostDataTemplate;
+
         private String searchURLTemplate;
+
         private String urlCharset;
 
         Search(String searchPostDataTemplate, String searchURLTemplate, String urlCharset) {

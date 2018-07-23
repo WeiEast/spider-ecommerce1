@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PdfUtils {
+
     private static Logger log = LoggerFactory.getLogger(PdfUtils.class);
 
     public static String pdfToHtml(InputStream input) {

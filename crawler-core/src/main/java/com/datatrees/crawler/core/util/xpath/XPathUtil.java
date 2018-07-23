@@ -35,7 +35,9 @@ import org.slf4j.LoggerFactory;
 public class XPathUtil {
 
     private static final Logger log       = LoggerFactory.getLogger(XPathUtil.class);
+
     private static final String TEXT_SIGN = "/text(";
+
     private static final String SEPARATOR = "\"";
 
     public static List<String> getXpath(String select, String content) {

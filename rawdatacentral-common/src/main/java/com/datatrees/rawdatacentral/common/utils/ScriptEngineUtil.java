@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 public class ScriptEngineUtil {
 
     private static final Logger logger          = LoggerFactory.getLogger(ScriptEngineUtil.class);
+
     private static final String DEFAULT_CHARSET = "UTF-8";
 
     /**

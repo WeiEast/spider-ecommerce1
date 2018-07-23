@@ -19,6 +19,7 @@ import java.util.Map;
 public enum HandlingType {
     ENCODE("encode"),
     DECODE("decode");
+
     private static Map<String, HandlingType> OperationTypeMap = new HashMap<String, HandlingType>();
 
     static {

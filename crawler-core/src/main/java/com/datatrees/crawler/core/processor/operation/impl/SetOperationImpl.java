@@ -31,10 +31,11 @@ public class SetOperationImpl extends Operation<SetOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull SetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull SetOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String output = operation.getValue();
 
-        if(EMPTY_TAG.equals(output)){
+        if (EMPTY_TAG.equals(output)) {
             output = StringUtils.EMPTY;
         }
 

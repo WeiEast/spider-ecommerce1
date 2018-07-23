@@ -26,8 +26,9 @@ public class MailParserOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 5545210782890757180L;
-    private Boolean bodyParser;
+    private static final long    serialVersionUID = 5545210782890757180L;
+
+    private              Boolean bodyParser;
 
     @Attr("body-parser")
     public Boolean getBodyParser() {

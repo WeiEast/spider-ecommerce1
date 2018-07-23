@@ -29,7 +29,9 @@ import org.slf4j.LoggerFactory;
 public class URLCookieFetchHandler extends CookieFetchHandler {
 
     private static final Logger   log    = LoggerFactory.getLogger(URLCookieFetchHandler.class);
+
     private static       Protocol client = WebClientUtil.getWebClient();
+
     private              String   url    = null;
 
     public URLCookieFetchHandler(String url) {
@@ -54,7 +56,8 @@ public class URLCookieFetchHandler extends CookieFetchHandler {
             log.debug("url cookie fetcher.. {} response: {}", url, responseCode);
             Metadata metadata = output.getContent().getMetadata();
             //
-            String[] cookieVals = (String[]) ArrayUtils.addAll(metadata.getValues(HttpHeaders.SET_COOKIE), metadata.getValues(HttpHeaders.SET_COOKIE2));
+            String[] cookieVals = (String[]) ArrayUtils
+                    .addAll(metadata.getValues(HttpHeaders.SET_COOKIE), metadata.getValues(HttpHeaders.SET_COOKIE2));
             if (cookieVals != null) {
                 log.debug("url cookie fetcher.. {} cookie: {}", url, cookieVals);
                 return CookieFormater.INSTANCE.parserCookie(cookieVals, false);

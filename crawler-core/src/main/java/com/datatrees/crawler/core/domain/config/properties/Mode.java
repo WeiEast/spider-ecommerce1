@@ -20,6 +20,7 @@ public enum Mode {
     NORMAL("normal"),
     AUTO("auto"),
     MANUAL("manual");
+
     private static Map<String, Mode> ModeMap = new HashMap<String, Mode>();
 
     static {

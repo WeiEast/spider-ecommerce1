@@ -2,6 +2,7 @@
  * datatrees.com Inc.
  * Copyright (c) 2004-${year} All Rights Reserved.
  */
+
 package com.datatrees.common.protocol.metadata;
 
 import java.lang.reflect.Field;
@@ -14,26 +15,24 @@ import org.apache.commons.lang.StringUtils;
 /**
  * A decorator to Metadata that adds spellchecking capabilities to property names. Currently used
  * spelling vocabulary contains just the httpheaders from {@link HttpHeaders} class.
- * 
  */
 public class SpellCheckedMetadata extends Metadata {
 
     /**
      * Treshold divider.
-     * 
      * <code>threshold = searched.length() / TRESHOLD_DIVIDER;</code>
      */
-    private static final int TRESHOLD_DIVIDER = 3;
+    private static final int                 TRESHOLD_DIVIDER = 3;
 
     /**
      * Normalized name to name mapping.
      */
-    private final static Map<String, String> NAMES_IDX = new HashMap<String, String>();
+    private final static Map<String, String> NAMES_IDX        = new HashMap<String, String>();
 
     /**
      * Array holding map keys.
      */
-    private static String[] normalized = null;
+    private static       String[]            normalized       = null;
 
     static {
 
@@ -44,8 +43,7 @@ public class SpellCheckedMetadata extends Metadata {
         for (Class<?> spellCheckedNames : spellthese) {
             for (Field field : spellCheckedNames.getFields()) {
                 int mods = field.getModifiers();
-                if (Modifier.isFinal(mods) && Modifier.isPublic(mods) && Modifier.isStatic(mods)
-                        && field.getType().equals(String.class)) {
+                if (Modifier.isFinal(mods) && Modifier.isPublic(mods) && Modifier.isStatic(mods) && field.getType().equals(String.class)) {
                     try {
                         String val = (String) field.get(null);
                         NAMES_IDX.put(normalize(val), val);
@@ -60,7 +58,6 @@ public class SpellCheckedMetadata extends Metadata {
 
     /**
      * Normalizes String.
-     * 
      * @param str the string to normalize
      * @return normalized String
      */
@@ -86,7 +83,6 @@ public class SpellCheckedMetadata extends Metadata {
      * <li>ConTnTtYpe gives Content-Type</li>
      * </ul>
      * If no matching with a well-known metadata name is found, then the original name is returned.
-     * 
      * @param name Name to normalize
      * @return normalized name
      */

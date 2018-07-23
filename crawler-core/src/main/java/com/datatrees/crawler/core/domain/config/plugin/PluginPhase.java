@@ -23,6 +23,7 @@ public enum PluginPhase {
     FIELD("field"),
     COOKIE_REFRESH("cookie_refresh"),
     SERVICE("service");
+
     private static Map<String, PluginPhase> PluginPhaseMap = new HashMap<String, PluginPhase>();
 
     static {

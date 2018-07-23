@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
  * @since 2015年10月21日 下午1:47:57
  */
 public final class CalculateUtils {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CalculateUtils.class);
 
     private CalculateUtils() {

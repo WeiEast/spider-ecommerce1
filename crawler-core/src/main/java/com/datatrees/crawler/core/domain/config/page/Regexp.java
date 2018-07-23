@@ -24,9 +24,11 @@ public class Regexp implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 996749945913257735L;
-    private String  regex;
-    private Integer index;
+    private static final long    serialVersionUID = 996749945913257735L;
+
+    private              String  regex;
+
+    private              Integer index;
 
     @Tag
     public String getRegex() {

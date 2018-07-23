@@ -12,14 +12,14 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.KpiUtils;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -169,10 +169,10 @@ public class China10010ForApp implements OperatorPluginService {
             //json = response.getPageContentForJSON();
             //code = json.getString("code");
             //if (StringUtils.equals(code, "0")) {
-                String provinceName = PatternUtils.group(response.getPageContent(), "proName\":\"([^\"]+)\"", 1);
-                TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
-                logger.info("登陆成功,param={}", param);
-                return result.success();
+            String provinceName = PatternUtils.group(response.getPageContent(), "proName\":\"([^\"]+)\"", 1);
+            TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
+            logger.info("登陆成功,param={}", param);
+            return result.success();
             //} else if (StringUtils.isNotBlank(code)) {
             //    String errorMessage = json.getString("dsc");
             //    logger.error("登陆失败,{},param={}", errorMessage, param);
@@ -254,7 +254,7 @@ public class China10010ForApp implements OperatorPluginService {
                 }
             } else if (StringUtils.contains(pageContent, "id=\"totalNum\"")) {
                 int totalPage = Integer.parseInt(XPathUtil.getXpath("//input[@id='totalNum']/@value", pageContent).get(0));
-                KpiUtils.sendKpi(param, "call_month_real_size", billMonth, totalPage*40+"", "按每页40条计算，可能有误差");
+                KpiUtils.sendKpi(param, "call_month_real_size", billMonth, totalPage * 40 + "", "按每页40条计算，可能有误差");
                 list = new ArrayList<>();
                 list.add(pageContent);
                 for (int i = 2; i <= totalPage; i++) {

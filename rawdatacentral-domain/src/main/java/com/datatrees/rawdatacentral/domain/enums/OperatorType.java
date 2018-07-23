@@ -12,6 +12,7 @@ public enum OperatorType {
     CMCC("10086", "移动"),
     TELECOM("10000", "电信"),
     UNICOM("10010", "联通"),;
+
     private static final Map<String, String> map = new HashMap<>();
 
     static {
@@ -24,6 +25,7 @@ public enum OperatorType {
      * 代码
      */
     private final String code;
+
     /**
      * 名称
      */

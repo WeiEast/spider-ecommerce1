@@ -24,11 +24,16 @@ import org.apache.commons.logging.LogFactory;
 public class QuotedPrintableInputStream extends InputStream {
 
     private static Log log = LogFactory.getLog(QuotedPrintableInputStream.class);
+
     ByteQueue byteq     = new ByteQueue();
+
     ByteQueue pushbackq = new ByteQueue();
+
     private InputStream stream;
-    private byte    state  = 0;
-    private boolean closed = false;
+
+    private byte        state  = 0;
+
+    private boolean     closed = false;
 
     public QuotedPrintableInputStream(InputStream stream) {
         this.stream = stream;

@@ -13,7 +13,6 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -21,13 +20,14 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import com.datatrees.spider.operator.api.OperatorApi;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,15 +39,23 @@ import org.slf4j.LoggerFactory;
  */
 public class SmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger                   logger = LoggerFactory.getLogger(SmsCheckPlugin.class);
+    private static final Logger                   logger       = LoggerFactory.getLogger(SmsCheckPlugin.class);
+
     private              OperatorApi              pluginService;
+
     private              MessageService           messageService;
+
     private              RedisService             redisService;
+
     //超时时间120秒
-    private              long                     timeOut = 120;
+    private              long                     timeOut      = 120;
+
     private              AbstractProcessorContext context;
+
     private              String                   fromType;
+
     private              Map<String, String>      pluginResult = new HashMap<>();
+
     private              MonitorService           monitorService;
 
     @Override
@@ -62,7 +70,7 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
         Long taskId = context.getLong(AttributeKey.TASK_ID);
 
         TaskUtils.updateCookies(taskId, ProcessorContextUtil.getCookieMap(context));
-        
+
         TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[1], new TypeReference<Map<String, String>>() {});
         fromType = map.get(AttributeKey.FORM_TYPE);
@@ -106,7 +114,7 @@ public class SmsCheckPlugin extends AbstractClientPlugin {
             //发送MQ指令(要求输入短信验证码)
             Map<String, String> data = new HashMap<>();
             data.put(AttributeKey.REMARK, "");
-            String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), JSON.toJSONString(data),fromType);
+            String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), JSON.toJSONString(data), fromType);
             //等待用户输入短信验证码,等待120秒
             messageService.sendTaskLog(taskId, "等待用户输入短信验证码");
 

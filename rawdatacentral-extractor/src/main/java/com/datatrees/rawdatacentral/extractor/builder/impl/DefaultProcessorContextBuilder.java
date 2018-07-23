@@ -9,7 +9,9 @@
 package com.datatrees.rawdatacentral.extractor.builder.impl;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
@@ -32,15 +34,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultProcessorContextBuilder {
 
-    private final static Logger logger = LoggerFactory.getLogger(DefaultProcessorContextBuilder.class);
-    private final List<String>         extractorUseDefaultWebsiteIds;
+    private final static Logger               logger = LoggerFactory.getLogger(DefaultProcessorContextBuilder.class);
+
+    private final        List<String>         extractorUseDefaultWebsiteIds;
+
     @Resource
-    private       WebsiteConfigService websiteConfigService;
+    private              WebsiteConfigService websiteConfigService;
 
     public DefaultProcessorContextBuilder() {
         String extractorUseDefaultWebsiteIds = PropertiesConfiguration.getInstance().get("extractor.use.default.websiteIds", "162");
         if (StringUtils.isNotEmpty(extractorUseDefaultWebsiteIds)) {
-            this.extractorUseDefaultWebsiteIds = Arrays.stream(extractorUseDefaultWebsiteIds.split(",")).map(String::trim).filter(s -> !s.isEmpty()).distinct().collect(Collectors.toList());
+            this.extractorUseDefaultWebsiteIds = Arrays.stream(extractorUseDefaultWebsiteIds.split(",")).map(String::trim).filter(s -> !s.isEmpty())
+                    .distinct().collect(Collectors.toList());
         } else {
             this.extractorUseDefaultWebsiteIds = Collections.emptyList();
         }

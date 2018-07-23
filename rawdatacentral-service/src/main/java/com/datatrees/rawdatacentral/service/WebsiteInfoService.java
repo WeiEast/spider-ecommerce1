@@ -1,6 +1,5 @@
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 
 /**
@@ -9,7 +8,7 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 public interface WebsiteInfoService {
 
     /**
-     *根据环境和站点名获取运营商配置
+     * 根据环境和站点名获取运营商配置
      * @param websiteName
      * @param env
      * @return

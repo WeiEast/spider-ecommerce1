@@ -8,6 +8,7 @@ package com.datatrees.rawdatacentral.collector.bdb.wapper;
 public class BDBWapper {
 
     private BDBEnvironmentWapper envWapper      = null;
+
     private BDBDatabaseWapper    databaseWapper = null;
 
     public BDBWapper(BDBEnvironmentWapper envWapper, BDBDatabaseWapper databaseWapper) {

@@ -4,35 +4,41 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
+import com.datatrees.spider.share.domain.ErrorCode;
 
 public class ProcessResult<T> implements Serializable {
 
     /**
      * 命令ID
      */
-    private Long    processId;
+    private Long                processId;
+
     /**
      * 执行结果:PROCESSING,SUCCESS,FAIL
      */
-    private String  processStatus;
+    private String              processStatus;
+
     /**
      * 错误代码
      */
-    private Integer errorCode;
+    private Integer             errorCode;
+
     /**
      * 错误信息
      */
-    private String  errorMsg;
+    private String              errorMsg;
+
     /**
      * 返回数据
      */
-    private T       data;
+    private T                   data;
+
     /**
      * 返回信息扩展
      */
     private Map<String, Object> extra     = new HashMap<>();
+
     /**
      * 时间戳
      */

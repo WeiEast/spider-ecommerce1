@@ -21,9 +21,12 @@ import org.slf4j.LoggerFactory;
 public class CustomPageProcessor implements PageProcessor {
 
     private static final Logger                                LOGGER  = LoggerFactory.getLogger(CustomPageProcessor.class);
+
     private final        ConcurrentLinkedQueue<Future<Object>> futures = new ConcurrentLinkedQueue<>();
-    private final ResultDataHandler resultDataHandler;
-    private final TaskMessage       taskMessage;
+
+    private final        ResultDataHandler                     resultDataHandler;
+
+    private final        TaskMessage                           taskMessage;
 
     public CustomPageProcessor(ResultDataHandler resultDataHandler, TaskMessage taskMessage) {
         this.resultDataHandler = resultDataHandler;

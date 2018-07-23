@@ -7,11 +7,16 @@ import java.io.Serializable;
  * Created by guimeichao on 18/3/28.
  */
 public class DetailReqBean implements Serializable {
+
     private String billMonth = null;
-    private String cellNum = null;
-    private int page;
-    private String tmemType = null;
-    private int unit;
+
+    private String cellNum   = null;
+
+    private int    page;
+
+    private String tmemType  = null;
+
+    private int    unit;
 
     public String getCellNum() {
         return this.cellNum;

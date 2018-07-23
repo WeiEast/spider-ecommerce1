@@ -87,5 +87,4 @@ public interface OperatorApi {
 
     //OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
 
-
 }

@@ -26,9 +26,11 @@ public class ReplaceOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 5074040034906359688L;
-    private String from;
-    private String to;
+    private static final long   serialVersionUID = 5074040034906359688L;
+
+    private              String from;
+
+    private              String to;
 
     @Attr("from")
     public String getFrom() {

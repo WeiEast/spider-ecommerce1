@@ -11,6 +11,7 @@ import com.datatrees.rawdatacentral.collector.bdb.wapper.BDBWapper;
  */
 public enum BDBFactory implements Environment {
     INSTANCE;
+
     private BDBEnvironmentManager manager = BDBEnvironmentManager.getInstance();
 
     public synchronized BDBWapper createDB() throws Exception {

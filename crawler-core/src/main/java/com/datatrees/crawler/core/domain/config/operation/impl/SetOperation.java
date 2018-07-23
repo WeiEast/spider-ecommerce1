@@ -25,8 +25,9 @@ public class SetOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 8770876253603267778L;
-    private String value;
+    private static final long   serialVersionUID = 8770876253603267778L;
+
+    private              String value;
 
     /**
      * @return the value

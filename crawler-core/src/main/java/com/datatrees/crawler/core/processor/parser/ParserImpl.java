@@ -46,8 +46,11 @@ import org.slf4j.LoggerFactory;
 public class ParserImpl {
 
     private static final Logger  logger            = LoggerFactory.getLogger(ParserImpl.class);
+
     private final        Parser  parser;
+
     private              boolean needRequest       = false;
+
     private              boolean needReturnUrlList = false;
 
     public ParserImpl(Parser parser, boolean needRequest) {
@@ -113,7 +116,8 @@ public class ParserImpl {
 
             Map<String, Object> context = RequestUtil.getSourceMap(request);
             if (CollectionUtils.isNotEmpty(fieldScopes)) {
-                return fieldScopes.stream().map(fieldScope -> parser.evalExp(ImmutableList.of(fieldScope, context), true, false)).distinct().collect(Collectors.toList());
+                return fieldScopes.stream().map(fieldScope -> parser.evalExp(ImmutableList.of(fieldScope, context), true, false)).distinct()
+                        .collect(Collectors.toList());
             }
 
             // if not find field result using default input context

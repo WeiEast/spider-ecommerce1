@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 public class FormatUtils {
 
     private static final Logger  logger  = LoggerFactory.getLogger(FormatUtils.class);
+
     /**
      * 匹配${**}
      */
@@ -93,17 +94,12 @@ public class FormatUtils {
         return format(template, param, DateUtils.YMDHMS);
     }
 
-
     public static void main(String[] args) {
         String successTemplate = "【${status}-${websiteTitle}-${env}】\n配置:${websiteName}\n成功:${lastSuccessTime}";
         String titleTmeplate = "【${status}-${websiteTitle}-${env}】";
 
         String smsWarnTemplate = "【${status}-${websiteTitle}-${env}】\n配置:${websiteName}\n阈值:人数${maxUser},间隔${resendTime}分钟" +
-                "\n成功:${lastSuccessTime}\n失败:${firstFailTime" +
-                "}至$" +
-                "{lastFailTime" +
-                "}\n任务:${failTaskCount},用户:${failUserCount}";
-
+                "\n成功:${lastSuccessTime}\n失败:${firstFailTime" + "}至$" + "{lastFailTime" + "}\n任务:${failTaskCount},用户:${failUserCount}";
 
         String template = "【${status}-${websiteTitle}-${env}】\n配置:${websiteName}成功:${lastSuccessTime}";
         Map<String, Object> map = new HashMap<>();

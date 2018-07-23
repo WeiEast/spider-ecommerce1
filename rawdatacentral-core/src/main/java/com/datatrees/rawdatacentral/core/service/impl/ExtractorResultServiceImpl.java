@@ -15,18 +15,22 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
 
     @Resource
     private MailExtractResultDAO      mailExtractResultDao;
+
     @Resource
     private EcommerceExtractResultDAO ecommerceExtractResultDao;
+
     @Resource
     private OperatorExtractResultDAO  operatorExtractResultDao;
+
     @Resource
     private EbankExtractResultDAO     eBankExtractResultDao;
+
     @Resource
     private DefaultExtractResultDAO   defaultExtractResultDAO;
 
     @Override
     public int insertMailExtractResult(MailExtractResult mailExtractResult) {
-        if(null != mailExtractResult){
+        if (null != mailExtractResult) {
             mailExtractResult.setReceiver(null);
         }
         return mailExtractResultDao.insert(mailExtractResult);
@@ -44,7 +48,7 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ExtractorResultService#insert(com.datatrees
      * .rawdatacentral.core.model.result.EBankExtractResult)
@@ -56,7 +60,7 @@ public class ExtractorResultServiceImpl implements ExtractorResultService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ExtractorResultService#insert(com.
      * datatrees.rawdatacentral.core.model.result.DefaultExtractResult)

@@ -33,7 +33,8 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
 
         BaseType baseType = operation.getBaseType();
 

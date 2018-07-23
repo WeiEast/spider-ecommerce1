@@ -20,12 +20,17 @@ public class Parser extends AbstractBeanDefinition implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = -1249743371163334883L;
-    private List<ParserPattern> patterns;
-    private String              urlTemplate;
-    private String              linkUrlTemplate;
-    private String              headers;
-    private Integer             sleepSecond;
+    private static final long                serialVersionUID = -1249743371163334883L;
+
+    private              List<ParserPattern> patterns;
+
+    private              String              urlTemplate;
+
+    private              String              linkUrlTemplate;
+
+    private              String              headers;
+
+    private              Integer             sleepSecond;
 
     public Parser() {
         super();

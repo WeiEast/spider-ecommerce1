@@ -13,20 +13,24 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleProxyManager extends ProxyManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(SimpleProxyManager.class);
+    private static final Logger       logger = LoggerFactory.getLogger(SimpleProxyManager.class);
+
     /**
      * proxy dubbo service
      */
-    private ProxyService proxyService;
+    private              ProxyService proxyService;
+
     /**
      * 当前代理
      */
-    private Proxy        last;
+    private              Proxy        last;
+
     /**
      * 根据taskId获取,全部session模式,
      */
-    private Long         taskId;
-    private String       websiteName;
+    private              Long         taskId;
+
+    private              String       websiteName;
 
     public SimpleProxyManager(Long taskId, String websiteName, ProxyService proxyService) {
         CheckUtils.checkNotNull(taskId, "taskId is null");
@@ -39,7 +43,7 @@ public class SimpleProxyManager extends ProxyManager {
 
     @Override
     public Proxy getProxy() throws Exception {
-        if(last == null){
+        if (last == null) {
             try {
                 com.treefinance.proxy.domain.Proxy proxy = proxyService.getProxy(taskId, websiteName);
                 if (null != proxy) {

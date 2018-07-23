@@ -26,8 +26,10 @@ import org.apache.commons.lang.StringUtils;
  */
 public class MailBillOutboxFilter extends RemovedFetchLinkNodeFilter {
 
-    private static       String[] recipientPatternKeys = PropertiesConfiguration.getInstance().get("mail.recipient.pattern.key", "emailAccount,qqAccount").split(",");
-    private static       String   outBoxFolderName     = PropertiesConfiguration.getInstance().get("mail.outbox.folder.name", "已发送");
+    private static String[] recipientPatternKeys = PropertiesConfiguration.getInstance().get("mail.recipient.pattern.key", "emailAccount,qqAccount")
+            .split(",");
+
+    private static String   outBoxFolderName     = PropertiesConfiguration.getInstance().get("mail.outbox.folder.name", "已发送");
 
     @Override
     protected void doProcess(LinkNode fetchLinkNode, SearchProcessor searchProcessor, Context context) {
@@ -35,7 +37,8 @@ public class MailBillOutboxFilter extends RemovedFetchLinkNodeFilter {
         Object sender = fetchLinkNode.getProperty(MailBillData.SENDER);
         Object folder = fetchLinkNode.getProperty(MailBillData.FOLDER);
         // use sender to detect mail in outbox
-        if (websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
+        if (websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) &&
+                SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
             boolean inOutbox = false;
             if (folder != null && PatternUtils.match(outBoxFolderName, folder.toString())) {
                 inOutbox = true;
@@ -53,7 +56,7 @@ public class MailBillOutboxFilter extends RemovedFetchLinkNodeFilter {
                 }
             }
             if (inOutbox) {
-                logger.info("Node: {} filtered as in outbox.",fetchLinkNode);
+                logger.info("Node: {} filtered as in outbox.", fetchLinkNode);
                 fetchLinkNode.setRemoved(true);
             }
         }

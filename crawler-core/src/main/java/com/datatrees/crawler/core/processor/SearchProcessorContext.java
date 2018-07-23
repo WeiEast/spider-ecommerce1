@@ -44,20 +44,32 @@ import org.apache.commons.lang.StringUtils;
  */
 public class SearchProcessorContext extends AbstractProcessorContext {
 
-    private final        Map<SearchTemplateConfig, Map<Integer, List<SearchSequenceUnit>>> depthPageMap                = new HashMap<>();
-    private final        Map<SearchTemplateConfig, Map<String, SearchSequenceUnit>>        pathPageMap                 = new HashMap<>();
-    private final        Map<String, SearchTemplateConfig>                                 searchTemplateConfigMap     = new HashMap<>();
-    private final        Map<SearchType, List<SearchTemplateConfig>>                       searchTemplateConfigListMap = new HashMap<>();
+    private final Map<SearchTemplateConfig, Map<Integer, List<SearchSequenceUnit>>> depthPageMap                = new HashMap<>();
+
+    private final Map<SearchTemplateConfig, Map<String, SearchSequenceUnit>>        pathPageMap                 = new HashMap<>();
+
+    private final Map<String, SearchTemplateConfig>                                 searchTemplateConfigMap     = new HashMap<>();
+
+    private final Map<SearchType, List<SearchTemplateConfig>>                       searchTemplateConfigListMap = new HashMap<>();
+
     // page id ===> page
-    private final        Map<String, Page>                                                 pageMap                     = new HashMap<>();
-    private ProxyManager   proxyManager;
-    private LoginResource  loginResource;
-    private Proxy          proxyConf;
-    private AbstractCookie cookieConf;
-    private Login.Status   status;
-    private Map<String, String> defaultHeader     = new HashMap<>();
-    private Map<Page, Integer>  pageVisitCountMap = new HashMap<>();
-    private boolean loginCheckIgnore;
+    private final Map<String, Page>                                                 pageMap                     = new HashMap<>();
+
+    private       ProxyManager                                                      proxyManager;
+
+    private       LoginResource                                                     loginResource;
+
+    private       Proxy                                                             proxyConf;
+
+    private       AbstractCookie                                                    cookieConf;
+
+    private       Login.Status                                                      status;
+
+    private       Map<String, String>                                               defaultHeader               = new HashMap<>();
+
+    private       Map<Page, Integer>                                                pageVisitCountMap           = new HashMap<>();
+
+    private       boolean                                                           loginCheckIgnore;
 
     public SearchProcessorContext(Website website, Long taskId) {
         super(website, taskId);
@@ -124,7 +136,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         registerPlugins(getSearchConfig().getPluginList());
 
         Properties searchProperties = getSearchProperties();
-        if(searchProperties != null){
+        if (searchProperties != null) {
             try {
                 // init cookie conf
                 cookieConf = searchProperties.getCookie().clone();
@@ -153,7 +165,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     public AbstractCookie getCookieConf() {
         return cookieConf;
     }
-
 
     public ProxyManager getProxyManager() {
         return proxyManager;
@@ -283,7 +294,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         }
         return false;
     }
-
 
     public com.datatrees.crawler.core.processor.proxy.Proxy getProxy(String url) throws Exception {
         return getProxy(url, false);

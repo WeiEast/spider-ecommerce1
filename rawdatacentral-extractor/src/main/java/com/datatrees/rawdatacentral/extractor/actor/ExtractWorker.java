@@ -30,15 +30,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExtractWorker {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExtractWorker.class);
+    private static final Logger                         logger = LoggerFactory.getLogger(ExtractWorker.class);
+
     @Resource
-    private ResultStorage                  resultStorage;
+    private              ResultStorage                  resultStorage;
+
     @Resource
-    private SubmitProcessor                submitProcessor;
+    private              SubmitProcessor                submitProcessor;
+
     @Resource
-    private DefaultProcessorContextBuilder contextBuilder;
+    private              DefaultProcessorContextBuilder contextBuilder;
+
     @Resource
-    private DefaultExtractResultBuilder    resultBuilder;
+    private              DefaultExtractResultBuilder    resultBuilder;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void doSubExtractProcess(ExtractMessage extractMessage, Object obj, int messageIndex) {
@@ -124,7 +128,7 @@ public class ExtractWorker {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.datatrees.common.actor.AbstractActor#processMessage(java.lang.Object)
      */
     public void process(ExtractMessage extractMessage) {

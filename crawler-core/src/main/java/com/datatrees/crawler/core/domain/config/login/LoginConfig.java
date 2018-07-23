@@ -25,12 +25,17 @@ public class LoginConfig implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 3832213144362274287L;
-    private LoginType        type;
-    private AbstractPlugin   plugin;
-    private String           urlTemplate;
-    private String           headers;
-    private LoginCheckConfig loginCheckConfig;
+    private static final long             serialVersionUID = 3832213144362274287L;
+
+    private              LoginType        type;
+
+    private              AbstractPlugin   plugin;
+
+    private              String           urlTemplate;
+
+    private              String           headers;
+
+    private              LoginCheckConfig loginCheckConfig;
 
     @Tag("login-check")
     public LoginCheckConfig getLoginCheckConfig() {

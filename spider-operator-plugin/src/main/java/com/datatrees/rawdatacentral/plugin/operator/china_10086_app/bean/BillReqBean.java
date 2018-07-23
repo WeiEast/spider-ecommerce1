@@ -7,9 +7,13 @@ import java.io.Serializable;
  * Created by guimeichao on 18/3/28.
  */
 public class BillReqBean implements Serializable {
+
     private String bgnMonth = null;
-    private String cellNum = null;
+
+    private String cellNum  = null;
+
     private String endMonth = null;
+
     private String qryMonth = null;
 
     public String getCellNum() {

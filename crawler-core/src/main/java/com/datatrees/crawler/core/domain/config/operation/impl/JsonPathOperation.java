@@ -16,8 +16,9 @@ public class JsonPathOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = -926221137233814333L;
-    private String jsonpath;
+    private static final long   serialVersionUID = -926221137233814333L;
+
+    private              String jsonpath;
 
     @Tag
     public String getJsonpath() {

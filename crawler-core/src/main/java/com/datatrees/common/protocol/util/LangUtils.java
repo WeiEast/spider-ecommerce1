@@ -3,19 +3,21 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2014
  */
+
 package com.datatrees.common.protocol.util;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 1:51:43 PM
  */
 public class LangUtils {
-    public static final int HASH_SEED = 17;
+
+    public static final int HASH_SEED   = 17;
+
     public static final int HASH_OFFSET = 37;
 
     private LangUtils() {

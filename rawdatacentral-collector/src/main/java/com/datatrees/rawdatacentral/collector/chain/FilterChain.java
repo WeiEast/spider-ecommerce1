@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory;
  */
 public class FilterChain {
 
-    private static final Logger logger = LoggerFactory.getLogger(FilterChain.class);
-    private List<Filter> filters;
-    private int pos = 0;
+    private static final Logger       logger = LoggerFactory.getLogger(FilterChain.class);
+
+    private              List<Filter> filters;
+
+    private              int          pos    = 0;
 
     public FilterChain(List<Filter> filters) {
         if (filters != null) {

@@ -3,33 +3,34 @@ package com.datatrees.spider.operator.domain.model;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table website_group(配置分组)  */
+/** create by system from table website_group(配置分组) */
 public class WebsiteGroup implements Serializable {
+
+    private static final long    serialVersionUID = 1L;
+
     /** 分组代码 */
-    private String groupCode;
+    private              String  groupCode;
 
     /** 分组名称 */
-    private String groupName;
+    private              String  groupName;
 
     /** 配置类型 */
-    private String websiteType;
+    private              String  websiteType;
 
     /** 配置名称 */
-    private String websiteName;
+    private              String  websiteName;
 
     /** 配置标题 */
-    private String websiteTitle;
+    private              String  websiteTitle;
 
     /** 是否启用(0:不启用,1:启用) */
-    private Boolean enable;
+    private              Boolean enable;
 
     /** 权重(0:不启用,权重越高,比重越大) */
-    private Integer weight;
+    private              Integer weight;
 
     /** 修改时间 */
-    private Date updatedAt;
-
-    private static final long serialVersionUID = 1L;
+    private              Date    updatedAt;
 
     public String getGroupCode() {
         return groupCode;

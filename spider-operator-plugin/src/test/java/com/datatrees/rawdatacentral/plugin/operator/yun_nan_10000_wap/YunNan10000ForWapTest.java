@@ -1,10 +1,5 @@
 package com.datatrees.rawdatacentral.plugin.operator.yun_nan_10000_wap;
 
-import javax.script.Invocable;
-import java.io.InputStream;
-
-import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class YunNan10000ForWapTest {

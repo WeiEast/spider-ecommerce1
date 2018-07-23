@@ -25,31 +25,33 @@ import org.slf4j.LoggerFactory;
 public final class NumberUnitMapping {
 
     private static final Logger                                               log   = LoggerFactory.getLogger(NumberUnitMapping.class);
-    private static final LoadingCache<Configuration, Map<String, NumberUnit>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).softValues().build(new CacheLoader<Configuration, Map<String, NumberUnit>>() {
-        @Override
-        public Map<String, NumberUnit> load(@Nonnull Configuration conf) throws Exception {
-            Map<String, NumberUnit> numberMapper = new HashMap<>();
-            String config = conf.get(Constants.NUMBER_FROMAT_CONFIG, "{\"ONE\":\"views|次\",\"TEN_THOUSAND\":\"万\"}");
-            if (StringUtils.isNotEmpty(config)) {
-                Map<String, String> periods = GsonUtils.fromJson(config, new TypeToken<Map<String, String>>() {}.getType());
 
-                periods.forEach((unit, val) -> {
-                    NumberUnit tu = null;
-                    try {
-                        tu = NumberUnit.valueOf(unit);
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                    if (tu != null && StringUtils.isNotEmpty(val)) {
-                        log.debug("period: {}, pattern: {}", tu, val);
-                        numberMapper.put(val, tu);
-                    }
-                });
-            }
+    private static final LoadingCache<Configuration, Map<String, NumberUnit>> CACHE = CacheBuilder.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES).softValues().build(new CacheLoader<Configuration, Map<String, NumberUnit>>() {
+                @Override
+                public Map<String, NumberUnit> load(@Nonnull Configuration conf) throws Exception {
+                    Map<String, NumberUnit> numberMapper = new HashMap<>();
+                    String config = conf.get(Constants.NUMBER_FROMAT_CONFIG, "{\"ONE\":\"views|次\",\"TEN_THOUSAND\":\"万\"}");
+                    if (StringUtils.isNotEmpty(config)) {
+                        Map<String, String> periods = GsonUtils.fromJson(config, new TypeToken<Map<String, String>>() {}.getType());
 
-            return numberMapper;
-        }
-    });
+                        periods.forEach((unit, val) -> {
+                            NumberUnit tu = null;
+                            try {
+                                tu = NumberUnit.valueOf(unit);
+                            } catch (Exception e) {
+                                // ignore
+                            }
+                            if (tu != null && StringUtils.isNotEmpty(val)) {
+                                log.debug("period: {}, pattern: {}", tu, val);
+                                numberMapper.put(val, tu);
+                            }
+                        });
+                    }
+
+                    return numberMapper;
+                }
+            });
 
     private NumberUnitMapping() {}
 

@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.common.protocol;
 
 import java.net.URLDecoder;
@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 13, 2014 10:53:22 AM
@@ -29,18 +29,23 @@ public class ProtocolInput {
 
     public static final    Logger              log                      = LoggerFactory.getLogger(ProtocolInput.class);
 
-    private final          Map<String, Object> context                  = new HashMap<String, Object>();
-
     protected static final String              URL                      = "ProtocolInput.URL";
-    protected static final String              PROXY                    = "ProtocolInput.PROXY";
-    protected static final String              HEADER                   = "ProtocolInput.HEADER";
-    protected static final String              COOKIE                   = "ProtocolInput.COOKIE";
-    protected static final String              LAST_MODIFY              = "ProtocolInput.LAST_MODIFY";
-    protected static final String              FOLLOW_REDIRECT          = "ProtocolInput.FOLLOW_REDIRECT";
-    protected static final String REDIRECT_URI_ESCAPED = "ProtocolInput.REDIRECT_URI_ESCAPED";
-    protected static final String              COOKIE_CO_EXIST          = "ProtocolInput.COOKIE_CO_EXIST";
-    protected static final String              ALLOW_CIRCULAR_REDIRECTS = "ProtocolInput.ALLOW_CIRCULAR_REDIRECTS";
 
+    protected static final String              PROXY                    = "ProtocolInput.PROXY";
+
+    protected static final String              HEADER                   = "ProtocolInput.HEADER";
+
+    protected static final String              COOKIE                   = "ProtocolInput.COOKIE";
+
+    protected static final String              LAST_MODIFY              = "ProtocolInput.LAST_MODIFY";
+
+    protected static final String              FOLLOW_REDIRECT          = "ProtocolInput.FOLLOW_REDIRECT";
+
+    protected static final String              REDIRECT_URI_ESCAPED     = "ProtocolInput.REDIRECT_URI_ESCAPED";
+
+    protected static final String              COOKIE_CO_EXIST          = "ProtocolInput.COOKIE_CO_EXIST";
+
+    protected static final String              ALLOW_CIRCULAR_REDIRECTS = "ProtocolInput.ALLOW_CIRCULAR_REDIRECTS";
 
     protected static final String              STATES                   = "ProtocolInput.STATES";
 
@@ -50,34 +55,11 @@ public class ProtocolInput {
 
     protected static final String              REQUEST_HEADERS          = "ProtocolInput.REQUEST_HEADER";
 
+    private final          Map<String, Object> context                  = new HashMap<String, Object>();
+
     private                Action              action                   = Action.GET;
+
     private                CookieScope         scope                    = CookieScope.REQUEST;
-
-
-
-    public enum Action {
-        GET, POST, POST_STRING, POST_FILE, PUT, DELETE;
-    }
-
-    public enum CookieScope {
-        REQUEST, USER_SESSION, SESSION;
-        private boolean retainQuote;
-
-        /**
-         * @return the retainQuote
-         */
-        public boolean isRetainQuote() {
-            return retainQuote;
-        }
-
-        /**
-         * @param retainQuote the retainQuote to set
-         */
-        public CookieScope setRetainQuote(boolean retainQuote) {
-            this.retainQuote = retainQuote;
-            return this;
-        }
-    }
 
     public CookieScope getCookieScope() {
         return scope;
@@ -88,6 +70,10 @@ public class ProtocolInput {
         return this;
     }
 
+    public String getUrl() {
+        return getString(URL);
+    }
+
     public ProtocolInput setUrl(String url) {
 
         if (!url.startsWith("http")) {
@@ -95,10 +81,6 @@ public class ProtocolInput {
         }
         context.put(URL, url);
         return this;
-    }
-
-    public String getUrl() {
-        return getString(URL);
     }
 
     protected ProtocolInput put(String key, Object val) {
@@ -130,7 +112,6 @@ public class ProtocolInput {
         return actual;
     }
 
-
     public String getProxy() {
         return getString(PROXY);
     }
@@ -147,7 +128,7 @@ public class ProtocolInput {
 
     /**
      * add request headers the json list is key value pairs of headers
-     * 
+     *
      * @param jsonHeaderList
      * @return
      */
@@ -160,7 +141,7 @@ public class ProtocolInput {
 
     /**
      * add request header
-     * 
+     *
      * @param key
      * @param value
      * @return
@@ -171,10 +152,9 @@ public class ProtocolInput {
         return this;
     }
 
-
     /**
      * add request header
-     * 
+     *
      * @param key
      * @param value
      * @return
@@ -185,15 +165,13 @@ public class ProtocolInput {
         return this;
     }
 
-
     public ProtocolInput clearHeaders() {
         getListWithNew(HEADER).clear();
         return this;
     }
 
-
     /**
-     * 
+     *
      * @param headers
      * @return
      */
@@ -212,7 +190,7 @@ public class ProtocolInput {
 
     /**
      * add post parameters
-     * 
+     *
      * @param key
      * @param value
      * @return
@@ -224,23 +202,23 @@ public class ProtocolInput {
     }
 
     /**
+     * get string entity as post content body
+     *
+     * @return
+     */
+    public String getPostBody() {
+        return getString(POST_STRING_BODY);
+    }
+
+    /**
      * set raw string as post body this will ignore url parameters
-     * 
+     *
      * @param content
      * @return
      */
     public ProtocolInput setPostBody(String content) {
         put(POST_STRING_BODY, content);
         return this;
-    }
-
-    /**
-     * get string entity as post content body
-     * 
-     * @return
-     */
-    public String getPostBody() {
-        return getString(POST_STRING_BODY);
     }
 
     public List<NameValuePair> getPostRequestParam() {
@@ -257,14 +235,9 @@ public class ProtocolInput {
         return orginalHeaders;
     }
 
-//增加cookie path 的sate
+    //增加cookie path 的sate
     public String getCookie() {
         return getString(COOKIE);
-    }
-    
-    
-    public Map<String,Cookie> getCookies() {
-        return (Map)get(COOKIE);
     }
 
     public ProtocolInput setCookie(String cookie) {
@@ -272,14 +245,16 @@ public class ProtocolInput {
         return this;
     }
 
+    public Map<String, Cookie> getCookies() {
+        return (Map) get(COOKIE);
+    }
 
     public Action getAction() {
         return action;
     }
 
-
-    public ProtocolInput setLastModify(long lastModified) {
-        put(LAST_MODIFY, (lastModified));
+    public ProtocolInput setAction(Action action) {
+        this.action = action;
         return this;
     }
 
@@ -288,14 +263,8 @@ public class ProtocolInput {
         return lastModify;
     }
 
-
-    public ProtocolInput setAction(Action action) {
-        this.action = action;
-        return this;
-    }
-
-    public ProtocolInput setRedirectUriEscaped(Boolean redirectUriEscaped) {
-        put(REDIRECT_URI_ESCAPED, redirectUriEscaped);
+    public ProtocolInput setLastModify(long lastModified) {
+        put(LAST_MODIFY, (lastModified));
         return this;
     }
 
@@ -308,8 +277,8 @@ public class ProtocolInput {
         return bol;
     }
 
-    public ProtocolInput setCoExist(Boolean coexist) {
-        put(COOKIE_CO_EXIST, coexist);
+    public ProtocolInput setRedirectUriEscaped(Boolean redirectUriEscaped) {
+        put(REDIRECT_URI_ESCAPED, redirectUriEscaped);
         return this;
     }
 
@@ -321,9 +290,9 @@ public class ProtocolInput {
         }
         return bol;
     }
-    
-    public ProtocolInput setAllowCircularRedirects(Boolean allowCircularRedirects) {
-        put(ALLOW_CIRCULAR_REDIRECTS, allowCircularRedirects);
+
+    public ProtocolInput setCoExist(Boolean coexist) {
+        put(COOKIE_CO_EXIST, coexist);
         return this;
     }
 
@@ -334,9 +303,9 @@ public class ProtocolInput {
         }
         return bol;
     }
-    
-    public ProtocolInput setFollowRedirect(Boolean followRedirect) {
-        put(FOLLOW_REDIRECT, followRedirect);
+
+    public ProtocolInput setAllowCircularRedirects(Boolean allowCircularRedirects) {
+        put(ALLOW_CIRCULAR_REDIRECTS, allowCircularRedirects);
         return this;
     }
 
@@ -348,6 +317,10 @@ public class ProtocolInput {
         return bol;
     }
 
+    public ProtocolInput setFollowRedirect(Boolean followRedirect) {
+        put(FOLLOW_REDIRECT, followRedirect);
+        return this;
+    }
 
     public HttpState getState() {
         return (HttpState) get(STATES);
@@ -364,6 +337,38 @@ public class ProtocolInput {
 
     public void setRequestHeaders(Header[] headers) {
         put(REQUEST_HEADERS, headers);
+    }
+
+    public enum Action {
+        GET,
+        POST,
+        POST_STRING,
+        POST_FILE,
+        PUT,
+        DELETE;
+    }
+
+    public enum CookieScope {
+        REQUEST,
+        USER_SESSION,
+        SESSION;
+
+        private boolean retainQuote;
+
+        /**
+         * @return the retainQuote
+         */
+        public boolean isRetainQuote() {
+            return retainQuote;
+        }
+
+        /**
+         * @param retainQuote the retainQuote to set
+         */
+        public CookieScope setRetainQuote(boolean retainQuote) {
+            this.retainQuote = retainQuote;
+            return this;
+        }
     }
 
 }

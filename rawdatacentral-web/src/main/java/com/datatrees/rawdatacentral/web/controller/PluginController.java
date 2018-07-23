@@ -21,9 +21,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @RequestMapping("/plugin")
 public class PluginController {
 
-    private static final Logger logger = LoggerFactory.getLogger("plugin_log");
+    private static final Logger        logger = LoggerFactory.getLogger("plugin_log");
+
     @Resource
-    private PluginService pluginService;
+    private              PluginService pluginService;
 
     /**
      * 上传java插件

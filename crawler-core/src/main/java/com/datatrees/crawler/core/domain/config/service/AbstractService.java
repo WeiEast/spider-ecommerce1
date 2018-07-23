@@ -15,14 +15,16 @@ import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
  * @version 1.0
  * @since Jan 9, 2014 7:16:53 PM
  */
-@Description(value = "serviceType", keys = {"Plugin_Service", "Grab_Service", "Task_Service"}, types = {PluginService.class, GrabService.class, TaskHttpService.class})
+@Description(value = "serviceType", keys = {"Plugin_Service", "Grab_Service", "Task_Service"}, types = {PluginService.class, GrabService.class,
+        TaskHttpService.class})
 public abstract class AbstractService extends AbstractBeanDefinition implements Serializable {
 
     /**
      *
      */
-    private static final long serialVersionUID = -1249145375986336790L;
-    private ServiceType serviceType;
+    private static final long        serialVersionUID = -1249145375986336790L;
+
+    private              ServiceType serviceType;
 
     @Attr("type")
     public ServiceType getServiceType() {

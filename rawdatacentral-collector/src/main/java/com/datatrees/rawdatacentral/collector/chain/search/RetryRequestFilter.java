@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.domain.model.Task;
  * @since 2015年7月29日 上午3:19:21
  */
 public class RetryRequestFilter extends LinkNodesFilter {
-    
+
     @Override
     protected void doInternalFilter(@Nonnull List<LinkNode> linkNodes, SearchProcessor searchProcessor, Context context) {
         Task task = searchProcessor.getTask();

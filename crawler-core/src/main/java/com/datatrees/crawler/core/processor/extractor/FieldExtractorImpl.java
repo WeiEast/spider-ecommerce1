@@ -161,7 +161,8 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         }
     }
 
-    private Object extractWithOperation(String content, Request request, FieldExtractResultSet fieldExtractResultSet) throws ResultEmptyException, OperationException {
+    private Object extractWithOperation(String content, Request request,
+            FieldExtractResultSet fieldExtractResultSet) throws ResultEmptyException, OperationException {
         OperationPipeline pipeline = new OperationPipeline(fieldExtractor);
         return pipeline.start(content, request, fieldExtractResultSet);
     }
@@ -208,12 +209,14 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         return fieldResult;
     }
 
-    private Object fieldDefaultValue(Request request, Response response, FieldExtractResultSet fieldExtractResultSet, Object fieldResult, ResultType type) {
+    private Object fieldDefaultValue(Request request, Response response, FieldExtractResultSet fieldExtractResultSet, Object fieldResult,
+            ResultType type) {
         String defaultValue = fieldExtractor.getDefaultValue();
         if (defaultValue != null && (fieldResult == null || (fieldResult instanceof String && StringUtils.isEmpty((String) fieldResult)))) {
             Object result;
             if (ResultType.String.equals(type)) {
-                result = StandardExpression.eval(defaultValue, ImmutableList.of(fieldExtractResultSet.resultMap(), RequestUtil.getSourceMap(request)));
+                result = StandardExpression
+                        .eval(defaultValue, ImmutableList.of(fieldExtractResultSet.resultMap(), RequestUtil.getSourceMap(request)));
             } else {
                 String val;
                 if (type != null) {
@@ -221,7 +224,8 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
                 } else {
                     val = defaultValue;
                 }
-                result = StandardExpression.evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), RequestUtil.getSourceMap(request)));
+                result = StandardExpression
+                        .evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), RequestUtil.getSourceMap(request)));
             }
             try {
                 return this.format(request, response, result, type);

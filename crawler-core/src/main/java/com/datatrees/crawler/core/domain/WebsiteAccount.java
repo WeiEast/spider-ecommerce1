@@ -16,6 +16,7 @@ package com.datatrees.crawler.core.domain;
 public class WebsiteAccount {
 
     private String userName;
+
     private String password;
 
     public WebsiteAccount(String userName, String password) {

@@ -9,13 +9,13 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -124,7 +124,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
                     .setFullUrl(templateUrl, picToken).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             String pageContent = response.getPageContent();
-            String imgBase64 = PatternUtils.group(pageContent,"data:image\\/png;base64,(.*)",1);
+            String imgBase64 = PatternUtils.group(pageContent, "data:image\\/png;base64,(.*)", 1);
             return result.success(imgBase64);
         } catch (Exception e) {
             logger.error("登录-->图片验证码-->刷新失败,param={},response={}", param, response, e);

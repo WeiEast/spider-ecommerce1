@@ -17,9 +17,11 @@ public class IndexMapping implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 6418187744014381993L;
-    private Integer groupIndex;
-    private String  placeholder;
+    private static final long    serialVersionUID = 6418187744014381993L;
+
+    private              Integer groupIndex;
+
+    private              String  placeholder;
 
     @Attr("group-index")
     public Integer getGroupIndex() {

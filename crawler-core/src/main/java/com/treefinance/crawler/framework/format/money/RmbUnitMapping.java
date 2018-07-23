@@ -25,32 +25,34 @@ import org.slf4j.LoggerFactory;
  */
 public final class RmbUnitMapping {
 
-    private static final Logger                                            LOGGER   = LoggerFactory.getLogger(RmbUnitMapping.class);
-    private static final LoadingCache<Configuration, Map<String, RMBUnit>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).softValues().build(new CacheLoader<Configuration, Map<String, RMBUnit>>() {
-        @Override
-        public Map<String, RMBUnit> load(@Nonnull Configuration conf) throws Exception {
-            Map<String, RMBUnit> rmbMapper = new HashMap<>();
-            String config = conf.get(Constants.RMB_FROMAT_CONFIG, "{\"YUAN\":\"yuan|元\",\"JIAO\":\"角|jiao\",\"FEN\":\"分|fen\"}");
-            if (StringUtils.isNotEmpty(config)) {
-                Map<String, String> rmbMap = GsonUtils.fromJson(config, new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+    private static final Logger                                            LOGGER = LoggerFactory.getLogger(RmbUnitMapping.class);
 
-                rmbMap.forEach((unit, val) -> {
-                    RMBUnit pu = null;
-                    try {
-                        pu = RMBUnit.valueOf(unit);
-                    } catch (Exception e) {
-                        LOGGER.error("rmb value error:" + e);
-                    }
-                    if (pu != null && StringUtils.isNotEmpty(val)) {
-                        LOGGER.debug("rmb: {}, pattern: {}", pu, val);
-                        rmbMapper.put(val, pu);
-                    }
-                });
-            }
+    private static final LoadingCache<Configuration, Map<String, RMBUnit>> CACHE  = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES)
+            .softValues().build(new CacheLoader<Configuration, Map<String, RMBUnit>>() {
+                @Override
+                public Map<String, RMBUnit> load(@Nonnull Configuration conf) throws Exception {
+                    Map<String, RMBUnit> rmbMapper = new HashMap<>();
+                    String config = conf.get(Constants.RMB_FROMAT_CONFIG, "{\"YUAN\":\"yuan|元\",\"JIAO\":\"角|jiao\",\"FEN\":\"分|fen\"}");
+                    if (StringUtils.isNotEmpty(config)) {
+                        Map<String, String> rmbMap = GsonUtils.fromJson(config, new TypeToken<LinkedHashMap<String, String>>() {}.getType());
 
-            return rmbMapper;
-        }
-    });
+                        rmbMap.forEach((unit, val) -> {
+                            RMBUnit pu = null;
+                            try {
+                                pu = RMBUnit.valueOf(unit);
+                            } catch (Exception e) {
+                                LOGGER.error("rmb value error:" + e);
+                            }
+                            if (pu != null && StringUtils.isNotEmpty(val)) {
+                                LOGGER.debug("rmb: {}, pattern: {}", pu, val);
+                                rmbMapper.put(val, pu);
+                            }
+                        });
+                    }
+
+                    return rmbMapper;
+                }
+            });
 
     private RmbUnitMapping() {}
 

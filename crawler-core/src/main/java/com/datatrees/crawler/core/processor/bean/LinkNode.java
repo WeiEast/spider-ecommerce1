@@ -11,7 +11,6 @@ package com.datatrees.crawler.core.processor.bean;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import org.apache.commons.collections.MapUtils;
 
 /**
@@ -21,25 +20,40 @@ import org.apache.commons.collections.MapUtils;
  */
 public class LinkNode {
 
-    private int    depth;
-    private String url;
-    private String referer;
-    private String baseUrl;
-    private String pageTitle;
-    private String redirectUrl;
+    private int                 depth;
+
+    private String              url;
+
+    private String              referer;
+
+    private String              baseUrl;
+
+    private String              pageTitle;
+
+    private String              redirectUrl;
+
     /** page id */
     private String              pId        = "";
+
     private int                 retryCount = 0;
+
     private Map<String, Object> property   = new HashMap<String, Object>();
+
     private Map<String, String> headers    = new HashMap<String, String>();
+
     /** page number */
     private int                 pNum       = -1;
+
     private boolean             isRemoved  = false;
+
     private boolean             isHosting  = false;
-    private String  anchorText;
+
+    private String              anchorText;
+
     /* get from parser */
-    private boolean isFromParser;
-    private boolean needRequeue;
+    private boolean             isFromParser;
+
+    private boolean             needRequeue;
 
     public LinkNode(String url) {
         this(0, url, null);

@@ -27,18 +27,31 @@ import org.slf4j.LoggerFactory;
  */
 public class FileWapper {
 
-    private static final Logger logger                    = LoggerFactory.getLogger(FileWapper.class);
-    private              int    sleepSecond               = PropertiesConfiguration.getInstance().getInt("default.sleep.seconds", 2000);
-    private              int    retryCount                = PropertiesConfiguration.getInstance().getInt("default.file.download.retry.count", 3);
-    private              String textFileNameSuffixPattern = PropertiesConfiguration.getInstance().get("text.filename.suffix.pattern", "htm$|html$|txt$");
-    private              String textMimeTypePattern       = PropertiesConfiguration.getInstance().get("text.mimeType.pattern", "^text/");
-    private String        name;
-    private String        mimeType;
-    private String        charSet;
-    private long          size;
-    private File          file;
-    private String        sourceURL;
-    private ProtocolInput input;
+    private static final Logger        logger                    = LoggerFactory.getLogger(FileWapper.class);
+
+    private              int           sleepSecond               = PropertiesConfiguration.getInstance().getInt("default.sleep.seconds", 2000);
+
+    private              int           retryCount                = PropertiesConfiguration.getInstance()
+            .getInt("default.file.download.retry.count", 3);
+
+    private              String        textFileNameSuffixPattern = PropertiesConfiguration.getInstance()
+            .get("text.filename.suffix.pattern", "htm$|html$|txt$");
+
+    private              String        textMimeTypePattern       = PropertiesConfiguration.getInstance().get("text.mimeType.pattern", "^text/");
+
+    private              String        name;
+
+    private              String        mimeType;
+
+    private              String        charSet;
+
+    private              long          size;
+
+    private              File          file;
+
+    private              String        sourceURL;
+
+    private              ProtocolInput input;
 
     /**
      * @return the name
@@ -119,7 +132,8 @@ public class FileWapper {
     }
 
     public boolean needDetectContent() {
-        return (this.getMimeType() != null && RegExp.find(this.getMimeType(), textMimeTypePattern)) || (name != null && RegExp.find(name, textFileNameSuffixPattern));
+        return (this.getMimeType() != null && RegExp.find(this.getMimeType(), textMimeTypePattern)) ||
+                (name != null && RegExp.find(name, textFileNameSuffixPattern));
     }
 
     /**
@@ -186,7 +200,8 @@ public class FileWapper {
      */
     @Override
     public String toString() {
-        return "FileWapper [name=" + name + ", mimeType=" + mimeType + ", charSet=" + charSet + ", size=" + size + ", file=" + file + ", sourceURL=" + sourceURL + "]";
+        return "FileWapper [name=" + name + ", mimeType=" + mimeType + ", charSet=" + charSet + ", size=" + size + ", file=" + file + ", sourceURL=" +
+                sourceURL + "]";
     }
 
 }

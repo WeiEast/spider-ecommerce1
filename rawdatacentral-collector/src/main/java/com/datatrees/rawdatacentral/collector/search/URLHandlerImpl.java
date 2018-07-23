@@ -18,10 +18,13 @@ import org.slf4j.LoggerFactory;
  */
 public class URLHandlerImpl implements URLHandler {
 
-    private static final Logger         log           = LoggerFactory.getLogger(URLHandlerImpl.class);
-    private              List<LinkNode> tempLinkNodes = new ArrayList<LinkNode>();
-    private DuplicateChecker duplicateChecker;
-    private SearchProcessor  searchProcessor;
+    private static final Logger           log           = LoggerFactory.getLogger(URLHandlerImpl.class);
+
+    private              List<LinkNode>   tempLinkNodes = new ArrayList<LinkNode>();
+
+    private              DuplicateChecker duplicateChecker;
+
+    private              SearchProcessor  searchProcessor;
 
     public URLHandlerImpl() {
         super();
@@ -29,7 +32,7 @@ public class URLHandlerImpl implements URLHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.vt.core.domainimpl.page.typehandler.URLHandler#handle(com.datatrees.vt.core.domainimpl.
      * bean.LinkNode, com.datatrees.vt.core.domainimpl.bean.LinkNode)

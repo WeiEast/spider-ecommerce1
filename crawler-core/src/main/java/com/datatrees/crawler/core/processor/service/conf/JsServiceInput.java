@@ -18,18 +18,26 @@ import com.google.gson.annotations.SerializedName;
 public class JsServiceInput {
 
     public String  instruction;
+
     @SerializedName("to_trigger_onclick")
     public boolean toTriggerOnclick;
+
     @SerializedName("page_id")
     public long    pageId;
+
     @SerializedName("page_url")
     public String  pageUrl;
+
     public String  referer;
+
     @SerializedName("last_modified_time")
     public String  lastModifiedTime;
+
     @SerializedName("http_proxy")
     public String  httpProxy;
+
     public String  cookie;
+
     public String  cmd;
 
     public static JsServiceInput create() {

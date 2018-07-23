@@ -37,32 +37,40 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Tag("service")
 public class GrabService extends AbstractService {
 
-    private String appName;
+    private String  appName;
+
     /**
      * css注入
      */
-    private String css;
+    private String  css;
+
     /**
      * js注入
      */
-    private String js;
+    private String  js;
+
     /**
      * proxy
      */
-    private String proxy;
+    private String  proxy;
+
     /**
      * header
      */
-    private String header;
+    private String  header;
+
     /**
      * client
      */
     private String  client    = "webview";
+
     /**
      * visitType
      */
     private String  visitType = "visitType";
+
     private Boolean visible   = false;
+
     private Boolean usePCUA   = true;
 
     @Tag("app-name")

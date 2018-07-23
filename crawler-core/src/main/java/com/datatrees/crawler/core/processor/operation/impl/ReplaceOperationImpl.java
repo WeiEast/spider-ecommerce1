@@ -30,7 +30,8 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ReplaceOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ReplaceOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String from = operation.getFrom();
         String to = operation.getTo();
 

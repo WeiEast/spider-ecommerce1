@@ -15,13 +15,13 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,7 +176,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             String code = json.getString("code");
             String desc = json.getString("desc");
             if (!StringUtils.equals(code, "0000")) {
-                if (StringUtils.equals(code,"3003")){
+                if (StringUtils.equals(code, "3003")) {
                     logger.info("登录失败,{},param={}", desc, param);
                     return result.failure("您的密码较简单，请修改密码后重新登录");
                 }

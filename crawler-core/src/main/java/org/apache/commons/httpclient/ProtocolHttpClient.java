@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.commons.httpclient;
 
 import java.io.IOException;
@@ -21,12 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jun 15, 2014 5:18:08 PM
  */
 public class ProtocolHttpClient extends HttpClient {
+
     private static final Logger LOG = LoggerFactory.getLogger(HttpClient.class);
 
     public ProtocolHttpClient(HttpConnectionManager httpConnectionManager) {
@@ -53,7 +54,8 @@ public class ProtocolHttpClient extends HttpClient {
             }
         }
 
-        HttpMethodDirector methodDirector = new ProtocolHttpMethodDirector(getHttpConnectionManager(), hostconfig, getParams(), (state == null ? getState() : state));
+        HttpMethodDirector methodDirector = new ProtocolHttpMethodDirector(getHttpConnectionManager(), hostconfig, getParams(),
+                (state == null ? getState() : state));
         methodDirector.executeMethod(method);
         return method.getStatusCode();
     }

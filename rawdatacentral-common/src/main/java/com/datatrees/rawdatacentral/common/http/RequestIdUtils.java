@@ -1,6 +1,5 @@
 package com.datatrees.rawdatacentral.common.http;
 
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**

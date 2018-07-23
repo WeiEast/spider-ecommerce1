@@ -69,7 +69,8 @@ public final class PluginHelper {
         return invokeDefaultService(linkNode, processorContext, null, retry);
     }
 
-    public static Response invokeDefaultService(LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration, Integer retry) throws Exception {
+    public static Response invokeDefaultService(LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration,
+            Integer retry) throws Exception {
         Objects.requireNonNull(linkNode);
         Objects.requireNonNull(processorContext);
         Request request = new Request();

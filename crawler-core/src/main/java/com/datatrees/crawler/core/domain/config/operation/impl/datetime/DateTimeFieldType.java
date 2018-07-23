@@ -23,6 +23,7 @@ public enum DateTimeFieldType {
     HOUR("hour"),
     MINUTE("minute"),
     SECOND("second");
+
     private static Map<String, DateTimeFieldType> dateTimeFieldTypeMap = new HashMap<String, DateTimeFieldType>();
 
     static {

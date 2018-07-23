@@ -13,14 +13,14 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
  */
 public class FuJian10000ForWeb implements OperatorPluginService {
 
-    private static final Logger                     logger         = LoggerFactory.getLogger(FuJian10000ForWeb.class);
+    private static final Logger                     logger     = LoggerFactory.getLogger(FuJian10000ForWeb.class);
 
-    private              LoginUtilsForChina10000Web loginUtils     = new LoginUtilsForChina10000Web();
+    private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -113,7 +113,8 @@ public class FuJian10000ForWeb implements OperatorPluginService {
             TaskUtils.addTaskShare(param.getTaskId(), "rsaPublicExponent", rsaPublicExponent);
 
             templateUrl = "http://wapfj.189.cn/pad/wapimagecode?" + Math.random();
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "fu_jian_10000_web_003").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "fu_jian_10000_web_003")
+                    .setFullUrl(templateUrl).invoke();
             logger.info("个人信息-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -134,14 +135,16 @@ public class FuJian10000ForWeb implements OperatorPluginService {
             String rsaModule = TaskUtils.getTaskShare(param.getTaskId(), "rsaModule");
             String rsaPublicExponent = TaskUtils.getTaskShare(param.getTaskId(), "rsaPublicExponent");
 
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(),"des_wap.js","GBK");
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des_wap.js", "GBK");
             String encryptMobile = invocable.invokeFunction("encryptedString", rsaModule, param.getMobile().toString()).toString();
             String encryptPassword = invocable.invokeFunction("encryptedString", rsaModule, param.getPassword()).toString();
 
             String referer = "http://wapfj.189.cn/pad/loginPad/toLoginPage.shtml?promptMsg=%D1%E9%D6%A4%C2%EB%B4%ED%CE%F3%A3%A1";
             String templateUrl = "http://wapfj.189.cn/pad/loginPad/waploginnew.shtml";
-            String templateData = "rsaModule=" + rsaModule + "&rsaPublicExponent=" + rsaPublicExponent + "&returnUrl=&city=&logintag=1&acc_num=" + encryptMobile + "&ver_code=" + param.getPicCode() + "&password=" + encryptPassword + "&ServType=50";
-            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10000_web_004").setFullUrl(templateUrl).setReferer(referer).setRequestBody(templateData).invoke();
+            String templateData = "rsaModule=" + rsaModule + "&rsaPublicExponent=" + rsaPublicExponent + "&returnUrl=&city=&logintag=1&acc_num=" +
+                    encryptMobile + "&ver_code=" + param.getPicCode() + "&password=" + encryptPassword + "&ServType=50";
+            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
+                    .setRequestBody(templateData).invoke();
             referer = "http://wapfj.189.cn/pad/";
             templateUrl = "http://wapfj.189.cn/pad/queryWapInfo.shtml";
             response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10000_web_005").setFullUrl(templateUrl).setReferer(referer).invoke();
@@ -152,19 +155,19 @@ public class FuJian10000ForWeb implements OperatorPluginService {
                 if (!CollectionUtils.isEmpty(customerNameList)) {
                     String customerName = customerNameList.get(0);
                     TaskUtils.addTaskShare(param.getTaskId(), "customerName", customerName);
-                    logger.info("******************customerName"+customerName);
+                    logger.info("******************customerName" + customerName);
                 }
                 List<String> idCardNoList = XPathUtil.getXpath("//div[@class='myinfo_box']/p[6]/span/text()", pageContent);
                 if (!CollectionUtils.isEmpty(idCardNoList)) {
                     String idCardNo = idCardNoList.get(0);
                     TaskUtils.addTaskShare(param.getTaskId(), "idCardNo", idCardNo);
-                    logger.info("******************idCardNo"+idCardNo);
+                    logger.info("******************idCardNo" + idCardNo);
                 }
                 List<String> joinDateList = XPathUtil.getXpath("//dl[@class='myinfo_dl']/dd/p[3]/text()", pageContent);
                 if (!CollectionUtils.isEmpty(joinDateList)) {
                     String joinDate = PatternUtils.group(joinDateList.get(0), "开通时间([^：]+)", 1);
                     TaskUtils.addTaskShare(param.getTaskId(), "joinDate", joinDate);
-                    logger.info("******************joinDate"+joinDate);
+                    logger.info("******************joinDate" + joinDate);
                 }
             } else {
                 logger.error("个人信息-->校验失败,wap版登陆失败,param={},response={}", param, response);
@@ -197,12 +200,14 @@ public class FuJian10000ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10000_web_007").setFullUrl(templateUrl).setReferer(referer).invoke();
 
             referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01420648";
-            templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10014&toStUrl=http://fj.189.cn/newcmsweb/commonIframe" + ".jsp?URLPATH=/service/bill/realtime.jsp&fastcode=01420648&cityCode=fj";
+            templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10014&toStUrl=http://fj.189.cn/newcmsweb/commonIframe" +
+                    ".jsp?URLPATH=/service/bill/realtime.jsp&fastcode=01420648&cityCode=fj";
             response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10000_web_008").setFullUrl(templateUrl).setReferer(referer).invoke();
 
             referer = "http://fj.189.cn/service/bill/realtime.jsp";
             templateUrl = "http://fj.189.cn/BillAjaxServlet.do?method=realtime&PRODNO={}&PRODTYPE=50";
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10000_web_009").setFullUrl(templateUrl, param.getMobile()).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10000_web_009").setFullUrl(templateUrl, param.getMobile())
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             if (StringUtils.contains(pageContent, "获取话费成功") || StringUtils.contains(pageContent, "暂不提供数据")) {
@@ -234,7 +239,8 @@ public class FuJian10000ForWeb implements OperatorPluginService {
 
             referer = "http://fj.189.cn/service/bill/detail.jsp";
             templateUrl = "http://fj.189.cn/service/bill/tanChu.jsp?PRODNO={}&PRODTYPE=50&CITYCODE={}&MONTH={}&SELTYPE=1";
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10000_web_011").setFullUrl(templateUrl, param.getMobile(), cityCode, billMonth).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10000_web_011")
+                    .setFullUrl(templateUrl, param.getMobile(), cityCode, billMonth).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             if (StringUtils.isNotBlank(pageContent)) {
@@ -247,9 +253,13 @@ public class FuJian10000ForWeb implements OperatorPluginService {
 
             referer = templateUrl;
             templateUrl = "http://fj.189.cn/BUFFALO/buffalo/QueryAllAjax";
-            String templateData = "<buffalo-call><method>getCDMASmsCode</method><map><type>java.util" + ".HashMap</type><string>PHONENUM</string><string>{}</string><string>PRODUCTID</string><string>50</string><string>CITYCODE" + "</string><string>{}</string><string>I_ISLIMIT</string><string>1</string><string>QUERYTYPE</string><string>BILL</string></map" + "></buffalo-call>";
+            String templateData = "<buffalo-call><method>getCDMASmsCode</method><map><type>java.util" +
+                    ".HashMap</type><string>PHONENUM</string><string>{}</string><string>PRODUCTID</string><string>50</string><string>CITYCODE" +
+                    "</string><string>{}</string><string>I_ISLIMIT</string><string>1</string><string>QUERYTYPE</string><string>BILL</string></map" +
+                    "></buffalo-call>";
             String data = TemplateUtils.format(templateData, param.getMobile(), cityCode);
-            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10000_web_012").setFullUrl(templateUrl).setRequestBody(data, ContentType.TEXT_XML).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10000_web_012").setFullUrl(templateUrl)
+                    .setRequestBody(data, ContentType.TEXT_XML).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "短信随机密码已经发到您的手机")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -275,13 +285,17 @@ public class FuJian10000ForWeb implements OperatorPluginService {
             String fullcityCode = TaskUtils.getTaskShare(param.getTaskId(), "fullcityCode");
             String puridID = "0";
             String emailEmpoent = "10001";
-            String emailModule = "863581c5892cdfe8a67b95c7abb47ead8b102e9620994ae95637f637fa22acac173b91015574507362816b30a884632d8562bf20de621d31d745291aaec7ca6f";
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(),"des_wap.js","GBK");
+            String emailModule
+                    = "863581c5892cdfe8a67b95c7abb47ead8b102e9620994ae95637f637fa22acac173b91015574507362816b30a884632d8562bf20de621d31d745291aaec7ca6f";
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des_wap.js", "GBK");
             String encryptPassword = invocable.invokeFunction("encryptedString", emailModule, param.getPassword()).toString();
 
             String templateUrl = "http://fj.189.cn/service/bill/trans.jsp";
-            String templateData = "PRODNO={}&PRODTYPE=50&CITYCODE={}&SELTYPE=1&MONTH={}&PURID={}&email_empoent={}&email_module={}&serPwd50" + "={}&randomPwd={}";
-            String data = TemplateUtils.format(templateData, param.getMobile(), fullcityCode, billMonth, puridID, emailEmpoent, emailModule, encryptPassword, param.getSmsCode());
+            String templateData = "PRODNO={}&PRODTYPE=50&CITYCODE={}&SELTYPE=1&MONTH={}&PURID={}&email_empoent={}&email_module={}&serPwd50" +
+                    "={}&randomPwd={}";
+            String data = TemplateUtils
+                    .format(templateData, param.getMobile(), fullcityCode, billMonth, puridID, emailEmpoent, emailModule, encryptPassword,
+                            param.getSmsCode());
             response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10000_web_013").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "暂无您所查询的数据清单") || StringUtils.contains(pageContent, "客户姓名")) {

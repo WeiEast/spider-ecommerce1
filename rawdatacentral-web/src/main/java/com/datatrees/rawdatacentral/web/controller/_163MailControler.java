@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/mail/163")
 public class _163MailControler {
 
-    private static final Logger logger = LoggerFactory.getLogger(_163MailControler.class);
+    private static final Logger               logger = LoggerFactory.getLogger(_163MailControler.class);
+
     @Resource
-    private MailServiceApiFor163 mailServiceApiFor163;
+    private              MailServiceApiFor163 mailServiceApiFor163;
+
     @Resource
-    private CommonPluginApi      commonPluginApi;
+    private              CommonPluginApi      commonPluginApi;
 
     @RequestMapping("/login")
     public Object login(CommonPluginParam param) {
@@ -54,8 +56,7 @@ public class _163MailControler {
     public ResponseEntity<InputStreamResource> refeshQRCode2(Long processId) {
         ProcessResult<Map<String, String>> processResult = ProcessResultUtils.queryProcessResult(processId);
         if (processResult.isSuccess()) {
-            String picCode = processResult.getData().get(
-                    AttributeKey.QR_BASE64);
+            String picCode = processResult.getData().get(AttributeKey.QR_BASE64);
             byte[] bytes = Base64.decodeBase64(picCode);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate");

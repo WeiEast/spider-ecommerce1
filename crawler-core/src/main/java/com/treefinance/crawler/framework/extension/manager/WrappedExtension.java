@@ -9,6 +9,7 @@ import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 public class WrappedExtension<T> {
 
     private final AbstractPlugin metadata;
+
     private       T              extension;
 
     public WrappedExtension(AbstractPlugin metadata) {

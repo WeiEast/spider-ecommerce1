@@ -6,14 +6,14 @@ import java.util.Map;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 public class TianJin10000ForWeb implements OperatorPluginService {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(TianJin10000ForWeb.class);
+
     private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
 
     @Override
@@ -93,10 +94,7 @@ public class TianJin10000ForWeb implements OperatorPluginService {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=02251357";
             String templateUrl
                     = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10002&toStUrl=http://tj.189.cn/tj/service/bill/feeQueryIndex.action?tab=3&fastcode=02251357&cityCode=tj";
-            response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10000_web_002")
-                    .setFullUrl(templateUrl)
-                    .setReferer(referer)
-                    .invoke();
+            response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://tj.189.cn/tj/service/bill/balanceQuery.action?requestFlag=asynchronism&shijian=";
             response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_005").setFullUrl(templateUrl).invoke();

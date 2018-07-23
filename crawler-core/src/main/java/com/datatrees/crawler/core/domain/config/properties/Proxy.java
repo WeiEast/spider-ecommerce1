@@ -24,11 +24,15 @@ public class Proxy implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 4167867516504535277L;
-    private String proxy;
-    private Scope  scope;
-    private String pattern;
-    private Mode   mode;
+    private static final long   serialVersionUID = 4167867516504535277L;
+
+    private              String proxy;
+
+    private              Scope  scope;
+
+    private              String pattern;
+
+    private              Mode   mode;
 
     @Tag
     public String getProxy() {

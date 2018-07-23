@@ -7,7 +7,6 @@ public interface ClassLoaderService {
 
     Class loadPlugin(String pluginName, String className, Long taskId);
 
-
     CommonPluginService getCommonPluginService(String pluginName, String className, Long taskId);
 
     CommonPluginService getCommonPluginService(CommonPluginParam pluginParam);

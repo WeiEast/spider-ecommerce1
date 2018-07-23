@@ -22,6 +22,7 @@ public enum BaseType {
     FIRST_DAY_OF_THIS_YEAR("firstdayofthisyear"),
     LAST_DAY_OF_THIS_YEAR("lastdayofthisyear"),
     CUSTOM("custom");
+
     private static Map<String, BaseType> baseTypeMap = new HashMap<String, BaseType>();
 
     static {

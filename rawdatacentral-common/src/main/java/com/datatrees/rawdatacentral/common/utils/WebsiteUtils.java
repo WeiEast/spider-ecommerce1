@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
  */
 public class WebsiteUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebsiteUtils.class);
+    private static final Logger                   logger            = LoggerFactory.getLogger(WebsiteUtils.class);
 
-    private static       Map<String, Set<String>> NICK_GROU_WEBSITE      = new ConcurrentHashMap<>();
+    private static       Map<String, Set<String>> NICK_GROU_WEBSITE = new ConcurrentHashMap<>();
 
     /**
      * 是否是运营商
@@ -364,11 +364,13 @@ public class WebsiteUtils {
         return Long.valueOf(id);
     }
 
-    public static Long getWebisteGroupMonitorId(@Nonnull String websiteName, @Nonnull String nickGroupCode, @Nonnull Long preId, @Nonnull Date orderDate) {
+    public static Long getWebisteGroupMonitorId(@Nonnull String websiteName, @Nonnull String nickGroupCode, @Nonnull Long preId,
+            @Nonnull Date orderDate) {
         return getWebisteGroupMonitorId(websiteName, nickGroupCode, preId, DateUtils.formatYmd(orderDate));
     }
 
-    public static Long getWebisteGroupMonitorId(@Nonnull String websiteName, @Nonnull String nickGroupCode, @Nonnull Long preId, @Nonnull String monitorDay) {
+    public static Long getWebisteGroupMonitorId(@Nonnull String websiteName, @Nonnull String nickGroupCode, @Nonnull Long preId,
+            @Nonnull String monitorDay) {
         String postfix = TaskUtils.getSassEnv(websiteName + "." + nickGroupCode + "." + monitorDay);
         String redisKey = RedisKeyPrefixEnum.WEBSITE_GROUP_MONITOR_ID.getRedisKey(postfix);
         if (RedisUtils.exists(redisKey)) {

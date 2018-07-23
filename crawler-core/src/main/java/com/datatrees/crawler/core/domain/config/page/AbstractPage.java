@@ -40,7 +40,8 @@ public abstract class AbstractPage extends AbstractBeanDefinition {
         return Collections.unmodifiableList(segmentList);
     }
 
-    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
+    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class,
+            CalculateSegment.class, BaseSegment.class})
     public void setSegmentList(AbstractSegment segment) {
         this.segmentList.add(segment);
     }

@@ -6,17 +6,22 @@ import java.util.Date;
 /** create by system from table t_bank_email(Bank email info) */
 public class BankMail implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long    serialVersionUID = 1L;
+
     /** bank Id */
-    private Integer id;
+    private              Integer id;
+
     /** bank Id */
-    private Integer bankId;
+    private              Integer bankId;
+
     /**  */
-    private String  bankEmailAddr;
+    private              String  bankEmailAddr;
+
     /**  */
-    private Date    createdAt;
+    private              Date    createdAt;
+
     /**  */
-    private Date    updatedAt;
+    private              Date    updatedAt;
 
     public Integer getId() {
         return id;

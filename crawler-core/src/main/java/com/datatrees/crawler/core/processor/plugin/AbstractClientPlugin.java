@@ -23,9 +23,11 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractClientPlugin {
 
-    protected Logger logger = LoggerFactory.getLogger(AbstractClientPlugin.class);
-    private Protocol     webClient;
-    private ProxyManager proxyManager;
+    protected Logger       logger = LoggerFactory.getLogger(AbstractClientPlugin.class);
+
+    private   Protocol     webClient;
+
+    private   ProxyManager proxyManager;
 
     public Protocol getWebClient() {
         return webClient;

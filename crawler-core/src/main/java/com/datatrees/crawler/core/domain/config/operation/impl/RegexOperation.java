@@ -26,9 +26,11 @@ public class RegexOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 4494685192256482511L;
-    private String  regex;
-    private Integer groupIndex;
+    private static final long    serialVersionUID = 4494685192256482511L;
+
+    private              String  regex;
+
+    private              Integer groupIndex;
 
     @Tag
     public String getRegex() {

@@ -7,27 +7,38 @@ import java.io.Serializable;
  * Created by guimeichao on 18/3/28.
  */
 public class UserInfoLoginReq implements Serializable {
+
     private String appurltype;
+
     private String artifact;
+
     private String backUrl;
+
     private String ccPasswd;
+
     private String cellNum;
+
     private String imei;
+
     private String imsi;
+
     private String sendSmsFlag;
+
     private String sysTime;
+
     private String verifyCode;
+
     private String pageFlag;
 
     public String getPageFlag() {
-		return pageFlag;
-	}
+        return pageFlag;
+    }
 
-	public void setPageFlag(String pageFlag) {
-		this.pageFlag = pageFlag;
-	}
+    public void setPageFlag(String pageFlag) {
+        this.pageFlag = pageFlag;
+    }
 
-	public String getSysTime() {
+    public String getSysTime() {
         return this.sysTime;
     }
 

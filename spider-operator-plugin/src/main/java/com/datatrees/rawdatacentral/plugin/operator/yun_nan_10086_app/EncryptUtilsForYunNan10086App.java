@@ -12,7 +12,9 @@ import org.apache.commons.codec.digest.DigestUtils;
  * Created by guimeichao on 17/8/28.
  */
 public class EncryptUtilsForYunNan10086App {
+
     private static final byte[] IV;
+
     private static final String KEY = "!@#j*&!k";
 
     static {
@@ -48,7 +50,7 @@ public class EncryptUtilsForYunNan10086App {
         return DigestUtils.md5Hex(content.getBytes("UTF-8"));
     }
 
-    private static String getDeviceId(){
+    private static String getDeviceId() {
         return "D7F40D126FE979D7C24E5FB874DBB84D";
     }
 

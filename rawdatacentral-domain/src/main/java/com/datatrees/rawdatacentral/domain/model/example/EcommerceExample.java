@@ -7,14 +7,19 @@ import java.util.List;
 
 public class EcommerceExample implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    protected String         orderByClause;
-    protected boolean        distinct;
-    protected List<Criteria> oredCriteria;
+    private static final long           serialVersionUID = 1L;
+
+    protected            String         orderByClause;
+
+    protected            boolean        distinct;
+
+    protected            List<Criteria> oredCriteria;
+
     /** 当前页 */
-    protected int            pageNum;
+    protected            int            pageNum;
+
     /** 每页数据条数 */
-    protected int            pageSize;
+    protected            int            pageSize;
 
     public EcommerceExample() {
         oredCriteria = new ArrayList<Criteria>();
@@ -520,12 +525,19 @@ public class EcommerceExample implements Serializable {
     public static class Criterion {
 
         private String  condition;
+
         private Object  value;
+
         private Object  secondValue;
+
         private boolean noValue;
+
         private boolean singleValue;
+
         private boolean betweenValue;
+
         private boolean listValue;
+
         private String  typeHandler;
 
         protected Criterion(String condition) {

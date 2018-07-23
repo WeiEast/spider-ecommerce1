@@ -16,8 +16,11 @@ package com.datatrees.rawdatacentral.core.model.subtask;
 public class SubTask {
 
     private long       taskId;
+
     private ParentTask parentTask;
+
     private SubSeed    seed;
+
     private long       submitAt;
 
     /**
@@ -86,7 +89,7 @@ public class SubTask {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

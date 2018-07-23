@@ -7,12 +7,14 @@ import com.datatrees.spider.share.domain.ErrorCode;
  */
 public abstract class AbstractTask {
 
-    protected String websiteName;
+    protected String  websiteName;
+
     /**
      * 是否子任务
      */
-    private boolean isSubTask = false;
-    private boolean isDuplicateRemoved;
+    private   boolean isSubTask = false;
+
+    private   boolean isDuplicateRemoved;
 
     public void setErrorCode(ErrorCode errorCode) {
         this.setErrorCode(errorCode, null);

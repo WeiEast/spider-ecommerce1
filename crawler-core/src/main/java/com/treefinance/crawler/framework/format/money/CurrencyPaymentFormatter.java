@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 public class CurrencyPaymentFormatter extends CommonFormatter<String> {
 
     private final CurrencyFormatter currencyFormat = new CurrencyFormatter();
+
     private final PaymentFormatter  paymentFormat  = new PaymentFormatter();
 
     @Override

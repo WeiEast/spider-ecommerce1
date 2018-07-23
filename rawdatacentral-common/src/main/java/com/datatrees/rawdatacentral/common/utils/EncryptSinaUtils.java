@@ -1,17 +1,19 @@
 package com.datatrees.rawdatacentral.common.utils;
 
-import org.apache.commons.io.IOUtils;
-
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Created by zhangyanjia on 2018/1/29.
  */
 public class EncryptSinaUtils {
+
     private static Invocable JsEngineInvocable_SINASU = null;
+
     private static Invocable JsEngineInvocable_SINASP = null;
 
     public static String getSinaSU(String mailAccount) throws Exception {
@@ -29,7 +31,7 @@ public class EncryptSinaUtils {
             strBuilder.append(jsStr);
             JsEngineInvocable_SINASU = loadJsEngineInvocable(strBuilder.toString());
         }
-        return (String) JsEngineInvocable_SINASU.invokeFunction("getSinaSU", new Object[] {mailAccount});
+        return (String) JsEngineInvocable_SINASU.invokeFunction("getSinaSU", new Object[]{mailAccount});
     }
 
     public static String getSinaSP(String serverTime, String nonce, String pubKey, String password) throws Exception {
@@ -48,7 +50,7 @@ public class EncryptSinaUtils {
             strBuilder.append(jsStr);
             JsEngineInvocable_SINASP = loadJsEngineInvocable(strBuilder.toString());
         }
-        return (String) JsEngineInvocable_SINASP.invokeFunction("getSinaSP", new Object[] {serverTime, nonce, pubKey, password});
+        return (String) JsEngineInvocable_SINASP.invokeFunction("getSinaSP", new Object[]{serverTime, nonce, pubKey, password});
     }
 
     private static Invocable loadJsEngineInvocable(String scriptHtml) throws Exception {

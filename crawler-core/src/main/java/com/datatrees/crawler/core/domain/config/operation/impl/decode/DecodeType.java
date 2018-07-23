@@ -20,6 +20,7 @@ public enum DecodeType {
     STANDARD("standard"),
     BASIC("basic"),
     HEX("hex");
+
     private static Map<String, DecodeType> decodeTypeMap = new HashMap<String, DecodeType>();
 
     static {

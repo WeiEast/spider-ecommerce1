@@ -13,13 +13,13 @@ public abstract class ConfigurableFormatter<R> extends CommonFormatter<R> implem
     private Configuration configuration;
 
     @Override
-    public void setConf(Configuration conf) {
-        this.configuration = conf;
+    public Configuration getConf() {
+        return configuration == null ? PropertiesConfiguration.getInstance() : configuration;
     }
 
     @Override
-    public Configuration getConf() {
-        return configuration == null ? PropertiesConfiguration.getInstance() : configuration;
+    public void setConf(Configuration conf) {
+        this.configuration = conf;
     }
 
 }

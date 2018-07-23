@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.common.protocol;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 7, 2014 7:57:52 PM
@@ -30,10 +30,12 @@ import org.slf4j.LoggerFactory;
 public class WebClientUtil {
 
     private static final Logger                log                = LoggerFactory.getLogger(WebClientUtil.class);
-    private static final Map<String, Protocol> PROTOCOL_MAP       = new ConcurrentHashMap<>();
-    private static final String                SERVICE_PREFIX     = "service";
-    private static final String                FILE_CLIENT_PREFIX = "file";
 
+    private static final Map<String, Protocol> PROTOCOL_MAP       = new ConcurrentHashMap<>();
+
+    private static final String                SERVICE_PREFIX     = "service";
+
+    private static final String                FILE_CLIENT_PREFIX = "file";
 
     static {
         try {

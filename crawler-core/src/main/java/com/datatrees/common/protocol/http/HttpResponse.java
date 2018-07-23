@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.common.protocol.http;
 
 // JDK imports
@@ -19,18 +19,21 @@ import org.apache.commons.httpclient.HttpState;
 
 /**
  * An HTTP response.
- * 
+ *
  * @author Susam Pal
  */
 public class HttpResponse implements Response {
 
-    private URL url;
-    private byte[] content;
-    private int code;
-    private Metadata headers = new SpellCheckedMetadata();
+    private URL       url;
+
+    private byte[]    content;
+
+    private int       code;
+
+    private Metadata  headers = new SpellCheckedMetadata();
 
     private String    redirectUrl;
-    
+
     private HttpState state;
 
     public HttpResponse() {
@@ -41,8 +44,18 @@ public class HttpResponse implements Response {
         return url;
     }
 
+    public HttpResponse setUrl(URL url) {
+        this.url = url;
+        return this;
+    }
+
     public int getCode() {
         return code;
+    }
+
+    public HttpResponse setCode(int code) {
+        this.code = code;
+        return this;
     }
 
     public String getHeader(String name) {
@@ -57,21 +70,10 @@ public class HttpResponse implements Response {
         return content;
     }
 
-    public HttpResponse setUrl(URL url) {
-        this.url = url;
-        return this;
-    }
-
     public HttpResponse setContent(byte[] content) {
         this.content = content;
         return this;
     }
-
-    public HttpResponse setCode(int code) {
-        this.code = code;
-        return this;
-    }
-
 
     public String getRedirectUrl() {
         return redirectUrl;

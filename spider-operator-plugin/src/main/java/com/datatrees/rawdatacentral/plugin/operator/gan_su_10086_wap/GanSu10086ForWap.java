@@ -10,14 +10,14 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GanSu10086ForWap implements OperatorPluginService {
 
-    private static final Logger logger     = LoggerFactory.getLogger(GanSu10086ForWap.class);
+    private static final Logger logger = LoggerFactory.getLogger(GanSu10086ForWap.class);
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -93,7 +93,7 @@ public class GanSu10086ForWap implements OperatorPluginService {
         try {
             //http://wap.gs.10086.cn/jsbo_oauth/getNumMsg?mobile={}可以省掉
 
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(),"des.js","GBK");
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encryptPassword = invocable.invokeFunction("hex_md5", param.getPassword()).toString();
 
             //获取时间戳timestamp,这个很重要,不能用System.currentTimeMillis(),否则-1014
@@ -137,7 +137,7 @@ public class GanSu10086ForWap implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(),"des.js","GBK");
+            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encryptPassword = invocable.invokeFunction("hex_md5", param.getPassword()).toString();
 
             //获取时间戳timestamp,这个很重要,不能用System.currentTimeMillis(),否则-1014

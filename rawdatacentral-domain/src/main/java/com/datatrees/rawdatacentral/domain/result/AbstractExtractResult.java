@@ -23,20 +23,33 @@ public abstract class AbstractExtractResult implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 3890382241592488877L;
-    private int                 id;
-    private int                 taskId;
-    private int                 websiteId;
-    private String              uniqueSign;
-    private String              uniqueMd5;
-    private int                 status;
-    private String              remark;
-    private String              storagePath;
-    private String              resultType;
-    private String              url;
-    private String              pageExtractId;
-    private long                duration;
-    private Map<String, Object> extraInfo;
+    private static final long                serialVersionUID = 3890382241592488877L;
+
+    private              int                 id;
+
+    private              int                 taskId;
+
+    private              int                 websiteId;
+
+    private              String              uniqueSign;
+
+    private              String              uniqueMd5;
+
+    private              int                 status;
+
+    private              String              remark;
+
+    private              String              storagePath;
+
+    private              String              resultType;
+
+    private              String              url;
+
+    private              String              pageExtractId;
+
+    private              long                duration;
+
+    private              Map<String, Object> extraInfo;
 
     /**
      * @return the extraInfo
@@ -231,7 +244,7 @@ public abstract class AbstractExtractResult implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

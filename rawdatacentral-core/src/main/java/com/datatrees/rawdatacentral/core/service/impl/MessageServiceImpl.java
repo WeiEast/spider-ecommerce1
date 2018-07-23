@@ -28,15 +28,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageServiceImpl implements MessageService {
 
-    private static final Logger logger               = LoggerFactory.getLogger(MessageServiceImpl.class);
+    private static final Logger            logger               = LoggerFactory.getLogger(MessageServiceImpl.class);
+
     /**
      * 默认格式格式化成JSON后发送的字符编码
      */
-    private static final String DEFAULT_CHARSET_NAME = "UTF-8";
+    private static final String            DEFAULT_CHARSET_NAME = "UTF-8";
+
     @Resource
-    private DefaultMQProducer defaultMQProducer;
+    private              DefaultMQProducer defaultMQProducer;
+
     @Resource
-    private RedisService      redisService;
+    private              RedisService      redisService;
 
     @Override
     public boolean sendTaskLog(Long taskId, String msg, String errorDetail) {

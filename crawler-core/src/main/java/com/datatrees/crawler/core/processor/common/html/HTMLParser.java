@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 public class HTMLParser {
 
     private BulletParser  bulletParser;
+
     private LinkExtractor linkExtractor;
 
     /**

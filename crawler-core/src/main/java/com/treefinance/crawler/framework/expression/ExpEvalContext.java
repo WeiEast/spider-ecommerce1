@@ -11,13 +11,17 @@ import com.treefinance.toolkit.util.kryo.KryoUtils;
  * @author Jerry
  * @since 13:34 2018/5/30
  */
-public class ExpEvalContext implements Serializable,Copyable<ExpEvalContext> {
+public class ExpEvalContext implements Serializable, Copyable<ExpEvalContext> {
 
-    public static final ExpEvalContext DEFAULT = new ExpEvalContext();
-    private final Map<String, Object> placeholderMapping;
-    private boolean failOnUnknown = true;
-    private boolean allowNull     = false;
-    private boolean nullToEmpty   = false;
+    public static final ExpEvalContext      DEFAULT       = new ExpEvalContext();
+
+    private final       Map<String, Object> placeholderMapping;
+
+    private             boolean             failOnUnknown = true;
+
+    private             boolean             allowNull     = false;
+
+    private             boolean             nullToEmpty   = false;
 
     public ExpEvalContext() {
         this(null);

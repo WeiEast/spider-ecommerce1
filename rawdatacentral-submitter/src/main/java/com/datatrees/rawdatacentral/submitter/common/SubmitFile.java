@@ -16,6 +16,7 @@ package com.datatrees.rawdatacentral.submitter.common;
 public class SubmitFile {
 
     private String fileName;
+
     private byte[] value;
 
     /**

@@ -43,7 +43,9 @@ import org.apache.commons.lang.StringUtils;
 public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkipProcessorValve {
 
     private final T                        segment;
+
     private       List<String>             splits = null;
+
     private       AbstractProcessorContext context;
 
     public SegmentBase(@Nonnull T segment) {
@@ -139,7 +141,8 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
             }
 
             if (maxCycles != null && resultList != null && resultList.size() >= maxCycles) {
-                logger.warn("Break segment content processing with reaching the limit cycles{} reach the maxCycles: {},total-size: {}", segment, maxCycles, splits.size());
+                logger.warn("Break segment content processing with reaching the limit cycles{} reach the maxCycles: {},total-size: {}", segment,
+                        maxCycles, splits.size());
                 break;
             }
 
@@ -189,7 +192,8 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                     segResultList = null;
                 }
                 // 暂时保留 兼容老程序
-                if (BooleanUtils.isTrue(abstractSegment.getNotEmpty()) && (segResultList == null || (segResultList instanceof Collection && CollectionUtils.isEmpty((Collection) segResultList)))) {
+                if (BooleanUtils.isTrue(abstractSegment.getNotEmpty()) &&
+                        (segResultList == null || (segResultList instanceof Collection && CollectionUtils.isEmpty((Collection) segResultList)))) {
                     throw new ResultEmptyException(abstractSegment + " result should not be Empty!");
                 }
                 if (segResultList != null) {

@@ -23,6 +23,7 @@ public enum SegmentType {
     SPLIT("split"),
     CALCULATE("calculate"),
     BASE("base");
+
     private static Map<String, SegmentType> segment = new HashMap<String, SegmentType>();
 
     static {

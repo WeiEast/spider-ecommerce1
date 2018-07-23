@@ -11,7 +11,7 @@ public enum ErrorCode {
     TASK_CANCEL_BY_USER(-4, "用户取消任务"),
     TASK_CHECK_FAIL(-5, "任务检查失败"),
     NOT_SUPORT_METHOD(-10, "方法不支持"),
-    PARAM_ERROR(-11,"参数错误"),
+    PARAM_ERROR(-11, "参数错误"),
     LOGIN_FAIL(-100, "登陆失败,请重试"),
     LOGIN_UNEXPECTED_RESULT(-101, "登陆失败,请重试"),
     LOGIN_ERROR(-102, "登陆失败,请重试"),
@@ -65,6 +65,7 @@ public enum ErrorCode {
     UNDER_MAINTENANCE(-606, "当前运营商正在维护中，请稍后重试");
 
     private int    errorCode;
+
     private String errorMessage;
 
     private ErrorCode(int errorCode, String errorMessage) {

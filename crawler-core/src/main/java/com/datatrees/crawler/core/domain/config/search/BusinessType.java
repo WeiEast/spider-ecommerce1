@@ -33,11 +33,17 @@ public enum BusinessType {
     PERSONAL_INFO("personal_info", "基本信息", WebsiteType.OPERATOR, 0, true, false),
     BILL_DETAILS("bill_details", "账单信息", WebsiteType.OPERATOR, 1),
     CALL_DETAILS("call_details", "通话详单", WebsiteType.OPERATOR, 2);
+
     private String      code;
+
     private String      name;
+
     private WebsiteType websiteType;
+
     private int         order;
+
     private boolean     open;    // 是否抓取
+
     private boolean     enable;       // 是否控制
 
     BusinessType(String code, String name, WebsiteType websiteType, int order) {
@@ -55,6 +61,18 @@ public enum BusinessType {
         this.order = order;
         this.open = open;
         this.enable = enable;
+    }
+
+    public static BusinessType getBusinessType(String code) {
+        return Arrays.stream(BusinessType.values()).filter(businessType -> businessType.getCode().equals(code)).findFirst().orElse(null);
+    }
+
+    public static Map<WebsiteType, List<BusinessType>> getGroup() {
+        return Holder.MAP;
+    }
+
+    public static List<BusinessType> getBusinessTypeList(WebsiteType websiteType) {
+        return getGroup().get(websiteType);
     }
 
     public String getCode() {
@@ -81,25 +99,15 @@ public enum BusinessType {
         return enable;
     }
 
-    public static BusinessType getBusinessType(String code) {
-        return Arrays.stream(BusinessType.values()).filter(businessType -> businessType.getCode().equals(code)).findFirst().orElse(null);
-    }
-
-    public static Map<WebsiteType, List<BusinessType>> getGroup() {
-        return Holder.MAP;
-    }
-
-    public static List<BusinessType> getBusinessTypeList(WebsiteType websiteType) {
-        return getGroup().get(websiteType);
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).append("code", code).append("name", name).append("websiteType", websiteType).append("open", open).append("enable", enable).toString();
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).append("code", code).append("name", name).append("websiteType", websiteType)
+                .append("open", open).append("enable", enable).toString();
     }
 
     private static class Holder {
 
-        private static final Map<WebsiteType, List<BusinessType>> MAP = Arrays.stream(BusinessType.values()).collect(Collectors.groupingBy(BusinessType::getWebsiteType));
+        private static final Map<WebsiteType, List<BusinessType>> MAP = Arrays.stream(BusinessType.values())
+                .collect(Collectors.groupingBy(BusinessType::getWebsiteType));
     }
 }

@@ -9,14 +9,14 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 public class HeNan10000ForWeb implements OperatorPluginPostService {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(HeNan10000ForWeb.class);
+
     private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
 
     @Override
@@ -219,16 +220,16 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
             templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inzd.jsp";
             String dataTemplate = "ACC_NBR={}&PROD_TYPE=713058010165&ACCTNBR97=";
-            String data = TemplateUtils.format(dataTemplate,param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).setRequestBody(data)
-                    .setConnectTimeout(60000).setSocketTimeout(60000).invoke();
+            String data = TemplateUtils.format(dataTemplate, param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
+                    .setRequestBody(data).setConnectTimeout(60000).setSocketTimeout(60000).invoke();
 
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
             templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inzd.jsp";
             dataTemplate = "ACC_NBR={}&SERV_NO=&REFRESH_FLAG=1&BillingCycle=201804&operateType=2&operateType=2";
-            data = TemplateUtils.format(dataTemplate,param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer).setRequestBody(data)
-                    .setConnectTimeout(60000).setSocketTimeout(60000).invoke();
+            data = TemplateUtils.format(dataTemplate, param.getMobile());
+            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
+                    .setRequestBody(data).setConnectTimeout(60000).setSocketTimeout(60000).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "该客户总费用为")) {
                 logger.info("登陆成功,param={}", param);

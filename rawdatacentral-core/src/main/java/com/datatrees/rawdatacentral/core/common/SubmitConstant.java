@@ -23,6 +23,7 @@ public interface SubmitConstant {
     String ALIYUN_OSS_ACCESSSECRET                = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossAccessSecret");
     String ALIYUN_OSS_DEFAULTBUCKET               = PropertiesConfiguration.getInstance().get("submitter.aliyun.ossDefaultBucket");
     String ALIYUN_OSS_OBJECT_PATH_ROOT            = PropertiesConfiguration.getInstance().get("oss.object.path.root");
-    String SUBMITTER_NEEDUPLOAD_KEY               = PropertiesConfiguration.getInstance().get("submitter.needUpload.keys", "mailHeader,pageContent,attachment");
+    String SUBMITTER_NEEDUPLOAD_KEY               = PropertiesConfiguration.getInstance()
+            .get("submitter.needUpload.keys", "mailHeader,pageContent,attachment");
 
 }

@@ -3,16 +3,16 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.common.pipeline;
 
 import com.treefinance.crawler.lang.AtomicAttributes;
 import com.treefinance.crawler.lang.Copyable;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:08:31 PM
@@ -29,17 +29,17 @@ public class Request extends AtomicAttributes implements Copyable<Request> {
         setInput(content);
     }
 
-    public Request setInput(Object content) {
-        setAttribute(INPUT, content);
-        return this;
+    public static Request clone(Request request) {
+        return request.copy();
     }
 
     public Object getInput() {
         return getAttribute(INPUT);
     }
 
-    public static Request clone(Request request) {
-        return request.copy();
+    public Request setInput(Object content) {
+        setAttribute(INPUT, content);
+        return this;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class Request extends AtomicAttributes implements Copyable<Request> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

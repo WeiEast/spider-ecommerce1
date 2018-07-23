@@ -11,9 +11,11 @@ import org.apache.commons.lang.StringUtils;
 @Path(".[@type='append']")
 public class AppendOperation extends AbstractOperation {
 
-    private static final long serialVersionUID = -7536995227560319224L;
-    private Integer index;
-    private String  value;
+    private static final long    serialVersionUID = -7536995227560319224L;
+
+    private              Integer index;
+
+    private              String  value;
 
     @Tag
     public String getValue() {

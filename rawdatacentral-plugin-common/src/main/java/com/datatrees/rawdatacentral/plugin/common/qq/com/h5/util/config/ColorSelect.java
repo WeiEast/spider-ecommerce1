@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class ColorSelect implements Serializable {
 
     private double percentageX;
+
     private double percentageY;
 
     public double getPercentageX() {

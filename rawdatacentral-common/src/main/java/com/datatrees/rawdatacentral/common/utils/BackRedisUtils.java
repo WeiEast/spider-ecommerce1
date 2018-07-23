@@ -16,9 +16,11 @@ import redis.clients.jedis.JedisPoolConfig;
 
 public class BackRedisUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(BackRedisUtils.class);
-    private static JedisPool jedisPool;
-    private static RedisConfig redisConfig = new RedisConfig();
+    private static final Logger      logger      = LoggerFactory.getLogger(BackRedisUtils.class);
+
+    private static       JedisPool   jedisPool;
+
+    private static       RedisConfig redisConfig = new RedisConfig();
 
     public static void init() {
         try {

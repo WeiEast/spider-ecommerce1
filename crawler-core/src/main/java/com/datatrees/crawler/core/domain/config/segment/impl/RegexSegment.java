@@ -24,9 +24,11 @@ public class RegexSegment extends AbstractSegment {
     /**
      *
      */
-    private static final long serialVersionUID = 3272694924275477445L;
-    private String  regex;
-    private Integer groupIndex;
+    private static final long    serialVersionUID = 3272694924275477445L;
+
+    private              String  regex;
+
+    private              Integer groupIndex;
 
     @Attr("value")
     public String getRegex() {

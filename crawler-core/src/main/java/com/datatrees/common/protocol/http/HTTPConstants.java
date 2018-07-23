@@ -3,46 +3,33 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.common.protocol.http;
 
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 1:45:04 PM
  */
 public interface HTTPConstants {
 
-    public static final String HTTP_HEADER_SET_COOKIE = "Set-Cookie";
-    
-    public static final String HTTP_HEADER_SET_COOKIE2 = "Set-Cookie2";
-
-    public static final String HTTP_MAX_RETRY_COUNT = "http.max.retry.count";
-
-    public static final String HTTP_PROXY_HOST = "http.proxy.host";
-
-    public static final String HTTP_PROXY_PORT = "http.proxy.port";
-
-    public static final String HTTP_CONTENT_LIMIT = "http.content.limit";
-
-
-    public static final String HTTP_ACCEPT = "http.accept";
-
-    public static final String HTTP_ACCEPT_LANGUAGE = "http.accept.language";
-    
-    public static final String HTTP_ACCEPT_ENCODING = "http.accept.encoding";
-    
-    public static final String HTTP_ACCEPT_CHARSET = "http.accept.charset";
-
-    public static final String HTTP_CONNECTION = "http.connection";
-
-    
+    public static final String HTTP_HEADER_SET_COOKIE     = "Set-Cookie";
+    public static final String HTTP_HEADER_SET_COOKIE2    = "Set-Cookie2";
+    public static final String HTTP_MAX_RETRY_COUNT       = "http.max.retry.count";
+    public static final String HTTP_PROXY_HOST            = "http.proxy.host";
+    public static final String HTTP_PROXY_PORT            = "http.proxy.port";
+    public static final String HTTP_CONTENT_LIMIT         = "http.content.limit";
+    public static final String HTTP_ACCEPT                = "http.accept";
+    public static final String HTTP_ACCEPT_LANGUAGE       = "http.accept.language";
+    public static final String HTTP_ACCEPT_ENCODING       = "http.accept.encoding";
+    public static final String HTTP_ACCEPT_CHARSET        = "http.accept.charset";
+    public static final String HTTP_CONNECTION            = "http.connection";
     /**
      * Defines the content of the <tt>User-Agent</tt> header used by
      * {@link org.apache.commons.httpclient.HttpMethod HTTP methods}.
@@ -50,8 +37,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link String}.
      * </p>
      */
-    public static final String USER_AGENT = "http.useragent";
-
+    public static final String USER_AGENT                 = "http.useragent";
     /**
      * Defines the {@link HttpVersion HTTP protocol version} used by
      * {@link org.apache.commons.httpclient.HttpMethod HTTP methods} per default.
@@ -59,8 +45,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link HttpVersion}.
      * </p>
      */
-    public static final String PROTOCOL_VERSION = "http.protocol.version";
-
+    public static final String PROTOCOL_VERSION           = "http.protocol.version";
     /**
      * Defines whether {@link org.apache.commons.httpclient.HttpMethod HTTP methods} should reject
      * ambiguous {@link org.apache.commons.httpclient.StatusLine HTTP status line}.
@@ -68,8 +53,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Boolean}.
      * </p>
      */
-    public static final String UNAMBIGUOUS_STATUS_LINE = "http.protocol.unambiguous-statusline";
-
+    public static final String UNAMBIGUOUS_STATUS_LINE    = "http.protocol.unambiguous-statusline";
     /**
      * Defines whether {@link org.apache.commons.httpclient.Cookie cookies} should be put on a
      * single {@link org.apache.commons.httpclient.Header response header}.
@@ -77,8 +61,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Boolean}.
      * </p>
      */
-    public static final String SINGLE_COOKIE_HEADER = "http.protocol.single-cookie-header";
-
+    public static final String SINGLE_COOKIE_HEADER       = "http.protocol.single-cookie-header";
     /**
      * Defines whether responses with an invalid <tt>Transfer-Encoding</tt> header should be
      * rejected.
@@ -86,8 +69,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Boolean}.
      * </p>
      */
-    public static final String STRICT_TRANSFER_ENCODING = "http.protocol.strict-transfer-encoding";
-
+    public static final String STRICT_TRANSFER_ENCODING   = "http.protocol.strict-transfer-encoding";
     /**
      * Defines whether the content body sent in response to
      * {@link org.apache.commons.httpclient.methods.HeadMethod} should be rejected.
@@ -95,8 +77,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Boolean}.
      * </p>
      */
-    public static final String REJECT_HEAD_BODY = "http.protocol.reject-head-body";
-
+    public static final String REJECT_HEAD_BODY           = "http.protocol.reject-head-body";
     /**
      * Sets period of time in milliseconds to wait for a content body sent in response to
      * {@link org.apache.commons.httpclient.methods.HeadMethod HEAD method} from a non-compliant
@@ -106,8 +87,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Integer}.
      * </p>
      */
-    public static final String HEAD_BODY_CHECK_TIMEOUT = "http.protocol.head-body-timeout";
-
+    public static final String HEAD_BODY_CHECK_TIMEOUT    = "http.protocol.head-body-timeout";
     /**
      * <p>
      * Activates 'Expect: 100-Continue' handshake for the
@@ -116,22 +96,21 @@ public interface HTTPConstants {
      * request message with a request body to determine if the origin server is willing to accept
      * the request (based on the request headers) before the client sends the request body.
      * </p>
-     * 
+     *
      * <p>
      * The use of the 'Expect: 100-continue' handshake can result in noticable peformance
      * improvement for entity enclosing requests (such as POST and PUT) that require the target
      * server's authentication.
      * </p>
-     * 
+     *
      * <p>
      * 'Expect: 100-continue' handshake should be used with caution, as it may cause problems with
      * HTTP servers and proxies that do not support HTTP/1.1 protocol.
      * </p>
-     * 
+     *
      * This parameter expects a value of type {@link Boolean}.
      */
-    public static final String USE_EXPECT_CONTINUE = "http.protocol.expect-continue";
-
+    public static final String USE_EXPECT_CONTINUE        = "http.protocol.expect-continue";
     /**
      * Defines the charset to be used when encoding
      * {@link org.apache.commons.httpclient.Credentials}. If not defined then the
@@ -140,40 +119,35 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link String}.
      * </p>
      */
-    public static final String CREDENTIAL_CHARSET = "http.protocol.credential-charset";
-
+    public static final String CREDENTIAL_CHARSET         = "http.protocol.credential-charset";
     /**
      * Defines the charset to be used for encoding HTTP protocol elements.
      * <p>
      * This parameter expects a value of type {@link String}.
      * </p>
      */
-    public static final String HTTP_ELEMENT_CHARSET = "http.protocol.element-charset";
-
+    public static final String HTTP_ELEMENT_CHARSET       = "http.protocol.element-charset";
     /**
      * Defines the charset to be used for parsing URIs.
      * <p>
      * This parameter expects a value of type {@link String}.
      * </p>
      */
-    public static final String HTTP_URI_CHARSET = "http.protocol.uri-charset";
-
+    public static final String HTTP_URI_CHARSET           = "http.protocol.uri-charset";
     /**
      * Defines the charset to be used for encoding content body.
      * <p>
      * This parameter expects a value of type {@link String}.
      * </p>
      */
-    public static final String HTTP_CONTENT_CHARSET = "http.protocol.content-charset";
-
+    public static final String HTTP_CONTENT_CHARSET       = "http.protocol.content-charset";
     /**
      * Defines {@link CookiePolicy cookie policy} to be used for cookie management.
      * <p>
      * This parameter expects a value of type {@link String}.
      * </p>
      */
-    public static final String COOKIE_POLICY = "http.protocol.cookie-policy";
-
+    public static final String COOKIE_POLICY              = "http.protocol.cookie-policy";
     /**
      * Defines HttpClient's behavior when a response provides more bytes than expected (specified
      * with Content-Length, for example).
@@ -190,8 +164,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Boolean}.
      * </p>
      */
-    public static final String WARN_EXTRA_INPUT = "http.protocol.warn-extra-input";
-
+    public static final String WARN_EXTRA_INPUT           = "http.protocol.warn-extra-input";
     /**
      * Defines the maximum number of ignorable lines before we expect a HTTP response's status code.
      * <p>
@@ -205,23 +178,20 @@ public interface HTTPConstants {
      * Set this to 0 to disallow any garbage/empty lines before the status line.<br />
      * To specify no limit, use {@link Integer#MAX_VALUE} (default in lenient mode).
      * </p>
-     * 
+     *
      * This parameter expects a value of type {@link Integer}.
      */
-    public static final String STATUS_LINE_GARBAGE_LIMIT =
-            "http.protocol.status-line-garbage-limit";
-
+    public static final String STATUS_LINE_GARBAGE_LIMIT  = "http.protocol.status-line-garbage-limit";
     /**
      * Sets the socket timeout (<tt>SO_TIMEOUT</tt>) in milliseconds to be used when executing the
      * method. A timeout value of zero is interpreted as an infinite timeout.
      * <p>
      * This parameter expects a value of type {@link Integer}.
      * </p>
-     * 
+     *
      * @see java.net.SocketOptions#SO_TIMEOUT
      */
-    public static final String SO_TIMEOUT = "http.socket.timeout";
-
+    public static final String SO_TIMEOUT                 = "http.socket.timeout";
     /**
      * Determines the timeout until a connection is etablished. A value of zero means the timeout is
      * not used. The default value is zero.
@@ -229,9 +199,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Integer}.
      * </p>
      */
-    public static final String CONNECTION_TIMEOUT = "http.connection.timeout";
-
-
+    public static final String CONNECTION_TIMEOUT         = "http.connection.timeout";
     /**
      * The key used to look up the date patterns used for parsing. The String patterns are stored in
      * a {@link java.util.Collection} and must be compatible with {@link java.text.SimpleDateFormat}
@@ -240,8 +208,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link java.util.Collection}.
      * </p>
      */
-    public static final String DATE_PATTERNS = "http.dateparser.patterns";
-
+    public static final String DATE_PATTERNS              = "http.dateparser.patterns";
     /**
      * Sets the method retry handler parameter.
      * <p>
@@ -249,8 +216,7 @@ public interface HTTPConstants {
      * {@link org.apache.commons.httpclient.HttpMethodRetryHandler}.
      * </p>
      */
-    public static final String RETRY_HANDLER = "http.method.retry-handler";
-
+    public static final String RETRY_HANDLER              = "http.method.retry-handler";
     /**
      * Sets the maximum buffered response size (in bytes) that triggers no warning. Buffered
      * responses exceeding this size will trigger a warning in the log.
@@ -258,9 +224,7 @@ public interface HTTPConstants {
      * This parameter expects a value if type {@link Integer}.
      * </p>
      */
-    public static final String BUFFER_WARN_TRIGGER_LIMIT = "http.method.response.buffer.warnlimit";
-
-
+    public static final String BUFFER_WARN_TRIGGER_LIMIT  = "http.method.response.buffer.warnlimit";
     /**
      * Sets the timeout in milliseconds used when retrieving an
      * {@link org.apache.commons.httpclient.HttpConnection HTTP connection} from the
@@ -270,7 +234,6 @@ public interface HTTPConstants {
      * </p>
      */
     public static final String CONNECTION_MANAGER_TIMEOUT = "http.connection-manager.timeout";
-
     /**
      * Defines the default {@link org.apache.commons.httpclient.HttpConnectionManager HTTP
      * connection manager} class.
@@ -278,24 +241,21 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Class}.
      * </p>
      */
-    public static final String CONNECTION_MANAGER_CLASS = "http.connection-manager.class";
-
+    public static final String CONNECTION_MANAGER_CLASS   = "http.connection-manager.class";
     /**
      * Defines whether authentication should be attempted preemptively.
      * <p>
      * This parameter expects a value of type {@link Boolean}.
      * </p>
      */
-    public static final String PREEMPTIVE_AUTHENTICATION = "http.authentication.preemptive";
-
+    public static final String PREEMPTIVE_AUTHENTICATION  = "http.authentication.preemptive";
     /**
      * Defines whether relative redirects should be rejected.
      * <p>
      * This parameter expects a value of type {@link Boolean}.
      * </p>
      */
-    public static final String REJECT_RELATIVE_REDIRECT = "http.protocol.reject-relative-redirect";
-
+    public static final String REJECT_RELATIVE_REDIRECT   = "http.protocol.reject-relative-redirect";
     /**
      * Defines the maximum number of redirects to be followed. The limit on number of redirects is
      * intended to prevent infinite loops.
@@ -303,8 +263,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Integer}.
      * </p>
      */
-    public static final String MAX_REDIRECTS = "http.protocol.max-redirects";
-
+    public static final String MAX_REDIRECTS              = "http.protocol.max-redirects";
     /**
      * Defines whether circular redirects (redirects to the same location) should be allowed. The
      * HTTP spec is not sufficiently clear whether circular redirects are permitted, therefore
@@ -313,8 +272,7 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Boolean}.
      * </p>
      */
-    public static final String ALLOW_CIRCULAR_REDIRECTS = "http.protocol.allow-circular-redirects";
-
+    public static final String ALLOW_CIRCULAR_REDIRECTS   = "http.protocol.allow-circular-redirects";
     /**
      * Defines the request headers to be sent per default with each request.
      * <p>
@@ -322,10 +280,7 @@ public interface HTTPConstants {
      * expected to contain {@link org.apache.commons.httpclient.Header}s.
      * </p>
      */
-    public static final String DEFAULT_HEADERS = "http.default-headers";
-
-
-
+    public static final String DEFAULT_HEADERS            = "http.default-headers";
     /**
      * Defines the maximum number of connections allowed per host configuration. These values only
      * apply to the number of connections from a particular instance of HttpConnectionManager.
@@ -336,8 +291,7 @@ public interface HTTPConstants {
      * {@link org.apache.commons.httpclient.HostConfiguration#ANY_HOST_CONFIGURATION}.
      * </p>
      */
-    public static final String MAX_HOST_CONNECTIONS = "http.connection-manager.max-per-host";
-
+    public static final String MAX_HOST_CONNECTIONS       = "http.connection-manager.max-per-host";
     /**
      * Defines the maximum number of connections allowed overall. This value only applies to the
      * number of connections from a particular instance of HttpConnectionManager.
@@ -345,7 +299,6 @@ public interface HTTPConstants {
      * This parameter expects a value of type {@link Integer}.
      * </p>
      */
-    public static final String MAX_TOTAL_CONNECTIONS = "http.connection-manager.max-total";
-    
-    
+    public static final String MAX_TOTAL_CONNECTIONS      = "http.connection-manager.max-total";
+
 }

@@ -17,7 +17,8 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         int index = operation.getIndex();
         String value = operation.getValue();
 

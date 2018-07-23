@@ -17,8 +17,8 @@ public class FieldExtractResultSet extends HashMap<String, FieldExtractResult> {
 
         return obj.isNotEmpty();
     }
-    
-    public Map<String, Object> resultMap(){
+
+    public Map<String, Object> resultMap() {
         if (this.isEmpty()) {
             return Collections.emptyMap();
         }

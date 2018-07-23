@@ -23,6 +23,7 @@ import com.datatrees.crawler.core.domain.config.properties.UnicodeMode;
 public abstract class AbstractDecoder implements Configurable {
 
     protected UnicodeMode   mode;
+
     protected Configuration conf;
 
     public String decode(String content, String charset) {

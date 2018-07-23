@@ -14,23 +14,32 @@ import com.alibaba.fastjson.annotation.JSONField;
 public class Response implements Serializable {
 
     @JSONField(ordinal = 1)
-    private int statusCode;
+    private int                 statusCode;
+
     @JSONField(ordinal = 2)
-    private boolean isRedirect = false;//是否重定向了
+    private boolean             isRedirect = false;//是否重定向了
+
     @JSONField(ordinal = 2)
-    private String  redirectUrl;
+    private String              redirectUrl;
+
     @JSONField(ordinal = 3)
-    private Request request;
+    private Request             request;
+
     @JSONField(ordinal = 4)
-    private long    totalTime;
+    private long                totalTime;
+
     @JSONField(ordinal = 5)
-    private List<NameValue> headers = new ArrayList<>();
+    private List<NameValue>     headers    = new ArrayList<>();
+
     @JSONField(ordinal = 6)
     private Map<String, String> responseCookies;
+
     @JSONField(serialize = false)
     private byte[]              response;
+
     @JSONField(ordinal = 7)
     private Charset             charset;
+
     @JSONField(ordinal = 8)
     private String              contentType;
 

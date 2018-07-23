@@ -8,8 +8,8 @@ import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.treefinance.proxy.api.ProxyProvider;
 import com.treefinance.proxy.domain.IpLocale;
 import com.treefinance.proxy.domain.Proxy;
@@ -21,11 +21,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProxyServiceImpl implements ProxyService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProxyServiceImpl.class);
+    private static final Logger        logger = LoggerFactory.getLogger(ProxyServiceImpl.class);
+
     @Resource
-    private ProxyProvider proxyProvider;
+    private              ProxyProvider proxyProvider;
+
     @Resource
-    private RedisService  redisService;
+    private              RedisService  redisService;
 
     @Override
     public Proxy getProxy(Long taskId, String websiteName) {

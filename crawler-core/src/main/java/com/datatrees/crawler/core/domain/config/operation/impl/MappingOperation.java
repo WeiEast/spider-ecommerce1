@@ -21,8 +21,9 @@ public class MappingOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 904657740887574781L;
-    private String groupName;
+    private static final long   serialVersionUID = 904657740887574781L;
+
+    private              String groupName;
 
     @Attr("group-name")
     public String getGroupName() {
@@ -36,7 +37,7 @@ public class MappingOperation extends AbstractOperation {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

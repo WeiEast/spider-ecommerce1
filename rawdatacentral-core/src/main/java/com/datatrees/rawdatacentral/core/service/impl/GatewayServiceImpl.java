@@ -4,6 +4,10 @@ import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.alibaba.rocketmq.client.producer.SendStatus;
+import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.rawdatacentral.api.MessageService;
@@ -11,10 +15,6 @@ import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
 import org.apache.commons.lang.StringUtils;
-import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.client.producer.SendStatus;
-import com.alibaba.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,15 +22,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class GatewayServiceImpl implements DataResource {
 
-    private static final Logger logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
+    private static final Logger            logger = LoggerFactory.getLogger(GatewayServiceImpl.class);
+
     @Resource
-    private RedisDao          redisDao;
+    private              RedisDao          redisDao;
+
     @Resource
-    private MessageFactory    messageFactory;
+    private              MessageFactory    messageFactory;
+
     @Resource
-    private DefaultMQProducer defaultMQProducer;
+    private              DefaultMQProducer defaultMQProducer;
+
     @Resource
-    private MessageService    messageService;
+    private              MessageService    messageService;
 
     private String genRedisKey(Map<String, Object> parameters) {
         StringBuilder sb = new StringBuilder();
@@ -40,7 +44,7 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.datatrees.crawler.core.processor.common.resource.DataResource#getData
      * (java.util.Map)
      */
@@ -60,7 +64,7 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.datatrees.crawler.core.processor.common.resource.DataResource#setData
      * (java.util.Map, java.lang.Object)
      */
@@ -110,7 +114,7 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.crawler.core.processor.common.resource.DataResource#ttlPush(java.lang.String,
      * java.lang.String, long)
@@ -129,7 +133,7 @@ public class GatewayServiceImpl implements DataResource {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.crawler.core.processor.common.resource.DataResource#deleteKey(java.lang.String)
      */

@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.common.protocol.http;
 
 // JDK imports
@@ -27,64 +27,70 @@ import org.slf4j.LoggerFactory;
 
 public abstract class HttpBase implements Protocol {
 
-    public static final int BUFFER_SIZE = 8 * 1024;
+    public static final  int           BUFFER_SIZE              = 8 * 1024;
 
-    private static final byte[] EMPTY_CONTENT = new byte[0];
-
-    /** The proxy hostname. */
-    protected String proxyHost = null;
-
-    /** The proxy port. */
-    protected int proxyPort = 8080;
-
-    /** Indicates if a proxy is used */
-    protected boolean useProxy = false;
-
-    /** The network timeout in millisecond default 3s */
-    protected int connectionTimeout = (int) TimeUnit.SECONDS.toMillis(3);
-
-    /** The network read data timeout in 7s */
-    protected int socketTimeout = (int) TimeUnit.SECONDS.toMillis(7);
-
-    /** the timeout in milliseconds used when retrieving an http connection from pool */
-    protected int connectionManagerTimeout = (int) TimeUnit.SECONDS.toMillis(120);
-
-    /** The length limit for downloaded content, in bytes. */
-    protected int maxContent = 8 * 1024 * 1024; // max length 4M
-
-    /** The 'User-Agent' request header */
-    protected String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:29.0) Gecko/20100101 Firefox/29.0";
-
-    /** The "Accept-Language" request header value. */
-    protected String acceptLanguage = "en-us,en-gb,en;q=0.7,*;q=0.3";
-
-    /** The "Accept" request header value. */
-    protected            String        accept         = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-
-    /** The "Accept-Encoding" request header value. */
-    protected            String        acceptEncoding = "x-gzip, gzip, deflate";
-
-    /** The "Connection" request header value. */
-    protected            String        connection     = "keep-alive";
-
-    /** The "Accept-Charset" request header value. */
-    protected            String        acceptCharset  = "utf-8,ISO-8859-1;q=0.7,*;q=0.7";
+    private static final byte[]        EMPTY_CONTENT            = new byte[0];
 
     /** The default logger */
-    private final static Logger        logger         = LoggerFactory.getLogger(HttpBase.class);
+    private final static Logger        logger                   = LoggerFactory.getLogger(HttpBase.class);
+
+    /** The proxy hostname. */
+    protected            String        proxyHost                = null;
+
+    /** The proxy port. */
+    protected            int           proxyPort                = 8080;
+
+    /** Indicates if a proxy is used */
+    protected            boolean       useProxy                 = false;
+
+    /** The network timeout in millisecond default 3s */
+    protected            int           connectionTimeout        = (int) TimeUnit.SECONDS.toMillis(3);
+
+    /** The network read data timeout in 7s */
+    protected            int           socketTimeout            = (int) TimeUnit.SECONDS.toMillis(7);
+
+    /** the timeout in milliseconds used when retrieving an http connection from pool */
+    protected            int           connectionManagerTimeout = (int) TimeUnit.SECONDS.toMillis(120);
+
+    /** The length limit for downloaded content, in bytes. */
+    protected            int           maxContent               = 8 * 1024 * 1024; // max length 4M
+
+    /** The 'User-Agent' request header */
+    protected            String        userAgent
+                                                                = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:29.0) Gecko/20100101 Firefox/29.0";
+
+    /** The "Accept-Language" request header value. */
+    protected            String        acceptLanguage           = "en-us,en-gb,en;q=0.7,*;q=0.3";
+
+    /** The "Accept" request header value. */
+    protected            String        accept                   = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+
+    /** The "Accept-Encoding" request header value. */
+    protected            String        acceptEncoding           = "x-gzip, gzip, deflate";
+
+    /** The "Connection" request header value. */
+    protected            String        connection               = "keep-alive";
+
+    /** The "Accept-Charset" request header value. */
+    protected            String        acceptCharset            = "utf-8,ISO-8859-1;q=0.7,*;q=0.7";
 
     /** The nutch configuration */
-    protected            Configuration conf           = null;
+    protected            Configuration conf                     = null;
 
-    protected String URLSPLIT;
+    protected            String        URLSPLIT;
 
-    protected String URLSEPARATOR;
+    protected            String        URLSEPARATOR;
 
     /** Do we use HTTP/1.1? */
-    protected boolean useHttp11 = true;
+    protected            boolean       useHttp11                = true;
 
     /** Creates a new instance of HttpBase */
     public HttpBase() {}
+
+    // Inherited Javadoc
+    public Configuration getConf() {
+        return this.conf;
+    }
 
     // Inherited Javadoc
     public void setConf(Configuration conf) {
@@ -110,15 +116,9 @@ public abstract class HttpBase implements Protocol {
         logConf();
     }
 
-    // Inherited Javadoc
-    public Configuration getConf() {
-        return this.conf;
-    }
-
     public ProtocolOutput getProtocolOutput(String url) {
         return getProtocolOutput(url, 0);
     }
-
 
     public ProtocolOutput getProtocolOutput(ProtocolInput input) {
         Response response = null;
@@ -138,9 +138,8 @@ public abstract class HttpBase implements Protocol {
                 }
             }
 
-            Content c =
-                    new Content(u.toString(), input.getUrl(), (content == null ? EMPTY_CONTENT : content), response.getHeader("Content-Type"),
-                            response.getHeaders());
+            Content c = new Content(u.toString(), input.getUrl(), (content == null ? EMPTY_CONTENT : content), response.getHeader("Content-Type"),
+                    response.getHeaders());
             c.setResponseCode(code);
 
             if (code == 200) { // got a good response
@@ -194,9 +193,8 @@ public abstract class HttpBase implements Protocol {
         }
     }
 
-
     /**
-     * 
+     *
      * @param orignal
      * @return
      */
@@ -230,7 +228,6 @@ public abstract class HttpBase implements Protocol {
         return useProxy;
     }
 
-
     public int getMaxContent() {
         return maxContent;
     }
@@ -241,7 +238,7 @@ public abstract class HttpBase implements Protocol {
 
     /**
      * Value of "Accept-Language" request header sent by Nutch.
-     * 
+     *
      * @return The value of the header "Accept-Language" header.
      */
     public String getAcceptLanguage() {
@@ -256,8 +253,6 @@ public abstract class HttpBase implements Protocol {
         return useHttp11;
     }
 
-
-
     protected void logConf() {
         logger.debug("http.proxy.host = " + proxyHost);
         logger.debug("http.proxy.port = " + proxyPort);
@@ -269,8 +264,6 @@ public abstract class HttpBase implements Protocol {
         logger.debug("http.accept.language = " + acceptLanguage);
         logger.debug("http.accept = " + accept);
     }
-
-
 
     public byte[] processGzipEncoded(byte[] compressed, String url) throws IOException {
 

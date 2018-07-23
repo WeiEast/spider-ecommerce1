@@ -11,10 +11,10 @@ package com.datatrees.rawdatacentral.core.message;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import org.apache.commons.lang.StringUtils;
-import com.alibaba.rocketmq.common.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +25,22 @@ import org.slf4j.LoggerFactory;
  */
 public class MessageFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(MessageFactory.class);
-    private String defaultTopic;
-    private int                      flag           = 0;
-    private String                   defaultTags    = "";
-    private String                   defaultKeys    = "";
-    private boolean                  waitStoreMsgOK = true;
-    private String                   messageTags    = PropertiesConfiguration.getInstance().get("core.mq.message.tags", "bankbill,taobao,operator");
-    private Map<String, Set<String>> keyTagMap      = null;
+    private static final Logger                   logger         = LoggerFactory.getLogger(MessageFactory.class);
+
+    private              String                   defaultTopic;
+
+    private              int                      flag           = 0;
+
+    private              String                   defaultTags    = "";
+
+    private              String                   defaultKeys    = "";
+
+    private              boolean                  waitStoreMsgOK = true;
+
+    private              String                   messageTags    = PropertiesConfiguration.getInstance()
+            .get("core.mq.message.tags", "bankbill,taobao,operator");
+
+    private              Map<String, Set<String>> keyTagMap      = null;
 
     {
         keyTagMap = new HashMap<String, Set<String>>();

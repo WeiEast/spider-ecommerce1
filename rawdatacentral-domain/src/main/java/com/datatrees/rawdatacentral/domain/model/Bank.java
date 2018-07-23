@@ -6,26 +6,36 @@ import java.util.Date;
 /** create by system from table t_bank(Bank basic info) */
 public class Bank implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long    serialVersionUID = 1L;
+
     /** bank Id */
-    private Integer bankId;
+    private              Integer bankId;
+
     /** not null if bank support search */
-    private Integer websiteId;
-    private String websiteName;
+    private              Integer websiteId;
+
+    private              String  websiteName;
+
     /**  */
-    private String  bankMark;
+    private              String  bankMark;
+
     /** bank name */
-    private String  bankName;
+    private              String  bankName;
+
     /**  */
-    private Short   orderIndex;
+    private              Short   orderIndex;
+
     /**  */
-    private String  matchText;
+    private              String  matchText;
+
     /** 0:false,1:true */
-    private Boolean isenabled;
+    private              Boolean isenabled;
+
     /**  */
-    private Date    createdAt;
+    private              Date    createdAt;
+
     /**  */
-    private Date    updatedAt;
+    private              Date    updatedAt;
 
     public Integer getBankId() {
         return bankId;

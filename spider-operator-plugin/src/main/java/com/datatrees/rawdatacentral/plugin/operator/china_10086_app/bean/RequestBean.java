@@ -7,24 +7,43 @@ import java.io.Serializable;
  * Created by guimeichao on 18/3/28.
  */
 public class RequestBean implements Serializable {
+
     private String ak;
+
     private String cid;
+
     private String city;
+
     private String ctid;
+
     private String cv;
+
     private String en;
+
     private String imei;
+
     private String nt;
+
     private String prov;
+
     private Object reqBody;
+
     private String sb;
+
     private String sn;
+
     private String sp;
+
     private String st;
+
     private String sv;
+
     private String f4306t;
+
     private String tel;
+
     private String xc;
+
     private String xk;
 
     public String getCtid() {

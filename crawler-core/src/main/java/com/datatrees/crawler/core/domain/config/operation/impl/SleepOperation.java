@@ -25,8 +25,9 @@ public class SleepOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 8770876253603267778L;
-    private Integer value;
+    private static final long    serialVersionUID = 8770876253603267778L;
+
+    private              Integer value;
 
     @Node("text()")
     public Integer getValue() {

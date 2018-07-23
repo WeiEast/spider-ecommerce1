@@ -20,6 +20,7 @@ public enum CodecType {
     MD5("md5"),
     BASE64("base64"),
     URI("uri");
+
     private static Map<String, CodecType> OperationTypeMap = new HashMap<String, CodecType>();
 
     static {

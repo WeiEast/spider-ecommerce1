@@ -20,6 +20,7 @@ import org.jdom2.xpath.XPathFactory;
 public class XmlParser {
 
     private final Document document;
+
     private final Element  root;
 
     public XmlParser(InputStream input) throws JDOMException, IOException {

@@ -27,18 +27,28 @@ public class Request implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 228030808365581545L;
-    private Integer      maxPages;
-    private String       noResultPattern;
-    private String       blockPattern;
-    private String       lastPagePattern;
-    private List<String> searchTemplateList;
+    private static final long         serialVersionUID = 228030808365581545L;
+
+    private              Integer      maxPages;
+
+    private              String       noResultPattern;
+
+    private              String       blockPattern;
+
+    private              String       lastPagePattern;
+
+    private              List<String> searchTemplateList;
+
     // add in vtboss1.0.1
-    private String       reVisitPattern;
-    private Boolean fullSearchSign = true;
-    private Integer maxExecuteMinutes;
-    private Integer visitTimeOut;
-    private String  defaultHeader;
+    private              String       reVisitPattern;
+
+    private              Boolean      fullSearchSign   = true;
+
+    private              Integer      maxExecuteMinutes;
+
+    private              Integer      visitTimeOut;
+
+    private              String       defaultHeader;
 
     public Request() {
         super();

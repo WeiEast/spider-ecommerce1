@@ -23,10 +23,12 @@ public enum StepEnum {
     VALIDATE_BILL_DETAIL_FAIL(4700, "详单校验失败"),
     LOGIN_FAIL(4800, "登陆失败"),
     INIT_FAIL(4900, "初始化失败");
+
     /**
      * 步骤代码
      */
     private int    stepCode;
+
     /**
      * 名称
      */

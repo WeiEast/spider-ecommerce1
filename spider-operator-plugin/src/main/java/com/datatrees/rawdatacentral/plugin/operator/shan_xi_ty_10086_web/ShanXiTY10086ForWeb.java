@@ -13,13 +13,13 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -205,8 +205,8 @@ public class ShanXiTY10086ForWeb implements OperatorPluginService {
                 }
             }
 
-            if (StringUtils.contains(pageContent,"location.replace")) {
-                templateUrl = PatternUtils.group(pageContent,"location.replace\\('([^']+)'\\)",1);
+            if (StringUtils.contains(pageContent, "location.replace")) {
+                templateUrl = PatternUtils.group(pageContent, "location.replace\\('([^']+)'\\)", 1);
                 response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_ty_10086_web_004").setFullUrl(templateUrl).invoke();
 
             }

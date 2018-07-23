@@ -7,9 +7,12 @@ package com.datatrees.crawler.core.processor.service.conf;
  */
 public class JsonRPCOut {
 
-    private Integer id      = 123;
-    private String  jsonrpc = "2.0";
+    private Integer   id      = 123;
+
+    private String    jsonrpc = "2.0";
+
     private String    method;
+
     private ParamsOut result;
 
     public Integer getId() {

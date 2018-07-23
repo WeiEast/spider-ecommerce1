@@ -15,13 +15,13 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -263,7 +263,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
                 response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_009").setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
-            if (StringUtils.contains(pageContent,"postartifact")){
+            if (StringUtils.contains(pageContent, "postartifact")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "fu_jian_10086_web_009", pageContent);
             }
             templateUrl = PatternUtils.group(pageContent, "href = \"([^\"]+)\"", 1);
@@ -306,7 +306,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
                 response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_005").setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
-            if (StringUtils.contains(pageContent,"postartifact")){
+            if (StringUtils.contains(pageContent, "postartifact")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "fu_jian_10086_web_006", pageContent);
             }
 

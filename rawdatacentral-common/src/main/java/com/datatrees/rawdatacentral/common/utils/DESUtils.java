@@ -16,6 +16,7 @@ public class DESUtils {
      * java支持56位密钥，bouncycastle支持64位
      */
     public static final String KEY_ALGORITHM    = "DES";
+
     /**
      * 加密/解密算法/工作模式/填充方式
      */

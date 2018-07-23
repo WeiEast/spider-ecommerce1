@@ -26,9 +26,11 @@ public class XpathOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 3159540420961407796L;
-    private String  xpath;
-    private Boolean emptyToNull;
+    private static final long    serialVersionUID = 3159540420961407796L;
+
+    private              String  xpath;
+
+    private              Boolean emptyToNull;
 
     @Attr("empty-to-null")
     public Boolean getEmptyToNull() {
@@ -52,7 +54,7 @@ public class XpathOperation extends AbstractOperation {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

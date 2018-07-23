@@ -19,9 +19,11 @@ public class ParserPattern implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 2300222575458432909L;
-    private String             regex;
-    private List<IndexMapping> indexMappings;// not necessary
+    private static final long               serialVersionUID = 2300222575458432909L;
+
+    private              String             regex;
+
+    private              List<IndexMapping> indexMappings;// not necessary
 
     public ParserPattern() {
         super();
@@ -43,13 +45,13 @@ public class ParserPattern implements Serializable {
         return Collections.unmodifiableList(indexMappings);
     }
 
+    public void setIndexMappings(List<IndexMapping> indexMappings) {
+        this.indexMappings = indexMappings;
+    }
+
     @Node("mappings/map")
     public void setIndexMappings(IndexMapping indexMapping) {
         this.indexMappings.add(indexMapping);
-    }
-
-    public void setIndexMappings(List<IndexMapping> indexMappings) {
-        this.indexMappings = indexMappings;
     }
 
 }

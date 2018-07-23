@@ -34,7 +34,10 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.bean.StatusUtil;
-import com.datatrees.crawler.core.processor.common.*;
+import com.datatrees.crawler.core.processor.common.DecodeUtil;
+import com.datatrees.crawler.core.processor.common.ProcessorFactory;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.common.html.HTMLParser;
 import com.datatrees.crawler.core.processor.common.html.urlspliter.URLSplitter;
@@ -58,14 +61,14 @@ import org.apache.commons.lang.StringUtils;
 public class PageImpl extends ProcessorInvokerAdapter {
 
     private static final String titleRegex     = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
+
     private static final int    URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
 
-    private final Page page ;
+    private final        Page   page;
 
     public PageImpl(@Nonnull Page page) {
         this.page = Objects.requireNonNull(page);
     }
-
 
     @Override
     public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
@@ -158,7 +161,8 @@ public class PageImpl extends ProcessorInvokerAdapter {
                     try {
                         int pNum = Integer.valueOf(pNumber);
                         logger.info("add paging number: {},  match-text: {}", pNum, matcher.group(0));
-                        String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false,  RequestUtil.getProcessorContext(request).getContext());
+                        String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false,
+                                RequestUtil.getProcessorContext(request).getContext());
                         if (StringUtils.isNotEmpty(pageUrl)) {
                             logger.info("add page url: {}", pageUrl);
                             LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
@@ -255,7 +259,8 @@ public class PageImpl extends ProcessorInvokerAdapter {
 
         SearchTemplateConfig searchTemplateConfig = wrapper.getSearchTemplateConfig(RequestUtil.getCurrentTemplateId(req));
         String revisitPattern = null;
-        if (searchTemplateConfig != null && searchTemplateConfig.getRequest() != null && StringUtils.isNotBlank(searchTemplateConfig.getRequest().getReVisitPattern())) {
+        if (searchTemplateConfig != null && searchTemplateConfig.getRequest() != null &&
+                StringUtils.isNotBlank(searchTemplateConfig.getRequest().getReVisitPattern())) {
             revisitPattern = searchTemplateConfig.getRequest().getReVisitPattern();
         }
         List<LinkNode> nodes = new ArrayList<LinkNode>();
@@ -323,7 +328,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
                      * tmp.setReferer(referer); } int depth = current.getDepth(); if (revisitPattern
                      * != null) { try { depth = PatternUtils.match(revisitPattern, url) ? depth - 1
                      * : depth; } catch (Exception e) { log.error("check revisit error!", e); } }
-                     * 
+                     *
                      * // adjust depth wrapper.adjustUrlDepth(tmp, template, depth); nodes.add(tmp);
                      * log.debug(current.getUrl() + "@@accept url:" + url); } else {
                      * log.debug(current.getUrl() + "@@filter url:" + url); }

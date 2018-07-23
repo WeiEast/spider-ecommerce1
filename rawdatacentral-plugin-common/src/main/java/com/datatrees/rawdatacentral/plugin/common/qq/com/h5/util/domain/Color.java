@@ -3,8 +3,11 @@ package com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain;
 public class Color {
 
     private int red;
+
     private int green;
+
     private int blue;
+
     private int alpha = 255;
 
     public Color() {

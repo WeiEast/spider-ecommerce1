@@ -42,8 +42,11 @@ import org.slf4j.LoggerFactory;
 public abstract class ProcessContext implements CrawlerContext {
 
     protected final Logger                      logger = LoggerFactory.getLogger(getClass());
+
     private final   Website                     website;
+
     private final   Map<String, AbstractPlugin> pluginMetadataMap;
+
     private         PluginManager               pluginManager;
 
     public ProcessContext(@Nonnull final Website website) {

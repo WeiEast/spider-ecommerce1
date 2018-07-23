@@ -28,9 +28,11 @@ public class EscapeOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 2187657297214938947L;
-    private EscapeType   escapeType;
-    private HandlingType handlingType;
+    private static final long         serialVersionUID = 2187657297214938947L;
+
+    private              EscapeType   escapeType;
+
+    private              HandlingType handlingType;
 
     @Attr("escape-type")
     public EscapeType getEscapeType() {

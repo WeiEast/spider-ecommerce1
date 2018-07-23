@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PluginCookieFetchHandler extends CookieFetchHandler {
 
-    private static final Logger                 log     = LoggerFactory.getLogger(PluginCookieFetchHandler.class);
+    private static final Logger                 log = LoggerFactory.getLogger(PluginCookieFetchHandler.class);
+
     private              SearchProcessorContext context;
 
     public PluginCookieFetchHandler(SearchProcessorContext wrapper) {
@@ -37,7 +38,7 @@ public class PluginCookieFetchHandler extends CookieFetchHandler {
             //call plugin 
             String pid = cookieConf.getHandleConfig();
 
-            Object respOutput = PluginCaller.call(pid,  context, null);
+            Object respOutput = PluginCaller.call(pid, context, null);
 
             result = (String) respOutput;
         } catch (Exception e) {

@@ -1,7 +1,5 @@
 package com.datatrees.rawdatacentral.plugin.common.exmail.qq.com.h5.util;
 
-import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
-
 /**
  * Created by zhangyanjia on 2018/2/27.
  */
@@ -36,7 +34,9 @@ public enum ExMailErrorEnum {
     ERRORDYNPWDSENDFAILED("errorDynPwdSendFailed", "动态密码推送失败，请稍后重试"),
     ERRORTOKENEXPIREDSCAN("errorTokenExpiredScan", "请扫码登录"),
     ERRORADSCAN("errorADScan", "你的帐号需要使用微信扫码登录，请使用微信扫描右侧二维码登录");
+
     private String code;
+
     private String message;
 
     ExMailErrorEnum(String code, String message) {

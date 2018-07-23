@@ -16,28 +16,33 @@ public class MailParam implements Serializable {
     /**
      * 任务id 必填
      */
-    private Long   taskId;
+    private Long                taskId;
+
     /**
      * 用户名
      */
-    private String username;
+    private String              username;
+
     /**
      * 登陆密码或者服务密码
      */
     @JSONField(serialize = false)
-    private String password;
+    private String              password;
+
     /**
      * 指令id
      */
-    private String directiveId;
+    private String              directiveId;
+
     /**
      * 扩展属性
      */
     private Map<String, Object> extral = new HashMap<>();
+
     /**
      * 给自定义plugin方法用
      */
-    private String[] args;
+    private String[]            args;
 
     public MailParam() {
     }

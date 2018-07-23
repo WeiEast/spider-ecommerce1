@@ -22,6 +22,7 @@ public enum LoginType {
     APP("app"),
     PLUGIN("plugin"),
     NONE("none");
+
     private static Map<String, LoginType> LoginTypeMap = new HashMap<String, LoginType>();
 
     static {

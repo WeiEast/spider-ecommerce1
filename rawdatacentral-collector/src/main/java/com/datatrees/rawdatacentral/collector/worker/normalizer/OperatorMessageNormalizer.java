@@ -32,13 +32,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class OperatorMessageNormalizer implements DataNormalizer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OperatorMessageNormalizer.class);
+    private static final Logger          LOGGER = LoggerFactory.getLogger(OperatorMessageNormalizer.class);
+
     @Resource
-    private OperatorService operatorService;
+    private              OperatorService operatorService;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
@@ -53,7 +54,8 @@ public class OperatorMessageNormalizer implements DataNormalizer {
             ((OperatorData) object).setOperatorId(message.getTypeId());
             ((OperatorData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), OperatorData.class.getSimpleName())) {
+        } else if (object instanceof HashMap &&
+                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), OperatorData.class.getSimpleName())) {
             OperatorData operatorData = new OperatorData();
             operatorData.putAll((Map) object);
             operatorData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

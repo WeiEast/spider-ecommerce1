@@ -80,7 +80,8 @@ public class Crawler {
                     doResponseCheck(page, RequestUtil.getContent(request), url.getUrl());
                 } catch (Exception e) {
                     // response code failed
-                    if (BooleanUtils.isTrue(page.getResponseCheck()) && RegExp.find(ResponseUtil.getResponseStatus(response).toString(), getFailurePattern(page))) {
+                    if (BooleanUtils.isTrue(page.getResponseCheck()) &&
+                            RegExp.find(ResponseUtil.getResponseStatus(response).toString(), getFailurePattern(page))) {
                         throw new ResponseCheckException("page:" + page.getId() + ",url:" + request.getUrl() + " response check failed!", e);
                     } else {
                         throw e;
@@ -115,13 +116,16 @@ public class Crawler {
     }
 
     private static String getFailurePattern(Page page) {
-        return StringUtils.defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$");
+        return StringUtils
+                .defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$");
     }
 
     private static void doResponseCheck(Page page, String content, String url) throws ResponseCheckException {
         // check if response failed
-        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) || (StringUtils.isNotBlank(page.getPageFailedPattern()) && RegExp.find(content, page.getPageFailedPattern())))) {
-            throw new ResponseCheckException("page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
+        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) ||
+                (StringUtils.isNotBlank(page.getPageFailedPattern()) && RegExp.find(content, page.getPageFailedPattern())))) {
+            throw new ResponseCheckException(
+                    "page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
         }
     }
 

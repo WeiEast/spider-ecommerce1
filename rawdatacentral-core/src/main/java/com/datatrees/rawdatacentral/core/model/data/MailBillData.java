@@ -19,12 +19,19 @@ import java.util.Date;
 public class MailBillData extends AbstractData {
 
     public static String SENDER     = "sender";
+
     public static String SUBJECT    = "subject";
+
     public static String RECEIVED   = "receiveAt";
+
     public static String RECEIVER   = "receiver";
+
     public static String MAILHEADER = "mailHeader";
+
     public static String FIRSTHAND  = "firstHand";
+
     public static String FOLDER     = "folder";
+
     public static String BANKID     = "bankid";
 
     public Integer getBankId() {

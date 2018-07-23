@@ -13,8 +13,12 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 public enum DefaultProtocol implements Protocol {
 
     INSTANCE;
+
     public static final String       protocolSeparator   = "://";
-    private             String       protocols           = PropertiesConfiguration.getInstance().get("url.split.protocols", "http,https,rtmp,qvod,pa,mms,rtsp,thunder,bdhb");
+
+    private             String       protocols           = PropertiesConfiguration.getInstance()
+            .get("url.split.protocols", "http,https,rtmp,qvod,pa,mms,rtsp,thunder,bdhb");
+
     private             List<String> supportProtocolList = null;
 
     private DefaultProtocol() {

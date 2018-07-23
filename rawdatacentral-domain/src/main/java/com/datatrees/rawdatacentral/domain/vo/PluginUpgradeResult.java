@@ -12,10 +12,12 @@ public class PluginUpgradeResult {
      * 插件文件
      */
     private File    file;
+
     /**
      * 是否需要重新加载
      */
     private Boolean forceReload;
+
     /**
      * 文件版本
      */

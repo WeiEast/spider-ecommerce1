@@ -35,7 +35,8 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String xpath = operation.getXpath();
 
         xpath = StandardExpression.eval(xpath, request, response);

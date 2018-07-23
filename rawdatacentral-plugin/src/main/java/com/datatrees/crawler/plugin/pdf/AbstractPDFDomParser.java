@@ -37,56 +37,82 @@ import static org.apache.pdfbox.pdmodel.graphics.state.RenderingMode.*;
 public abstract class AbstractPDFDomParser extends PDFTextStripper {
 
     /** Length units used in the generated CSS */
-    public static final String   UNIT             = "pt";
+    public static final String              UNIT             = "pt";
+
     /** Known font names that are recognized in the PDF files */
-    protected static    String[] cssFontFamily    = {"Times New Roman", "Times", "Garamond", "Helvetica", "Arial", "Arial Narrow", "Verdana", "Courier New", "MS Sans Serif"};
+    protected static    String[]            cssFontFamily    = {"Times New Roman", "Times", "Garamond", "Helvetica", "Arial", "Arial Narrow",
+            "Verdana", "Courier New", "MS Sans Serif"};
+
     /** Known font subtypes recognized in PDF files */
-    protected static    String[] pdFontType       = {"normal", "roman", "bold", "italic", "bolditalic"};
+    protected static    String[]            pdFontType       = {"normal", "roman", "bold", "italic", "bolditalic"};
+
     /** Font weights corresponding to the font subtypes in {@link SimplePDFDomParser#pdFontType} */
-    protected static    String[] cssFontWeight    = {"normal", "normal", "bold", "normal", "bold"};
+    protected static    String[]            cssFontWeight    = {"normal", "normal", "bold", "normal", "bold"};
+
     /** Font styles corresponding to the font subtypes in {@link SimplePDFDomParser#pdFontType} */
-    protected static    String[] cssFontStyle     = {"normal", "normal", "normal", "italic", "italic"};
-    private static      Logger   log              = LoggerFactory.getLogger(AbstractPDFDomParser.class);
+    protected static    String[]            cssFontStyle     = {"normal", "normal", "normal", "italic", "italic"};
+
+    private static      Logger              log              = LoggerFactory.getLogger(AbstractPDFDomParser.class);
+
     /** When set to <code>true</code>, the graphics in the PDF file will be ignored. */
-    protected           boolean  disableGraphics  = false;
+    protected           boolean             disableGraphics  = false;
+
     /** When set to <code>true</code>, the embedded images will be ignored. */
-    protected           boolean  disableImages    = false;
+    protected           boolean             disableImages    = false;
+
     /** When set to <code>true</code>, the image data will not be transferred to the HTML data: url. */
-    protected           boolean  disableImageData = false;
+    protected           boolean             disableImageData = false;
+
     /** First page to be processed */
-    protected int       startPage;
+    protected           int                 startPage;
+
     /** Last page to be processed */
-    protected int       endPage;
+    protected           int                 endPage;
+
     /** Table of embedded fonts */
-    protected FontTable fontTable;
+    protected           FontTable           fontTable;
+
     /** The PDF page currently being processed */
-    protected PDPage    pdpage;
+    protected           PDPage              pdpage;
+
     /** Current text coordinates (the coordinates of the last encountered text box). */
-    protected float     cur_x;
+    protected           float               cur_x;
+
     /** Current text coordinates (the coordinates of the last encountered text box). */
-    protected float     cur_y;
+    protected           float               cur_y;
+
     /** Current path construction position */
-    protected float     path_x;
+    protected           float               path_x;
+
     /** Current path construction position */
-    protected float     path_y;
+    protected           float               path_y;
+
     /** Starting path construction position */
-    protected float     path_start_x;
+    protected           float               path_start_x;
+
     /** Starting path construction position */
-    protected float     path_start_y;
+    protected           float               path_start_y;
+
     /** Previous positioned text. */
-    protected TextPosition lastText = null;
+    protected           TextPosition        lastText         = null;
+
     /** Last diacritic if any */
-    protected TextPosition lastDia  = null;
+    protected           TextPosition        lastDia          = null;
+
     /** The text box currently being created. */
-    protected StringBuilder       textLine;
+    protected           StringBuilder       textLine;
+
     /** Current text line metrics */
-    protected TextMetrics         textMetrics;
+    protected           TextMetrics         textMetrics;
+
     /** Current graphics path */
-    protected Vector<PathSegment> graphicsPath;
+    protected           Vector<PathSegment> graphicsPath;
+
     /** The style of the future box being modified by the operators */
-    protected BoxStyle            style;
+    protected           BoxStyle            style;
+
     /** The style of the text line being created */
-    protected BoxStyle            curstyle;
+    protected           BoxStyle            curstyle;
 
     public AbstractPDFDomParser() throws IOException {
         super();
@@ -480,7 +506,8 @@ public abstract class AbstractPDFDomParser extends PDFTextStripper {
             }
 
             // should we split the boxes?
-            boolean split = lastText == null || distx > 1.0f || distx < -6.0f || Math.abs(disty) > 1.0f || isReversed(getTextDirectionality(text)) != isReversed(getTextDirectionality(lastText));
+            boolean split = lastText == null || distx > 1.0f || distx < -6.0f || Math.abs(disty) > 1.0f ||
+                    isReversed(getTextDirectionality(text)) != isReversed(getTextDirectionality(lastText));
             // if the style changed, we should split the boxes
             updateStyle(style, text);
             if (!style.equals(curstyle)) split = true;

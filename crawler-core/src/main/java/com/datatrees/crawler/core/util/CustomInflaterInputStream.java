@@ -27,19 +27,26 @@ public class CustomInflaterInputStream extends InflaterInputStream {
      * Decompressor for this stream.
      */
     protected Inflater inf;
+
     /**
      * Input buffer for decompression.
      */
     protected byte[]   buf;
+
     /**
      * Length of input buffer.
      */
     protected int      len;
+
     boolean usesDefaultInflater = false;
+
     private boolean closed        = false;
+
     // this flag is set to true after EOF has reached
     private boolean reachEOF      = false;
+
     private byte[]  singleByteBuf = new byte[1];
+
     private byte[]  b             = new byte[512];
 
     /**

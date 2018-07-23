@@ -1,16 +1,20 @@
 package com.datatrees.rawdatacentral.core.message;
 
+import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.ReflectionUtils;
 import com.datatrees.rawdatacentral.service.constants.Constants;
-import com.alibaba.rocketmq.common.message.Message;
 
 public class GsonMessageConverter implements MessageConverter {
 
-    private String topic;
+    private String  topic;
+
     private int     flag           = 0;
+
     private String  tags           = "";
+
     private String  keys           = "";
+
     private boolean waitStoreMsgOK = true;
 
     public String getTopic() {

@@ -24,9 +24,11 @@ public class SplitSegment extends AbstractSegment {
     /**
      *
      */
-    private static final long serialVersionUID = -4391709858547716289L;
-    private String  splitString;
-    private Boolean append;
+    private static final long    serialVersionUID = -4391709858547716289L;
+
+    private              String  splitString;
+
+    private              Boolean append;
 
     @Attr("append")
     public Boolean getAppend() {

@@ -22,12 +22,19 @@ import org.slf4j.LoggerFactory;
 class ExpressionMatcher {
 
     private static final Logger  LOGGER             = LoggerFactory.getLogger(ExpressionMatcher.class);
+
     private static final String  EXPRESSION_REGEXP  = "(\\s*)\\$\\{\\s*([^}]+)\\s*}(\\s*)";
+
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile(EXPRESSION_REGEXP);
+
     private static final int     PLACEHOLDER_GROUP  = 2;
+
     private              String  text;
+
     private              boolean empty;
+
     private              Matcher matcher;
+
     private              Boolean find;
 
     private ExpressionMatcher() {

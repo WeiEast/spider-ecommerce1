@@ -13,8 +13,8 @@ import java.util.Map;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.HttpResult;
 
 /**
@@ -25,13 +25,20 @@ import com.datatrees.spider.share.domain.HttpResult;
 public class TaskMessage {
 
     private final Task                   task;
+
     private final SearchProcessorContext context;
-    private Boolean                messageSend;
-    private int                    parentTaskID;
-    private CollectorMessage       collectorMessage;
-    private String                 templateId;
-    private String                 uniqueSuffix;
-    private Boolean                statusSend;
+
+    private       Boolean                messageSend;
+
+    private       int                    parentTaskID;
+
+    private       CollectorMessage       collectorMessage;
+
+    private       String                 templateId;
+
+    private       String                 uniqueSuffix;
+
+    private       Boolean                statusSend;
 
     public TaskMessage(final Task task, final SearchProcessorContext context) {
         this.task = task;
@@ -151,7 +158,8 @@ public class TaskMessage {
 
     @Override
     public String toString() {
-        return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" + parentTaskID + "]";
+        return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" +
+                parentTaskID + "]";
     }
 
     public void setErrorCode(ErrorCode errorCode) {

@@ -15,13 +15,13 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -39,6 +39,30 @@ import org.slf4j.LoggerFactory;
 public class GuangDong10086ForWeb implements OperatorPluginService {
 
     private static final Logger logger = LoggerFactory.getLogger(GuangDong10086ForWeb.class);
+
+    public static byte[] unZip(byte[] data) {
+        byte[] b = null;
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(data);
+            ZipInputStream zip = new ZipInputStream(bis);
+            while (zip.getNextEntry() != null) {
+                byte[] buf = new byte[1024];
+                int num = -1;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                while ((num = zip.read(buf, 0, buf.length)) != -1) {
+                    baos.write(buf, 0, num);
+                }
+                b = baos.toByteArray();
+                baos.flush();
+                baos.close();
+            }
+            zip.close();
+            bis.close();
+        } catch (Exception ex) {
+            logger.info("解压缩出错", ex);
+        }
+        return b;
+    }
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -252,29 +276,5 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             logger.error("通话记录页访问失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
         }
-    }
-
-    public static byte[] unZip(byte[] data) {
-        byte[] b = null;
-        try {
-            ByteArrayInputStream bis = new ByteArrayInputStream(data);
-            ZipInputStream zip = new ZipInputStream(bis);
-            while (zip.getNextEntry() != null) {
-                byte[] buf = new byte[1024];
-                int num = -1;
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                while ((num = zip.read(buf, 0, buf.length)) != -1) {
-                    baos.write(buf, 0, num);
-                }
-                b = baos.toByteArray();
-                baos.flush();
-                baos.close();
-            }
-            zip.close();
-            bis.close();
-        } catch (Exception ex) {
-            logger.info("解压缩出错", ex);
-        }
-        return b;
     }
 }

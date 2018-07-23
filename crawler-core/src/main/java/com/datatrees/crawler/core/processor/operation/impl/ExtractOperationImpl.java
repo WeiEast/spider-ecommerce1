@@ -51,7 +51,8 @@ public class ExtractOperationImpl extends Operation<ExtractOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ExtractOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ExtractOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         // get input
         String content = (String) operatingData;
         String baseURL = RequestUtil.getCurrentUrl(request).getUrl();

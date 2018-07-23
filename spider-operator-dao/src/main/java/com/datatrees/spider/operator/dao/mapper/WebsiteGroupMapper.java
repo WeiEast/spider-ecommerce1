@@ -1,12 +1,14 @@
 package com.datatrees.spider.operator.dao.mapper;
 
+import java.util.List;
+
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
- /** create by system from table website_group(配置分组)  */
+/** create by system from table website_group(配置分组) */
 public interface WebsiteGroupMapper {
+
     int countByExample(WebsiteGroupExample example);
 
     int deleteByExample(WebsiteGroupExample example);

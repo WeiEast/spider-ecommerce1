@@ -13,6 +13,7 @@ public enum ExtractCode {
     ERROR_INPUT(4, "Extract error input"),
     EXTRACT_FAIL(6, "Extract fail code"),
     EXTRACT_STORE_FAIL(8, "Extract store failed");
+
     private static Map<Integer, ExtractCode> extractCodeMap = new HashMap<Integer, ExtractCode>();
 
     static {
@@ -22,6 +23,7 @@ public enum ExtractCode {
     }
 
     int    code;
+
     String desc;
 
     ExtractCode(int code, String desc) {

@@ -24,11 +24,13 @@ final class ExpressionExecutor {
         return ExpressionMatcher.match(value).evalExp(placeholder);
     }
 
-    public static String evalExp(@Nonnull String value, @Nullable Map<String, Object> placeholder, @Nullable BiFunction<String, String, String> mappingFunction) {
+    public static String evalExp(@Nonnull String value, @Nullable Map<String, Object> placeholder,
+            @Nullable BiFunction<String, String, String> mappingFunction) {
         return ExpressionMatcher.match(value).evalExp(placeholder, mappingFunction);
     }
 
-    public static String evalExp(@Nonnull String value, @Nullable Map<String, Object> placeholder, @Nullable List<String> urlEncodedKeys, @Nullable String charset) {
+    public static String evalExp(@Nonnull String value, @Nullable Map<String, Object> placeholder, @Nullable List<String> urlEncodedKeys,
+            @Nullable String charset) {
         return ExpressionMatcher.match(value).evalExp(placeholder, urlEncodedKeys, charset);
     }
 
@@ -44,16 +46,20 @@ final class ExpressionExecutor {
         return ExpressionMatcher.match(value).evalExp(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
     }
 
-    public static String evalExp(@Nonnull String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier, @Nullable List<String> urlEncodedKeys, @Nullable String charset) {
-        return ExpressionMatcher.match(value).evalExp(() -> new UrlExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get(), urlEncodedKeys, charset));
+    public static String evalExp(@Nonnull String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier,
+            @Nullable List<String> urlEncodedKeys, @Nullable String charset) {
+        return ExpressionMatcher.match(value)
+                .evalExp(() -> new UrlExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get(), urlEncodedKeys, charset));
     }
 
     public static Object evalExpWithObject(@Nonnull String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier) {
-        return ExpressionMatcher.match(value).evalExpWithObject(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
+        return ExpressionMatcher.match(value)
+                .evalExpWithObject(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
     }
 
     public static String evalExpSpecial(@Nonnull String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier) {
-        return ExpressionMatcher.match(value).evalExpSpecial(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
+        return ExpressionMatcher.match(value)
+                .evalExpSpecial(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
     }
 
     public static String evalExp(@Nonnull String value, @Nonnull ExpEvalContext context) {

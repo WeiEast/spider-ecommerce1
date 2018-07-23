@@ -22,9 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/app/crawler")
 public class AppCrwalerController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AppCrwalerController.class);
+    private static final Logger                  logger = LoggerFactory.getLogger(AppCrwalerController.class);
+
     @Resource
-    private AppCrawlerConfigService appCrawlerConfigService;
+    private              AppCrawlerConfigService appCrawlerConfigService;
 
     @RequestMapping("/getList")
     public SaasResult<List<AppCrawlerConfigParam>> getAppCrawlerConfigList() {
@@ -32,13 +33,11 @@ public class AppCrwalerController {
 
     }
 
-
     @RequestMapping("/update")
     public SaasResult<String> updateAppCrawlerConfig(@RequestBody AppCrawlerConfigParam params) {
-        logger.info("AppCrawlerConfigParam is {}",params);
+        logger.info("AppCrawlerConfigParam is {}", params);
         appCrawlerConfigService.updateAppConfig(params.getAppId(), params.getProjectConfigInfos());
         return Results.newResult(CommonStateCode.SUCCESS);
     }
-
 
 }

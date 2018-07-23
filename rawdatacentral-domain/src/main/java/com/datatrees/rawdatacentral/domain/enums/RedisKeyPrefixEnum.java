@@ -51,26 +51,31 @@ public enum RedisKeyPrefixEnum {
     TASK_INIT_NICK_GROUP_CODE("task.init.nick.group.code", 30, TimeUnit.MINUTES, "任务初始化时的groupCode"),
     TASK_INFO_ACCOUNT_NO("task.info.account.no", 30, TimeUnit.MINUTES, "任务对应的accountNo"),
     APP_CRAWLER_CONFIG("app.crawler.config", 1, TimeUnit.MILLISECONDS, "用户爬取模块配置");
+
     /**
      * 备注
      */
-    private final String remark;
+    private final String   remark;
+
     /**
      * 分隔符
      */
-    private final String separator = ".";
+    private final String   separator = ".";
+
     /**
      * 前缀
      */
-    private String   prefix;
+    private       String   prefix;
+
     /**
      * 超时时间
      */
-    private int      timeout;
+    private       int      timeout;
+
     /**
      * 时间单位
      */
-    private TimeUnit timeUnit;
+    private       TimeUnit timeUnit;
 
     RedisKeyPrefixEnum(String prefix, int timeout, TimeUnit timeUnit, String remark) {
         this.prefix = prefix;

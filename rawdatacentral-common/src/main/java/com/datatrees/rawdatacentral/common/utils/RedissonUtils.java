@@ -32,18 +32,17 @@ public class RedissonUtils {
      * @param port
      * @return
      */
-    public static RedissonClient getRedisson(String ip, String port,String password) {
+    public static RedissonClient getRedisson(String ip, String port, String password) {
         Config config = new Config();
         SingleServerConfig serverConfig = config.useSingleServer();
         serverConfig.setAddress("redis://" + ip + ":" + port);
-        if(StringUtils.isNoneBlank(password)){
+        if (StringUtils.isNoneBlank(password)) {
             serverConfig.setPassword(password);
         }
         RedissonClient redisson = Redisson.create(config);
         logger.info("成功连接Redis Server,{}:{}", ip, port);
         return redisson;
     }
-
 
     /**
      * 关闭Redisson客户端连接

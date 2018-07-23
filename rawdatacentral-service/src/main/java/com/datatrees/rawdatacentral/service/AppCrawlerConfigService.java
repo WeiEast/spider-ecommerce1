@@ -28,6 +28,6 @@ public interface AppCrawlerConfigService {
      * @param appId
      * @param projectConfigInfos
      */
-    void updateAppConfig(String appId,List<CrawlerProjectParam> projectConfigInfos);
+    void updateAppConfig(String appId, List<CrawlerProjectParam> projectConfigInfos);
 
 }

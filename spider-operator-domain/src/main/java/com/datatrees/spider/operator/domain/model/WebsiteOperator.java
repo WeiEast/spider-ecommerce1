@@ -3,87 +3,88 @@ package com.datatrees.spider.operator.domain.model;
 import java.io.Serializable;
 import java.util.Date;
 
- /** create by system from table website_operator(运营商配置)  */
+/** create by system from table website_operator(运营商配置) */
 public class WebsiteOperator implements Serializable {
+
+    private static final long    serialVersionUID = 1L;
+
     /** 主键 */
-    private Integer websiteId;
+    private              Integer websiteId;
 
     /** 区分环境 */
-    private String env;
+    private              String  env;
 
     /** 配置名称 */
-    private String websiteName;
+    private              String  websiteName;
 
     /** 配置标题 */
-    private String websiteTitle;
+    private              String  websiteTitle;
 
     /** 是否启用(0:不启用,1:启用) */
-    private Boolean enable;
+    private              Boolean enable;
 
     /** 代理(0:不启用,1:启用) */
-    private Boolean proxyEnable;
+    private              Boolean proxyEnable;
 
     /** 搜索配置 */
-    private String searchConfig;
+    private              String  searchConfig;
 
     /** 解析配置 */
-    private String extractorConfig;
+    private              String  extractorConfig;
 
     /** 分组 */
-    private String groupCode;
+    private              String  groupCode;
 
     /** 运营商类型:10086,10010,10000 */
-    private String operatorType;
+    private              String  operatorType;
 
     /** 区域 */
-    private String regionName;
+    private              String  regionName;
 
     /** 修改时间 */
-    private Date updatedAt;
+    private              Date    updatedAt;
 
     /** 插件启动阶段(在***表单提交成功之后发送登录成功消息) */
-    private String startStage;
+    private              String  startStage;
 
     /** 登录地址 */
-    private String loginUrl;
+    private              String  loginUrl;
 
     /** 插件地址 */
-    private String pluginClass;
+    private              String  pluginClass;
 
     /** 登录配置 */
-    private String loginConfig;
+    private              String  loginConfig;
 
     /** 短信重发间隔时间(全局) */
-    private Integer smsInterval;
+    private              Integer smsInterval;
 
     /** 描述 */
-    private String remark;
+    private              String  remark;
 
     /** 登录过程中自定义提示 */
-    private String loginTip;
+    private              String  loginTip;
 
     /** 爬过过程中校验,短信输入框提示 */
-    private String verifyTip;
+    private              String  verifyTip;
 
     /** 重置密码方式(SMS:短信, TEL:拨打电话, WEB:url重置) */
-    private String resetType;
+    private              String  resetType;
 
     /** 重置密码短信模板 */
-    private String smsTemplate;
+    private              String  smsTemplate;
 
     /** 重置密码接收手机号 */
-    private String smsReceiver;
+    private              String  smsReceiver;
 
     /** 重置密码url */
-    private String resetUrl;
+    private              String  resetUrl;
 
     /** 重置密码提示 */
-    private String resetTip;
+    private              String  resetTip;
 
     /**  */
-    private Boolean simulate;
-
-    private static final long serialVersionUID = 1L;
+    private              Boolean simulate;
 
     public Integer getWebsiteId() {
         return websiteId;
@@ -93,15 +94,15 @@ public class WebsiteOperator implements Serializable {
         this.websiteId = websiteId;
     }
 
-     public String getEnv() {
-         return env;
-     }
+    public String getEnv() {
+        return env;
+    }
 
-     public void setEnv(String env) {
-         this.env = env;
-     }
+    public void setEnv(String env) {
+        this.env = env;
+    }
 
-     public String getWebsiteName() {
+    public String getWebsiteName() {
         return websiteName;
     }
 

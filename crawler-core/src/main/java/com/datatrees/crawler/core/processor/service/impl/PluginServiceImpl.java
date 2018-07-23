@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class PluginServiceImpl extends ServiceBase<PluginService> {
 
-    private final        int    retryCount = PropertiesConfiguration.getInstance().getInt("pluginService.retry.count", 3);
+    private final int retryCount = PropertiesConfiguration.getInstance().getInt("pluginService.retry.count", 3);
 
     public PluginServiceImpl(@Nonnull PluginService service) {
         super(service);

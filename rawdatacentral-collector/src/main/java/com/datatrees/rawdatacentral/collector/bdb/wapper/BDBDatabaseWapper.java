@@ -11,8 +11,11 @@ import com.sleepycat.je.SecondaryDatabase;
 public class BDBDatabaseWapper {
 
     private String            databaseName  = null;
+
     private String            secondaryName = null;
+
     private Database          db            = null;
+
     private SecondaryDatabase sdb           = null;
 
     public BDBDatabaseWapper(Database db, SecondaryDatabase sdb) {

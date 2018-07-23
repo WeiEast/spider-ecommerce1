@@ -26,9 +26,11 @@ public class MatchGroupOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = -8222059832401343348L;
-    private Integer groupIndex;
-    private String  sourceId;
+    private static final long    serialVersionUID = -8222059832401343348L;
+
+    private              Integer groupIndex;
+
+    private              String  sourceId;
 
     @Attr("index")
     public Integer getGroupIndex() {

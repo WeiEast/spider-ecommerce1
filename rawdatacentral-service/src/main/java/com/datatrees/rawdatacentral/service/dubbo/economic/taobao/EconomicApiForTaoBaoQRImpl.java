@@ -4,9 +4,9 @@ import javax.annotation.Resource;
 
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.springframework.stereotype.Service;
 

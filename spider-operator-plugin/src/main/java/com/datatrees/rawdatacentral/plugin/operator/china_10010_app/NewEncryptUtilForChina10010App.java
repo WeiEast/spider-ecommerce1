@@ -11,6 +11,8 @@ import java.security.spec.X509EncodedKeySpec;
  */
 public class NewEncryptUtilForChina10010App {
 
+    private static final byte[] a = "#PART#".getBytes();
+
     public static String encode(String str, String U) throws Exception {
         String str2 = (new StringBuilder()).append(str).append(U).toString();
         String encodeString = Base64.encodeToString(a(str2.getBytes(), Base64.decode(
@@ -18,8 +20,6 @@ public class NewEncryptUtilForChina10010App {
                 2)), 2);
         return URLEncoder.encode(encodeString, "UTF-8");
     }
-
-    private static final byte[] a = "#PART#".getBytes();
 
     private static byte[] a(byte[] bArr, byte[] bArr2) throws Exception {
         Key generatePublic = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(bArr2));

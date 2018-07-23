@@ -18,11 +18,15 @@ public class ExtractorSelector implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 8089954857564467379L;
-    private String        field;
-    private String        containRegex;
-    private String        disContainRegex;
-    private PageExtractor pageExtractor;
+    private static final long          serialVersionUID = 8089954857564467379L;
+
+    private              String        field;
+
+    private              String        containRegex;
+
+    private              String        disContainRegex;
+
+    private              PageExtractor pageExtractor;
 
     @Attr("field")
     public String getField() {

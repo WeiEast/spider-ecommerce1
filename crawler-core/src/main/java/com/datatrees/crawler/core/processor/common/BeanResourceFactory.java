@@ -5,7 +5,8 @@ import com.datatrees.crawler.core.processor.common.resource.BeanResource;
 public class BeanResourceFactory implements BeanResource {
 
     private static BeanResourceFactory factory = null;
-    private BeanResource beanResource;
+
+    private        BeanResource        beanResource;
 
     private BeanResourceFactory() {}
 

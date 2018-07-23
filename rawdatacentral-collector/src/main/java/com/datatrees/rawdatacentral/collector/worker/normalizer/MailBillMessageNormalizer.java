@@ -16,13 +16,13 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import com.datatrees.rawdatacentral.core.common.DataNormalizer;
+import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
 import com.datatrees.rawdatacentral.service.BankService;
-import com.datatrees.rawdatacentral.core.common.SubmitConstant;
+import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +36,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailBillMessageNormalizer implements DataNormalizer {
 
-    private static final Logger logger = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
+    private static final Logger       logger            = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
+
     @Resource
-    private BankService bankService;
-    private String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
-    private List<String> loadFileBankList  = null;
-    private List<String> needLoadFieldList = null;
+    private              BankService  bankService;
+
+    private              String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
+
+    private              List<String> loadFileBankList  = null;
+
+    private              List<String> needLoadFieldList = null;
 
     {
         loadFileBankList = Arrays.asList(loadFileBankIds.split(" *; *"));
@@ -51,7 +55,7 @@ public class MailBillMessageNormalizer implements DataNormalizer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
@@ -68,7 +72,8 @@ public class MailBillMessageNormalizer implements DataNormalizer {
             ((MailBillData) object).setResultType(message.getResultType().getValue());
             processLoadFile((MailBillData) object);
             return true;
-        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), MailBillData.class.getSimpleName())) {
+        } else if (object instanceof HashMap &&
+                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), MailBillData.class.getSimpleName())) {
             MailBillData mailBillData = new MailBillData();
             mailBillData.putAll((Map) object);
             mailBillData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

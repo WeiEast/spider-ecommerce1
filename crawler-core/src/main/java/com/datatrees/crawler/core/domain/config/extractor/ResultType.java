@@ -29,6 +29,7 @@ public enum ResultType {
     BOOLEAN("boolean"),
     INT("int"),
     LONG("long");
+
     private static Map<String, ResultType> ResultTypeMap = new HashMap<String, ResultType>();
 
     static {

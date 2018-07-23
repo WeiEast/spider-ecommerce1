@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 public class ParserOperationImpl extends Operation<ParserOperation> {
 
     private static final FieldRequestFilter  fieldFilter         = new FieldRequestFilter();
+
     private static final ParserUrlListFilter parserUrlListFilter = new ParserUrlListFilter();
 
     public ParserOperationImpl(@Nonnull ParserOperation operation, @Nonnull FieldExtractor extractor) {
@@ -37,7 +38,8 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         Parser parser = operation.getParser();
         Preconditions.checkNotNull(parser, "ParserOperation parser element should not be null!");
         boolean needRequest = false;

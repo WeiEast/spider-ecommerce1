@@ -32,16 +32,25 @@ public class SearchConfig extends AbstractWebsiteConfig {
     /**
      *
      */
-    private static final long serialVersionUID = -3594853402134944912L;
-    private List<String>               protocolTypeList;
-    private List<UrlFilter>            urlFilterList;
-    private Properties                 properties;
-    private List<AbstractService>      serviceList;
-    private List<Parser>               parserList;
-    private List<Page>                 pageList;
-    private List<SearchTemplateConfig> searchTemplateConfigList;
-    private LoginConfig                loginConfig;
-    private List<String>               resultTagList;
+    private static final long                       serialVersionUID = -3594853402134944912L;
+
+    private              List<String>               protocolTypeList;
+
+    private              List<UrlFilter>            urlFilterList;
+
+    private              Properties                 properties;
+
+    private              List<AbstractService>      serviceList;
+
+    private              List<Parser>               parserList;
+
+    private              List<Page>                 pageList;
+
+    private              List<SearchTemplateConfig> searchTemplateConfigList;
+
+    private              LoginConfig                loginConfig;
+
+    private              List<String>               resultTagList;
 
     public SearchConfig() {
         super();

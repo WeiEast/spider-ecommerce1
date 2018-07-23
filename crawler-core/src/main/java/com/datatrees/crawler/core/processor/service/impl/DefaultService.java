@@ -54,6 +54,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DefaultService extends ServiceBase {
 
     private static final int DEFAULT_MAX_RETRIES   = PropertiesConfiguration.getInstance().getInt("default.request.max.retrycount", 3);
+
     private static final int DEFAULT_WAIT_INTERVAL = PropertiesConfiguration.getInstance().getInt("default.wait.interval", 500);
 
     @Override
@@ -87,7 +88,8 @@ public class DefaultService extends ServiceBase {
             input.setCoExist(coexist);
         }
 
-        input.setFollowRedirect(true).setRedirectUriEscaped(context.isRedirectUriEscaped()).setState(ProcessorContextUtil.getHttpState(context)).setAllowCircularRedirects(context.isAllowCircularRedirects());
+        input.setFollowRedirect(true).setRedirectUriEscaped(context.isRedirectUriEscaped()).setState(ProcessorContextUtil.getHttpState(context))
+                .setAllowCircularRedirects(context.isAllowCircularRedirects());
 
         Protocol protocol = this.getHttpClient(context.getHttpClientType());
 
@@ -142,16 +144,19 @@ public class DefaultService extends ServiceBase {
                         logger.warn("sleep {}ms, request [{}] retry, url:{}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         continue;
                     } else if (page.getRetryMode() == RetryMode.REQUEUE) {
-                        logger.warn("sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
+                        logger.warn("sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills, current.getRetryCount(),
+                                url, content);
                         // node requeue
                         current.setNeedRequeue(true);
                         ResponseUtil.setResponseStatus(response, Status.REQUEUE);
                     } else if (page.getRetryMode() == RetryMode.PROXY_RETRY) {
-                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
+                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, url: {}, content: {}", sleepMills, current.getRetryCount(),
+                                url, content);
                         this.proxyRelease(proxy, context);
                         continue;
                     } else if (page.getRetryMode() == RetryMode.PROXY_REQUEUE) {
-                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
+                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills,
+                                current.getRetryCount(), url, content);
                         // node requeue
                         current.setNeedRequeue(true);
                         ResponseUtil.setResponseStatus(response, Status.REQUEUE);
@@ -258,7 +263,8 @@ public class DefaultService extends ServiceBase {
         }
     }
 
-    private void notifyProxyStatus(@Nullable final Proxy proxy, @Nonnull final ProxyStatus status, @Nonnull final SearchProcessorContext context) throws Exception {
+    private void notifyProxyStatus(@Nullable final Proxy proxy, @Nonnull final ProxyStatus status,
+            @Nonnull final SearchProcessorContext context) throws Exception {
         if (proxy != null) {
             ProxyManager proxyManager = context.getProxyManager();
             if (proxyManager != null) {
@@ -267,7 +273,8 @@ public class DefaultService extends ServiceBase {
         }
     }
 
-    private Proxy setProxy(@Nonnull final ProtocolInput input, @Nonnull final SearchProcessorContext context, @Nonnull final String url) throws Exception {
+    private Proxy setProxy(@Nonnull final ProtocolInput input, @Nonnull final SearchProcessorContext context,
+            @Nonnull final String url) throws Exception {
         Proxy proxy = context.getProxy(url, false);
         if (proxy != null) {
             input.setProxy(proxy.format());

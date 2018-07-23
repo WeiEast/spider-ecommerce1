@@ -52,16 +52,16 @@ import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.core.oss.OssUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.Task;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.service.TaskService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -78,28 +78,43 @@ import org.springframework.stereotype.Service;
 @Service
 public class Collector {
 
-    private static final Logger logger                     = LoggerFactory.getLogger(Collector.class);
-    private static       String duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
-    private static       String mqStatusTags               = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
-    private static       String mqMessageSendTagPattern    = PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
+    private static final Logger                 logger                     = LoggerFactory.getLogger(Collector.class);
+
+    private static       String                 duplicateRemovedResultKeys = PropertiesConfiguration.getInstance()
+            .get("duplicate.removed.result.keys", "bankbill");
+
+    private static       String                 mqStatusTags               = PropertiesConfiguration.getInstance()
+            .get("core.mq.status.tags", "bankbill,ecommerce,operator");
+
+    private static       String                 mqMessageSendTagPattern    = PropertiesConfiguration.getInstance()
+            .get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
+
     @Resource
-    private WebsiteConfigService   websiteConfigService;
+    private              WebsiteConfigService   websiteConfigService;
+
     @Resource
-    private TaskService            taskService;
+    private              TaskService            taskService;
+
     @Resource
-    private MessageFactory         messageFactory;
+    private              MessageFactory         messageFactory;
+
     @Resource
-    private DefaultMQProducer      defaultMQProducer;
+    private              DefaultMQProducer      defaultMQProducer;
+
     @Resource
-    private ZooKeeperClient        zookeeperClient;
+    private              ZooKeeperClient        zookeeperClient;
+
     @Resource
-    private CollectorWorkerFactory collectorWorkerFactory;
+    private              CollectorWorkerFactory collectorWorkerFactory;
+
     @Resource
-    private RedisDao               redisDao;
+    private              RedisDao               redisDao;
+
     @Resource
-    private MessageService         messageService;
+    private              MessageService         messageService;
+
     @Resource
-    private MonitorService         monitorService;
+    private              MonitorService         monitorService;
 
     private TaskMessage taskMessageInit(CollectorMessage message) {
         Task task = new Task();
@@ -231,7 +246,8 @@ public class Collector {
 
             boolean needLogin = context.needLogin();
             LoginType loginType = context.getLoginConfig() != null ? context.getLoginConfig().getType() : null;
-            logger.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin, loginType, context.getWebsiteName());
+            logger.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin, loginType,
+                    context.getWebsiteName());
 
             HttpResult<Boolean> loginResult = new HttpResult<>();
             if (needLogin) {
@@ -271,9 +287,11 @@ public class Collector {
                         }
                     }
                     if (task.isSubTask() && MapUtils.isEmpty(submitkeyResult)) {
-                        logger.info("skip send mq message threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
+                        logger.info("skip send mq message threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(),
+                                task.getWebsiteName());
                     } else if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                        logger.warn("Thread interrupt before result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
+                        logger.warn("Thread interrupt before result send to queue. threadId={},taskId={},websiteName={}",
+                                Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
                         task.setStatus(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode());
                         task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg());
                     } else {
@@ -318,7 +336,7 @@ public class Collector {
                     if (task.getStatus() != 0) {
                         String newRemark = null;
                         try {
-                            if(WebsiteUtils.isOperator(task.getWebsiteName())){
+                            if (WebsiteUtils.isOperator(task.getWebsiteName())) {
                                 newRemark = OperatorUtils.getRemarkForTaskFail(task.getTaskId());
                             }
                         } catch (Exception e) {
@@ -327,14 +345,16 @@ public class Collector {
                         messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), StringUtils.defaultString(newRemark));
                     }
                 }
-                logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={},status={}", task.getTaskId(), task.isSubTask(), task.getStatus(), task.getRemark(), task.getWebsiteName(), task.getStatus());
+                logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={},status={}", task.getTaskId(), task.isSubTask(),
+                        task.getStatus(), task.getRemark(), task.getWebsiteName(), task.getStatus());
             }
         }
         this.messageComplement(taskMessage, message);
         message.setFinish(true);
         taskService.updateTask(task);
         if (null != task && !task.isSubTask()) {
-            TaskUtils.addTaskShare(task.getTaskId(), RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(AttributeKey.CRAWLER), System.currentTimeMillis() + "");
+            TaskUtils.addTaskShare(task.getTaskId(), RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(AttributeKey.CRAWLER),
+                    System.currentTimeMillis() + "");
             monitorService.sendTaskCompleteMsg(task.getTaskId(), task.getWebsiteName(), task.getStatus(), task.getRemark());
         }
         return taskMessage.getContext().getProcessorResult();
@@ -356,7 +376,8 @@ public class Collector {
             String startMsgJson = GsonUtils.toJson(message);
 
             if (startMsgJson.length() > PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000)) {
-                String path = "task/" + taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/" + taskMessage.getTask().getId();
+                String path = "task/" + taskMessage.getTask().getTaskId() + "/" + taskMessage.getTask().getWebsiteId() + "/" +
+                        taskMessage.getTask().getId();
                 map.put("startMsgOSSPath", path);
                 SubmitFile file = new SubmitFile("startMsg.json", startMsgJson.getBytes());
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -364,7 +385,8 @@ public class Collector {
                     Map<String, SubmitFile> uploadMap = new HashMap<>();
                     uploadMap.put("startMsg.json", file);
                     ZipCompressUtils.compress(baos, uploadMap);
-                    OssServiceProvider.getDefaultService().putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), baos.toByteArray());
+                    OssServiceProvider.getDefaultService()
+                            .putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, OssUtils.getObjectKey(path), baos.toByteArray());
                 } catch (Exception e) {
                     logger.error("upload startMsg.json error: {}", e.getMessage(), e);
                 } finally {
@@ -451,7 +473,8 @@ public class Collector {
                         keyResult.setResultEmpty(!notEmptyTag.contains(key));
                     }
                     try {
-                        Message mqMessage = messageFactory.getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
+                        Message mqMessage = messageFactory
+                                .getMessage("rawData_result_status", key, GsonUtils.toJson(keyResult), "" + taskMessage.getTask().getId());
                         SendResult sendResult = defaultMQProducer.send(mqMessage);
                         logger.info("send result message: {}, result: {}", mqMessage, sendResult);
                     } catch (Exception e) {

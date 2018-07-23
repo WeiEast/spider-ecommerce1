@@ -17,52 +17,64 @@ public class OperatorParam implements Serializable {
     /**
      * 表单类型,LOGIN:登陆,详单VALIDATE_BILL_DETAIL:验证通话记录,VALIDATE_USER_INFO:验证个人信息
      */
-    private String formType;
+    private String              formType;
+
     /**
      * 任务id 必填
      */
-    private Long   taskId;
+    private Long                taskId;
+
     /**
      * website name 必填
      */
-    private String websiteName;
+    private String              websiteName;
+
     /**
      * 手机号
      */
-    private Long   mobile;
+    private Long                mobile;
+
     /**
      * 登陆密码或者服务密码
      */
     @JSONField(serialize = false)
-    private String password;
+    private String              password;
+
     /**
      * 图片验证码
      */
-    private String picCode;
+    private String              picCode;
+
     /**
      * 短信验证码
      */
-    private String smsCode;
+    private String              smsCode;
+
     /**
      * 真实姓名
      */
-    private String realName;
+    private String              realName;
+
     /**
      * 身份证号码
      */
-    private String idCard;
+    private String              idCard;
+
     /** 分组代码 */
-    private String groupCode;
+    private String              groupCode;
+
     /** 分组名称 */
-    private String groupName;
+    private String              groupName;
+
     /**
      * 扩展属性
      */
     private Map<String, Object> extral = new HashMap<>();
+
     /**
      * 给自定义plugin方法用
      */
-    private String[] args;
+    private String[]            args;
 
     public OperatorParam() {
     }

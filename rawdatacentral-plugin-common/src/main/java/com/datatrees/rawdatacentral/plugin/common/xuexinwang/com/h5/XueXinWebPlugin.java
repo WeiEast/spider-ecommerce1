@@ -22,14 +22,14 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
@@ -42,22 +42,74 @@ import org.slf4j.LoggerFactory;
  */
 public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService {
 
-    private static final Logger logger = LoggerFactory.getLogger(XueXinWebPlugin.class);
+    private static final Logger         logger         = LoggerFactory.getLogger(XueXinWebPlugin.class);
+
+    private final static String         TX_GENERAL_URL = "http://recognition.image.myqcloud.com/ocr/general";
+
+    private final static String         appid          = "1255658810";
+
+    private final static String         bucket         = "dashutest";
+
+    private final static String         secretid       = "AKIDHQRPGv4iroY7UgqxNejeNuFOLBpHscje";
+
+    private final static String         secretkey      = "swyoTwCIH4f4IKBsPkwwTxGRTL1Vnupd";
+
+    private final static String         HOST           = "recognition.image.myqcloud.com";
+
     @Resource
-    private MonitorService monitorService;
+    private              MonitorService monitorService;
+
     @Resource
-    private MessageService messageService;
-    private final static String TX_GENERAL_URL = "http://recognition.image.myqcloud.com/ocr/general";
-    private final static String appid          = "1255658810";
-    private final static String bucket         = "dashutest";
-    private final static String secretid       = "AKIDHQRPGv4iroY7UgqxNejeNuFOLBpHscje";
-    private final static String secretkey      = "swyoTwCIH4f4IKBsPkwwTxGRTL1Vnupd";
-    private final static String HOST           = "recognition.image.myqcloud.com";
+    private              MessageService messageService;
 
     private static void setRedisBySelect(String key, String select, String pageContent) {
         List<String> list = XPathUtil.getXpath(select, pageContent);
         String redisValue = list.get(0);
         RedisUtils.set(key, redisValue, 1800);
+    }
+
+    private static String handlePic(String url, Long taskId, String websiteName) {
+
+        try {
+            Map<String, String> map = new HashMap<>();
+            byte[] pageContent = TaskHttpClient.create(taskId, websiteName, RequestType.GET, "chsi_com_cn_pic").setFullUrl(url).invoke()
+                    .getResponse();
+            int i = (int) (Math.random() * 100000);
+            String picName = i + ".jpeg";
+            String path = "education/" + websiteName + "/" + taskId + "/" + picName;
+            RpcOssService rpcOssService = BeanFactoryUtils.getBean(RpcOssService.class);
+            //todo 开发环境无法使用oss，需注释
+            rpcOssService.upload(path, pageContent);
+            logger.info("学信网图片上传oss成功！path={}", path);
+            String authorization = RedisUtils.get("authorization");
+            if (authorization == null) {
+                Long appId = Long.parseLong(appid);
+                //authorization的有效期为81天
+                authorization = Sign.appSign(appId, secretid, secretkey, bucket, 6998400L);
+                //存redis存80天
+                RedisUtils.set("authorization", authorization, 6912000);
+            }
+            map.put("Authorization", authorization);
+            map.put("Host", HOST);
+            String fileName = taskId + ".jpg";
+            logger.info("请求腾讯解析图片接口参数：tx_url={},appid={},bucket={},map={}", TX_GENERAL_URL, appid, bucket, JSON.toJSONString(map));
+            int num = 1;
+            //腾讯云可能返回为空,所以试3次,3次都为空那你可以去买彩票了。。。
+            while (num < 4) {
+                String imageResult = HttpUtils.doPostForImage(TX_GENERAL_URL, map, appid, bucket, pageContent, fileName);
+                if (imageResult != null) {
+                    logger.info("腾讯云返回结果result={}", imageResult);
+                    return imageResult;
+                } else {
+                    logger.info("第{}次腾讯云返回结果为空", num);
+                    num++;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -77,7 +129,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
-            if (StringUtils.equals(response.getStatusCode()+"","400")){
+            if (StringUtils.equals(response.getStatusCode() + "", "400")) {
                 logger.error("登录-->初始化-->失败,当前代理不可用,请重新初始化,param={}", param);
                 return result.failure("初始化失败，请重试");
             }
@@ -162,7 +214,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
                 map.put("information", response.getPageContent());
                 logger.error("登录-->失败,重新访问的图片的response={}", response);
                 return result.success(map);
-            } else if (pageContent != null && (pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")||pageContent.contains("为保障您的账号安全，请输入图片验证码后重新登录"))) {
+            } else if (pageContent != null && (pageContent.contains("为保障您的账号安全，请输入验证码后重新登录") || pageContent.contains("为保障您的账号安全，请输入图片验证码后重新登录"))) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url)
                         .invoke();
@@ -344,8 +396,9 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             url = "https://account.chsi.com.cn/account/registerprocess.action";
             templateDate
                     = "from=&mphone={}&vcode={}&password={}&password1={}&xm={}&credentialtype={}&sfzh={}&from=&email=&pwdreq1=&pwdanswer1=&pwdreq2=&pwdanswer2=&pwdreq3=&pwdanswer3=&continueurl=&serviceId=&serviceNote=1&serviceNote_res=0";
-            date = TemplateUtils.format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name,
-                    param.getIdCardType(), param.getIdCard());
+            date = TemplateUtils
+                    .format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name, param.getIdCardType(),
+                            param.getIdCard());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_06").setFullUrl(url)
                     .setRequestBody(date).invoke();
             pageContent = response.getPageContent();
@@ -355,7 +408,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
                 logger.error("注册失败--验证码有误，param={},response={}", param, response);
                 return result.failure("校验码有误,注册失败");
             }
-            if (pageContent.contains("证件号码已注册")||pageContent.contains("证件号码已被注册")) {
+            if (pageContent.contains("证件号码已注册") || pageContent.contains("证件号码已被注册")) {
                 logger.error("注册失败--证件号码已注册，param={},response={}", param, response);
                 return result.failure("证件号码已被注册");
             }
@@ -385,49 +438,5 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             logger.error("OCR处理失败,param={}", param, e);
             return result.failure(ErrorCode.UNKNOWN_REASON);
         }
-    }
-
-    private static String handlePic(String url, Long taskId, String websiteName) {
-
-        try {
-            Map<String, String> map = new HashMap<>();
-            byte[] pageContent = TaskHttpClient.create(taskId, websiteName, RequestType.GET, "chsi_com_cn_pic").setFullUrl(url).invoke()
-                    .getResponse();
-            int i = (int) (Math.random() * 100000);
-            String picName = i + ".jpeg";
-            String path = "education/" + websiteName + "/" + taskId + "/" + picName;
-            RpcOssService rpcOssService = BeanFactoryUtils.getBean(RpcOssService.class);
-            //todo 开发环境无法使用oss，需注释
-            rpcOssService.upload(path, pageContent);
-            logger.info("学信网图片上传oss成功！path={}", path);
-            String authorization = RedisUtils.get("authorization");
-            if (authorization == null) {
-                Long appId = Long.parseLong(appid);
-                //authorization的有效期为81天
-                authorization = Sign.appSign(appId, secretid, secretkey, bucket, 6998400L);
-                //存redis存80天
-                RedisUtils.set("authorization", authorization, 6912000);
-            }
-            map.put("Authorization", authorization);
-            map.put("Host", HOST);
-            String fileName = taskId + ".jpg";
-            logger.info("请求腾讯解析图片接口参数：tx_url={},appid={},bucket={},map={}", TX_GENERAL_URL, appid, bucket, JSON.toJSONString(map));
-            int num = 1;
-            //腾讯云可能返回为空,所以试3次,3次都为空那你可以去买彩票了。。。
-            while (num < 4) {
-                String imageResult = HttpUtils.doPostForImage(TX_GENERAL_URL, map, appid, bucket, pageContent, fileName);
-                if (imageResult != null) {
-                    logger.info("腾讯云返回结果result={}", imageResult);
-                    return imageResult;
-                } else {
-                    logger.info("第{}次腾讯云返回结果为空", num);
-                    num++;
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

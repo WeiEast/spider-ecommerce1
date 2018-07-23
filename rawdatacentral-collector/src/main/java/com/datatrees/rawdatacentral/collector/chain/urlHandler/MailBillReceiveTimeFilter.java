@@ -26,8 +26,10 @@ import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
  */
 public class MailBillReceiveTimeFilter extends RemovedFetchLinkNodeFilter {
 
-    private static       long    maxMailReceiveInterval      = PropertiesConfiguration.getInstance().getLong("max.mail.receive.interval", new Double(1000L * 3600L * 24L * 365L * 1.5).longValue());
-    private static       boolean mailReceiveTimeFilterSwitch = PropertiesConfiguration.getInstance().getBoolean("mail.receive.filter.switch", true);
+    private static long    maxMailReceiveInterval      = PropertiesConfiguration.getInstance()
+            .getLong("max.mail.receive.interval", new Double(1000L * 3600L * 24L * 365L * 1.5).longValue());
+
+    private static boolean mailReceiveTimeFilterSwitch = PropertiesConfiguration.getInstance().getBoolean("mail.receive.filter.switch", true);
 
     @Override
     protected void doProcess(LinkNode fetchLinkNode, SearchProcessor searchProcessor, Context context) {
@@ -38,7 +40,9 @@ public class MailBillReceiveTimeFilter extends RemovedFetchLinkNodeFilter {
         if (searchProcessor.isLastLink() && currentLinkNode != null && currentLinkNode.getpNum() > 0) {
             logger.info("filter pageNode: {} as LastPageLink marked ,receiveAt: {}", fetchLinkNode, receiveAt);
             fetchLinkNode.setRemoved(true);
-        } else if (mailReceiveTimeFilterSwitch && receiveAt != null && receiveAt instanceof Date && websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
+        } else if (mailReceiveTimeFilterSwitch && receiveAt != null && receiveAt instanceof Date && websiteType != null &&
+                WebsiteType.MAIL.getValue().equals(websiteType) &&
+                SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
             if ((UnifiedSysTime.INSTANCE.getSystemTime().getTime() - ((Date) receiveAt).getTime() > maxMailReceiveInterval)) {
                 logger.info("Node: {},receiveAt: {} receive time filtered...", fetchLinkNode, receiveAt);
                 fetchLinkNode.setRemoved(true);

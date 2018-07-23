@@ -23,6 +23,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class SynchronizedMap<K, V> implements Map<K, V> {
 
     private final Map<K, V>     map;
+
     private final ReadWriteLock readWriteLock;
 
     /**
@@ -36,7 +37,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#size()
      */
     @Override
@@ -51,7 +52,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#isEmpty()
      */
     @Override
@@ -66,7 +67,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#containsKey(java.lang.Object)
      */
     @Override
@@ -81,7 +82,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#containsValue(java.lang.Object)
      */
     @Override
@@ -96,7 +97,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#get(java.lang.Object)
      */
     @Override
@@ -111,7 +112,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
     @Override
@@ -126,7 +127,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#remove(java.lang.Object)
      */
     @Override
@@ -141,7 +142,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#putAll(java.util.Map)
      */
     @Override
@@ -156,7 +157,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#clear()
      */
     @Override
@@ -171,7 +172,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#keySet()
      */
     @Override
@@ -186,7 +187,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#values()
      */
     @Override
@@ -201,7 +202,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.Map#entrySet()
      */
     @Override

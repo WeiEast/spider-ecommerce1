@@ -16,7 +16,9 @@ package com.datatrees.rawdatacentral.core.model.message;
 public class MessageInfo {
 
     private int    reconsumeTimes;
+
     private String msgId;
+
     private long   bornTimestamp;
 
     /**

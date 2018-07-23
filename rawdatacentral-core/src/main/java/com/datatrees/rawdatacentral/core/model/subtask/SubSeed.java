@@ -20,15 +20,25 @@ import com.datatrees.crawler.core.processor.proxy.Proxy;
 public class SubSeed extends HashMap {
 
     public final static String WEBSITE_NAME       = "websiteName";
+
     public final static String UNIQUE_SUFFIX      = "uniqueSuffix";
+
     public final static String SYNC               = "sync";
+
     public final static String MUTEX              = "mutex";
+
     public final static String TEMPLATEID         = "templateId";// 包含多个“,”分割
+
     public final static String SEEDURL            = "seedurl";
+
     public final static String WAITING            = "waiting";// waiting waitingMillis or 'parentTask'
+
     public final static String LOGIN_CHECK_IGNORE = "loginCheckIgnore";
+
     public final static String NO_STATUS          = "noStatus";
+
     public final static String PROXY_SHARED       = "proxyShared";// 代理共享，父子任务持续使用代理
+
     public final static String PROXY              = "proxy";// 代理共享，父子任务持续使用代理
 
     public Proxy getProxy() {

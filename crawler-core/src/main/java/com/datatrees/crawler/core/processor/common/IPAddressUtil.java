@@ -3,21 +3,21 @@ package com.datatrees.crawler.core.processor.common;
 /*
  * Copyright 2004-2005 Sun Microsystems, Inc. All Rights Reserved. DO NOT ALTER OR REMOVE COPYRIGHT
  * NOTICES OR THIS FILE HEADER.
- * 
+ *
  * This code is free software; you can redistribute it and/or modify it under the terms of the GNU
  * General Public License version 2 only, as published by the Free Software Foundation. Sun
  * designates this particular file as subject to the "Classpath" exception as provided by Sun in the
  * LICENSE file that accompanied this code.
- * 
+ *
  * This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License version 2 for more details (a copy is included in the LICENSE file that
  * accompanied this code).
- * 
+ *
  * You should have received a copy of the GNU General Public License version 2 along with this work;
  * if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA.
- * 
+ *
  * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara, CA 95054 USA or visit
  * www.sun.com if you need additional information or have any questions.
  */
@@ -25,14 +25,16 @@ package com.datatrees.crawler.core.processor.common;
 public class IPAddressUtil {
 
     private final static int INADDR4SZ  = 4;
+
     private final static int INADDR16SZ = 16;
+
     private final static int INT16SZ    = 2;
 
     /*
      * Converts IPv4 address in its textual presentation form into its numeric binary form.
-     * 
+     *
      * @param src a String representing an IPv4 address in standard format
-     * 
+     *
      * @return a byte array representing the IPv4 numeric address
      */
     public static byte[] textToNumericFormatV4(String src) {
@@ -115,11 +117,11 @@ public class IPAddressUtil {
     /*
      * Convert IPv6 presentation level address to network order binary form. credit: Converted from
      * C code from Solaris 8 (inet_pton)
-     * 
+     *
      * Any component of the string following a per-cent % is ignored.
-     * 
+     *
      * @param src a String representing an IPv6 address in textual format
-     * 
+     *
      * @return a byte array representing the IPv6 numeric address
      */
     public static byte[] textToNumericFormatV6(String src) {
@@ -245,9 +247,9 @@ public class IPAddressUtil {
     /*
      * Convert IPv4-Mapped address to IPv4 address. Both input and returned value are in network
      * order binary form.
-     * 
+     *
      * @param src a String representing an IPv4-Mapped address in textual format
-     * 
+     *
      * @return a byte array representing the IPv4 numeric address
      */
     public static byte[] convertFromIPv4MappedAddress(byte[] addr) {
@@ -268,7 +270,9 @@ public class IPAddressUtil {
         if (addr.length < INADDR16SZ) {
             return false;
         }
-        if ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00) && (addr[6] == 0x00) && (addr[7] == 0x00) && (addr[8] == 0x00) && (addr[9] == 0x00) && (addr[10] == (byte) 0xff) && (addr[11] == (byte) 0xff)) {
+        if ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00) &&
+                (addr[6] == 0x00) && (addr[7] == 0x00) && (addr[8] == 0x00) && (addr[9] == 0x00) && (addr[10] == (byte) 0xff) &&
+                (addr[11] == (byte) 0xff)) {
             return true;
         }
         return false;

@@ -22,6 +22,7 @@ public enum ResultType {
     OPERATOR("OPERATOR"),
     ECOMMERCE("ECOMMERCE"),
     DEFAULT("DEFAULT");
+
     private static Map<String, ResultType> ResultTypeMap = new HashMap<String, ResultType>();
 
     static {

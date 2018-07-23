@@ -9,9 +9,12 @@ import com.alibaba.fastjson.annotation.JSONField;
 public class ColorPoint implements Serializable {
 
     private List<RelativeColorPoint> children = new ArrayList<>();
-    private int   absoluteX;
-    private int   absoluteY;
-    private Color color;
+
+    private int                      absoluteX;
+
+    private int                      absoluteY;
+
+    private Color                    color;
 
     public ColorPoint() {
     }

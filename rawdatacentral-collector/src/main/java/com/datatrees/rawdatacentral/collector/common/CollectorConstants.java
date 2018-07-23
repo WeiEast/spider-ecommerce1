@@ -25,7 +25,8 @@ public interface CollectorConstants {
     public static int                     MAX_QUEUE_SIZE                        = 128;
     // === COLLECTOR properties configuration ===
     public static int                     COLLECTOR_JOB_INTERVAL                = sysConfig.getInt("collector.job.interval", 60);
-    public static String                  COLLECTOR_WEBSERVICE_URL              = sysConfig.get("collector.web.service.url", "http://127.0.0.1:8082/");
+    public static String                  COLLECTOR_WEBSERVICE_URL              = sysConfig
+            .get("collector.web.service.url", "http://127.0.0.1:8082/");
     public static String                  COLLECTOR_TEMP_DIR                    = sysConfig.get("collector.link.queue.dir", "/tmp/urlQueue/");
     public static int                     COLLECTOR_BDB_MAX_DB_COUNT            = sysConfig.getInt("collector.bdb.max.db.count", 10);
     public static String                  COLLECTOR_CALSS_SUFFIX                = "COLLECTOR";
@@ -51,9 +52,11 @@ public interface CollectorConstants {
     public static String                  URL_LIST_MD5                          = "urlListMD5";
     public static String                  REFERER_URL                           = "referer_url";
     // unit:minutes
-    public static int                     DUPLICATE_BEFORE_REQUEST_FAILURE_TIME = sysConfig.getInt("collector.download.url.before.request.duplicate.failure.time", 120);
+    public static int                     DUPLICATE_BEFORE_REQUEST_FAILURE_TIME = sysConfig
+            .getInt("collector.download.url.before.request.duplicate.failure.time", 120);
     // unit:day
-    public static int                     DUPLICATE_AFTER_REQUEST_FAILURE_TIME  = sysConfig.getInt("collector.download.url.after.request.duplicate.failure.time", 14);
+    public static int                     DUPLICATE_AFTER_REQUEST_FAILURE_TIME  = sysConfig
+            .getInt("collector.download.url.after.request.duplicate.failure.time", 14);
     public static String                  POST_DATE                             = "post_date";
     public static String                  DATE_FORMAT                           = "yyyy-MM-dd HH:mm:ss";
     public static String                  RESOURCEURL_REVERSE_SWITCH            = sysConfig.get("collector.resource.reverse.switch", "OFF");

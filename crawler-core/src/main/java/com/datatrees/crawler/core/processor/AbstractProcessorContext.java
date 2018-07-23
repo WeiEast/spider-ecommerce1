@@ -32,13 +32,17 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class AbstractProcessorContext extends ProcessContext {
 
-    protected final Long                        taskId;
-    protected final Map<String, Object>         context;
-    private final   Map<String, Object>         statusContext;
-    private final   Map<Thread, Object>         threadContext;
-    private final   ProcessorResult             processorResult;
-    private final   ProcessorResult             processorLog;
+    protected final Long                taskId;
 
+    protected final Map<String, Object> context;
+
+    private final   Map<String, Object> statusContext;
+
+    private final   Map<Thread, Object> threadContext;
+
+    private final   ProcessorResult     processorResult;
+
+    private final   ProcessorResult     processorLog;
 
     public AbstractProcessorContext(Website website, Long taskId) {
         super(website);
@@ -210,12 +214,12 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         Object v = getContext().get(key);
         if (null == v) {
             return null;
-        }else if (v instanceof Boolean) {
+        } else if (v instanceof Boolean) {
             return (Boolean) v;
         } else if (v instanceof String) {
             return Boolean.valueOf((String) v);
         }
-        throw new ClassCastException("Can not cast class '"+v.getClass()+"' to 'Boolean'.");
+        throw new ClassCastException("Can not cast class '" + v.getClass() + "' to 'Boolean'.");
     }
 
     public <T> WrappedExtension<T> loadExtension(@Nonnull AbstractPlugin pluginMetadata, @Nonnull Class<T> extensionType) {

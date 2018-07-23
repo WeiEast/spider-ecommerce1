@@ -6,14 +6,14 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 public class HuBei10000ForWeb implements OperatorPluginService {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(HuBei10000ForWeb.class);
+
     private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
 
     @Override
@@ -87,7 +88,8 @@ public class HuBei10000ForWeb implements OperatorPluginService {
                 return result;
             }
 
-            String templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10018&toStUrl=http://hb.189.cn/SSOtoWSSNew?toWssUrl=/pages/selfservice/feesquery/feesyue.jsp&trackPath=SYleftDH";
+            String templateUrl
+                    = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10018&toStUrl=http://hb.189.cn/SSOtoWSSNew?toWssUrl=/pages/selfservice/feesquery/feesyue.jsp&trackPath=SYleftDH";
             String referer = "http://www.189.cn/hb/";
             response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
@@ -115,7 +117,8 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             templateUrl = "http://hb.189.cn/ajaxServlet/getCityCodeAndIsLogin";
             String templateData = "method=getCityCodeAndIsLogin";
             referer = "http://hb.189.cn/hbuserCenter.action";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains("LOGIN\":\"true")) {
                 logger.warn("登录成功,params={}", param);
@@ -138,7 +141,8 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://hb.189.cn/feesquery_sentPwd.action";
             String templateData = "productNumber=" + param.getMobile() + "&cityCode=" + citycode + "&sentType=C&ip=0";
             String referer = "http://hb.189.cn/pages/selfservice/feesquery/detailListQuery.jsp";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_005").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_005").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("随机验证码已经发送")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -164,7 +168,8 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://hb.189.cn/feesquery_checkCDMAFindWeb.action";
             String templateData = "random=" + param.getSmsCode() + "&sentType=C";
             String referer = "http://hb.189.cn/pages/selfservice/feesquery/detailListQuery.jsp";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_006").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_web_006").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("1")) {
                 logger.info("详单-->校验成功,param={}", param);

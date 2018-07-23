@@ -58,5 +58,4 @@ public class ExtractorProcessorContext extends AbstractProcessorContext {
         return Collections.unmodifiableMap(pageExtractorMap);
     }
 
-
 }

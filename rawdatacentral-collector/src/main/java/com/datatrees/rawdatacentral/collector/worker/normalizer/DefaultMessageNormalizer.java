@@ -33,7 +33,7 @@ public class DefaultMessageNormalizer implements DataNormalizer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
@@ -46,7 +46,8 @@ public class DefaultMessageNormalizer implements DataNormalizer {
             message.setResultType(ResultType.DEFAULT);
             message.setTypeId(message.getWebsiteId());
             return true;
-        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), DefaultData.class.getSimpleName())) {
+        } else if (object instanceof HashMap &&
+                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), DefaultData.class.getSimpleName())) {
             DefaultData defaultData = new DefaultData();
             defaultData.putAll((Map) object);
             defaultData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

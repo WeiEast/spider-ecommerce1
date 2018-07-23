@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
 
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/website")
 public class WebsiteController {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebsiteController.class);
+    private static final Logger               logger = LoggerFactory.getLogger(WebsiteController.class);
+
     @Resource
-    private WebsiteConfigService websiteConfigService;
+    private              WebsiteConfigService websiteConfigService;
 
     @RequestMapping(value = "/updateWebsiteConf", method = RequestMethod.POST)
     public HttpResult<Boolean> updateWebsiteConf(String websiteName, String searchConfig, String extractConfig) {

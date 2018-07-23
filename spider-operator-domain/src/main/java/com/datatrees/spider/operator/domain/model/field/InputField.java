@@ -21,31 +21,38 @@ public class InputField implements Serializable {
     /**
      * name属性
      */
-    private String name;
+    private String      name;
+
     /**
      * 业务 类型 例如:USERNAME,PASSWORD,SMS_CODE,PIC_CODE
      */
-    private String bizType;
+    private String      bizType;
+
     /**
      * type属性 例如:text,password
      */
-    private String type;
+    private String      type;
+
     /**
      * label 属性
      */
-    private String label;
+    private String      label;
+
     /**
      * 验证input正确性的正则
      */
-    private String validationPattern;
+    private String      validationPattern;
+
     /**
      * 验证失败提示信息
      */
-    private String validationMsg;
+    private String      validationMsg;
+
     /**
      * 默认提示信息
      */
-    private String placeholder;
+    private String      placeholder;
+
     /**
      * 依赖字段input的name属性
      */

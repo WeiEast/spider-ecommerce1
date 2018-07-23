@@ -33,13 +33,20 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class RemoteWebDriverBuilder<T extends RemoteWebDriverBuilder> {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger              logger = LoggerFactory.getLogger(getClass());
+
     private final DesiredCapabilities capabilities;
+
     private       String              remoteUrl;
+
     private       HttpCommandExecutor executor;
+
     private       String              proxy;
+
     private       String              userAgent;
+
     private       boolean             disableCSS;
+
     private       boolean             disableImage;
 
     RemoteWebDriverBuilder(DesiredCapabilities capabilities, String remoteUrl) {

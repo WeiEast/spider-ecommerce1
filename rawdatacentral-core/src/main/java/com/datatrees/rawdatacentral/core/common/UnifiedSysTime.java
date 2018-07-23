@@ -14,9 +14,12 @@ import org.slf4j.LoggerFactory;
  */
 public enum UnifiedSysTime {
     INSTANCE;
-    private static final Logger logger = LoggerFactory.getLogger(UnifiedSysTime.class);
-    private static final long JET_LAG;
-    private static TaskService service = (TaskService) BeansFactory.getService("taskServiceImpl", TaskService.class);
+
+    private static final Logger      logger  = LoggerFactory.getLogger(UnifiedSysTime.class);
+
+    private static final long        JET_LAG;
+
+    private static       TaskService service = (TaskService) BeansFactory.getService("taskServiceImpl", TaskService.class);
 
     static {
         Date dbTime = service.selectNow();

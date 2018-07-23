@@ -21,8 +21,9 @@ import com.datatrees.crawler.core.util.xml.annotation.Path;
 @Path(".[@type='xpath']")
 public class XpathSegment extends AbstractSegment {
 
-    private static final long serialVersionUID = -8540951198783881443L;
-    private String xpath;
+    private static final long   serialVersionUID = -8540951198783881443L;
+
+    private              String xpath;
 
     @Attr("value")
     public String getXpath() {

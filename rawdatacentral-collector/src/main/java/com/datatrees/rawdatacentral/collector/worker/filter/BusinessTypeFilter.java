@@ -28,12 +28,16 @@ import org.springframework.stereotype.Service;
 @Service("businessTypeFilter")
 public class BusinessTypeFilter implements IBusinessTypeFilter {
 
-    private static final Logger                 logger     = LoggerFactory.getLogger(BusinessTypeFilter.class);
-    private final        Cache<String, Boolean> localCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).expireAfterAccess(1, TimeUnit.MINUTES).softValues().build();
+    private static final Logger                  logger     = LoggerFactory.getLogger(BusinessTypeFilter.class);
+
+    private final        Cache<String, Boolean>  localCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES)
+            .expireAfterAccess(1, TimeUnit.MINUTES).softValues().build();
+
     @Resource
-    private TaskFacade              taskFacade;
+    private              TaskFacade              taskFacade;
+
     @Resource
-    private AppCrawlerConfigService appCrawlerConfigService;
+    private              AppCrawlerConfigService appCrawlerConfigService;
 
     @Override
     public boolean isFilter(String businessType, @Nonnull AbstractProcessorContext context) {

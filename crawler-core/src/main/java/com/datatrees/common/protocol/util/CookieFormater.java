@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2014
  */
+
 package com.datatrees.common.protocol.util;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jul 29, 2014 1:51:32 PM
@@ -27,11 +27,10 @@ import org.slf4j.LoggerFactory;
 public enum CookieFormater {
     INSTANCE;
 
-
     private static final Logger logger = LoggerFactory.getLogger(CookieFormater.class);
 
     /**
-     * 
+     *
      * @param cookies
      * @return
      */
@@ -88,7 +87,6 @@ public enum CookieFormater {
     public Map<String, String> parserCookieToMap(String cookieVals) {
         return parserCookieToMap(cookieVals, false);
     }
-
 
     public Map<String, String> parserCookieToMap(String cookieVals, boolean retainQuote) {
         Map<String, String> cookieMap = null;

@@ -1,6 +1,5 @@
 package com.datatrees.rawdatacentral.core.oss;
 
-
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 
 public class OssServiceProvider {
@@ -29,6 +28,7 @@ public class OssServiceProvider {
 
     private static class OssServiceHolder {
 
-        private static OssService service = new OssService(SubmitConstant.ALIYUN_OSS_ENDPOINT, SubmitConstant.ALIYUN_OSS_ACCESSID, SubmitConstant.ALIYUN_OSS_ACCESSSECRET);
+        private static OssService service = new OssService(SubmitConstant.ALIYUN_OSS_ENDPOINT, SubmitConstant.ALIYUN_OSS_ACCESSID,
+                SubmitConstant.ALIYUN_OSS_ACCESSSECRET);
     }
 }

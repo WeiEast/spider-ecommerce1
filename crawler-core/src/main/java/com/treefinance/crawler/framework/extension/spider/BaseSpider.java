@@ -28,11 +28,15 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseSpider implements Spider {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    private SearchProcessorContext context;
-    private ProxyManager           proxyManager;
-    private PageProcessor          pageProcessor;
-    private Interrupter            interrupter;
+    protected final Logger                 logger = LoggerFactory.getLogger(getClass());
+
+    private         SearchProcessorContext context;
+
+    private         ProxyManager           proxyManager;
+
+    private         PageProcessor          pageProcessor;
+
+    private         Interrupter            interrupter;
 
     protected SearchProcessorContext getContext() {
         return context;

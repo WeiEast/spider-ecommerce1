@@ -38,7 +38,8 @@ public class CodecOperationImpl extends Operation<CodecOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull CodecOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull CodecOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String charSet = RequestUtil.getContentCharset(request);
         // check default charset
         charSet = StringUtils.defaultIfEmpty(charSet, "UTF-8");

@@ -23,9 +23,12 @@ import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
  */
 public class ReissueDetectCollectorMessage extends CollectorMessage implements TemplteAble, TaskRelated {
 
-    private Set<String> defaultResultTag = new HashSet<String>(Arrays.asList(PropertiesConfiguration.getInstance().get("reissue.detect.result.tag", "detectResults").split(",")));
-    private int    parentTaskID;
-    private String templateId;
+    private Set<String> defaultResultTag = new HashSet<String>(
+            Arrays.asList(PropertiesConfiguration.getInstance().get("reissue.detect.result.tag", "detectResults").split(",")));
+
+    private int         parentTaskID;
+
+    private String      templateId;
 
     public Set<String> getResultTagSet() {
         return defaultResultTag;

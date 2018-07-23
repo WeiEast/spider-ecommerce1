@@ -3,7 +3,6 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2014
  */
 
@@ -25,7 +24,9 @@ import org.slf4j.LoggerFactory;
 public class DeflateUtils {
 
     private static final Logger LOG                        = LoggerFactory.getLogger(DeflateUtils.class);
+
     private static final int    EXPECTED_COMPRESSION_RATIO = 5;
+
     private static final int    BUF_SIZE                   = 4096;
 
     /**
@@ -45,13 +46,11 @@ public class DeflateUtils {
      */
     public static final byte[] inflateBestEffort(byte[] in, int sizeLimit) {
         // decompress using InflaterInputStream
-        ByteArrayOutputStream outStream =
-                new ByteArrayOutputStream(EXPECTED_COMPRESSION_RATIO * in.length);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream(EXPECTED_COMPRESSION_RATIO * in.length);
 
         // "true" because HTTP does not provide zlib headers
         Inflater inflater = new Inflater(true);
-        CustomInflaterInputStream inStream =
-                new CustomInflaterInputStream(new ByteArrayInputStream(in), inflater);
+        CustomInflaterInputStream inStream = new CustomInflaterInputStream(new ByteArrayInputStream(in), inflater);
 
         byte[] buf = new byte[BUF_SIZE];
         int written = 0;
@@ -77,16 +76,14 @@ public class DeflateUtils {
         return outStream.toByteArray();
     }
 
-
     /**
      * Returns an inflated copy of the input array.
-     * 
+     *
      * @throws IOException if the input cannot be properly decompressed
      */
     public static final byte[] inflate(byte[] in) throws IOException {
         // decompress using InflaterInputStream
-        ByteArrayOutputStream outStream =
-                new ByteArrayOutputStream(EXPECTED_COMPRESSION_RATIO * in.length);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream(EXPECTED_COMPRESSION_RATIO * in.length);
 
         InflaterInputStream inStream = new InflaterInputStream(new ByteArrayInputStream(in));
 
@@ -106,8 +103,7 @@ public class DeflateUtils {
      */
     public static final byte[] deflate(byte[] in) {
         // compress using DeflaterOutputStream
-        ByteArrayOutputStream byteOut =
-                new ByteArrayOutputStream(in.length / EXPECTED_COMPRESSION_RATIO);
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream(in.length / EXPECTED_COMPRESSION_RATIO);
 
         DeflaterOutputStream outStream = new DeflaterOutputStream(byteOut);
 

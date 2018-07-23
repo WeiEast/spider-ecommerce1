@@ -9,59 +9,84 @@ import com.google.gson.annotations.SerializedName;
  */
 public class JSXParamsIn {
 
-    private String cookie;
+    private String  cookie;
+
     @SerializedName("http_proxy")
-    private String httpProxy;
+    private String  httpProxy;
+
     @SerializedName("last_modified_time")
-    private String lastModifiedTime;
+    private String  lastModifiedTime;
+
     @SerializedName("page_id")
-    private int page_id     = 1;
+    private int     page_id                    = 1;
+
     @SerializedName("waiting_time")
-    private int waitingTime = 30;
+    private int     waitingTime                = 30;
+
     @SerializedName("page_url")
-    private String pageUrl;
-    private String referer;
+    private String  pageUrl;
+
+    private String  referer;
+
     @SerializedName("video_url_pattern")
-    private String videoUrlPattern;
+    private String  videoUrlPattern;
+
     @SerializedName("video_return_type")
-    private String videoReturnType;
+    private String  videoReturnType;
+
     @SerializedName("to_save_image")
     private boolean toSaveImage                = false;
+
     @SerializedName("to_trigger_onclick")
     private boolean toTriggerOnclick           = false;
+
     @SerializedName("anchor_on")
     private boolean anchorOn                   = true;
+
     @SerializedName("in_iframe")
     private boolean inIframe                   = false;
+
     @SerializedName("to_load_image")
     private boolean toLoadImage                = false;
+
     @SerializedName("to_return_page")
     private boolean toReturnPage               = true;
+
     @SerializedName("page_load_timeout")
     private int     pageLoadTimeout            = 60 * 5; // page load time out
+
     @SerializedName("page_script_timeout")
     private int     pageScriptTimeout          = 60; // page js load time out
+
     // net export page load timeout
     @SerializedName("netexport_pageLoaded_timeout")
     private int     netexportPageLoadedTimeout = 60 * 5; //
+
     // click elements
     @SerializedName("click_element")
     private String  clickElement               = ""; //
+
     // need return all request content ??
     @SerializedName("to_return_stream")
     private boolean toReturnStream             = false;
+
     // need net export feature ??
     @SerializedName("netexport_enable")
     private boolean netexportEnable            = false;
+
     // export firefox type now just support firefox
     @SerializedName("browser_type")
     private String  browserType                = "firefox";
+
     @SerializedName("js_sleep_time")
     private int     jsSleepTime                = 0;
+
     @SerializedName("js_wait_time")
     private int     jsWaitTime                 = 0;
+
     @SerializedName("netexport_total_timeout")
     private int     netexportTotalTimeout      = 60000;
+
     // executor javascript
     @SerializedName("js_content")
     private String  jsContent                  = "";
@@ -334,6 +359,12 @@ public class JSXParamsIn {
 
     @Override
     public String toString() {
-        return "ParamsIn [cookie=" + cookie + ", http_proxy=" + httpProxy + ", last_modified_time=" + lastModifiedTime + ", page_id=" + page_id + ", waiting_time=" + waitingTime + ", page_url=" + pageUrl + ", referer=" + referer + ", video_url_pattern=" + videoUrlPattern + ", video_return_type=" + videoReturnType + ", to_save_image=" + toSaveImage + ", to_trigger_onclick=" + toTriggerOnclick + ", anchor_on=" + anchorOn + ", in_iframe=" + inIframe + ", to_load_image=" + toLoadImage + ", to_return_page=" + toReturnPage + ", page_load_timeout=" + pageLoadTimeout + ", page_script_timeout=" + pageScriptTimeout + ", netexport_pageLoaded_timeout=" + netexportPageLoadedTimeout + ", click_element=" + clickElement + ", to_return_stream=" + toReturnStream + ", netexport_enable=" + netexportEnable + ", browser_type=" + browserType + "]";
+        return "ParamsIn [cookie=" + cookie + ", http_proxy=" + httpProxy + ", last_modified_time=" + lastModifiedTime + ", page_id=" + page_id +
+                ", waiting_time=" + waitingTime + ", page_url=" + pageUrl + ", referer=" + referer + ", video_url_pattern=" + videoUrlPattern +
+                ", video_return_type=" + videoReturnType + ", to_save_image=" + toSaveImage + ", to_trigger_onclick=" + toTriggerOnclick +
+                ", anchor_on=" + anchorOn + ", in_iframe=" + inIframe + ", to_load_image=" + toLoadImage + ", to_return_page=" + toReturnPage +
+                ", page_load_timeout=" + pageLoadTimeout + ", page_script_timeout=" + pageScriptTimeout + ", netexport_pageLoaded_timeout=" +
+                netexportPageLoadedTimeout + ", click_element=" + clickElement + ", to_return_stream=" + toReturnStream + ", netexport_enable=" +
+                netexportEnable + ", browser_type=" + browserType + "]";
     }
 }

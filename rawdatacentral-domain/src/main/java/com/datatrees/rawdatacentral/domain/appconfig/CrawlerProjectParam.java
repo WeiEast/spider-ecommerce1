@@ -13,7 +13,8 @@ public class CrawlerProjectParam {
     /**
      * 业务类型 {WebsiteType}
      */
-    private Byte            websiteType;
+    private Byte               websiteType;
+
     /**
      * 具体业务
      */

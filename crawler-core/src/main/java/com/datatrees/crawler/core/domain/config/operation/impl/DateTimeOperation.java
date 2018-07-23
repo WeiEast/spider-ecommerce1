@@ -20,13 +20,19 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Path(".[@type='datetime']")
 public class DateTimeOperation extends AbstractOperation {
 
-    private static final long serialVersionUID = 9065578536551734019L;
-    private BaseType          baseType;
-    private DateTimeFieldType dateTimeFieldType;
-    private String            offset;
-    private String            format;
-    private Boolean           calibrate;
-    private String            sourceFormat;
+    private static final long              serialVersionUID = 9065578536551734019L;
+
+    private              BaseType          baseType;
+
+    private              DateTimeFieldType dateTimeFieldType;
+
+    private              String            offset;
+
+    private              String            format;
+
+    private              Boolean           calibrate;
+
+    private              String            sourceFormat;
 
     @Attr("source-format")
     public String getSourceFormat() {
@@ -94,7 +100,8 @@ public class DateTimeOperation extends AbstractOperation {
      */
     @Override
     public String toString() {
-        return "DateTimeOperation [baseType=" + baseType + ", dateTimeFieldType=" + dateTimeFieldType + ", offset=" + offset + ", format=" + format + ", calibrate=" + calibrate + ", sourceFormat=" + sourceFormat + "]";
+        return "DateTimeOperation [baseType=" + baseType + ", dateTimeFieldType=" + dateTimeFieldType + ", offset=" + offset + ", format=" + format +
+                ", calibrate=" + calibrate + ", sourceFormat=" + sourceFormat + "]";
     }
 
 }

@@ -28,10 +28,13 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Page implements Serializable {
 
-    private final String url;
-    private final String content;
+    private final String              url;
+
+    private final String              content;
+
     private final Map<String, Object> attributes = new HashMap<>();
-    private Map<String, Object> extra;
+
+    private       Map<String, Object> extra;
 
     public Page(String url, String content) {
         this(url, content, null);

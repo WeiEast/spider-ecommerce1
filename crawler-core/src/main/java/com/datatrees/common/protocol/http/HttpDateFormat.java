@@ -3,7 +3,6 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
 
@@ -18,15 +17,14 @@ import java.util.TimeZone;
 
 /**
  * class to handle HTTP dates.
- * 
+ *
  * Modified from FastHttpDateFormat.java in jakarta-tomcat.
- * 
+ *
  * @author John Xing
  */
 public class HttpDateFormat {
 
-    protected static SimpleDateFormat format = new SimpleDateFormat(
-            "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
+    protected static SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
 
     /**
      * HTTP date uses TimeZone GMT

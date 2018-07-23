@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 public class RedisKeyUtils {
 
     private static final Logger log          = LoggerFactory.getLogger(RedisKeyUtils.class);
+
     private static       String REDIS_PREFIX = PropertiesConfiguration.getInstance().get("core.redis.redis.prefix", "raw_res_");
 
     public static String genRedisKey(long taskId, long taskLogId, String resultClass) {

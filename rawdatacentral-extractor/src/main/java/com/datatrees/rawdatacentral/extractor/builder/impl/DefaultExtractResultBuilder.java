@@ -29,7 +29,7 @@ public class DefaultExtractResultBuilder implements ExtractResultBuilder {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ExtractResultBuilder#buildExtractResult(com.datatrees
      * .rawdatacentral.core.model.ExtractMessage)

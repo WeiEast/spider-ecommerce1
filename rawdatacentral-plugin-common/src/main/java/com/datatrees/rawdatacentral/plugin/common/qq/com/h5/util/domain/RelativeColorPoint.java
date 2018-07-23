@@ -3,8 +3,11 @@ package com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain;
 public class RelativeColorPoint extends ColorPoint {
 
     private int        relativeX;
+
     private int        relativeY;
+
     private Color      color;
+
     private ColorPoint parent;
 
     public RelativeColorPoint() {

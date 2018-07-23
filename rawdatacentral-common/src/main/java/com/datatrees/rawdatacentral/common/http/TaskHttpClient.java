@@ -12,15 +12,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.NameValue;
 import com.datatrees.rawdatacentral.domain.vo.Request;
 import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.treefinance.proxy.domain.Proxy;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +56,9 @@ import org.slf4j.LoggerFactory;
 public class TaskHttpClient {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(TaskHttpClient.class);
+
     private static final String                     USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:29.0) Gecko/20100101 Firefox/29.0";
+
     private static       SSLConnectionSocketFactory sslsf      = null;//海南电信,重定向要忽略证书
 
     static {
@@ -71,17 +73,24 @@ public class TaskHttpClient {
         }
     }
 
-    private Request     request;
-    private Response    response;
-    private ContentType requestContentType;
-    private ContentType responseContentType;
-    private boolean isRedirect = false;//是否重定向了
-    private CredentialsProvider credsProvider;
+    private Request                 request;
+
+    private Response                response;
+
+    private ContentType             requestContentType;
+
+    private ContentType             responseContentType;
+
+    private boolean                 isRedirect      = false;//是否重定向了
+
+    private CredentialsProvider     credsProvider;
+
     /**
      * 自定义的cookie
      */
-    private List<BasicClientCookie> extralCookie = new ArrayList<>();
-    private AtomicInteger connectFailures = new AtomicInteger(0);
+    private List<BasicClientCookie> extralCookie    = new ArrayList<>();
+
+    private AtomicInteger           connectFailures = new AtomicInteger(0);
 
     private TaskHttpClient(Request request) {
         this.request = request;
@@ -419,23 +428,23 @@ public class TaskHttpClient {
                         request.getProxy(), url, statusCode);
             }
         } catch (HttpHostConnectException e) {
-            if(request.getProxyEnable()){
+            if (request.getProxyEnable()) {
                 // release proxy when the setting proxy is unreachable.
                 logger.warn("release the setting proxy. error: {}", e.getMessage());
                 ProxyUtils.releaseProxy(taskId);
             }
 
-            if(connectFailures.incrementAndGet() < 3){
+            if (connectFailures.incrementAndGet() < 3) {
                 logger.warn("connect host failure ,will retry ,taskId={},websiteName={},proxy={},url={}", taskId, request.getWebsiteName(),
                         request.getProxy(), url);
                 return invoke();
             }
 
-            logger.error("connect failure,retry={},taskId={},websiteName={},proxy={},url={}", connectFailures.get(),
-                    taskId, request.getWebsiteName(), request.getProxy(), url, e);
-            throw new RuntimeException("connect host failure, times=" + connectFailures.get() +", request=" + request, e);
+            logger.error("connect failure,retry={},taskId={},websiteName={},proxy={},url={}", connectFailures.get(), taskId, request.getWebsiteName(),
+                    request.getProxy(), url, e);
+            throw new RuntimeException("connect host failure, times=" + connectFailures.get() + ", request=" + request, e);
         } catch (SocketTimeoutException e) {
-            if(request.getProxyEnable()){
+            if (request.getProxyEnable()) {
                 // release proxy when socket was timeout.
                 logger.warn("release the setting proxy. error: {}", e.getMessage());
                 ProxyUtils.releaseProxy(taskId);

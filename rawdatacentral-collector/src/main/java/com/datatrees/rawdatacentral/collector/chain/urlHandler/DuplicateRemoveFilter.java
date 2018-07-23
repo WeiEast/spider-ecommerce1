@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.core.model.data.AbstractData;
  */
 public class DuplicateRemoveFilter extends RemovedFetchLinkNodeFilter {
 
-    private static       boolean deduplicateRemoveSwitch = PropertiesConfiguration.getInstance().getBoolean("uniqueKey.deduplicate.remove.switch", true);
+    private static boolean deduplicateRemoveSwitch = PropertiesConfiguration.getInstance().getBoolean("uniqueKey.deduplicate.remove.switch", true);
 
     @Override
     protected void doProcess(LinkNode fetchLinkNode, SearchProcessor searchProcessor, Context context) {
@@ -24,7 +24,7 @@ public class DuplicateRemoveFilter extends RemovedFetchLinkNodeFilter {
         if (deduplicateRemoveSwitch && uniqueKey != null && checker != null && searchProcessor.isDuplicateRemoval()) {
             if (checker.isDuplicate(websiteType, uniqueKey.toString())) {
                 fetchLinkNode.setRemoved(true);
-                logger.info("Node: {} filtered by uniqueKey: {}, websiteType: {}",fetchLinkNode,  uniqueKey ,  websiteType);
+                logger.info("Node: {} filtered by uniqueKey: {}, websiteType: {}", fetchLinkNode, uniqueKey, websiteType);
                 // mark the task has been DuplicateRemoved
                 searchProcessor.getTask().setDuplicateRemoved(true);
             }

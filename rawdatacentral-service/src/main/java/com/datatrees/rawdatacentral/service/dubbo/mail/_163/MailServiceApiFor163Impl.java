@@ -6,11 +6,11 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.mail._163.MailServiceApiFor163;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
 
-    private static final Logger logger = LoggerFactory.getLogger(MailServiceApiFor163Impl.class);
+    private static final Logger          logger = LoggerFactory.getLogger(MailServiceApiFor163Impl.class);
 
     @Resource
-    private CommonPluginApi commonPluginApi;
+    private              CommonPluginApi commonPluginApi;
 
     @Override
     public HttpResult<Object> login(CommonPluginParam param) {

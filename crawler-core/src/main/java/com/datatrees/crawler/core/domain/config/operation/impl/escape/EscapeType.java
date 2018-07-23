@@ -21,6 +21,7 @@ public enum EscapeType {
     JAVA("java"),
     JS("js"),
     XML("xml");
+
     private static Map<String, EscapeType> escapeTypeMap = new HashMap<String, EscapeType>();
 
     static {

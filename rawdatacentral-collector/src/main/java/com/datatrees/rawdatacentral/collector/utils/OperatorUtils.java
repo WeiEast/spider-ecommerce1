@@ -8,8 +8,8 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 public class OperatorUtils {
 
     private static final Logger logger                 = LoggerFactory.getLogger(OperatorUtils.class);
+
     private static final String OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
 
     public static String getRemarkForTaskFail(long taskId) {

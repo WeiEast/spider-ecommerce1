@@ -55,7 +55,7 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void segResultConvert(Map segmentResultMap, Object segResult, AbstractSegment abstractSegment) {
-        if(segResult == null){
+        if (segResult == null) {
             return;
         }
 
@@ -111,7 +111,8 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
     private Object resultMapConvert(Map<String, Object> resultMap) {
         String className = null;
         try {
-            if (resultMap == null || resultMap.isEmpty() || StringUtils.isBlank((className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
+            if (resultMap == null || resultMap.isEmpty() ||
+                    StringUtils.isBlank((className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
                 return resultMap;
             } else {
                 // Reflect to class instance

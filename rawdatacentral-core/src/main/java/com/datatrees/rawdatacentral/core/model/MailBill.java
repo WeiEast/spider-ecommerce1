@@ -16,6 +16,7 @@ package com.datatrees.rawdatacentral.core.model;
 public class MailBill {
 
     private String mailId;
+
     private int    billId;
 
     /**

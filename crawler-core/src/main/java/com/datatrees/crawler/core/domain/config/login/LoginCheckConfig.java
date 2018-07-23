@@ -27,10 +27,15 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 public class LoginCheckConfig {
 
     private String                successPattern;
+
     private String                failPattern;
+
     private Integer               checkInterval;// unit m
+
     private String                checkUrl;// check url
+
     private String                headers;
+
     private List<AbstractSegment> segmentList;
 
     /**
@@ -46,7 +51,8 @@ public class LoginCheckConfig {
         return Collections.unmodifiableList(segmentList);
     }
 
-    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
+    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class,
+            CalculateSegment.class, BaseSegment.class})
     public void setSegmentList(AbstractSegment segment) {
         this.segmentList.add(segment);
     }

@@ -73,7 +73,9 @@ public class AddPagingUrlLinkFilter implements Filter {
 
     private String getPageLinkUrl(int currentPageNum, SearchProcessor searchProcessor) {
         log.info("getPageLinkUrl currentPageNum: {}", currentPageNum);
-        return SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(), searchProcessor.getEncoding(), currentPageNum, true, searchProcessor.getProcessorContext().getContext());
+        return SearchTemplateCombine
+                .constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(), searchProcessor.getEncoding(), currentPageNum,
+                        true, searchProcessor.getProcessorContext().getContext());
     }
 
     /**

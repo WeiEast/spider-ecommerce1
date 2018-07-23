@@ -10,51 +10,73 @@ import com.datatrees.rawdatacentral.domain.model.base.AbstractTask;
 /** create by system from table t_tasklog(task log info) */
 public class Task extends AbstractTask implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long          serialVersionUID = 1L;
+
     /** mail Id */
-    private Integer       id;
+    private              Integer       id;
+
     /** user Id */
-    private Long          taskId;
+    private              Long          taskId;
+
     /** mail website id */
-    private Integer       websiteId;
+    private              Integer       websiteId;
+
     /**  */
-    private String        nodeName;
+    private              String        nodeName;
+
     /**  */
-    private AtomicInteger openUrlCount;
+    private              AtomicInteger openUrlCount;
+
     /**  */
-    private AtomicInteger openPageCount;
+    private              AtomicInteger openPageCount;
+
     /**  */
-    private AtomicInteger requestFailedCount;
+    private              AtomicInteger requestFailedCount;
+
     /**  */
-    private AtomicInteger retryCount;
+    private              AtomicInteger retryCount;
+
     /**  */
-    private AtomicInteger filteredCount;
+    private              AtomicInteger filteredCount;
+
     /** 0:init;200:success;101:cookie Invalid，102：block 103：no result */
-    private Integer       status;
+    private              Integer       status;
+
     /**  */
-    private String        remark;
+    private              String        remark;
+
     /**  */
-    private String        resultMessage;
+    private              String        resultMessage;
+
     /** Task duration, in seconds */
-    private Long          duration;
+    private              Long          duration;
+
     /**  */
-    private Integer       extractedCount;
+    private              Integer       extractedCount;
+
     /**  */
-    private Integer       extractSucceedCount;
+    private              Integer       extractSucceedCount;
+
     /**  */
-    private Integer       extractFailedCount;
+    private              Integer       extractFailedCount;
+
     /**  */
-    private Integer       storeFailedCount;
+    private              Integer       storeFailedCount;
+
     /**  */
-    private Integer       notExtractCount;
+    private              Integer       notExtractCount;
+
     /**  */
-    private AtomicLong    networkTraffic;
+    private              AtomicLong    networkTraffic;
+
     /**  */
-    private Date          startedAt;
+    private              Date          startedAt;
+
     /**  */
-    private Date          finishedAt;
+    private              Date          finishedAt;
+
     /**  */
-    private Date          createdAt;
+    private              Date          createdAt;
 
     public Integer getId() {
         return id;

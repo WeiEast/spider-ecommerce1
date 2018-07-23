@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 public class PaymentFormatter extends ConfigurableFormatter<Number> {
 
     private static final String NEGATE_FLAG       = "~";
+
     private static final String PAYMENT_NUM_REGEX = "([\\.,\\d]+)";
 
     @Override

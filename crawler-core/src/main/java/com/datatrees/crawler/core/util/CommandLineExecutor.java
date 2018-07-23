@@ -24,15 +24,23 @@ import static com.google.common.collect.ImmutableMap.copyOf;
  */
 public class CommandLineExecutor {
 
-    private static final Logger                      log           = LoggerFactory.getLogger(CommandLineExecutor.class);
-    private final        ByteArrayOutputStream       inputOut      = new ByteArrayOutputStream();
-    private final        ByteArrayOutputStream       inputErrorOut = new ByteArrayOutputStream();
-    private final        DefaultExecuteResultHandler handler       = new DefaultExecuteResultHandler();
-    private final        Executor                    executor      = new DefaultExecutor();
-    private final org.apache.commons.exec.CommandLine cl;
-    private final Map<String, String> env = new ConcurrentHashMap<String, String>();
-    private volatile String allInput;
-    private ExecuteWatchdog executeWatchdog = new ExecuteWatchdog(1000 * 60 * 10);
+    private static final Logger                              log             = LoggerFactory.getLogger(CommandLineExecutor.class);
+
+    private final        ByteArrayOutputStream               inputOut        = new ByteArrayOutputStream();
+
+    private final        ByteArrayOutputStream               inputErrorOut   = new ByteArrayOutputStream();
+
+    private final        DefaultExecuteResultHandler         handler         = new DefaultExecuteResultHandler();
+
+    private final        Executor                            executor        = new DefaultExecutor();
+
+    private final        org.apache.commons.exec.CommandLine cl;
+
+    private final        Map<String, String>                 env             = new ConcurrentHashMap<String, String>();
+
+    private volatile     String                              allInput;
+
+    private              ExecuteWatchdog                     executeWatchdog = new ExecuteWatchdog(1000 * 60 * 10);
 
     public CommandLineExecutor(String executable, String... args) {
         cl = new org.apache.commons.exec.CommandLine(executable);

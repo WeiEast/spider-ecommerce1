@@ -12,14 +12,17 @@ public class ProjectParam {
      * 爬取业务标识 例"huabei"
      */
     private String code;
+
     /**
      * 爬取业务名称 例"花呗"
      */
     private String name;
+
     /**
      * 爬取状态
      */
     private Byte   crawlerStatus;
+
     /**
      * 排序
      */

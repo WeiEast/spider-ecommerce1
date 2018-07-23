@@ -23,9 +23,9 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.exception.LoginFailException;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,14 +34,22 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implements Login {
 
-    private static Logger logger                = LoggerFactory.getLogger(AbstractLoginPlugin.class);
-    private static String REDIS_PREFIX          = PropertiesConfiguration.getInstance().get("core.redis.redis.prefix", "rawdata_");
-    private static long   defaultTimeToLiveTime = PropertiesConfiguration.getInstance().getLong("data.default.ttl.time", 3600 * 24 * 2);
-    protected QRCodeVerification qRCodeVerification;
+    private static Logger             logger                = LoggerFactory.getLogger(AbstractLoginPlugin.class);
+
+    private static String             REDIS_PREFIX          = PropertiesConfiguration.getInstance().get("core.redis.redis.prefix", "rawdata_");
+
+    private static long               defaultTimeToLiveTime = PropertiesConfiguration.getInstance().getLong("data.default.ttl.time", 3600 * 24 * 2);
+
+    protected      QRCodeVerification qRCodeVerification;
+
     int refreshCodeCount = 0;
+
     int loginCount       = 0;
+
     int qrCodeCount      = 0;
+
     int verifyCodeCount  = 0;
+
     private MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
 
     /**

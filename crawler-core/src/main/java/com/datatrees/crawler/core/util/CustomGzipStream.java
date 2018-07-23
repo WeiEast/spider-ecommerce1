@@ -11,25 +11,34 @@ public class CustomGzipStream extends InflaterInputStream {
     /**
      * GZIP header magic number.
      */
-    public final static  int   GZIP_MAGIC = 0x8b1f;
+    public final static  int     GZIP_MAGIC = 0x8b1f;
+
     /*
      * File header flags.
      */
-    private final static int   FTEXT      = 1;    // Extra text
-    private final static int   FHCRC      = 2;    // Header CRC
-    private final static int   FEXTRA     = 4;    // Extra field
-    private final static int   FNAME      = 8;    // File name
-    private final static int   FCOMMENT   = 16;    // File comment
+    private final static int     FTEXT      = 1;    // Extra text
+
+    private final static int     FHCRC      = 2;    // Header CRC
+
+    private final static int     FEXTRA     = 4;    // Extra field
+
+    private final static int     FNAME      = 8;    // File name
+
+    private final static int     FCOMMENT   = 16;    // File comment
+
     /**
      * CRC-32 for uncompressed data.
      */
-    protected            CRC32 crc        = new CRC32();
+    protected            CRC32   crc        = new CRC32();
+
     /**
      * Indicates end of input stream.
      */
-    protected boolean eos;
-    private boolean closed = false;
-    private byte[]  tmpbuf = new byte[128];
+    protected            boolean eos;
+
+    private              boolean closed     = false;
+
+    private              byte[]  tmpbuf     = new byte[128];
 
     /**
      * Creates a new input stream with the specified buffer size.

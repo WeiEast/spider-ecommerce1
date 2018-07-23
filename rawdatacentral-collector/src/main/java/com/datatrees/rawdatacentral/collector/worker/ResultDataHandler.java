@@ -36,11 +36,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResultDataHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(ResultDataHandler.class);
+    private static final Logger            log = LoggerFactory.getLogger(ResultDataHandler.class);
+
     @Resource
-    private NormalizerFactory collectNormalizerFactory;
+    private              NormalizerFactory collectNormalizerFactory;
+
     @Resource
-    private WrappedActorRef   extractorActorRef;
+    private              WrappedActorRef   extractorActorRef;
 
     private ParentTask getParentTask(TaskMessage taskMessage) {
         ParentTask parentTask = new ParentTask();
@@ -71,7 +73,8 @@ public class ResultDataHandler {
             try {
                 boolean result = collectNormalizerFactory.normalize(message);
                 if (result) {
-                    Future<Object> future = Patterns.ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
+                    Future<Object> future = Patterns
+                            .ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
                     futureList.add(future);
                 } else {
                     log.warn("message normalize failed, message:" + message + ", obj:" + obj);

@@ -23,60 +23,69 @@ import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 
 public class CebPDFDomParser extends AbstractPDFDomParser {
-    private static Logger log = LoggerFactory.getLogger(CebPDFDomParser.class);
+
+    private static Logger      log                       = LoggerFactory.getLogger(CebPDFDomParser.class);
 
     /** Default style placed in the begining of the resulting document */
-    protected String defaultStyle = ".page{position:relative; border:1px solid blue;margin:0.5em}\n" + ".p,.r{position:absolute;}\n" +
-    // disable text-shadow fallback for text stroke if stroke supported by browser
+    protected      String      defaultStyle              = ".page{position:relative; border:1px solid blue;margin:0.5em}\n" +
+            ".p,.r{position:absolute;}\n" +
+            // disable text-shadow fallback for text stroke if stroke supported by browser
             "@supports(-webkit-text-stroke: 1px black) {" + ".p{text-shadow:none !important;}" + "}";
 
     /** The resulting document representing the PDF file. */
-    protected Document    doc;
+    protected      Document    doc;
+
     /** The head element of the resulting document. */
-    protected Element head;
+    protected      Element     head;
+
     /** The body element of the resulting document. */
-    protected Element body;
+    protected      Element     body;
+
     /** The title element of the resulting document. */
-    protected Element     title;
+    protected      Element     title;
+
     /** The global style element of the resulting document. */
-    protected Element     globalStyle;
+    protected      Element     globalStyle;
+
     /** The element representing the page currently being created in the resulting document. */
-    protected Element     curpage;
+    protected      Element     curpage;
 
     /** Text element counter for assigning IDs to the text elements. */
-    protected int         textcnt;
+    protected      int         textcnt;
+
     /** Page counter for assigning IDs to the pages. */
-    protected int         pagecnt;
+    protected      int         pagecnt;
 
-    private   Node        lastNode;
+    protected      int         tradecnt;
 
-    private   TextMetrics lastTextMetrics;
+    protected      boolean     isTradeStarted;
 
-    private   String      lastData;
+    private        Node        lastNode;
 
-    private   boolean     processingTransDetails;
+    private        TextMetrics lastTextMetrics;
 
-    private String transactionDetailsPattern = PropertiesConfiguration.getInstance().get("cebbank.transaction.details.pattern", "交易日");
-    
-    private int lineMaxPtSpace = PropertiesConfiguration.getInstance().getInt("cebbank.max.pt.space", 1);
+    private        String      lastData;
 
-    private String tradeStartPattern = PropertiesConfiguration.getInstance().get("cebbank.trade.start.pattern", "\\d{4}/\\d{2}/\\d{2}");
+    private        boolean     processingTransDetails;
 
-    private String tradeEndPattern = PropertiesConfiguration.getInstance().get("cebbank.trade.end.pattern", "本期最低还款额|本期欠款|本期存款|共[\\s\\d]+页|^第|^￥\\d*|本期应还款额");
-    
-    private String megreSplite = PropertiesConfiguration.getInstance().get("cebbank.megre.splite.pattern", " ");
+    private        String      transactionDetailsPattern = PropertiesConfiguration.getInstance().get("cebbank.transaction.details.pattern", "交易日");
 
-    private Element currentTrade;
+    private        int         lineMaxPtSpace            = PropertiesConfiguration.getInstance().getInt("cebbank.max.pt.space", 1);
 
-    protected int tradecnt;
+    private        String      tradeStartPattern         = PropertiesConfiguration.getInstance()
+            .get("cebbank.trade.start.pattern", "\\d{4}/\\d{2}/\\d{2}");
 
-    protected boolean isTradeStarted;
+    private        String      tradeEndPattern           = PropertiesConfiguration.getInstance()
+            .get("cebbank.trade.end.pattern", "本期最低还款额|本期欠款|本期存款|共[\\s\\d]+页|^第|^￥\\d*|本期应还款额");
+
+    private        String      megreSplite               = PropertiesConfiguration.getInstance().get("cebbank.megre.splite.pattern", " ");
+
+    private        Element     currentTrade;
 
     /**
      * Creates a new PDF DOM parser.
-     * 
-     * @throws IOException
-     * @throws ParserConfigurationException
+     * @exception IOException
+     * @exception ParserConfigurationException
      */
     public CebPDFDomParser() throws IOException, ParserConfigurationException {
         super();
@@ -85,8 +94,7 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
 
     /**
      * Internal initialization.
-     * 
-     * @throws ParserConfigurationException
+     * @exception ParserConfigurationException
      */
     private void init() throws ParserConfigurationException {
         pagecnt = 0;
@@ -99,15 +107,13 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
 
     /**
      * Creates a new empty HTML document tree.
-     * 
-     * @throws ParserConfigurationException
+     * @exception ParserConfigurationException
      */
     protected void createDocument() throws ParserConfigurationException {
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
-        DocumentType doctype =
-                builder.getDOMImplementation()
-                        .createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN", "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
+        DocumentType doctype = builder.getDOMImplementation()
+                .createDocumentType("html", "-//W3C//DTD XHTML 1.1//EN", "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd");
         doc = builder.getDOMImplementation().createDocument("http://www.w3.org/1999/xhtml", "html", doctype);
         head = doc.createElement("head");
         Element meta = doc.createElement("meta");
@@ -129,7 +135,6 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
 
     /**
      * Obtains the resulting document tree.
-     * 
      * @return The DOM root element.
      */
     public Document getDocument() {
@@ -182,10 +187,9 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
 
     /**
      * Loads a PDF document and creates a DOM tree from it.
-     * 
      * @param doc the source document
      * @return a DOM Document representing the DOM tree
-     * @throws IOException
+     * @exception IOException
      */
     public Document createDOM(PDDocument doc) throws IOException {
         /*
@@ -265,10 +269,10 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
     }
 
     private boolean isNeedMerge(TextMetrics metrics) {
-        if (lastTextMetrics != null && (lastTextMetrics.getTop() - metrics.getTop()) <= lineMaxPtSpace
-                && (metrics.getTop() - lastTextMetrics.getTop()) <= lineMaxPtSpace
-                && (lastTextMetrics.getHeight() - metrics.getHeight()) <= lineMaxPtSpace
-                && (metrics.getHeight() - lastTextMetrics.getHeight()) <= lineMaxPtSpace) return true;
+        if (lastTextMetrics != null && (lastTextMetrics.getTop() - metrics.getTop()) <= lineMaxPtSpace &&
+                (metrics.getTop() - lastTextMetrics.getTop()) <= lineMaxPtSpace &&
+                (lastTextMetrics.getHeight() - metrics.getHeight()) <= lineMaxPtSpace &&
+                (metrics.getHeight() - lastTextMetrics.getHeight()) <= lineMaxPtSpace) return true;
         return false;
     }
 
@@ -286,8 +290,7 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
             }
             pstyle = "width:" + w + UNIT + ";" + "height:" + h + UNIT + ";";
             pstyle += "overflow:hidden;";
-        } else
-            log.warn("No media box found");
+        } else log.warn("No media box found");
         Element el = doc.createElement("div");
         el.setAttribute("id", "tradeDetail" + (tradecnt++));
         el.setAttribute("class", "TradeDetail");
@@ -317,7 +320,6 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
 
     /**
      * Creates an element that represents a single page.
-     * 
      * @return the resulting DOM element
      */
     protected Element createPageElement() {
@@ -334,8 +336,7 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
             }
             pstyle = "width:" + w + UNIT + ";" + "height:" + h + UNIT + ";";
             pstyle += "overflow:hidden;";
-        } else
-            log.warn("No media box found");
+        } else log.warn("No media box found");
         Element el = doc.createElement("div");
         el.setAttribute("id", "page_" + (pagecnt++));
         el.setAttribute("class", "page");
@@ -345,7 +346,6 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
 
     /**
      * Creates an element that represents a single positioned box with no content.
-     * 
      * @return the resulting DOM element
      */
     protected Element createTextElement(float width) {
@@ -361,7 +361,6 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
     /**
      * Creates an element that represents a single positioned box containing the specified text
      * string.
-     * 
      * @param data the text string to be contained in the created box.
      * @return the resulting DOM element
      */
@@ -375,13 +374,12 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
     /**
      * Creates an element that represents a rectangle drawn at the specified coordinates in the
      * page.
-     * 
-     * @param x the X coordinate of the rectangle
-     * @param y the Y coordinate of the rectangle
-     * @param width the width of the rectangle
+     * @param x      the X coordinate of the rectangle
+     * @param y      the Y coordinate of the rectangle
+     * @param width  the width of the rectangle
      * @param height the height of the rectangle
      * @param stroke should there be a stroke around?
-     * @param fill should the rectangle be filled?
+     * @param fill   should the rectangle be filled?
      * @return the resulting DOM element
      */
     protected Element createRectangleElement(float x, float y, float width, float height, boolean stroke, boolean fill) {
@@ -412,7 +410,6 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
 
     /**
      * Create an element that represents a horizntal or vertical line.
-     * 
      * @param x1
      * @param y1
      * @param x2
@@ -446,12 +443,11 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
 
     /**
      * Creates an element that represents an image drawn at the specified coordinates in the page.
-     * 
-     * @param x the X coordinate of the image
-     * @param y the Y coordinate of the image
-     * @param width the width coordinate of the image
-     * @param height the height coordinate of the image
-     * @param type the image type: <code>"png"</code> or <code>"jpeg"</code>
+     * @param x        the X coordinate of the image
+     * @param y        the Y coordinate of the image
+     * @param width    the width coordinate of the image
+     * @param height   the height coordinate of the image
+     * @param type     the image type: <code>"png"</code> or <code>"jpeg"</code>
      * @param resource the image data depending on the specified type
      * @return
      */
@@ -466,92 +462,13 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
         // ignore img
         // String imgSrc = config.getImageHandler().handleResource(resource);
         String imgSrc = "";
-        if (!disableImageData && !imgSrc.isEmpty())
-            el.setAttribute("src", imgSrc);
-        else
-            el.setAttribute("src", "");
+        if (!disableImageData && !imgSrc.isEmpty()) el.setAttribute("src", imgSrc);
+        else el.setAttribute("src", "");
         return el;
     }
 
     /**
-     * Maps input line to an HTML div rectangle, since HTML does not support standard lines
-     */
-    protected class HtmlDivLine {
-        private final float x1;
-        private final float y1;
-        private final float x2;
-        private final float y2;
-        private final float width;
-        private final float height;
-        // horizontal or vertical lines are treated separately (no rotations used)
-        private final boolean horizontal;
-        private final boolean vertical;
-
-        public HtmlDivLine(float x1, float y1, float x2, float y2) {
-            this.x1 = x1;
-            this.y1 = y1;
-            this.x2 = x2;
-            this.y2 = y2;
-            this.width = Math.abs(x2 - x1);
-            this.height = Math.abs(y2 - y1);
-            this.horizontal = (height < 0.5f);
-            this.vertical = (width < 0.5f);
-        }
-
-        public float getHeight() {
-            return vertical ? height : 0;
-        }
-
-        public float getWidth() {
-            if (vertical)
-                return 0;
-            else if (horizontal)
-                return width;
-            else
-                return distanceFormula(x1, y1, x2, y2);
-        }
-
-        public float getLeft() {
-            if (horizontal || vertical)
-                return Math.min(x1, x2);
-            else
-                return Math.abs((x2 + x1) / 2) - getWidth() / 2;
-        }
-
-        public float getTop() {
-            if (horizontal || vertical)
-                return Math.min(y1, y2);
-            else
-                // after rotation top left will be center of line so find the midpoint and correct
-                // for the line to border transform
-                return Math.abs((y2 + y1) / 2) - (getLineStrokeWidth() + getHeight()) / 2;
-        }
-
-        public double getAngleDegrees() {
-            if (horizontal || vertical)
-                return 0;
-            else
-                return Math.toDegrees(Math.atan((y2 - y1) / (x2 - x1)));
-        }
-
-        public float getLineStrokeWidth() {
-            float lineWidth = transformWidth(getGraphicsState().getLineWidth());
-            if (lineWidth < 0.5f) lineWidth = 0.5f;
-            return lineWidth;
-        }
-
-        public String getBorderSide() {
-            return vertical ? "border-right" : "border-bottom";
-        }
-
-        private float distanceFormula(float x1, float y1, float x2, float y2) {
-            return (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-        }
-    }
-
-    /**
      * Generate the global CSS style for the whole document.
-     * 
      * @return the CSS code used in the generated document header
      */
     protected String createGlobalStyle() {
@@ -591,5 +508,81 @@ public class CebPDFDomParser extends AbstractPDFDomParser {
         // }
         ret.append("');");
         ret.append("}\n");
+    }
+
+    /**
+     * Maps input line to an HTML div rectangle, since HTML does not support standard lines
+     */
+    protected class HtmlDivLine {
+
+        private final float   x1;
+
+        private final float   y1;
+
+        private final float   x2;
+
+        private final float   y2;
+
+        private final float   width;
+
+        private final float   height;
+
+        // horizontal or vertical lines are treated separately (no rotations used)
+        private final boolean horizontal;
+
+        private final boolean vertical;
+
+        public HtmlDivLine(float x1, float y1, float x2, float y2) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.width = Math.abs(x2 - x1);
+            this.height = Math.abs(y2 - y1);
+            this.horizontal = (height < 0.5f);
+            this.vertical = (width < 0.5f);
+        }
+
+        public float getHeight() {
+            return vertical ? height : 0;
+        }
+
+        public float getWidth() {
+            if (vertical) return 0;
+            else if (horizontal) return width;
+            else return distanceFormula(x1, y1, x2, y2);
+        }
+
+        public float getLeft() {
+            if (horizontal || vertical) return Math.min(x1, x2);
+            else return Math.abs((x2 + x1) / 2) - getWidth() / 2;
+        }
+
+        public float getTop() {
+            if (horizontal || vertical) return Math.min(y1, y2);
+            else
+                // after rotation top left will be center of line so find the midpoint and correct
+                // for the line to border transform
+                return Math.abs((y2 + y1) / 2) - (getLineStrokeWidth() + getHeight()) / 2;
+        }
+
+        public double getAngleDegrees() {
+            if (horizontal || vertical) return 0;
+            else return Math.toDegrees(Math.atan((y2 - y1) / (x2 - x1)));
+        }
+
+        public float getLineStrokeWidth() {
+            float lineWidth = transformWidth(getGraphicsState().getLineWidth());
+            if (lineWidth < 0.5f) lineWidth = 0.5f;
+            return lineWidth;
+        }
+
+        public String getBorderSide() {
+            return vertical ? "border-right" : "border-bottom";
+        }
+
+        private float distanceFormula(float x1, float y1, float x2, float y2) {
+            return (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+        }
     }
 }

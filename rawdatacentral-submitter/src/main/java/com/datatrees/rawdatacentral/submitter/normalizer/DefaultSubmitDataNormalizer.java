@@ -23,7 +23,7 @@ public class DefaultSubmitDataNormalizer implements DataNormalizer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see DataNormalizer#normalize(java.lang.Object)
      */
     @Override

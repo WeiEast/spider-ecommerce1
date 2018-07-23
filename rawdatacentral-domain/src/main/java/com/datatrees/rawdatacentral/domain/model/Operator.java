@@ -6,21 +6,28 @@ import java.util.Date;
 /** create by system from table t_operator(operator basic info) */
 public class Operator implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long    serialVersionUID = 1L;
+
     /** operator Id */
-    private Integer id;
+    private              Integer id;
+
     /** not null if operator support search */
-    private Integer websiteId;
+    private              Integer websiteId;
+
     /** operator name */
-    private String  operatorName;
+    private              String  operatorName;
+
     /** operator region */
-    private String  region;
+    private              String  region;
+
     /** 0:false,1:true */
-    private Boolean isenabled;
+    private              Boolean isenabled;
+
     /**  */
-    private Date    createdAt;
+    private              Date    createdAt;
+
     /**  */
-    private Date    updatedAt;
+    private              Date    updatedAt;
 
     public Integer getId() {
         return id;

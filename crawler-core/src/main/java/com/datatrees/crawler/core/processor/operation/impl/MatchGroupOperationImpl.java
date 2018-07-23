@@ -31,7 +31,8 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String sourceId = operation.getSourceId();
         Matcher matcher = null;
         String result = null;

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum Login {
     INSTANCE;
+
     private static final Logger logger = LoggerFactory.getLogger(Login.class);
 
     public void doLogin(SearchProcessorContext context) throws Exception {
@@ -110,7 +111,8 @@ public enum Login {
      */
     public void doServerLogin(SearchProcessorContext context) throws Exception {
         Cookie cookie;
-        if (context.getLoginResource() == null || (cookie = context.getLoginResource().getCookie(ProcessorContextUtil.getAccountKey(context))) == null) {
+        if (context.getLoginResource() == null ||
+                (cookie = context.getLoginResource().getCookie(ProcessorContextUtil.getAccountKey(context))) == null) {
             logger.warn("no active cookie while do server login,use empty cookie");
             cookie = new Cookie();
         }

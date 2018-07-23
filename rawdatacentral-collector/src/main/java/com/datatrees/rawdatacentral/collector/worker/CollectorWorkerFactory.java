@@ -27,17 +27,22 @@ public class CollectorWorkerFactory {
 
     @Resource
     private ResultDataHandler  resultDataHandler;
+
     @Resource
     private CrawlExecutor      crawlExecutor;
+
     @Resource
     private SubTaskManager     subTaskManager;
+
     @Resource
     private RedisDao           redisDao;
+
     @Resource
     private BusinessTypeFilter businessTypeFilter;
 
     public CollectorWorker getCollectorWorker(TaskMessage taskMessage) {
 
-        return new CollectorWorker().setCrawlExecutor(crawlExecutor).setResultDataHandler(resultDataHandler).setSubTaskManager(subTaskManager).setRedisDao(redisDao).setBusinessTypeFilter(businessTypeFilter);
+        return new CollectorWorker().setCrawlExecutor(crawlExecutor).setResultDataHandler(resultDataHandler).setSubTaskManager(subTaskManager)
+                .setRedisDao(redisDao).setBusinessTypeFilter(businessTypeFilter);
     }
 }

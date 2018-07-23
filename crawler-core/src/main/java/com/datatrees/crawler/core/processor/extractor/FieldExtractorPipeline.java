@@ -23,7 +23,8 @@ public class FieldExtractorPipeline extends ProcessPipeline {
                     FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl(fieldExtractor);
                     addValve(fieldExtractorImpl);
                 } else {
-                    logger.warn("Skipped field-extractor[{}] with the forbidden business. field: {}, businessType: {} ,taskId: {}", fieldExtractor.getId(), fieldExtractor.getField(), fieldExtractor.getBusinessType(), context.getTaskId());
+                    logger.warn("Skipped field-extractor[{}] with the forbidden business. field: {}, businessType: {} ,taskId: {}",
+                            fieldExtractor.getId(), fieldExtractor.getField(), fieldExtractor.getBusinessType(), context.getTaskId());
                 }
             }
         }

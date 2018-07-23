@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2014
  */
+
 package com.datatrees.common.protocol.util;
 
 import java.util.ArrayList;
@@ -20,18 +20,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 13, 2014 5:31:53 PM
  */
 public class CookieParser {
+
     public static final Logger LOG        = LoggerFactory.getLogger(CookieParser.class);
 
-
     public static final String LINE_SPLIT = ";";
-    public static final String PAIR_SPLIT = "=";
 
+    public static final String PAIR_SPLIT = "=";
 
     public static List<Cookie> getCookies(String domain, String lineSplit, String keySplit, String data) {
         List<Cookie> cookies = new ArrayList<Cookie>();
@@ -115,8 +115,6 @@ public class CookieParser {
         return buffer.toString();
     }
 
-
-
     public static String formatCookies(Header[] headers) throws IllegalArgumentException {
         LOG.trace("enter CookieSpecBase.formatCookies(Cookie[])");
         if (headers == null) {
@@ -134,11 +132,9 @@ public class CookieParser {
         return StringUtils.join(cookieList, "; ");
     }
 
-
-
     /**
      * not imple
-     * 
+     *
      * @param cookie
      * @param url
      * @return

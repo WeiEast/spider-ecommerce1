@@ -28,8 +28,10 @@ import com.treefinance.toolkit.util.json.Jackson;
 public abstract class Operation<T extends AbstractOperation> extends ProcessorValve {
 
     protected final T              operation;
+
     protected final FieldExtractor extractor;
-    private boolean needReturn = true;
+
+    private         boolean        needReturn = true;
 
     public Operation(@Nonnull T operation, @Nonnull FieldExtractor extractor) {
         this(operation, extractor, true);
@@ -103,7 +105,8 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
         }
     }
 
-    protected abstract Object doOperation(@Nonnull T operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception;
+    protected abstract Object doOperation(@Nonnull T operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception;
 
     @Override
     protected final void postProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {

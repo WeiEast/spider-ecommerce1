@@ -20,6 +20,7 @@ public enum SearchType {
     KEYWORD_SEARCH("keyword_search"),
     DEEP("deep"),
     CATEGORY_SEARCH("category_search");
+
     private static Map<String, SearchType> SearchTypeMap = new HashMap<String, SearchType>();
 
     static {

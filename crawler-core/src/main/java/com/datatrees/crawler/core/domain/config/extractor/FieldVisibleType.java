@@ -20,6 +20,7 @@ public enum FieldVisibleType {
     REQUEST("request"),
     CONTEXT("context"),
     PROCESSOR_RESULT("processor_result");
+
     private static Map<String, FieldVisibleType> fieldVisibleTypeMap = new HashMap<String, FieldVisibleType>();
 
     static {

@@ -24,9 +24,11 @@ public class CustomCookie extends BaseCookie {
     /**
      *
      */
-    private static final long serialVersionUID = 6827347510874254280L;
-    private String failPattern;
-    private String handleConfig;// pugnigid or url
+    private static final long   serialVersionUID = 6827347510874254280L;
+
+    private              String failPattern;
+
+    private              String handleConfig;// pugnigid or url
 
     @Attr("fail-pattern")
     public String getFailPattern() {

@@ -7,11 +7,17 @@ import java.io.Serializable;
  * Created by guimeichao on 18/3/28.
  */
 public class UserInfoLoginDoubleReq implements Serializable {
+
     private String businessCode;
+
     private String cellNum;
+
     private String imei;
+
     private String imsi;
+
     private String passwd;
+
     private String smsPasswd;
 
     public String getBusinessCode() {

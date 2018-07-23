@@ -16,7 +16,6 @@ import java.util.List;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.*;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.util.xml.annotation.Attr;
 import com.datatrees.crawler.core.util.xml.annotation.Node;
 import com.datatrees.crawler.core.util.xml.annotation.Tag;
@@ -33,19 +32,31 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
     /**
      *
      */
-    private static final long serialVersionUID = 169636932735670442L;
-    private String                  field;
-    private String                  sourceId;
-    private String                  encoding;
-    private ResultType              resultType;
-    private String                  format;
-    private AbstractPlugin          plugin;
-    private List<AbstractOperation> operationList;
-    private Boolean                 notEmpty;
-    private FieldVisibleType        fieldVisibleType;
-    private Boolean                 standBy;
-    private String                  defaultValue;
-    private String                  businessType;
+    private static final long                    serialVersionUID = 169636932735670442L;
+
+    private              String                  field;
+
+    private              String                  sourceId;
+
+    private              String                  encoding;
+
+    private              ResultType              resultType;
+
+    private              String                  format;
+
+    private              AbstractPlugin          plugin;
+
+    private              List<AbstractOperation> operationList;
+
+    private              Boolean                 notEmpty;
+
+    private              FieldVisibleType        fieldVisibleType;
+
+    private              Boolean                 standBy;
+
+    private              String                  defaultValue;
+
+    private              String                  businessType;
 
     public FieldExtractor() {
         super();
@@ -137,7 +148,11 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
         return Collections.unmodifiableList(operationList);
     }
 
-    @Node(value = "operation", types = {ParserOperation.class, RegexOperation.class, ReplaceOperation.class, TemplateOperation.class, XpathOperation.class, JsonPathOperation.class, CodecOperation.class, TrimOperation.class, ReturnOperation.class, SetOperation.class, ExtractOperation.class, AppendOperation.class, MatchGroupOperation.class, DateTimeOperation.class, TripleOperation.class, MailParserOperation.class, CalculateOperation.class, EscapeOperation.class, DecodeOperation.class, ProxySetOperation.class, MappingOperation.class, SleepOperation.class, ReturnMatchOperation.class})
+    @Node(value = "operation", types = {ParserOperation.class, RegexOperation.class, ReplaceOperation.class, TemplateOperation.class,
+            XpathOperation.class, JsonPathOperation.class, CodecOperation.class, TrimOperation.class, ReturnOperation.class, SetOperation.class,
+            ExtractOperation.class, AppendOperation.class, MatchGroupOperation.class, DateTimeOperation.class, TripleOperation.class,
+            MailParserOperation.class, CalculateOperation.class, EscapeOperation.class, DecodeOperation.class, ProxySetOperation.class,
+            MappingOperation.class, SleepOperation.class, ReturnMatchOperation.class})
     public void setOperationList(AbstractOperation operation) {
         this.operationList.add(operation);
     }
@@ -174,7 +189,7 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 public class BDBEnvironmentContext {
 
     private static final Logger log           = LoggerFactory.getLogger(BDBEnvironmentContext.class);
+
     private final static String homePath      = CollectorConstants.COLLECTOR_TEMP_DIR;
+
     private static final int    LOG_FILE_SIZE = 128 * 1024 * 1024;
 
     static {
@@ -28,11 +30,17 @@ public class BDBEnvironmentContext {
     }
 
     protected com.sleepycat.je.Environment env              = null;
+
     protected DatabaseConfig               dbConfig         = null;
+
     protected SecondaryConfig              sdbConfig        = null;
+
     protected String                       folderName       = null;
+
     private   File                         envHome          = null;
+
     private   EnvironmentConfig            envConfig        = null;
+
     private   EnvironmentMutableConfig     envMutableConfig = null;
 
     public BDBEnvironmentContext(String folderName) throws Exception {

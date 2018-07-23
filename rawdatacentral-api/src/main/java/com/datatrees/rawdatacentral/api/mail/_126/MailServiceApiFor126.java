@@ -44,5 +44,4 @@ public interface MailServiceApiFor126 {
      */
     HttpResult<Object> queryQRStatus(CommonPluginParam param);
 
-
 }

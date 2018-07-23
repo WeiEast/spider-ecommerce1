@@ -33,31 +33,42 @@ public class LinkExtractor extends DefaultCallback {
      * refresh type.
      */
     private static final TextPattern             URLEQUAL_PATTERN = new TextPattern("URL=", TextPattern.CASE_INSENSITIVE);
+
     private static       Logger                  log              = LoggerFactory.getLogger(LinkExtractor.class);
+
     /** The URLs resulting from the parsing process. */
     // public final Set<String> urls = new ObjectLinkedOpenHashSet<String>();
     public final         HashMap<String, String> urls             = new LinkedHashMap<String, String>(); // URL,
+
     /** The title resulting from the parsing process. */
     public final         MutableString           title            = new MutableString();
+
     // anchorText
     private              String                  nextURL          = null;
+
     private              MutableString           nextAnchorText   = null;
+
     /**
      * The URL contained in the first <samp>META </samp> <samp>HTTP-EQUIV </samp> element of refresh
      * type (if any).
      */
     private              String                  metaRefresh      = null;
+
     /**
      * The URL contained in the first <samp>META </samp> <samp>HTTP-EQUIV </samp> element of
      * location type (if any).
      */
     private              String                  metaLocation     = null;
+
     /** The URL contained in the first <samp>BASE </samp> element (if any). */
     private              String                  base             = null;
+
     private              String                  contexURL        = null;
+
     /** True if we are in the middle of the title. */
-    private boolean inTitle;
-    private boolean firstTitle = true;
+    private              boolean                 inTitle;
+
+    private              boolean                 firstTitle       = true;
 
     /**
      * Configure the parser to parse elements and certain attributes.

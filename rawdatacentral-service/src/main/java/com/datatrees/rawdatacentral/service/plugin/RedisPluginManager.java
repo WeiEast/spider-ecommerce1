@@ -23,9 +23,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class RedisPluginManager implements PluginManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(RedisPluginManager.class);
+    private static final Logger             logger = LoggerFactory.getLogger(RedisPluginManager.class);
+
     @Autowired
-    private ClassLoaderService classLoaderService;
+    private              ClassLoaderService classLoaderService;
 
     @Override
     public <T> WrappedExtension<T> loadExtension(AbstractPlugin metadata, Class<T> extensionType, Long taskId) throws ExtensionException {

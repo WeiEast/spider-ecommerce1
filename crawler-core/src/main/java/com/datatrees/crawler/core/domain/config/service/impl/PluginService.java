@@ -14,8 +14,9 @@ public class PluginService extends AbstractService {
     /**
      *
      */
-    private static final long serialVersionUID = 7775621324577608743L;
-    private AbstractPlugin plugin;
+    private static final long           serialVersionUID = 7775621324577608743L;
+
+    private              AbstractPlugin plugin;
 
     @Attr(value = "plugin-ref", referenced = true)
     public AbstractPlugin getPlugin() {

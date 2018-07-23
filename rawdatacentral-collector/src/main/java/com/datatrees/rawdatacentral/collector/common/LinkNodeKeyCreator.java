@@ -18,7 +18,7 @@ public class LinkNodeKeyCreator implements SecondaryKeyCreator {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.sleepycat.je.SecondaryMultiKeyCreator#createSecondaryKeys(com.sleepycat.je.SecondaryDatabase
      * , com.sleepycat.je.DatabaseEntry, com.sleepycat.je.DatabaseEntry, java.util.Set)

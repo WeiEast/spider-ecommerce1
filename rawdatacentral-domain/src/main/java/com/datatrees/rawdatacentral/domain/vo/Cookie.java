@@ -13,19 +13,26 @@ import com.alibaba.fastjson.annotation.JSONField;
 public class Cookie implements Serializable {
 
     @JSONField(ordinal = 1)
-    private String  name;
+    private String              name;
+
     @JSONField(ordinal = 2)
-    private String  value;
+    private String              value;
+
     @JSONField(ordinal = 3)
-    private String  domain;
+    private String              domain;
+
     @JSONField(ordinal = 4)
-    private int     version;
+    private int                 version;
+
     @JSONField(ordinal = 5)
-    private String  path;
+    private String              path;
+
     @JSONField(ordinal = 6)
-    private boolean secure;
+    private boolean             secure;
+
     @JSONField(ordinal = 7)
-    private Date    expiryDate;
+    private Date                expiryDate;
+
     @JSONField(ordinal = 8)
     private Map<String, String> attribs = new HashMap<>();
 

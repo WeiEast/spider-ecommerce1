@@ -15,15 +15,23 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 public class DistributedLock {
 
-    private static final Logger                            LOGGER = LoggerFactory.getLogger(DistributedLock.class);
-    private static final ConcurrentHashMap<String, Thread> HOLDER = new ConcurrentHashMap<>();
-    private final RedisTemplate<String, Long> redisTemplate;
-    private final String                      lockName;
-    private long leaseTime = 3 * 60 * 1000;
+    private static final Logger                            LOGGER    = LoggerFactory.getLogger(DistributedLock.class);
+
+    private static final ConcurrentHashMap<String, Thread> HOLDER    = new ConcurrentHashMap<>();
+
+    private final        RedisTemplate<String, Long>       redisTemplate;
+
+    private final        String                            lockName;
+
+    private              long                              leaseTime = 3 * 60 * 1000;
 
     DistributedLock(RedisTemplate<String, Long> redisTemplate, String key) {
         this.redisTemplate = redisTemplate;
         this.lockName = getLockName(key);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Thread.currentThread() == null);
     }
 
     private String getLockName(String name) {
@@ -80,10 +88,6 @@ public class DistributedLock {
         }
 
         return false;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(Thread.currentThread() == null);
     }
 
     private boolean doLock(long leaseTime, long timeout) throws InterruptedException {

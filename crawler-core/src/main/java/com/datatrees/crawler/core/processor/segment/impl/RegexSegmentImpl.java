@@ -32,7 +32,7 @@ public class RegexSegmentImpl extends SegmentBase<RegexSegment> {
 
     @Override
     public List<String> splitInputContent(String content, RegexSegment segment, Request request, Response response) {
-        if(StringUtils.isEmpty(content)){
+        if (StringUtils.isEmpty(content)) {
             return Collections.emptyList();
         }
 

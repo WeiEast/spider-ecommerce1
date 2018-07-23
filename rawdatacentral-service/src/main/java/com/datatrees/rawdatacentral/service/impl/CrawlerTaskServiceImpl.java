@@ -17,9 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrawlerTaskServiceImpl implements CrawlerTaskService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CrawlerTaskServiceImpl.class);
+    private static final Logger      logger = LoggerFactory.getLogger(CrawlerTaskServiceImpl.class);
+
     @Resource
-    private TaskService taskService;
+    private              TaskService taskService;
 
     @Override
     public Task getByTaskId(Long taskId) {

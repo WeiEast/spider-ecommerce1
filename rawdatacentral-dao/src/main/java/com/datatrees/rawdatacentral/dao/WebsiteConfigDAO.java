@@ -25,6 +25,7 @@ public interface WebsiteConfigDAO {
      * @param searchConfig
      * @param extractConfig
      */
-    int updateWebsiteConf(@Param("websiteId") Integer websiteId, @Param("searchConfig") String searchConfig, @Param("extractConfig") String extractConfig);
+    int updateWebsiteConf(@Param("websiteId") Integer websiteId, @Param("searchConfig") String searchConfig,
+            @Param("extractConfig") String extractConfig);
 
 }

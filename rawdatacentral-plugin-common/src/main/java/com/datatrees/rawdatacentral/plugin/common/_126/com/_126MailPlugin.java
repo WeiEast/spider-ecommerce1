@@ -21,15 +21,18 @@ import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.rawdatacentral.domain.enums.*;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
+import com.datatrees.rawdatacentral.domain.enums.QRStatus;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -44,9 +47,11 @@ import org.slf4j.LoggerFactory;
  */
 public class _126MailPlugin implements CommonPluginService, QRPluginService {
 
-    private static final Logger logger = LoggerFactory.getLogger(_126MailPlugin.class);
-    private MessageService messageService;
-    private MonitorService monitorService;
+    private static final Logger         logger = LoggerFactory.getLogger(_126MailPlugin.class);
+
+    private              MessageService messageService;
+
+    private              MonitorService monitorService;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {

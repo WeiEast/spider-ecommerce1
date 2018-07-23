@@ -19,6 +19,7 @@ import java.util.Map;
 public enum HandlingType {
     ESCAPE("escape"),
     UNESCAPE("unescape");
+
     private static Map<String, HandlingType> OperationTypeMap = new HashMap<String, HandlingType>();
 
     static {

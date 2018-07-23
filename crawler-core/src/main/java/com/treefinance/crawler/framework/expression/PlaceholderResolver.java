@@ -16,9 +16,13 @@ import org.slf4j.LoggerFactory;
 class PlaceholderResolver {
 
     private static final Logger              LOGGER = LoggerFactory.getLogger(PlaceholderResolver.class);
+
     private final        Map<String, Object> placeholderMapping;
+
     private final        boolean             failOnUnknown;
+
     private final        boolean             allowNull;
+
     private final        boolean             nullToEmpty;
 
     PlaceholderResolver(@Nonnull ExpEvalContext context) {

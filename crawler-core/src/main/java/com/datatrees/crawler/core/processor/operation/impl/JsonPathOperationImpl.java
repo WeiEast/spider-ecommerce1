@@ -21,7 +21,8 @@ public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull JsonPathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull JsonPathOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String original = (String) operatingData;
 
         String jsonpath = operation.getJsonpath();

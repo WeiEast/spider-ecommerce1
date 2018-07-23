@@ -17,7 +17,6 @@ import com.datatrees.rawdatacentral.collector.search.URLHandlerImpl;
  */
 public class AddParserTemplateUrlFilter extends RemovedFetchLinkNodeFilter {
 
-
     @Override
     protected void doProcess(LinkNode fetchLinkNode, SearchProcessor searchProcessor, Context context) {
         if (fetchLinkNode.isFromParser() && PatternUtils.match("\\#\\{page,", fetchLinkNode.getUrl())) {

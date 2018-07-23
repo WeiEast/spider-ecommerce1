@@ -19,6 +19,7 @@ import java.util.Map;
 public enum Scope {
     REQUEST("request"),
     SESSION("session");
+
     private static Map<String, Scope> scopeMap = new HashMap<String, Scope>();
 
     static {

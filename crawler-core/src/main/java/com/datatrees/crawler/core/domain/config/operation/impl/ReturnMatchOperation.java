@@ -22,8 +22,9 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Path(".[@type='returnmatch']")
 public class ReturnMatchOperation extends AbstractOperation {
 
-    private static final long serialVersionUID = 4155105411045428793L;
-    private String value;
+    private static final long   serialVersionUID = 4155105411045428793L;
+
+    private              String value;
 
     @Tag
     public String getValue() {

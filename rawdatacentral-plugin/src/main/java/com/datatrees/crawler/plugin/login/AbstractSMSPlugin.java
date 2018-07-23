@@ -16,8 +16,8 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
 
     private Logger         logger         = LoggerFactory.getLogger(AbstractSMSPlugin.class);
+
     private MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
 
     public Map<String, String> doProcess(Map<String, String> paramMap) throws Exception {

@@ -3,9 +3,9 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- *
  * Copyright (c) datatrees.com Inc. 2014
  */
+
 package com.datatrees.common.protocol.util;
 
 import java.nio.charset.Charset;
@@ -23,12 +23,18 @@ import org.slf4j.LoggerFactory;
  * @since Feb 20, 2014 9:43:26 AM
  */
 public class CharsetUtil {
-    private static final Logger LOGGER  = LoggerFactory.getLogger(CharsetUtil.class);
+
     public static final  Charset ASCII      = Consts.ASCII;
+
     public static final  Charset ISO_8859_1 = Consts.ISO_8859_1;
+
     public static final  Charset UTF_8      = Consts.UTF_8;
+
     public static final  String  UTF_8_NAME = UTF_8.name();
+
     public static final  String  DEFAULT    = UTF_8_NAME;
+
+    private static final Logger  LOGGER     = LoggerFactory.getLogger(CharsetUtil.class);
 
     public static Charset getCharset(String charsetName, String defaultCharset) {
         Charset charset = null;
@@ -37,8 +43,7 @@ public class CharsetUtil {
             try {
                 charset = Charset.forName(charsetName);
             } catch (UnsupportedCharsetException e) {
-                LOGGER.warn("Charset '{}' is not supported. And use default charset '{}' instead.", charsetName,
-                        defaultCharset);
+                LOGGER.warn("Charset '{}' is not supported. And use default charset '{}' instead.", charsetName, defaultCharset);
             }
         }
 

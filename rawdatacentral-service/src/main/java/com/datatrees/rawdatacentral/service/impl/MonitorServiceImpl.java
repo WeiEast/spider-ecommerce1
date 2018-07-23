@@ -16,9 +16,9 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,12 +28,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class MonitorServiceImpl implements MonitorService {
 
-    private static final Logger logger               = LoggerFactory.getLogger(MonitorServiceImpl.class);
-    private static final String DEFAULT_CHARSET_NAME = "UTF-8";
+    private static final Logger             logger               = LoggerFactory.getLogger(MonitorServiceImpl.class);
+
+    private static final String             DEFAULT_CHARSET_NAME = "UTF-8";
+
     @Resource
-    private CrawlerTaskService crawlerTaskService;
+    private              CrawlerTaskService crawlerTaskService;
+
     @Resource
-    private DefaultMQProducer  defaultMQProducer;
+    private              DefaultMQProducer  defaultMQProducer;
 
     @Override
     public void initTask(Long taskId, String websiteName, Object userName) {

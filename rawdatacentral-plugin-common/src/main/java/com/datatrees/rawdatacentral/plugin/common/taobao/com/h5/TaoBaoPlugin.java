@@ -26,15 +26,15 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util.QRUtils;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.treefinance.proxy.domain.IpLocale;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -50,23 +50,81 @@ import org.slf4j.LoggerFactory;
 public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
 
     private static final Logger         logger                   = LoggerFactory.getLogger(TaoBaoPlugin.class);
+
     private static final String         IS_RUNNING               = "economic_qr_is_runing_";
+
     private static final String         IS_INIT                  = "economic_qr_is_init_";
+
     private static final String         QR_STATUS                = "economic_qr_status_";
+
     private static final String         ALIPAY_URL               = "https://consumeprod.alipay.com/record/advanced.htm";
+
     private static final String         AUTO_SIGN_ALIPAY_URL     = ALIPAY_URL + "?sign_from=3000";
-    private static final String         preLoginUrl              = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" + encodeUrl(AUTO_SIGN_ALIPAY_URL);
+
+    private static final String         preLoginUrl              = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" +
+            encodeUrl(AUTO_SIGN_ALIPAY_URL);
+
     private static final String         UMID_CACHE_PREFIX        = "TAOBAO_QRCODE_AUTH_LOGIN_UMID_TOKEN_";
+
     private static final String         UAB_COLLINA_CACHE_PREFIX = "TAOBAO_QRCODE_AUTH_LOGIN_UAB_COLLINA_";
+
     private static final String         UMID_PARAM               = "umid_token";
+
     private static final String         UAB_COLLINA_COOKIE       = "uab_collina";
+
     private static final String         QRCODE_GEN_TIME_KEY      = "com.treefinance.rawdatacentral.ecommerce.h5_login.qrcode.gen_time:";
+
     /**
      * qrcode 过期时间，单位：秒
      */
     private static final int            QRCODE_EXPIRATION        = 240;
+
     private              MonitorService monitorService;
+
     private              MessageService messageService;
+
+    private static void markQRStatus(CommonPluginParam param, QRCodeVerification.QRCodeStatus qrCodeStatus) {
+        RedisUtils.set(QR_STATUS + param.getTaskId(), qrCodeStatus.name(), 60 * 2);
+    }
+
+    private static String encodeUrl(String queryString) {
+        try {
+            return URLEncoder.encode(queryString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.warn(e.getMessage());
+        }
+
+        return queryString;
+    }
+
+    private static String timestampFlag() {
+        return System.currentTimeMillis() + "_" + (int) (Math.random() * 1000);
+    }
+
+    private static TaoBaoPlugin.UMID getUMID(boolean init, CommonPluginParam param) {
+        String uabCollina = RedisUtils.get(UAB_COLLINA_CACHE_PREFIX + param.getTaskId());
+        long timestamp = System.currentTimeMillis();
+        if (init && StringUtils.isEmpty(uabCollina)) {
+            uabCollina = timestamp + random(11);
+            RedisUtils.set(UAB_COLLINA_CACHE_PREFIX + param.getTaskId(), uabCollina, 60 * 10);
+        }
+
+        String umidToken = RedisUtils.get(UMID_CACHE_PREFIX + param.getTaskId());
+        if (init || StringUtils.isEmpty(umidToken)) {
+            umidToken = "C" + uabCollina + timestamp + random(3);
+            RedisUtils.set(UMID_CACHE_PREFIX + param.getTaskId(), umidToken, 60 * 10);
+        }
+
+        return new TaoBaoPlugin.UMID(umidToken, uabCollina);
+    }
+
+    private static String random(int length) {
+        StringBuilder text = new StringBuilder(length);
+        for (; text.length() < length; ) {
+            text.append(String.valueOf(Math.random()).substring(2));
+        }
+        return text.substring(text.length() - length);
+    }
 
     public MonitorService getMonitorService() {
         if (monitorService == null) {
@@ -158,8 +216,12 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
             try {
                 UMID umid = getUMID(true, param);
 
-                String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&appkey=00000000&_ksTS={}&callback=json&" + UMID_PARAM + "=" + umid.token;
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl, timestampFlag()).setReferer(preLoginUrl).addExtralCookie("taobao.com", UAB_COLLINA_COOKIE, umid.uab).invoke();
+                String templateUrl =
+                        "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&appkey=00000000&_ksTS={}&callback=json&" +
+                                UMID_PARAM + "=" + umid.token;
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+                        .setFullUrl(templateUrl, timestampFlag()).setReferer(preLoginUrl).addExtralCookie("taobao.com", UAB_COLLINA_COOKIE, umid.uab)
+                        .invoke();
                 String jsonString = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(jsonString);
 
@@ -168,7 +230,8 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
                     imgUrl = "https:" + imgUrl;
                 }
 
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(imgUrl).setReferer(preLoginUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(imgUrl)
+                        .setReferer(preLoginUrl).invoke();
 
                 QRUtils qrUtils = new QRUtils();
                 String qrText = qrUtils.parseCode(response.getResponse());
@@ -253,10 +316,24 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
         return null;
     }
 
+    private static class UMID {
+
+        private final String token;
+
+        private final String uab;
+
+        public UMID(String token, String uab) {
+            this.token = token;
+            this.uab = uab;
+        }
+    }
+
     private class QRCodeStatusQuery implements Runnable {
 
         private final CommonPluginParam param;
+
         private final String            cacheKey;
+
         private       String            lastFailure;
 
         QRCodeStatusQuery(CommonPluginParam param) {
@@ -332,10 +409,12 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
 
             Response response = null;
             try {
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(loginUrl).setReferer(preLoginUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(loginUrl)
+                        .setReferer(preLoginUrl).invoke();
                 String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
                 String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(redirectUrl).setReferer(referer).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(redirectUrl)
+                        .setReferer(referer).invoke();
                 processCertCheck(param.getTaskId(), param.getWebsiteName(), "", response.getPageContent());
             } catch (Exception e) {
                 markQRStatus(param, QRCodeVerification.QRCodeStatus.FAILED);
@@ -416,7 +495,8 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
             Response response = null;
             try {
                 String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+                        .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
                 String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(resultJson);
                 String code = json.getString("code");
@@ -428,60 +508,6 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
                 logger.error("获取二维码状态失败，param={},response={}", param, response, e);
             }
             return StringUtils.EMPTY;
-        }
-    }
-
-    private static void markQRStatus(CommonPluginParam param, QRCodeVerification.QRCodeStatus qrCodeStatus) {
-        RedisUtils.set(QR_STATUS + param.getTaskId(), qrCodeStatus.name(), 60 * 2);
-    }
-
-    private static String encodeUrl(String queryString) {
-        try {
-            return URLEncoder.encode(queryString, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.warn(e.getMessage());
-        }
-
-        return queryString;
-    }
-
-    private static String timestampFlag() {
-        return System.currentTimeMillis() + "_" + (int) (Math.random() * 1000);
-    }
-
-    private static TaoBaoPlugin.UMID getUMID(boolean init, CommonPluginParam param) {
-        String uabCollina = RedisUtils.get(UAB_COLLINA_CACHE_PREFIX + param.getTaskId());
-        long timestamp = System.currentTimeMillis();
-        if (init && StringUtils.isEmpty(uabCollina)) {
-            uabCollina = timestamp + random(11);
-            RedisUtils.set(UAB_COLLINA_CACHE_PREFIX + param.getTaskId(), uabCollina, 60 * 10);
-        }
-
-        String umidToken = RedisUtils.get(UMID_CACHE_PREFIX + param.getTaskId());
-        if (init || StringUtils.isEmpty(umidToken)) {
-            umidToken = "C" + uabCollina + timestamp + random(3);
-            RedisUtils.set(UMID_CACHE_PREFIX + param.getTaskId(), umidToken, 60 * 10);
-        }
-
-        return new TaoBaoPlugin.UMID(umidToken, uabCollina);
-    }
-
-    private static String random(int length) {
-        StringBuilder text = new StringBuilder(length);
-        for (; text.length() < length; ) {
-            text.append(String.valueOf(Math.random()).substring(2));
-        }
-        return text.substring(text.length() - length);
-    }
-
-    private static class UMID {
-
-        private final String token;
-        private final String uab;
-
-        public UMID(String token, String uab) {
-            this.token = token;
-            this.uab = uab;
         }
     }
 }

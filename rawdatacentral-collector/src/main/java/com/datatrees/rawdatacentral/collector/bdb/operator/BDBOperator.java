@@ -18,13 +18,21 @@ import org.slf4j.LoggerFactory;
 public class BDBOperator implements Operator {
 
     private static final Logger               log             = LoggerFactory.getLogger(BDBOperator.class);
+
     private static       LinkNodeTupleBinding linkNodeBinding = new LinkNodeTupleBinding();
+
     private              Database             linkDB          = null;
+
     private              SecondaryDatabase    slinkDB         = null;
+
     private              Cursor               queueFront      = null;
+
     private              BDBWapper            bdbWapper       = null;
+
     private              String               databaseName    = null;
+
     private              long                 currentId       = 1;
+
     private              long                 lastFetchId     = 0;
 
     public BDBOperator() throws Exception {
@@ -36,7 +44,7 @@ public class BDBOperator implements Operator {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.colander.taskworker.util.Operator#select(com.datatrees.vt.core.processer.bean
      * .LinkNode)
@@ -116,7 +124,7 @@ public class BDBOperator implements Operator {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.colander.taskworker.util.Operator#select(com.datatrees.vt.core.processer.bean
      * .LinkNode)
@@ -154,7 +162,8 @@ public class BDBOperator implements Operator {
                     }
                     newLinkNum++;
                     currentId = currentId + 1;
-                    log.info("url add to linkQueue, url: " + link.getUrl() + " depth : " + link.getDepth() + ", currentId " + currentId + ", lastFetchedId : " + lastFetchId);
+                    log.info("url add to linkQueue, url: " + link.getUrl() + " depth : " + link.getDepth() + ", currentId " + currentId +
+                            ", lastFetchedId : " + lastFetchId);
                 }
             } else {
                 log.debug("already exists in queue" + foundValue.getData());

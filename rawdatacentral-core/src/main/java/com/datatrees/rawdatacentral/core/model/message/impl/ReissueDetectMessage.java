@@ -21,7 +21,9 @@ import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
 public class ReissueDetectMessage extends MessageInfo {
 
     private int            userId;
+
     private String         bankBillsKey;
+
     private List<MailBill> mailBills;
 
     /**
@@ -68,7 +70,7 @@ public class ReissueDetectMessage extends MessageInfo {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

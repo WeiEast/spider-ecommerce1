@@ -21,8 +21,9 @@ public class BaseCookie extends AbstractCookie {
     /**
      *
      */
-    private static final long serialVersionUID = -1065814613979865015L;
-    private Boolean coexist;
+    private static final long    serialVersionUID = -1065814613979865015L;
+
+    private              Boolean coexist;
 
     @Attr("coexist")
     public Boolean getCoexist() {

@@ -5,9 +5,9 @@ import javax.annotation.Resource;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.rawdatacentral.service.website.WebsiteHolder;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import org.springframework.stereotype.Component;
 
 @Component

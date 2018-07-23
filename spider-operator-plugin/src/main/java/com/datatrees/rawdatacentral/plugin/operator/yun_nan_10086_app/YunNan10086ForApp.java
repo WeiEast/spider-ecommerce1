@@ -10,13 +10,13 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -34,7 +34,9 @@ import org.slf4j.LoggerFactory;
 public class YunNan10086ForApp implements OperatorPluginService {
 
     private static final Logger logger       = LoggerFactory.getLogger(YunNan10086ForApp.class);
+
     private static final String templateUrl  = "http://www.yn.10086.cn/appsrv/actionDispatcher.do";
+
     private              String templateData = "deviceid=D7F40D126FE979D7C24E5FB874DBB84D&appKey=11100&cstamp={}&internet=WIFI&sys_version=6.0.1" +
             "&screen" + "=1080x1920&model=Mi Note 2&imsi=460078065323889&imei=8697{}&md5sign={}&jsonParam={}";
 

@@ -4,10 +4,10 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.spider.operator.service.impl.WebsiteOperatorServiceImpl;
 import com.datatrees.spider.operator.api.WebsiteOperatorApi;
-import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.service.impl.WebsiteOperatorServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

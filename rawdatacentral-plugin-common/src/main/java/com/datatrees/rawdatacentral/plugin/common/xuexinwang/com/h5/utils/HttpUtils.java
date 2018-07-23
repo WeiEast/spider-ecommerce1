@@ -1,5 +1,10 @@
 package com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -22,11 +27,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import static org.apache.http.entity.ContentType.MULTIPART_FORM_DATA;
 
 /**
@@ -34,9 +34,11 @@ import static org.apache.http.entity.ContentType.MULTIPART_FORM_DATA;
  */
 public class HttpUtils {
 
-    public static final String CHARSET = "UTF-8";
+    public static final  String              CHARSET = "UTF-8";
+
     private static final CloseableHttpClient httpClient;
-    private static Logger logger = LoggerFactory.getLogger(HttpUtils.class);
+
+    private static       Logger              logger  = LoggerFactory.getLogger(HttpUtils.class);
 
     static {
         RequestConfig config = RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(3000).build();
@@ -92,24 +94,20 @@ public class HttpUtils {
         return null;
     }
 
-    public static String doPostForImage(String url, Map<String,String> headers,String appid,String bucket,byte[] bytes,String fileName) {
+    public static String doPostForImage(String url, Map<String, String> headers, String appid, String bucket, byte[] bytes, String fileName) {
         if (StringUtils.isBlank(url)) {
             return null;
         }
 
-        CloseableHttpResponse response=null;
+        CloseableHttpResponse response = null;
         try {
             HttpPost httpPost = new HttpPost(url);
 
             if (null != bytes) {
 
                 MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-                multipartEntityBuilder
-                        .setContentType(MULTIPART_FORM_DATA)
-                        .setMode(HttpMultipartMode.RFC6532)
-                        .addPart("appid",new StringBody(appid))
-                        .addPart("bucket",new StringBody(bucket))
-                        .addPart("image",new ByteArrayBody(bytes,fileName));
+                multipartEntityBuilder.setContentType(MULTIPART_FORM_DATA).setMode(HttpMultipartMode.RFC6532).addPart("appid", new StringBody(appid))
+                        .addPart("bucket", new StringBody(bucket)).addPart("image", new ByteArrayBody(bytes, fileName));
                 httpPost.setEntity(multipartEntityBuilder.build());
 
                 List<Header> headerList = new ArrayList<>();

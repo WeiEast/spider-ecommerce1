@@ -26,9 +26,11 @@ public class SearchSequenceUnit implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = -3034367943949209346L;
-    private Integer depth;
-    private Page    page;
+    private static final long    serialVersionUID = -3034367943949209346L;
+
+    private              Integer depth;
+
+    private              Page    page;
 
     @Attr("depth")
     public Integer getDepth() {

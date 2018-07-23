@@ -21,11 +21,16 @@ import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
  */
 public class ParentTask {
 
-    private int              taskId;
-    private String           cookie;
-    private String           websiteName;
-    private CollectorMessage collectorMessage;
-    private Map<String, Object> property = new HashMap<String, Object>();
+    private int                    taskId;
+
+    private String                 cookie;
+
+    private String                 websiteName;
+
+    private CollectorMessage       collectorMessage;
+
+    private Map<String, Object>    property = new HashMap<String, Object>();
+
     private SearchProcessorContext processorContext;
 
     /**
@@ -114,7 +119,7 @@ public class ParentTask {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

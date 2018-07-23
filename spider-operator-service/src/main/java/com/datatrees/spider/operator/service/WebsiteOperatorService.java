@@ -92,7 +92,7 @@ public interface WebsiteOperatorService {
      * @param websiteName 站点
      * @param enable      状态
      * @param auto        true:自动,false:手动
-     * @return from,to
+     * @return from, to
      */
     Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto);
 
@@ -110,6 +110,5 @@ public interface WebsiteOperatorService {
      * @return
      */
     OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
-
 
 }

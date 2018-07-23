@@ -7,9 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
@@ -28,7 +26,9 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin implements QRCodeVerification {
 
     int verifyQRCodeCount = 0;
+
     private Logger         logger         = LoggerFactory.getLogger(AbstractQRCodePlugin.class);
+
     private MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
 
     @Override

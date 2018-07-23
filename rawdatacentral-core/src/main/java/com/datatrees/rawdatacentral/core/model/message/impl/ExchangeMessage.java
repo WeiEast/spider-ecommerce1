@@ -18,7 +18,9 @@ import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
 public class ExchangeMessage extends MessageInfo {
 
     private String websiteName;
+
     private int    userId;
+
     private String message;
 
     /**

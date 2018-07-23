@@ -35,7 +35,9 @@ public interface QRCodeVerification {
     public class QRCodeResult {
 
         public QRCodeStatus        status;
+
         public String              remark;
+
         public Map<String, Object> result;
 
         /**

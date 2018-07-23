@@ -21,6 +21,7 @@ public enum Option {
     ON("on"),
     NORMAL("normal"),
     AUTO("auto");
+
     private static Map<String, Option> OptionTypeMap = new HashMap<String, Option>();
 
     static {

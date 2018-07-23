@@ -31,6 +31,7 @@ import org.apache.commons.collections.MapUtils;
 public abstract class Plugin<T extends AbstractPlugin> extends ProcessorInvokerAdapter {
 
     private final T                        metadata;
+
     private final AbstractProcessorContext context;
 
     public Plugin(@Nonnull T metadata, @Nonnull AbstractProcessorContext context) {

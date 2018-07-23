@@ -32,13 +32,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class EcommerceMessageNormalizer implements DataNormalizer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EcommerceMessageNormalizer.class);
+    private static final Logger           LOGGER = LoggerFactory.getLogger(EcommerceMessageNormalizer.class);
+
     @Resource
-    private EcommerceService ecommerceService;
+    private              EcommerceService ecommerceService;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)
@@ -52,7 +53,8 @@ public class EcommerceMessageNormalizer implements DataNormalizer {
             message.setTypeId(this.getEcommerceId(message));
             ((EcommerceData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if ((object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EcommerceData.class.getSimpleName()))) {
+        } else if ((object instanceof HashMap &&
+                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EcommerceData.class.getSimpleName()))) {
             EcommerceData ecommerceData = new EcommerceData();
             ecommerceData.putAll((Map) object);
             ecommerceData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

@@ -24,7 +24,9 @@ import org.slf4j.LoggerFactory;
 public class CurrencyFormatter extends CommonFormatter<String> {
 
     private static final Logger              log                  = LoggerFactory.getLogger(CurrencyFormatter.class);
+
     private static final Map<String, String> DEFAULT_CURRENCY_MAP = new HashMap<>();
+
     private static final String              DEFAULT_CURRENCY     = "RMB";
 
     static {

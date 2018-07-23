@@ -15,14 +15,14 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.constant.PerpertyKey;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +40,10 @@ import org.slf4j.LoggerFactory;
 public class China10086ForShop implements OperatorPluginService {
 
     private static final Logger  logger       = LoggerFactory.getLogger(China10086ForShop.class);
+
     //这个是最小的通道
     private              Integer minChannelID = 12002;
+
     //这个之后没试过
     private              Integer maxChannelID = 12011;
 
@@ -353,9 +355,8 @@ public class China10086ForShop implements OperatorPluginService {
             String referer = "https://login.10086.cn/html/login/login.html";
             String channelID = TaskUtils.getTaskShare(param.getTaskId(), "channelID");
             response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004")
-                    .setFullUrl(templateUrl, param.getMobile(), URLEncoder.encode(encryptPwd,"UTF-8"), param.getSmsCode(), param.getPicCode(),
-                            channelID,
-                            System.currentTimeMillis()).setReferer(referer).invoke();
+                    .setFullUrl(templateUrl, param.getMobile(), URLEncoder.encode(encryptPwd, "UTF-8"), param.getSmsCode(), param.getPicCode(),
+                            channelID, System.currentTimeMillis()).setReferer(referer).invoke();
             /**
              * 结果枚举:
              * 登陆成功:{"artifact":"3490872f8d114992b44dc4e60f595fa0","assertAcceptURL":"http://shop.10086.cn/i/v1/auth/getArtifact"
@@ -367,7 +368,7 @@ public class China10086ForShop implements OperatorPluginService {
              新输入","islocal":false,"result":"2"}
              重复登陆:{"islocal":false,"result":"9"}
              */
-            logger.info("帮助查询问题{},响应：{}",param.getTaskId(),response.getPageContent());
+            logger.info("帮助查询问题{},响应：{}", param.getTaskId(), response.getPageContent());
             //没有设置referer会出现connect reset
             JSONObject json = response.getPageContentForJSON();
             //重复登陆:{"islocal":false,"result":"9"}

@@ -27,6 +27,7 @@ public enum ResultClassType {
     ECOMMERCE_ADDRESSES("Ecommerce.Addresses"),
     ECOMMERCE_BANKCARDS("Ecommerce.BankCards"),
     ECOMMERCE_FEESACCOUNTS("Ecommerce.FeesAccounts");
+
     private static Map<String, ResultClassType> ResultTypeMap = new HashMap<String, ResultClassType>();
 
     static {

@@ -27,8 +27,9 @@ public class ParserOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 7608874201077082625L;
-    private Parser parser;
+    private static final long   serialVersionUID = 7608874201077082625L;
+
+    private              Parser parser;
 
     @Attr(value = "ref", referenced = true)
     public Parser getParser() {

@@ -41,34 +41,34 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Handles the process of executing a method including authentication, redirection and retries.
- *
  * @since 3.0
  */
 public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
-    private static final Log LOG = LogFactory.getLog(ProtocolHttpMethodDirector.class);
+    private static final Log                    LOG               = LogFactory.getLog(ProtocolHttpMethodDirector.class);
 
-    private ConnectMethod         connectMethod;
+    private              ConnectMethod          connectMethod;
 
-    private HttpState             state;
+    private              HttpState              state;
 
-    private HostConfiguration     hostConfiguration;
+    private              HostConfiguration      hostConfiguration;
 
-    private HttpConnectionManager connectionManager;
+    private              HttpConnectionManager  connectionManager;
 
-    private HttpClientParams      params;
+    private              HttpClientParams       params;
 
-    private HttpConnection        conn;
+    private              HttpConnection         conn;
 
     /** A flag to indicate if the connection should be released after the method is executed. */
-    private boolean                releaseConnection = false;
+    private              boolean                releaseConnection = false;
 
     /** Authentication processor */
-    private AuthChallengeProcessor authProcessor     = null;
+    private              AuthChallengeProcessor authProcessor     = null;
 
-    private Set                    redirectLocations = null;
+    private              Set                    redirectLocations = null;
 
-    public ProtocolHttpMethodDirector(final HttpConnectionManager connectionManager, final HostConfiguration hostConfiguration, final HttpClientParams params, final HttpState state) {
+    public ProtocolHttpMethodDirector(final HttpConnectionManager connectionManager, final HostConfiguration hostConfiguration,
+            final HttpClientParams params, final HttpState state) {
         super(connectionManager, hostConfiguration, params, state);
         this.connectionManager = connectionManager;
         this.hostConfiguration = hostConfiguration;
@@ -77,12 +77,10 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
         this.authProcessor = new AuthChallengeProcessor(this.params);
     }
 
-
     /**
      * Executes the method associated with this method director.
-     *
-     * @throws IOException
-     * @throws HttpException
+     * @exception IOException
+     * @exception HttpException
      */
     public void executeMethod(final HttpMethod method) throws IOException, HttpException {
         if (method == null) {
@@ -106,7 +104,7 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
         try {
             int maxRedirects = this.params.getIntParameter(HttpClientParams.MAX_REDIRECTS, 100);
 
-            for (int redirectCount = 0;;) {
+            for (int redirectCount = 0; ; ) {
 
                 // make sure the connection we have is appropriate
                 if (this.conn != null && !hostConfiguration.hostEquals(this.conn)) {
@@ -183,7 +181,6 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
     }
 
-
     private void authenticate(final HttpMethod method) {
         try {
             if (this.conn.isProxied() && !this.conn.isSecure()) {
@@ -194,7 +191,6 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
             LOG.error(e.getMessage(), e);
         }
     }
-
 
     private boolean cleanAuthHeaders(final HttpMethod method, final String name) {
         Header[] authheaders = method.getRequestHeaders(name);
@@ -209,7 +205,6 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
         }
         return clean;
     }
-
 
     private void authenticateHost(final HttpMethod method) throws AuthenticationException {
         // Clean up existing authentication headers
@@ -249,7 +244,6 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
         }
     }
 
-
     private void authenticateProxy(final HttpMethod method) throws AuthenticationException {
         // Clean up existing authentication headers
         if (!cleanAuthHeaders(method, PROXY_AUTH_RESP)) {
@@ -283,13 +277,10 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
         }
     }
 
-
     /**
      * Applies connection parameters specified for a given method
-     *
      * @param method HTTP method
-     *
-     * @throws IOException if an I/O occurs setting connection parameters
+     * @exception IOException if an I/O occurs setting connection parameters
      */
     private void applyConnectionParams(final HttpMethod method) throws IOException {
         int timeout = 0;
@@ -307,11 +298,10 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Executes a method with the current hostConfiguration.
-     *
-     * @throws IOException if an I/O (transport) error occurs. Some transport exceptions
-     * can be recovered from.
-     * @throws HttpException  if a protocol exception occurs. Usually protocol exceptions
-     * cannot be recovered from.
+     * @exception IOException   if an I/O (transport) error occurs. Some transport exceptions
+     *                          can be recovered from.
+     * @exception HttpException if a protocol exception occurs. Usually protocol exceptions
+     *                          cannot be recovered from.
      */
     private void executeWithRetry(final HttpMethod method) throws IOException, HttpException {
 
@@ -402,11 +392,9 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Executes a ConnectMethod to establish a tunneled connection.
-     *
      * @return <code>true</code> if the connect was successful
-     *
-     * @throws IOException
-     * @throws HttpException
+     * @exception IOException
+     * @exception HttpException
      */
     private boolean executeConnect() throws IOException, HttpException {
 
@@ -414,7 +402,7 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
         this.connectMethod.getParams().setDefaults(this.hostConfiguration.getParams());
 
         int code;
-        for (;;) {
+        for (; ; ) {
             if (!this.conn.isOpen()) {
                 this.conn.open();
             }
@@ -482,7 +470,8 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
         // the wrapped method closes the response connection in
         // releaseConnection().
         if (method instanceof HttpMethodBase) {
-            ((HttpMethodBase) method).fakeResponse(this.connectMethod.getStatusLine(), this.connectMethod.getResponseHeaderGroup(), this.connectMethod.getResponseBodyAsStream());
+            ((HttpMethodBase) method).fakeResponse(this.connectMethod.getStatusLine(), this.connectMethod.getResponseHeaderGroup(),
+                    this.connectMethod.getResponseBodyAsStream());
             method.getProxyAuthState().setAuthScheme(this.connectMethod.getProxyAuthState().getAuthScheme());
             this.connectMethod = null;
         } else {
@@ -493,7 +482,6 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Process the redirect response.
-     *
      * @return <code>true</code> if the redirect was successful
      */
     private boolean processRedirectResponse(final HttpMethod method) throws RedirectException {
@@ -549,7 +537,8 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
             throw new InvalidRedirectLocationException("Invalid redirect location: " + location, location, ex);
         }
 
-        if (this.params.isParameterFalse(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS) || method.getParams().isParameterFalse(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS)) {
+        if (this.params.isParameterFalse(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS) ||
+                method.getParams().isParameterFalse(HttpClientParams.ALLOW_CIRCULAR_REDIRECTS)) {
             if (this.redirectLocations == null) {
                 this.redirectLocations = new HashSet();
             }
@@ -578,12 +567,10 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Processes a response that requires authentication
-     *
      * @param method the current {@link HttpMethod HTTP method}
-     *
      * @return <tt>true</tt> if the authentication challenge can be responsed to,
-     *   (that is, at least one of the requested authentication scheme is supported,
-     *   and matching credentials have been found), <tt>false</tt> otherwise.
+     * (that is, at least one of the requested authentication scheme is supported,
+     * and matching credentials have been found), <tt>false</tt> otherwise.
      */
     private boolean processAuthenticationResponse(final HttpMethod method) {
         LOG.trace("enter HttpMethodBase.processAuthenticationResponse(" + "HttpState, HttpConnection)");
@@ -714,9 +701,7 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Tests if the {@link HttpMethod method} requires a redirect to another location.
-     *
      * @param method HTTP method
-     *
      * @return boolean <tt>true</tt> if a retry is needed, <tt>false</tt> otherwise.
      */
     private boolean isRedirectNeeded(final HttpMethod method) {
@@ -738,9 +723,7 @@ public class ProtocolHttpMethodDirector extends HttpMethodDirector {
 
     /**
      * Tests if the {@link HttpMethod method} requires authentication.
-     *
      * @param method HTTP method
-     *
      * @return boolean <tt>true</tt> if a retry is needed, <tt>false</tt> otherwise.
      */
     private boolean isAuthenticationNeeded(final HttpMethod method) {

@@ -22,6 +22,7 @@ public enum CookieScope implements Serializable {
     USER_SESSION("user_session"),
     SESSION("session"),
     CUSTOM("custom");
+
     private static Map<String, CookieScope> scopeMap = new HashMap<String, CookieScope>();
 
     static {

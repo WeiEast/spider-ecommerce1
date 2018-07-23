@@ -18,11 +18,17 @@ import java.util.HashMap;
 public class ResultMessage extends HashMap<String, Object> {
 
     public final static String TASK_ID        = "taskId";
+
     public final static String WEBSITE_NAME   = "websiteName";
+
     public final static String STATUS         = "status";// "status":SUCCESS/FAIL/WAITING_FOR_SMS_VERIFY/WAITING_FOR_PICTURE_VERIFY,
+
     public final static String ISRESULT_EMPTY = "isResultEmpty";
+
     public final static String REMARK         = "remark";
+
     public final static String WEBSITE_TYPE   = "websiteType";
+
     public final static String LEVAL_1_STATUS = "level1Status";
 
     /**

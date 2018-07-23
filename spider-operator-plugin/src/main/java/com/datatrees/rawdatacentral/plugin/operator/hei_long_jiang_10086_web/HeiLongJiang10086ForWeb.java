@@ -10,14 +10,14 @@ import com.alibaba.fastjson.JSONPath;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -325,8 +325,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
     private String getEncryptPwdNew(OperatorParam param) {
         Response response = null;
         try {
-            String modulus
-                    = "85592c52c613c934";
+            String modulus = "85592c52c613c934";
             String exponent = "85592c52c613c934";
             String templateUrl = "http://hl.10086.cn/rest/rsa/aes-key?_={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_003")

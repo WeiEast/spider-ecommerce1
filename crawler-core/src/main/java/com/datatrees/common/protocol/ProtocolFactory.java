@@ -3,9 +3,9 @@
  * copying and reproduction of this document and/or its content (whether wholly or partly) or any
  * incorporation of the same into any other material in any media or format of any kind is strictly
  * prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
+
 package com.datatrees.common.protocol;
 
 import java.util.concurrent.ExecutionException;
@@ -47,12 +47,16 @@ public class ProtocolFactory {
     }
 
     public enum ProtocolType {
-        HTTP, FTP, FILE, SFTP;
+        HTTP,
+        FTP,
+        FILE,
+        SFTP;
     }
 
     private static class Key {
 
         private final Configuration conf;
+
         private final String        type;
 
         public Key(Configuration conf, String type) {

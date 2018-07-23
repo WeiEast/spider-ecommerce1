@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ProcessPipeline {
 
     protected final Logger   logger   = LoggerFactory.getLogger(getClass());
+
     private         Pipeline pipeline = new StandardPipeline();
 
     public ProcessPipeline() {

@@ -16,10 +16,10 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.model.Keyword;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.service.KeywordService;
+import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -34,9 +34,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CrawlExecutor {
 
-    private static final Logger log = LoggerFactory.getLogger(CrawlExecutor.class);
+    private static final Logger         log = LoggerFactory.getLogger(CrawlExecutor.class);
+
     @Resource
-    private KeywordService keywordService;
+    private              KeywordService keywordService;
 
     /**
      * @param searchProcessor
@@ -51,7 +52,8 @@ public class CrawlExecutor {
             if (!linkQueue.init()) {
                 Task task = searchProcessor.getTask();
                 task.setErrorCode(ErrorCode.INIT_QUEUE_FAILED_ERROR_CODE);
-                log.info("{} -- The queue is empty, the system will exit. Template: {}", searchTemplateConfig.getType(), searchProcessor.getSearchTemplate());
+                log.info("{} -- The queue is empty, the system will exit. Template: {}", searchTemplateConfig.getType(),
+                        searchProcessor.getSearchTemplate());
                 return;
             }
 
@@ -79,7 +81,8 @@ public class CrawlExecutor {
 
     private void doExecute(SearchProcessor searchProcessor, LinkQueue linkQueue, String keyword, Integer threadCount) throws ResultEmptyException {
         searchProcessor.initWithKeyword(keyword);
-        String url = SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), keyword, searchProcessor.getEncoding(), 0, true, searchProcessor.getProcessorContext().getContext());
+        String url = SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), keyword, searchProcessor.getEncoding(), 0, true,
+                searchProcessor.getProcessorContext().getContext());
 
         log.info("Actual search seed url: {}", url);
 
@@ -87,7 +90,8 @@ public class CrawlExecutor {
         this.doLoopCrawl(searchProcessor, linkQueue, linkNode, threadCount);
     }
 
-    private void doLoopCrawl(SearchProcessor searchProcessor, LinkQueue linkQueue, LinkNode linkNode, Integer threadCount) throws ResultEmptyException {
+    private void doLoopCrawl(SearchProcessor searchProcessor, LinkQueue linkQueue, LinkNode linkNode,
+            Integer threadCount) throws ResultEmptyException {
         Task task = searchProcessor.getTask();
         log.info("Start doLoopCrawl , Task id: {}, linkNode: {}", task.getId(), linkNode);
         if (linkNode != null && StringUtils.isNotBlank(linkNode.getUrl())) {
@@ -183,7 +187,8 @@ public class CrawlExecutor {
         boolean timeout = searchProcessor.isTimeout(currentTime);
 
         if (timeout) {
-            log.debug("Crawl task is time out! taskId : {}, startTime: {}, now: {}", searchProcessor.getTaskId(), searchProcessor.getStartTime(), currentTime);
+            log.debug("Crawl task is time out! taskId : {}, startTime: {}, now: {}", searchProcessor.getTaskId(), searchProcessor.getStartTime(),
+                    currentTime);
         }
 
         return timeout;

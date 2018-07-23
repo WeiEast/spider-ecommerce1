@@ -8,8 +8,10 @@ import java.io.IOException;
 public class ImageResource extends HtmlResource {
 
     private final BufferedImage image;
-    private double x = 0;
-    private double y = 0;
+
+    private       double        x = 0;
+
+    private       double        y = 0;
 
     public ImageResource(String name, BufferedImage image) {
         super(name);

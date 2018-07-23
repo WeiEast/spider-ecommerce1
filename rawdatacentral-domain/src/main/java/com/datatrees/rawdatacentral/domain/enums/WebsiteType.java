@@ -22,7 +22,8 @@ public enum WebsiteType {
     ECOMMERCE("ecommerce", "3"),
     BANK("bank", "4"),
     INTERNAL("internal", "5"),
-    EDUCATION("education","6");
+    EDUCATION("education", "6");
+
     private static Map<String, WebsiteType> WebsiteTypeMap = new HashMap<String, WebsiteType>();
 
     static {
@@ -32,6 +33,7 @@ public enum WebsiteType {
     }
 
     private final String value;
+
     private final String type;
 
     WebsiteType(String type, String value) {
@@ -51,7 +53,7 @@ public enum WebsiteType {
         return type;
     }
 
-    public byte val(){
+    public byte val() {
         return Byte.parseByte(value);
     }
 }

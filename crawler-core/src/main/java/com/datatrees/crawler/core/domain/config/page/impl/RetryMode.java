@@ -21,6 +21,7 @@ public enum RetryMode {
     REQUEUE("requeue"),
     PROXY_RETRY("proxy_retry"),
     PROXY_REQUEUE("proxy_requeue");
+
     private static Map<String, RetryMode> retryModeMap = new HashMap<String, RetryMode>();
 
     static {

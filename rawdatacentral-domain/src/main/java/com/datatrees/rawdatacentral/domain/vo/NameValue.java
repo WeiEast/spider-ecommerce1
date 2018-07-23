@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class NameValue implements Serializable {
 
     private String name;
+
     private String value;
 
     public NameValue() {

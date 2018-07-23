@@ -28,7 +28,8 @@ public class ReturnOperationImpl extends Operation<ReturnOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ReturnOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ReturnOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         return operatingData;
     }
 

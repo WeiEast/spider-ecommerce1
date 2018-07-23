@@ -11,43 +11,52 @@ public class DirectiveResult<T> implements Serializable {
     /**
      * 应用名称
      */
-    private static final String appName  = "rawdatacentral";
+    private static final String  appName       = "rawdatacentral";
+
     /**
      * 当前线程ID
      */
-    private static       String threadId = "t0";
+    private static       String  threadId      = "t0";
+
     /**
      * 指令ID
      */
-    private String directiveId;
+    private              String  directiveId;
+
     /**
      * 发送指令后,是否等待插件处理完成并返回数据
      */
-    private boolean requireReturn = false;
+    private              boolean requireReturn = false;
+
     /**
      * 交互类别
      */
-    private String type;
+    private              String  type;
+
     /**
      * 任务ID
      */
-    private long   taskId;
+    private              long    taskId;
+
     /**
      * 当前指令状态
      */
-    private String status;
+    private              String  status;
+
     /**
      * 错误代码
      */
-    private String errorCode;
+    private              String  errorCode;
+
     /**
      * 错误信息
      */
-    private String errorMsg;
+    private              String  errorMsg;
+
     /**
      * 交互数据
      */
-    private T      data;
+    private              T       data;
 
     @Deprecated
     public DirectiveResult() {

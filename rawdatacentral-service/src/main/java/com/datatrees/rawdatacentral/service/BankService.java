@@ -22,7 +22,7 @@ public interface BankService {
      * @param
      * @return
      */
-//    Bank getByWebsiteIdFromCache(Integer websiteId);
+    //    Bank getByWebsiteIdFromCache(Integer websiteId);
 
     Bank getByWebsiteName(String websiteName);
 
@@ -38,7 +38,7 @@ public interface BankService {
      * @param websiteId
      * @return
      */
-//    Bank getEnabledByWebsiteId(Integer websiteId);
+    //    Bank getEnabledByWebsiteId(Integer websiteId);
 
     /**
      * key:mail

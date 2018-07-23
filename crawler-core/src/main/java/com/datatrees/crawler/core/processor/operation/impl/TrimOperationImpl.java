@@ -30,7 +30,8 @@ public class TrimOperationImpl extends Operation<TrimOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull TrimOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull TrimOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String input = (String) operatingData;
 
         String output = StringUtils.trim(input);

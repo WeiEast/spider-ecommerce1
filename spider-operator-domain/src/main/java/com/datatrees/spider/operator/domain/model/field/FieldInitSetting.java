@@ -12,6 +12,7 @@ public class FieldInitSetting {
      * 字段业务属性FieldBizType
      */
     private String       type;
+
     /**
      * 依赖业务属性FieldBizType
      */

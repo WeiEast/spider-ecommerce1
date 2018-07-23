@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 public class FontTable {
 
     private static Logger      log             = LoggerFactory.getLogger(FontTable.class);
+
     private static Pattern     fontFamilyRegex = Pattern.compile("([^+^-]*)[+-]([^+]*)");
+
     private        List<Entry> entries         = new ArrayList<Entry>();
 
     public void addEntry(PDFont font) {
@@ -83,12 +85,18 @@ public class FontTable {
     public class Entry extends HtmlResource {
 
         public  String           fontName;
+
         public  String           usedName;
+
         public  PDFontDescriptor descriptor;
+
         private PDFont           baseFont;
+
         private byte[]           cachedFontData;
-        private String mimeType = "x-font-truetype";
-        private String fileEnding;
+
+        private String           mimeType = "x-font-truetype";
+
+        private String           fileEnding;
 
         public Entry(String fontName, String usedName, PDFont font) {
             super(fontName);
@@ -182,7 +190,8 @@ public class FontTable {
             // with the
             // PDFont, so might have to submit a change there to be really sure fonts are indeed the
             // same.
-            return compare.getName().equals(baseFont.getName()) && compare.getType().equals(baseFont.getType()) && compare.getSubType().equals(baseFont.getSubType());
+            return compare.getName().equals(baseFont.getName()) && compare.getType().equals(baseFont.getType()) &&
+                    compare.getSubType().equals(baseFont.getSubType());
         }
 
         @Override

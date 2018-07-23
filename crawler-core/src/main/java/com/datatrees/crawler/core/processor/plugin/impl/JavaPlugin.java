@@ -29,7 +29,8 @@ public class JavaPlugin extends Plugin<com.datatrees.crawler.core.domain.config.
     }
 
     @Override
-    protected Object invokePlugin(com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin metadata, String args, Request request) throws Exception {
+    protected Object invokePlugin(com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin metadata, String args,
+            Request request) throws Exception {
         AbstractClientPlugin clientPlugin = getContext().loadPlugin(metadata);
         if (getContext() instanceof SearchProcessorContext) {
             // add proxy if necessary

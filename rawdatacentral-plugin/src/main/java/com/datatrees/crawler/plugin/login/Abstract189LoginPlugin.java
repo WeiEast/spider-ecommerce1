@@ -37,7 +37,8 @@ public abstract class Abstract189LoginPlugin extends AbstractLoginPlugin {
 
     // 189 login
     protected String login189Website(String username, String password, String uType, String provinceId) {
-        String requestUrl = "http://login.189.cn/login\"Account=" + username + "&UType=" + uType + "&ProvinceID=" + provinceId + "&AreaCode=&CityNo=&RandomFlag=0&Password=" + password + "&Captcha=";
+        String requestUrl = "http://login.189.cn/login\"Account=" + username + "&UType=" + uType + "&ProvinceID=" + provinceId +
+                "&AreaCode=&CityNo=&RandomFlag=0&Password=" + password + "&Captcha=";
         LinkNode loginPage = new LinkNode(requestUrl);
         loginPage.setReferer("http://login.189.cn/login");
         return (String) getResponseByWebRequest(loginPage, ContentType.Content);

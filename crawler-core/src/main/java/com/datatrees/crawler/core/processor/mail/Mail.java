@@ -27,9 +27,12 @@ import org.apache.james.mime4j.storage.StorageProvider;
 public class Mail extends Message {
 
     private StringBuffer     txtBody     = new StringBuffer();
+
     private StringBuffer     htmlBody    = new StringBuffer();
+
     private List<FileWapper> attachments = new ArrayList<FileWapper>();
-    private String websiteName;
+
+    private String           websiteName;
 
     /**
      *

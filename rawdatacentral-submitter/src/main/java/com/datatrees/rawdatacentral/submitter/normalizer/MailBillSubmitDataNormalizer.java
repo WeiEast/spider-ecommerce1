@@ -28,7 +28,7 @@ public class MailBillSubmitDataNormalizer implements DataNormalizer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see DataNormalizer#normalize(java.lang.Object)
      */
     @SuppressWarnings({"unchecked", "rawtypes"})

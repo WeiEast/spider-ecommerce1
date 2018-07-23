@@ -21,11 +21,12 @@ import org.slf4j.LoggerFactory;
 public class NormalizerFactory implements DataNormalizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NormalizerFactory.class);
+
     List<DataNormalizer> normalizerList;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
      * core.model.ExtractMessage)

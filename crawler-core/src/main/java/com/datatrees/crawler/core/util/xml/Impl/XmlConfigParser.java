@@ -24,9 +24,13 @@ import org.slf4j.LoggerFactory;
  */
 public class XmlConfigParser implements ConfigParser {
 
-    static final         List<Class<?>>        valueTypes       = Arrays.asList(new Class<?>[]{String.class, Boolean.class, Integer.class, Float.class, Double.class});
+    static final         List<Class<?>>        valueTypes       = Arrays
+            .asList(new Class<?>[]{String.class, Boolean.class, Integer.class, Float.class, Double.class});
+
     private static final Logger                logger           = LoggerFactory.getLogger(XmlConfigParser.class);
+
     final                Map<String, Object>   contentMap       = new HashMap<String, Object>();
+
     final                Map<Class<?>, Object> typeSetMethodMap = new HashMap<Class<?>, Object>();
 
     private XmlConfigParser() {}
@@ -37,7 +41,7 @@ public class XmlConfigParser implements ConfigParser {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.datatrees.crawler.core.util.xml.ConfigParser#parse(java.lang.String,
      * java.lang.Class, com.datatrees.crawler.core.util.xml.ConfigParser)
      */
@@ -161,7 +165,7 @@ public class XmlConfigParser implements ConfigParser {
 
     private void methodinvoke(Object value, Object parent, Method method, Node node) throws ParseException {
         if (value != null) {
-            logger.trace("invoke method : {} for target : {} with value : {}" ,method.getName(), parent,value);
+            logger.trace("invoke method : {} for target : {} with value : {}", method.getName(), parent, value);
             ReflectionUtils.invokeMethod(method, parent, value);
             if (node.registered()) {
                 String id = value.toString();

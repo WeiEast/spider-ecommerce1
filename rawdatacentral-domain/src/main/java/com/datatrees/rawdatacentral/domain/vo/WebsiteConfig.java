@@ -17,51 +17,73 @@ import java.util.Date;
  */
 public class WebsiteConfig {
 
-    private static final long serialVersionUID = 1L;
+    private static final long    serialVersionUID = 1L;
+
     /**  */
-    private Integer websiteId;
+    private              Integer websiteId;
+
     /** 1:mail,2:operator,3:ecommerce，4:bank,5:internal */
-    private String  websiteType;
+    private              String  websiteType;
+
     /** website name */
-    private String  websiteName;
+    private              String  websiteName;
+
     /** 0:false,1:true */
-    private Boolean isenabled;
+    private              Boolean isenabled;
+
     /** 登录过程中自定义提示 */
-    private String  loginTip;
+    private              String  loginTip;
+
     /** 验证码提示 */
-    private String  verifyTip;
+    private              String  verifyTip;
+
     /** 重置类型：SMS|WEB */
-    private String  resetType;
+    private              String  resetType;
+
     /** 短信模板 */
-    private String  smsTemplate;
+    private              String  smsTemplate;
+
     /** 短信接收方 */
-    private String  smsReceiver;
+    private              String  smsReceiver;
+
     /** 网页方式重置的url */
-    private String  resetURL;
+    private              String  resetURL;
+
     /** 密码重置提示 */
-    private String  resetTip;
+    private              String  resetTip;
+
     /**  */
-    private Date    createdAt;
+    private              Date    createdAt;
+
     /**  */
-    private Date    updatedAt;
+    private              Date    updatedAt;
+
     /**  */
-    private Boolean simulate;
+    private              Boolean simulate;
+
     /**  */
-    private Integer templateId;
+    private              Integer templateId;
+
     /**  */
-    private Integer websiteConfId;
+    private              Integer websiteConfId;
+
     /** extractor config */
-    private String  extractorConfig;
+    private              String  extractorConfig;
+
     /** search config */
-    private String  searchConfig;
+    private              String  searchConfig;
+
     /**  */
-    private String  initSetting;
+    private              String  initSetting;
+
     /** 配置标题 */
-    private String  websiteTitle;
+    private              String  websiteTitle;
+
     /** 分组 */
-    private String  groupCode;
+    private              String  groupCode;
+
     /** 分组 */
-    private String  groupName;
+    private              String  groupName;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

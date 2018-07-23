@@ -29,8 +29,9 @@ import org.springframework.stereotype.Service;
 public class TaskServiceImpl implements TaskService {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
+
     @Resource
-    private TaskDAO taskDAO;
+    private              TaskDAO          taskDAO;
 
     @Override
     public int insertTask(Task task) {

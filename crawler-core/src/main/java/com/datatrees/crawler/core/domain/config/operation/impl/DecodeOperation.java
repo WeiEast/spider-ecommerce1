@@ -27,9 +27,11 @@ public class DecodeOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = 2187657297214938947L;
-    private DecodeType decodeType;
-    private String     charset;
+    private static final long       serialVersionUID = 2187657297214938947L;
+
+    private              DecodeType decodeType;
+
+    private              String     charset;
 
     @Attr("decode-type")
     public DecodeType getDecodeType() {

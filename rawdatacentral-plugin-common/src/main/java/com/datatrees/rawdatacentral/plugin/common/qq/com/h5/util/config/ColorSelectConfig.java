@@ -6,7 +6,8 @@ import java.util.List;
 
 public class ColorSelectConfig implements Serializable {
 
-    private ColorSelect root;
+    private ColorSelect       root;
+
     private List<ColorSelect> children = new ArrayList<>();
 
     public ColorSelect getRoot() {

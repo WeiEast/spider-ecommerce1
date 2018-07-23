@@ -6,19 +6,25 @@ import java.util.Date;
 /** create by system from table t_website_conf(website config,sopport search) */
 public class WebsiteConf implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long    serialVersionUID = 1L;
+
     /**  */
-    private Integer websiteConfId;
+    private              Integer websiteConfId;
+
     /**  */
-    private Integer websiteId;
+    private              Integer websiteId;
+
     /** extractor config */
-    private String  extractorConfig;
+    private              String  extractorConfig;
+
     /**  */
-    private Date    createdAt;
+    private              Date    createdAt;
+
     /**  */
-    private Date    updatedAt;
+    private              Date    updatedAt;
+
     /** search config */
-    private String  searchConfig;
+    private              String  searchConfig;
 
     public Integer getWebsiteConfId() {
         return websiteConfId;

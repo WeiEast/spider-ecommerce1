@@ -83,7 +83,8 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         String separator = StringUtils.defaultString(source.getSeparator());
         AbstractPlugin plugin = source.getPlugin();
 
-        logger.debug("Get page content. <<< source-ref: {}, separator: {}, plugin-ref: {}", source.getField(), separator, plugin != null ? plugin.getId() : null);
+        logger.debug("Get page content. <<< source-ref: {}, separator: {}, plugin-ref: {}", source.getField(), separator,
+                plugin != null ? plugin.getId() : null);
 
         if (plugin != null) {
             Object value = SourceFieldUtils.getFieldValue(input, source.getField());

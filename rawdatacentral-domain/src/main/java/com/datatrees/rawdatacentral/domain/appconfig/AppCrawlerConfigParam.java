@@ -14,14 +14,17 @@ public class AppCrawlerConfigParam {
      * 商户appid
      */
     private String                    appId;
+
     /**
      * 商户appName
      */
     private String                    appName;
+
     /**
      * 业务名称
      */
     private List<String>              projectNames;
+
     /**
      * 具体业务info
      */

@@ -24,16 +24,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReidsServiceImpl implements RedisService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReidsServiceImpl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(ReidsServiceImpl.class);
+
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private              StringRedisTemplate stringRedisTemplate;
+
     @Resource
-    private RedisTemplate       redisTemplate;
+    private              RedisTemplate       redisTemplate;
+
     /**
      * 默认超时时间(单位:秒),默认1小时
      */
     @Value("${rawdatacentral.redisKey.timeout:3600}")
-    private long                defaultTimeOut;
+    private              long                defaultTimeOut;
 
     @Override
     public boolean saveBytes(String key, byte[] value) {

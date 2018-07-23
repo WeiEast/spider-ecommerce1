@@ -5,13 +5,13 @@ import java.util.Map;
 
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,7 +74,6 @@ public class HuBei10000ForWap implements OperatorPluginService {
         return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
     }
 
-
     private HttpResult<Map<String, Object>> refeshSmsCodeForLogin(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
@@ -104,7 +103,8 @@ public class HuBei10000ForWap implements OperatorPluginService {
             String referer = "http://wap.hb.189.cn/login/login.jsp";
             String templateUrl = "http://wap.hb.189.cn/login/doLogin.htm";
             String templateData = "accountID=" + accountID + "&random=" + random + "&loginType=2";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_wap_002").setFullUrl(templateUrl).setRequestBody(templateData).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_wap_002").setFullUrl(templateUrl).setRequestBody(templateData)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "flag\":\"1\"")) {
                 logger.info("登陆成功,param={}", param);
@@ -145,7 +145,9 @@ public class HuBei10000ForWap implements OperatorPluginService {
         try {
             String templateUrl = "http://wap.hb.189.cn/billQuery/checkRan.htm";
             String templateData = "accountID={}&random={}";
-            String data = TemplateUtils.format(templateData, URLEncoder.encode(Base64.encodeBase64String(param.getMobile().toString().getBytes()), "UTF-8"), URLEncoder.encode(Base64.encodeBase64String(param.getSmsCode().getBytes()), "UTF-8"));
+            String data = TemplateUtils
+                    .format(templateData, URLEncoder.encode(Base64.encodeBase64String(param.getMobile().toString().getBytes()), "UTF-8"),
+                            URLEncoder.encode(Base64.encodeBase64String(param.getSmsCode().getBytes()), "UTF-8"));
             response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10000_wap_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
 

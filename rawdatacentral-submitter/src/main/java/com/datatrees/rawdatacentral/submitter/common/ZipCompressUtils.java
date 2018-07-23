@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 public class ZipCompressUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ZipCompressUtils.class);
+
     private static final int    BUFFER = 8192;
 
     public static void compress(String zipPathName, String srcPathName) {
@@ -82,7 +83,8 @@ public class ZipCompressUtils {
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(entry.getValue().getValue());
                 String basedir = "";
                 try {
-                    String fileName = StringUtils.isNotBlank(entry.getValue().getFileName()) ? entry.getValue().getFileName() : entry.getKey() + ".html";
+                    String fileName = StringUtils.isNotBlank(entry.getValue().getFileName()) ? entry.getValue().getFileName() :
+                            entry.getKey() + ".html";
                     compressInputStream(inputStream, out, basedir, fileName);
                 } finally {
                     try {

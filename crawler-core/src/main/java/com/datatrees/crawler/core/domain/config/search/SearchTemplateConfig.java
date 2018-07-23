@@ -31,21 +31,32 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
     /**
      *
      */
-    private static final long serialVersionUID = -7796504114576595157L;
+    private static final long                     serialVersionUID = -7796504114576595157L;
+
     // attribute
-    private SearchType     type;
-    private Boolean        autoStart;
-    private Integer        maxDepth;
-    private Integer        threadCount;
-    private Integer        waitIntervalMillis;
-    private AbstractPlugin plugin;
-    private Float          weight;
+    private              SearchType               type;
+
+    private              Boolean                  autoStart;
+
+    private              Integer                  maxDepth;
+
+    private              Integer                  threadCount;
+
+    private              Integer                  waitIntervalMillis;
+
+    private              AbstractPlugin           plugin;
+
+    private              Float                    weight;
+
     //爬取业务标识
-    private BusinessType   businessType;
+    private              BusinessType             businessType;
+
     // child nodes
-    private Request        request;
-    private List<SearchSequenceUnit> searchSequence = new ArrayList<>();
-    private List<String>             resultTagList  = new ArrayList<>();
+    private              Request                  request;
+
+    private              List<SearchSequenceUnit> searchSequence   = new ArrayList<>();
+
+    private              List<String>             resultTagList    = new ArrayList<>();
 
     public SearchTemplateConfig() {
         super();
@@ -163,7 +174,8 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
 
     @Override
     public String toString() {
-        return "SearchTemplateConfig [id=" + getId() + " ,type=" + type + ", maxDepth=" + maxDepth + ", autoStart=" + autoStart + ", businessType=" + businessType + "]";
+        return "SearchTemplateConfig [id=" + getId() + " ,type=" + type + ", maxDepth=" + maxDepth + ", autoStart=" + autoStart + ", businessType=" +
+                businessType + "]";
     }
 
 }

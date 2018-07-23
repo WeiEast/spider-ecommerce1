@@ -20,9 +20,13 @@ public class DateUtils {
      * 时间格式
      */
     public static final  String                                     YMDHMS = "yyyy-MM-dd HH:mm:ss";
+
     public static final  String                                     YMD    = "yyyy-MM-dd";
+
     public static final  String                                     GMT    = "EEE MMM ddHH:mm:ss 'GMT' yyyy";
+
     private static final Logger                                     logger = LoggerFactory.getLogger(DateUtils.class);
+
     private static       ThreadLocal<Map<String, SimpleDateFormat>> sfs    = new ThreadLocal<Map<String, SimpleDateFormat>>() {
         @Override
         protected Map<String, SimpleDateFormat> initialValue() {

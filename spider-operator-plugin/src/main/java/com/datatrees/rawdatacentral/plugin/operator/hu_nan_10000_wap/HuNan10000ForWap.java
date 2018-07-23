@@ -9,13 +9,13 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -211,8 +211,8 @@ public class HuNan10000ForWap implements OperatorPluginService {
                 //    logger.info("详单-->校验成功,param={}", param);
                 //    return result.success();
                 //} else {
-                    logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPageContent());
-                    return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
+                logger.error("详单-->校验失败,param={},pageContent={}", param, response.getPageContent());
+                return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
                 //}
             }
         } catch (Exception e) {

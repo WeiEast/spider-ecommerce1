@@ -31,9 +31,11 @@ public class ExtractorConfig extends AbstractWebsiteConfig {
     /**
      *
      */
-    private static final long       serialVersionUID   = 7882181962225972799L;
-    private List<ExtractorSelector> extractorSelectors = new ArrayList<>();
-    private List<PageExtractor>     pageExtractors     = new ArrayList<>();
+    private static final long                    serialVersionUID   = 7882181962225972799L;
+
+    private              List<ExtractorSelector> extractorSelectors = new ArrayList<>();
+
+    private              List<PageExtractor>     pageExtractors     = new ArrayList<>();
 
     public ExtractorConfig() {
         super();

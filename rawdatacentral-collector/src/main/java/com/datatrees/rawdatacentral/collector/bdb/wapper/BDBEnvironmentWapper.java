@@ -22,12 +22,15 @@ import org.slf4j.LoggerFactory;
  */
 public class BDBEnvironmentWapper extends BDBEnvironmentContext implements Environment {
 
-    private static final Logger log = LoggerFactory.getLogger(BDBEnvironmentWapper.class);
+    private static final Logger                         log      = LoggerFactory.getLogger(BDBEnvironmentWapper.class);
+
     // Save the number of created db
-    private final AtomicInteger plusCount;
+    private final        AtomicInteger                  plusCount;
+
     // save the number of deleted db
-    private final AtomicInteger minusCount;
-    private final Map<String, BDBDatabaseWapper> dbBucket = new ConcurrentHashMap<String, BDBDatabaseWapper>();
+    private final        AtomicInteger                  minusCount;
+
+    private final        Map<String, BDBDatabaseWapper> dbBucket = new ConcurrentHashMap<String, BDBDatabaseWapper>();
 
     /**
      * @param env

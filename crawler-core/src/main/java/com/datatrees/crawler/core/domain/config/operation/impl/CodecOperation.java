@@ -28,9 +28,11 @@ public class CodecOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = -8553272059353645739L;
-    private CodecType    codecType;
-    private HandlingType handlingType;
+    private static final long         serialVersionUID = -8553272059353645739L;
+
+    private              CodecType    codecType;
+
+    private              HandlingType handlingType;
 
     @Attr("codec-type")
     public CodecType getCodecType() {

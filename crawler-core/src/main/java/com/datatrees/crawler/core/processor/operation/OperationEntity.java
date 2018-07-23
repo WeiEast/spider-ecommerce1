@@ -15,9 +15,13 @@ import org.apache.commons.collections.CollectionUtils;
 public class OperationEntity implements Serializable {
 
     private Object                  source;
+
     private Object                  lastData;
+
     private Object                  data;
+
     private AbstractOperation       lastOperation;
+
     private List<AbstractOperation> undoOperations;
 
     private OperationEntity(Object data) {
@@ -48,7 +52,7 @@ public class OperationEntity implements Serializable {
         this.lastOperation = operation;
     }
 
-    public void update(AbstractOperation operation){
+    public void update(AbstractOperation operation) {
         this.lastOperation = operation;
     }
 

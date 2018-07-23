@@ -10,10 +10,12 @@ public enum OperationEnum {
     SEARCH("SEARCH", "抓取页面"),
     EXTRACT("EXTRACT", "解析页面"),
     CRAWLER("CRAWLER", "爬取");
+
     /**
      * 操作代码
      */
     private String code;
+
     /**
      * 操作名称
      */

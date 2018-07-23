@@ -20,6 +20,7 @@ public enum ProxyStatus {
     SUCCESS("success"),
     FAIL("fail"),
     RELEASE("release");
+
     private static Map<String, ProxyStatus> proxyStatusMap = new HashMap<String, ProxyStatus>();
 
     static {

@@ -9,6 +9,7 @@ import org.apache.pdfbox.text.TextPosition;
 public class TextMetrics {
 
     private float x, baseline, width, height, pointSize, descent, ascent, fontSize;
+
     private PDFont font;
 
     public TextMetrics(TextPosition tp) {

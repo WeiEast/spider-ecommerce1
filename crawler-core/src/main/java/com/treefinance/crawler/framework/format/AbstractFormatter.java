@@ -11,8 +11,9 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractFormatter<R> implements Formatter<R> {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    private Class<R> resultClass;
+    protected final Logger   logger = LoggerFactory.getLogger(getClass());
+
+    private         Class<R> resultClass;
 
     public AbstractFormatter() {
         this(null);
@@ -31,6 +32,5 @@ public abstract class AbstractFormatter<R> implements Formatter<R> {
     public boolean supportResultType(Object value) {
         return resultClass.isInstance(value);
     }
-
 
 }

@@ -1,24 +1,24 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RpcEducationService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by zhangyanjia on 2017/12/1.
@@ -26,18 +26,21 @@ import java.util.Map;
 @Service
 public class RpcEducationServiceImpl implements RpcEducationService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RpcEducationServiceImpl.class);
+    private static final Logger          logger               = LoggerFactory.getLogger(RpcEducationServiceImpl.class);
+
     /**
      * 默认格式格式化成JSON后发送的字符编码
      */
-    private static final String DEFAULT_CHARSET_NAME = "UTF-8";
+    private static final String          DEFAULT_CHARSET_NAME = "UTF-8";
 
     @Resource
-    private CommonPluginApi commonPluginApi;
+    private              CommonPluginApi commonPluginApi;
+
     @Resource
-    private MonitorService monitorService;
+    private              MonitorService  monitorService;
+
     @Resource
-    private MessageService messageService;
+    private              MessageService  messageService;
 
     @Override
     public HttpResult<Object> loginInit(EducationParam param) {
@@ -137,9 +140,9 @@ public class RpcEducationServiceImpl implements RpcEducationService {
 
     @Override
     public HttpResult<Object> registerSubmit(EducationParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null || param.getPwd()
-                == null
-                || param.getSurePwd() == null || param.getRealName() == null || param.getIdCard() == null || param.getIdCardType() == null) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null ||
+                param.getPwd() == null || param.getSurePwd() == null || param.getRealName() == null || param.getIdCard() == null ||
+                param.getIdCardType() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         HttpResult<Object> result = commonPluginApi.registerSubmit(param);
@@ -152,6 +155,5 @@ public class RpcEducationServiceImpl implements RpcEducationService {
         logger.info("学信网注册-->校验信息-->注册成功");
         return result;
     }
-
 
 }

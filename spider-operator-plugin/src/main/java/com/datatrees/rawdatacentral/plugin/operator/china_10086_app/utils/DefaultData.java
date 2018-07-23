@@ -9,6 +9,7 @@ import java.util.HashMap;
 public class DefaultData {
 
     private static HashMap<String, String> payType  = null;
+
     private static HashMap<String, String> payType1 = null;
 
     public static HashMap<String, String> getRealNameRegType() {

@@ -3,8 +3,6 @@ package com.treefinance.crawler.framework.expression.spring;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * @author Jerry
  * @since 16:10 2018/6/8

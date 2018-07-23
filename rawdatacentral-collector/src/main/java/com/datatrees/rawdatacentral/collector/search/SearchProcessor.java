@@ -40,25 +40,40 @@ import org.slf4j.LoggerFactory;
  */
 public class SearchProcessor {
 
-    private static final Logger log = LoggerFactory.getLogger(SearchProcessor.class);
-    private String               searchTemplate;
-    private SearchTemplateConfig searchTemplateConfig;
-    private String               encoding;
-    private long                 waitIntervalMillis;
-    private boolean              duplicateRemoval;
-    private ResultDataHandler    resultDataHandler;
-    private String               keyword;
-    private boolean              isLastLink;
-    private boolean              needEarlyQuit;
-    private       ThreadPoolExecutor   crawlExecutorPool = null;
-    private final List<Future<Object>> futureList        = new ArrayList<>();
-    private final TaskMessage        taskMessage;
+    private static final Logger               log               = LoggerFactory.getLogger(SearchProcessor.class);
+
+    private final        List<Future<Object>> futureList        = new ArrayList<>();
+
+    private final        TaskMessage          taskMessage;
+
+    private              String               searchTemplate;
+
+    private              SearchTemplateConfig searchTemplateConfig;
+
+    private              String               encoding;
+
+    private              long                 waitIntervalMillis;
+
+    private              boolean              duplicateRemoval;
+
+    private              ResultDataHandler    resultDataHandler;
+
+    private              String               keyword;
+
+    private              boolean              isLastLink;
+
+    private              boolean              needEarlyQuit;
+
+    private              ThreadPoolExecutor   crawlExecutorPool = null;
+
     // 任务默认超时时间，单位：毫秒
-    private long defaultTimeout = -1;
+    private              long                 defaultTimeout    = -1;
+
     // 任务超时时间，单位：毫秒
-    private long timeout        = -1;
+    private              long                 timeout           = -1;
+
     // 任务可执行的结束时间戳，单位：毫秒
-    private long deadLine       = -1;
+    private              long                 deadLine          = -1;
 
     public SearchProcessor(TaskMessage taskMessage) {
         this.taskMessage = taskMessage;
@@ -109,7 +124,8 @@ public class SearchProcessor {
         CrawlRequest request = null;
         try {
             URLHandlerImpl handler = initURLHandlerImpl();
-            request = CrawlRequest.build().setProcessorContext(getProcessorContext()).setUrl(url).setSearchTemplateId(searchTemplateConfig.getId()).setSearchTemplate(searchTemplate).setUrlHandler(handler).contextInit();
+            request = CrawlRequest.build().setProcessorContext(getProcessorContext()).setUrl(url).setSearchTemplateId(searchTemplateConfig.getId())
+                    .setSearchTemplate(searchTemplate).setUrlHandler(handler).contextInit();
 
             RequestUtil.setKeyWord(request, keyword);
             CrawlResponse response = Crawler.crawl(request);
@@ -264,7 +280,8 @@ public class SearchProcessor {
     }
 
     private ThreadPoolExecutor initCrawlExecutorPool(int threadCount) {
-        return new ThreadPoolExecutor(threadCount, threadCount, 20L, java.util.concurrent.TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadFactoryImpl(Thread.currentThread().getName() + "_"));
+        return new ThreadPoolExecutor(threadCount, threadCount, 20L, java.util.concurrent.TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
+                new ThreadFactoryImpl(Thread.currentThread().getName() + "_"));
     }
 
     public ExecutorService getCrawlExecutorPool() {
@@ -345,7 +362,7 @@ public class SearchProcessor {
         return SearchType.KEYWORD_SEARCH.equals(searchTemplateConfig.getType());
     }
 
-    public Integer getWebsiteType(){
+    public Integer getWebsiteType() {
         return Integer.valueOf(getProcessorContext().getWebsiteType());
     }
 }

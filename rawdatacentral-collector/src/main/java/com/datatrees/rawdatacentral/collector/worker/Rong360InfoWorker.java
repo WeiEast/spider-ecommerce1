@@ -30,9 +30,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class Rong360InfoWorker {
 
-    private static final Logger log = LoggerFactory.getLogger(Rong360InfoWorker.class);
+    private static final Logger    log = LoggerFactory.getLogger(Rong360InfoWorker.class);
+
     @Resource
-    private Collector collector;
+    private              Collector collector;
 
     public void process(Rong360InfoMessage message) {
         message.setSerialNum(UniqueKeyGenUtil.uniqueKeyGen(null));// unique sign

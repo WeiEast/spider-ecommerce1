@@ -9,29 +9,35 @@ public class DirectiveType {
     /**
      * 将后端失败率高的页面交给APP抓取
      */
-    public static final String GRAB_URL     = "grab_url";
+    public static final String GRAB_URL              = "grab_url";
+
     /**
      * 模拟登陆
      */
-    public static final String PLUGIN_LOGIN = "plugin_login";
+    public static final String PLUGIN_LOGIN          = "plugin_login";
+
     /**
      * 登录过程中,二次密码，例：QQ邮箱独立密码
      */
-    public static final String LOGIN_SECOND_PASSWORD     = "login_second_password";
+    public static final String LOGIN_SECOND_PASSWORD = "login_second_password";
+
     /**
      * 抓取过程中,图片验证码
      */
-    public static final String CRAWL_CODE   = "crawl_code";
+    public static final String CRAWL_CODE            = "crawl_code";
+
     /**
      * 抓取过程中,短信验证码
      */
-    public static final String CRAWL_SMS    = "crawl_sms";
+    public static final String CRAWL_SMS             = "crawl_sms";
+
     /**
      * 抓取过程中,二维码
      */
-    public static final String CRAWL_QR     = "crawl_qr";
+    public static final String CRAWL_QR              = "crawl_qr";
+
     /**
      * 取消任务
      */
-    public static final String CANCEL       = "cancel";
+    public static final String CANCEL                = "cancel";
 }

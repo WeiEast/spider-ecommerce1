@@ -17,10 +17,13 @@ import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
-import com.datatrees.rawdatacentral.domain.enums.*;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.TaskStatusEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
+import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
@@ -33,13 +36,19 @@ import org.slf4j.LoggerFactory;
 
 public class LoginPluginForQQ implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginPluginForQQ.class);
-    private Long   taskId;
-    private String websiteName;
-    private String hubUrl;
-    private MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
-    private RedisService   redisService   = BeanFactoryUtils.getBean(RedisService.class);
-    private MessageService messageService = BeanFactoryUtils.getBean(MessageService.class);
+    private static final Logger         logger         = LoggerFactory.getLogger(LoginPluginForQQ.class);
+
+    private              Long           taskId;
+
+    private              String         websiteName;
+
+    private              String         hubUrl;
+
+    private              MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
+
+    private              RedisService   redisService   = BeanFactoryUtils.getBean(RedisService.class);
+
+    private              MessageService messageService = BeanFactoryUtils.getBean(MessageService.class);
 
     public LoginPluginForQQ(Long taskId, String websiteName, String hubUrl) {
         this.taskId = taskId;

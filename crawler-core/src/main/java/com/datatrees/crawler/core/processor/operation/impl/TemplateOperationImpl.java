@@ -31,7 +31,8 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull TemplateOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull TemplateOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String template = operation.getTemplate();
 
         Object output;

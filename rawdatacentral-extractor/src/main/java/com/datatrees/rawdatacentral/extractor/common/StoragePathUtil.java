@@ -45,7 +45,8 @@ public class StoragePathUtil {
             }
             bucket = resultTypeStr + "/" + date + "/" + extractMessage.getTaskLogId() + "/" + extractMessage.getWebsiteId();
         }
-        return extractMessage.getMessageIndex() == null ? bucket + "/" + uniqueMd5 : bucket + "/" + uniqueMd5 + "_" + extractMessage.getMessageIndex();
+        return extractMessage.getMessageIndex() == null ? bucket + "/" + uniqueMd5 :
+                bucket + "/" + uniqueMd5 + "_" + extractMessage.getMessageIndex();
 
     }
 }

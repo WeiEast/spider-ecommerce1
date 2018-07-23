@@ -27,11 +27,15 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 @Tag("source")
 public class PageSource {
 
-    private String         field;
-    private AbstractPlugin plugin;
+    private String            field;
+
+    private AbstractPlugin    plugin;
+
     private List<Replacement> replacements = new ArrayList<>();
-    private Regexp regexp;
-    private String separator;
+
+    private Regexp            regexp;
+
+    private String            separator;
 
     public PageSource() {
         super();

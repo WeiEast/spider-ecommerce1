@@ -26,9 +26,12 @@ import org.jdom2.output.XMLOutputter;
  */
 public enum XmlConfigBuilder implements ConfigBuilder {
     INSTANCE;
+
     static final String splitRegex = "/";
+
     @SuppressWarnings("unchecked")
-    List<Class> boxingTypes = Arrays.asList(new Class[]{String.class, Long.class, Integer.class, Short.class, Double.class, Float.class, Boolean.class});
+    List<Class> boxingTypes = Arrays
+            .asList(new Class[]{String.class, Long.class, Integer.class, Short.class, Double.class, Float.class, Boolean.class});
 
     public static XmlConfigBuilder getInstance() {
         return INSTANCE;
@@ -84,7 +87,8 @@ public enum XmlConfigBuilder implements ConfigBuilder {
     }
 
     private void processObjectForTagMethods(Parent parent, Object obj) {
-        @SuppressWarnings("unchecked") List<Method> tagMethods = ReflectionUtils.listGetMethodWithAnnotations(obj.getClass(), Tag.class, ChildTag.class);
+        @SuppressWarnings("unchecked") List<Method> tagMethods = ReflectionUtils
+                .listGetMethodWithAnnotations(obj.getClass(), Tag.class, ChildTag.class);
         for (Method tagMethod : tagMethods) {
             if (tagMethod.isAnnotationPresent(Tag.class)) {
                 this.processTagMethod(parent, obj, tagMethod);

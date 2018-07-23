@@ -27,7 +27,6 @@ public class RedisUtilsTest {
         String title = JsoupXpathUtils.selectFirst(content, "/titel");
         webClient.close();
 
-
     }
 
 }

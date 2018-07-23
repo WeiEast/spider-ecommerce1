@@ -11,10 +11,12 @@ public class Step {
      * 步骤代码
      */
     private int    stepCode;
+
     /**
      * 名称
      */
     private String stepName;
+
     /**
      * 时间戳
      */

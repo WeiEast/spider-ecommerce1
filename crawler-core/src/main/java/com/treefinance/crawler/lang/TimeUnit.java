@@ -75,16 +75,26 @@ public enum TimeUnit {
         }
 
     };
+
     // Handy constants for conversion methods
     private static final long C0  = 1L;
+
     private static final long C1  = C0 * 1000L;
+
     private static final long C2  = C1 * 1000L;
+
     private static final long C3  = C2 * 1000L;
+
     private static final long C4  = C3 * 60L;
+
     private static final long C5  = C4 * 60L;
+
     private static final long C6  = C5 * 24L;
+
     private static final long C7  = C6 * 30L;
+
     private static final long C8  = C7 * 12L;
+
     private static final long MAX = Long.MAX_VALUE;
 
     /**

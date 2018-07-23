@@ -12,13 +12,13 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -148,7 +148,8 @@ public class HaiNan10086ForWeb implements OperatorPluginPostService {
             String errorurlForSms = TaskUtils.getTaskShare(param.getTaskId(), "errorurlForSms");
             String templateUrl = "https://hi.ac.10086.cn/sso3/SMSCodeSend?mobileNum={}&validCode={}&spid={}&errorurl={}";
             response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_003")
-                    .setFullUrl(templateUrl, param.getMobile(), param.getPicCode().toLowerCase(), spid, errorurlForSms).setAutoRedirect(false).invoke();
+                    .setFullUrl(templateUrl, param.getMobile(), param.getPicCode().toLowerCase(), spid, errorurlForSms).setAutoRedirect(false)
+                    .invoke();
             String code = PatternUtils.group(response.getRedirectUrl(), "code=([^&]+)&", 1);
             if (StringUtils.equals(code, "0000")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);

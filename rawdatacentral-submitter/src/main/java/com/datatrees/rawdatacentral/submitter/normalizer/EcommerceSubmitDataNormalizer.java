@@ -23,7 +23,7 @@ public class EcommerceSubmitDataNormalizer implements DataNormalizer {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see DataNormalizer#normalize(java.lang.Object)
      */
     @Override

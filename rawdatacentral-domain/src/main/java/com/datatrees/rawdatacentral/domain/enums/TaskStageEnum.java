@@ -7,7 +7,9 @@ public enum TaskStageEnum {
     LOGIN_SUCCESS("LOGIN_SUCCESS", "登录成功"),
     LOGIN_POST_SUCCESS("LOGIN_POST_SUCCESS", "登录后处理成功"),
     CRAWLER_START("CRAWLER_START", "爬虫启动"),;
+
     private String status;
+
     private String remark;
 
     TaskStageEnum(String status, String remark) {

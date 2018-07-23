@@ -23,7 +23,8 @@ import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
 public class MutexSubTaskContainer implements Mutex, Container {
 
     private Queue<SubTask> exclusiveList;
-    private boolean waiting = true;// thread wait for new subtask add
+
+    private boolean        waiting = true;// thread wait for new subtask add
 
     /**
      *
@@ -44,7 +45,7 @@ public class MutexSubTaskContainer implements Mutex, Container {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see Container#isMutex()
      */
     @Override
@@ -54,7 +55,7 @@ public class MutexSubTaskContainer implements Mutex, Container {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see Mutex#stopWaiting()
      */
     @Override
@@ -92,7 +93,7 @@ public class MutexSubTaskContainer implements Mutex, Container {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see Container#getSubTask()
      */
     @Override
@@ -102,7 +103,7 @@ public class MutexSubTaskContainer implements Mutex, Container {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see Mutex#waiting()
      */
     @Override
@@ -112,7 +113,7 @@ public class MutexSubTaskContainer implements Mutex, Container {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * Container#addSubTask(com.datatrees.rawdatacentral
      * .core.model.subtask.SubTask)

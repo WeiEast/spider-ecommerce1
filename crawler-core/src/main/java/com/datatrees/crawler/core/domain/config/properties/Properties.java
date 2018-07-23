@@ -19,20 +19,33 @@ public class Properties implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = -1340916732791297838L;
-    private Integer        waitIntervalMillis;
-    private AbstractCookie cookie;
-    private Proxy          proxy;
-    private String         encoding;
-    private Boolean        useTaskHttp;
-    private UnicodeMode    unicodeMode;
-    private String         taskRegion;
-    private Integer        maxRetryCount;
-    private Boolean        duplicateRemoval;
-    private String         httpClientType;
-    private Boolean        redirectUriEscaped;
-    private Boolean        allowCircularRedirects;
-    private Integer        captchaCode;
+    private static final long           serialVersionUID = -1340916732791297838L;
+
+    private              Integer        waitIntervalMillis;
+
+    private              AbstractCookie cookie;
+
+    private              Proxy          proxy;
+
+    private              String         encoding;
+
+    private              Boolean        useTaskHttp;
+
+    private              UnicodeMode    unicodeMode;
+
+    private              String         taskRegion;
+
+    private              Integer        maxRetryCount;
+
+    private              Boolean        duplicateRemoval;
+
+    private              String         httpClientType;
+
+    private              Boolean        redirectUriEscaped;
+
+    private              Boolean        allowCircularRedirects;
+
+    private              Integer        captchaCode;
 
     @Tag("captcha-code")
     public Integer getCaptchaCode() {

@@ -1,14 +1,13 @@
 package com.datatrees.rawdatacentral.web.controller;
 
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.api.RpcEducationService;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
 
 /**
  * Created by zhangyanjia on 2017/11/30.
@@ -17,10 +16,10 @@ import javax.annotation.Resource;
 @RequestMapping("/chsi")
 public class EducationController {
 
-    private static final Logger logger= LoggerFactory.getLogger(EducationController.class);
+    private static final Logger              logger = LoggerFactory.getLogger(EducationController.class);
 
     @Resource
-    private RpcEducationService educationService;
+    private              RpcEducationService educationService;
 
     /**
      * 学信网登录初始化
@@ -28,7 +27,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/login/init")
-    public Object loginInit(EducationParam param){
+    public Object loginInit(EducationParam param) {
         return educationService.loginInit(param);
     }
 
@@ -38,15 +37,14 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/login/submit")
-    public Object loginSubmit(EducationParam param){
+    public Object loginSubmit(EducationParam param) {
         return educationService.loginSubmit(param);
     }
 
     @RequestMapping("/register/init")
-    public Object registerInit(EducationParam param){
+    public Object registerInit(EducationParam param) {
         return educationService.registerInit(param);
     }
-
 
     /**
      * 注册刷新图片
@@ -54,7 +52,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/register/refeshPicCode")
-    public Object registerRefeshPicCode(EducationParam param){
+    public Object registerRefeshPicCode(EducationParam param) {
         return educationService.registerRefeshPicCode(param);
     }
 
@@ -64,7 +62,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/register/ValidatePicCode")
-    public Object registerValidatePicCodeAndSendSmsCode(EducationParam param){
+    public Object registerValidatePicCodeAndSendSmsCode(EducationParam param) {
         return educationService.registerValidatePicCodeAndSendSmsCode(param);
     }
 
@@ -74,7 +72,7 @@ public class EducationController {
      * @return
      */
     @RequestMapping("/register/submit")
-    public Object registerSubmit(EducationParam param){
+    public Object registerSubmit(EducationParam param) {
         return educationService.registerSubmit(param);
     }
 

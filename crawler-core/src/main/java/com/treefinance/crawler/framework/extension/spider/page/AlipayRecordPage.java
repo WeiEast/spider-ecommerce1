@@ -25,6 +25,7 @@ import java.util.Map;
 public class AlipayRecordPage extends SimplePage {
 
     private boolean success;
+
     //判断是是否是最后一页标识
     private boolean end;
 

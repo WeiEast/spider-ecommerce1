@@ -27,6 +27,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 public class PageExtractor extends AbstractPage {
 
     private List<PageSource> pageSourceList;
+
     private Boolean          disAlternative;
 
     public PageExtractor() {

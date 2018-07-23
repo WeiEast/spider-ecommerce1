@@ -11,13 +11,15 @@ import java.util.Map;
 public class UrlExpEvalContext extends ExpEvalContext {
 
     private final List<String> urlEncodedKeys;
+
     private final String       charset;
 
     public UrlExpEvalContext(Map<String, Object> placeholderMapping, List<String> urlEncodedKeys, String charset) {
         this(placeholderMapping, true, false, urlEncodedKeys, charset);
     }
 
-    public UrlExpEvalContext(Map<String, Object> placeholderMapping, boolean failOnUnknown, boolean allowNull, List<String> urlEncodedKeys, String charset) {
+    public UrlExpEvalContext(Map<String, Object> placeholderMapping, boolean failOnUnknown, boolean allowNull, List<String> urlEncodedKeys,
+            String charset) {
         super(placeholderMapping, failOnUnknown, allowNull);
         this.urlEncodedKeys = urlEncodedKeys == null ? Collections.emptyList() : urlEncodedKeys;
         this.charset = charset;

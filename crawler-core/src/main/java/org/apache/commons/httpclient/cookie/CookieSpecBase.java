@@ -45,10 +45,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *
  * Cookie management functions shared by all specification.
- *
- * @author  B.C. Holmes
+ * @author B.C. Holmes
  * @author <a href="mailto:jericho@thinkfree.com">Park, Sung-Gu</a>
  * @author <a href="mailto:dsale@us.britannica.com">Doug Sale</a>
  * @author Rod Waldhoff
@@ -58,7 +56,6 @@ import org.apache.commons.logging.LogFactory;
  * @author Marc A. Saegesser
  * @author <a href="mailto:oleg@ural.ru">Oleg Kalnichevski</a>
  * @author <a href="mailto:mbowler@GargoyleSoftware.com">Mike Bowler</a>
- *
  * @since 2.0
  */
 public class CookieSpecBase implements CookieSpec {
@@ -74,12 +71,29 @@ public class CookieSpecBase implements CookieSpec {
         super();
     }
 
+    /**
+     * Adds the given cookie into the given list in descending path order. That
+     * is, more specific path to least specific paths.  This may not be the
+     * fastest algorythm, but it'll work OK for the small number of cookies
+     * we're generally dealing with.
+     * @param list      - the list to add the cookie to
+     * @param addCookie - the Cookie to add to list
+     */
+    private static void addInPathOrder(List list, Cookie addCookie) {
+        int i = 0;
+
+        for (i = 0; i < list.size(); i++) {
+            Cookie c = (Cookie) list.get(i);
+            if (addCookie.compare(addCookie, c) > 0) {
+                break;
+            }
+        }
+        list.add(i, addCookie);
+    }
 
     /**
      * Parses the Set-Cookie value into an array of <tt>Cookie</tt>s.
-     *
      * <P>The syntax for the Set-Cookie response header is:
-     *
      * <PRE>
      * set-cookie      =    "Set-Cookie:" cookies
      * cookies         =    1#cookie
@@ -87,24 +101,23 @@ public class CookieSpecBase implements CookieSpec {
      * NAME            =    attr
      * VALUE           =    value
      * cookie-av       =    "Comment" "=" value
-     *                 |    "Domain" "=" value
-     *                 |    "Max-Age" "=" value
-     *                 |    "Path" "=" value
-     *                 |    "Secure"
-     *                 |    "Version" "=" 1*DIGIT
+     * |    "Domain" "=" value
+     * |    "Max-Age" "=" value
+     * |    "Path" "=" value
+     * |    "Secure"
+     * |    "Version" "=" 1*DIGIT
      * </PRE>
-     *
-     * @param host the host from which the <tt>Set-Cookie</tt> value was
-     * received
-     * @param port the port from which the <tt>Set-Cookie</tt> value was
-     * received
-     * @param path the path from which the <tt>Set-Cookie</tt> value was
-     * received
+     * @param host   the host from which the <tt>Set-Cookie</tt> value was
+     *               received
+     * @param port   the port from which the <tt>Set-Cookie</tt> value was
+     *               received
+     * @param path   the path from which the <tt>Set-Cookie</tt> value was
+     *               received
      * @param secure <tt>true</tt> when the <tt>Set-Cookie</tt> value was
-     * received over secure conection
+     *               received over secure conection
      * @param header the <tt>Set-Cookie</tt> received from the server
      * @return an array of <tt>Cookie</tt>s parsed from the Set-Cookie value
-     * @throws MalformedCookieException if an exception occurs during parsing
+     * @exception MalformedCookieException if an exception occurs during parsing
      */
     public Cookie[] parse(String host, int port, String path, boolean secure, final String header) throws MalformedCookieException {
 
@@ -159,9 +172,7 @@ public class CookieSpecBase implements CookieSpec {
             }
         }
         if (isNetscapeCookie) {
-            headerElements = new HeaderElement[] {
-                    new HeaderElement(header.toCharArray())
-            };
+            headerElements = new HeaderElement[]{new HeaderElement(header.toCharArray())};
         } else {
             headerElements = HeaderElement.parseElements(header.toCharArray());
         }
@@ -191,13 +202,10 @@ public class CookieSpecBase implements CookieSpec {
         return cookies;
     }
 
-
     /**
      * Parse the <tt>"Set-Cookie"</tt> {@link Header} into an array of {@link
      * Cookie}s.
-     *
      * <P>The syntax for the Set-Cookie response header is:
-     *
      * <PRE>
      * set-cookie      =    "Set-Cookie:" cookies
      * cookies         =    1#cookie
@@ -205,25 +213,24 @@ public class CookieSpecBase implements CookieSpec {
      * NAME            =    attr
      * VALUE           =    value
      * cookie-av       =    "Comment" "=" value
-     *                 |    "Domain" "=" value
-     *                 |    "Max-Age" "=" value
-     *                 |    "Path" "=" value
-     *                 |    "Secure"
-     *                 |    "Version" "=" 1*DIGIT
+     * |    "Domain" "=" value
+     * |    "Max-Age" "=" value
+     * |    "Path" "=" value
+     * |    "Secure"
+     * |    "Version" "=" 1*DIGIT
      * </PRE>
-     *
-     * @param host the host from which the <tt>Set-Cookie</tt> header was
-     * received
-     * @param port the port from which the <tt>Set-Cookie</tt> header was
-     * received
-     * @param path the path from which the <tt>Set-Cookie</tt> header was
-     * received
+     * @param host   the host from which the <tt>Set-Cookie</tt> header was
+     *               received
+     * @param port   the port from which the <tt>Set-Cookie</tt> header was
+     *               received
+     * @param path   the path from which the <tt>Set-Cookie</tt> header was
+     *               received
      * @param secure <tt>true</tt> when the <tt>Set-Cookie</tt> header was
-     * received over secure conection
+     *               received over secure conection
      * @param header the <tt>Set-Cookie</tt> received from the server
      * @return an array of <tt>Cookie</tt>s parsed from the <tt>"Set-Cookie"
      * </tt> header
-     * @throws MalformedCookieException if an exception occurs during parsing
+     * @exception MalformedCookieException if an exception occurs during parsing
      */
     public Cookie[] parse(String host, int port, String path, boolean secure, final Header header) throws MalformedCookieException {
 
@@ -234,17 +241,14 @@ public class CookieSpecBase implements CookieSpec {
         return parse(host, port, path, secure, header.getValue());
     }
 
-
     /**
      * Parse the cookie attribute and update the corresponsing {@link Cookie}
      * properties.
-     *
      * @param attribute {@link HeaderElement} cookie attribute from the
-     * <tt>Set- Cookie</tt>
-     * @param cookie {@link Cookie} to be updated
-     * @throws MalformedCookieException if an exception occurs during parsing
+     *                  <tt>Set- Cookie</tt>
+     * @param cookie    {@link Cookie} to be updated
+     * @exception MalformedCookieException if an exception occurs during parsing
      */
-
     public void parseAttribute(final NameValuePair attribute, final Cookie cookie) throws MalformedCookieException {
 
         if (attribute == null) {
@@ -315,7 +319,6 @@ public class CookieSpecBase implements CookieSpec {
         }
     }
 
-
     public Collection getValidDateFormats() {
         return this.datepatterns;
     }
@@ -326,15 +329,14 @@ public class CookieSpecBase implements CookieSpec {
 
     /**
      * Performs most common {@link Cookie} validation
-     *
-     * @param host the host from which the {@link Cookie} was received
-     * @param port the port from which the {@link Cookie} was received
-     * @param path the path from which the {@link Cookie} was received
+     * @param host   the host from which the {@link Cookie} was received
+     * @param port   the port from which the {@link Cookie} was received
+     * @param path   the path from which the {@link Cookie} was received
      * @param secure <tt>true</tt> when the {@link Cookie} was received using a
-     * secure connection
+     *               secure connection
      * @param cookie The cookie to validate.
-     * @throws MalformedCookieException if an exception occurs during
-     * validation
+     * @exception MalformedCookieException if an exception occurs during
+     *                                     validation
      */
     public void validate(String host, int port, String path, boolean secure, final Cookie cookie) throws MalformedCookieException {
 
@@ -363,10 +365,10 @@ public class CookieSpecBase implements CookieSpec {
         // security check... we musn't allow the server to give us an
         // invalid domain scope
 
-        // Validate the cookies domain attribute.  NOTE:  Domains without 
-        // any dots are allowed to support hosts on private LANs that don't 
-        // have DNS names.  Since they have no dots, to domain-match the 
-        // request-host and domain must be identical for the cookie to sent 
+        // Validate the cookies domain attribute.  NOTE:  Domains without
+        // any dots are allowed to support hosts on private LANs that don't
+        // have DNS names.  Since they have no dots, to domain-match the
+        // request-host and domain must be identical for the cookie to sent
         // back to the origin-server.
         if (host.indexOf(".") >= 0) {
             // Not required to have at least two dots.  RFC 2965.
@@ -396,13 +398,12 @@ public class CookieSpecBase implements CookieSpec {
         }
     }
 
-
     /**
      * Return <tt>true</tt> if the cookie should be submitted with a request
      * with given attributes, <tt>false</tt> otherwise.
-     * @param host the host to which the request is being submitted
-     * @param port the port to which the request is being submitted (ignored)
-     * @param path the path to which the request is being submitted
+     * @param host   the host to which the request is being submitted
+     * @param port   the port to which the request is being submitted (ignored)
+     * @param path   the path to which the request is being submitted
      * @param secure <tt>true</tt> if the request is using a secure connection
      * @param cookie {@link Cookie} to be matched
      * @return true if the cookie matches the criterium
@@ -453,7 +454,7 @@ public class CookieSpecBase implements CookieSpec {
 
     /**
      * Performs domain-match as implemented in common browsers.
-     * @param host The target host.
+     * @param host   The target host.
      * @param domain The cookie domain attribute.
      * @return true if the specified host matches the given domain.
      */
@@ -469,12 +470,12 @@ public class CookieSpecBase implements CookieSpec {
 
     /**
      * Performs path-match as implemented in common browsers.
-     * @param path The target path.
+     * @param path        The target path.
      * @param topmostPath The cookie path attribute.
      * @return true if the paths match
      */
     public boolean pathMatch(final String path, final String topmostPath) {
-        boolean match = path.startsWith (topmostPath);
+        boolean match = path.startsWith(topmostPath);
         // if there is a match and these values are not exactly the same we have
         // to make sure we're not matcing "/foobar" and "/foo"
         if (match && path.length() != topmostPath.length()) {
@@ -488,11 +489,11 @@ public class CookieSpecBase implements CookieSpec {
     /**
      * Return an array of {@link Cookie}s that should be submitted with a
      * request with given attributes, <tt>false</tt> otherwise.
-     * @param host the host to which the request is being submitted
-     * @param port the port to which the request is being submitted (currently
-     * ignored)
-     * @param path the path to which the request is being submitted
-     * @param secure <tt>true</tt> if the request is using a secure protocol
+     * @param host    the host to which the request is being submitted
+     * @param port    the port to which the request is being submitted (currently
+     *                ignored)
+     * @param path    the path to which the request is being submitted
+     * @param secure  <tt>true</tt> if the request is using a secure protocol
      * @param cookies an array of <tt>Cookie</tt>s to be matched
      * @return an array of <tt>Cookie</tt>s matching the criterium
      */
@@ -510,28 +511,6 @@ public class CookieSpecBase implements CookieSpec {
             }
         }
         return (Cookie[]) matching.toArray(new Cookie[matching.size()]);
-    }
-
-
-    /**
-     * Adds the given cookie into the given list in descending path order. That
-     * is, more specific path to least specific paths.  This may not be the
-     * fastest algorythm, but it'll work OK for the small number of cookies
-     * we're generally dealing with.
-     *
-     * @param list - the list to add the cookie to
-     * @param addCookie - the Cookie to add to list
-     */
-    private static void addInPathOrder(List list, Cookie addCookie) {
-        int i = 0;
-
-        for (i = 0; i < list.size(); i++) {
-            Cookie c = (Cookie) list.get(i);
-            if (addCookie.compare(addCookie, c) > 0) {
-                break;
-            }
-        }
-        list.add(i, addCookie);
     }
 
     /**
@@ -559,9 +538,8 @@ public class CookieSpecBase implements CookieSpec {
      * <i>cookies</i> suitable for sending in a <tt>"Cookie"</tt> header
      * @param cookies an array of {@link Cookie}s to be formatted
      * @return a string suitable for sending in a Cookie header.
-     * @throws IllegalArgumentException if an input parameter is illegal
+     * @exception IllegalArgumentException if an input parameter is illegal
      */
-
     public String formatCookies(Cookie[] cookies) throws IllegalArgumentException {
         LOG.trace("enter CookieSpecBase.formatCookies(Cookie[])");
         if (cookies == null) {
@@ -581,12 +559,11 @@ public class CookieSpecBase implements CookieSpec {
         return buffer.toString();
     }
 
-
     /**
      * Create a <tt>"Cookie"</tt> {@link Header} containing all {@link Cookie}s
      * in <i>cookies</i>.
      * @param cookies an array of {@link Cookie}s to be formatted as a <tt>"
-     * Cookie"</tt> header
+     *                Cookie"</tt> header
      * @return a <tt>"Cookie"</tt> {@link Header}.
      */
     public Header formatCookieHeader(Cookie[] cookies) {
@@ -594,11 +571,10 @@ public class CookieSpecBase implements CookieSpec {
         return new Header("Cookie", formatCookies(cookies));
     }
 
-
     /**
      * Create a <tt>"Cookie"</tt> {@link Header} containing the {@link Cookie}.
      * @param cookie <tt>Cookie</tt>s to be formatted as a <tt>Cookie</tt>
-     * header
+     *               header
      * @return a Cookie header.
      */
     public Header formatCookieHeader(Cookie cookie) {

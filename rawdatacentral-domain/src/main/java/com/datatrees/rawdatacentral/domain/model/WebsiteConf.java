@@ -20,19 +20,31 @@ public class WebsiteConf implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = -4488630632381744273L;
-    private Boolean simulate;
-    private String  websiteName;
-    private String  websiteType;
-    private String  name;
-    private String  initSetting;
-    private String  loginTip;
-    private String  verifyTip;
-    private String  resetType;// 重置类型：SMS|WEB
-    private String  smsTemplate;
-    private String  smsReceiver;
-    private String  resetURL;
-    private String  resetTip;
+    private static final long    serialVersionUID = -4488630632381744273L;
+
+    private              Boolean simulate;
+
+    private              String  websiteName;
+
+    private              String  websiteType;
+
+    private              String  name;
+
+    private              String  initSetting;
+
+    private              String  loginTip;
+
+    private              String  verifyTip;
+
+    private              String  resetType;// 重置类型：SMS|WEB
+
+    private              String  smsTemplate;
+
+    private              String  smsReceiver;
+
+    private              String  resetURL;
+
+    private              String  resetTip;
 
     public Boolean getSimulate() {
         return simulate;

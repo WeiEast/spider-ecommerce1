@@ -6,19 +6,25 @@ import java.util.Date;
 /** create by system from table t_ecommerce(ecommerce basic info) */
 public class Ecommerce implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long    serialVersionUID = 1L;
+
     /** bank Id */
-    private Integer id;
+    private              Integer id;
+
     /** not null if ecommerce support search */
-    private Integer websiteId;
+    private              Integer websiteId;
+
     /** ecommerce name */
-    private String  ecommerceName;
+    private              String  ecommerceName;
+
     /** 0:false,1:true */
-    private Boolean isenabled;
+    private              Boolean isenabled;
+
     /**  */
-    private Date    createdAt;
+    private              Date    createdAt;
+
     /**  */
-    private Date    updatedAt;
+    private              Date    updatedAt;
 
     public Integer getId() {
         return id;

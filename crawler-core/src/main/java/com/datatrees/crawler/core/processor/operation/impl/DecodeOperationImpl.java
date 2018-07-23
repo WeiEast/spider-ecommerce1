@@ -37,20 +37,6 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
         super(operation, extractor);
     }
 
-    @Override
-    protected Object doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
-      // get input
-        String orginal = (String) operatingData;
-
-        String charSet = StringUtils.isEmpty(operation.getCharset()) ? (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil.getContentCharset(request)) : operation.getCharset();
-
-        DecodeType decodeType = operation.getDecodeType();
-
-        log.debug("decode-type: {}", decodeType);
-
-        return decode(orginal, decodeType, charSet);
-    }
-
     /**
      * @param original
      * @param decodeType
@@ -79,5 +65,22 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
             log.error("handlerDecode error!", e);
         }
         return result;
+    }
+
+    @Override
+    protected Object doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
+        // get input
+        String orginal = (String) operatingData;
+
+        String charSet = StringUtils.isEmpty(operation.getCharset()) ?
+                (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil.getContentCharset(request)) :
+                operation.getCharset();
+
+        DecodeType decodeType = operation.getDecodeType();
+
+        log.debug("decode-type: {}", decodeType);
+
+        return decode(orginal, decodeType, charSet);
     }
 }

@@ -20,11 +20,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class EcommerceServiceImpl implements EcommerceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EcommerceServiceImpl.class);
+    private static final Logger       logger = LoggerFactory.getLogger(EcommerceServiceImpl.class);
+
     @Resource
-    private RedisService redisService;
+    private              RedisService redisService;
+
     @Resource
-    private EcommerceDAO ecommerceDAO;
+    private              EcommerceDAO ecommerceDAO;
 
     @Override
     public Ecommerce getByWebsiteId(Integer websiteId) {

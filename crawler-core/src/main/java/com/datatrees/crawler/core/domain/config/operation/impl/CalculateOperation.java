@@ -25,8 +25,9 @@ public class CalculateOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long serialVersionUID = -4440451039134841535L;
-    private String value;
+    private static final long   serialVersionUID = -4440451039134841535L;
+
+    private              String value;
 
     @Tag
     public String getValue() {

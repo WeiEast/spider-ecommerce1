@@ -24,20 +24,20 @@ import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
 import com.datatrees.rawdatacentral.domain.enums.QRStatus;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.ImageOcrUtils;
 import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.ImageUtils;
 import com.datatrees.rawdatacentral.plugin.common.qq.com.h5.util.domain.ColorPoint;
 import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -50,12 +50,16 @@ import org.slf4j.LoggerFactory;
 
 public class QQMailPlugin implements CommonPluginService, QRPluginService {
 
-    private static final Logger logger = LoggerFactory.getLogger(QQMailPlugin.class);
-    private MessageService messageService;
-    private MonitorService monitorService;
-    private RedisService   redisService;
+    private static final Logger         logger  = LoggerFactory.getLogger(QQMailPlugin.class);
+
+    private              MessageService messageService;
+
+    private              MonitorService monitorService;
+
+    private              RedisService   redisService;
+
     //超时时间120秒
-    private long timeOut = 120;
+    private              long           timeOut = 120;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {

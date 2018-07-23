@@ -21,10 +21,13 @@ import org.slf4j.LoggerFactory;
 
 public class UploadTask implements Runnable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UploadTask.class);
-    private ExtractMessage extractMessage;
-    private List<String>   fieldList;
-    private String         ossKey;
+    private static final Logger         LOGGER = LoggerFactory.getLogger(UploadTask.class);
+
+    private              ExtractMessage extractMessage;
+
+    private              List<String>   fieldList;
+
+    private              String         ossKey;
 
     UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
         this.extractMessage = extractMessage;

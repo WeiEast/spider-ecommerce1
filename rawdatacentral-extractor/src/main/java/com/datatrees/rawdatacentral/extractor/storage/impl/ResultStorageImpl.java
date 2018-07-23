@@ -29,15 +29,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResultStorageImpl implements ResultStorage {
 
-    private static final Logger logger       = LoggerFactory.getLogger(ResultStorageImpl.class);
-    private              int    remarkLength = PropertiesConfiguration.getInstance().getInt("remark.max.length", 255);
-    private              int    urlLength    = PropertiesConfiguration.getInstance().getInt("url.max.length", 512);
+    private static final Logger                 logger       = LoggerFactory.getLogger(ResultStorageImpl.class);
+
+    private              int                    remarkLength = PropertiesConfiguration.getInstance().getInt("remark.max.length", 255);
+
+    private              int                    urlLength    = PropertiesConfiguration.getInstance().getInt("url.max.length", 512);
+
     @Resource
-    private ExtractorResultService extractorService;
+    private              ExtractorResultService extractorService;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ResultStorage#doExtractResultSave(com.datatrees.rawdatacentral
      * .core.model.result.AbstractExtractResult)

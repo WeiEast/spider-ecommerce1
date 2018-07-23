@@ -3,24 +3,25 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
- * 
  * Copyright (c) datatrees.com Inc. 2015
  */
 
 package com.datatrees.common.protocol;
 
-
-
 /**
  * Simple aggregate to pass from protocol plugins both content and protocol status.
- * 
+ *
  * @author Andrzej Bialecki &lt;ab@getopt.org&gt;
  */
 public class ProtocolOutput {
-    private Content  content;
-    private int      statusCode;
-    private Response response;
 
+    public static ProtocolOutput NULL = new Null(Content.NULL);
+
+    private Content  content;
+
+    private int      statusCode;
+
+    private Response response;
 
     /**
      * @param content
@@ -73,18 +74,6 @@ public class ProtocolOutput {
     }
 
     /**
-     * null instance mean dummy
-     */
-    private static class Null extends ProtocolOutput {
-        public Null(Content content) {
-            super(content);
-        }
-    }
-
-    public static ProtocolOutput NULL = new Null(Content.NULL);
-
-
-    /**
      * @return the response
      */
     public Response getResponse() {
@@ -96,6 +85,16 @@ public class ProtocolOutput {
      */
     public void setResponse(Response response) {
         this.response = response;
+    }
+
+    /**
+     * null instance mean dummy
+     */
+    private static class Null extends ProtocolOutput {
+
+        public Null(Content content) {
+            super(content);
+        }
     }
 
 }

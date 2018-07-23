@@ -18,14 +18,21 @@ import com.treefinance.crawler.lang.AtomicAttributes;
 public class Context extends AtomicAttributes {
 
     private final static String FETCHED_LINK_NODE_LIST = "FETCHED_LINK_NODE_LIST";
+
     private final static String CURRENT_REQUEST        = "CURRENT_REQUEST";
+
     private final static String CURRENT_RESPONSE       = "CURRENT_RESPONSE";
+
     // search processor filter
     private final static String SEARCH_PROCESSOR       = "SEARCH_PROCESSOR";
+
     private final static String DUPLICATE_CHECKER      = "DUPLICATE_CHECKER";
+
     private final static String FECHED_LINK_NODE       = "FECHED_LINK_NODE";
+
     // hosting site & redlist filter
     private final static String URL_HANDLER            = "URL_HANDLER";
+
     // common proerites
     private final static String CURRENT_LINK_NODE      = "CURRENT_LINK_NODE";
 

@@ -3,10 +3,8 @@ package com.datatrees.rawdatacentral.web.controller;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +25,5 @@ public class StatusController {
         map.put("status", "ok");
         return map;
     }
-
 
 }

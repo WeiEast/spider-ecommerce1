@@ -20,10 +20,14 @@ import java.util.Map;
 public abstract class AbstractData extends HashMap {
 
     public static String UNIQUESIGN  = "uniqueSign";
+
     public static String URL         = "url";
+
     // maybe collection
     public static String PAGECONTENT = "pageContent";
+
     public static String RESULTTYPE  = "resultType";
+
     public static String EXTRAINFO   = "extraInfo";
 
     public String getResultType() {

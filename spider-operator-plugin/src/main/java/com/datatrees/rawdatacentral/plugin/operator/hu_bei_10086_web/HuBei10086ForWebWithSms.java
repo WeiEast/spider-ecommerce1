@@ -16,14 +16,14 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -128,10 +128,10 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
         try {
             String templateUrl = "https://hb.ac.10086.cn/SSO/sendsms";
             String templateData = "username={}&service=my&passwordType=2";
-            String data = TemplateUtils.format(templateData,param.getMobile());
+            String data = TemplateUtils.format(templateData, param.getMobile());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "hu_bei_10086_web_001")
                     .setFullUrl(templateUrl).setRequestBody(data).invoke();
-            if (StringUtils.contains(response.getPageContent(),"随机短信已经发送到您的手机")) {
+            if (StringUtils.contains(response.getPageContent(), "随机短信已经发送到您的手机")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             } else {
@@ -158,8 +158,8 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
                     "=%2FSSO%2Floginbox&style=mymobile&service=my&continue=http%3A%2F%2Fwww.hb.10086.cn%3A80%2Fmy%2Findex" +
                     ".action&submitMode=login&guestIP=s&isCompelLogin=0";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_002")
-                    .setFullUrl(templateUrl).setRequestBody(data).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param, RequestType.POST, "hu_bei_10086_web_002").setFullUrl(templateUrl).setRequestBody(data)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("登陆失败,param={},response={}", param, response);

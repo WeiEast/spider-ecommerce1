@@ -14,35 +14,42 @@ public class HttpResult<T> implements Serializable {
     /**
      * true:操作成功 false:操作失败
      */
-    private boolean status  = false;
+    private boolean             status       = false;
+
     /**
      * 返回提示信息
      */
-    private String  message = "处理失败";
+    private String              message      = "处理失败";
+
     /**
      * 详细错误信息
      */
-    private String errorDetail;
+    private String              errorDetail;
+
     /**
      * 返回代码: 小于0:失败,大于0:操作成功
      */
-    private int responseCode = -1;
+    private int                 responseCode = -1;
+
     /**
      * 返回数据
      */
-    private T data;
+    private T                   data;
+
     /**
      * 返回信息扩展
      */
-    private Map<String, Object> extra     = new HashMap<>();
+    private Map<String, Object> extra        = new HashMap<>();
+
     /**
      * 时间戳
      */
-    private long                timestamp = System.currentTimeMillis();
+    private long                timestamp    = System.currentTimeMillis();
+
     /**
      * 是否异步
      */
-    private boolean             async     = false;
+    private boolean             async        = false;
 
     public HttpResult() {
         this.failure();

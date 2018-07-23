@@ -1,17 +1,17 @@
 package com.datatrees.rawdatacentral.service.dubbo.mail.exmail_qq;
 
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.mail.exmail_qq.MailServiceApiForExMailQQ;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * Created by zhangyanjia on 2018/2/26.
@@ -19,9 +19,10 @@ import javax.annotation.Resource;
 @Service
 public class MailServiceApiForExMailQQImpl implements MailServiceApiForExMailQQ {
 
-    private static final Logger logger = LoggerFactory.getLogger(MailServiceApiForExMailQQImpl.class);
+    private static final Logger          logger = LoggerFactory.getLogger(MailServiceApiForExMailQQImpl.class);
+
     @Resource
-    private CommonPluginApi commonPluginApi;
+    private              CommonPluginApi commonPluginApi;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {

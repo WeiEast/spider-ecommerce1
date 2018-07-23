@@ -25,9 +25,11 @@ public class Replacement implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 6456178618030598235L;
-    private String from;
-    private String to;
+    private static final long   serialVersionUID = 6456178618030598235L;
+
+    private              String from;
+
+    private              String to;
 
     @Attr("from")
     public String getFrom() {

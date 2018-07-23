@@ -23,17 +23,28 @@ import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
  */
 public class ExtractMessage {
 
-    private int         taskLogId;//TaskLog Id
-    private Long        taskId;
-    private int         websiteId;// search websiteid
-    private ResultType  ResultType;
-    private int         typeId;// maybe bankid，operatorid，ecommerceid
-    private Object      messageObject;
-    private ExtractCode extractCode;
-    private Map<String, String> submitkeyResult = new HashMap<String, String>();
+    private int                  taskLogId;//TaskLog Id
+
+    private Long                 taskId;
+
+    private int                  websiteId;// search websiteid
+
+    private ResultType           ResultType;
+
+    private int                  typeId;// maybe bankid，operatorid，ecommerceid
+
+    private Object               messageObject;
+
+    private ExtractCode          extractCode;
+
+    private Map<String, String>  submitkeyResult = new HashMap<String, String>();
+
     private ParentTask           task;
+
     private List<ExtractMessage> subExtractMessageList;
+
     private Integer              messageIndex;
+
     private String               websiteName;
 
     public Long getTaskId() {
@@ -198,10 +209,10 @@ public class ExtractMessage {
     }
 
     /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#toString()
-         */
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "ExtractMessage [taskLogId=" + taskLogId + ",taskId=" + taskId + ", ResultType=" + ResultType + ", typeId=" + typeId + "]";

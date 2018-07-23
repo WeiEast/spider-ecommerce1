@@ -30,6 +30,7 @@ import org.apache.james.mime4j.util.CharsetUtil;
 public class DecoderUtil {
 
     private static final Pattern PATTERN_ENCODED_WORD = Pattern.compile("(.*?)=\\?([^\\?]+?)\\?(\\w)\\?([^\\?]+?)\\?=", Pattern.DOTALL);
+
     private static       Log     log                  = LogFactory.getLog(DecoderUtil.class);
 
     /**
@@ -158,12 +159,15 @@ public class DecoderUtil {
         String charset = CharsetUtil.toJavaCharset(mimeCharset);
         if (charset == null) {
             if (log.isWarnEnabled()) {
-                log.warn("MIME charset '" + mimeCharset + "' in encoded word '" + recombine(mimeCharset, encoding, encodedText) + "' doesn't have a " + "corresponding Java charset");
+                log.warn(
+                        "MIME charset '" + mimeCharset + "' in encoded word '" + recombine(mimeCharset, encoding, encodedText) + "' doesn't have a " +
+                                "corresponding Java charset");
             }
             return null;
         } else if (!CharsetUtil.isDecodingSupported(charset)) {
             if (log.isWarnEnabled()) {
-                log.warn("Current JDK doesn't support decoding of charset '" + charset + "' (MIME charset '" + mimeCharset + "' in encoded word '" + recombine(mimeCharset, encoding, encodedText) + "')");
+                log.warn("Current JDK doesn't support decoding of charset '" + charset + "' (MIME charset '" + mimeCharset + "' in encoded word '" +
+                        recombine(mimeCharset, encoding, encodedText) + "')");
             }
             return null;
         }

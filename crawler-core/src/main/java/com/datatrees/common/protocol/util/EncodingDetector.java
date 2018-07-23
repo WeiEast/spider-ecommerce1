@@ -4,14 +4,15 @@
  * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License. You may obtain a
  * copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package com.datatrees.common.protocol.util;
 
 import java.nio.charset.Charset;
@@ -32,16 +33,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A simple class for detecting character encodings.
- *
  * <p>
  * Broadly this encompasses two functions, which are distinctly separate:
- *
  * <ol>
  * <li>Auto detecting a set of "clues" from input text.</li>
  * <li>Taking a set of clues and making a "best guess" as to the "real" encoding.</li>
  * </ol>
  * </p>
- *
  * <p>
  * A caller will often have some extra information about what the encoding might be (e.g. from the
  * HTTP header or HTML meta-tags, often wrong but still potentially useful clues). The types of
@@ -53,43 +51,6 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public class EncodingDetector {
-
-    private class EncodingClue {
-        private String value;
-        private String source;
-        private int confidence;
-
-        // Constructor for clues with no confidence values (ignore thresholds)
-        public EncodingClue(String value, String source) {
-            this(value, source, NO_THRESHOLD);
-        }
-
-        public EncodingClue(String value, String source, int confidence) {
-            this.value = value.toLowerCase();
-            this.source = source;
-            this.confidence = confidence;
-        }
-
-        public String getSource() {
-            return source;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public String toString() {
-            return value + " (" + source + ((confidence >= 0) ? ", " + confidence + "% confidence" : "") + ")";
-        }
-
-        public boolean isEmpty() {
-            return (value == null || "".equals(value));
-        }
-
-        public boolean meetsThreshold() {
-            return (confidence < 0 || (minConfidence >= 0 && confidence >= minConfidence));
-        }
-    }
 
     public static final  Logger                  LOG                = LoggerFactory.getLogger(EncodingDetector.class);
 
@@ -139,7 +100,7 @@ public class EncodingDetector {
 
     private List<EncodingClue> clues;
 
-    private int clueAdjustMinConfidence = PropertiesConfiguration.getInstance().getInt("clueAdjust.min.confidence", 70);
+    private int                clueAdjustMinConfidence = PropertiesConfiguration.getInstance().getInt("clueAdjust.min.confidence", 70);
 
     public EncodingDetector(Configuration conf) {
         minConfidence = conf.getInt(MIN_CONFIDENCE_KEY, 1);
@@ -147,6 +108,37 @@ public class EncodingDetector {
         clues = new ArrayList<EncodingClue>();
     }
 
+    public static String resolveEncodingAlias(String encoding) {
+        try {
+            if (encoding == null || !Charset.isSupported(encoding)) return null;
+            String canonicalName = new String(Charset.forName(encoding).name());
+            return ALIASES.containsKey(canonicalName) ? ALIASES.get(canonicalName) : canonicalName;
+        } catch (Exception e) {
+            LOG.warn("Invalid encoding " + encoding + " detected, using default.");
+            return null;
+        }
+    }
+
+    /**
+     * Parse the character encoding from the specified content type header. If the content type is
+     * null, or there is no explicit character encoding, <code>null</code> is returned. <br />
+     * This method was copied from org.apache.catalina.util.RequestUtil, which is licensed under the
+     * Apache License, Version 2.0 (the "License").
+     * @param contentType a content type header
+     */
+    public static String parseCharacterEncoding(String contentType) {
+        if (contentType == null) return (null);
+        int start = contentType.indexOf("charset=");
+        if (start < 0) return (null);
+        String encoding = contentType.substring(start + 8);
+        int end = encoding.indexOf(';');
+        if (end >= 0) encoding = encoding.substring(0, end);
+        encoding = encoding.trim();
+        if ((encoding.length() > 2) && (encoding.startsWith("\"")) && (encoding.endsWith("\"")))
+            encoding = encoding.substring(1, encoding.length() - 1);
+        return (encoding.trim());
+
+    }
 
     public void autoDetectClues(Content content, boolean filter, boolean mimeTypeIgnore) {
         byte[] data = content.getContent();
@@ -199,12 +191,10 @@ public class EncodingDetector {
 
     /**
      * Guess the encoding with the previously specified list of clues.
-     *
-     * @param content Content instance
+     * @param content      Content instance
      * @param defaultValue Default encoding to return if no encoding can be detected with enough
-     *        confidence. Note that this will <b>not</b> be normalized with
-     *        {@link EncodingDetector#resolveEncodingAlias}
-     *
+     *                     confidence. Note that this will <b>not</b> be normalized with
+     *                     {@link EncodingDetector#resolveEncodingAlias}
      * @return Guessed encoding or defaultValue
      */
     public String guessEncoding(Content content, String defaultValue, boolean clueAdjust) {
@@ -232,8 +222,8 @@ public class EncodingDetector {
         if (clueAdjust) {
             for (EncodingClue clue : clues) {
                 String charset = clue.value;
-                if (minConfidence >= 0 && clue.confidence >= minConfidence && clue.confidence >= clueAdjustMinConfidence
-                        && StringUtils.isNotBlank(content.getCharSet())) {
+                if (minConfidence >= 0 && clue.confidence >= minConfidence && clue.confidence >= clueAdjustMinConfidence &&
+                        StringUtils.isNotBlank(content.getCharSet())) {
                     if (StringUtils.equalsIgnoreCase(resolveEncodingAlias(charset), resolveEncodingAlias(content.getCharSet()))) {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace(base + ": Adjust Choosing encoding: " + charset + " with confidence " + clue.confidence);
@@ -304,37 +294,44 @@ public class EncodingDetector {
         }
     }
 
-    public static String resolveEncodingAlias(String encoding) {
-        try {
-            if (encoding == null || !Charset.isSupported(encoding)) return null;
-            String canonicalName = new String(Charset.forName(encoding).name());
-            return ALIASES.containsKey(canonicalName) ? ALIASES.get(canonicalName) : canonicalName;
-        } catch (Exception e) {
-            LOG.warn("Invalid encoding " + encoding + " detected, using default.");
-            return null;
+    private class EncodingClue {
+
+        private String value;
+
+        private String source;
+
+        private int    confidence;
+
+        // Constructor for clues with no confidence values (ignore thresholds)
+        public EncodingClue(String value, String source) {
+            this(value, source, NO_THRESHOLD);
         }
-    }
 
-    /**
-     * Parse the character encoding from the specified content type header. If the content type is
-     * null, or there is no explicit character encoding, <code>null</code> is returned. <br />
-     * This method was copied from org.apache.catalina.util.RequestUtil, which is licensed under the
-     * Apache License, Version 2.0 (the "License").
-     *
-     * @param contentType a content type header
-     */
-    public static String parseCharacterEncoding(String contentType) {
-        if (contentType == null) return (null);
-        int start = contentType.indexOf("charset=");
-        if (start < 0) return (null);
-        String encoding = contentType.substring(start + 8);
-        int end = encoding.indexOf(';');
-        if (end >= 0) encoding = encoding.substring(0, end);
-        encoding = encoding.trim();
-        if ((encoding.length() > 2) && (encoding.startsWith("\"")) && (encoding.endsWith("\"")))
-            encoding = encoding.substring(1, encoding.length() - 1);
-        return (encoding.trim());
+        public EncodingClue(String value, String source, int confidence) {
+            this.value = value.toLowerCase();
+            this.source = source;
+            this.confidence = confidence;
+        }
 
+        public String getSource() {
+            return source;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String toString() {
+            return value + " (" + source + ((confidence >= 0) ? ", " + confidence + "% confidence" : "") + ")";
+        }
+
+        public boolean isEmpty() {
+            return (value == null || "".equals(value));
+        }
+
+        public boolean meetsThreshold() {
+            return (confidence < 0 || (minConfidence >= 0 && confidence >= minConfidence));
+        }
     }
 
 }

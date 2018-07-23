@@ -23,16 +23,17 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class MappingOperationImpl extends Operation<MappingOperation> {
 
-    private static final LoadingCache<String, Map<String, String>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.MINUTES).softValues().initialCapacity(2).build(new CacheLoader<String, Map<String, String>>() {
-        @Override
-        public Map<String, String> load(String groupName) throws Exception {
-            String groupMapJson = PropertiesConfiguration.getInstance().get("mapping.group." + groupName + ".json");
-            if (StringUtils.isNotBlank(groupMapJson)) {
-                return GsonUtils.fromJson(groupMapJson, new TypeToken<Map<String, String>>() {}.getType());
-            }
-            return null;
-        }
-    });
+    private static final LoadingCache<String, Map<String, String>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.MINUTES)
+            .softValues().initialCapacity(2).build(new CacheLoader<String, Map<String, String>>() {
+                @Override
+                public Map<String, String> load(String groupName) throws Exception {
+                    String groupMapJson = PropertiesConfiguration.getInstance().get("mapping.group." + groupName + ".json");
+                    if (StringUtils.isNotBlank(groupMapJson)) {
+                        return GsonUtils.fromJson(groupMapJson, new TypeToken<Map<String, String>>() {}.getType());
+                    }
+                    return null;
+                }
+            });
 
     public MappingOperationImpl(@Nonnull MappingOperation operation, @Nonnull FieldExtractor extractor) {
         super(operation, extractor);
@@ -48,7 +49,8 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull MappingOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull MappingOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
+            @Nonnull Response response) throws Exception {
         String input = (String) operatingData;
 
         String result = null;

@@ -12,28 +12,35 @@ public class LoginMessage implements Serializable {
      * 站点名
      */
     private String websiteName;
+
     /**
      * 任务ID
      */
     private long   taskId;
+
     /**
      * 结束url
      */
     private String endUrl;
+
     /**
      * head配置:cookie
      */
     private String cookie;
+
     /**
      * head配置项:Set-Cookie
      */
     private String setCookie;
+
     /**
      * 用户账户
      */
     private String accountNo;
+
     /** 分组代码 */
     private String groupCode;
+
     /** 分组名称 */
     private String groupName;
 

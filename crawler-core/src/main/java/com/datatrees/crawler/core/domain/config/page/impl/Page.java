@@ -29,22 +29,38 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 public class Page extends AbstractPage {
 
     private String            path;
+
     private String            contentRegex;
+
     private String            pageNumRegex;
+
     private String            contentPageRegex;
+
     private AbstractService   service;
+
     private String            pageTitleRegex;
+
     private Boolean           urlExtract;
+
     private List<Replacement> replacementList;
+
     private Regexp            regexp;
+
     private Boolean           redirectUrlAdd;
+
     private Integer           maxPageCount;
+
     private Boolean           responseCheck;
+
     private String            failedCodePattern;
+
     private String            pageFailedPattern;
+
     /* config for wbsite trigger temporary blockade */
     private String            pageRetryPattern;
+
     private Integer           retrySleepSecond;/* unit:s */
+
     private RetryMode         retryMode;
 
     public Page() {

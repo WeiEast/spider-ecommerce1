@@ -21,10 +21,13 @@ import org.slf4j.LoggerFactory;
  */
 public class ActorLockEventWatcher extends AbstractLockerWatcher {
 
-    private static final Logger logger = LoggerFactory.getLogger(ActorLockEventWatcher.class);
-    private Thread          actorThread;
-    private ZooKeeperClient zookeeperClient;
-    private String          root;
+    private static final Logger          logger = LoggerFactory.getLogger(ActorLockEventWatcher.class);
+
+    private              Thread          actorThread;
+
+    private              ZooKeeperClient zookeeperClient;
+
+    private              String          root;
 
     /**
      * @param name
@@ -38,7 +41,7 @@ public class ActorLockEventWatcher extends AbstractLockerWatcher {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.datatrees.common.zookeeper.Locker#await()
      */
     @Override
@@ -47,7 +50,7 @@ public class ActorLockEventWatcher extends AbstractLockerWatcher {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher#detectLeader()
      */
     @Override

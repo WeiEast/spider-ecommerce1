@@ -6,5 +6,4 @@ public interface ThreadPoolService {
 
     ThreadPoolExecutor getMailLoginExecutors();
 
-
 }

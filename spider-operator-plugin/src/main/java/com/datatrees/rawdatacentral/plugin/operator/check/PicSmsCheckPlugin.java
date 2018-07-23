@@ -13,7 +13,6 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
@@ -22,13 +21,14 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import com.datatrees.spider.operator.api.OperatorApi;
+import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,15 +40,23 @@ import org.slf4j.LoggerFactory;
  */
 public class PicSmsCheckPlugin extends AbstractClientPlugin {
 
-    private static final Logger                   logger = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
+    private static final Logger                   logger       = LoggerFactory.getLogger(PicSmsCheckPlugin.class);
+
     private              OperatorApi              pluginService;
+
     private              MessageService           messageService;
+
     private              RedisService             redisService;
+
     private              MonitorService           monitorService;
+
     //超时时间120秒
-    private              long                     timeOut = 120;
+    private              long                     timeOut      = 120;
+
     private              AbstractProcessorContext context;
+
     private              String                   fromType;
+
     private              Map<String, String>      pluginResult = new HashMap<>();
 
     @Override
@@ -111,7 +119,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
             //发送MQ指令(要求输入图片验证码)
             Map<String, String> data = new HashMap<>();
             data.put(AttributeKey.REMARK, picCode);
-            String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), JSON.toJSONString(data),fromType);
+            String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_PICTURE.getCode(), JSON.toJSONString(data), fromType);
             //等待用户输入图片验证码,等待120秒
             messageService.sendTaskLog(taskId, "等待用户输入图片验证码");
             DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
@@ -167,7 +175,7 @@ public class PicSmsCheckPlugin extends AbstractClientPlugin {
         //发送MQ指令(要求输入短信验证码)
         Map<String, String> data = new HashMap<>();
         data.put(AttributeKey.REMARK, "");
-        String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), JSON.toJSONString(data),fromType);
+        String directiveId = messageService.sendDirective(taskId, DirectiveEnum.REQUIRE_SMS.getCode(), JSON.toJSONString(data), fromType);
         messageService.sendTaskLog(taskId, "等待用户输入短信验证码");
         //等待用户输入图片验证码,等待120秒
         DirectiveResult<Map<String, Object>> receiveDirective = redisService.getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
