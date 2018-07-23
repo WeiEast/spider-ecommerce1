@@ -8,7 +8,7 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.HttpResult;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,8 +1,9 @@
-package com.datatrees.rawdatacentral.service;
+package com.datatrees.spider.operator.service;
 
 import java.util.List;
 import java.util.Map;
 
+import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 

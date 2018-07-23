@@ -15,7 +15,7 @@ import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.service.OperatorPluginPostService;
 import com.datatrees.rawdatacentral.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.rawdatacentral.service.mq.MessageHandler;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.model.FormType;

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.datatrees.spider.operator.service.impl.WebsiteOperatorServiceImpl;
 import com.datatrees.spider.operator.api.WebsiteOperatorApi;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
