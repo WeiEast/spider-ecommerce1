@@ -37,13 +37,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class EducationServiceImpl implements EducationService {
 
-    private static final Logger        logger = LoggerFactory.getLogger(EducationServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(EducationServiceImpl.class);
 
     @Autowired
     WebsiteConfigService websiteConfigService;
 
     @Resource
-    private              RedisTemplate redisTemplate;
+    private RedisTemplate  redisTemplate;
 
     @Resource
     private MonitorService monitorService;
@@ -66,7 +66,7 @@ public class EducationServiceImpl implements EducationService {
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_01").setFullUrl(url).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url).invoke();
             String pageContent = response.getPageContent();
             //获取lt参数，登录需要使用
             String select = "//input[@name='lt']/@value";
@@ -123,7 +123,7 @@ public class EducationServiceImpl implements EducationService {
 
             String referer
                     = "https://account.chsi.com.cn/passport/login?service=https%3A%2F%2Fmy.chsi.com.cn%2Farchive%2Fj_spring_cas_security_check";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_02").setFullUrl(url)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url)
                     .setRequestBody(data, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             logger.info("登录的请求返回的response={}", response);
@@ -134,8 +134,7 @@ public class EducationServiceImpl implements EducationService {
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url).invoke();
                 if (response.getStatusCode() == 200) {
                     messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
@@ -149,8 +148,7 @@ public class EducationServiceImpl implements EducationService {
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("为保障您的账号安全，请输入验证码后重新登录")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_登录获取验证码").setFullUrl(url)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url).invoke();
                 if (response.getStatusCode() == 200) {
                     messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
@@ -194,8 +192,7 @@ public class EducationServiceImpl implements EducationService {
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/account/preregister.action?from=archive";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_注册初始化").setFullUrl(url)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("注册-->初始化失败,param={},e={}", param, e.getMessage());
@@ -216,8 +213,8 @@ public class EducationServiceImpl implements EducationService {
             String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
             String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
             String date = TemplateUtils.format(templateDate, param.getMobile(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_05").setFullUrl(url)
-                    .setRequestBody(date).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url).setRequestBody(date)
+                    .invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("false")) {
                 logger.error("此手机号已被注册，mobile={}", param.getMobile());
@@ -225,7 +222,7 @@ public class EducationServiceImpl implements EducationService {
             }
             long time = System.currentTimeMillis();
             url = "https://account.chsi.com.cn/account/captchimagecreateaction.action?time=" + time;
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "chsi_com_cn_03").setFullUrl(url).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url).invoke();
             Map<String, Object> map = new HashMap<>();
             map.put("picCode", response.getPageContent());
             return result.success(map);
@@ -252,7 +249,7 @@ public class EducationServiceImpl implements EducationService {
             //            params.put("ignoremphone", "false");
             String templateDate = "captch={}&mobilePhone={}&optType=REGISTER&ignoremphone=false";
             String date = TemplateUtils.format(templateDate, param.getPicCode(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_04").setFullUrl(url)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url)
                     .setRequestBody(date, ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)).invoke();
             String pageContent = response.getPageContent();
             String str = "学信网已向 " + param.getMobile() + " 发送校验码，请查收";
@@ -292,8 +289,8 @@ public class EducationServiceImpl implements EducationService {
             String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
             String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
             String date = TemplateUtils.format(templateDate, param.getMobile(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_05").setFullUrl(url)
-                    .setRequestBody(date).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url).setRequestBody(date)
+                    .invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("false")) {
                 logger.error("此手机号已被注册，mobile={}", param.getMobile());
@@ -306,8 +303,8 @@ public class EducationServiceImpl implements EducationService {
             date = TemplateUtils
                     .format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name, param.getIdCardType(),
                             param.getIdCard());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "chsi_com_cn_06").setFullUrl(url)
-                    .setRequestBody(date).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url).setRequestBody(date)
+                    .invoke();
             pageContent = response.getPageContent();
             logger.info("注册返回结果 responPage={}", response.getPageContent());
             Map<String, Object> map = new HashMap<>();

@@ -14,12 +14,10 @@ import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
-import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.vo.Cookie;
 import com.datatrees.rawdatacentral.domain.vo.NameValue;
 import com.datatrees.rawdatacentral.domain.vo.Request;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.treefinance.proxy.domain.Proxy;
 import org.apache.commons.io.IOUtils;
@@ -97,24 +95,15 @@ public class TaskHttpClient {
         this.response = new Response(request);
     }
 
-    public static TaskHttpClient create(Long taskId, String websiteName, RequestType requestType, String remarkId) {
-        return create(taskId, websiteName, requestType, remarkId, false);
+    public static TaskHttpClient create(Long taskId, String websiteName, RequestType requestType) {
+        return create(taskId, websiteName, requestType, false);
     }
 
-    public static TaskHttpClient create(OperatorParam operatorParam, RequestType requestType, String remarkId) {
-        return create(operatorParam.getTaskId(), operatorParam.getWebsiteName(), requestType, remarkId, false);
-    }
-
-    public static TaskHttpClient create(CommonPluginParam param, RequestType requestType) {
-        return create(param.getTaskId(), param.getWebsiteName(), requestType, null, false);
-    }
-
-    public static TaskHttpClient create(Long taskId, String websiteName, RequestType requestType, String remarkId, boolean isRedirect) {
+    public static TaskHttpClient create(Long taskId, String websiteName, RequestType requestType, boolean isRedirect) {
         Request request = new Request();
         request.setTaskId(taskId);
         request.setWebsiteName(websiteName);
         request.setType(requestType);
-        request.setRemarkId(remarkId);
         request.setRedirect(isRedirect);
         TaskHttpClient client = new TaskHttpClient(request);
         return client;
@@ -505,7 +494,7 @@ public class TaskHttpClient {
             }
             logger.info("http has redirect,taskId={},websiteName={},type={},from={} to redirectUrl={}", taskId, request.getWebsiteName(),
                     request.getType(), request.getUrl(), redirectUrl);
-            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, request.getRemarkId(), true)
+            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, true)
                     .setRedirectCount(request.getRedirectCount() + 1).setUrl(redirectUrl).setAutoRedirect(request.getAutoRedirect()).invoke();
             return response;
         }

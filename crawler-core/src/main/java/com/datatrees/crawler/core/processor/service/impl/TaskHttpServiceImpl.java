@@ -53,7 +53,7 @@ public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
         String url = StringUtils.substringBefore(linkUrl, "\"");
         String requestBody = StringUtils.substringAfter(linkUrl, "\"");
 
-        TaskHttpClient client = TaskHttpClient.create(taskId, websiteName, requestType, "", true).setReferer(referer).setUrl(url);
+        TaskHttpClient client = TaskHttpClient.create(taskId, websiteName, requestType, true).setReferer(referer).setUrl(url);
         if (CollectionUtils.isNotEmpty(context.getDefaultHeader())) {
             client.addHeaders(context.getDefaultHeader());
         }
