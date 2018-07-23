@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.operator.service.impl;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -8,28 +8,26 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
+import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
+import com.datatrees.rawdatacentral.service.*;
+import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
+import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.spider.operator.domain.model.field.FieldBizType;
 import com.datatrees.spider.operator.domain.model.field.FieldInitSetting;
 import com.datatrees.spider.operator.domain.model.field.InputField;
-import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
-import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
-import com.datatrees.rawdatacentral.service.NotifyService;
-import com.datatrees.rawdatacentral.service.WebsiteGroupService;
-import com.datatrees.rawdatacentral.service.WebsiteInfoService;
-import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
-import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
-import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample;
+import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -39,9 +37,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
-    private static final Logger              logger = LoggerFactory.getLogger(WebsiteOperatorServiceImpl.class);
+    private static final Logger              logger                   = LoggerFactory.getLogger(WebsiteOperatorServiceImpl.class);
 
-    private static final Map<String, String> hosts  = new HashMap<>();
+    private static final Map<String, String> hosts                    = new HashMap<>();
+
+    /**
+     * 插件名称
+     */
+    private static final String              OPERATOR_PLUGIN_FILENAME = "rawdatacentral-plugin-operator.jar";
 
     static {
         hosts.put("开发", "192.168.5.15:6789");
@@ -62,6 +65,12 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Resource
     private WebsiteInfoService  websiteInfoService;
+
+    @Resource
+    private RedisService        redisService;
+
+    @Resource
+    private ClassLoaderService  classLoaderService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -270,7 +279,6 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         websiteOperatorDAO.updateEnable(websiteName, enable ? 1 : 0);
     }
 
-
     @Override
     public List<WebsiteOperator> queryDisable() {
         WebsiteOperatorExample example = new WebsiteOperatorExample();
@@ -355,5 +363,32 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         }
         config.setEnable(true);
         return config;
+    }
+
+    @Override
+    public OperatorPluginService getOperatorPluginService(String websiteName, Long taskId) {
+        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
+        WebsiteOperator websiteOperator = getByWebsiteName(websiteName);
+        if (null == websiteOperator) {
+            logger.error("not found config,websiteName={}", websiteName);
+            throw new CommonException("not found config,websiteName=" + websiteName);
+        }
+        String mainLoginClass = websiteOperator.getPluginClass();
+        String pluginFileName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME.getRedisKey(websiteName));
+        if (StringUtils.isNoneBlank(pluginFileName)) {
+            logger.info("websiteName={},独立映射到了插件pluginFileName={}", websiteName, pluginFileName);
+        } else {
+            pluginFileName = OPERATOR_PLUGIN_FILENAME;
+        }
+        try {
+            Class loginClass = classLoaderService.loadPlugin(pluginFileName, mainLoginClass, taskId);
+            if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
+                throw new RuntimeException("mainLoginClass not impl " + OperatorPluginService.class.getName());
+            }
+            return (OperatorPluginService) loginClass.newInstance();
+        } catch (Throwable e) {
+            logger.error("getOperatorService error websiteName={}", websiteName, e);
+            throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName, e);
+        }
     }
 }

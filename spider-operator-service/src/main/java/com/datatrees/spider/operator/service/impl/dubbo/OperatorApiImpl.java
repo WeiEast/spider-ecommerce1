@@ -11,23 +11,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.*;
+import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.api.ProxyService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.retry.RetryHandler;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.spider.operator.api.OperatorApi;
-import com.datatrees.spider.operator.domain.model.FormType;
-import com.datatrees.rawdatacentral.domain.enums.*;
-import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.spider.operator.domain.model.OperatorGroup;
-import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
+import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.rawdatacentral.domain.enums.StepEnum;
+import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
 import com.datatrees.rawdatacentral.service.*;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.api.OperatorApi;
+import com.datatrees.spider.operator.domain.model.*;
 import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -338,33 +339,7 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
     }
 
     private OperatorPluginService getPluginService(String websiteName, Long taskId) {
-        return getOperatorPluginService(websiteName, taskId);
-    }
-
-    public OperatorPluginService getOperatorPluginService(String websiteName, Long taskId) {
-        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-        if (null == websiteOperator) {
-            logger.error("not found config,websiteName={}", websiteName);
-            throw new CommonException("not found config,websiteName=" + websiteName);
-        }
-        String mainLoginClass = websiteOperator.getPluginClass();
-        String pluginFileName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME.getRedisKey(websiteName));
-        if (StringUtils.isNoneBlank(pluginFileName)) {
-            logger.info("websiteName={},独立映射到了插件pluginFileName={}", websiteName, pluginFileName);
-        } else {
-            pluginFileName = OPERATOR_PLUGIN_FILENAME;
-        }
-        try {
-            Class loginClass = classLoaderService.loadPlugin(pluginFileName, mainLoginClass, taskId);
-            if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
-                throw new RuntimeException("mainLoginClass not impl " + OperatorPluginService.class.getName());
-            }
-            return (OperatorPluginService) loginClass.newInstance();
-        } catch (Throwable e) {
-            logger.error("getOperatorService error websiteName={}", websiteName, e);
-            throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName, e);
-        }
+        return websiteOperatorService.getOperatorPluginService(websiteName, taskId);
     }
 
     /**

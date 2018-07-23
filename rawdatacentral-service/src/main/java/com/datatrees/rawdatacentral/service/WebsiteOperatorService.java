@@ -102,4 +102,13 @@ public interface WebsiteOperatorService {
      */
     OperatorLoginConfig getLoginConfig(String websiteName);
 
+    /**
+     * 获取运营商plugin
+     * @param websiteName
+     * @param taskId
+     * @return
+     */
+    OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
+
+
 }

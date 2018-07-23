@@ -12,13 +12,8 @@ import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ClassLoaderUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.exception.CommonException;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.google.common.cache.*;
@@ -34,18 +29,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingBean {
 
-    private static final Logger logger                   = LoggerFactory.getLogger("plugin_log");
-    private static final String OPERATOR_PLUGIN_FILENAME = "rawdatacentral-plugin-operator.jar";
-    private static LoadingCache<String, ClassLoader> classLoacerCache;
-    private static LoadingCache<String, Class>       classCache;
+    private static final Logger                            logger                   = LoggerFactory.getLogger("plugin_log");
+
+    private static final String                            OPERATOR_PLUGIN_FILENAME = "rawdatacentral-plugin-operator.jar";
+
+    private static       LoadingCache<String, ClassLoader> classLoacerCache;
+
+    private static       LoadingCache<String, Class>       classCache;
+
     @Resource
-    private        PluginService                     pluginService;
+    private              PluginService                     pluginService;
+
     @Resource
-    private        RedisService                      redisService;
+    private              RedisService                      redisService;
+
     @Resource
-    private        WebsiteOperatorService            websiteOperatorService;
+    private              WebsiteOperatorService            websiteOperatorService;
+
     @Resource
-    private        ConfigServiceApi                  configServiceApi;
+    private              ConfigServiceApi                  configServiceApi;
 
     public static LoadingCache<String, ClassLoader> getClassLoacerCache() {
         return classLoacerCache;
@@ -61,8 +63,8 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
         CheckUtils.checkNotBlank(className, "className is blank");
         try {
             String version = pluginService.getPluginVersionFromCache(pluginName);
-            if(StringUtils.isBlank(version)){
-                logger.error("not found plugin version for:{} ",pluginName);
+            if (StringUtils.isBlank(version)) {
+                logger.error("not found plugin version for:{} ", pluginName);
                 return null;
             }
             Class mainClass = getClassFromCache(pluginName, version, className, taskId);
@@ -70,33 +72,6 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
         } catch (Throwable e) {
             logger.error("loadPlugin error pluginName={},className={}", pluginName, className, e);
             throw new RuntimeException(TemplateUtils.format("loadPlugin error pluginName={},className={}", pluginName, className));
-        }
-    }
-
-    @Override
-    public OperatorPluginService getOperatorPluginService(String websiteName, Long taskId) {
-        CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-        if (null == websiteOperator) {
-            logger.error("not found config,websiteName={}", websiteName);
-            throw new CommonException("not found config,websiteName=" + websiteName);
-        }
-        String mainLoginClass = websiteOperator.getPluginClass();
-        String pluginFileName = redisService.getString(RedisKeyPrefixEnum.WEBSITE_PLUGIN_FILE_NAME.getRedisKey(websiteName));
-        if (StringUtils.isNoneBlank(pluginFileName)) {
-            logger.info("websiteName={},独立映射到了插件pluginFileName={}", websiteName, pluginFileName);
-        } else {
-            pluginFileName = OPERATOR_PLUGIN_FILENAME;
-        }
-        try {
-            Class loginClass = loadPlugin(pluginFileName, mainLoginClass, taskId);
-            if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
-                throw new RuntimeException("mainLoginClass not impl " + OperatorPluginService.class.getName());
-            }
-            return (OperatorPluginService) loginClass.newInstance();
-        } catch (Throwable e) {
-            logger.error("getOperatorService error websiteName={}", websiteName, e);
-            throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName, e);
         }
     }
 

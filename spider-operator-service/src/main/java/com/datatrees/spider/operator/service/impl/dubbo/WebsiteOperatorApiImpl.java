@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.service.impl.WebsiteOperatorServiceImpl;
+import com.datatrees.spider.operator.service.impl.WebsiteOperatorServiceImpl;
 import com.datatrees.spider.operator.api.WebsiteOperatorApi;
 import com.datatrees.rawdatacentral.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
