@@ -78,7 +78,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
         Response response = null;
         try {
             String templateUrl = "https://login.10086.cn/captchazh.htm?type=12&timestamp={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -134,7 +134,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
 
             String refer = "https://login.10086.cn/html/bj/iloginnew.html?{}";
             String templateUrl = "https://login.10086.cn/verifyCaptcha?inputCode={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl, picCode)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, picCode)
                     .setReferer(refer, System.currentTimeMillis()).invoke();
             JSONObject jsonObject = response.getPageContentForJSON();
             String resultCode = jsonObject.getString("resultCode");

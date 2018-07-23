@@ -105,7 +105,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://gx.189.cn/public/image.jsp?date={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());

@@ -83,7 +83,7 @@ public class QQExMailPlugin implements CommonPluginService {
             ProxyUtils.setProxyEnable(param.getTaskId(), true);
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(MAIN_URL).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(MAIN_URL).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("exmailqq web login request home url error!");
@@ -172,7 +172,7 @@ public class QQExMailPlugin implements CommonPluginService {
                         = "sid=&firstlogin=false&domain={}&aliastype=other&errtemplate=dm_loginpage&first_step=&buy_amount=&year=&company_name=&is_get_dp_coupon=&source=&qy_code=&origin=&starttime={}&redirecturl=&f=biz&uin={}&p={}&delegate_url=&ts={}&from=&ppp=&chg=0&domain_bak=0&loginentry=3&s=&dmtype=bizmail&fun=&inputuin={}&verifycode={}";
                 data = TemplateUtils.format(templateData, domain, System.currentTimeMillis(), uin, p, publicTs, userName, param.getPicCode());
             }
-            response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.POST, "").setFullUrl(LOGIN_URL).setRequestBody(data)
+            response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.POST).setFullUrl(LOGIN_URL).setRequestBody(data)
                     .invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("正在登录腾讯企业邮箱") && pageContent.contains("\"frame_html?sid=")) {
@@ -181,7 +181,7 @@ public class QQExMailPlugin implements CommonPluginService {
                 String targetUrlParam = PatternUtils.group(pageContent, SUCCESS_TARGETURL_PARAM_RESULT_PATTERN, 1);
                 StringBuilder url = new StringBuilder();
                 String currentUrl = url.append(urlHead).append(targetUrl).append(targetUrlParam).toString();
-                response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(currentUrl).invoke();
+                response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET).setFullUrl(currentUrl).invoke();
                 map.put("directive", "login_success");
                 map.put("information", "登陆成功");
                 Map<String, Object> mqMap = new HashMap<>();
@@ -222,7 +222,7 @@ public class QQExMailPlugin implements CommonPluginService {
                     StringBuilder stringBuilder = new StringBuilder();
                     currentUrl = stringBuilder.append(URL).append(fail).toString();
                 }
-                response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(currentUrl).invoke();
+                response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET).setFullUrl(currentUrl).invoke();
                 pageContent = response.getPageContent();
                 //更新redis中ts的值
                 publicTs = PatternUtils.group(pageContent, PRELOGIN_RESULT_PATTERN, 1);
@@ -240,7 +240,7 @@ public class QQExMailPlugin implements CommonPluginService {
                 String errorString = list.get(5);
                 String isPicCode = PatternUtils.group(pageContent, ISPICCODE_RESULT_PATTERN, 1);
                 if (isPicCode.equals("true") && errorString.equals("errorVerifyCode")) {
-                    response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(PIC_URL).invoke();
+                    response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET).setFullUrl(PIC_URL).invoke();
                     map.put("directive", "require_picture_again");
                     map.put("errorMessage", "输入的验证码不正确");
                     map.put("information", response.getPageContent());
@@ -250,7 +250,7 @@ public class QQExMailPlugin implements CommonPluginService {
                 } else if (errorString.equals("errorNamePassowrd")) {
                     return failForResult(param, result, monitorService, map, taskId, errorString);
                 } else if (isPicCode.equals("true")) {
-                    response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET, "").setFullUrl(PIC_URL).invoke();
+                    response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.GET).setFullUrl(PIC_URL).invoke();
                     map.put("directive", "require_picture");
                     map.put("information", response.getPageContent());
                     logger.error("登录-->失败，重新访问的图片的response={}", response);

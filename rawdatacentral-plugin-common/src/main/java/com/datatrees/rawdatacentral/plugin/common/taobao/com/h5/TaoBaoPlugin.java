@@ -219,7 +219,7 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
                 String templateUrl =
                         "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&appkey=00000000&_ksTS={}&callback=json&" +
                                 UMID_PARAM + "=" + umid.token;
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                         .setFullUrl(templateUrl, timestampFlag()).setReferer(preLoginUrl).addExtralCookie("taobao.com", UAB_COLLINA_COOKIE, umid.uab)
                         .invoke();
                 String jsonString = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
@@ -230,7 +230,7 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
                     imgUrl = "https:" + imgUrl;
                 }
 
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(imgUrl)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(imgUrl)
                         .setReferer(preLoginUrl).invoke();
 
                 QRUtils qrUtils = new QRUtils();
@@ -261,7 +261,7 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
         Response response = null;
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "淘宝");
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(preLoginUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(preLoginUrl).invoke();
             logger.info("淘宝二维码登录-->初始化成功，taskId={}", param.getTaskId());
 
             notifyLogger(param, "初始化二维码成功", "初始化-->成功", null, null);
@@ -409,11 +409,11 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
 
             Response response = null;
             try {
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(loginUrl)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(loginUrl)
                         .setReferer(preLoginUrl).invoke();
                 String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
                 String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(redirectUrl)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl)
                         .setReferer(referer).invoke();
                 processCertCheck(param.getTaskId(), param.getWebsiteName(), "", response.getPageContent());
             } catch (Exception e) {
@@ -495,7 +495,7 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
             Response response = null;
             try {
                 String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "")
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                         .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
                 String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(resultJson);

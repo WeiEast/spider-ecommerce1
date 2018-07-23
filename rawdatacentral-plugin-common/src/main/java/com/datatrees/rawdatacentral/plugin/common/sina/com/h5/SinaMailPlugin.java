@@ -66,7 +66,7 @@ public class SinaMailPlugin implements CommonPluginService {
             ProxyUtils.setProxyEnable(param.getTaskId(), true);
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "sina_com_cn_01").setFullUrl(MAIN_URL)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(MAIN_URL)
                     .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -76,7 +76,7 @@ public class SinaMailPlugin implements CommonPluginService {
                 return result.failure(ErrorMessage.MAIL_DEFAULT_ERROR);
             }
             String preLoginUrl = PRE_LOGIN_URL + System.currentTimeMillis();
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "sina_com_cn_02").setFullUrl(preLoginUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(preLoginUrl)
                     .invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -117,7 +117,7 @@ public class SinaMailPlugin implements CommonPluginService {
             int rnd = RandomUtils.nextInt(100000000);
             String pcId = RedisUtils.get("sina_pcId_" + param.getTaskId());
             String requestUrl = String.format(CHECK_CODE_URL, rnd, pcId);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "sina_mail_h5_获取验证码").setFullUrl(requestUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(requestUrl)
                     .invoke();
             Map<String, Object> map = new HashMap<>();
             if (response.getStatusCode() == 200) {
@@ -185,7 +185,7 @@ public class SinaMailPlugin implements CommonPluginService {
                         = "entry=cnmail&gateway=1&from=&savestate=30&qrcode_flag=false&useticket=0&pagerefer=&cw=1&pcid={}&door={}&su={}&service=sso&servertime={}&nonce={}&pwencode=rsa2&rsakv={}&sp={}&sr=1920*1200&encoding=UTF-8&cdult=3&domain=sina.com.cn&prelt=46&returntype=TEXT";
                 data = TemplateUtils.format(templateData, pcId, param.getPicCode(), su, serverTime, nonce, rsakv, sp);
             }
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "").setFullUrl(requestUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(requestUrl)
                     .setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             logger.info("新浪登录请求返回的response={}", response);
@@ -233,7 +233,7 @@ public class SinaMailPlugin implements CommonPluginService {
                 for (String crossUrl : urlList) {
                     crossUrl = crossUrl + "&callback=sinaSSOController.doCrossDomainCallBack&scriptId=ssoscript" + i +
                             "&client=ssologin.js(v1.4.19)&_=" + System.currentTimeMillis();
-                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").setFullUrl(crossUrl).invoke();
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(crossUrl).invoke();
                     pageContent = response.getPageContent();
                     if (StringUtils.isBlank(pageContent)) {
                         logger.error("sina web login request cross url error! crossUrl: " + crossUrl);
@@ -243,7 +243,7 @@ public class SinaMailPlugin implements CommonPluginService {
                     }
                     i++;
                 }
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "").
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).
                         setFullUrl(FINAL_URL).setReferer("http://mail.sina.cn/?vt=4").addHeader("Upgrade-Insecure-Requests", "1").invoke();
                 pageContent = response.getPageContent();
                 if (StringUtils.isBlank(pageContent)) {
@@ -269,7 +269,7 @@ public class SinaMailPlugin implements CommonPluginService {
                 }
                 templateData = "uid={}&reload=true";
                 data = TemplateUtils.format(templateData, param.getUsername());
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST, "").setFullUrl(requestUrl)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(requestUrl)
                         .setRequestBody(data).invoke();
                 pageContent = response.getPageContent();
                 if (!PatternUtils.match("\"username\":\"([^\"]+)\"", pageContent)) {
