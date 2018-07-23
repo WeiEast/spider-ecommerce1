@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.dubbo;
+package com.datatrees.spider.operator.service.impl.dubbo;
 
 import javax.annotation.Resource;
 import java.util.*;

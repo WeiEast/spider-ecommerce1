@@ -20,23 +20,25 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
-import com.datatrees.rawdatacentral.api.*;
+import com.datatrees.rawdatacentral.api.CrawlerService;
+import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.rawdatacentral.api.ProxyService;
+import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
-import com.datatrees.spider.operator.api.OperatorApi;
-import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
 import com.datatrees.rawdatacentral.domain.enums.QRStatus;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
-import com.datatrees.spider.share.domain.HttpResult;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.HttpResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,9 +63,6 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Resource
     private              ZooKeeperClient      zooKeeperClient;
-
-    @Resource
-    private              OperatorApi          spiderOperatorApi;
 
     @Resource
     private              MonitorService       monitorService;
