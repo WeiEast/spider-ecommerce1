@@ -834,7 +834,7 @@ public class China10086ForApp3 implements OperatorPluginPostService {
             for (int i = 0; i < size; i++) {
                 int index = (int) Math.floor(Math.random() * urls.length);
                 String url = "http://" + urls[index] + "?str={}";
-                response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(url, str).setProxyEnable(false).invoke();
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "").setFullUrl(url, str).setProxyEnable(false).invoke();
                 String pageContent = response.getPageContent();
                 if (StringUtils.isNotBlank(pageContent)) {
                     result = pageContent;

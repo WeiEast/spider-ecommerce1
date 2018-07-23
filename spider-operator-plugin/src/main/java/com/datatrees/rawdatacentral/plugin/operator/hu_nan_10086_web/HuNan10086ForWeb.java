@@ -85,7 +85,7 @@ public class HuNan10086ForWeb implements OperatorPluginPostService {
             String referer = "http://www.hn.10086.cn/service/static/componant/login.html";
             String templateUrl = "http://www.hn.10086.cn/service/ics/login/sendSms?serialNumber={}&validateCode=&chanId=E003&operType=LOGIN" +
                     "&goodsName=发送短信验证码&loginType=2&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10086_web_001").setFullUrl(templateUrl, param.getMobile(), Math.random())
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10086_web_001").setFullUrl(templateUrl, param.getMobile(), Math.random())
                     .setReferer(referer).invoke();
 
             if (StringUtils.contains(response.getPageContent(), "随机短信验证码已经下发")) {
@@ -217,11 +217,11 @@ public class HuNan10086ForWeb implements OperatorPluginPostService {
             String referer = "http://www.hn.10086.cn/service/static/componant/login.html";
             String templateUrl
                     = "https://login.10086.cn/AddUID.htm?channelID=00731&Artifact={}&backUrl=http://www.hn.10086.cn/service/static/index.html&TransactionID={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10086_web_002")
                     .setFullUrl(templateUrl, ARTIFACT, System.currentTimeMillis()).setReferer(referer).invoke();
             referer = "http://www.hn.10086.cn/service/static/index.html";
             templateUrl = "https://login.10086.cn/SSOCheck.action?channelID=12034&backUrl=http://www.hn.10086.cn/service/static/index.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10086_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10086_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);

@@ -162,7 +162,7 @@ public class HuNan10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://waphn.189.cn/hnselfservice/billquery/queryBilly.action?number={}&vicode={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10000_wap_004")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10000_wap_004")
                     .setFullUrl(templateUrl, param.getMobile(), param.getPicCode()).invoke();
             if (StringUtils.contains(response.getPageContent(), "success")) {
                 logger.info("详单-->图片验证码-->校验成功,param={}", param);
@@ -199,13 +199,13 @@ public class HuNan10000ForWap implements OperatorPluginService {
             String referer = "http://waphn.189.cn/hnselfservice/billquery/queryBillList.action?patitype=2";
             String templateUrl = "http://waphn.189.cn/hnselfservice/billquery/queryBillListx" +
                     ".action?tm=&tabIndex=2&queryMonth={}&patitype=2&code={}&accNbr={}&chargeType=";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10000_wap_005")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10000_wap_005")
                     .setFullUrl(templateUrl, queryMonth, param.getSmsCode(), param.getMobile()).setReferer(referer).invoke();
             if (!StringUtils.contains(response.getPageContent(), "验证码错误!")) {
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
             } else {
-                //response = TaskHttpClient.create(param, RequestType.GET, "hu_nan_10000_wap_006")
+                //response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10000_wap_006")
                 //        .setFullUrl(templateUrl, lastMonth, param.getSmsCode(), param.getMobile()).setReferer(referer).invoke();
                 //if (StringUtils.contains(response.getPageContent(), "费用")) {
                 //    logger.info("详单-->校验成功,param={}", param);

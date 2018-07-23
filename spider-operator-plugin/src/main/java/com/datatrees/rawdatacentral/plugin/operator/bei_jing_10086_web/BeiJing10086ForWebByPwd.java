@@ -52,9 +52,9 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
             //获取cookie:Webtrends
-            TaskHttpClient.create(param, RequestType.GET, "").setFullUrl("https://login.10086.cn/html/bj/login.html").invoke();
+            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "").setFullUrl("https://login.10086.cn/html/bj/login.html").invoke();
             //获取cookie:JSESSIONID
-            TaskHttpClient.create(param, RequestType.GET, "")
+            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "")
                     .setFullUrl("https://login.10086.cn/html/bj/iloginnew.html?{}", System.currentTimeMillis()).invoke();
             return result.success();
         } catch (Exception e) {
@@ -187,7 +187,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             String artifact = json.getString("artifact");
             String assertAcceptURL = json.getString("assertAcceptURL");
             templateUrl = "{}?backUrl=http%3A%2F%2Fservice.bj.10086.cn&artifact={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "bei_jing_10086_web_003").setFullUrl(templateUrl, assertAcceptURL, artifact)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "bei_jing_10086_web_003").setFullUrl(templateUrl, assertAcceptURL, artifact)
                     .setReferer(referer, System.currentTimeMillis()).invoke();
             logger.info("登录成功,param={}", param);
             return result.success();
@@ -238,7 +238,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
         try {
             String templateUrl = "https://login.10086.cn/SSOCheck" +
                     ".action?channelID=12034&backUrl=http%3A%2F%2Fwww.10086.cn%2Findex%2Fbj%2Findex_100_100.html";
-            TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl).invoke();
 
             templateUrl = "http://www1.10086.cn/web-Center/authCenter/assertionQuery.do";
             String templateData = "requestJson=%7B%22serviceName%22%3A%22if008_query_user_assertion%22%2C%22header%22%3A%7B%22version%22%3A%221.0" +
@@ -286,7 +286,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             String message = json.getString("message");
             if (StringUtils.equals("Y", message)) {
                 logger.info("详单校验成功,param={}", param);
-                TaskHttpClient.create(param, RequestType.GET, "")
+                TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "")
                         .setFullUrl("https://login.10086.cn/SSOCheck.action?channelID=12003&backUrl=http://shop.10086.cn/i/?f=custinfoqry").invoke();
                 return result.success();
             } else {

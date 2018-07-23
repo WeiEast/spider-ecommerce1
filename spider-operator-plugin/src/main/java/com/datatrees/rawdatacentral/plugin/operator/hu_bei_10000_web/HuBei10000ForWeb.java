@@ -91,7 +91,7 @@ public class HuBei10000ForWeb implements OperatorPluginService {
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10018&toStUrl=http://hb.189.cn/SSOtoWSSNew?toWssUrl=/pages/selfservice/feesquery/feesyue.jsp&trackPath=SYleftDH";
             String referer = "http://www.189.cn/hb/";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_bei_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("hu_bei_10000_web_002请求失败,param={},response={}", param, response);
@@ -100,7 +100,7 @@ public class HuBei10000ForWeb implements OperatorPluginService {
 
             templateUrl = "http://hb.189.cn/hbuserCenter.action";
             referer = "http://hb.189.cn/pages/selfservice/feesquery/newBOSSQueryCustBill.action";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_bei_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("hu_bei_10000_web_003请求失败,param={},response={}", param, response);

@@ -103,7 +103,7 @@ public class China10010ForWap implements OperatorPluginService {
             }
             String code2 = json.getString("code");
             templateUrl = "http://wap.10010.com/t/loginCallBack.htm?code={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_002").setFullUrl(templateUrl, code2).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10010_app_002").setFullUrl(templateUrl, code2).invoke();
 
             /**
              * 查询归属地
@@ -118,7 +118,7 @@ public class China10010ForWap implements OperatorPluginService {
                 TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
             } else {
                 templateUrl = "https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?cb=&resource_name=guishudi&query={}&_=";
-                response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_003").setFullUrl(templateUrl, param.getMobile()).invoke();
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10010_app_003").setFullUrl(templateUrl, param.getMobile()).invoke();
                 String prov = (String) JSONPath.eval(response.getPageContentForJSON(), "$.data[0].prov");
                 String city = (String) JSONPath.eval(response.getPageContentForJSON(), "$.data[0].city");
                 String provinceName = prov;
@@ -150,7 +150,7 @@ public class China10010ForWap implements OperatorPluginService {
              */
             String templateUrl = "http://wap.10010.com/mobileService/query/queryRealFeeHistroyDetail" +
                     ".htm?desmobile=&version=android@5.5&menuId=000200010005&month={}&randm=";
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_002").setFullUrl(templateUrl, billMonth).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10010_app_002").setFullUrl(templateUrl, billMonth).invoke();
             String pageContent = response.getPageContent();
             return result.success(pageContent);
         } catch (Exception e) {
@@ -198,7 +198,7 @@ public class China10010ForWap implements OperatorPluginService {
                 for (int i = 0; i <= pages; i++) {
                     templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/thxd_more_list" +
                             ".jsp?1=1&t={}&beginrow={}&endrow={}&pagenum={}";
-                    response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_004")
+                    response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10010_app_004")
                             .setFullUrl(templateUrl, System.currentTimeMillis(), (40 * i), (40 * (i + 1)), (i + 1)).invoke();
                     list.add(response.getPageContent());
                 }
@@ -255,7 +255,7 @@ public class China10010ForWap implements OperatorPluginService {
             for (int i = 0; i <= pages; i++) {
                 templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/sms_more_list.jsp?1=1&t=" + System.currentTimeMillis() +
                         "&beginrow=" + (100 * i) + "&endrow=" + (100 * (i + 1)) + "&pagenum=" + (i + 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_007")
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10010_app_007")
                         .setFullUrl(templateUrl, System.currentTimeMillis(), (100 * i), (100 * (i + 1)), (i + 1)).invoke();
                 list.add(response.getPageContent());
             }
@@ -296,7 +296,7 @@ public class China10010ForWap implements OperatorPluginService {
                 for (int i = 0; i <= pages; i++) {
                     templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/net_more_list.jsp?1=1&t=" + System.currentTimeMillis() +
                             "&beginrow=" + (40 * i) + "&endrow=" + (40 * (i + 1)) + "&pagenum=" + (i + 1);
-                    response = TaskHttpClient.create(param, RequestType.GET, "china_10010_app_009")
+                    response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10010_app_009")
                             .setFullUrl(templateUrl, System.currentTimeMillis(), (40 * i), (40 * (i + 1)), (i + 1)).invoke();
                     list.add(response.getPageContent());
                 }

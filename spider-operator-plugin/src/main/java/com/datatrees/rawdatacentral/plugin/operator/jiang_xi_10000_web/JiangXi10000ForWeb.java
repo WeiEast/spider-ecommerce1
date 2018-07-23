@@ -48,7 +48,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://jx.189.cn/service/account/seeInfo.jsp";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10000_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "jiang_xi_10000_web_001").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String modulus = PatternUtils.group(pageContent, "var modulus = \"([^\"]+)\"", 1);
             if (StringUtils.isNotBlank(modulus)) {

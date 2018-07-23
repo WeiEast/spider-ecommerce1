@@ -196,7 +196,7 @@ public class AnHui10086ForWeb implements OperatorPluginService {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_ERROR);
             }
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_006").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_006").setFullUrl(templateUrl).invoke();
             if (StringUtils.isBlank(response.getPageContent())) {
                 logger.error("登陆失败,param={},response={}", param, response);
                 return result.failure(ErrorCode.LOGIN_ERROR);
@@ -212,11 +212,11 @@ public class AnHui10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param, RequestType.POST, "an_hui_10086_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
 
             templateUrl = PatternUtils.group(response.getPageContent(), "window.top.location.href=\"([^\"]+)\"", 1);
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_008").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_008").setFullUrl(templateUrl).invoke();
 
             String referer = "http://service.ah.10086.cn/index.html";
             templateUrl = "http://service.ah.10086.cn/common/pageInfoInit?kind=&f=&url=%2Findex.html&_=";
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_009").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_009").setFullUrl(templateUrl).setReferer(referer)
                     .setRequestContentType(ContentType.APPLICATION_JSON).addHeader("X-Requested-With", "XMLHttpRequest")
                     .addHeader("Accept", "application/json, text/javascript, */*; q=0.01").invoke();
 
@@ -240,13 +240,13 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         try {
             String referer = "http://service.ah.10086.cn/pub-page/qry/qryDetail/billDetailIndex.html?kind=200011522&f=200011538&area=cd";
             String templateUrl = "https://service.ah.10086.cn/busi/broadbandZQ/getSubmitId?type=billDetailIndex_submitId&_={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_010").setFullUrl(templateUrl, System.currentTimeMillis())
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_010").setFullUrl(templateUrl, System.currentTimeMillis())
                     .setReferer(referer).setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             JSONObject jsonObject = response.getPageContentForJSON();
             String submitId = (String) JSONPath.eval(jsonObject, "$.object.yzm_submitId");
 
             templateUrl = "https://service.ah.10086.cn/pub/sendSmPass?opCode=EC20&phone_No=&type=billDetailIndex_submitId&yanzm_submitId={}&_={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10086_web_010")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10086_web_010")
                     .setFullUrl(templateUrl, submitId, System.currentTimeMillis()).setReferer(referer)
                     .setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             String pageContent = response.getPageContent();
@@ -270,7 +270,7 @@ public class AnHui10086ForWeb implements OperatorPluginService {
         try {
             String referer = "https://service.ah.10086.cn/pub-page/qry/qryDetail/billDetailIndex.html?kind=200011522&f=200011538&area=cd";
             String templateUrl = "https://service.ah.10086.cn/pub/chkSmPass?smPass={}&phone_No=&_={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "he_bei_10086_web_014")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_bei_10086_web_014")
                     .setFullUrl(templateUrl, param.getSmsCode(), System.currentTimeMillis()).setReferer(referer)
                     .addHeader("X-Requested-With", "XMLHttpRequest").setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             String pageContent = response.getPageContent();

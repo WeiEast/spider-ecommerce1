@@ -89,7 +89,7 @@ public class BeiJing10000ForWeb implements OperatorPluginService {
 
             templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10001&toStUrl=http://bj.189.cn/iframe/feequery/detailBillIndex" +
                     ".action?fastcode=01390638&cityCode=bj";
-            response = TaskHttpClient.create(param, RequestType.GET, "bei_jing_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "bei_jing_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
             if (StringUtils.isNotBlank(response.getPageContent())) {
                 logger.warn("登录成功,params={}", param);
                 return result.success();

@@ -84,7 +84,7 @@ public class YunNan10000ForWeb implements OperatorPluginService {
             String refer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01941227";
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10025&toStUrl=http://yn.189.cn/service/jt/bill/qry_mainjt.jsp?SERV_NO=9A001&fastcode=01941226&cityCode=yn";
-            response = TaskHttpClient.create(param, RequestType.GET, "yun_nan_10000_web_001").setFullUrl(templateUrl).setReferer(refer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "yun_nan_10000_web_001").setFullUrl(templateUrl).setReferer(refer).invoke();
             logger.info("登录成功,params={}", param);
             return result.success();
         } catch (Exception e) {

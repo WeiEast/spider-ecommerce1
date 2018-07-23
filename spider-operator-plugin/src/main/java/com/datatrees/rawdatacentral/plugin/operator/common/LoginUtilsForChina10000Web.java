@@ -37,7 +37,7 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.189.cn/login/index/ecs.do";
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10000_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10000_web_001").setFullUrl(templateUrl).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={},response={}", param, response, e);

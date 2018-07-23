@@ -186,7 +186,7 @@ public class China10086ForShop implements OperatorPluginService {
             String templateUrl = "http://shop.10086.cn/i/v1/res/precheck/{}?captchaVal={}&_={}";
             //结果枚举:正确{"data":null,"retCode":"000000","retMsg":"输入正确，校验成功","sOperTime":null},
             //错误{"data":null,"retCode":"999999","retMsg":"输入错误，校验失败","sOperTime":null}
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_007")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10086_shop_007")
                     .setFullUrl(templateUrl, param.getMobile(), param.getPicCode(), System.currentTimeMillis()).setReferer(referer).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
@@ -262,12 +262,12 @@ public class China10086ForShop implements OperatorPluginService {
             //没有referer提示403
             String referer = TemplateUtils.format("http://shop.10086.cn/i/?welcome={}", param.getMobile());
             //用post或者参数错误提示{\"retCode\":\"400000\",\"retMsg\":\"parameter illegal!\"}
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10086_shop_008")
                     .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis()).setReferer(referer).invoke();
             if (response.getStatusCode() == 403 || response.getStatusCode() == 555) {
                 logger.error("中国移动-->使用代理获取详单短信-->失败,将使用本地重试一次,taskId={},proxy={},statusCode={}", param.getTaskId(), response.getRequest().getProxy(),
                         response.getStatusCode());
-                response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_008")
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10086_shop_008")
                         .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis(), System.currentTimeMillis()).setProxyEnable(false)
                         .setReferer(referer).invoke();
                 if (response.getStatusCode() == 200) {
@@ -315,7 +315,7 @@ public class China10086ForShop implements OperatorPluginService {
              */
             //没有设置referer会出现connect reset
             String referer = "http://shop.10086.cn/i/?f=home&welcome=";
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_009")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10086_shop_009")
                     .setFullUrl(templateUrl, param.getMobile(), pwdTempSerCode, pwdTempRandCode, param.getPicCode(), System.currentTimeMillis())
                     .setReferer(referer).addHeader("Accept", "*/*").invoke();
             JSONObject json = response.getPageContentForJSON();
@@ -354,7 +354,7 @@ public class China10086ForShop implements OperatorPluginService {
             //没有referer提示:Connection reset
             String referer = "https://login.10086.cn/html/login/login.html";
             String channelID = TaskUtils.getTaskShare(param.getTaskId(), "channelID");
-            response = TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_004")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10086_shop_004")
                     .setFullUrl(templateUrl, param.getMobile(), URLEncoder.encode(encryptPwd, "UTF-8"), param.getSmsCode(), param.getPicCode(),
                             channelID, System.currentTimeMillis()).setReferer(referer).invoke();
             /**
@@ -383,7 +383,7 @@ public class China10086ForShop implements OperatorPluginService {
                 //获取权限信息,必须访问下主页,否则详单有些cookie没用
                 String artifact = json.getString("artifact");
                 templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?backUrl=http://shop.10086.cn/i/&artifact={}";
-                TaskHttpClient.create(param, RequestType.GET, "china_10086_shop_005").setFullUrl(templateUrl, artifact).invoke();
+                TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "china_10086_shop_005").setFullUrl(templateUrl, artifact).invoke();
                 String provinceCode = TaskUtils.getCookieValue(param.getTaskId(), "ssologinprovince");
                 String provinceName = getProvinceName(provinceCode);
                 TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.PROVINCE_NAME, provinceName);

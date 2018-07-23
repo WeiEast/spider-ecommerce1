@@ -79,7 +79,7 @@ public class HuBei10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.hb.189.cn/login/getSmsCode.htm?phoneNumber=" + param.getMobile() + "&randomType=loginRan";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10000_wap_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_bei_10000_wap_001").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("\"result\":0")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -124,7 +124,7 @@ public class HuBei10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.hb.189.cn/login/getSmsCode.htm?randomType=billQuery&phoneNumber={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10000_wap_003").setFullUrl(templateUrl, param.getMobile()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_bei_10000_wap_003").setFullUrl(templateUrl, param.getMobile()).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "flag\":\"1\"") || StringUtils.contains(pageContent, "msg\":\"系统异常")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);

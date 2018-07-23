@@ -38,7 +38,7 @@ public class JiangSu10086ForWap implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
             //获取imgReqSeq
-            Response response = TaskHttpClient.create(param, RequestType.GET, "jiang_su_10086_wap_001")
+            Response response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "jiang_su_10086_wap_001")
                     .setFullUrl("http://wap.js.10086.cn/login.thtml").invoke();
             String pageContent = response.getPageContent();
             String imgReqSeq = RegexpUtils.select(pageContent, "id=\\\\\"imgReqSeq\\\\\" value=\\\\\"(.+?)\\\\\"", 1);

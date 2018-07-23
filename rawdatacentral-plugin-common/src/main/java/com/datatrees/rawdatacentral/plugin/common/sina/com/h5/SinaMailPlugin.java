@@ -317,7 +317,7 @@ public class SinaMailPlugin implements CommonPluginService {
         MessageService messageService = BeanFactoryUtils.getBean(MessageService.class);
         int rnd = RandomUtils.nextInt(100000000);
         String picUrl = String.format(CHECK_CODE_URL, rnd, pcId);
-        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "sina_mail_h5_获取验证码").setFullUrl(picUrl)
+        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(picUrl)
                 .invoke();
         if (response.getStatusCode() == 200) {
             BeanFactoryUtils.getBean(MessageService.class).sendTaskLog(param.getTaskId(), "刷新图片验证码");

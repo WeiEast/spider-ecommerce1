@@ -32,7 +32,7 @@ public class JiangSu10000ForWeb implements OperatorPluginService {
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
-            TaskHttpClient.create(param, RequestType.GET, "jiang_su_10000_web_001").setFullUrl("http://js.189.cn/nservice/login/toLogin").invoke();
+            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "jiang_su_10000_web_001").setFullUrl("http://js.189.cn/nservice/login/toLogin").invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={}", param, e);

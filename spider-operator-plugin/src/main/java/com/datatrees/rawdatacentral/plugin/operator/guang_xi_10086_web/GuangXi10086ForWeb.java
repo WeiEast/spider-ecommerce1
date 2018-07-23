@@ -38,7 +38,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
-            response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (org.apache.commons.lang.StringUtils.isBlank(pageContent)) {
                 logger.error("登录-->初始化失败,param={},response={}", param, response);
@@ -53,7 +53,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
 
             if (pageContent.contains("replace")) {
                 templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
             if (pageContent.contains("postartifact")) {
@@ -181,7 +181,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             String referer = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
             String templateUrl = "https://gx.ac.10086.cn/SMSCodeSend?mobileNum={}&spid={}&errorurl={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_003").setFullUrl(templateUrl, param.getMobile(), spid,
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "guang_xi_10086_web_003").setFullUrl(templateUrl, param.getMobile(), spid,
                     URLEncoder.encode("http://www.gx.10086.cn/wodeyidong/public/LoginAction/showSSOErr.action", "UTF-8")).setReferer(referer)
                     .invoke();
             if (response.getPageContent().contains("短信验证码已发送到您的手机")) {
@@ -226,7 +226,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String pageContent = response.getPageContent();
             if (pageContent.contains("replace")) {
                 templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "guang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
             if (pageContent.contains("postartifact")) {

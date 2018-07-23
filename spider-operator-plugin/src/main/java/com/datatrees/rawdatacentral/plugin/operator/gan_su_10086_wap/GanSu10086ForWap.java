@@ -36,7 +36,7 @@ public class GanSu10086ForWap implements OperatorPluginService {
         try {
             //获取cookie:JSESSIONID
             String loginUrl = "http://wap.gs.10086.cn/jsbo_oauth/login?redirectURL=http://wap.gs.10086.cn/index.html";
-            String pageContent = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_001").setFullUrl(loginUrl).invoke().getPageContent();
+            String pageContent = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "gan_su_10086_wap_001").setFullUrl(loginUrl).invoke().getPageContent();
             //获取时间戳timestamp,这个很重要,没有的话后面刷新短信验证码不行
             String timestamp = RegexpUtils.select(pageContent, "jstimestamp = (\\d+)", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "timestamp", timestamp);
@@ -165,9 +165,9 @@ public class GanSu10086ForWap implements OperatorPluginService {
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
             //获取重要cookie:SESSION否则个人信息要访问2次才能成功
-            TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_006").setFullUrl("http://wap.gs.10086.cn/index.html").invoke();
+            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "gan_su_10086_wap_006").setFullUrl("http://wap.gs.10086.cn/index.html").invoke();
 
-            response = TaskHttpClient.create(param, RequestType.GET, "gan_su_10086_wap_006").addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "gan_su_10086_wap_006").addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest")
                     .setFullUrl("http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=MessageInfo").setReferer("http://wap.gs.10086.cn/index.html")
                     .invoke();
             json = response.getPageContentForJSON();

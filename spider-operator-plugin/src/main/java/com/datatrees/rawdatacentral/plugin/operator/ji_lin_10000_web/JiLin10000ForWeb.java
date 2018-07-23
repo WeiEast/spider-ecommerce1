@@ -107,7 +107,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             //RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
 
             String templateUrl = "http://wapjl.189.cn/menu/treeMenu.action?cms_page_type=4&servId=-1";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "ji_lin_10000_web_001").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("get encrypt param:初始化失败!");
@@ -153,7 +153,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
 
             templateUrl = "http://wapjl.189.cn/authImg?" + Math.random();
             String referer = "http://wapjl.189.cn/";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "ji_lin_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
             logger.info("登陆wap版-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             }
             templateUrl = "http://wapjl.189.cn/custquery/customerInfoQuery.action?servId=154";
             referer = "http://wapjl.189.cn/";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "ji_lin_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, String.valueOf(param.getMobile()))) {
                 String customerName = PatternUtils.group(pageContent, "客户姓名：<\\/strong>\\s*([^：]+)\\s*<br", 1);
@@ -248,7 +248,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10030&toStUrl=http://jl.189.cn/service/bill/toDetailBillFra.action?fastcode=00710602&cityCode=jl";
             referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00710602";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_0010").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "ji_lin_10000_web_0010").setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent) || !StringUtils.contains(pageContent, "证件号码")) {
                 logger.error("requestUrl is wrong!");
@@ -256,7 +256,7 @@ public class JiLin10000ForWeb implements OperatorPluginService {
             }
             templateUrl = "http://jl.189.cn/authImg";
             referer = response.getRedirectUrl();
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10000_web_0011").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "ji_lin_10000_web_0011").setFullUrl(templateUrl).setReferer(referer).invoke();
             logger.info("详单-->第一次图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {

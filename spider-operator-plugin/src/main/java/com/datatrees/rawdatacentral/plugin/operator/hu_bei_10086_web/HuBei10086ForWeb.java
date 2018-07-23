@@ -370,13 +370,13 @@ public class HuBei10086ForWeb implements OperatorPluginPostService {
             pageContent = processSSOLogin(param, pageContent);
             String templateUrl = PatternUtils.group(pageContent, "window\\.parent\\.location\\.href='([^']+)'", 1);
             if (StringUtils.isNotEmpty(templateUrl)) {
-                response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10086_web_004").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_bei_10086_web_004").setFullUrl(templateUrl).invoke();
             }
             String rsaModule
                     = "8a4928b7e4ce5943230539120cb6ee7a64000034b11b923a91faf8c381dd09b4a9a9a6fa02ca0bd3b90576ac1498983f7c78d8f8f5126a24a30f75eac86815c3430fe3e77f81a326d0d2f7ffbfe285bb368175d66c29777ec031c0c75f64da92aa43866fdfa2597cfb4ce614f450e95670be7cc27e4b05b7a48ca876305e5d51";
             String rsaEmpoent = "10001";
             templateUrl = "http://www.hb.10086.cn/my/index.action";
-            response = TaskHttpClient.create(param, RequestType.GET, "hu_bei_10086_web_007").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_bei_10086_web_007").setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent)) {
                 List<String> rsaModuleList = XPathUtil.getXpath("//input[@id='rsaModule']/@value", pageContent);

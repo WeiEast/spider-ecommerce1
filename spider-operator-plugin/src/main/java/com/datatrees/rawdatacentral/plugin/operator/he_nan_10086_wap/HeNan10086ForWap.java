@@ -35,7 +35,7 @@ public class HeNan10086ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.ha.10086.cn/login.action";
-            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10086_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_nan_10086_web_001").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String onceTag = StringUtils.EMPTY;
             String returnUrl = StringUtils.EMPTY;
@@ -190,7 +190,7 @@ public class HeNan10086ForWap implements OperatorPluginService {
         try {
             String referer = "http://wap.ha.10086.cn/";
             String templateUrl = "http://wap.ha.10086.cn/fee/query-now-detail.action?menuCode=61037";
-            response = TaskHttpClient.create(param, RequestType.GET, "he_nan_10086_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_nan_10086_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "验证码已发送，请注意查收") || StringUtils.contains(pageContent, "尊敬的客户，您之前的验证码仍在有效期内")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);

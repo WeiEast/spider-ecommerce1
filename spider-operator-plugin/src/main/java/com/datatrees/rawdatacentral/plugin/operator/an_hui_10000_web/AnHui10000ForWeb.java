@@ -106,7 +106,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://ah.189.cn/sso/VImage.servlet?random=" + System.currentTimeMillis();
             String referer = "http://ah.189.cn/sso/login?returnUrl=%2Fservice%2Faccount%2Finit.action";
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_001").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10000_web_001").setFullUrl(templateUrl).setReferer(referer).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -211,7 +211,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://ah.189.cn/service/bill/phoneAndInternetDetail.action?rnd=" + Math.random();
-            response = TaskHttpClient.create(param, RequestType.GET, "an_hui_10000_web_007").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10000_web_007").setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String macCode = PatternUtils.group(pageContent, "id=\"macCode\"\\s*value=\"([^ ]+)\"", 1);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

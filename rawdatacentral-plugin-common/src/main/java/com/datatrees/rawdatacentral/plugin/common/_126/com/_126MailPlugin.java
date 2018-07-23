@@ -172,12 +172,12 @@ public class _126MailPlugin implements CommonPluginService, QRPluginService {
                     RemoteWebDriver driver = null;
                     try {
 
-                        Response response = TaskHttpClient.create(param, RequestType.GET)
+                        Response response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                                 .setUrl("https://reg.163.com/services/getqrcodeid?product=mail126&usage=web").invoke();
                         String pageSource = response.getPageContent();
                         pageSource = StringUtils.substring(pageSource, 3).trim();
                         String uuid = JSON.parseObject(pageSource).getJSONObject("l").getString("i");
-                        response = TaskHttpClient.create(param, RequestType.GET)
+                        response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                                 .setFullUrl("https://reg.163.com/services/getUrlQrcode?uuid={}&size=170", uuid).invoke();
                         String qrBase64 = response.getPageContentForBase64();
                         String qrText = QRUtils.parseCode(response.getResponse());
@@ -206,7 +206,7 @@ public class _126MailPlugin implements CommonPluginService, QRPluginService {
                                 lastLoginProcessId);
 
                         if (StringUtils.equals(qrStatus, QRStatus.SUCCESS) && TaskUtils.isLastLoginProcessId(taskId, processId)) {
-                            response = TaskHttpClient.create(param, RequestType.GET)
+                            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                                     .setFullUrl("https://reg.163.com/services/qrcodeauth?uuid={}&product=mail126", uuid).invoke();
                             String ticket = response.getPageContentForJSON().getString("ticket");
 
@@ -290,7 +290,7 @@ public class _126MailPlugin implements CommonPluginService, QRPluginService {
     private String getScandStatus(CommonPluginParam param, String uuid) {
         String qrStatus = null;
         try {
-            Response response = TaskHttpClient.create(param, RequestType.GET)
+            Response response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                     .setFullUrl("https://q.reg.163.com/services/ngxqrcodeauthstatus?uuid={}&product=mail126", uuid).invoke();
             String retCode = response.getPageContentForJSON().getString("retCode");
             logger.info("query qr status,retCode={},uuid={}", response, uuid);
