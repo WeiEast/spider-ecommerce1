@@ -100,18 +100,18 @@ public class ZheJiang10000ForWeb implements OperatorPluginPostService {
         Response response = null;
         try {
             String templateUrl = "http://zj.189.cn/zjpr/service/query/query_order.html?menuFlag=1";
-            response = TaskHttpClient.create(param, RequestType.GET, "zhe_jiang_10000_web_005").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             String referer = templateUrl;
             templateUrl = "http://zj.189.cn/bfapp/buffalo/cdrService";
             String data = "<buffalo-call><method>querycdrasset</method></buffalo-call>";
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_005").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.TEXT_XML).setReferer(referer).invoke();
 
             templateUrl = "http://zj.189.cn/bfapp/buffalo/VCodeOperation";
             String templateData = "<buffalo-call><method>SendVCodeByNbr</method><string>{}</string></buffalo-call>";
             data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_005").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.TEXT_XML).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "成功")) {
@@ -159,7 +159,7 @@ public class ZheJiang10000ForWeb implements OperatorPluginPostService {
                             ".randpsw={}";
             String data = TemplateUtils
                     .format(templateData, param.getMobile(), areaid, productid, servtype, billMonth, username, idCard, param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "zhe_jiang_10000_web_006").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).setSocketTimeout(30000).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "清单详情") || StringUtils.contains(pageContent, "ErrorNo=61010")) {
@@ -182,7 +182,7 @@ public class ZheJiang10000ForWeb implements OperatorPluginPostService {
         try {
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10012&toStUrl=http://zj.189.cn/zjpr/balancep/getBalancep.htm";
-            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             logger.info("登陆成功,param={}", param);
             return result.success();
         } catch (Exception e) {

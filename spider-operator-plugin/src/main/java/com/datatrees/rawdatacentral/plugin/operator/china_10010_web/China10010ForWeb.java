@@ -78,10 +78,10 @@ public class China10010ForWeb implements OperatorPluginService {
         try {
             String referer = "https://uac.10010.com/portal/homeLogin";
             String templateUrl = "https://uac.10010.com/portal/Service/CheckNeedVerify?callback=jQuery&userName={}&pwdType=01&_={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis())
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis())
                     .setReferer(referer).invoke();
             templateUrl = "https://uac.10010.com/portal/Service/SendCkMSG?callback=jQuery&req_time={}&mobile={}&_={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), System.currentTimeMillis()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "resultCode:\"0000\"")) {

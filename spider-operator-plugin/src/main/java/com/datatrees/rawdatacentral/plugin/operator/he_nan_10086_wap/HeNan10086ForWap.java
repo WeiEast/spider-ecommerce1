@@ -35,7 +35,7 @@ public class HeNan10086ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.ha.10086.cn/login.action";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_nan_10086_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String onceTag = StringUtils.EMPTY;
             String returnUrl = StringUtils.EMPTY;
@@ -121,7 +121,7 @@ public class HeNan10086ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.ha.10086.cn/sso!img2.action?d={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "he_nan_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -155,7 +155,7 @@ public class HeNan10086ForWap implements OperatorPluginService {
             String data = TemplateUtils
                     .format(templateData, onceTag, URLEncoder.encode(returnUrl, "UTF-8"), checkContract, onceTag, URLEncoder.encode(svcNum, "UTF-8"),
                             URLEncoder.encode(numbc, "UTF-8"), URLEncoder.encode(passwd, "UTF-8"), param.getPicCode().toLowerCase());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10086_web_003").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "系统检测到不安全的请求方式，请重新登录。")) {
@@ -190,7 +190,7 @@ public class HeNan10086ForWap implements OperatorPluginService {
         try {
             String referer = "http://wap.ha.10086.cn/";
             String templateUrl = "http://wap.ha.10086.cn/fee/query-now-detail.action?menuCode=61037";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_nan_10086_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "验证码已发送，请注意查收") || StringUtils.contains(pageContent, "尊敬的客户，您之前的验证码仍在有效期内")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -214,7 +214,7 @@ public class HeNan10086ForWap implements OperatorPluginService {
             String templateUrl = "http://wap.ha.10086.cn/fee/query-now-detail!ver.action?menuCode=61037";
             String templateData = "verCode={}";
             String data = TemplateUtils.format(templateData, param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10086_web_005").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "随机码错误，请输入正确的随机码")) {

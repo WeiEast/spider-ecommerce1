@@ -194,7 +194,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         }
         String queryUrl = TemplateUtils
                 .format("http://{}/website/operator/getByWebsiteNameAndEnv?websiteName={}&env={}", hosts.get(from), websiteName, env);
-        String json = TaskHttpClient.create(6L, "", RequestType.POST, "").setFullUrl(queryUrl).setProxyEnable(false).invoke().getPageContent();
+        String json = TaskHttpClient.create(6L, "", RequestType.POST).setFullUrl(queryUrl).setProxyEnable(false).invoke().getPageContent();
         WebsiteOperator config = JSON.parseObject(json, new TypeReference<WebsiteOperator>() {});
         if (null == config || StringUtils.isBlank(config.getWebsiteName())) {
             throw new RuntimeException("website not found");
@@ -262,7 +262,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         }
         config.setEnv(env);
         String queryUrl = TemplateUtils.format("http://{}/website/operator/saveConfigForExport", hosts.get(to));
-        String result = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST, "china_10000_app_001").setFullUrl(queryUrl)
+        String result = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST).setFullUrl(queryUrl)
                 .setProxyEnable(false).setRequestBody(JSON.toJSONString(config), ContentType.APPLICATION_JSON).invoke().getPageContent();
         logger.info("exportConfig websiteName={},to={},result={}", websiteName, to, result);
 

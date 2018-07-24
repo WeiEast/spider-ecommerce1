@@ -39,7 +39,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://gx.189.cn/chaxun/iframe/user_center.jsp";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String key1 = PatternUtils.group(pageContent, "var key1='([^']+)'", 1);
             String key2 = PatternUtils.group(pageContent, "var key2='([^']+)'", 1);

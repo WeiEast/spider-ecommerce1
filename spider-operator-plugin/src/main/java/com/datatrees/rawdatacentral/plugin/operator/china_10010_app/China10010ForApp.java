@@ -140,7 +140,7 @@ public class China10010ForApp implements OperatorPluginService {
             //templateUrl = "https://m.client.10010.com/mobileService/operationservice/getUserinfo" +
             //        ".htm?menuId=000200020010&mobile_c_from=query&navUrlCode=2201";
             //data = "timestamp=&desmobile=" + param.getMobile().toString() + "&version=android%405.61";
-            //response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            //response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             //
             //RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
 

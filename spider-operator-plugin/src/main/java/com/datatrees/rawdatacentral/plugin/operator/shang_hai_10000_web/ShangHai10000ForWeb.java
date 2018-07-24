@@ -85,10 +85,11 @@ public class ShangHai10000ForWeb implements OperatorPluginService {
             String referer = "http://www.189.cn/sh/";
             String templateUrl
                     = "http://www.189.cn/login/skip/ecs.do?method=skip&platNo=93507&toStUrl=http://service.sh.189.cn/service/query/balance";
-            response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             templateUrl = "http://service.sh.189.cn/service/mobileLogin";
-            response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10000_web_003").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             if (StringUtils.contains(response.getPageContent(), "我的电信")) {
                 logger.warn("登录成功,params={}", param);
                 return result.success();
@@ -110,7 +111,7 @@ public class ShangHai10000ForWeb implements OperatorPluginService {
             String referer = "http://service.sh.189.cn/service/query/detail";
             String templateUrl = "http://service.sh.189.cn/service/service/authority/query/billdetail/sendCode" +
                     ".do?flag=1&devNo={}&dateType=&moPingType=LOCAL&startDate=&endDate=";
-            response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10000_web_004").setFullUrl(templateUrl, param.getMobile())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile())
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"result\":true")) {
@@ -134,7 +135,7 @@ public class ShangHai10000ForWeb implements OperatorPluginService {
             String referer = "http://service.sh.189.cn/service/query/detail";
             String templateUrl = "http://service.sh.189.cn/service/service/authority/query/billdetail/validate" +
                     ".do?input_code={}&selDevid={}&flag=nocw&checkCode=%E9%AA%8C%E8%AF%81%E7%A0%81";
-            response = TaskHttpClient.create(param, RequestType.GET, "shang_hai_10000_web_005")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, param.getSmsCode(), param.getMobile()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"CODE\":\"0\"")) {

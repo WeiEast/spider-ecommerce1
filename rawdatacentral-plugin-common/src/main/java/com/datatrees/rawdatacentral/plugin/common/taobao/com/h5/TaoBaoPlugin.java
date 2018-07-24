@@ -458,7 +458,7 @@ public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
                 }
                 params = pairs.stream().map(pair -> pair.getName() + "=" + pair.getValue()).collect(Collectors.joining("&"));
             }
-            Response response = TaskHttpClient.create(taskId, websiteName, RequestType.POST, remark).setUrl(url).setRequestBody(params).invoke();
+            Response response = TaskHttpClient.create(taskId, websiteName, RequestType.POST).setUrl(url).setRequestBody(params).invoke();
             if (HttpStatus.SC_OK != response.getStatusCode()) {
                 throw new IllegalStateException("Something is wrong when request '" + url + "'");
             }

@@ -40,7 +40,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
             String templateUrl = "https://fj.ac.10086.cn/login";
-            Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "fu_jian_10086_web_001")
+            Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -49,7 +49,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             }
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
             if (StringUtils.isNotBlank(templateUrl)) {
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "fu_jian_10086_web_002")
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                         .setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
@@ -140,7 +140,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         try {
             BigDecimal db = new BigDecimal(Math.random() * (1 - 0) + 0);
             String templateUrl = "https://fj.ac.10086.cn/common/image.jsp?r_{}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "fu_jian_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, db.setScale(16, BigDecimal.ROUND_HALF_UP)).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -179,7 +179,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             }
             String data = TemplateUtils
                     .format(templateData, loginType, backUrl, errorurl, spid, relayStateId, param.getMobile(), encryptPwd, param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10086_web_004").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             //TODO
             String pageContent = response.getPageContent();
@@ -206,7 +206,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         Response response = null;
         try {
             String templateUrl = "https://fj.ac.10086.cn/common/image.jsp?id={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "china_10086_shop_006")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, Math.random()).invoke();
             logger.info("详单-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -223,7 +223,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "https://fj.ac.10086.cn/SMSCodeSend?spid={}&mobileNum={}&validCode={}&errorurl=http://www" +
                     ".fj.10086.cn:80/my/login/send.jsp";
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_007")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, spid, param.getMobile(), param.getPicCode()).invoke();
             String pageContent = response.getPageContent();
             String url = response.getRedirectUrl();
@@ -253,22 +253,22 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
                     ".fj.10086.cn%3A80%2Fmy%2Fuser%2FgetUserInfo.do&errorurl=http%3A%2F%2Fwww.fj.10086.cn%3A80%2Fmy%2Flogin%2Fsend" +
                     ".jsp&smsValidCode={}&smscode1={}";
             String data = TemplateUtils.format(templateData, spid, param.getSmsCode(), param.getMobile(), param.getSmsCode(), param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "fu_jian_10086_web_008").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "basicInfoReferUrl", templateUrl);
             if (StringUtils.isNotBlank(templateUrl)) {
-                response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_009").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
             if (StringUtils.contains(pageContent, "postartifact")) {
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "fu_jian_10086_web_009", pageContent);
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), pageContent);
             }
             templateUrl = PatternUtils.group(pageContent, "href = \"([^\"]+)\"", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "basicInfoUrl", templateUrl);
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_010").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
 
             if (!StringUtils.contains(pageContent, param.getMobile().toString()) && StringUtils.contains(pageContent, "window.location.href")) {
@@ -277,7 +277,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
                     templateUrl = "http://www.fj.10086.cn" + templateUrl;
                 }
                 TaskUtils.addTaskShare(param.getTaskId(), "basicInfoUrl", templateUrl);
-                response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_011").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
 
@@ -303,18 +303,17 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             String pageContent = TaskUtils.getTaskShare(param.getTaskId(), "pageContentTemp");
             String templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
             if (StringUtils.isNotBlank(templateUrl)) {
-                response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_005").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
             if (StringUtils.contains(pageContent, "postartifact")) {
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "fu_jian_10086_web_006", pageContent);
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), pageContent);
             }
 
             String samLart = PatternUtils.group(pageContent, "callBackurlAll\\('([^']+)'", 1);
 
             templateUrl = "http://www.fj.10086.cn/my/?SAMLart={}&RelayState=";
-            response = TaskHttpClient.create(param, RequestType.GET, "fu_jian_10086_web_006").setFullUrl(templateUrl, samLart).setMaxRetry(2)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, samLart).setMaxRetry(2).invoke();
             pageContent = response.getPageContent();
 
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains(param.getMobile().toString())) {
@@ -335,7 +334,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
      * @param pageContent
      * @return
      */
-    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent) {
+    private String executeScriptSubmit(Long taskId, String websiteName, String pageContent) {
         String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
         String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
         List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "//input");
@@ -360,7 +359,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         }
         String url = fullUrl.substring(0, fullUrl.length() - 1);
         RequestType requestType = org.apache.commons.lang3.StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
-        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType).setFullUrl(url).invoke();
         return response.getPageContent();
     }
 }

@@ -52,9 +52,9 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
             //获取cookie:Webtrends
-            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "").setFullUrl("https://login.10086.cn/html/bj/login.html").invoke();
+            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl("https://login.10086.cn/html/bj/login.html").invoke();
             //获取cookie:JSESSIONID
-            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "")
+            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                     .setFullUrl("https://login.10086.cn/html/bj/iloginnew.html?{}", System.currentTimeMillis()).invoke();
             return result.success();
         } catch (Exception e) {
@@ -170,7 +170,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
                     "&timestamp={}";
             String data = TemplateUtils
                     .format(templateData, param.getMobile(), passWord, URLEncoder.encode(param.getPicCode(), "UTF-8"), System.currentTimeMillis());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "bei_jing_10086_web_002").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer, System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("code");
@@ -187,7 +187,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             String artifact = json.getString("artifact");
             String assertAcceptURL = json.getString("assertAcceptURL");
             templateUrl = "{}?backUrl=http%3A%2F%2Fservice.bj.10086.cn&artifact={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "bei_jing_10086_web_003").setFullUrl(templateUrl, assertAcceptURL, artifact)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, assertAcceptURL, artifact)
                     .setReferer(referer, System.currentTimeMillis()).invoke();
             logger.info("登录成功,param={}", param);
             return result.success();
@@ -227,7 +227,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
         }
         String url = fullUrl.substring(0, fullUrl.length() - 1);
         RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
-        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType).setFullUrl(url).invoke();
         return response.getPageContent();
     }
 
@@ -238,7 +238,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
         try {
             String templateUrl = "https://login.10086.cn/SSOCheck" +
                     ".action?channelID=12034&backUrl=http%3A%2F%2Fwww.10086.cn%2Findex%2Fbj%2Findex_100_100.html";
-            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             templateUrl = "http://www1.10086.cn/web-Center/authCenter/assertionQuery.do";
             String templateData = "requestJson=%7B%22serviceName%22%3A%22if008_query_user_assertion%22%2C%22header%22%3A%7B%22version%22%3A%221.0" +
@@ -248,7 +248,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             Invocable invocableForMd5 = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "md5.js", "GBK");
             String md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
             String data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
 
             templateUrl = "https://www1.10086.cn/web-Center/interfaceService/realFeeQry.do";
             templateData = "requestJson=%7B%22serviceName%22%3A%22if007_query_fee%22%2C%22header%22%3A%7B%22version%22%3A%221.0%22" +
@@ -257,7 +257,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             timestamp = System.currentTimeMillis() + "";
             md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
             data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "balancePage", response.getPageContent());
 
             templateUrl = "https://www1.10086.cn/web-Center/interfaceService/custInfoQry.do";
@@ -266,14 +266,14 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
                     "%3A%7B%22channelId%22%3A%220001%22%7D%7D";
             md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
             data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "baseInfoPage", response.getPageContent());
             TaskUtils.addTaskShare(param.getTaskId(), "baseInfoUrl", templateUrl);
 
             //详单校验
             templateUrl = "https://service.bj.10086.cn/poffice/package/xdcx/userYzmCheck.action?PACKAGECODE=XD&yzCheckCode={}";
             String validateCallDetailUrl = TemplateUtils.format(templateUrl, param.getPassword());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "").setFullUrl(validateCallDetailUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(validateCallDetailUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "RelayState")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
@@ -286,7 +286,7 @@ public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
             String message = json.getString("message");
             if (StringUtils.equals("Y", message)) {
                 logger.info("详单校验成功,param={}", param);
-                TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "")
+                TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                         .setFullUrl("https://login.10086.cn/SSOCheck.action?channelID=12003&backUrl=http://shop.10086.cn/i/?f=custinfoqry").invoke();
                 return result.success();
             } else {

@@ -77,15 +77,17 @@ public class LiaoNing10000ForWeb implements OperatorPluginService {
 
             String referer = "http://www.189.cn/ln/";
             String templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01650721";
-            response = TaskHttpClient.create(param, RequestType.GET, "liao_ning_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             referer = templateUrl;
             templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10005&toStUrl=http://ln.189.cn/group/bill/bill_owed.do?fastcode=01650721";
-            response = TaskHttpClient.create(param, RequestType.GET, "liao_ning_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             templateUrl = "http://ln.189.cn/group/bill/bill_owed.action";
-            response = TaskHttpClient.create(param, RequestType.GET, "liao_ning_10000_web_004").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             if (StringUtils.contains(response.getPageContent(), param.getMobile().toString())) {
                 logger.warn("登录成功,params={}", param);
                 return result.success();
