@@ -172,8 +172,7 @@ public class QQExMailPlugin implements CommonPluginService {
                         = "sid=&firstlogin=false&domain={}&aliastype=other&errtemplate=dm_loginpage&first_step=&buy_amount=&year=&company_name=&is_get_dp_coupon=&source=&qy_code=&origin=&starttime={}&redirecturl=&f=biz&uin={}&p={}&delegate_url=&ts={}&from=&ppp=&chg=0&domain_bak=0&loginentry=3&s=&dmtype=bizmail&fun=&inputuin={}&verifycode={}";
                 data = TemplateUtils.format(templateData, domain, System.currentTimeMillis(), uin, p, publicTs, userName, param.getPicCode());
             }
-            response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.POST).setFullUrl(LOGIN_URL).setRequestBody(data)
-                    .invoke();
+            response = TaskHttpClient.create(taskId, param.getWebsiteName(), RequestType.POST).setFullUrl(LOGIN_URL).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("正在登录腾讯企业邮箱") && pageContent.contains("\"frame_html?sid=")) {
                 String urlHead = PatternUtils.group(pageContent, URLHEAD_RESULT_PATTERN, 1);

@@ -72,8 +72,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
 
         try {
             Map<String, String> map = new HashMap<>();
-            byte[] pageContent = TaskHttpClient.create(taskId, websiteName, RequestType.GET).setFullUrl(url).invoke()
-                    .getResponse();
+            byte[] pageContent = TaskHttpClient.create(taskId, websiteName, RequestType.GET).setFullUrl(url).invoke().getResponse();
             int i = (int) (Math.random() * 100000);
             String picName = i + ".jpeg";
             String path = "education/" + websiteName + "/" + taskId + "/" + picName;
@@ -201,8 +200,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
                 return result.success(map);
             } else if (pageContent != null && pageContent.contains("图片验证码输入有误")) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url).invoke();
                 if (response.getStatusCode() == 200) {
                     messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
@@ -216,8 +214,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
                 return result.success(map);
             } else if (pageContent != null && (pageContent.contains("为保障您的账号安全，请输入验证码后重新登录") || pageContent.contains("为保障您的账号安全，请输入图片验证码后重新登录"))) {
                 url = "https://account.chsi.com.cn/passport/captcha.image";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url).invoke();
                 if (response.getStatusCode() == 200) {
                     messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码");
                     monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网登录-->刷新图片验证码-->成功");
@@ -286,8 +283,7 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
             String url = "https://account.chsi.com.cn/account/preregister.action?from=archive";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("注册-->初始化失败,param={},e={}", param, e.getMessage());
@@ -308,8 +304,8 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
             String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
             String date = TemplateUtils.format(templateDate, param.getMobile(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url)
-                    .setRequestBody(date).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url).setRequestBody(date)
+                    .invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("false")) {
                 logger.error("此手机号已被注册，mobile={}", param.getMobile());
@@ -385,8 +381,8 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             String url = "https://account.chsi.com.cn/account/checkmobilephoneother.action";
             String templateDate = "mphone={}&dataInfo={}&optType=REGISTER";
             String date = TemplateUtils.format(templateDate, param.getMobile(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url)
-                    .setRequestBody(date).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url).setRequestBody(date)
+                    .invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("false")) {
                 logger.error("此手机号已被注册，mobile={}", param.getMobile());
@@ -399,8 +395,8 @@ public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService
             date = TemplateUtils
                     .format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name, param.getIdCardType(),
                             param.getIdCard());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url)
-                    .setRequestBody(date).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url).setRequestBody(date)
+                    .invoke();
             pageContent = response.getPageContent();
             logger.info("注册返回结果 responsePage={}", response.getPageContent());
             Map<String, Object> map = new HashMap<>();

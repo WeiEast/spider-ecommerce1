@@ -66,8 +66,7 @@ public class SinaMailPlugin implements CommonPluginService {
             ProxyUtils.setProxyEnable(param.getTaskId(), true);
             String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId());
             RedisUtils.del(redisKey);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(MAIN_URL)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(MAIN_URL).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("sina web login request home url error!");
@@ -76,8 +75,7 @@ public class SinaMailPlugin implements CommonPluginService {
                 return result.failure(ErrorMessage.MAIL_DEFAULT_ERROR);
             }
             String preLoginUrl = PRE_LOGIN_URL + System.currentTimeMillis();
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(preLoginUrl)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(preLoginUrl).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("sina web pre login error!");
@@ -117,8 +115,7 @@ public class SinaMailPlugin implements CommonPluginService {
             int rnd = RandomUtils.nextInt(100000000);
             String pcId = RedisUtils.get("sina_pcId_" + param.getTaskId());
             String requestUrl = String.format(CHECK_CODE_URL, rnd, pcId);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(requestUrl)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(requestUrl).invoke();
             Map<String, Object> map = new HashMap<>();
             if (response.getStatusCode() == 200) {
                 messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码成功");
@@ -185,8 +182,8 @@ public class SinaMailPlugin implements CommonPluginService {
                         = "entry=cnmail&gateway=1&from=&savestate=30&qrcode_flag=false&useticket=0&pagerefer=&cw=1&pcid={}&door={}&su={}&service=sso&servertime={}&nonce={}&pwencode=rsa2&rsakv={}&sp={}&sr=1920*1200&encoding=UTF-8&cdult=3&domain=sina.com.cn&prelt=46&returntype=TEXT";
                 data = TemplateUtils.format(templateData, pcId, param.getPicCode(), su, serverTime, nonce, rsakv, sp);
             }
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(requestUrl)
-                    .setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(requestUrl).setRequestBody(data)
+                    .invoke();
             String pageContent = response.getPageContent();
             logger.info("新浪登录请求返回的response={}", response);
             if (pageContent.contains("101")) {
@@ -317,8 +314,7 @@ public class SinaMailPlugin implements CommonPluginService {
         MessageService messageService = BeanFactoryUtils.getBean(MessageService.class);
         int rnd = RandomUtils.nextInt(100000000);
         String picUrl = String.format(CHECK_CODE_URL, rnd, pcId);
-        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(picUrl)
-                .invoke();
+        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(picUrl).invoke();
         if (response.getStatusCode() == 200) {
             BeanFactoryUtils.getBean(MessageService.class).sendTaskLog(param.getTaskId(), "刷新图片验证码");
             messageService.sendTaskLog(param.getTaskId(), "刷新图片验证码成功");

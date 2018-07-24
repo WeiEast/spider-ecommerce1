@@ -53,13 +53,6 @@ public class MailBillMessageNormalizer implements DataNormalizer {
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.datatrees.rawdatacentral.collector.worker.MessageNormalizer#normalize(com.datatrees.rawdatacentral.
-     * core.model.ExtractMessage)
-     */
     @Override
     public boolean normalize(Object data) {
         ExtractMessage message = ((ExtractMessage) data);
