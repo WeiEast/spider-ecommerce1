@@ -27,6 +27,6 @@ public class OperatorWebsiteHolder implements WebsiteHolder {
     @Override
     public Website getWebsite(long taskId, String websiteName) {
         WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-        return websiteConfigService.buildWebsite(websiteOperator);
+        return websiteOperatorService.buildWebsite(websiteOperator);
     }
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
@@ -21,7 +22,7 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.NotifyService;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
 import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
@@ -30,6 +31,7 @@ import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample
 import com.datatrees.spider.operator.domain.model.field.FieldBizType;
 import com.datatrees.spider.operator.domain.model.field.FieldInitSetting;
 import com.datatrees.spider.operator.domain.model.field.InputField;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.share.domain.ErrorCode;
@@ -60,22 +62,25 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Resource
-    private WebsiteOperatorDAO  websiteOperatorDAO;
+    private WebsiteOperatorDAO   websiteOperatorDAO;
 
     @Resource
-    private WebsiteGroupService websiteGroupService;
+    private WebsiteGroupService  websiteGroupService;
 
     @Resource
-    private NotifyService       notifyService;
+    private NotifyService        notifyService;
 
     @Resource
-    private WebsiteInfoService  websiteInfoService;
+    private WebsiteInfoService   websiteInfoService;
 
     @Resource
-    private RedisService        redisService;
+    private RedisService         redisService;
 
     @Resource
-    private ClassLoaderService  classLoaderService;
+    private ClassLoaderService   classLoaderService;
+
+    @Resource
+    private WebsiteConfigService websiteConfigService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -262,8 +267,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         }
         config.setEnv(env);
         String queryUrl = TemplateUtils.format("http://{}/website/operator/saveConfigForExport", hosts.get(to));
-        String result = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST).setFullUrl(queryUrl)
-                .setProxyEnable(false).setRequestBody(JSON.toJSONString(config), ContentType.APPLICATION_JSON).invoke().getPageContent();
+        String result = TaskHttpClient.create(6L, "china_10000_app", RequestType.POST).setFullUrl(queryUrl).setProxyEnable(false)
+                .setRequestBody(JSON.toJSONString(config), ContentType.APPLICATION_JSON).invoke().getPageContent();
         logger.info("exportConfig websiteName={},to={},result={}", websiteName, to, result);
 
     }
@@ -395,5 +400,30 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             logger.error("getOperatorService error websiteName={}", websiteName, e);
             throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName, e);
         }
+    }
+
+    @Override
+    public Website buildWebsite(WebsiteOperator operator) {
+        CheckUtils.checkNotNull(operator, "operator is null");
+        WebsiteConfig config = new WebsiteConfig();
+        config.setWebsiteId(operator.getWebsiteId());
+        config.setWebsiteName(operator.getWebsiteName());
+        config.setWebsiteType("2");
+        config.setIsenabled(true);
+        config.setLoginTip(operator.getLoginTip());
+        config.setVerifyTip(operator.getVerifyTip());
+        config.setResetType(operator.getResetType());
+        config.setSmsReceiver(operator.getSmsReceiver());
+        config.setSmsTemplate(operator.getSmsTemplate());
+        config.setResetTip(operator.getResetTip());
+        config.setResetURL(operator.getResetUrl());
+        config.setInitSetting(operator.getLoginConfig());
+        config.setSearchConfig(operator.getSearchConfig());
+        config.setExtractorConfig(operator.getExtractorConfig());
+        config.setSimulate(operator.getSimulate());
+        config.setWebsiteTitle(operator.getWebsiteTitle());
+        config.setGroupCode(operator.getGroupCode());
+        config.setGroupName(GroupEnum.getByGroupCode(operator.getGroupCode()).getGroupName());
+        return websiteConfigService.buildWebsite(config);
     }
 }

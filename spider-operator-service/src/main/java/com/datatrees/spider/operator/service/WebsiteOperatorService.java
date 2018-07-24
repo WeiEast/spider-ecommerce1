@@ -3,6 +3,7 @@ package com.datatrees.spider.operator.service;
 import java.util.List;
 import java.util.Map;
 
+import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 
@@ -109,5 +110,14 @@ public interface WebsiteOperatorService {
      * @return
      */
     OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
+
+
+    /**
+     * 将WebsiteOperator转化成Website
+     * @param websiteOperator
+     * @return
+     */
+    Website buildWebsite(WebsiteOperator websiteOperator);
+
 
 }

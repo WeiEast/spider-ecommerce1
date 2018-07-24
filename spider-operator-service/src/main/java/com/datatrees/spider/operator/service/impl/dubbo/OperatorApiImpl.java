@@ -24,15 +24,14 @@ import com.datatrees.rawdatacentral.domain.enums.GroupEnum;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.StepEnum;
 import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
-import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
-import com.datatrees.spider.operator.service.OperatorPluginService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.WebsiteHolderService;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.model.OperatorGroup;
 import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.share.domain.ErrorCode;
@@ -49,14 +48,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class OperatorApiImpl implements OperatorApi, InitializingBean {
 
-    private static final org.slf4j.Logger       logger                   = LoggerFactory.getLogger(OperatorApiImpl.class);
+    private static final org.slf4j.Logger       logger                 = LoggerFactory.getLogger(OperatorApiImpl.class);
 
-    private static final String                 OPERATOR_FAIL_USER_MAX   = "operator.fail.usercount.max";
-
-    private static final String                 OPERATOR_PLUGIN_FILENAME = "rawdatacentral-plugin-operator.jar";
-
-    @Resource
-    private              ClassLoaderService     classLoaderService;
+    private static final String                 OPERATOR_FAIL_USER_MAX = "operator.fail.usercount.max";
 
     @Resource
     private              RedisService           redisService;
@@ -68,9 +62,6 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
     private              MonitorService         monitorService;
 
     @Resource
-    private              WebsiteConfigService   websiteConfigService;
-
-    @Resource
     private              WebsiteGroupService    websiteGroupService;
 
     @Resource
@@ -80,6 +71,9 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
 
     @Resource
     private              ProxyService           proxyService;
+
+    @Resource
+    private              WebsiteHolderService   websiteHolderService;
 
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
@@ -114,7 +108,7 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
 
                         //从新的运营商表读取配置
                         WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-                        Website website = websiteConfigService.buildWebsite(websiteOperator);
+                        Website website = websiteHolderService.getWebsite(taskId, websiteName);
                         redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
 
                         //缓存task基本信息
