@@ -163,7 +163,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action";
             String templateData = "userName={}&type=POST&channelID=00100";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10086_shop_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             switch (response.getPageContent()) {
                 case "0":
                     logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -210,7 +210,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "https://login.10086.cn/touchBjLogin.action";
             String templateData = "rememberMe=1&accountType=01&pwdType=02&account={}&password={}&channelID=00100&protocol=https%3A" + "&timestamp={}";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode(), System.currentTimeMillis());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "bei_jing_10086_web_002").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer, System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("code");
@@ -223,7 +223,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             String artifact = json.getString("artifact");
             String assertAcceptURL = json.getString("assertAcceptURL");
             templateUrl = "{}?backUrl=http%3A%2F%2Fservice.bj.10086.cn&artifact={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "bei_jing_10086_web_003").setFullUrl(templateUrl, assertAcceptURL, artifact)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, assertAcceptURL, artifact)
                     .setReferer(referer, System.currentTimeMillis()).invoke();
             logger.info("登录成功,param={}", param);
             return result.success();
@@ -238,7 +238,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
      * @param pageContent
      * @return
      */
-    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent) {
+    private String executeScriptSubmit(Long taskId, String websiteName, String pageContent) {
         String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
         String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
         List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "//input");
@@ -263,7 +263,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
         }
         String url = fullUrl.substring(0, fullUrl.length() - 1);
         RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
-        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setFullUrl(url).invoke();
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType).setFullUrl(url).invoke();
         return response.getPageContent();
     }
 
@@ -314,10 +314,10 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(validateCallDetailUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "RelayState")) {
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), pageContent);
             }
             if (StringUtils.contains(pageContent, "RelayState")) {
-                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), pageContent);
             }
 
             JSONObject json = JSON.parseObject(pageContent);

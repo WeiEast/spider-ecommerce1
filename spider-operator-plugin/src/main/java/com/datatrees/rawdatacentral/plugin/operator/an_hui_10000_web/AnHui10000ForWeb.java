@@ -106,7 +106,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://ah.189.cn/sso/VImage.servlet?random=" + System.currentTimeMillis();
             String referer = "http://ah.189.cn/sso/login?returnUrl=%2Fservice%2Faccount%2Finit.action";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10000_web_001").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://ah.189.cn/sso/ValidateRandom?validCode=" + param.getPicCode();
             String referer = "http://ah.189.cn/sso/login?returnUrl=%2Fservice%2Faccount%2Finit.action";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "an_hui_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "true")) {
                 logger.info("登录-->图片验证码-->校验成功,param={}", param);
@@ -154,7 +154,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
                     "ssoAuth=0&returnUrl=%2Fservice%2Faccount%2Finit.action&sysId=1003&loginType=4&accountType=9&latnId=551&loginName={}" +
                             "&passType=0&passWord={}&validCode={}&csrftoken=";
             String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, param.getPicCode());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "an_hui_10000_web_003").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -191,7 +191,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
                             mobile.substring(8, 10)).toString();
             String referer = "http://ah.189.cn/service/bill/fee.action?type=ticket";
             String templateUrl = "http://ah.189.cn/service/bill/sendValidReq.action?_v=" + data;
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "an_hui_10000_web_006").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "发送成功")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -211,7 +211,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://ah.189.cn/service/bill/phoneAndInternetDetail.action?rnd=" + Math.random();
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "an_hui_10000_web_007").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String macCode = PatternUtils.group(pageContent, "id=\"macCode\"\\s*value=\"([^ ]+)\"", 1);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -222,7 +222,7 @@ public class AnHui10000ForWeb implements OperatorPluginService {
             templateUrl = "http://ah.189.cn/service/bill/feeDetailrecordList.action?";
             String body = "_v=" + invocable.invokeFunction("encryptedString", data).toString();
             String referer = "http://ah.189.cn/service/bill/fee.action?type=phoneAndInternetDetail";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "an_hui_10000_web_008").setFullUrl(templateUrl).setRequestBody(body)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(body)
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "没有符合条件的记录") || StringUtils.contains(pageContent, "导出查询结果")) {
@@ -249,10 +249,10 @@ public class AnHui10000ForWeb implements OperatorPluginService {
         String[] params = paramMap.get("page_content").split("\\\"");
         Response response = null;
         try {
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "an_hui_10000_web_009").setFullUrl(params[0]).setRequestBody(params[1])
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(params[0]).setRequestBody(params[1])
                     .invoke();
             if (StringUtils.contains(params[1], "operListId=6")) {
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "an_hui_10000_web_009").setFullUrl(params[0]).setRequestBody(params[1])
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(params[0]).setRequestBody(params[1])
                         .invoke();
             }
             byte[] bytes = response.getResponse();
