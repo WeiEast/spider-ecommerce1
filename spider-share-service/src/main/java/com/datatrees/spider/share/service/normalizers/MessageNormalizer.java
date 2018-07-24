@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.normalizers;
+package com.datatrees.spider.share.service.normalizers;
 
 public interface MessageNormalizer {
 

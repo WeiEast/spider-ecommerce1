@@ -1,4 +1,8 @@
 dependencies {
     compile project(':spider-share-dao')
 
+    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
+    compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
+    compile "org.springframework:spring-oxm:${springVersion}"
+
 }

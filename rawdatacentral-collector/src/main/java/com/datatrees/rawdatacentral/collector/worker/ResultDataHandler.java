@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
-import com.datatrees.rawdatacentral.core.normalizers.MessageNormalizerFactory;
+import com.datatrees.spider.share.service.normalizers.MessageNormalizerFactory;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

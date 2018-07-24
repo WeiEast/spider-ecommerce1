@@ -16,7 +16,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.rawdatacentral.core.normalizers.MessageNormalizer;
+import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;

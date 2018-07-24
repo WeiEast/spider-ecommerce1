@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.rawdatacentral.core.normalizers.MessageNormalizer;
+import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
