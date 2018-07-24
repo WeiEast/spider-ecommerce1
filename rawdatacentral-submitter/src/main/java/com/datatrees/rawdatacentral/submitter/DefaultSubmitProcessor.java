@@ -13,12 +13,12 @@ import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.BackRedisUtils;
-import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
 import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
+import com.datatrees.rawdatacentral.core.normalizers.SubmitNormalizerFactory;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
@@ -36,16 +36,16 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DefaultSubmitProcessor.class);
 
     @Resource
-    RedisService      redisService;
+    RedisService            redisService;
 
     @Resource
-    FileStoreService  fileStoreService;
+    FileStoreService        fileStoreService;
 
     @Resource
-    NormalizerFactory submitNormalizerFactory;
+    SubmitNormalizerFactory submitNormalizerFactory;
 
     @Resource
-    SubTaskManager    subTaskManager;
+    SubTaskManager          subTaskManager;
 
     @Override
     public boolean process(Object message) {

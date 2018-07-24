@@ -8,9 +8,9 @@
 
 package com.datatrees.rawdatacentral.submitter.normalizer;
 
-import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import com.datatrees.rawdatacentral.core.normalizers.SubmitNormalizer;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,13 +19,8 @@ import org.springframework.stereotype.Service;
  * @since 2015年8月4日 下午5:34:36
  */
 @Service
-public class OperatorSubmitDataNormalizer implements DataNormalizer {
+public class OperatorSubmitDataNormalizer implements SubmitNormalizer {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see DataNormalizer#normalize(java.lang.Object)
-     */
     @Override
     public boolean normalize(Object data) {
         SubmitMessage message = ((SubmitMessage) data);

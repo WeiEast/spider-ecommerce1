@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import com.datatrees.rawdatacentral.core.normalizers.SubmitNormalizer;
 import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +24,8 @@ import org.springframework.stereotype.Service;
  * @since 2015年8月4日 下午5:33:54
  */
 @Service
-public class EbankSubmitDataNormalizer implements DataNormalizer {
+public class EbankSubmitDataNormalizer implements SubmitNormalizer {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see DataNormalizer#normalize(java.lang.Object)
-     */
     @Override
     public boolean normalize(Object data) {
         SubmitMessage message = ((SubmitMessage) data);

@@ -20,9 +20,9 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
-import com.datatrees.rawdatacentral.core.common.NormalizerFactory;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
+import com.datatrees.rawdatacentral.core.normalizers.MessageNormalizerFactory;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +36,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResultDataHandler {
 
-    private static final Logger            log = LoggerFactory.getLogger(ResultDataHandler.class);
+    private static final Logger                   log = LoggerFactory.getLogger(ResultDataHandler.class);
 
     @Resource
-    private              NormalizerFactory collectNormalizerFactory;
+    private              MessageNormalizerFactory messageNormalizerFactory;
 
     @Resource
-    private              WrappedActorRef   extractorActorRef;
+    private              WrappedActorRef          extractorActorRef;
 
     private ParentTask getParentTask(TaskMessage taskMessage) {
         ParentTask parentTask = new ParentTask();
@@ -71,7 +71,7 @@ public class ResultDataHandler {
             message.setTask(parentTask);
             message.setWebsiteName(taskMessage.getWebsiteName());
             try {
-                boolean result = collectNormalizerFactory.normalize(message);
+                boolean result = messageNormalizerFactory.normalize(message);
                 if (result) {
                     Future<Object> future = Patterns
                             .ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));

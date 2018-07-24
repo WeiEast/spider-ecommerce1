@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import com.datatrees.rawdatacentral.core.common.DataNormalizer;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import com.datatrees.rawdatacentral.core.normalizers.SubmitNormalizer;
 import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +24,8 @@ import org.springframework.stereotype.Service;
  * @since 2015年8月4日 下午5:21:18
  */
 @Service
-public class MailBillSubmitDataNormalizer implements DataNormalizer {
+public class MailBillSubmitDataNormalizer implements SubmitNormalizer {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see DataNormalizer#normalize(java.lang.Object)
-     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public boolean normalize(Object data) {
@@ -53,7 +48,6 @@ public class MailBillSubmitDataNormalizer implements DataNormalizer {
         return false;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private void mailNormalize(Map map, MailExtractResult result) {
         map.put("BankId", result.getBankId());
         map.put("ReceiveAt", result.getReceiveAt());
