@@ -6,7 +6,6 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 
 /**
  * 站点配置
@@ -88,13 +87,6 @@ public interface WebsiteConfigService {
      * @return
      */
     Website buildWebsite(WebsiteConfig websiteConfig);
-
-    /**
-     * 将WebsiteOperator转化成Website
-     * @param websiteOperator
-     * @return
-     */
-    Website buildWebsite(WebsiteOperator websiteOperator);
 
     /**
      * 将WebsiteInfoWithBLOBs转化成Website

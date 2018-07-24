@@ -21,7 +21,7 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.NotifyService;
-import com.datatrees.rawdatacentral.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
 import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;

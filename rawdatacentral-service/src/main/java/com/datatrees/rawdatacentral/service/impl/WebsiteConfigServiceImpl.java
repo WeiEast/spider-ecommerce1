@@ -27,7 +27,6 @@ import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteHolderService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -289,11 +288,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return website;
     }
 
-    @Override
-    public Website buildWebsite(WebsiteOperator websiteOperator) {
-        WebsiteConfig config = buildWebsiteConfig(websiteOperator);
-        return buildWebsite(config);
-    }
 
     @Override
     public Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo) {
@@ -327,29 +321,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return website;
     }
 
-    private WebsiteConfig buildWebsiteConfig(WebsiteOperator operator) {
-        CheckUtils.checkNotNull(operator, "operator is null");
-        WebsiteConfig config = new WebsiteConfig();
-        config.setWebsiteId(operator.getWebsiteId());
-        config.setWebsiteName(operator.getWebsiteName());
-        config.setWebsiteType("2");
-        config.setIsenabled(true);
-        config.setLoginTip(operator.getLoginTip());
-        config.setVerifyTip(operator.getVerifyTip());
-        config.setResetType(operator.getResetType());
-        config.setSmsReceiver(operator.getSmsReceiver());
-        config.setSmsTemplate(operator.getSmsTemplate());
-        config.setResetTip(operator.getResetTip());
-        config.setResetURL(operator.getResetUrl());
-        config.setInitSetting(operator.getLoginConfig());
-        config.setSearchConfig(operator.getSearchConfig());
-        config.setExtractorConfig(operator.getExtractorConfig());
-        config.setSimulate(operator.getSimulate());
-        config.setWebsiteTitle(operator.getWebsiteTitle());
-        config.setGroupCode(operator.getGroupCode());
-        config.setGroupName(GroupEnum.getByGroupCode(operator.getGroupCode()).getGroupName());
-        return config;
-    }
 
     private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfoWithBLOBs info) {
         CheckUtils.checkNotNull(info, "info is null");
