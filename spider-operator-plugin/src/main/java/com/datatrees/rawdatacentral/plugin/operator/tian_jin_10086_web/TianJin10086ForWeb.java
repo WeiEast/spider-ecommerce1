@@ -34,7 +34,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://tj.ac.10086.cn/";
-            response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10086_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("登录-->初始化失败,param={},response={}", param, response);
@@ -120,7 +120,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
             }
             String templateUrl = "https://tj.ac.10086.cn/captcha.htm?token={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "tian_jin_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, picToken).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             String pageContent = response.getPageContent();
@@ -145,7 +145,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
             String templateData = "redirectUrl=http%3A%2F%2Fservice" +
                     ".tj.10086.cn%2Fics%2FartifactServletRev%3FRelayState%3DMyHome&token={}&appKey={}&action=passwd&mp={}&loginPwd={}&captcha={}";
             String data = TemplateUtils.format(templateData, picToken, appKey, param.getMobile(), param.getPassword(), param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10086_web_003").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             templateUrl = PatternUtils.group(pageContent, "\"redirect\":\"([^\"]+)\"", 1);
@@ -167,7 +167,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }
             }
-            response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10086_web_004").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             if (StringUtils.isNotEmpty(pageContent)) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();
@@ -188,7 +188,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
             String referer = "http://service.tj.10086.cn/ics/myMobile/myDetailRecords.html";
             String templateUrl = "http://service.tj.10086.cn/ics/ics?service=ajaxDirect/1/componant/componant/javascript/&pagename=componant" +
                     "&eventname=sendMessage&GOODSNAME=详单&DOWHAT=QUE&ajaxSubmitType=get&ajax_randomcode=";
-            response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10086_web_005").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             if (StringUtils.contains(response.getPageContent(), "\"FLAG\":\"true\"")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
@@ -210,7 +210,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
             String templateUrl =
                     "http://service.tj.10086.cn/ics/ics?service=ajaxDirect/1/componant/componant/javascript/&pagename=componant&eventname" +
                             "=validateSms&smsCode={}&ajaxSubmitType=get&ajax_randomcode=";
-            response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10086_web_006").setFullUrl(templateUrl, param.getSmsCode())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getSmsCode())
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "验证成功")) {

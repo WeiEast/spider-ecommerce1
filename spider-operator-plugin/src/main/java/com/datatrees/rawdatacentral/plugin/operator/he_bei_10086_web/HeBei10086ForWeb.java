@@ -44,7 +44,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
         try {
             String referer = "http://www.10086.cn/he/index_311_311.html";
             String templateUrl = "https://he.ac.10086.cn/login";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_bei_10086_web_001").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             String displayPics = PatternUtils.group(pageContent, "name=\"displayPics\" value=\"([^\"]+)\"", 1);
@@ -125,7 +125,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://he.ac.10086.cn/common/image.jsp?l={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "he_bei_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, db.setScale(16, BigDecimal.ROUND_HALF_UP)).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -142,7 +142,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://he.ac.10086.cn/validImageCode?r_{}&imageCode={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "he_bei_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, db.setScale(16, BigDecimal.ROUND_HALF_UP), param.getPicCode())
                     .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             String pageContent = response.getPageContent();
@@ -186,7 +186,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
                     "&backurl={}&warnurl={}&spid={}&RelayState={}&mobileNum={}&userIdTemp={}&servicePassword={}" +
                     "&emailPwd=&smsValidCode=&login_pwd_type=&email=输入Email邮箱地址&validCode={}&emailPwd=请输入密码&servicePassword=请输入6" +
                     "位数字的服务密码&smsValidCode=";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_004")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, displayPics, displayPic, loginType, formerLoginType, backurl, warnurl, spid, relayState,
                             param.getMobile(), param.getMobile(), encodePassword, param.getPicCode()).invoke();
             String pageContent = response.getPageContent();
@@ -228,7 +228,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
 
             templateUrl
                     = "https://he.ac.10086.cn//hblogin/backPage.jsp?SAMLart={}&isEncodePassword={}&displayPic={}&RelayState={}&isEncodeMobile=1&displayPics={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_005")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, samLart, isEncodePassword, displayPic, relayState, displayPics).invoke();
             if (StringUtils.isBlank(response.getContentType())) {
                 logger.error("登陆失败,param={},response={}", param, response);
@@ -251,10 +251,10 @@ public class HeBei10086ForWeb implements OperatorPluginService {
             templateUrl = "http://www.he.10086.cn/my";
             String templateData = "SAMLart={}&RelayState={}";
             String data = TemplateUtils.format(templateData, URLEncoder.encode(samLart, "UTF-8"), URLEncoder.encode(relayState, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_006").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
 
             //String redirectUrl = "http://www.he.10086.cn/my/account/";
-            //response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_006").setFullUrl(redirectUrl).invoke();
+            //response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(redirectUrl).invoke();
             pageContent = response.getPageContent();
 
             relayStateList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
@@ -268,7 +268,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
 
             String referer = "http://www.he.10086.cn/my/";
             templateUrl = "http://he.ac.10086.cn/POST?SAMLRequest={}&RelayState={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_007")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, URLEncoder.encode(samLart, "UTF-8"), URLEncoder.encode(relayState, "UTF-8")).setReferer(referer)
                     .invoke();
             pageContent = response.getPageContent();
@@ -295,11 +295,11 @@ public class HeBei10086ForWeb implements OperatorPluginService {
             }
 
             templateUrl = "http://www.he.10086.cn/my/?SAMLart={}&isEncodePassword={}&displayPic={}&RelayState={}&displayPics={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_008")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, samLart, isEncodePassword, displayPic, relayState, displayPics).invoke();
 
             templateUrl = "http://www.he.10086.cn/my/account/";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_bei_10086_web_009").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
             if (pageContent.contains(param.getMobile().toString())) {
                 logger.info("登陆成功,param={}", param);
@@ -320,7 +320,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.he.10086.cn/service/fee/qryDetailBill.action?menuid=qryDetailBill&pageId={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_bei_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, db.setScale(17, BigDecimal.ROUND_HALF_UP)).invoke();
             String pageContent = response.getPageContent();
 
@@ -339,7 +339,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
             templateUrl = "http://he.ac.10086.cn/POST";
             String templateData = "SAMLRequest={}&RelayState={}";
             String data = TemplateUtils.format(templateData, samLart, relayState);
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_010").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             pageContent = response.getPageContent();
 
             relayStateList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
@@ -368,14 +368,14 @@ public class HeBei10086ForWeb implements OperatorPluginService {
 
             templateUrl = "http://www.he.10086.cn/service/login!initLogin" +
                     ".action?SAMLart={}&isEncodePassword={}&displayPic={}&RelayState={}&displayPics={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_011")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, samLart, isEncodePassword, displayPic, relayState, displayPics).invoke();
 
             templateUrl = "http://www.he.10086.cn/service/fee/qryDetailBill.action";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_bei_10086_web_012").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             templateUrl = "http://www.he.10086.cn/service/fee/fee/qryDetailBill!sendRandomCode.action?r={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_013")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, db.setScale(16, BigDecimal.ROUND_HALF_UP)).invoke();
             pageContent = response.getPageContent();
             if (pageContent.contains("result\":\"success\"")) {
@@ -398,7 +398,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
         try {
             String referer = "http://www.he.10086.cn/service/fee/qryDetailBill.action";
             String templateUrl = "http://www.he.10086.cn/service/fee/qryDetailBill!checkSmsCode.action?r={}&smsrandom={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10086_web_014")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, db.setScale(16, BigDecimal.ROUND_HALF_UP), param.getSmsCode()).setReferer(referer, param.getMobile())
                     .addHeader("X-Requested-With", "XMLHttpRequest").setReferer(referer).invoke();
             String pageContent = response.getPageContent();

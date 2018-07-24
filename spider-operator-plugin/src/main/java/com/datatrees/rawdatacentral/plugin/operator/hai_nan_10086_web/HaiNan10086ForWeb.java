@@ -37,7 +37,7 @@ public class HaiNan10086ForWeb implements OperatorPluginPostService {
         Response response = null;
         try {
             String templateUrl = "http://www.hi.10086.cn/service/zzzz.jsp";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("登录-->初始化失败,param={},response={}", param, response);
@@ -130,7 +130,7 @@ public class HaiNan10086ForWeb implements OperatorPluginPostService {
         Response response = null;
         try {
             String templateUrl = "https://hi.ac.10086.cn/sso3/common/image.jsp?l=";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hai_nan_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -147,7 +147,7 @@ public class HaiNan10086ForWeb implements OperatorPluginPostService {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             String errorurlForSms = TaskUtils.getTaskShare(param.getTaskId(), "errorurlForSms");
             String templateUrl = "https://hi.ac.10086.cn/sso3/SMSCodeSend?mobileNum={}&validCode={}&spid={}&errorurl={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, param.getMobile(), param.getPicCode().toLowerCase(), spid, errorurlForSms).setAutoRedirect(false)
                     .invoke();
             String code = PatternUtils.group(response.getRedirectUrl(), "code=([^&]+)&", 1);
@@ -186,7 +186,7 @@ public class HaiNan10086ForWeb implements OperatorPluginPostService {
                     .format(templateData, URLEncoder.encode(backurl, "UTF-8"), URLEncoder.encode(errorurlForLogin, "UTF-8"), spid, hasdespwd,
                             param.getMobile(), encryptPassword, param.getSmsCode(), param.getPicCode());
 
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -212,13 +212,13 @@ public class HaiNan10086ForWeb implements OperatorPluginPostService {
         Response response = null;
         try {
             String templateUrl = "http://www.hi.10086.cn/service/bill/beforeQueryNewDetails.do";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_010").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             String referer = "http://www.hi.10086.cn/service/login_yzmpasswd.jsp";
             templateUrl = "http://www.hi.10086.cn/service/user/sendvaildateSmsCode.do";
             String templateData = "mobileno={}&getsmscode=true&isrecord=";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_011").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
@@ -243,13 +243,13 @@ public class HaiNan10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "http://www.hi.10086.cn/service/user/vaildateCode.do";
             String templateData = "vaildateCode={}";
             String data = TemplateUtils.format(templateData, param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_012").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             if (StringUtils.contains(response.getPageContent(), "true")) {
                 templateUrl = "http://www.hi.10086.cn/service/user/vaildateSms.do";
                 templateData = "mobileno={}&agentcode=&sso=0&INPASS=ture_aa&INSMS=ture_aa&vaildateCode={}";
                 data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode());
-                response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10086_web_013").setFullUrl(templateUrl).setRequestBody(data)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                         .setReferer(referer).invoke();
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
@@ -271,16 +271,16 @@ public class HaiNan10086ForWeb implements OperatorPluginPostService {
             String pageContent = TaskUtils.getTaskShare(param.getTaskId(), "pageContentTemp");
             String referer = "https://hi.ac.10086.cn/sso3/Login";
             String templateUrl = PatternUtils.group(pageContent, "replace\\('([^\\)]+)'\\);", 1);
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_005").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://www.hi.10086.cn/service";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_006").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "https://login.10086.cn/SSOCheck.action?channelID=12027&backUrl=http%3A%2F%2Fwww.hi.10086.cn%2Fservice%2F";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_006").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://www1.10086.cn/service/sso/checkuserloginstatus.jsp?callback=checkuserloginstatuscallback&_={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10086_web_006").setFullUrl(templateUrl, System.currentTimeMillis())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, System.currentTimeMillis())
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "UserInfo\":\"true")) {

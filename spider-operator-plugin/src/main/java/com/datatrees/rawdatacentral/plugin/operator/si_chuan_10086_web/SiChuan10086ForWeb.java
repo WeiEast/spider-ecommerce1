@@ -96,7 +96,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://www.sc.10086.cn/service/actionDispatcher.do";
             String templateData = "reqUrl=SC_VerCode&busiNum=SC_VerCode&key=LOGIN_PWD";
-            response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_001").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .invoke();
             JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");
@@ -124,7 +124,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
             String templateUrl = "http://www.sc.10086.cn/service/sms.do";
             String templateData = "busiNum=SCLoginSMS&mobile=" + param.getMobile() + "&smsType=1&passwordType=1&imgVerCode=" +
                     URLEncoder.encode(encryptImgCode, "UTF-8");
-            response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_002").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .invoke();
             JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");
@@ -155,7 +155,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
                     URLEncoder.encode(encryptPassWord, "UTF-8") + "&verifyCode=" + URLEncoder.encode(encryptSmsCode, "UTF-8") +
                     "&loginFormTab=&passwordType=1&url=my%2FSC_MY_INDEX.html";
             String referer = "http://www.sc.10086.cn/service/login.html?url=my/SC_MY_INDEX.html";
-            response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_003").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");
@@ -166,7 +166,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
             //访问主页
             templateUrl = (String) JSONPath.eval(json, "$.resultObj.url");
             referer = "http://www.sc.10086.cn/service/login.html?url=my/SC_MY_INDEX.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "si_chuan_10086_web_004").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, String.valueOf(param.getMobile()))) {
@@ -188,7 +188,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://www.sc.10086.cn/service/actionDispatcher.do";
             String templateData = "reqUrl=SC_VerCode&busiNum=SC_VerCode&key=KET_XDCX_CODE";
-            response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_005").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .invoke();
             JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");
@@ -212,7 +212,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://www.sc.10086.cn/service/actionDispatcher.do";
             String templateData = "reqUrl=SC_VerCode&busiNum=SC_VerCode&methodQuery=validatVerCode&key=KET_XDCX_CODE&code=" + param.getPicCode();
-            response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_006").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .invoke();
             JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");
@@ -234,12 +234,12 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://www.sc.10086.cn/service/actionDispatcher.do";
             String templateData = "reqUrl=SC_MY_XDCXQuery&mothodQuery=detailBillSMSQuery";
-            response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_007").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .invoke();
 
             templateUrl = "http://www.sc.10086.cn/service/actionDispatcher.do";
             templateData = "reqUrl=SC_MY_XDCXQuery&mothodQuery=sendSMSCode&async=false";
-            response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_008").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .invoke();
             JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");
@@ -267,7 +267,7 @@ public class SiChuan10086ForWeb implements OperatorPluginService {
             String templateUrl = "http://www.sc.10086.cn/service/actionDispatcher.do";
             String templateData = "reqUrl=SC_MY_XDCXQuery&mothodQuery=smsverify&smscode=" + URLEncoder.encode(encryptSmsWord, "UTF-8") + "&yzmCode=" +
                     param.getPicCode();
-            response = TaskHttpClient.create(param, RequestType.POST, "si_chuan_10086_web_009").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .invoke();
             JSONObject json = response.getPageContentForJSON();
             String resultCode = json.getString("resultCode");

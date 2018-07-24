@@ -94,10 +94,10 @@ public class TianJin10000ForWeb implements OperatorPluginService {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=02251357";
             String templateUrl
                     = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10002&toStUrl=http://tj.189.cn/tj/service/bill/feeQueryIndex.action?tab=3&fastcode=02251357&cityCode=tj";
-            response = TaskHttpClient.create(param, RequestType.GET, "tian_jin_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://tj.189.cn/tj/service/bill/balanceQuery.action?requestFlag=asynchronism&shijian=";
-            response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_005").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent)) {
                 logger.info("登陆成功,param={}", param);
@@ -119,7 +119,7 @@ public class TianJin10000ForWeb implements OperatorPluginService {
             BigDecimal db = new BigDecimal(Math.random() * (1 - 0) + 0);
             String referer = "http://tj.189.cn/tj/service/bill/detailBillQuery.action";
             String templateUrl = "http://tj.189.cn/tj/authImg?{}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "tian_jin_10000_web_006")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, db.setScale(16, BigDecimal.ROUND_HALF_UP)).setReferer(referer).invoke();
             logger.info("详单-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -136,7 +136,7 @@ public class TianJin10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://tj.189.cn/tj/service/bill/detailBillQuery.action";
             String templateUrl = "http://tj.189.cn/tj/checkrand/checkRand.action?randValue={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_007").setFullUrl(templateUrl, param.getPicCode())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getPicCode())
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"ret\":0")) {
@@ -164,7 +164,7 @@ public class TianJin10000ForWeb implements OperatorPluginService {
             }
             //String templateData = "<buffalo-call><method>SendVCodeByNbr</method><string>{}</string></buffalo-call>";
             //String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_008").setFullUrl(templateUrl, picCode).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, picCode).setReferer(referer)
                     .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"requestFlag\":\"success\"")) {
@@ -186,7 +186,7 @@ public class TianJin10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://tj.189.cn/tj/service/bill/detailBillQuery.action";
             String templateUrl = "http://tj.189.cn/tj/service/bill/validateRandomcode.action?sRandomCode={}&randomMode=1&funcType=detail";
-            response = TaskHttpClient.create(param, RequestType.POST, "tian_jin_10000_web_009").setFullUrl(templateUrl, param.getSmsCode())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getSmsCode())
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"requestFlag\":\"success\"")) {

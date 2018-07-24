@@ -133,7 +133,7 @@ public class China10000ForApp implements OperatorPluginService {
                     ">{}</UserLoginName></HeaderInfos><Content><Attach>test</Attach><FieldData><SceneType>7</SceneType><Imsi></Imsi><PhoneNbr>{}</PhoneNbr></FieldData></Content" +
                     "></Request>";
             String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_app_005").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
             String resultCode = XPathUtil.getXpath("//ResultCode/text()", pageContent).get(0);
@@ -163,7 +163,7 @@ public class China10000ForApp implements OperatorPluginService {
             String data = TemplateUtils
                     .format(templateData, format.format(new Date()), token, param.getMobile(), format2.format(new Date()), param.getSmsCode(),
                             param.getMobile(), format2.format(new Date()));
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_app_006").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
             String resultCode = XPathUtil.getXpath("//ResultCode/text()", pageContent).get(0);
@@ -196,7 +196,7 @@ public class China10000ForApp implements OperatorPluginService {
                     "<Attach>test</Attach><FieldData><PswType>01</PswType><PhonePsw>{}</PhonePsw><PhoneNbr>{}</PhoneNbr><AccountType>c2000004</AccountType><Token></Token></FieldData></Content></Request>";
             String data = TemplateUtils.format(templateData, format.format(new Date()), param.getMobile(), param.getPassword(), param.getMobile());
 
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_app_001").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
 
@@ -232,7 +232,7 @@ public class China10000ForApp implements OperatorPluginService {
                         "2#</ClientType><Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>" +
                         "<Content><Attach>test</Attach><FieldData><PhoneNbr>{}</PhoneNbr></FieldData></Content></Request>";
                 data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), param.getMobile());
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_app_002").setFullUrl(templateUrl)
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                         .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
                 /**
                  * 取出姓名
@@ -264,7 +264,7 @@ public class China10000ForApp implements OperatorPluginService {
                         data = TemplateUtils
                                 .format(templateData, format.format(new Date()), token, param.getMobile(), format2.format(calendar.getTime()),
                                         param.getMobile());
-                        response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_app_003").setFullUrl(templateUrl)
+                        response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                                 .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
                         pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
                         realName = XPathUtil.getXpath("//AcctName/text()", pageContent).get(0);
@@ -288,7 +288,7 @@ public class China10000ForApp implements OperatorPluginService {
                         "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos>" +
                         "<Content><Attach>test</Attach><FieldData><PhoneNum>{}</PhoneNum><IsDirectCon>1</IsDirectCon><PhoneType>6</PhoneType></FieldData></Content></Request>";
                 data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), param.getMobile());
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_app_004").setFullUrl(templateUrl)
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                         .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
                 pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
                 String balance = XPathUtil.getXpath("//TotalBalance/text()", pageContent).get(0);
@@ -331,7 +331,7 @@ public class China10000ForApp implements OperatorPluginService {
                     "<Source>110003</Source><SourcePassword>Sid98s</SourcePassword><Token>{}</Token><UserLoginName>{}</UserLoginName></HeaderInfos><Content>" +
                     "<Attach>test</Attach><FieldData><Random>123456</Random><Month>{}</Month><PhoneNum>{}</PhoneNum><Type>1</Type></FieldData></Content></Request>";
             String data = TemplateUtils.format(templateData, format.format(new Date()), token, param.getMobile(), billMonth, param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_app_007").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
             return result.success(pageContent);
@@ -366,7 +366,7 @@ public class China10000ForApp implements OperatorPluginService {
             String data = TemplateUtils
                     .format(templateData, format.format(new Date()), token, param.getMobile(), times[0], queryType, smsCode, param.getMobile(),
                             times[1]);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "china_10000_app_008").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(EncryptUtilsForChina10000App.encrypt(data), ContentType.TEXT_XML).invoke();
             String pageContent = EncryptUtilsForChina10000App.decrypt(response.getPageContent());
             return result.success(pageContent);

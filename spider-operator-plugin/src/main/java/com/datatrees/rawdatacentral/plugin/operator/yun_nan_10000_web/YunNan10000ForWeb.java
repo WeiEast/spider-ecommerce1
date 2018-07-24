@@ -84,7 +84,7 @@ public class YunNan10000ForWeb implements OperatorPluginService {
             String refer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01941227";
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10025&toStUrl=http://yn.189.cn/service/jt/bill/qry_mainjt.jsp?SERV_NO=9A001&fastcode=01941226&cityCode=yn";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "yun_nan_10000_web_001").setFullUrl(templateUrl).setReferer(refer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(refer).invoke();
             logger.info("登录成功,params={}", param);
             return result.success();
         } catch (Exception e) {
@@ -102,7 +102,7 @@ public class YunNan10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://yn.189.cn/public/postValidCode.jsp";
             String templateDate = "NUM={}&AREA_CODE={}&LOGIN_TYPE=21&OPER_TYPE=CR0&RAND_TYPE=004";
             String data = TemplateUtils.format(templateDate, param.getMobile(), areaCode);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "yun_nan_10000_web_002").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<actionFlag>0</actionFlag>")) {
@@ -129,7 +129,7 @@ public class YunNan10000ForWeb implements OperatorPluginService {
             String templateData = "_FUNC_ID_=WB_PAGE_PRODPASSWDQRY&NAME={}&CUSTCARDNO={}&PROD_PASS={}&MOBILE_CODE={}&NAME={}&CUSTCARDNO={}";
             String data = TemplateUtils
                     .format(templateData, name, param.getIdCard(), param.getPassword(), param.getSmsCode(), name, param.getIdCard());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "yun_nan_10000_web_002").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "<rsFlag>1</rsFlag>")) {
                 logger.error("详单-->校验失败,param={},pateContent={}", param, pageContent);
@@ -140,14 +140,14 @@ public class YunNan10000ForWeb implements OperatorPluginService {
                     = "_FUNC_ID_=WB_PAGE_PRODPASSWDQRY&NAME={}&CUSTCARDNO={}&PROD_PASS={}&MOBILE_CODE={}&ACC_NBR={}&AREA_CODE={}&LOGIN_TYPE=21&PASSWORD={}&MOBILE_FLAG=1&MOBILE_LOGON_NAME={}&MOBILE_CODE={}&PROD_NO={}";
             data = TemplateUtils.format(templateData, name, param.getIdCard(), param.getPassword(), param.getSmsCode(), param.getMobile(), areaCode,
                     param.getPassword(), param.getMobile(), param.getSmsCode(), proNo);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "yun_nan_10000_web_003").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<rsFlag>2</rsFlag>")) {
                 logger.info("详单-->校验成功,param={}", param);
                 templateUrl = "http://yn.189.cn/service/jt/bill/actionjt/ifr_bill_detailslist_new.jsp";
                 templateData = "NUM={}&AREA_CODE={}&PROD_NO={}";
                 data = TemplateUtils.format(templateData, param.getMobile(), areaCode, proNo);
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST, "yun_nan_10000_web_004").setFullUrl(templateUrl).setRequestBody(data)
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                         .invoke();
                 return result.success();
             } else {

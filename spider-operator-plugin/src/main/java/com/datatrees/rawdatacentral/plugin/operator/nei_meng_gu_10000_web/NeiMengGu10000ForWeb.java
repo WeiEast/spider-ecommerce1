@@ -104,7 +104,7 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
 
             String referer = "http://www.189.cn/nm/";
             String templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10008&toStUrl=http://nm.189.cn/selfservice/bill/hf";
-            response = TaskHttpClient.create(param, RequestType.GET, "nei_meng_gu_10000_web_002").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             String pageContent = response.getPageContent();
 
@@ -157,7 +157,7 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
             params.put("sRand", sRand);
 
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_003").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
 
             //templateUrl = "http://nm.189.cn/selfservice/bill/hfQuery";
@@ -180,7 +180,7 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
             //params.put("prodSpecName", "??");
             //
             //data = JSON.toJSONString(params);
-            //response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_004").setFullUrl(templateUrl)
+            //response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
             //        .setRequestBody(data, ContentType.APPLICATION_JSON).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
@@ -188,7 +188,7 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
                 TaskUtils.addTaskShare(param.getTaskId(), "areaCode", areaCode);
 
                 templateUrl = "http://nm.189.cn/selfservice/cust/queryAllProductInfo";
-                response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_006").setFullUrl(templateUrl)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                         .setRequestBody("{\"qryAccNbrType\":\"\"}", ContentType.APPLICATION_JSON).invoke();
                 pageContent = response.getPageContent();
                 String prodSpecId = PatternUtils.group(pageContent, "\"prodSpecId\":\"(\\d+)\"", 1);
@@ -228,7 +228,7 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
             params.put("IDCardType", "1");
 
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_005").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "flag\":\"1\"")) {
@@ -244,7 +244,7 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
             params.put("phone", param.getMobile().toString());
 
             data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_006").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "flag\":\"0\"")) {
@@ -276,13 +276,13 @@ public class NeiMengGu10000ForWeb implements OperatorPluginService {
             params.put("code", param.getSmsCode());
 
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_007").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "flag\":\"1\"")) {
                 referer = "http://nm.189.cn/selfservice/bill/xd";
                 templateUrl = "http://nm.189.cn/selfservice/bill/xdQuerySMSCheckIf";
-                response = TaskHttpClient.create(param, RequestType.POST, "nei_meng_gu_10000_web_008").setFullUrl(templateUrl)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                         .setRequestBody("{}", ContentType.APPLICATION_JSON).setReferer(referer).invoke();
                 pageContent = response.getPageContent();
                 if (StringUtils.contains(pageContent, "flag\":\"1\"")) {

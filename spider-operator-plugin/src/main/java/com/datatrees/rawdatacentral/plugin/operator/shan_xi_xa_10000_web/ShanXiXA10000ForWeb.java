@@ -87,10 +87,10 @@ public class ShanXiXA10000ForWeb implements OperatorPluginService {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000197";
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10027&toStUrl=http://sn.189.cn/service/bill/fee.action?type=resto&fastcode=10000197&cityCode=sn";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_xa_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://sn.189.cn/service/bill/initQueryBill.action?rnd={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_xa_10000_web_003")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, (int) (Math.random() * 1000000)).invoke();
             String pageContent = response.getPageContent();
             String areacode = PatternUtils.group(pageContent, "areacode=(\\d+)&amp;", 1);
@@ -105,16 +105,14 @@ public class ShanXiXA10000ForWeb implements OperatorPluginService {
             referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000197";
             templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10027&toStUrl=http://sn.189.cn/service/bill/fee.action?type=resto&fastcode=10000197&cityCode=sn";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_xa_10000_web_004").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://sn.189.cn/service/bill/resto.action?rnd={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_xa_10000_web_005")
-                    .setFullUrl(templateUrl, (int) (Math.random() * 1000000)).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, (int) (Math.random() * 1000000)).invoke();
 
             referer = "http://sn.189.cn/service/manage/myProducts.action?fastcode=10000195&cityCode=sn";
             templateUrl = "http://sn.189.cn/service/manage/offerListView.action?currentPage=1";
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10000_web_006").setFullUrl(templateUrl).setReferer(referer)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             if (StringUtils.isNotBlank(response.getPageContent())) {
                 logger.warn("登录成功,params={}", param);
@@ -135,8 +133,7 @@ public class ShanXiXA10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://sn.189.cn/service/bill/fee.action?type=allDetails&fastcode=10000203&cityCode=sn";
             String templateUrl = "http://sn.189.cn/service/bill/sendInternetRandom.action?mobileNum={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10000_web_007").setFullUrl(templateUrl, param.getMobile())
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "随机码发送成功")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -157,7 +154,7 @@ public class ShanXiXA10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://sn.189.cn/service/bill/fee.action?type=allDetails&fastcode=10000203&cityCode=sn";
             String templateUrl = "http://sn.189.cn/service/bill/validInternet.action?mobileNum={}&rondomCode={}&_={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10000_web_008")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, param.getMobile(), param.getSmsCode(), System.currentTimeMillis()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "随机码验证成功")) {

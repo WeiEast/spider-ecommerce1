@@ -108,7 +108,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://hl.10086.cn/rest/authImg?type=0&rand={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_001")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, Math.random()).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -124,7 +124,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://hl.10086.cn/rest/common/vali/valiImage?imgCode={}&_={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, param.getPicCode(), System.currentTimeMillis()).setRequestContentType(ContentType.APPLICATION_JSON)
                     .invoke();
             /**
@@ -172,7 +172,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             params.put("pwdType", "01");
             params.put("clientIP", param.getPicCode());
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10086_web_004").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             /**
              * 结果枚举:
@@ -190,9 +190,9 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
                 //获取权限信息
                 data = json.getString("data");
                 templateUrl = "http://hl.10086.cn/rest/login/unified/callBack/?artifact={}&backUrl=http%3A%2F%2Fhl.10086.cn%2Fmy%2F";
-                TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_005").setFullUrl(templateUrl, data).invoke();
+                TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, data).invoke();
                 templateUrl = "https://login.10086.cn/SSOCheck.action?channelID=12034&backUrl=http://hl.10086.cn/my/";
-                TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_005").setFullUrl(templateUrl).invoke();
+                TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             }
@@ -225,7 +225,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             params.put("phone_no", "");
             params.put("sms_params", "");
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10086_web_006").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setRequestContentType(ContentType.APPLICATION_JSON).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
@@ -255,7 +255,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
              * "retCode":"100004"
              */
             String templateUrl = "http://hl.10086.cn/rest/sms/checkSmsCode?func_code={}&sms_type=2&phone_no=&sms_code={}&_={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10086_web_007")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, funcCode, param.getSmsCode(), System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             String retCode = json.getString("retCode");
@@ -299,7 +299,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
         try {
             String key = "abc123";
             String templateUrl = "http://hl.10086.cn/rest/session/getPscToken/?_={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             if (StringUtils.isNotBlank(json.getString("data"))) {
@@ -328,7 +328,7 @@ public class HeiLongJiang10086ForWeb implements OperatorPluginService {
             String modulus = "85592c52c613c934";
             String exponent = "85592c52c613c934";
             String templateUrl = "http://hl.10086.cn/rest/rsa/aes-key?_={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "hei_long_jiang_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis())
                     .addHeader(HttpHeadKey.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()).invoke();
             JSONObject json = response.getPageContentForJSON();

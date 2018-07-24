@@ -95,7 +95,7 @@ public class YunNan10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String url = "http://wapyn.189.cn/vcImage.do";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "yun_nan_10000_wap_001")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setResponseContentType(ContentType.create("image/png")).setFullUrl(url).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -112,7 +112,7 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String templateUrl = "http://wapyn.189.cn/sendSms.do";
             String templateData = "accNbr=" + param.getMobile();
             String referer = "http://wapyn.189.cn/initLogin.do";
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_002").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "\"respCode\":\"0\"")) {
@@ -145,13 +145,13 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String templateData = "loginPwdType=B&nodeId=72&mode=other&enAccNbr=" + encodeMobile + "&enPassword=" + encodePassword + "&valid=" +
                     param.getPicCode();
             String referer = "http://wapyn.189.cn/initLogin.do";
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_003").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             templateUrl = "http://wapyn.189.cn/self/info/custInfo.do?nodeId=319";
             referer = "http://wapyn.189.cn/self/index.do";
-            response = TaskHttpClient.create(param, RequestType.GET, "yun_nan_10000_wap_004").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains(String.valueOf(param.getMobile()))) {
                 logger.info("登陆成功,param={}", param);
@@ -189,7 +189,7 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String referer = "http://wapyn.189.cn/self/fee/detailQuery?nodeId=86";
             String templateUrl = "http://wapyn.189.cn/self/fee/sendSms.do";
             String templateData = "accNbr=";
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_005").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "\"respCode\":\"0\"")) {
@@ -216,7 +216,7 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String referer = "http://wapyn.189.cn/self/fee/detailQuery?nodeId=86";
             String templateUrl = "http://wapyn.189.cn/self/fee/detailRecord.do";
             String templateData = "date=" + billMonth + "&cdrtype=10&deailsms=" + param.getSmsCode() + "&nodeId=86";
-            response = TaskHttpClient.create(param, RequestType.POST, "yun_nan_10000_wap_006").setFullUrl(templateUrl).setRequestBody(templateData)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent)) {

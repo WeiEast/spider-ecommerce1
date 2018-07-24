@@ -217,7 +217,7 @@ public class ShanXiTY10086ForWeb implements OperatorPluginService {
             //templateData = "SAMLart={}&isEncodePassword=2&displayPic=1&RelayState={}&isEncodeMobile=1&displayPics=mobile_sms_login%3A0%3D%3D" +
             //        "%3DsendSMS%3A0%3D%3D%3Dmobile_servicepasswd_login%3A0";
             //data = TemplateUtils.format(templateData, samLart, URLEncoder.encode(relay, "UTF-8"));
-            //response = TaskHttpClient.create(param, RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            //response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
             //        .invoke();
             pageContent = response.getPageContent();
             String samLart = PatternUtils.group(pageContent, "'([^']+)'", 1);

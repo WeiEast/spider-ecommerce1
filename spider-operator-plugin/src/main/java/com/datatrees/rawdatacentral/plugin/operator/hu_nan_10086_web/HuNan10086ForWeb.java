@@ -85,7 +85,7 @@ public class HuNan10086ForWeb implements OperatorPluginPostService {
             String referer = "http://www.hn.10086.cn/service/static/componant/login.html";
             String templateUrl = "http://www.hn.10086.cn/service/ics/login/sendSms?serialNumber={}&validateCode=&chanId=E003&operType=LOGIN" +
                     "&goodsName=发送短信验证码&loginType=2&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10086_web_001").setFullUrl(templateUrl, param.getMobile(), Math.random())
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile(), Math.random())
                     .setReferer(referer).invoke();
 
             if (StringUtils.contains(response.getPageContent(), "随机短信验证码已经下发")) {
@@ -120,7 +120,7 @@ public class HuNan10086ForWeb implements OperatorPluginPostService {
             String tokenId = db.setScale(17, BigDecimal.ROUND_HALF_UP).toString();
             TaskUtils.addTaskShare(param.getTaskId(), "tokenId", tokenId);
 
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_nan_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, param.getMobile(), encryptPassword, param.getSmsCode(), db.setScale(16, BigDecimal.ROUND_HALF_UP))
                     .setReferer(referer).addExtralCookie("www.hn.10086.cn", tokenId, "0").invoke();
             JSONObject json = response.getPageContentForJSON();
@@ -149,14 +149,14 @@ public class HuNan10086ForWeb implements OperatorPluginPostService {
             double random = Math.random();
             String referer = "http://www.hn.10086.cn/service/static/myMobile/detailBillQuery.html";
             String templateUrl = "http://www.hn.10086.cn/service/ics/componant/initTelQCellCore?tel={}&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_nan_10086_web_003").setFullUrl(templateUrl, param.getMobile(), random)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile(), random)
                     .setReferer(referer).addHeader("Accept", "application/json, text/javascript, */*; q=0.01")
                     .addExtralCookie("www.hn.10086.cn", random + "", "0").invoke();
 
             random = Math.random();
             referer = "http://www.hn.10086.cn/service/static/myMobile/detailBillQuery.html";
             templateUrl = "http://www.hn.10086.cn/service/ics/componant/initSendHattedCode?requestTel={}&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_nan_10086_web_004").setFullUrl(templateUrl, param.getMobile(), random)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile(), random)
                     .setReferer(referer).addHeader("Accept", "application/json, text/javascript, */*; q=0.01")
                     .addExtralCookie("www.hn.10086.cn", random + "", "0").invoke();
             String pageContent = response.getPageContent();
@@ -182,7 +182,7 @@ public class HuNan10086ForWeb implements OperatorPluginPostService {
             double random = Math.random();
             String referer = "http://www.hn.10086.cn/service/static/myMobile/detailBillQuery.html";
             String templateUrl = "http://www.hn.10086.cn/service/ics/componant/initTelQCellCore?tel={}&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_nan_10086_web_005").setFullUrl(templateUrl, param.getMobile(), random)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile(), random)
                     .setReferer(referer).addHeader("Accept", "application/json, text/javascript, */*; q=0.01")
                     .addExtralCookie("www.hn.10086.cn", random + "", "0").invoke();
 
@@ -190,7 +190,7 @@ public class HuNan10086ForWeb implements OperatorPluginPostService {
             referer = "http://www.hn.10086.cn/service/static/myMobile/detailBillQuery.html";
             templateUrl = "http://www.hn.10086.cn/service/ics/componant/initSmsCodeAndServicePwd?smsCode={}&servicePwd=NaN&requestTel" +
                     "={}&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "hu_nan_10086_web_006")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, param.getSmsCode(), param.getMobile(), random).setReferer(referer)
                     .addHeader("Accept", "application/json, text/javascript, */*; q=0.01").addExtralCookie("www.hn.10086.cn", random + "", "0")
                     .invoke();
@@ -217,11 +217,11 @@ public class HuNan10086ForWeb implements OperatorPluginPostService {
             String referer = "http://www.hn.10086.cn/service/static/componant/login.html";
             String templateUrl
                     = "https://login.10086.cn/AddUID.htm?channelID=00731&Artifact={}&backUrl=http://www.hn.10086.cn/service/static/index.html&TransactionID={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, ARTIFACT, System.currentTimeMillis()).setReferer(referer).invoke();
             referer = "http://www.hn.10086.cn/service/static/index.html";
             templateUrl = "https://login.10086.cn/SSOCheck.action?channelID=12034&backUrl=http://www.hn.10086.cn/service/static/index.html";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "hu_nan_10086_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);

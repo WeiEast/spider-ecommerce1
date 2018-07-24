@@ -90,7 +90,7 @@ public class HeBei10000ForWeb implements OperatorPluginService {
             }
 
             String templateUrl = "http://www.189.cn/login/index.do";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_bei_10000_web_002").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             if (StringUtils.contains(response.getPageContent(), "regUrl\":null")) {
                 /**
                  * 不访问会导致无权限获取短信
@@ -98,7 +98,7 @@ public class HeBei10000ForWeb implements OperatorPluginService {
                 String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00380407";
                 templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10006&toStUrl=http://he.189.cn/service/bill/feeQuery_iframe" +
                         ".jsp?SERV_NO=SHQD1&fastcode=00380407&cityCode=he";
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_bei_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
+                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
                 logger.warn("登录成功,params={}", param);
                 return result.success();
@@ -125,7 +125,7 @@ public class HeBei10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://he.189.cn/public/postValidCode.jsp";
             String templateData = "NUM={}&AREA_CODE={}&LOGIN_TYPE={}&OPER_TYPE={}&RAND_TYPE={}";
             String data = TemplateUtils.format(templateData, param.getMobile(), areaCode, loginType, operType, randType);
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<actionFlag>0</actionFlag>")) {
@@ -149,7 +149,7 @@ public class HeBei10000ForWeb implements OperatorPluginService {
             String[] urls = TaskUtils.getTaskContext(param.getTaskId(), "callUrl").split("\"");
             String templateUrl = urls[0];
             String data = TemplateUtils.format(urls[1], param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_bei_10000_web_004").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (!StringUtils.contains(pageContent, "随机码不正确,请重新输入")) {

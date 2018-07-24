@@ -71,7 +71,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
         try {
             //登陆页没有获取任何cookie,不用登陆
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/weblogin.jsps?backURL=http://gd.10086.cn/commodity/index.shtml";
-            response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={},response={}", param, response, e);
@@ -126,7 +126,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/getSmsCode.jsps";
             String templateData = "mobile={}";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_001").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             JSONObject json = response.getPageContentForJSON();
             String returnCode = json.getString("returnCode");
@@ -152,7 +152,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/webForm.jsps";
             String templateData = "mobile={}&smsPwd={}&loginType=1&cookieMobile=on&backURL=http://gd.10086.cn/commodity/index.shtml";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_002").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             /**
              * 结果枚举:
@@ -169,7 +169,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                  * 获取校验服务密码请求所需要的参数
                  */
                 templateUrl = "http://gd.10086.cn/commodity/servicio/nostandardserv/mobileInfoQuery/index.jsps?operaType=QUERY&servCode=MY_BASICINFO";
-                response = TaskHttpClient.create(param, RequestType.GET, "guang_dong_10086_web_003").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
                 /**
                  * 获取参数列表
@@ -193,7 +193,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                 String backURL = PatternUtils.group(pageContent, "backURL\":\\s*\"([^\"]*)\"", 1);
 
                 templateUrl = "https://gd.ac.10086.cn/ucs/ucs/decryptToken/generate.jsps";
-                response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 json = response.getPageContentForJSON();
 
                 String decryptToken = json.getString("decryptToken");
@@ -205,7 +205,7 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
                 templateData
                         = "mobile={}&encryptItems={}&saType={}&channel={}&st={}&sign={}&token={}&appid={}&backURL=http://gd.10086.cn/my/myService/myBasicInfo.shtml";
                 data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, saType, channel, st, sign, token, appid, backURL);
-                response = TaskHttpClient.create(param, RequestType.POST, "guang_dong_10086_web_004").setFullUrl(templateUrl)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                         .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
                 json = response.getPageContentForJSON();
                 returnCode = json.getString("returnCode");
@@ -250,12 +250,12 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "http://gd.10086.cn/commodity/servicio/nostandardserv/realtimeListSearch/downLoad.jsps";
             String templateData = "downloadBeginTime={}000000&downloadEneTime={}235959&downloadType=1&uniqueTagDown=";
             String data = TemplateUtils.format(templateData, times[1], times[2]);
-            response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             String pageContent = new String(response.getResponse(), "GBK");
             String checkPageContent = new String(response.getResponse(), "UTF-8");
             if (StringUtils.contains(checkPageContent, "发生错误")) {
                 TimeUnit.SECOND.toMillis(1);
-                response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody(data).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
                 pageContent = new String(response.getResponse(), "GBK");
                 checkPageContent = new String(response.getResponse(), "UTF-8");
                 logger.info("发生错误,重试一下!pageContent={},checkPageContent={},taskId={}", pageContent, checkPageContent, param.getTaskId());

@@ -83,38 +83,38 @@ public class HeiLongJiangForWeb implements OperatorPluginService {
             }
 
             String templateUrl = "http://www.189.cn/hl/";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_002").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             String referer = "http://www.189.cn/hl/";
             templateUrl = "http://www.189.cn/dqmh/cms/index/login_jx.jsp?ifindex=index";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_003").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
 
             templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00520481";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
 
             referer = templateUrl;
             templateUrl
                     = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10010&toStUrl=http://hl.189.cn/service/zzfw.do?method=fycx&id=6&fastcode=00520481";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_005").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             templateUrl = "http://hl.189.cn/service/zzfw.do?method=fycx&id=6&fastcode=00520481";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_006").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             referer = templateUrl;
             templateUrl = "http://hl.189.cn/service/selectBallance.do?method=ballance";
-            response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && !StringUtils.contains(pageContent, param.getMobile().toString())) {
                 referer = "http://hl.189.cn/service/selectBallance.do?method=ballance";
                 templateUrl
                         = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10010&toStUrl=http://hl.189.cn/service/selectBallance.do?method=ballance";
-                response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_008").setFullUrl(templateUrl).setReferer(referer)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
                         .invoke();
                 templateUrl = "http://hl.189.cn/service/selectBallance.do?method=ballance";
-                response = TaskHttpClient.create(param, RequestType.GET, "hei_long_jiang_10000_web_009").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
 
@@ -137,7 +137,7 @@ public class HeiLongJiangForWeb implements OperatorPluginService {
         try {
             String referer = "http://hl.189.cn/service/zzfw.do?method=fycx&id=10&fastcode=00520485&cityCode=hl";
             String templateUrl = "http://hl.189.cn/service/userCheck.do?method=sendMsg";
-            response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10000_web_010").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "1")) {
@@ -159,7 +159,7 @@ public class HeiLongJiangForWeb implements OperatorPluginService {
         try {
             String referer = "ttp://hl.189.cn/service/zzfw.do?method=fycx&id=10&fastcode=00520485&cityCode=hl";
             String templateUrl = "http://hl.189.cn/service/zzfw.do?method=checkDX&yzm={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "hei_long_jiang_10000_web_011").setFullUrl(templateUrl, param.getSmsCode())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getSmsCode())
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent)) {

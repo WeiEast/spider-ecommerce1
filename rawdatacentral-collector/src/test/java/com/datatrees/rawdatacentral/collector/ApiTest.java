@@ -39,7 +39,7 @@ public class ApiTest extends BaseTest {
         String artifact = "";
         String templateUrl = "http://shop.10086.cn/i/v1/auth/getArtifact?artifact={}&backUrl=http://shop.10086.cn/i/?f=home";
 
-        Response response = TaskHttpClient.create(taskId, "china_10086_shop", RequestType.GET, "china_10086_shop_005")
+        Response response = TaskHttpClient.create(taskId, "china_10086_shop", RequestType.GET)
                 .setFullUrl(templateUrl, artifact).setRequestCharset(Charset.forName("UTF-8"))
                 .setRequestContentType(ContentType.APPLICATION_FORM_URLENCODED).invoke();
         System.out.println(response);

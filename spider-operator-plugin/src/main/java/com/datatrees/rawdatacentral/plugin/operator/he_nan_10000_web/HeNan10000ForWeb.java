@@ -92,7 +92,7 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
                 return result;
             }
             String templateUrl = "http://www.189.cn/ha/";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_nan_10000_web_002").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             logger.info("登陆成功,param={}", param);
             return result.success();
@@ -110,7 +110,7 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
         try {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000354";
             String templateUrl = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_nan_10000_web_005").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             String param_PRODTYPE = PatternUtils.group(pageContent, "doQuery\\('(\\d+)','(\\d+)',''\\)", 2);
 
@@ -123,7 +123,7 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
             templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp?ACC_NBR=" + param.getMobile() + "&PROD_TYPE=" + param_PRODTYPE +
                     "&BEGIN_DATE=&END_DATE=&SERV_NO=&ValueType=1&REFRESH_FLAG=1&FIND_TYPE=1&radioQryType=on&QRY_FLAG=1&ACCT_DATE=" +
                     sf.format(c.getTime()) + "&ACCT_DATE_1=" + sf.format(c.getTime());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_006").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isBlank(response.getPageContent())) {
                 logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
@@ -154,7 +154,7 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
                     param_BureauCode + "&ACC_NBR=" + param.getMobile() + "&PROD_TYPE=" + param_PRODTYPE + "&PROD_PWD=&REFRESH_FLAG=" +
                     param_REFRESH_FLAG + "&BEGIN_DATE=&END_DATE=&ACCT_DATE=" + param_ACCT_DATE + "&FIND_TYPE=1&SERV_NO=&QRY_FLAG=" + param_QRY_FLAG +
                     "&ValueType=" + param_ValueType + "&MOBILE_NAME=" + param.getMobile() + "&OPER_TYPE=" + param_OPER_TYPE + "&PASSWORD=";
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_007").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<flag>0</flag>")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -189,7 +189,7 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
                     "&PROD_PWD=&REFRESH_FLAG=" + param_REFRESH_FLAG + "&BEGIN_DATE=&END_DATE=&ACCT_DATE=" + param_ACCT_DATE +
                     "&FIND_TYPE=1&SERV_NO=&QRY_FLAG=" + param_QRY_FLAG + "&ValueType=" + param_ValueType + "&MOBILE_NAME=" + param.getMobile() +
                     "&OPER_TYPE=" + param_OPER_TYPE + "&PASSWORD=" + param.getSmsCode();
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_008").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
             if (StringUtils.contains(response.getPageContent(), "开始时间")) {
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
@@ -212,23 +212,23 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
 
         try {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000354";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_nan_10000_web_003").setFullUrl(referer).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(referer).setReferer(referer).invoke();
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10017&toStUrl=http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-3&fastcode=20000355&cityCode=ha";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "he_nan_10000_web_003").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
             templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inzd.jsp";
             String dataTemplate = "ACC_NBR={}&PROD_TYPE=713058010165&ACCTNBR97=";
             String data = TemplateUtils.format(dataTemplate, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).setConnectTimeout(60000).setSocketTimeout(60000).invoke();
 
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
             templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inzd.jsp";
             dataTemplate = "ACC_NBR={}&SERV_NO=&REFRESH_FLAG=1&BillingCycle=201804&operateType=2&operateType=2";
             data = TemplateUtils.format(dataTemplate, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "he_nan_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).setConnectTimeout(60000).setSocketTimeout(60000).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, String.valueOf(param.getMobile())) && StringUtils.contains(pageContent, "该客户总费用为")) {

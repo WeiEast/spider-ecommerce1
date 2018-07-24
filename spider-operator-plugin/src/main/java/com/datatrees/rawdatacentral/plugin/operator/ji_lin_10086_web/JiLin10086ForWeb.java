@@ -87,7 +87,7 @@ public class JiLin10086ForWeb implements OperatorPluginService {
             String encryptMobile = invocable.invokeFunction("doRSAEncrypt", param.getMobile().toString()).toString();
             String templateUrl = "http://www.jl.10086.cn/service/operate/action/SendSmsCheckCode_sendSmsCodeForLogin" +
                     ".action?bossPhoneid={}&randomStr={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10086_web_001")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, encryptMobile, System.currentTimeMillis()).invoke();
             if (response.getPageContent().contains("短信验证码已下发至您的手机中")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -115,7 +115,7 @@ public class JiLin10086ForWeb implements OperatorPluginService {
             String referer = "http://www.jl.10086.cn/service/GroupLogin/popuplogin.jsp";
             String templateUrl = "http://www.jl.10086.cn/service/ssojson/LoginAction_login" +
                     ".action?loginType=01&userId={}&userPassword={}&sms_num={}&_={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10086_web_002")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, param.getMobile(), encryptPassword, encryptSmsCode, System.currentTimeMillis()).setReferer(referer)
                     .invoke();
             JSONObject json = response.getPageContentForJSON();
@@ -151,7 +151,7 @@ public class JiLin10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.jl.10086.cn/service/operate/action/SendSmsCheckCode_sendSmsCode.action?randomStr={}&type=query";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10086_web_003").setFullUrl(templateUrl, System.currentTimeMillis())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, System.currentTimeMillis())
                     .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "短信验证码已下发至您的手机中")) {
@@ -175,7 +175,7 @@ public class JiLin10086ForWeb implements OperatorPluginService {
             String referer = "http://www.jl.10086.cn/service/fee/QueryDetailList_3300.jsp";
             String templateUrl = "http://www.jl.10086.cn/service/operate/json/CheckSmsAndLetter_handleJson.json?checkCodeBean" +
                     ".checkRange=checkSms&checkCodeBean.smsCheckCode={}&rnd={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10086_web_004")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, param.getSmsCode(), Math.random()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"checkBoolean\":true")) {
@@ -186,7 +186,7 @@ public class JiLin10086ForWeb implements OperatorPluginService {
 
                 templateUrl = "http://www.jl.10086.cn/service/fee/json/QueryDetailList_queryJson.json?serviceBean.serviceType=3300&serviceBean" +
                         ".DATE_TYPE=1&serviceBean.RADIO_TIME={}&serviceBean.PASSWORD={}&rnd={}";
-                response = TaskHttpClient.create(param, RequestType.GET, "ji_lin_10086_web_005")
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                         .setFullUrl(templateUrl, billMonth, encryptPassword, Math.random()).invoke();
                 pageContent = response.getPageContent();
                 TaskUtils.addTaskShare(param.getTaskId(), "details", pageContent);

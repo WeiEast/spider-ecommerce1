@@ -83,10 +83,10 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
         try {
             String referer = "https://login.10086.cn/html/window/loginMini.html?channelID=00240&backUrl=www.ln.10086.cn/sso/iLoginFrameCas.jsp";
             String templateUrl = "https://login.10086.cn/needVerifyCode.htm?accountType=01&account={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "liao_ning_10086_web_001").setFullUrl(templateUrl, param.getMobile())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile())
                     .setReferer(referer).invoke();
             templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?userName={}&channelID=00240&type=01";
-            response = TaskHttpClient.create(param, RequestType.POST, "liao_ning_10086_web_002").setFullUrl(templateUrl, param.getMobile()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile()).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.equals("0", pageContent)) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -110,7 +110,7 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
             String referer = "https://login.10086.cn/html/window/loginMini.html?channelID=00240&backUrl=www.ln.10086.cn/sso/iLoginFrameCas.jsp";
             String templateUrl = "https://login.10086.cn/login" +
                     ".htm?accountType=01&account={}&password={}&pwdType=01&smsPwd={}&inputCode=&backUrl=www.ln.10086.cn/sso/iLoginFrameCas.jsp&rememberMe=0&channelID=00240&protocol=https:";
-            response = TaskHttpClient.create(param, RequestType.GET, "liao_ning_10086_web_003")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, param.getMobile(), param.getPassword(), param.getSmsCode()).setReferer(referer).invoke();
             JSONObject json = response.getPageContentForJSON();
             String desc = json.getString("desc");
@@ -118,10 +118,10 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
                 String redirectUrl = json.getString("assertAcceptURL");
                 String artifact = json.getString("artifact");
                 templateUrl = "{}?backUrl=www.ln.10086.cn/sso/iLoginFrameCas.jsp&artifact={}";
-                response = TaskHttpClient.create(param, RequestType.GET, "liao_ning_10086_web_004").setFullUrl(templateUrl, redirectUrl, artifact)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, redirectUrl, artifact)
                         .invoke();
                 templateUrl = "http://www.ln.10086.cn/my/account/index.xhtml";
-                response = TaskHttpClient.create(param, RequestType.GET, "liao_ning_10086_web_005").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 if (StringUtils.contains(response.getPageContent(), param.getMobile().toString())) {
                     String menuId = PatternUtils.group(response.getPageContent(), "var _menuId = '(\\d+)'", 1);
                     TaskUtils.addTaskShare(param.getTaskId(), "menuId", menuId);
@@ -150,7 +150,7 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
                 String templateUrl
                         = "http://www.ln.10086.cn/busicenter/myinfo/MyInfoMenuAction/initBusi.menu?_menuId=1040101&_menuId=1040101&divId=main";
                 String referer = "http://www.ln.10086.cn/my/account/mydata.xhtml";
-                response = TaskHttpClient.create(param, RequestType.POST, "liao_ning_10086_web_006").setFullUrl(templateUrl).setReferer(referer)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                         .invoke();
                 String pageContent = response.getPageContent();
                 TaskUtils.addTaskShare(param.getTaskId(), "count", "send");
@@ -163,7 +163,7 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
             }
             String templateUrl = "http://www.ln.10086.cn/busicenter/myinfo/MyInfoMenuAction/reSendSmsPassWd.menu?_menuId=1040101&commonSmsPwd=";
             String referer = "http://www.ln.10086.cn/my/account/mydata.xhtml";
-            response = TaskHttpClient.create(param, RequestType.POST, "liao_ning_10086_web_007").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("\"sendResult\":\"success\"")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -183,7 +183,7 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://www.ln.10086.cn/busicenter/myinfo/MyInfoMenuAction/checkSmsPassWd.menu?_menuId=1040101&commonSmsPwd={}";
             String referer = "http://www.ln.10086.cn/my/account/mydata.xhtml";
-            response = TaskHttpClient.create(param, RequestType.POST, "liao_ning_10086_web_008").setFullUrl(templateUrl, param.getSmsCode())
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getSmsCode())
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("\"checkResult\":\"success\"")) {

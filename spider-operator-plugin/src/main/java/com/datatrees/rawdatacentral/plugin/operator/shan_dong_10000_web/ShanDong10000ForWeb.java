@@ -114,7 +114,7 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             String referer = "http://www.189.cn/sd/";
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10016&toStUrl=http://sd.189.cn/selfservice/account/returnAuth?columnId=0201";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_dong_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             String returnStr = "";
@@ -138,7 +138,7 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
              */
             params.put("returnStr", returnStr);
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_003").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer, returnStr).invoke();
 
             referer = "http://sd.189.cn/selfservice/bill?tag=queryBalance";
@@ -148,7 +148,7 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
              */
             params = new HashMap<>();
             data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_004").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
@@ -175,15 +175,15 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
              */
             Map<String, Object> params = new HashMap<>();
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_005").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
 
             templateUrl = "http://sd.189.cn/selfservice/service/toBusiVa?v=83&r=6";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_dong_10000_web_006").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             referer = templateUrl;
             templateUrl = "http://sd.189.cn/selfservice/validatecode/codeimg.jpg";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_dong_10000_web_007").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             logger.info("个人信息-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -222,7 +222,7 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             params.put("valicode", param.getPicCode());
             params.put("smsFlag", "real_2busi_validate");
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_008").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             if (StringUtils.equals(response.getPageContent().trim(), "0")) {
                 logger.info("个人信息-->短信验证码-->刷新成功,param={}", param);
@@ -259,7 +259,7 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             params.put("randomcode_2busi", param.getSmsCode());
             params.put("randomcode_flag", "0");
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_009").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "retnCode\":0")) {
@@ -294,7 +294,7 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             params.put("areaCode", areaCode);
             params.put("accNbrType", "4");
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_010").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
 
             SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
@@ -316,15 +316,15 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             params.put("billingCycle", billMonth);
             params.put("ticketType", "0");
             data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_011").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
 
             templateUrl = "http://sd.189.cn/selfservice/service/toBusiVa?v=83&r=1";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_dong_10000_web_012").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
 
             referer = templateUrl;
             templateUrl = "http://sd.189.cn/selfservice/validatecode/codeimg.jpg";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_dong_10000_web_013").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             logger.info("详单-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -363,7 +363,7 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             params.put("valicode", param.getPicCode());
             params.put("smsFlag", "real_2busi_validate");
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_014").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             if (StringUtils.equals(response.getPageContent().trim(), "0")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -407,7 +407,7 @@ public class ShanDong10000ForWeb implements OperatorPluginService {
             params.put("rid", 1);
             params.put("fid", "bill_monthlyDetail");
             String data = JSON.toJSONString(params);
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_dong_10000_web_015").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_JSON).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "retnCode\":0")) {

@@ -244,7 +244,7 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
         //            "=boolean:false&c0-param2=string:{}&c0-param3=string:{}&c0-param4=string:{}&xml=true";
         //    String data = TemplateUtils.format(templateData, id, areaCode, param.getMobile(), phoneType);
         //    String referer = "http://gd.189.cn/service/home/query/xd_index.html";
-        //    response = TaskHttpClient.create(param, RequestType.POST).setFullUrl(templateUrl)
+        //    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
         //            .setRequestBody(data, ContentType.TEXT_PLAIN).setReferer(referer).invoke();
         //    if (StringUtils.contains(response.getPageContent(), "DWREngine._handleResponse")) {
         //        logger.info("详单-->短信验证码-->刷新成功,param={}", param);

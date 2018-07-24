@@ -116,7 +116,7 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
             String templateData = "<buffalo-call><method>getSmsCode</method><map><type>java.util" +
                     ".HashMap</type><string>PHONENUM</string><string>{}</string><string>PRODUCTID</string><string>50</string><string>RTYPE</string><string>QD</string></map></buffalo-call>";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_008").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.TEXT_XML).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("短信随机密码已经发到您的联系电话")) {
@@ -148,7 +148,7 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
                     "><string>{}</string><string>TYPE</string><string>8</string><string>PRODUCTID</string><string>{}</string><string>CODE</string" +
                     "><string>{}</string><string>USERID</string><string>{}</string></map></buffalo-call>";
             String data = TemplateUtils.format(templateData, prodnum, citycode, format.format(new Date()), prodid, param.getSmsCode(), userid);
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_009").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.TEXT_XML).invoke();
             String pageContent = response.getPageContent();
 
@@ -175,14 +175,14 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
              */
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10022&toStUrl=http://hi.189.cn/service/thesame/billing.jsp?TABNAME=zdcx&fastcode=02091576&cityCode=hi";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_005").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             templateUrl
                     = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10022&toStUrl=http://hi.189.cn/service/thesame/balanceChanges.jsp?TABNAME=yecx&fastcode=02091574&cityCode=hi";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_006").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             templateUrl = "http://hi.189.cn/service/bill/feequery.jsp?TABNAME=xdcx&fastcode=02091577&cityCode=hi";
-            response = TaskHttpClient.create(param, RequestType.GET, "hai_nan_10000_web_006").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
 
             String citycode = PatternUtils.group(pageContent, "var citycode=\"(\\d+)\"", 1);
@@ -199,7 +199,7 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
 
             templateUrl = "http://hi.189.cn/webgo/thesame/myBill";
             String data = "objectNum=" + param.getMobile().toString() + "&objectType=%E6%89%8B%E6%9C%BA&queryType=2";
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_007").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "balancePageContent", response.getPageContent());
 
             logger.info("登陆成功,param={}", param);
@@ -223,7 +223,7 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
             String templateUrl = "http://hi.189.cn/webgo/thesame/billing";
             String templateData = "objectNum={}&queryMonth={}";
             String data = TemplateUtils.format(templateData, param.getMobile(), billMonth);
-            response = TaskHttpClient.create(param, RequestType.POST, "hai_nan_10000_web_010").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
             return result.success(response.getPageContent());
         } catch (Exception e) {
             logger.error("账单页访问失败,param={},response={}", param, response, e);

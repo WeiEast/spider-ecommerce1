@@ -32,7 +32,7 @@ public class ShanXiXA10086ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.sn.10086.cn/h5/personal/html/login.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_xa_10086_wap_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
 
             String key1 = "4";
@@ -118,7 +118,7 @@ public class ShanXiXA10086ForWap implements OperatorPluginService {
         try {
             String referer = "http://wap.sn.10086.cn/h5/personal/html/login.html";
             String templateUrl = "http://wap.sn.10086.cn/h5/servlet/validateCodeServlet?width=86.15&height=35";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET, "shan_xi_xa_10086_wap_002")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl).setReferer(referer).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
@@ -137,7 +137,7 @@ public class ShanXiXA10086ForWap implements OperatorPluginService {
             String encodeMobile = invocable.invokeFunction("strEncForNew", param.getMobile().toString(), tokenId).toString();
             String referer = "http://wap.sn.10086.cn/h5/personal/html/login.html";
             String templateUrl = "http://wap.sn.10086.cn/h5/server/authLogin/sendSMSPwd?serialNumber={}&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10086_wap_003").setFullUrl(templateUrl, encodeMobile, tokenId)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, encodeMobile, tokenId)
                     .setReferer(referer).addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             if (StringUtils.contains(response.getPageContent(), "短信验证码已经下发到您的手机")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -175,7 +175,7 @@ public class ShanXiXA10086ForWap implements OperatorPluginService {
             String referer = "http://wap.sn.10086.cn/h5/personal/html/login.html";
             String templateUrl = "http://wap.sn.10086.cn/h5/server/authLogin/ssoLogin?loginMethod={}&username={}&password={}&validateCode" +
                     "={}&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10086_wap_004")
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, encodeLoginMethod, encodeMobile, encodePassword, encodePicCode, tokenId).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "登录成功")) {
@@ -196,10 +196,10 @@ public class ShanXiXA10086ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.sn.10086.cn/h5/personal/html/detailedQuery.html";
-            response = TaskHttpClient.create(param, RequestType.GET, "shan_xi_xa_10086_wap_005").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             templateUrl = "http://wap.sn.10086.cn/h5/server/DetailedQuery/sendSMS?&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10086_wap_006").setFullUrl(templateUrl, Math.random()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, Math.random()).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "短信验证码已经下发到您的手机")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -222,7 +222,7 @@ public class ShanXiXA10086ForWap implements OperatorPluginService {
             Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
             String encodeSmsCode = invocable.invokeFunction("strEncForNew", param.getSmsCode(), tokenId).toString();
             String templateUrl = "http://wap.sn.10086.cn/h5/server/DetailedQuery/forgotPwd?SMS_NUMBER={}&ajaxSubmitType=post&ajax_randomcode={}";
-            response = TaskHttpClient.create(param, RequestType.POST, "shan_xi_xa_10086_wap_007").setFullUrl(templateUrl, encodeSmsCode, tokenId)
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, encodeSmsCode, tokenId)
                     .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "X_RESULTCODE\":\"0")) {

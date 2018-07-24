@@ -37,7 +37,7 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://jx.ac.10086.cn/login";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String form = XPathUtil.getXpath("//form[@id='normal-user']", pageContent).get(0);
 
@@ -142,7 +142,8 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "https://jx.ac.10086.cn/common/image.jsp";
             String referer = "https://jx.ac.10086.cn/POST";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -177,7 +178,7 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
             String data = TemplateUtils
                     .format(templateData, from, sid, type, URLEncoder.encode(backurl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid,
                             URLEncoder.encode(relayState, "UTF-8"), encryptMobile, encryptPassword, param.getPicCode());
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10086_web_003").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("postartifact")) {
@@ -193,7 +194,8 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
             templateUrl = "http://www.jx.10086.cn/my/";
             templateData = "SAMLart={}&RelayState={}";
             data = TemplateUtils.format(templateData, SAMLart, URLEncoder.encode(relayState, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10086_web_004").setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                 logger.info("登陆成功,param={}", param);
@@ -217,7 +219,8 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
         try {
             templateUrl = "https://jx.ac.10086.cn/common/image.jsp?l=";
             String referer = "http://service.jx.10086.cn/service/checkSmsPassN.action?menuid=000200010003";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_005").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -235,7 +238,8 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
         try {
             String referer = "http://www.jx.10086.cn/my/queryXXNew.do";
             templateUrl = "http://service.jx.10086.cn/service/showBillDetail!queryShowBillDatailN.action?menuid=000200010003";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_006").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("postartifact")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
@@ -283,8 +287,8 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
 
             templateUrl = "https://jx.ac.10086.cn/SMSCodeSend?mobileNum={}&errorurl=http://service.jx.10086.cn/service/common/ssoPrompt" +
                     ".jsp&spid={}";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_007").setFullUrl(templateUrl, param.getMobile(), spid_sms)
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .setFullUrl(templateUrl, param.getMobile(), spid_sms).setReferer(referer).invoke();
             //if (response.getPageContent().contains("随机短信验证码已发送成功")) {
             logger.info("详单-->短信验证码-->刷新成功,param={}", param);
             return result.success();
@@ -294,7 +298,7 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
             //}
         } catch (Exception e) {
             templateUrl = "http://service.jx.10086.cn/service/checkSmsPassN.action?menuid=000200010003";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_006").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             loginOut(param, templateUrl);
             loginOutForBillDetails(param, templateUrl);
@@ -323,35 +327,36 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
                     .format(templateData, param.getSmsCode(), param.getPicCode(), spid_sms, URLEncoder.encode(backurl_sms, "UTF-8"),
                             URLEncoder.encode(errorurl_sms, "UTF-8"), sid_sms, param.getMobile(), URLEncoder.encode(ssoImageUrl_sms, "UTF-8"),
                             URLEncoder.encode(ssoSmsUrl_sms, "UTF-8"));
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10086_web_008").setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "replace")) {
                 referer = "https://jx.ac.10086.cn/Login";
                 templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-                response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_009").setFullUrl(templateUrl).setReferer(referer)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
+                        .setReferer(referer).invoke();
 
                 templateUrl
                         = "http://service.jx.10086.cn/service/showBillDetail!importExcel.action?menuid=00890201&billType=202&startDate=20171101&endDate=20171109";
-                response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_020").setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
                 templateUrl = "http://service.jx.10086.cn/service/showBillDetail!queryIndex" +
                         ".action?billType=202&startDate=20170601&endDate=20170630&clientDate=&menuid=00890201&requestStartTime=";
-                response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_011").setFullUrl(templateUrl).setReferer(referer)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
+                        .setReferer(referer).invoke();
 
                 templateUrl = "http://service.jx.10086.cn/service/service/queryPersonalInfoN!executeForAjax.action";
                 data = "menuid=000200030004";
-                response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10086_web_012").setFullUrl(templateUrl).setRequestBody(data)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setRequestBody(data).invoke();
                 templateUrl = "http://service.jx.10086.cn/service/service/queryCurrFeeAjax.action";
                 data = "menuid=000200010001";
-                response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10086_web_013").setFullUrl(templateUrl).setRequestBody(data)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setRequestBody(data).invoke();
                 templateUrl = "http://service.jx.10086.cn/service/queryWebPageInfo" +
                         ".action?requestStartTime=&menuid=00890104&queryMonth=201710&s={}";
-                response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10086_web_014").setFullUrl(templateUrl, Math.random()).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, Math.random())
+                        .invoke();
                 loginOut(param, templateUrl);
                 loginOutForBillDetails(param, templateUrl);
                 logger.error("详单-->短信验证码正确,param={}", param);
@@ -397,28 +402,29 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
             }
         }
         RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
-        Response response = TaskHttpClient.create(taskId, websiteName, requestType, remark).setUrl(url).setParams(params).invoke();
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType).setUrl(url).setParams(params).invoke();
         return response.getPageContent();
     }
 
     private void loginOut(OperatorParam param, String referer) {
         String templateUrl = "https://jx.ac.10086.cn/logout";
-        Response response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).setReferer(referer).invoke();
+        Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
+                .setReferer(referer).invoke();
         String pageContent = response.getPageContent();
         templateUrl = "http://www.jx.10086.cn/";
-        response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody("display=0").invoke();
+        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody("display=0").invoke();
         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
         logger.info("退出登录-->成功");
     }
 
     private void loginOutForBillDetails(OperatorParam param, String referer) {
         String templateUrl = "https://jx.ac.10086.cn/logout";
-        Response response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).setReferer(referer).invoke();
+        Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
         String pageContent = response.getPageContent();
         templateUrl = "http://www.jx.10086.cn/";
-        response = TaskHttpClient.create(param, RequestType.POST, "").setFullUrl(templateUrl).setRequestBody("display=0").invoke();
+        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody("display=0").invoke();
         templateUrl = "http://www1.10086.cn/service/sso/logout.jsp?channelID=12027&backUrl=http%3A%2F%2Fwww.10086.cn%2Fjx%2Findex_791_791.html";
-        response = TaskHttpClient.create(param, RequestType.GET, "").setFullUrl(templateUrl).invoke();
+        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
         logger.info("退出登录-->成功");
     }

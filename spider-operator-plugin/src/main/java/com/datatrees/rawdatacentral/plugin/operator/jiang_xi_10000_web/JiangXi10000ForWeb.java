@@ -48,7 +48,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://jx.189.cn/service/account/seeInfo.jsp";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET, "jiang_xi_10000_web_001").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String modulus = PatternUtils.group(pageContent, "var modulus = \"([^\"]+)\"", 1);
             if (StringUtils.isNotBlank(modulus)) {
@@ -119,7 +119,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://jx.189.cn/public/v4/common/control/page/image.jsp?date=" + URLEncoder.encode("" + new Date(), "UTF-8");
             String referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10000_web_002").setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -145,7 +145,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                     "&c0-param0=string:GET_USER_TYPE" + "&c0-param1=boolean:false" + "&c0-e1=string:" + param.getMobile() +
                     "&c0-param2=Object_Object:{user_no:reference:c0-e1}" + "&batchId=0";
             String referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_005").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(templateData, ContentType.TEXT_PLAIN).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.containsNone(pageContent, "flag:\"0\"")) {
@@ -167,7 +167,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                     "&c0-param0=string:WB_TEST_VALIDCODE" + "&c0-param1=boolean:false" + "&c0-e1=string:" + param.getPicCode() +
                     "&c0-param2=Object_Object:{valid_code_input:reference:c0-e1}" + "&batchId=3";
             referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_006").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(templateData, ContentType.TEXT_PLAIN).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "\"OK\"")) {
@@ -188,7 +188,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://jx.189.cn/public/common/control/dwr/engine.js";
-            response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10000_web_003").setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("获取scriptSessionId页面失败");
@@ -211,7 +211,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                     "&batchId=2";
             String referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
 
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_004").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(templateData, ContentType.TEXT_PLAIN).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "flag:\"0\"")) {
@@ -257,13 +257,13 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                     areaCode +
                     "&c0-e6=string:1&c0-param2=Object_Object:{LOGIN_TYPE:reference:c0-e1, LOGIN_PRODUCT_ID:reference:c0-e2, LOGIN_PASSWD:reference:c0-e3, LOGIN_NAME:reference:c0-e4, AREA_CODE:reference:c0-e5, MY_CHECK_FLAG:reference:c0-e6}&batchId=5";
             String referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_007").setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(templateData, ContentType.TEXT_PLAIN).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, param.getMobile().toString()) && StringUtils.contains(pageContent, "IS_SUCCESS':\"1")) {
                 templateUrl = "http://login.189.cn/";
                 referer = "http://www.189.cn/html/login/index.html";
-                response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10000_web_008").setFullUrl(templateUrl).setReferer(referer)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
                         .invoke();
                 if (StringUtils.isBlank(response.getPageContent())) {
                     logger.error("jx189 login request is error! errormessage: pre login failed");
@@ -276,7 +276,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                 templateData = "Account=" + param.getMobile() + "&UType=201&ProvinceID=15&AreaCode=&CityNo=&RandomFlag=0&Password=" +
                         URLEncoder.encode(encryptPassWord, "UTF-8") + "&Captcha=";
                 referer = "http://login.189.cn/login";
-                response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_009").setFullUrl(templateUrl).setReferer(referer)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                         .setRequestBody(templateData).invoke();
                 if (StringUtils.isBlank(response.getPageContent())) {
                     logger.error("jx189 login request loginre.189.cn error");
@@ -285,7 +285,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
 
                 templateUrl = "http://www.189.cn/login/index.do";
                 referer = "http://www.189.cn/html/login/index.html";
-                response = TaskHttpClient.create(param, RequestType.GET, "jiang_xi_10000_web_010").setFullUrl(templateUrl).setReferer(referer)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
                         .invoke();
                 pageContent = response.getPageContent();
                 if (StringUtils.containsNone(pageContent, "code\":\"0")) {
@@ -314,7 +314,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                     "&c0-scriptName=Service&c0-methodName=excute&c0-id=0&c0-param0=string:DETAILS_SERVICE&" +
                     "c0-param1=boolean:false&c0-e1=string:SEND_SMS_CODE&c0-param2=Object_Object:{method:reference:c0-e1}&batchId=1";
             String referer = "http://jx.189.cn/2017/details.jsp";
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_011").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(templateData, ContentType.TEXT_PLAIN).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "CODE:\"1\"")) {
@@ -343,7 +343,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                     queryMonth + "&c0-e2=string:7&c0-e3=string:" + param.getSmsCode() +
                     "&c0-e4=string:QRY_DETAILS_BY_LOGIN_NBR&c0-param2=Object_Object:{month:reference:c0-e1, query_type:reference:c0-e2, valid_code:reference:c0-e3, method:reference:c0-e4}&batchId=2";
             String referer = "http://jx.189.cn/2017/details.jsp";
-            response = TaskHttpClient.create(param, RequestType.POST, "jiang_xi_10000_web_012").setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(templateData, ContentType.TEXT_PLAIN).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             TaskUtils.addTaskShare(param.getTaskId(), "scriptSessionId", scriptSessionId);
