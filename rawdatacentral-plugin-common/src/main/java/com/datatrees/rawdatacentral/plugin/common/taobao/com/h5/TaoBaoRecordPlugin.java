@@ -32,8 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TaoBaoRecordPlugin extends AbstractPicPlugin {
 
-    private static final Logger                   logger = LoggerFactory.getLogger(TaoBaoRecordPlugin.class);
-    private static       HashMap<Long, Integer> map    = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(TaoBaoRecordPlugin.class);
 
     {
         this.setTags("ecommerce");
@@ -59,21 +58,7 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
     }
 
     private boolean isNormalPage(Map<String, String> paramMap) {
-        AbstractProcessorContext context = PluginFactory.getProcessorContext();
-        Long taskId = context.getLong(AttributeKey.TASK_ID);
-        int index;
-        try {
-            index = map.get(taskId);
-        } catch (Exception e) {
-            index = 0;
-        }
-        String pageContent;
-        logger.info("indexis {}", index);
-        if (index == 0) {
-            pageContent = "{\"rgv587_flag0\":\"sm\",\"url\":\"https://sec.taobao.com/query.htm?smApp=trademanager&smPolicy=trademanager-asyncBought-anti_Spider-checkcode&smCharset=UTF-8&smTag=MjIwLjE5MS4xMDAuMTY0LDExMjM3MTk4MjIsNjNkYTFkNDRmOTBjNDFhMGFjMzBlZWFkMTZmNDBkNWI%3D&smReturn=https%3A%2F%2Fbuyertrade.taobao.com%2Ftrade%2Fitemlist%2FasyncBought.htm%3Faction%3Ditemlist%252FBoughtQueryAction%26event_submit_do_query%3D1%26_input_charset%3Dutf8%26dateBegin%3D0%26dateEnd%3D0%26pageNum%3D1%26pageSize%3D100%26queryOrder%3Ddesc&smSign=A9hw7QUJsbIkY%2FfBTrXn9w%3D%3D\"}";
-        } else {
-            pageContent = getPageContent(paramMap);
-        }
+        String pageContent = getPageContent(paramMap);
         if (pageContent.contains("\"rgv587_flag0\":\"sm\"")) {
             logger.info("taobao 交易页面 is {}", pageContent);
             return false;
@@ -84,28 +69,13 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
     @Override
     public String requestPicCode(Map<String, String> parms) {
         AbstractProcessorContext context = PluginFactory.getProcessorContext();
-        Long taskId = context.getLong(AttributeKey.TASK_ID);
-        int index;
-        try {
-            index = map.get(taskId);
-        } catch (Exception e) {
-            index = 0;
-        }
-        Map<String, String> resultMap = new LinkedHashMap<String, String>();
-        String str;
-        if (index == 0) {
-            str = "{\"rgv587_flag0\":\"sm\",\"url\":\"https://sec.taobao.com/query" + ".htm?smApp=trademanager&smPolicy=trademanager-asyncBought-anti_Spider-checkcode&" + "smCharset=UTF-8&smTag=MjIwLjE5MS4xMDAuMTY0LDExMjM3MTk4MjIsNjNkYTFkNDRmOTBjNDFhMGFjMzBlZWFkMTZmNDBkNWI%3D&smReturn=https%3A%2F%2Fbuyertrade.taobao.com%2Ftrade%2Fitemlist%2FasyncBought.htm%3Faction%3Ditemlist%252FBoughtQueryAction%26event_submit_do_query%3D1%26_input_charset%3Dutf8%26dateBegin%3D0%26dateEnd%3D0%26pageNum%3D1%26pageSize%3D100%26queryOrder%3Ddesc&smSign=A9hw7QUJsbIkY%2FfBTrXn9w%3D%3D\"}";
-        } else {
-            str = getPageContent(parms);
-        }
-        index++;
-        map.put(taskId, index);
+        String str = getPageContent(parms);
         String url = JsonPathUtil.readAsString(str, "$.url");
         LinkNode checkNode = new LinkNode(url);
         checkNode.setReferer(url);
         logger.info("请求url1 is {}", url);
         String pageContent = (String) getResponseByWebRequest(checkNode, ContentType.Content, null);
-        logger.info("访问安全页1：{}", pageContent);
+        logger.debug("访问安全页1：{}", pageContent);
         url = JsonPathUtil.readAsString(pageContent, "$.url");
         String smApp = PatternUtils.group(url, "smApp=([^&]+)", 1);
         String smPolicy = PatternUtils.group(url, "smPolicy=([^&]+)", 1);
@@ -116,7 +86,7 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         checkNode.setReferer(url);
         logger.info("请求url2 is {}", url);
         pageContent = (String) getResponseByWebRequest(checkNode, ContentType.Content, null);
-        logger.info("访问安全页2：{}", pageContent);
+        logger.debug("访问安全页2：{}", pageContent);
         String identity = PatternUtils.group(pageContent, "identity:\\s*'([^']+)'", 1);
         String sessionid = PatternUtils.group(pageContent, "sessionid:\\s*'([^']+)'", 1);
         context.getContext().put("identity", identity);
@@ -148,13 +118,13 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         String smPolicy = (String) context.getContext().get("smPolicy");
         LinkNode validNode = new LinkNode("https://pin.aliyun.com/check_img?code=" + pidCode + "&_ksTS=" + timestampFlag() + "&callback=&identity=" + identity + "&sessionid=" + sessionid + "&delflag=0&type=150_40");
         String pageContent = (String) getResponseByWebRequest(validNode, ContentType.Content, null);
-        logger.info("校验后交易页面1：{}", pageContent);
+        logger.debug("校验后交易页面1：{}", pageContent);
         if (StringUtils.isNotBlank(pageContent) && pageContent.contains("message\":\"SUCCESS.\"")) {
             String url = "https://sec.taobao.com/query.htm?action=QueryAction&event_submit_do_unique=ok&smPolicy=" + smPolicy + "&smApp=trademanager&smReturn=" + smReturn + "&smCharset=UTF-8&smTag=" + smTag + "&captcha=&smSign=" + smSign + "&identity=" + identity + "&code=" + pidCode + "&_ksTS=" + timestampFlag() + "&callback=";
-            logger.info("校验后交易请求2：{}", url);
+            logger.debug("校验后交易请求2：{}", url);
             validNode = new LinkNode(url);
             pageContent = (String) getResponseByWebRequest(validNode, ContentType.Content, null);
-            logger.info("校验后交易页面2：{}", pageContent);
+            logger.debug("校验后交易页面2：{}", pageContent);
             /**
              * 这地方的响应：
              * ({"url":"https://buyertrade.taobao.com/trade/itemlist/asyncBought.htm?action=itemlist%2FBoughtQueryAction
@@ -165,10 +135,10 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
              */
             String urll = PatternUtils.group(pageContent, "\\\"url\\\":\\\"([^\\\"]+)\\\"", 1);
             String queryToken = PatternUtils.group(pageContent, "\\\"queryToken\\\":\\\"([^\\\"]+)\\\"", 1);
-            logger.info("校验后交易请求3：{}", urll);
+            logger.debug("校验后交易请求3：{}", urll);
             validNode = new LinkNode(urll + "&" + queryToken);
             pageContent = (String) getResponseByWebRequest(validNode, ContentType.Content, null);
-            logger.info("校验后交易页面3：{}", pageContent);
+            logger.debug("校验后交易页面3：{}", pageContent);
             return pageContent;
         }
         logger.error("imageCode input error!");
@@ -180,9 +150,4 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         return System.currentTimeMillis() + "_" + (int) (Math.random() * 1000);
     }
 
-    public static void main(String[] args) {
-        int index = map.get("1");
-        System.out.println(index);
-
-    }
 }
