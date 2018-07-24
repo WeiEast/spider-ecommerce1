@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':spider-share-web')
+    compile project(':spider-operator-web')
+}
