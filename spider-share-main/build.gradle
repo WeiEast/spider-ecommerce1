@@ -1,4 +1,32 @@
+plugins {
+    id "org.springframework.boot" version "1.5.9.RELEASE"
+}
+
+bootRepackage {
+    mainClass = "com.datatrees.spider.share.main.Application"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources", "src/main/profile/$env"]
+        }
+    }
+}
+
+
+
 dependencies {
     compile project(':spider-share-web')
     compile project(':spider-operator-web')
+    compile project(":rawdatacentral-web")
+    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+    compile("org.seleniumhq.selenium:selenium-java:${seleniumVersion}") {
+        exclude(module: "guava")
+    }
 }
+apply from: rootProject.file("printLib.gradle")
+
+
+
+
