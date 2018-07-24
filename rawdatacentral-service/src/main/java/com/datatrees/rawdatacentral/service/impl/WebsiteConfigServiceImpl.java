@@ -288,7 +288,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return website;
     }
 
-
     @Override
     public Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo) {
         WebsiteConfig config = buildWebsiteConfigFromWebsiteInfo(websiteInfo);
@@ -320,7 +319,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         return website;
     }
-
 
     private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfoWithBLOBs info) {
         CheckUtils.checkNotNull(info, "info is null");

@@ -13,8 +13,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -36,7 +36,8 @@ public class GanSu10086ForWap implements OperatorPluginService {
         try {
             //获取cookie:JSESSIONID
             String loginUrl = "http://wap.gs.10086.cn/jsbo_oauth/login?redirectURL=http://wap.gs.10086.cn/index.html";
-            String pageContent = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(loginUrl).invoke().getPageContent();
+            String pageContent = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(loginUrl).invoke()
+                    .getPageContent();
             //获取时间戳timestamp,这个很重要,没有的话后面刷新短信验证码不行
             String timestamp = RegexpUtils.select(pageContent, "jstimestamp = (\\d+)", 1);
             TaskUtils.addTaskShare(param.getTaskId(), "timestamp", timestamp);
@@ -110,7 +111,7 @@ public class GanSu10086ForWap implements OperatorPluginService {
             params.put("dxYzm", null);
             params.put("timestamp", timestamp);
             params.put("clickType", 1);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setUrl(loginUrl).setParams(params)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setUrl(loginUrl).setParams(params)
                     .addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest").invoke();
             JSONObject json = response.getPageContentForJSON();
             Integer rcode = json.getInteger("rcode");
@@ -156,8 +157,8 @@ public class GanSu10086ForWap implements OperatorPluginService {
             params.put("timestamp", timestamp);
             params.put("clickType", 2);
 
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setUrl(loginUrl).setParams(params).setReferer(referer)
-                    .addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest").invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setUrl(loginUrl).setParams(params)
+                    .setReferer(referer).addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest").invoke();
             JSONObject json = response.getPageContentForJSON();
             Integer rcode = json.getInteger("rcode");
             if (rcode != 1000) {
@@ -165,9 +166,11 @@ public class GanSu10086ForWap implements OperatorPluginService {
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
             //获取重要cookie:SESSION否则个人信息要访问2次才能成功
-            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl("http://wap.gs.10086.cn/index.html").invoke();
+            TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl("http://wap.gs.10086.cn/index.html")
+                    .invoke();
 
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest")
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .addHeader(HttpHeadKey.X_REQUESTED_WITH, "XMLHttpRequest")
                     .setFullUrl("http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=MessageInfo").setReferer("http://wap.gs.10086.cn/index.html")
                     .invoke();
             json = response.getPageContentForJSON();
@@ -191,7 +194,7 @@ public class GanSu10086ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=sendSmsCode&busiNum=XDCX";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
 
             if (StringUtils.contains(pageContent, "短信下发成功")) {
@@ -213,7 +216,8 @@ public class GanSu10086ForWap implements OperatorPluginService {
         try {
             String templateUrl
                     = "http://wap.gs.10086.cn/actionDispatcher.do?reqUrl=XDCX_YY_Query&busiNum=XDCX&operType=3&confirm_smsPassword={}&confirmFlg=1";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getSmsCode()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getSmsCode())
+                    .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "系统流程处理正常")) {
                 logger.info("详单-->校验成功,param={}", param);

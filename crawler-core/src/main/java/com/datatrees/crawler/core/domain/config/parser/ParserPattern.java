@@ -45,13 +45,13 @@ public class ParserPattern implements Serializable {
         return Collections.unmodifiableList(indexMappings);
     }
 
-    public void setIndexMappings(List<IndexMapping> indexMappings) {
-        this.indexMappings = indexMappings;
-    }
-
     @Node("mappings/map")
     public void setIndexMappings(IndexMapping indexMapping) {
         this.indexMappings.add(indexMapping);
+    }
+
+    public void setIndexMappings(List<IndexMapping> indexMappings) {
+        this.indexMappings = indexMappings;
     }
 
 }

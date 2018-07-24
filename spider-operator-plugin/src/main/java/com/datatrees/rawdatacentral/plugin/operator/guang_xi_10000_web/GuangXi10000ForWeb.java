@@ -16,8 +16,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -39,7 +39,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://gx.189.cn/chaxun/iframe/user_center.jsp";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String key1 = PatternUtils.group(pageContent, "var key1='([^']+)'", 1);
             String key2 = PatternUtils.group(pageContent, "var key2='([^']+)'", 1);
@@ -136,7 +136,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://gx.189.cn/public/login.jsp";
             String templateData = "LOGIN_TYPE=21&RAND_TYPE=001&AREA_CODE=&logon_name={}&password_type_ra=1&logon_passwd={}&logon_valid={}";
             String data = TemplateUtils.format(templateData, param.getMobile(), encryptPassword, param.getPicCode());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
 
@@ -154,21 +154,21 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
                 templateUrl = "http://gx.189.cn/public/user_protocol.jsp";
                 templateData = "Logon_Name={}&USER_FLAG=001&USE_PROTOCOL=&LOGIN_TYPE=21&USER_NO={}&ESFlag=8&REDIRECT_URL=%2F2015%2F";
                 data = TemplateUtils.format(templateData, param.getMobile(), userNo);
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
-                        .setRequestBody(data).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setReferer(referer).setRequestBody(data).invoke();
 
                 referer = templateUrl;
                 templateUrl = "http://gx.189.cn/public/protocollogin.jsp";
                 templateData = "OPEN_TYPE=1&LOGIN_TYPE=21&USER_NO={}&CUSTBRAND=&ESFlag=8&REDIRECT_URL=%2F2015%2F";
                 data = TemplateUtils.format(templateData, userNo);
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
-                        .setRequestBody(data).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setReferer(referer).setRequestBody(data).invoke();
 
                 referer = templateUrl;
                 templateUrl = "http://gx.189.cn/service/account/";
                 data = "CUSTBRAND=&ESFlag=8&REDIRECT_URL=%2F2015%2F";
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
-                        .setRequestBody(data).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setReferer(referer).setRequestBody(data).invoke();
                 if (StringUtils.contains(response.getPageContent(), param.getMobile().toString())) {
                     logger.info("登陆成功,param={}", param);
                     return result.success();
@@ -204,7 +204,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://gx.189.cn/service/bill/getRand.jsp";
             String templateData = "MOBILE_NAME={}&RAND_TYPE=025&OPER_TYPE=CR1&PRODTYPE=2020966";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<flag>0</flag>")) {
@@ -228,7 +228,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://gx.189.cn/public/realname/checkRealName.jsp";
             String templateData = "NUM={}&V_PASSWORD={}&RAND_TYPE=025";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "对不起,您输入的名字或证件号码不正确，请重新输入")) {
@@ -252,7 +252,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://gx.189.cn/chaxun/iframe/qdcx.jsp";
             String templateData = "ACC_NBR={}&PROD_TYPE=2020966";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
@@ -271,7 +271,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
                     "=&SERV_NO=&QRY_FLAG=1&MOBILE_NAME={}&OPER_TYPE=CR1&FIND_TYPE=1031&radioQryType=on&ACCT_DATE={}&ACCT_DATE_1={}&PASSWORD" +
                     "=&CUST_NAME=&CARD_TYPE=1&CARD_NO=";
             data = TemplateUtils.format(templateData, "", param.getMobile(), param.getMobile(), currentMonth, currentMonth);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<flag>0</flag>")) {
@@ -298,7 +298,7 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
             String templateData = "NUM={}&V_PASSWORD={}&CUST_NAME={}&CARD_NO={}&CARD_TYPE=1&RAND_TYPE=002";
             String data = TemplateUtils
                     .format(templateData, param.getMobile(), param.getSmsCode(), URLEncoder.encode(param.getRealName(), "UTF-8"), param.getIdCard());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<Tips>")) {
@@ -315,8 +315,8 @@ public class GuangXi10000ForWeb implements OperatorPluginService {
                 data = TemplateUtils
                         .format(templateData, bureauCode, param.getMobile(), param.getMobile(), currentMonth, currentMonth, param.getSmsCode(),
                                 URLEncoder.encode(param.getRealName(), "UTF-8"), param.getIdCard());
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
-                        .setReferer(referer).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setRequestBody(data).setReferer(referer).invoke();
                 pageContent = response.getPageContent();
                 if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                     logger.info("详单-->校验成功,param={}", param);

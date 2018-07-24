@@ -10,8 +10,8 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -32,7 +32,8 @@ public class JiangSu10000ForWeb implements OperatorPluginService {
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
-            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl("http://js.189.cn/nservice/login/toLogin").invoke();
+            TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl("http://js.189.cn/nservice/login/toLogin")
+                    .invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={}", param, e);
@@ -81,8 +82,8 @@ public class JiangSu10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://js.189.cn/nservice/login/toLogin";
             String templateUrl = "http://js.189.cn/nservice/verication/getCodeImage";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -101,7 +102,7 @@ public class JiangSu10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://js.189.cn/nservice/login/doLogin?menuType=0";
             String templteData = "userType=2000004&logonPattern=1&favurl=&newUamType=-1&productId={}&userPwd={}&validateCodeNumber={}";
             String data = TemplateUtils.format(templteData, param.getMobile(), param.getPassword(), param.getPicCode());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             String errorMsg = null;

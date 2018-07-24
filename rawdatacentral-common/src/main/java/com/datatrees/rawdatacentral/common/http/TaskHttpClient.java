@@ -494,8 +494,8 @@ public class TaskHttpClient {
             }
             logger.info("http has redirect,taskId={},websiteName={},type={},from={} to redirectUrl={}", taskId, request.getWebsiteName(),
                     request.getType(), request.getUrl(), redirectUrl);
-            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, true)
-                    .setRedirectCount(request.getRedirectCount() + 1).setUrl(redirectUrl).setAutoRedirect(request.getAutoRedirect()).invoke();
+            response = create(request.getTaskId(), request.getWebsiteName(), RequestType.GET, true).setRedirectCount(request.getRedirectCount() + 1)
+                    .setUrl(redirectUrl).setAutoRedirect(request.getAutoRedirect()).invoke();
             return response;
         }
         return response;

@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jul 29, 2014 1:51:32 PM
@@ -30,7 +29,6 @@ public enum CookieFormater {
     private static final Logger logger = LoggerFactory.getLogger(CookieFormater.class);
 
     /**
-     *
      * @param cookies
      * @return
      */

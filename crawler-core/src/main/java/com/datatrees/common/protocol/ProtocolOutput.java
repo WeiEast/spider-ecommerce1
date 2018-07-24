@@ -10,18 +10,17 @@ package com.datatrees.common.protocol;
 
 /**
  * Simple aggregate to pass from protocol plugins both content and protocol status.
- *
  * @author Andrzej Bialecki &lt;ab@getopt.org&gt;
  */
 public class ProtocolOutput {
 
     public static ProtocolOutput NULL = new Null(Content.NULL);
 
-    private Content  content;
+    private       Content        content;
 
-    private int      statusCode;
+    private       int            statusCode;
 
-    private Response response;
+    private       Response       response;
 
     /**
      * @param content

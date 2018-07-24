@@ -14,8 +14,8 @@ import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -38,7 +38,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (org.apache.commons.lang.StringUtils.isBlank(pageContent)) {
                 logger.error("登录-->初始化失败,param={},response={}", param, response);
@@ -53,7 +53,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
 
             if (pageContent.contains("replace")) {
                 templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
             if (pageContent.contains("postartifact")) {
@@ -181,8 +181,9 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             String referer = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";
             String templateUrl = "https://gx.ac.10086.cn/SMSCodeSend?mobileNum={}&spid={}&errorurl={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile(), spid,
-                    URLEncoder.encode("http://www.gx.10086.cn/wodeyidong/public/LoginAction/showSSOErr.action", "UTF-8")).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .setFullUrl(templateUrl, param.getMobile(), spid,
+                            URLEncoder.encode("http://www.gx.10086.cn/wodeyidong/public/LoginAction/showSSOErr.action", "UTF-8")).setReferer(referer)
                     .invoke();
             if (response.getPageContent().contains("短信验证码已发送到您的手机")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -221,12 +222,12 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String data = TemplateUtils.format(templateData, URLEncoder.encode(backurl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid,
                     URLEncoder.encode(relayState, "UTF-8"), URLEncoder.encode(imgUrl, "UTF-8"), param.getMobile(), param.getSmsCode(),
                     param.getPicCode(), isValidateCode);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("replace")) {
                 templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
             if (pageContent.contains("postartifact")) {
@@ -238,7 +239,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
             }
             templateUrl = "http://www.gx.10086.cn/wodeyidong";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).invoke();
 
             //templateUrl = "http://www.gx.10086.cn/wodeyidong/public/QueryBaseBillInfoAction/refreshFee.action";
             //templateData = "ajaxType=json&_tmpDate={}&_buttonId=&_dateTimeToken={}";
@@ -265,11 +266,13 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String referer = "http://www.gx.10086.cn/wodeyidong/mymob/xiangdan.jsp";
             String templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/initBusi" +
                     ".menu?is_first_render=true&_menuId=410900003558&=&_lastCombineChild=false&_zoneId=busimain&_tmpDate=&_buttonId=";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/sendSecondPsw" +
                     ".menu?ajaxType=json&_tmpDate=&_menuId=410900003558&_buttonId=";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             if (response.getPageContent().contains("随机短信验证码已发送成功")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
@@ -291,7 +294,7 @@ public class GuangXi10086ForWeb implements OperatorPluginService {
             String templateUrl = "http://www.gx.10086.cn/wodeyidong/ecrm/queryDetailInfo/QueryDetailInfoAction/checkSecondPsw" +
                     ".menu?input_random_code={}&input_svr_pass={}&is_first_render=true&_zoneId=_sign_errzone&_tmpDate=&_menuId=410900003558" +
                     "&_buttonId=other_sign_btn";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, param.getSmsCode(), param.getPassword()).setReferer(referer)
                     .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
             logger.info(response.getPageContent());

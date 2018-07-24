@@ -185,9 +185,8 @@ public class Content {
 
     /**
      * The media type of the retrieved content.
-     *
      * @see <a href="http://www.iana.org/assignments/media-types/">
-     *      http://www.iana.org/assignments/media-types/</a>
+     * http://www.iana.org/assignments/media-types/</a>
      */
     public String getContentType() {
         return contentType;

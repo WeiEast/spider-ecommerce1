@@ -194,7 +194,6 @@ public abstract class HttpBase implements Protocol {
     }
 
     /**
-     *
      * @param orignal
      * @return
      */
@@ -238,7 +237,6 @@ public abstract class HttpBase implements Protocol {
 
     /**
      * Value of "Accept-Language" request header sent by Nutch.
-     *
      * @return The value of the header "Accept-Language" header.
      */
     public String getAcceptLanguage() {

@@ -78,8 +78,7 @@ public class DeflateUtils {
 
     /**
      * Returns an inflated copy of the input array.
-     *
-     * @throws IOException if the input cannot be properly decompressed
+     * @exception IOException if the input cannot be properly decompressed
      */
     public static final byte[] inflate(byte[] in) throws IOException {
         // decompress using InflaterInputStream

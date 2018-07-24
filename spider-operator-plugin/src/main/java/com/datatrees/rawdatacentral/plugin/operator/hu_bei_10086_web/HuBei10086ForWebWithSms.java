@@ -19,8 +19,8 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -129,8 +129,8 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
             String templateUrl = "https://hb.ac.10086.cn/SSO/sendsms";
             String templateData = "username={}&service=my&passwordType=2";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
-                    .setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             if (StringUtils.contains(response.getPageContent(), "随机短信已经发送到您的手机")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
@@ -158,7 +158,7 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
                     "=%2FSSO%2Floginbox&style=mymobile&service=my&continue=http%3A%2F%2Fwww.hb.10086.cn%3A80%2Fmy%2Findex" +
                     ".action&submitMode=login&guestIP=s&isCompelLogin=0";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getSmsCode(), param.getPicCode());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
@@ -236,7 +236,7 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
             return null;
         }
         String templateUrl = "{}?timeStamp={}&RelayState={}&SAMLart={}&artifact={}&accountType={}&PasswordType={}&errorMsg={}&errFlag={}&telNum={}";
-        Response response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST)
+        Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                 .setFullUrl(templateUrl, action, System.currentTimeMillis(), relayState, samLart, artifact, accountType, passwordType, errorMsg,
                         errFlag, telNum).invoke();
 
@@ -254,7 +254,7 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
                 Thread.sleep(waitTime);
             }
             String templateUrl = "http://www.hb.10086.cn/my/balance/smsRandomPass!sendSmsCheckCode.action?menuid=myDetailBill";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("\"result\":\"1\"")) {
                 int newCount = Integer.parseInt(count) + 1;
@@ -290,7 +290,7 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
             SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
             String templateUrl
                     = "http://www.hb.10086.cn/my/detailbill/detailBillQry.action?postion=outer&detailBean.billcycle={}&detailBean.selecttype=0&detailBean.flag=GSM&selecttype=%E5%85%A8%E9%83%A8%E6%9F%A5%E8%AF%A2&flag=%E9%80%9A%E8%AF%9D%E8%AF%A6%E5%8D%95&detailBean.password={}&detailBean.chkey={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, sf.format(new Date()), encryptPwd, encryptSmsCode).invoke();
             String pageContent = response.getPageContent();
             if (!pageContent.contains("暂时无法为您提供服务") && !pageContent.contains("您输入的服务密码或短信验证码错误或者过期")) {
@@ -321,7 +321,7 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
             String templateUrl = "http://www.hb.10086.cn/my/detailbill/generateNewDetailExcel.action?menuid=myDetailBill&detailBean" +
                     ".billcycle={}&detailBean.password={}&detailBean.chkey={}&detailBean.startdate={}&detailBean" +
                     ".enddate={}&detailBean.flag={}&detailBean.selecttype=0";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                     .setFullUrl(templateUrl, params[0], param.getPassword(), smsCode, params[1], params[2], queryType).invoke();
             byte[] bytes = response.getResponse();
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
@@ -396,13 +396,13 @@ public class HuBei10086ForWebWithSms implements OperatorPluginPostService {
             pageContent = processSSOLogin(param, pageContent);
             String templateUrl = PatternUtils.group(pageContent, "window\\.parent\\.location\\.href='([^']+)'", 1);
             if (StringUtils.isNotEmpty(templateUrl)) {
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             }
             String rsaModule
                     = "8a4928b7e4ce5943230539120cb6ee7a64000034b11b923a91faf8c381dd09b4a9a9a6fa02ca0bd3b90576ac1498983f7c78d8f8f5126a24a30f75eac86815c3430fe3e77f81a326d0d2f7ffbfe285bb368175d66c29777ec031c0c75f64da92aa43866fdfa2597cfb4ce614f450e95670be7cc27e4b05b7a48ca876305e5d51";
             String rsaEmpoent = "10001";
             templateUrl = "http://www.hb.10086.cn/my/index.action";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent)) {
                 List<String> rsaModuleList = XPathUtil.getXpath("//input[@id='rsaModule']/@value", pageContent);

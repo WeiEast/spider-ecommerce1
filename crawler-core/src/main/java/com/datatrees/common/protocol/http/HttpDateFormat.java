@@ -17,9 +17,7 @@ import java.util.TimeZone;
 
 /**
  * class to handle HTTP dates.
- *
  * Modified from FastHttpDateFormat.java in jakarta-tomcat.
- *
  * @author John Xing
  */
 public class HttpDateFormat {

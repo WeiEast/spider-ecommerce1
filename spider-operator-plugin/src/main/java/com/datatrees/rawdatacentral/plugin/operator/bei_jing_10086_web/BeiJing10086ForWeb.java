@@ -17,8 +17,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -52,9 +52,10 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
             //获取cookie:Webtrends
-            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl("https://login.10086.cn/html/bj/login.html").invoke();
+            TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl("https://login.10086.cn/html/bj/login.html")
+                    .invoke();
             //获取cookie:JSESSIONID
-            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+            TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl("https://login.10086.cn/html/bj/iloginnew.html?{}", System.currentTimeMillis()).invoke();
             return result.success();
         } catch (Exception e) {
@@ -163,7 +164,8 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action";
             String templateData = "userName={}&type=POST&channelID=00100";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             switch (response.getPageContent()) {
                 case "0":
                     logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -210,7 +212,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             String templateUrl = "https://login.10086.cn/touchBjLogin.action";
             String templateData = "rememberMe=1&accountType=01&pwdType=02&account={}&password={}&channelID=00100&protocol=https%3A" + "&timestamp={}";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getSmsCode(), System.currentTimeMillis());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer, System.currentTimeMillis()).invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("code");
@@ -223,8 +225,8 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             String artifact = json.getString("artifact");
             String assertAcceptURL = json.getString("assertAcceptURL");
             templateUrl = "{}?backUrl=http%3A%2F%2Fservice.bj.10086.cn&artifact={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, assertAcceptURL, artifact)
-                    .setReferer(referer, System.currentTimeMillis()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .setFullUrl(templateUrl, assertAcceptURL, artifact).setReferer(referer, System.currentTimeMillis()).invoke();
             logger.info("登录成功,param={}", param);
             return result.success();
         } catch (Exception e) {
@@ -274,7 +276,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
         try {
             String templateUrl = "https://login.10086.cn/SSOCheck" +
                     ".action?channelID=12034&backUrl=http%3A%2F%2Fwww.10086.cn%2Findex%2Fbj%2Findex_100_100.html";
-            TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             templateUrl = "http://www1.10086.cn/web-Center/authCenter/assertionQuery.do";
             String templateData = "requestJson=%7B%22serviceName%22%3A%22if008_query_user_assertion%22%2C%22header%22%3A%7B%22version%22%3A%221.0" +
@@ -284,7 +286,8 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             Invocable invocableForMd5 = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "md5.js", "GBK");
             String md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
             String data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
 
             //templateUrl = "https://www1.10086.cn/web-Center/interfaceService/realFeeQry.do";
             //templateData = "requestJson=%7B%22serviceName%22%3A%22if007_query_fee%22%2C%22header%22%3A%7B%22version%22%3A%221.0%22" +
@@ -295,7 +298,8 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             //data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
             templateUrl = "http://service.bj.10086.cn/poffice/my/showYECX.action";
             data = "PACKAGECODE=YECX&PRODUCTSHOWCODE=YECX&REALTIME=Y";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "balancePage", response.getPageContent());
 
             templateUrl = "https://www1.10086.cn/web-Center/interfaceService/custInfoQry.do";
@@ -304,14 +308,15 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
                     "%3A%7B%22channelId%22%3A%220001%22%7D%7D";
             md5String = invocableForMd5.invokeFunction("getDigest", timestamp).toString();
             data = TemplateUtils.format(templateData, timestamp, URLEncoder.encode(md5String, "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "baseInfoPage", response.getPageContent());
             TaskUtils.addTaskShare(param.getTaskId(), "baseInfoUrl", templateUrl);
 
             //详单校验
             templateUrl = "https://service.bj.10086.cn/poffice/package/xdcx/userYzmCheck.action?PACKAGECODE=XD&yzCheckCode={}";
             String validateCallDetailUrl = TemplateUtils.format(templateUrl, param.getPassword());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(validateCallDetailUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(validateCallDetailUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "RelayState")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), pageContent);
@@ -324,7 +329,7 @@ public class BeiJing10086ForWeb implements OperatorPluginPostService {
             String message = json.getString("message");
             if (StringUtils.equals("Y", message)) {
                 logger.info("详单校验成功,param={}", param);
-                TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+                TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                         .setFullUrl("https://login.10086.cn/SSOCheck.action?channelID=12003&backUrl=http://shop.10086.cn/i/?f=custinfoqry").invoke();
                 return result.success();
             } else {

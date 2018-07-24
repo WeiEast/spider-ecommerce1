@@ -12,8 +12,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -48,7 +48,7 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://jx.189.cn/service/account/seeInfo.jsp";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String modulus = PatternUtils.group(pageContent, "var modulus = \"([^\"]+)\"", 1);
             if (StringUtils.isNotBlank(modulus)) {
@@ -119,7 +119,8 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
         try {
             String templateUrl = "http://jx.189.cn/public/v4/common/control/page/image.jsp?date=" + URLEncoder.encode("" + new Date(), "UTF-8");
             String referer = "http://jx.189.cn/public/v4/logon/loginPop.jsp?from_sc=service_login&ret_url=";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -263,8 +264,8 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
             if (StringUtils.contains(pageContent, param.getMobile().toString()) && StringUtils.contains(pageContent, "IS_SUCCESS':\"1")) {
                 templateUrl = "http://login.189.cn/";
                 referer = "http://www.189.cn/html/login/index.html";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
+                        .setReferer(referer).invoke();
                 if (StringUtils.isBlank(response.getPageContent())) {
                     logger.error("jx189 login request is error! errormessage: pre login failed");
                     return result.failure(ErrorCode.NOT_EMPTY_ERROR_CODE);
@@ -276,8 +277,8 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
                 templateData = "Account=" + param.getMobile() + "&UType=201&ProvinceID=15&AreaCode=&CityNo=&RandomFlag=0&Password=" +
                         URLEncoder.encode(encryptPassWord, "UTF-8") + "&Captcha=";
                 referer = "http://login.189.cn/login";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
-                        .setRequestBody(templateData).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setReferer(referer).setRequestBody(templateData).invoke();
                 if (StringUtils.isBlank(response.getPageContent())) {
                     logger.error("jx189 login request loginre.189.cn error");
                     return result.failure(ErrorCode.NOT_EMPTY_ERROR_CODE);
@@ -285,8 +286,8 @@ public class JiangXi10000ForWeb implements OperatorPluginService {
 
                 templateUrl = "http://www.189.cn/login/index.do";
                 referer = "http://www.189.cn/html/login/index.html";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
+                        .setReferer(referer).invoke();
                 pageContent = response.getPageContent();
                 if (StringUtils.containsNone(pageContent, "code\":\"0")) {
                     logger.error("jx189 login check password failed");

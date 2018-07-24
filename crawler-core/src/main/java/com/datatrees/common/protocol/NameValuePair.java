@@ -11,7 +11,6 @@ package com.datatrees.common.protocol;
 import com.datatrees.common.protocol.util.LangUtils;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 1:51:25 PM
@@ -32,7 +31,6 @@ public class NameValuePair {
 
     /**
      * Default constructor.
-     *
      */
     public NameValuePair() {
         this(null, null);
@@ -40,8 +38,7 @@ public class NameValuePair {
 
     /**
      * Constructor.
-     *
-     * @param name The name.
+     * @param name  The name.
      * @param value The value.
      */
     public NameValuePair(String name, String value) {
@@ -53,7 +50,6 @@ public class NameValuePair {
 
     /**
      * Return the name.
-     *
      * @return String name The name
      * @see #setName(String)
      */
@@ -63,7 +59,6 @@ public class NameValuePair {
 
     /**
      * Set the name.
-     *
      * @param name The new name
      * @see #getName()
      */
@@ -73,7 +68,6 @@ public class NameValuePair {
 
     /**
      * Return the current value.
-     *
      * @return String value The current value.
      */
     public String getValue() {
@@ -82,7 +76,6 @@ public class NameValuePair {
 
     /**
      * Set the value.
-     *
      * @param value The new value.
      */
     public void setValue(String value) {
@@ -93,7 +86,6 @@ public class NameValuePair {
 
     /**
      * Get a String representation of this pair.
-     *
      * @return A string representation.
      */
     public String toString() {

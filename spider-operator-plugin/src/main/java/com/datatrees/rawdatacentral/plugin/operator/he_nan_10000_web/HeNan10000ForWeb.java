@@ -12,8 +12,8 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -92,7 +92,7 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
                 return result;
             }
             String templateUrl = "http://www.189.cn/ha/";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             logger.info("登陆成功,param={}", param);
             return result.success();
@@ -110,7 +110,8 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
         try {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000354";
             String templateUrl = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-2&fastcode=20000356&cityCode=ha";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             String pageContent = response.getPageContent();
             String param_PRODTYPE = PatternUtils.group(pageContent, "doQuery\\('(\\d+)','(\\d+)',''\\)", 2);
 
@@ -123,7 +124,8 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
             templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inxxall.jsp?ACC_NBR=" + param.getMobile() + "&PROD_TYPE=" + param_PRODTYPE +
                     "&BEGIN_DATE=&END_DATE=&SERV_NO=&ValueType=1&REFRESH_FLAG=1&FIND_TYPE=1&radioQryType=on&QRY_FLAG=1&ACCT_DATE=" +
                     sf.format(c.getTime()) + "&ACCT_DATE_1=" + sf.format(c.getTime());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isBlank(response.getPageContent())) {
                 logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
@@ -154,7 +156,8 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
                     param_BureauCode + "&ACC_NBR=" + param.getMobile() + "&PROD_TYPE=" + param_PRODTYPE + "&PROD_PWD=&REFRESH_FLAG=" +
                     param_REFRESH_FLAG + "&BEGIN_DATE=&END_DATE=&ACCT_DATE=" + param_ACCT_DATE + "&FIND_TYPE=1&SERV_NO=&QRY_FLAG=" + param_QRY_FLAG +
                     "&ValueType=" + param_ValueType + "&MOBILE_NAME=" + param.getMobile() + "&OPER_TYPE=" + param_OPER_TYPE + "&PASSWORD=";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "<flag>0</flag>")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -189,7 +192,8 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
                     "&PROD_PWD=&REFRESH_FLAG=" + param_REFRESH_FLAG + "&BEGIN_DATE=&END_DATE=&ACCT_DATE=" + param_ACCT_DATE +
                     "&FIND_TYPE=1&SERV_NO=&QRY_FLAG=" + param_QRY_FLAG + "&ValueType=" + param_ValueType + "&MOBILE_NAME=" + param.getMobile() +
                     "&OPER_TYPE=" + param_OPER_TYPE + "&PASSWORD=" + param.getSmsCode();
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             if (StringUtils.contains(response.getPageContent(), "开始时间")) {
                 logger.info("详单-->校验成功,param={}", param);
                 return result.success();
@@ -212,10 +216,12 @@ public class HeNan10000ForWeb implements OperatorPluginPostService {
 
         try {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=20000354";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(referer).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(referer).setReferer(referer)
+                    .invoke();
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10017&toStUrl=http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-3&fastcode=20000355&cityCode=ha";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             referer = "http://ha.189.cn/service/iframe/feeQuery_iframe.jsp?SERV_NO=FSE-2-1&fastcode=20000354&cityCode=ha";
             templateUrl = "http://ha.189.cn/service/iframe/bill/iframe_inzd.jsp";

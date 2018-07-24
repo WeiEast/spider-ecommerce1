@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentMap;
 import static java.lang.Integer.MAX_VALUE;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年8月22日 下午9:34:01

@@ -14,8 +14,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -94,13 +94,14 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
         try {
             String templateUrl = "https://uac.10010.com/oauth2/new_auth?display=wap&page_type=05&app_code=ECS-YH-WAP&redirect_uri=http" +
                     "://wap.10010.com/t/loginCallBack.htm&state=http://wap.10010.com/t/myunicom.htm&channel_code=113000001";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             templateUrl = "https://uac.10010.com/portal/Service/CheckNeedVerify?callback=&userName={}&pwdType=01";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile())
+                    .invoke();
 
             templateUrl = "https://uac.10010.com/portal/Service/SendCkMSG?callback=&req_time={}&mobile={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile()).invoke();
             if (StringUtils.contains(response.getPageContent(), "resultCode:\"0000\"")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -124,8 +125,8 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
                     "=code&redirect_uri=http%3A%2F%2Fwap.10010.com%2Ft%2FloginCallBack.htm&is_check=1&verifyCKCode={}" +
                     "&state=http%3A%2F%2Fwap.10010.com%2Ft%2Fmyunicom.htm";
             String data = TemplateUtils.format(templateData, param.getMobile(), param.getPassword(), param.getSmsCode());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, System.currentTimeMillis())
-                    .setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).setRequestBody(data).invoke();
             JSONObject json = response.getPageContentForJSON();
             String code = json.getString("rsp_code");
             if (!StringUtils.equals(code, "0000")) {
@@ -135,7 +136,7 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
             }
             String code2 = json.getString("code");
             templateUrl = "http://wap.10010.com/t/loginCallBack.htm?code={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, code2).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, code2).invoke();
 
             /**
              * 查询归属地
@@ -143,14 +144,16 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
             templateUrl = "http://wap.10010.com/mobileService/customerService/queryAffiliationPlace.htm?desmobile=&version=wap@4.0";
             templateData = "mobile_id={}";
             data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             if (!StringUtils.contains(response.getPageContent(), "很抱歉，暂时无法为您提供服务，请稍后再试")) {
                 String provinceName = XPathUtil.getXpath("th:contains(号码归属地):not(:has(th))+td/text()", response.getPageContent()).get(0).trim();
                 provinceName = PatternUtils.group(provinceName, "^([^ ]+)\\s*", 1);
                 TaskUtils.addTaskShare(param.getTaskId(), "provinceName", provinceName);
             } else {
                 templateUrl = "https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?cb=&resource_name=guishudi&query={}&_=";
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile()).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                        .setFullUrl(templateUrl, param.getMobile()).invoke();
                 String prov = (String) JSONPath.eval(response.getPageContentForJSON(), "$.data[0].prov");
                 String city = (String) JSONPath.eval(response.getPageContentForJSON(), "$.data[0].city");
                 String provinceName = prov;
@@ -182,7 +185,7 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
              */
             String templateUrl = "http://wap.10010.com/mobileService/query/queryRealFeeHistroyDetail" +
                     ".htm?desmobile=&version=android@5.5&menuId=000200010005&month={}&randm=";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, billMonth).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, billMonth).invoke();
             String pageContent = response.getPageContent();
             return result.success(pageContent);
         } catch (Exception e) {
@@ -206,7 +209,8 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
             String templateUrl = "http://wap.10010.com/mobileService/query/getPhoneByDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             String pageContent = response.getPageContent();
 
             Map<String, Object> map = new HashMap<>();
@@ -230,7 +234,7 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
                 for (int i = 0; i <= pages; i++) {
                     templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/thxd_more_list" +
                             ".jsp?1=1&t={}&beginrow={}&endrow={}&pagenum={}";
-                    response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                             .setFullUrl(templateUrl, System.currentTimeMillis(), (40 * i), (40 * (i + 1)), (i + 1)).invoke();
                     list.add(response.getPageContent());
                 }
@@ -242,8 +246,8 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
                     templateUrl = "http://wap.10010.com/mobileService/query/getPhoneByDetailContent.htm";
                     templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=000200010005&currNum={}";
                     data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
-                    response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
-                            .invoke();
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                            .setRequestBody(data).invoke();
                     list.add(response.getPageContent());
                 }
             }
@@ -270,7 +274,8 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
             String templateUrl = "http://wap.10010.com/mobileService/query/querySmsByDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             String pageContent = response.getPageContent();
             String totalRaw = "0";
             List<String> totalRawList = XPathUtil.getXpath("p:contains(总发送):not(:has(p)) span/text()", pageContent);
@@ -287,7 +292,7 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
             for (int i = 0; i <= pages; i++) {
                 templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/sms_more_list.jsp?1=1&t=" + System.currentTimeMillis() +
                         "&beginrow=" + (100 * i) + "&endrow=" + (100 * (i + 1)) + "&pagenum=" + (i + 1);
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                         .setFullUrl(templateUrl, System.currentTimeMillis(), (100 * i), (100 * (i + 1)), (i + 1)).invoke();
                 list.add(response.getPageContent());
             }
@@ -314,7 +319,8 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
             String templateUrl = "http://wap.10010.com/mobileService/query/queryNetWorkDetailContent.htm";
             String templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=";
             String data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             String pageContent = response.getPageContent();
             int totalRaw = 0;
             String str = PatternUtils.group(pageContent, "点击加载更多（(\\d+)条）", 1);
@@ -328,7 +334,7 @@ public class China10010ForWapWithSMS implements OperatorPluginService {
                 for (int i = 0; i <= pages; i++) {
                     templateUrl = "http://wap.10010.com/mobileService/view/client/query/xdcx/net_more_list.jsp?1=1&t=" + System.currentTimeMillis() +
                             "&beginrow=" + (40 * i) + "&endrow=" + (40 * (i + 1)) + "&pagenum=" + (i + 1);
-                    response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                             .setFullUrl(templateUrl, System.currentTimeMillis(), (40 * i), (40 * (i + 1)), (i + 1)).invoke();
                     list.add(response.getPageContent());
                 }

@@ -22,24 +22,23 @@ import org.slf4j.LoggerFactory;
 
 /**
  * UrlUtils.java
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Dec 25, 2012 2:37:27 PM
  */
 public class UrlUtils {
 
-    private static final Logger  logger           = LoggerFactory.getLogger(UrlUtils.class);
+    private static final Logger  logger               = LoggerFactory.getLogger(UrlUtils.class);
 
-    private static final Pattern URL_NAME_PATTERN = PatternUtils.compile("(https?://)?(\\w+\\.)?(([^/\\s]+)\\.\\w+)(/.*)?");
+    private static final Pattern URL_NAME_PATTERN     = PatternUtils.compile("(https?://)?(\\w+\\.)?(([^/\\s]+)\\.\\w+)(/.*)?");
 
-    private static final Pattern URL_PATTERN      = PatternUtils.compile("^https?(:|&#58;)//([-\\w]+\\.)+[\\w-]+(:\\d+)?(/[^'<>,、，\\s\\\"]*)?");
+    private static final Pattern URL_PATTERN          = PatternUtils.compile("^https?(:|&#58;)//([-\\w]+\\.)+[\\w-]+(:\\d+)?(/[^'<>,、，\\s\\\"]*)?");
 
-    private static final BitSet PATH_ALLOWED_CHARS   = new BitSet(256);
+    private static final BitSet  PATH_ALLOWED_CHARS   = new BitSet(256);
 
-    private static final BitSet QUERY_ALLOWED_CHARS  = new BitSet(256);
+    private static final BitSet  QUERY_ALLOWED_CHARS  = new BitSet(256);
 
-    private static final BitSet ANCHOR_ALLOWED_CHARS = new BitSet(256);
+    private static final BitSet  ANCHOR_ALLOWED_CHARS = new BitSet(256);
 
     /**
      * URI allowed char initialization; based on HttpClient 3.1's URI bit sets.
@@ -184,7 +183,6 @@ public class UrlUtils {
 
     /**
      * check the given string is url ?
-     *
      * @param data
      * @return
      */
@@ -224,13 +222,11 @@ public class UrlUtils {
      * Encodes illegal characters in the specified URL's path, query string and anchor according to
      * the URL encoding rules observed in real browsers.
      * </p>
-     *
      * <p>
      * For example, this method changes <tt>"http://first/?a=b c"</tt> to
      * <tt>"http://first/?a=b%20c"</tt>.
      * </p>
-     *
-     * @param url the URL to encode
+     * @param url                  the URL to encode
      * @param minimalQueryEncoding whether or not to perform minimal query encoding, like IE does
      * @return the encoded URL
      */
@@ -266,7 +262,6 @@ public class UrlUtils {
 
     /**
      * Encodes and escapes the specified URI anchor string.
-     *
      * @param anchor the anchor string to encode and escape
      * @return the encoded and escaped anchor string
      */
@@ -279,7 +274,6 @@ public class UrlUtils {
 
     /**
      * Unescapes and decodes the specified string.
-     *
      * @param escaped the string to be unescaped and decoded
      * @return the unescaped and decoded string
      */
@@ -300,10 +294,9 @@ public class UrlUtils {
     /**
      * Escapes and encodes the specified string. Based on HttpClient 3.1's <tt>URIUtil.encode()</tt>
      * method.
-     *
      * @param unescaped the string to encode
-     * @param allowed allowed characters that shouldn't be escaped
-     * @param charset the charset to use
+     * @param allowed   allowed characters that shouldn't be escaped
+     * @param charset   the charset to use
      * @return the escaped string
      */
     private static String encode(final String unescaped, final BitSet allowed, final String charset) {
@@ -320,11 +313,10 @@ public class UrlUtils {
     /**
      * Creates and returns a new URL identical to the specified URL, except using the specified
      * protocol.
-     *
-     * @param u the URL on which to base the returned URL
+     * @param u           the URL on which to base the returned URL
      * @param newProtocol the new protocol to use in the returned URL
      * @return a new URL identical to the specified URL, except using the specified protocol
-     * @throws MalformedURLException if there is a problem creating the new URL
+     * @exception MalformedURLException if there is a problem creating the new URL
      */
     public static URL getUrlWithNewProtocol(final URL u, final String newProtocol) throws MalformedURLException {
         return createNewUrl(newProtocol, u.getHost(), u.getPort(), u.getPath(), u.getRef(), u.getQuery());
@@ -333,11 +325,10 @@ public class UrlUtils {
     /**
      * Creates and returns a new URL identical to the specified URL, except using the specified
      * host.
-     *
-     * @param u the URL on which to base the returned URL
+     * @param u       the URL on which to base the returned URL
      * @param newHost the new host to use in the returned URL
      * @return a new URL identical to the specified URL, except using the specified host
-     * @throws MalformedURLException if there is a problem creating the new URL
+     * @exception MalformedURLException if there is a problem creating the new URL
      */
     public static URL getUrlWithNewHost(final URL u, final String newHost) throws MalformedURLException {
         return createNewUrl(u.getProtocol(), newHost, u.getPort(), u.getPath(), u.getRef(), u.getQuery());
@@ -346,11 +337,10 @@ public class UrlUtils {
     /**
      * Creates and returns a new URL identical to the specified URL, except using the specified
      * port.
-     *
-     * @param u the URL on which to base the returned URL
+     * @param u       the URL on which to base the returned URL
      * @param newPort the new port to use in the returned URL
      * @return a new URL identical to the specified URL, except using the specified port
-     * @throws MalformedURLException if there is a problem creating the new URL
+     * @exception MalformedURLException if there is a problem creating the new URL
      */
     public static URL getUrlWithNewPort(final URL u, final int newPort) throws MalformedURLException {
         return createNewUrl(u.getProtocol(), u.getHost(), newPort, u.getPath(), u.getRef(), u.getQuery());
@@ -359,11 +349,10 @@ public class UrlUtils {
     /**
      * Creates and returns a new URL identical to the specified URL, except using the specified
      * path.
-     *
-     * @param u the URL on which to base the returned URL
+     * @param u       the URL on which to base the returned URL
      * @param newPath the new path to use in the returned URL
      * @return a new URL identical to the specified URL, except using the specified path
-     * @throws MalformedURLException if there is a problem creating the new URL
+     * @exception MalformedURLException if there is a problem creating the new URL
      */
     public static URL getUrlWithNewPath(final URL u, final String newPath) throws MalformedURLException {
         return createNewUrl(u.getProtocol(), u.getHost(), u.getPort(), newPath, u.getRef(), u.getQuery());
@@ -372,11 +361,10 @@ public class UrlUtils {
     /**
      * Creates and returns a new URL identical to the specified URL, except using the specified
      * reference.
-     *
-     * @param u the URL on which to base the returned URL
+     * @param u      the URL on which to base the returned URL
      * @param newRef the new reference to use in the returned URL
      * @return a new URL identical to the specified URL, except using the specified reference
-     * @throws MalformedURLException if there is a problem creating the new URL
+     * @exception MalformedURLException if there is a problem creating the new URL
      */
     public static URL getUrlWithNewRef(final URL u, final String newRef) throws MalformedURLException {
         return createNewUrl(u.getProtocol(), u.getHost(), u.getPort(), u.getPath(), newRef, u.getQuery());
@@ -385,11 +373,10 @@ public class UrlUtils {
     /**
      * Creates and returns a new URL identical to the specified URL, except using the specified
      * query string.
-     *
-     * @param u the URL on which to base the returned URL
+     * @param u        the URL on which to base the returned URL
      * @param newQuery the new query string to use in the returned URL
      * @return a new URL identical to the specified URL, except using the specified query string
-     * @throws MalformedURLException if there is a problem creating the new URL
+     * @exception MalformedURLException if there is a problem creating the new URL
      */
     public static URL getUrlWithNewQuery(final URL u, final String newQuery) throws MalformedURLException {
         return createNewUrl(u.getProtocol(), u.getHost(), u.getPort(), u.getPath(), u.getRef(), newQuery);
@@ -397,15 +384,14 @@ public class UrlUtils {
 
     /**
      * Creates a new URL based on the specified fragments.
-     *
      * @param protocol the protocol to use (may not be <tt>null</tt>)
-     * @param host the host to use (may not be <tt>null</tt>)
-     * @param port the port to use (may be <tt>-1</tt> if no port is specified)
-     * @param path the path to use (may be <tt>null</tt> and may omit the initial <tt>'/'</tt>)
-     * @param ref the reference to use (may be <tt>null</tt> and must not include the <tt>'#'</tt>)
-     * @param query the query to use (may be <tt>null</tt> and must not include the <tt>'?'</tt>)
+     * @param host     the host to use (may not be <tt>null</tt>)
+     * @param port     the port to use (may be <tt>-1</tt> if no port is specified)
+     * @param path     the path to use (may be <tt>null</tt> and may omit the initial <tt>'/'</tt>)
+     * @param ref      the reference to use (may be <tt>null</tt> and must not include the <tt>'#'</tt>)
+     * @param query    the query to use (may be <tt>null</tt> and must not include the <tt>'?'</tt>)
      * @return a new URL based on the specified fragments
-     * @throws MalformedURLException if there is a problem creating the new URL
+     * @exception MalformedURLException if there is a problem creating the new URL
      */
     private static URL createNewUrl(final String protocol, final String host, final int port, final String path, final String ref,
             final String query) throws MalformedURLException {
@@ -438,8 +424,7 @@ public class UrlUtils {
     /**
      * Resolves a given relative URL against a base URL. See <a
      * href="http://www.faqs.org/rfcs/rfc1808.html">RFC1808</a> Section 4 for more details.
-     *
-     * @param baseUrl The base URL in which to resolve the specification.
+     * @param baseUrl     The base URL in which to resolve the specification.
      * @param relativeUrl The relative URL to resolve against the base URL.
      * @return the resolved specification.
      */
@@ -458,8 +443,7 @@ public class UrlUtils {
     /**
      * Resolves a given relative URL against a base URL. See <a
      * href="http://www.faqs.org/rfcs/rfc1808.html">RFC1808</a> Section 4 for more details.
-     *
-     * @param baseUrl The base URL in which to resolve the specification.
+     * @param baseUrl     The base URL in which to resolve the specification.
      * @param relativeUrl The relative URL to resolve against the base URL.
      * @return the resolved specification.
      */
@@ -473,16 +457,13 @@ public class UrlUtils {
     /**
      * Parses a given specification using the algorithm depicted in <a
      * href="http://www.faqs.org/rfcs/rfc1808.html">RFC1808</a>:
-     *
      * Section 2.4: Parsing a URL
-     *
      * An accepted method for parsing URLs is useful to clarify the generic-RL syntax of Section 2.2
      * and to describe the algorithm for resolving relative URLs presented in Section 4. This
      * section describes the parsing rules for breaking down a URL (relative or absolute) into the
      * component parts described in Section 2.1. The rules assume that the URL has already been
      * separated from any surrounding text and copied to a "parse string". The rules are listed in
      * the order in which they would be applied by the parser.
-     *
      * @param spec The specification to parse.
      * @return the parsed specification.
      */
@@ -642,16 +623,13 @@ public class UrlUtils {
     /**
      * Resolves a given relative URL against a base URL using the algorithm depicted in <a
      * href="http://www.faqs.org/rfcs/rfc1808.html">RFC1808</a>:
-     *
      * Section 4: Resolving Relative URLs
-     *
      * This section describes an example algorithm for resolving URLs within a context in which the
      * URLs may be relative, such that the result is always a URL in absolute form. Although this
      * algorithm cannot guarantee that the resulting URL will equal that intended by the original
      * author, it does guarantee that any valid URL (relative or absolute) can be consistently
      * transformed to an absolute form given a valid base URL.
-     *
-     * @param baseUrl The base URL in which to resolve the specification.
+     * @param baseUrl     The base URL in which to resolve the specification.
      * @param relativeUrl The relative URL to resolve against the base URL.
      * @return the resolved specification.
      */
@@ -799,7 +777,6 @@ public class UrlUtils {
 
     /**
      * Class <tt>Url</tt> represents a Uniform Resource Locator.
-     *
      * @author Martin Tamme
      */
     private static class Url {
@@ -823,7 +800,6 @@ public class UrlUtils {
 
         /**
          * Creates a <tt>Url</tt> object from the specified <tt>Url</tt> object.
-         *
          * @param url a <tt>Url</tt> object.
          */
         public Url(final Url url) {
@@ -837,7 +813,6 @@ public class UrlUtils {
 
         /**
          * Returns a string representation of the <tt>Url</tt> object.
-         *
          * @return a string representation of the <tt>Url</tt> object.
          */
         @Override

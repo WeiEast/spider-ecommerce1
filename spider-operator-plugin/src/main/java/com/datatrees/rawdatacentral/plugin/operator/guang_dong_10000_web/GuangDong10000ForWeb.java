@@ -15,8 +15,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -158,7 +158,8 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
                     "={}&smsCode=&loginCodeRand={}";
             data = TemplateUtils
                     .format(templateData, URLEncoder.encode(ssoRequestXML, "UTF-8"), param.getMobile(), param.getPassword(), param.getPicCode());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .setRequestBody(data).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("登陆失败,param={},response={}", param, response);
@@ -177,12 +178,14 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
                     return result.failure(ErrorCode.LOGIN_UNEXPECTED_RESULT);
                 }
             }
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             if (StringUtils.contains(response.getPageContent(), "/service/home/")) {
                 referer = templateUrl;
                 templateUrl = "https://gd.189.cn/service/home/";
                 data = "loginRedirect=true";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).setRequestBody(data).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setReferer(referer).setRequestBody(data).invoke();
                 if (StringUtils.contains(response.getPageContent(Charset.forName("GB2312")), "上次登录")) {
                     logger.info("登陆成功,param={}", param);
                     return result.success();
@@ -210,7 +213,8 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             //String phoneType = TaskUtils.getTaskContext(param.getTaskId(), "ServiceType");
             String templateUrl = "https://gd.189.cn/volidate/validateSendMsg.action";
             String templateData = "number=" + param.getMobile() + "&latnId=" + areaCode + "&typeCode=LIST_QRY";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    .setRequestBody(templateData).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.containsNone(pageContent, "允许发送短信")) {
                 logger.error("详单-->短信验证码-->刷新失败,param={},pateContent={}", param, response.getPageContent());
@@ -219,7 +223,8 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             templateUrl = "https://gd.189.cn/volidate/insertSendSmg.action";
             templateData = "validaterResult=0&resultmsg=%E5%85%81%E8%AE%B8%E5%8F%91%E9%80%81%E7%9F%AD%E4%BF%A1&YXBS=LIST_QRY&number=" +
                     param.getMobile() + "&latnId=" + areaCode;
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    .setRequestBody(templateData).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "保存信息成功")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -274,7 +279,8 @@ public class GuangDong10000ForWeb implements OperatorPluginService {
             String templateData = "a.c=0&a.u=user&a.p=pass&a.s=ECSS&c.n=\u7487\ue162\u7176\u5a13\u546d\u5d1f&c.t=02&c.i=02-005-04&d.d01=call&d" +
                     ".d02={}&d.d03={}&d.d04={}&d.d05=1000000&d.d06=1&d.d07={}&d.d08=1";
             String data = TemplateUtils.format(templateData, nowMonth, firstDay, nowDay, param.getSmsCode());
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"msg\":\"成功") || StringUtils.contains(pageContent, "\"msg\":\"没有数据")) {
                 logger.info("详单-->校验成功,param={}", param);

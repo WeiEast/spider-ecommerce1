@@ -18,8 +18,8 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean.*;
 import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.utils.MD5Util;
 import com.datatrees.rawdatacentral.plugin.operator.common.KpiUtils;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -834,7 +834,8 @@ public class China10086ForApp3 implements OperatorPluginPostService {
             for (int i = 0; i < size; i++) {
                 int index = (int) Math.floor(Math.random() * urls.length);
                 String url = "http://" + urls[index] + "?str={}";
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(url, str).setProxyEnable(false).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(url, str)
+                        .setProxyEnable(false).invoke();
                 String pageContent = response.getPageContent();
                 if (StringUtils.isNotBlank(pageContent)) {
                     result = pageContent;
@@ -859,7 +860,7 @@ public class China10086ForApp3 implements OperatorPluginPostService {
     private Response httpRequestAndCheck(OperatorParam param, String templateUrl, String xs, Object params, String cookieString) {
         Response response = null;
         for (int i = 0; i < 3; i++) {
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(JSON.toJSONString(params), ContentType.APPLICATION_JSON).addHeader("xs", xs).addHeader("Cookie", cookieString)
                     .invoke();
             if (!StringUtils.equals(response.getStatusCode() + "", "403") && !StringUtils.equals(response.getStatusCode() + "", "500")) {

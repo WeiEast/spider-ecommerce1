@@ -9,7 +9,6 @@
 package com.datatrees.common.pipeline;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:05:52 PM
@@ -23,7 +22,6 @@ public interface Valve extends Invoker {
 
     /**
      * Set the next Valve in the pipeline containing this Valve.
-     *
      * @param valve The new next valve, or <code>null</code> if none
      */
     void setNext(Valve valve);

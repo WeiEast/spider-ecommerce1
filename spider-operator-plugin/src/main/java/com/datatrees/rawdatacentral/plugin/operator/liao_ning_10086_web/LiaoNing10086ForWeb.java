@@ -9,8 +9,8 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -86,7 +86,8 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile())
                     .setReferer(referer).invoke();
             templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?userName={}&channelID=00240&type=01";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile())
+                    .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.equals("0", pageContent)) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -118,8 +119,8 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
                 String redirectUrl = json.getString("assertAcceptURL");
                 String artifact = json.getString("artifact");
                 templateUrl = "{}?backUrl=www.ln.10086.cn/sso/iLoginFrameCas.jsp&artifact={}";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, redirectUrl, artifact)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                        .setFullUrl(templateUrl, redirectUrl, artifact).invoke();
                 templateUrl = "http://www.ln.10086.cn/my/account/index.xhtml";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 if (StringUtils.contains(response.getPageContent(), param.getMobile().toString())) {
@@ -150,8 +151,8 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
                 String templateUrl
                         = "http://www.ln.10086.cn/busicenter/myinfo/MyInfoMenuAction/initBusi.menu?_menuId=1040101&_menuId=1040101&divId=main";
                 String referer = "http://www.ln.10086.cn/my/account/mydata.xhtml";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
-                        .invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setReferer(referer).invoke();
                 String pageContent = response.getPageContent();
                 TaskUtils.addTaskShare(param.getTaskId(), "count", "send");
                 if (pageContent.contains("<br class=\"spacer\"")) {
@@ -163,7 +164,8 @@ public class LiaoNing10086ForWeb implements OperatorPluginService {
             }
             String templateUrl = "http://www.ln.10086.cn/busicenter/myinfo/MyInfoMenuAction/reSendSmsPassWd.menu?_menuId=1040101&commonSmsPwd=";
             String referer = "http://www.ln.10086.cn/my/account/mydata.xhtml";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("\"sendResult\":\"success\"")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);

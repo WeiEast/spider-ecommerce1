@@ -11,34 +11,34 @@ public class CustomGzipStream extends InflaterInputStream {
     /**
      * GZIP header magic number.
      */
-    public final static  int GZIP_MAGIC = 0x8b1f;
+    public final static  int     GZIP_MAGIC = 0x8b1f;
 
     /*
      * File header flags.
      */
-    private final static int FTEXT      = 1;    // Extra text
+    private final static int     FTEXT      = 1;    // Extra text
 
-    private final static int FHCRC      = 2;    // Header CRC
+    private final static int     FHCRC      = 2;    // Header CRC
 
-    private final static int FEXTRA     = 4;    // Extra field
+    private final static int     FEXTRA     = 4;    // Extra field
 
-    private final static int FNAME      = 8;    // File name
+    private final static int     FNAME      = 8;    // File name
 
-    private final static int FCOMMENT   = 16;    // File comment
+    private final static int     FCOMMENT   = 16;    // File comment
 
     /**
      * CRC-32 for uncompressed data.
      */
-    protected CRC32   crc    = new CRC32();
+    protected            CRC32   crc        = new CRC32();
 
     /**
      * Indicates end of input stream.
      */
-    protected boolean eos;
+    protected            boolean eos;
 
-    private   boolean closed = false;
+    private              boolean closed     = false;
 
-    private byte[] tmpbuf = new byte[128];
+    private              byte[]  tmpbuf     = new byte[128];
 
     /**
      * Creates a new input stream with the specified buffer size.
@@ -78,14 +78,14 @@ public class CustomGzipStream extends InflaterInputStream {
      * @param buf the buffer into which the data is read
      * @param off the start offset in the destination array <code>b</code>
      * @param len the maximum number of bytes read
+     * @return the actual number of bytes read, or -1 if the end of the
+     * compressed input stream is reached
      * @exception NullPointerException      If <code>buf</code> is <code>null</code>.
      * @exception IndexOutOfBoundsException If <code>off</code> is negative,
      *                                      <code>len</code> is negative, or <code>len</code> is greater than
      *                                      <code>buf.length - off</code>
      * @exception IOException               if an I/O error has occurred or the compressed
      *                                      input data is corrupt
-     * @return the actual number of bytes read, or -1 if the end of the
-     * compressed input stream is reached
      */
     public int read(byte[] buf, int off, int len) throws IOException {
         ensureOpen();

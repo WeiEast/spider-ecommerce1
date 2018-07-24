@@ -14,8 +14,8 @@ import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -412,17 +412,20 @@ public class JiangXi10086ForWeb implements OperatorPluginService {
                 .setReferer(referer).invoke();
         String pageContent = response.getPageContent();
         templateUrl = "http://www.jx.10086.cn/";
-        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody("display=0").invoke();
+        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                .setRequestBody("display=0").invoke();
         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));
         logger.info("退出登录-->成功");
     }
 
     private void loginOutForBillDetails(OperatorParam param, String referer) {
         String templateUrl = "https://jx.ac.10086.cn/logout";
-        Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+        Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
+                .setReferer(referer).invoke();
         String pageContent = response.getPageContent();
         templateUrl = "http://www.jx.10086.cn/";
-        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody("display=0").invoke();
+        response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                .setRequestBody("display=0").invoke();
         templateUrl = "http://www1.10086.cn/service/sso/logout.jsp?channelID=12027&backUrl=http%3A%2F%2Fwww.10086.cn%2Fjx%2Findex_791_791.html";
         response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
         RedisUtils.del(RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(param.getTaskId()));

@@ -10,8 +10,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -112,8 +112,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String templateUrl = "http://wapyn.189.cn/sendSms.do";
             String templateData = "accNbr=" + param.getMobile();
             String referer = "http://wapyn.189.cn/initLogin.do";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    .setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "\"respCode\":\"0\"")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -145,13 +145,14 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String templateData = "loginPwdType=B&nodeId=72&mode=other&enAccNbr=" + encodeMobile + "&enPassword=" + encodePassword + "&valid=" +
                     param.getPicCode();
             String referer = "http://wapyn.189.cn/initLogin.do";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    .setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
 
             templateUrl = "http://wapyn.189.cn/self/info/custInfo.do?nodeId=319";
             referer = "http://wapyn.189.cn/self/index.do";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains(String.valueOf(param.getMobile()))) {
                 logger.info("登陆成功,param={}", param);
@@ -189,8 +190,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String referer = "http://wapyn.189.cn/self/fee/detailQuery?nodeId=86";
             String templateUrl = "http://wapyn.189.cn/self/fee/sendSms.do";
             String templateData = "accNbr=";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    .setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent) && StringUtils.contains(pageContent, "\"respCode\":\"0\"")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -216,8 +217,8 @@ public class YunNan10000ForWap implements OperatorPluginService {
             String referer = "http://wapyn.189.cn/self/fee/detailQuery?nodeId=86";
             String templateUrl = "http://wapyn.189.cn/self/fee/detailRecord.do";
             String templateData = "date=" + billMonth + "&cdrtype=10&deailsms=" + param.getSmsCode() + "&nodeId=86";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    .setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isNotBlank(pageContent)) {
                 logger.info("详单-->校验成功,param={}", param);

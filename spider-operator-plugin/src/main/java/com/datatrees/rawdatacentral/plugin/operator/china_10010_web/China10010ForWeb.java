@@ -8,8 +8,8 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -78,10 +78,10 @@ public class China10010ForWeb implements OperatorPluginService {
         try {
             String referer = "https://uac.10010.com/portal/homeLogin";
             String templateUrl = "https://uac.10010.com/portal/Service/CheckNeedVerify?callback=jQuery&userName={}&pwdType=01&_={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis())
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .setFullUrl(templateUrl, param.getMobile(), System.currentTimeMillis()).setReferer(referer).invoke();
             templateUrl = "https://uac.10010.com/portal/Service/SendCkMSG?callback=jQuery&req_time={}&mobile={}&_={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), System.currentTimeMillis()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "resultCode:\"0000\"")) {
@@ -112,7 +112,7 @@ public class China10010ForWeb implements OperatorPluginService {
                     "https://uac.10010.com/portal/Service/MallLogin?callback=jQuery&req_time={}&redirectURL=http://www.10010.com&userName" +
                             "={}&password={}&pwdType=01&productType=01&verifyCode={}&uvc={}&redirectType=01&rememberMe=1&verifyCKCode={}&_={}";
             String uacverifykey = TaskUtils.getCookieValue(param.getTaskId(), "uacverifykey");
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, System.currentTimeMillis(), param.getMobile(), param.getPassword(), param.getPicCode(), uacverifykey,
                             param.getSmsCode(), System.currentTimeMillis()).setReferer(referer).invoke();
             /**
@@ -131,8 +131,8 @@ public class China10010ForWeb implements OperatorPluginService {
                  * 顺便验证登录是否成功
                  */
                 templateUrl = "http://iservice.10010.com/e3/static/check/checklogin/";
-                TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setSocketTimeout(30000).setMaxRetry(2)
-                        .invoke();
+                TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setSocketTimeout(30000)
+                        .setMaxRetry(2).invoke();
                 logger.info("登陆成功,param={}", param);
                 return result.success();
             }

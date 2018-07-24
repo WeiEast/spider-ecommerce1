@@ -14,8 +14,8 @@ import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -40,8 +40,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://zj.ac.10086.cn/login";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             String relayState
                     = "type=B;backurl=http://www.zj.10086.cn/my/servlet/assertion;nl=6;loginFromUrl=http://www.zj.10086.cn/my/index.do;callbackurl=/servlet/assertion;islogin=true";
@@ -146,8 +145,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "https://zj.ac.10086.cn/common/image.jsp";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -209,7 +207,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                 logger.info("frefeshSmsCodeForBillDetail find bid={},param={}", bid, param);
 
                 templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?bid={}";
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, bid).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, bid).invoke();
                 pageContent = response.getPageContent();
             }
             switch (pageContent) {
@@ -233,8 +231,8 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         try {
             String bid = TaskUtils.getTaskShare(param.getTaskId(), "bid");
             String templateUrl = "http://service.zj.10086.cn/yw/detail/secondPassCheck.do?validateCode={}&bid={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getSmsCode(), bid)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
+                    .setFullUrl(templateUrl, param.getSmsCode(), bid).invoke();
             String pageContent = response.getPageContent();
             switch (pageContent) {
                 case "12":
@@ -275,7 +273,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
                     URLEncoder.encode(errorurl, "UTF-8"), spid, URLEncoder.encode(relayState, "UTF-8"), encryptMobile, param.getPicCode(),
                     encryptPassword);
 
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
 
             if (StringUtils.contains(response.getPageContent(), "location.replace")) {
@@ -302,7 +300,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
             templateUrl = "http://www.zj.10086.cn/my/servlet/assertion";
             templateData = "SAMLart={}&RelayState={}";
             data = TemplateUtils.format(templateData, sAMLart, URLEncoder.encode(relayState, "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
             if (StringUtils.contains(pageContent, param.getMobile().toString())) {
                 logger.info("登陆成功,param={}", param);
@@ -357,7 +355,7 @@ public class ZheJiang10086ForWeb implements OperatorPluginService {
         try {
             String smsCode = TaskUtils.getTaskShare(param.getTaskId(), RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(FormType.VALIDATE_BILL_DETAIL));
             String templateUrl = "http://www.zj.10086.cn/my/userinfo/queryUserYdInfo.do?fromFlag=&secPwd={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, smsCode).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, smsCode).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "postartifact") || StringUtils.contains(pageContent, "authnrequestform")) {
                 pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), pageContent);

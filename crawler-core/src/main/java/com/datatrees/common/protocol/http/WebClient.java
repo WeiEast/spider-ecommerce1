@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
  * This class is a protocol plugin that configures an HTTP client for Basic, Digest and NTLM
  * authentication schemes for web server as well as proxy server. It takes care of HTTPS protocol as
  * well as cookies in a single fetch session.
- *
  * @author Susam Pal
  */
 public class WebClient extends HttpBase {
@@ -90,10 +89,9 @@ public class WebClient extends HttpBase {
     /**
      * Returns an authentication scope for the specified <code>host</code>, <code>port</code>,
      * <code>realm</code> and <code>scheme</code>.
-     *
-     * @param host Host name or address.
-     * @param port Port number.
-     * @param realm Authentication realm.
+     * @param host   Host name or address.
+     * @param port   Port number.
+     * @param realm  Authentication realm.
      * @param scheme Authentication scheme.
      */
     private static AuthScope getAuthScope(String host, int port, String realm, String scheme) {
@@ -112,9 +110,8 @@ public class WebClient extends HttpBase {
     /**
      * Returns an authentication scope for the specified <code>host</code>, <code>port</code> and
      * <code>realm</code>.
-     *
-     * @param host Host name or address.
-     * @param port Port number.
+     * @param host  Host name or address.
+     * @param port  Port number.
      * @param realm Authentication realm.
      */
     private static AuthScope getAuthScope(String host, int port, String realm) {
@@ -130,7 +127,6 @@ public class WebClient extends HttpBase {
 
     /**
      * Returns the configured HTTP client.
-     *
      * @return HTTP client
      */
     public HttpClient getClient() {
@@ -139,7 +135,6 @@ public class WebClient extends HttpBase {
 
     /**
      * Reads the configuration from the Nutch configuration files and sets the configuration.
-     *
      * @param conf Configuration
      */
     public void setConf(Configuration conf) {
@@ -258,11 +253,10 @@ public class WebClient extends HttpBase {
     }
 
     /**
-     *
      * @param action
      * @return
-     * @throws UnsupportedEncodingException
-     * @throws Exception
+     * @exception UnsupportedEncodingException
+     * @exception Exception
      */
     private HttpMethod getMethodByAction(Action action, String url, ProtocolInput input) throws UnsupportedEncodingException {
         HttpMethod method = null;
@@ -458,9 +452,7 @@ public class WebClient extends HttpBase {
 
     /**
      * Tests if the {@link HttpMethod method} requires a redirect to another location.
-     *
      * @param method HTTP method
-     *
      * @return boolean <tt>true</tt> if a retry is needed, <tt>false</tt> otherwise.
      */
     private boolean isRedirectNeeded(final HttpMethod method) {
@@ -537,7 +529,6 @@ public class WebClient extends HttpBase {
     }
 
     /**
-     *
      * @param state
      */
     private void printState(HttpState state) {
@@ -551,7 +542,6 @@ public class WebClient extends HttpBase {
     }
 
     /**
-     *
      * @param input
      * @param method
      */
@@ -612,7 +602,6 @@ public class WebClient extends HttpBase {
 
     /**
      * create httpstate to hold cookie info
-     *
      * @param scope
      * @return
      */

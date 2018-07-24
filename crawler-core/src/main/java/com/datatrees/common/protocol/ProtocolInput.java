@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 13, 2014 10:53:22 AM
@@ -128,7 +127,6 @@ public class ProtocolInput {
 
     /**
      * add request headers the json list is key value pairs of headers
-     *
      * @param jsonHeaderList
      * @return
      */
@@ -141,7 +139,6 @@ public class ProtocolInput {
 
     /**
      * add request header
-     *
      * @param key
      * @param value
      * @return
@@ -154,7 +151,6 @@ public class ProtocolInput {
 
     /**
      * add request header
-     *
      * @param key
      * @param value
      * @return
@@ -171,7 +167,6 @@ public class ProtocolInput {
     }
 
     /**
-     *
      * @param headers
      * @return
      */
@@ -190,7 +185,6 @@ public class ProtocolInput {
 
     /**
      * add post parameters
-     *
      * @param key
      * @param value
      * @return
@@ -203,7 +197,6 @@ public class ProtocolInput {
 
     /**
      * get string entity as post content body
-     *
      * @return
      */
     public String getPostBody() {
@@ -212,7 +205,6 @@ public class ProtocolInput {
 
     /**
      * set raw string as post body this will ignore url parameters
-     *
      * @param content
      * @return
      */

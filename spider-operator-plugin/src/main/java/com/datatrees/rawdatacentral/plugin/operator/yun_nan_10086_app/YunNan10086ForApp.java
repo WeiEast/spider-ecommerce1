@@ -12,8 +12,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -143,7 +143,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
                     .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
                             base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4")
                     .invoke();
             /**
@@ -218,7 +218,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
                     .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
                             base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4")
                     .invoke();
             //{"smsPwdLogin":{"errorCode":"","errorMessage":"","resultCode":"1","resultObj":"短信下发成功"}}
@@ -272,7 +272,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
                     .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
                             base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4")
                     .invoke();
             /**
@@ -341,7 +341,7 @@ public class YunNan10086ForApp implements OperatorPluginService {
                     .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
                             base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4")
                     .invoke();
             return result.success(response.getPageContent());
@@ -397,13 +397,13 @@ public class YunNan10086ForApp implements OperatorPluginService {
                     .format(templateData, System.currentTimeMillis(), param.getMobile(), EncryptUtilsForYunNan10086App.md5sign(base64Data),
                             base64Data);
             //没有请求头{ "platform" : "android", "version" : "5.0.4"}会导致请求失败
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                     .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android").addHeader("version", "5.0.4")
                     .invoke();
             logger.info(response.getPageContent());
             for (int i = 0; i < 5; i++) {
                 if (response.getPageContent().contains("系统繁忙")) {
-                    response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                             .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).addHeader("platform", "android")
                             .addHeader("version", "5.0.4").invoke();
                     logger.info("系统繁忙，刷新" + (i + 1) + "次，页面为：" + response.getPageContent());

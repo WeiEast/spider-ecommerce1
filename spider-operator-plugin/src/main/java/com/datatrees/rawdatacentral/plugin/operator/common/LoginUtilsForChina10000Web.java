@@ -12,8 +12,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -37,7 +37,7 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.189.cn/login/index/ecs.do";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             return result.success();
         } catch (Exception e) {
             logger.error("登录-->初始化失败,param={},response={}", param, response, e);
@@ -85,8 +85,8 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://login.189.cn/web/captcha?undefined&source=login&{}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl, Math.random()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, Math.random())
+                    .invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -107,7 +107,8 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
             String templateUrl = "http://login.189.cn/web/login/ajax";
             String templateData = "m=checkphone&phone={}";
             String data = TemplateUtils.format(templateData, param.getMobile());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             String pageContent = response.getPageContent();
             String provinceId = "01";
             if (pageContent.contains("provinceId")) {
@@ -120,7 +121,8 @@ public class LoginUtilsForChina10000Web implements OperatorPluginService {
             templateData = "Account={}&UType=201&ProvinceID={}&AreaCode=&CityNo=&RandomFlag=0&Password={}&Captcha={}";
             data = TemplateUtils.format(templateData, param.getMobile(), provinceId, URLEncoder.encode(encryptPassword, "UTF-8"),
                     param.getPicCode().toLowerCase());
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             pageContent = response.getPageContent();
             String resultCode = PatternUtils.group(pageContent, "data-resultcode=\"(\\d+)\"", 1);
             if (resultCode != null) {

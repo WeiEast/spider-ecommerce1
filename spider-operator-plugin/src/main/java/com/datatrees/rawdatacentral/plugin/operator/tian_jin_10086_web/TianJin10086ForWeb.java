@@ -11,8 +11,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -120,8 +120,7 @@ public class TianJin10086ForWeb implements OperatorPluginService {
                 return result.failure(ErrorCode.REFESH_PIC_CODE_ERROR);
             }
             String templateUrl = "https://tj.ac.10086.cn/captcha.htm?token={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl, picToken).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, picToken).invoke();
             logger.info("登录-->图片验证码-->刷新成功,param={}", param);
             String pageContent = response.getPageContent();
             String imgBase64 = PatternUtils.group(pageContent, "data:image\\/png;base64,(.*)", 1);
@@ -188,7 +187,8 @@ public class TianJin10086ForWeb implements OperatorPluginService {
             String referer = "http://service.tj.10086.cn/ics/myMobile/myDetailRecords.html";
             String templateUrl = "http://service.tj.10086.cn/ics/ics?service=ajaxDirect/1/componant/componant/javascript/&pagename=componant" +
                     "&eventname=sendMessage&GOODSNAME=详单&DOWHAT=QUE&ajaxSubmitType=get&ajax_randomcode=";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             if (StringUtils.contains(response.getPageContent(), "\"FLAG\":\"true\"")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();

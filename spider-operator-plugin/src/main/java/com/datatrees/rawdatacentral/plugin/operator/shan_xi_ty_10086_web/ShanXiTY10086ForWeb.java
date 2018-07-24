@@ -15,8 +15,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -147,8 +147,8 @@ public class ShanXiTY10086ForWeb implements OperatorPluginService {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             String templateUrl = "https://sx.ac.10086.cn/SMSCodeSend?mobileNum={}&errorurl=https://sx.ac.10086.cn/4login/errorPage" +
                     ".jsp&name=menhu&validCode=%B5%E3%BB%F7%BB%F1%C8%A1" + "&isCheckImage=false&displayPic=0&spid={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile(), spid)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .setFullUrl(templateUrl, param.getMobile(), spid).invoke();
             if (StringUtils.contains(response.getPageContent(), "短信验证码已发送到您的手机")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
                 return result.success();

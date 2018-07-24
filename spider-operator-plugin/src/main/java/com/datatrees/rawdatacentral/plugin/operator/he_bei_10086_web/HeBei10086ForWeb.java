@@ -17,8 +17,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -44,7 +44,8 @@ public class HeBei10086ForWeb implements OperatorPluginService {
         try {
             String referer = "http://www.10086.cn/he/index_311_311.html";
             String templateUrl = "https://he.ac.10086.cn/login";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             String pageContent = response.getPageContent();
 
             String displayPics = PatternUtils.group(pageContent, "name=\"displayPics\" value=\"([^\"]+)\"", 1);
@@ -251,7 +252,8 @@ public class HeBei10086ForWeb implements OperatorPluginService {
             templateUrl = "http://www.he.10086.cn/my";
             String templateData = "SAMLart={}&RelayState={}";
             String data = TemplateUtils.format(templateData, URLEncoder.encode(samLart, "UTF-8"), URLEncoder.encode(relayState, "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
 
             //String redirectUrl = "http://www.he.10086.cn/my/account/";
             //response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(redirectUrl).invoke();
@@ -299,7 +301,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
                     .setFullUrl(templateUrl, samLart, isEncodePassword, displayPic, relayState, displayPics).invoke();
 
             templateUrl = "http://www.he.10086.cn/my/account/";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             pageContent = response.getPageContent();
             if (pageContent.contains(param.getMobile().toString())) {
                 logger.info("登陆成功,param={}", param);
@@ -320,7 +322,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.he.10086.cn/service/fee/qryDetailBill.action?menuid=qryDetailBill&pageId={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, db.setScale(17, BigDecimal.ROUND_HALF_UP)).invoke();
             String pageContent = response.getPageContent();
 
@@ -339,7 +341,8 @@ public class HeBei10086ForWeb implements OperatorPluginService {
             templateUrl = "http://he.ac.10086.cn/POST";
             String templateData = "SAMLRequest={}&RelayState={}";
             String data = TemplateUtils.format(templateData, samLart, relayState);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             pageContent = response.getPageContent();
 
             relayStateList = XPathUtil.getXpath("//input[@name='RelayState']/@value", pageContent);
@@ -372,7 +375,7 @@ public class HeBei10086ForWeb implements OperatorPluginService {
                     .setFullUrl(templateUrl, samLart, isEncodePassword, displayPic, relayState, displayPics).invoke();
 
             templateUrl = "http://www.he.10086.cn/service/fee/qryDetailBill.action";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
 
             templateUrl = "http://www.he.10086.cn/service/fee/fee/qryDetailBill!sendRandomCode.action?r={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)

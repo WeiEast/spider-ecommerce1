@@ -11,7 +11,6 @@ package com.datatrees.common.protocol;
 import com.datatrees.common.conf.PropertiesConfiguration;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月9日 下午8:01:00

@@ -14,8 +14,8 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -199,7 +199,8 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
 
             templateUrl = "http://hi.189.cn/webgo/thesame/myBill";
             String data = "objectNum=" + param.getMobile().toString() + "&objectType=%E6%89%8B%E6%9C%BA&queryType=2";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             TaskUtils.addTaskShare(param.getTaskId(), "balancePageContent", response.getPageContent());
 
             logger.info("登陆成功,param={}", param);
@@ -223,7 +224,8 @@ public class HaiNan10000ForWeb implements OperatorPluginPostService {
             String templateUrl = "http://hi.189.cn/webgo/thesame/billing";
             String templateData = "objectNum={}&queryMonth={}";
             String data = TemplateUtils.format(templateData, param.getMobile(), billMonth);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             return result.success(response.getPageContent());
         } catch (Exception e) {
             logger.error("账单页访问失败,param={},response={}", param, response, e);

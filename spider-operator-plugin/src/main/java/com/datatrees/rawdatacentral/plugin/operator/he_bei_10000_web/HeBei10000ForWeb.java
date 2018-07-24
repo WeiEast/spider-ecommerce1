@@ -9,8 +9,8 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -90,7 +90,7 @@ public class HeBei10000ForWeb implements OperatorPluginService {
             }
 
             String templateUrl = "http://www.189.cn/login/index.do";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             if (StringUtils.contains(response.getPageContent(), "regUrl\":null")) {
                 /**
                  * 不访问会导致无权限获取短信
@@ -98,7 +98,8 @@ public class HeBei10000ForWeb implements OperatorPluginService {
                 String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=00380407";
                 templateUrl = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10006&toStUrl=http://he.189.cn/service/bill/feeQuery_iframe" +
                         ".jsp?SERV_NO=SHQD1&fastcode=00380407&cityCode=he";
-                response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
+                        .setReferer(referer).invoke();
 
                 logger.warn("登录成功,params={}", param);
                 return result.success();

@@ -478,6 +478,17 @@ public abstract class HttpMethodBase implements HttpMethod {
     }
 
     /**
+     * Sets the query string of this HTTP method. The caller must ensure that the string
+     * is properly URL encoded. The query string should not start with the question
+     * mark character.
+     * @param queryString the query string
+     * @see EncodingUtil#formUrlEncode(NameValuePair[], String)
+     */
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
+    /**
      * Sets the query string of this HTTP method.  The pairs are encoded as UTF-8 characters.
      * To use a different charset the parameters can be encoded manually using EncodingUtil
      * and set as a single String.
@@ -490,17 +501,6 @@ public abstract class HttpMethodBase implements HttpMethod {
     public void setQueryString(NameValuePair[] params) {
         LOG.trace("enter HttpMethodBase.setQueryString(NameValuePair[])");
         queryString = EncodingUtil.formUrlEncode(params, "UTF-8");
-    }
-
-    /**
-     * Sets the query string of this HTTP method. The caller must ensure that the string
-     * is properly URL encoded. The query string should not start with the question
-     * mark character.
-     * @param queryString the query string
-     * @see EncodingUtil#formUrlEncode(NameValuePair[], String)
-     */
-    public void setQueryString(String queryString) {
-        this.queryString = queryString;
     }
 
     /**

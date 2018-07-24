@@ -10,8 +10,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -103,8 +103,8 @@ public class SiChuan10000ForWeb implements OperatorPluginPostService {
 
             String referer = "http://sc.189.cn/service/v6/xdcx?fastcode=20000326&cityCode=sc";
             String templateUrl = "http://sc.189.cn/service/billDetail/sendSMSAjax.jsp?dateTime1={}&dateTime2={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, date, date).setReferer(referer)
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, date, date)
+                    .setReferer(referer).invoke();
             if (StringUtils.contains(response.getPageContent(), "retMsg\":\"成功")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
@@ -130,8 +130,8 @@ public class SiChuan10000ForWeb implements OperatorPluginPostService {
 
             String referer = "http://sc.189.cn/service/v6/xdcx?fastcode=20000326&cityCode=sc";
             String templateUrl = "http://sc.189.cn/service/billDetail/detailQuery.jsp?startTime={}&endTime={}&qryType=21&randomCode={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, date, date, encryptSmscode)
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .setFullUrl(templateUrl, date, date, encryptSmscode).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "sessNum\":\"true")) {
                 TaskUtils.addTaskShare(param.getTaskId(), "sessionId", sessionId);
@@ -155,16 +155,19 @@ public class SiChuan10000ForWeb implements OperatorPluginPostService {
         try {
             String referer = "http://www.189.cn/sc/";
             String templateUrl = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01881189";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=01881189";
             templateUrl = "http://www.189.cn/dqmh/ssoLink.do?method=linkTo&platNo=10023&toStUrl=http://sc.189.cn/service/bill/myQueryBalance" +
                     ".jsp?fastcode=01881189&cityCode=sc";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             referer = "http://sc.189.cn/service/bill/myQueryBalance.jsp?fastcode=01881189&cityCode=sc";
             templateUrl = "http://sc.189.cn/common/ajax.jsp";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
             if (StringUtils.contains(response.getPageContent(), "\"ISLOGIN\":\"true\"")) {
                 logger.info("登陆成功,param={}", param);
                 return result.success();

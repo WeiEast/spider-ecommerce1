@@ -111,7 +111,6 @@ public interface WebsiteOperatorService {
      */
     OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
 
-
     /**
      * 将WebsiteOperator转化成Website
      * @param websiteOperator
@@ -128,6 +127,5 @@ public interface WebsiteOperatorService {
      * @return
      */
     Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, WebsiteOperator from, WebsiteOperator to, Boolean enable, Boolean auto);
-
 
 }

@@ -17,8 +17,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -250,12 +250,14 @@ public class GuangDong10086ForWeb implements OperatorPluginService {
             String templateUrl = "http://gd.10086.cn/commodity/servicio/nostandardserv/realtimeListSearch/downLoad.jsps";
             String templateData = "downloadBeginTime={}000000&downloadEneTime={}235959&downloadType=1&uniqueTagDown=";
             String data = TemplateUtils.format(templateData, times[1], times[2]);
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             String pageContent = new String(response.getResponse(), "GBK");
             String checkPageContent = new String(response.getResponse(), "UTF-8");
             if (StringUtils.contains(checkPageContent, "发生错误")) {
                 TimeUnit.SECOND.toMillis(1);
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setRequestBody(data).invoke();
                 pageContent = new String(response.getResponse(), "GBK");
                 checkPageContent = new String(response.getResponse(), "UTF-8");
                 logger.info("发生错误,重试一下!pageContent={},checkPageContent={},taskId={}", pageContent, checkPageContent, param.getTaskId());

@@ -7,8 +7,8 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -79,7 +79,7 @@ public class HuBei10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.hb.189.cn/login/getSmsCode.htm?phoneNumber=" + param.getMobile() + "&randomType=loginRan";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (pageContent.contains("\"result\":0")) {
                 logger.info("登录-->短信验证码-->刷新成功,param={}", param);
@@ -103,8 +103,8 @@ public class HuBei10000ForWap implements OperatorPluginService {
             String referer = "http://wap.hb.189.cn/login/login.jsp";
             String templateUrl = "http://wap.hb.189.cn/login/doLogin.htm";
             String templateData = "accountID=" + accountID + "&random=" + random + "&loginType=2";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(templateData)
-                    .setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    .setRequestBody(templateData).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "flag\":\"1\"")) {
                 logger.info("登陆成功,param={}", param);
@@ -124,7 +124,8 @@ public class HuBei10000ForWap implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://wap.hb.189.cn/login/getSmsCode.htm?randomType=billQuery&phoneNumber={}";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile())
+                    .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "flag\":\"1\"") || StringUtils.contains(pageContent, "msg\":\"系统异常")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -148,7 +149,8 @@ public class HuBei10000ForWap implements OperatorPluginService {
             String data = TemplateUtils
                     .format(templateData, URLEncoder.encode(Base64.encodeBase64String(param.getMobile().toString().getBytes()), "UTF-8"),
                             URLEncoder.encode(Base64.encodeBase64String(param.getSmsCode().getBytes()), "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+                    .invoke();
             String pageContent = response.getPageContent();
 
             if (StringUtils.contains(pageContent, "flag\":\"1\"")) {

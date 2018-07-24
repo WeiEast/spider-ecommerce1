@@ -12,8 +12,8 @@ import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -90,16 +90,18 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
 
             String referer = "http://cq.189.cn/account/index.htm";
             String templateUrl = "http://www.189.cn/dqmh/my189/checkMy189Session.do?fastcode=02031273";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
 
             referer = templateUrl;
             templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10004&toStUrl=http://cq.189.cn/new-bill/bill_xd?fastcode=02031273&cityCode=cq";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             templateUrl = "http://cq.189.cn/new-bill/bill_XDCX?accNbr={}&productId=208511296&billingModeId=2100";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile())
+                    .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "语音详单")) {
                 logger.info("登陆成功,param={}", param);
@@ -120,7 +122,7 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://cq.189.cn/new-bill/bill_xd?fastcode=02031273&cityCode=cq&ticket=";
             String templateUrl = "http://cq.189.cn/new-bill/bill_DXYZM";
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
                     .invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "0")) {
@@ -156,7 +158,7 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
             String templateUrl = "http://cq.189.cn/new-bill/bill_SMZ";
             String templateData = "tname={}";
             String data = TemplateUtils.format(templateData, URLEncoder.encode(halfName, "UTF-8"));
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "xm\":\"1\"")) {
@@ -168,7 +170,7 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
             templateUrl = "http://cq.189.cn/new-bill/bill_SMZ";
             templateData = "idcard={}";
             data = TemplateUtils.format(templateData, last6Id);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "sfz\":\"2\"")) {
@@ -184,7 +186,7 @@ public class ChongQing10000ForWeb implements OperatorPluginService {
                     "={}-01&endTime={}-28&rc={}&tname={}&idcard={}&zq=2";
             data = TemplateUtils
                     .format(templateData, param.getMobile(), month, month, month, param.getSmsCode(), URLEncoder.encode(halfName, "UTF-8"), last6Id);
-            response = TaskHttpClient.create(param.getTaskId(),param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "对不起，没有查到您的清单数据") || StringUtils.contains(pageContent, "费用") ||

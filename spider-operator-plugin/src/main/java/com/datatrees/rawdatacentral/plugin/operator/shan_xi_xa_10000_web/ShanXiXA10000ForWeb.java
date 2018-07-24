@@ -9,8 +9,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -87,7 +87,8 @@ public class ShanXiXA10000ForWeb implements OperatorPluginService {
             String referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000197";
             String templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10027&toStUrl=http://sn.189.cn/service/bill/fee.action?type=resto&fastcode=10000197&cityCode=sn";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             templateUrl = "http://sn.189.cn/service/bill/initQueryBill.action?rnd={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
@@ -105,14 +106,17 @@ public class ShanXiXA10000ForWeb implements OperatorPluginService {
             referer = "http://www.189.cn/dqmh/my189/initMy189home.do?fastcode=10000197";
             templateUrl
                     = "http://www.189.cn/login/sso/ecs.do?method=linkTo&platNo=10027&toStUrl=http://sn.189.cn/service/bill/fee.action?type=resto&fastcode=10000197&cityCode=sn";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             templateUrl = "http://sn.189.cn/service/bill/resto.action?rnd={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, (int) (Math.random() * 1000000)).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .setFullUrl(templateUrl, (int) (Math.random() * 1000000)).invoke();
 
             referer = "http://sn.189.cn/service/manage/myProducts.action?fastcode=10000195&cityCode=sn";
             templateUrl = "http://sn.189.cn/service/manage/offerListView.action?currentPage=1";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .invoke();
 
             if (StringUtils.isNotBlank(response.getPageContent())) {
                 logger.warn("登录成功,params={}", param);
@@ -133,7 +137,8 @@ public class ShanXiXA10000ForWeb implements OperatorPluginService {
         try {
             String referer = "http://sn.189.cn/service/bill/fee.action?type=allDetails&fastcode=10000203&cityCode=sn";
             String templateUrl = "http://sn.189.cn/service/bill/sendInternetRandom.action?mobileNum={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile()).setReferer(referer).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl, param.getMobile())
+                    .setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "随机码发送成功")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);

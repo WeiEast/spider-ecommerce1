@@ -17,7 +17,6 @@ import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipException;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 28, 2014 2:05:16 PM
@@ -41,20 +40,19 @@ public class CustomInflaterInputStream extends InflaterInputStream {
 
     boolean usesDefaultInflater = false;
 
-    private   boolean  closed   = false;
+    private boolean closed        = false;
 
     // this flag is set to true after EOF has reached
-    private   boolean  reachEOF = false;
+    private boolean reachEOF      = false;
 
-    private byte[] singleByteBuf = new byte[1];
+    private byte[]  singleByteBuf = new byte[1];
 
-    private byte[] b = new byte[512];
+    private byte[]  b             = new byte[512];
 
     /**
      * Creates a new input stream with the specified decompressor and buffer size.
-     *
-     * @param in the input stream
-     * @param inf the decompressor ("inflater")
+     * @param in   the input stream
+     * @param inf  the decompressor ("inflater")
      * @param size the input buffer size
      * @exception IllegalArgumentException if size is <= 0
      */
@@ -71,8 +69,7 @@ public class CustomInflaterInputStream extends InflaterInputStream {
 
     /**
      * Creates a new input stream with the specified decompressor and a default buffer size.
-     *
-     * @param in the input stream
+     * @param in  the input stream
      * @param inf the decompressor ("inflater")
      */
     public CustomInflaterInputStream(InputStream in, Inflater inf) {
@@ -81,7 +78,6 @@ public class CustomInflaterInputStream extends InflaterInputStream {
 
     /**
      * Creates a new input stream with a default decompressor and buffer size.
-     *
      * @param in the input stream
      */
     public CustomInflaterInputStream(InputStream in) {
@@ -101,7 +97,6 @@ public class CustomInflaterInputStream extends InflaterInputStream {
     /**
      * Reads a byte of uncompressed data. This method will block until enough input is available for
      * decompression.
-     *
      * @return the byte read, or -1 if end of compressed input is reached
      * @exception IOException if an I/O error has occurred
      */
@@ -114,17 +109,16 @@ public class CustomInflaterInputStream extends InflaterInputStream {
      * Reads uncompressed data into an array of bytes. If <code>len</code> is not zero, the method
      * will block until some input can be decompressed; otherwise, no bytes are read and
      * <code>0</code> is returned.
-     *
-     * @param b the buffer into which the data is read
+     * @param b   the buffer into which the data is read
      * @param off the start offset in the destination array <code>b</code>
      * @param len the maximum number of bytes read
      * @return the actual number of bytes read, or -1 if the end of the compressed input is reached
-     *         or a preset dictionary is needed
-     * @exception NullPointerException If <code>b</code> is <code>null</code>.
+     * or a preset dictionary is needed
+     * @exception NullPointerException      If <code>b</code> is <code>null</code>.
      * @exception IndexOutOfBoundsException If <code>off</code> is negative, <code>len</code> is
-     *            negative, or <code>len</code> is greater than <code>b.length - off</code>
-     * @exception ZipException if a ZIP format error has occurred
-     * @exception IOException if an I/O error has occurred
+     *                                      negative, or <code>len</code> is greater than <code>b.length - off</code>
+     * @exception ZipException              if a ZIP format error has occurred
+     * @exception IOException               if an I/O error has occurred
      */
     public int read(byte[] b, int off, int len) throws IOException {
         ensureOpen();
@@ -160,10 +154,8 @@ public class CustomInflaterInputStream extends InflaterInputStream {
      * <p>
      * Programs should not count on this method to return the actual number of bytes that could be
      * read without blocking.
-     *
      * @return 1 before EOF and 0 after EOF.
      * @exception IOException if an I/O error occurs.
-     *
      */
     public int available() throws IOException {
         ensureOpen();
@@ -176,10 +168,9 @@ public class CustomInflaterInputStream extends InflaterInputStream {
 
     /**
      * Skips specified number of bytes of uncompressed data.
-     *
      * @param n the number of bytes to skip
      * @return the actual number of bytes skipped.
-     * @exception IOException if an I/O error has occurred
+     * @exception IOException              if an I/O error has occurred
      * @exception IllegalArgumentException if n < 0
      */
     public long skip(long n) throws IOException {
@@ -206,7 +197,6 @@ public class CustomInflaterInputStream extends InflaterInputStream {
 
     /**
      * Closes this input stream and releases any system resources associated with the stream.
-     *
      * @exception IOException if an I/O error has occurred
      */
     public void close() throws IOException {
@@ -219,7 +209,6 @@ public class CustomInflaterInputStream extends InflaterInputStream {
 
     /**
      * Fills input buffer with more data to decompress.
-     *
      * @exception IOException if an I/O error has occurred
      */
     protected void fill() throws IOException {
@@ -235,9 +224,8 @@ public class CustomInflaterInputStream extends InflaterInputStream {
      * Tests if this input stream supports the <code>mark</code> and <code>reset</code> methods. The
      * <code>markSupported</code> method of <code>InflaterInputStream</code> returns
      * <code>false</code>.
-     *
      * @return a <code>boolean</code> indicating if this stream type supports the <code>mark</code>
-     *         and <code>reset</code> methods.
+     * and <code>reset</code> methods.
      * @see InputStream#mark(int)
      * @see InputStream#reset()
      */
@@ -247,12 +235,10 @@ public class CustomInflaterInputStream extends InflaterInputStream {
 
     /**
      * Marks the current position in this input stream.
-     *
      * <p>
      * The <code>mark</code> method of <code>InflaterInputStream</code> does nothing.
-     *
      * @param readlimit the maximum limit of bytes that can be read before the mark position becomes
-     *        invalid.
+     *                  invalid.
      * @see InputStream#reset()
      */
     public synchronized void mark(int readlimit) {}
@@ -260,11 +246,9 @@ public class CustomInflaterInputStream extends InflaterInputStream {
     /**
      * Repositions this stream to the position at the time the <code>mark</code> method was last
      * called on this input stream.
-     *
      * <p>
      * The method <code>reset</code> for class <code>InflaterInputStream</code> does nothing except
      * throw an <code>IOException</code>.
-     *
      * @exception IOException if this method is invoked.
      * @see InputStream#mark(int)
      * @see IOException

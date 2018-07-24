@@ -11,8 +11,8 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -151,8 +151,8 @@ public class JiLin10086ForWeb implements OperatorPluginService {
         Response response = null;
         try {
             String templateUrl = "http://www.jl.10086.cn/service/operate/action/SendSmsCheckCode_sendSmsCode.action?randomStr={}&type=query";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, System.currentTimeMillis())
-                    .invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                    .setFullUrl(templateUrl, System.currentTimeMillis()).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "短信验证码已下发至您的手机中")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);

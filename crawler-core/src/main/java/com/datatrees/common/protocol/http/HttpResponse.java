@@ -19,7 +19,6 @@ import org.apache.commons.httpclient.HttpState;
 
 /**
  * An HTTP response.
- *
  * @author Susam Pal
  */
 public class HttpResponse implements Response {

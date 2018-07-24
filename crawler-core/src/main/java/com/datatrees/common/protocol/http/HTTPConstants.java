@@ -12,7 +12,6 @@ import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 1:45:04 PM
@@ -96,18 +95,15 @@ public interface HTTPConstants {
      * request message with a request body to determine if the origin server is willing to accept
      * the request (based on the request headers) before the client sends the request body.
      * </p>
-     *
      * <p>
      * The use of the 'Expect: 100-continue' handshake can result in noticable peformance
      * improvement for entity enclosing requests (such as POST and PUT) that require the target
      * server's authentication.
      * </p>
-     *
      * <p>
      * 'Expect: 100-continue' handshake should be used with caution, as it may cause problems with
      * HTTP servers and proxies that do not support HTTP/1.1 protocol.
      * </p>
-     *
      * This parameter expects a value of type {@link Boolean}.
      */
     public static final String USE_EXPECT_CONTINUE        = "http.protocol.expect-continue";
@@ -178,7 +174,6 @@ public interface HTTPConstants {
      * Set this to 0 to disallow any garbage/empty lines before the status line.<br />
      * To specify no limit, use {@link Integer#MAX_VALUE} (default in lenient mode).
      * </p>
-     *
      * This parameter expects a value of type {@link Integer}.
      */
     public static final String STATUS_LINE_GARBAGE_LIMIT  = "http.protocol.status-line-garbage-limit";
@@ -188,7 +183,6 @@ public interface HTTPConstants {
      * <p>
      * This parameter expects a value of type {@link Integer}.
      * </p>
-     *
      * @see java.net.SocketOptions#SO_TIMEOUT
      */
     public static final String SO_TIMEOUT                 = "http.socket.timeout";

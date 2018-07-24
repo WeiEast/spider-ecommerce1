@@ -29,13 +29,13 @@ public final class HttpCookie implements Cloneable {
     // The value of the cookie itself.
     //
 
-    static final TimeZone GMT = TimeZone.getTimeZone("GMT");
+    static final         TimeZone                                       GMT                 = TimeZone.getTimeZone("GMT");
 
     //
     // Since the positive and zero max-age have their meanings,
     // this value serves as a hint as 'not specify max-age'
     //
-    private final static long     MAX_AGE_UNSPECIFIED = -1;
+    private final static long                                           MAX_AGE_UNSPECIFIED = -1;
 
     //
     // Attributes encoded in the header's cookie fields.
@@ -45,23 +45,23 @@ public final class HttpCookie implements Cloneable {
     // date formats used by Netscape's cookie draft
     // as well as formats seen on various sites
     //
-    private final static String[] COOKIE_DATE_FORMATS = {"EEE',' dd-MMM-yyyy HH:mm:ss 'GMT'", "EEE',' dd MMM yyyy HH:mm:ss 'GMT'",
-            "EEE MMM dd yyyy HH:mm:ss 'GMT'Z"};
+    private final static String[]                                       COOKIE_DATE_FORMATS = {"EEE',' dd-MMM-yyyy HH:mm:ss 'GMT'",
+            "EEE',' dd MMM yyyy HH:mm:ss 'GMT'", "EEE MMM dd yyyy HH:mm:ss 'GMT'Z"};
 
     //
     // constant strings represent set-cookie header token
     //
-    private final static String   SET_COOKIE          = "set-cookie:";
+    private final static String                                         SET_COOKIE          = "set-cookie:";
 
-    private final static String   SET_COOKIE2         = "set-cookie2:";
+    private final static String                                         SET_COOKIE2         = "set-cookie2:";
 
     // Note -- disabled for now to allow full Netscape compatibility
     // from RFC 2068, token special case characters
     //
     // private static final String tspecials = "()<>@,;:\\\"/[]?={} \t";
-    private static final String tspecials = ",;";
+    private static final String                                         tspecials           = ",;";
 
-    static java.util.Map<String, CookieAttributeAssignor> assignors = null;
+    static               java.util.Map<String, CookieAttributeAssignor> assignors           = null;
 
     static {
         assignors = new java.util.HashMap<String, CookieAttributeAssignor>();
@@ -136,40 +136,40 @@ public final class HttpCookie implements Cloneable {
 
     // The original header this cookie was consructed from, if it was
     // constructed by parsing a header, otherwise null.
-    private final        String   header;
+    private final String  header;
 
-    private              String   name; // NAME= ... "$Name" style is reserved
+    private       String  name; // NAME= ... "$Name" style is reserved
 
-    private              String   value; // value of NAME
+    private       String  value; // value of NAME
 
-    private              String   comment; // Comment=VALUE ... describes cookie's use
+    private       String  comment; // Comment=VALUE ... describes cookie's use
 
-    private              String   commentURL; // CommentURL="http URL" ... describes cookie's use
+    private       String  commentURL; // CommentURL="http URL" ... describes cookie's use
 
-    private              boolean  toDiscard; // Discard ... discard cookie unconditionally
+    private       boolean toDiscard; // Discard ... discard cookie unconditionally
 
-    private              String   domain; // Domain=VALUE ... domain that sees cookie
+    private       String  domain; // Domain=VALUE ... domain that sees cookie
 
-    private              long     maxAge              = MAX_AGE_UNSPECIFIED; // Max-Age=VALUE ... cookies auto-expire
+    private       long    maxAge      = MAX_AGE_UNSPECIFIED; // Max-Age=VALUE ... cookies auto-expire
 
-    private              String   path; // Path=VALUE ... URLs that see the cookie
+    private       String  path; // Path=VALUE ... URLs that see the cookie
 
-    private              String   portlist; // Port[="portlist"] ... the port cookie may be returned to
+    private       String  portlist; // Port[="portlist"] ... the port cookie may be returned to
 
 
     /* ---------------- Ctors -------------- */
 
-    private              boolean  secure; // Secure ... e.g. use SSL
+    private       boolean secure; // Secure ... e.g. use SSL
 
-    private              boolean  httpOnly; // HttpOnly ... i.e. not accessible to scripts
+    private       boolean httpOnly; // HttpOnly ... i.e. not accessible to scripts
 
-    private              int      version             = 1; // Version=1 ... RFC 2965 style
+    private       int     version     = 1; // Version=1 ... RFC 2965 style
 
     //
     // Hold the creation time (in seconds) of the http cookie for later
     // expiration calculation
     //
-    private              long     whenCreated         = 0;
+    private       long    whenCreated = 0;
 
     /**
      * Constructs a cookie with a specified name and value.

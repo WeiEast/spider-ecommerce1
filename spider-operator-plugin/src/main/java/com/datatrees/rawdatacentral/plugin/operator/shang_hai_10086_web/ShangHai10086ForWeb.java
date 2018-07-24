@@ -14,8 +14,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -35,7 +35,8 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl("https://sh.ac.10086.cn/login").invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl("https://sh.ac.10086.cn/login")
+                    .invoke();
             String pageContent = response.getPageContent();
             String source = PatternUtils.group(pageContent, "var source\\s*=\\s*\"([^\"]+)\"", 1);
             String dtmToken = PatternUtils.group(pageContent, "var source\\s*=\\s*\"(\\d+)\"", 1);
@@ -148,13 +149,14 @@ public class ShangHai10086ForWeb implements OperatorPluginService {
                         .format("http://www.sh.10086.cn/service/server/sso/reload.jsp?source=wysso&uid={}&tourl=http%3A%2F%2Fwww" +
                                 ".sh.10086.cn%2Fsh%2Fservice%2F", artifact);
                 params.put("backUrl", TemplateUtils.format(backUrl));
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setUrl("https://login.10086.cn/AddUID.action").setParams(params)
-                        .setReferer(referer).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                        .setUrl("https://login.10086.cn/AddUID.action").setParams(params).setReferer(referer).invoke();
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
                         .setFullUrl("http://www" + ".sh.10086.cn/service/server/ssologin/loginFromUid")
                         .setRequestBody("uid=" + artifact + "&isFirst=false").invoke();
                 referer = response.getRedirectUrl();
-                TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setUrl("http://www.sh.10086.cn/service/static/").setReferer(referer).invoke();
+                TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setUrl("http://www.sh.10086.cn/service/static/")
+                        .setReferer(referer).invoke();
                 logger.info("登录成功,param={}", param);
                 return result.success();
             }

@@ -17,8 +17,8 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.enums.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.HttpResult;
@@ -40,8 +40,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         try {
             String templateUrl = "https://fj.ac.10086.cn/login";
-            Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl).invoke();
+            Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.isBlank(pageContent)) {
                 logger.error("登录-->初始化失败,param={},response={}", param, response);
@@ -49,8 +48,7 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             }
             templateUrl = PatternUtils.group(pageContent, "replace\\('([^']+)'\\)", 1);
             if (StringUtils.isNotBlank(templateUrl)) {
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                        .setFullUrl(templateUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
                 pageContent = response.getPageContent();
             }
 
@@ -206,8 +204,8 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
         Response response = null;
         try {
             String templateUrl = "https://fj.ac.10086.cn/common/image.jsp?id={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl, Math.random()).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, Math.random())
+                    .invoke();
             logger.info("详单-->图片验证码-->刷新成功,param={}", param);
             return result.success(response.getPageContentForBase64());
         } catch (Exception e) {
@@ -313,7 +311,8 @@ public class FuJian10086ForWeb implements OperatorPluginPostService {
             String samLart = PatternUtils.group(pageContent, "callBackurlAll\\('([^']+)'", 1);
 
             templateUrl = "http://www.fj.10086.cn/my/?SAMLart={}&RelayState=";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, samLart).setMaxRetry(2).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, samLart)
+                    .setMaxRetry(2).invoke();
             pageContent = response.getPageContent();
 
             if (StringUtils.isNotBlank(pageContent) && pageContent.contains(param.getMobile().toString())) {

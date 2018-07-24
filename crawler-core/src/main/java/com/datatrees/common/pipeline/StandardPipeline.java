@@ -15,12 +15,10 @@ import java.util.List;
  * Standard implementation of a processing <b>Pipeline</b> that will invoke a
  * series of Valves that have been configured to be called in order. This
  * implementation can be used for any type of Container.
- *
  * <b>IMPLEMENTATION WARNING</b> - This implementation assumes that no calls to
  * <code>addValve()</code> or <code>removeValve</code> are allowed while a
  * request is currently being processed. Otherwise, the mechanism by which
  * per-thread state is maintained will need to be modified.
- *
  * @author Craig R. McClanahan
  */
 public class StandardPipeline implements Pipeline {

@@ -9,7 +9,6 @@
 package com.datatrees.common.pipeline;
 
 /**
- *
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:04:52 PM
