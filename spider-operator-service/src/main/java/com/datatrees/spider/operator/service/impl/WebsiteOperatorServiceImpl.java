@@ -1,6 +1,7 @@
 package com.datatrees.spider.operator.service.impl;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -330,7 +331,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         map.put(AttributeKey.TO, to);
 
         if (null != from && null != to) {
-            notifyService.sendMsgForOperatorStatusUpdate(websiteOperatorDb, from, to, enable, auto);
+            sendMsgForOperatorStatusUpdate(websiteOperatorDb, from, to, enable, auto);
         }
         return map;
     }
@@ -425,5 +426,33 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         config.setGroupCode(operator.getGroupCode());
         config.setGroupName(GroupEnum.getByGroupCode(operator.getGroupCode()).getGroupName());
         return websiteConfigService.buildWebsite(config);
+    }
+
+    @Override
+    public Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, WebsiteOperator from, WebsiteOperator to, Boolean enable, Boolean auto) {
+        try {
+            String saasEnv = TaskUtils.getSassEnv();
+            Map<String, Object> map = new HashMap<>();
+            map.put("changeWebsiteName", change.getWebsiteName());
+            map.put("changeWebsiteTitle", change.getWebsiteTitle());
+            map.put("env", saasEnv);
+            map.put("enable", enable ? "启用" : "禁用");
+            map.put("auto", auto ? " 自动" : "手动");
+            map.put("fromWebsiteTitle", from.getWebsiteTitle());
+            map.put("toWebsiteTitle", to.getWebsiteTitle());
+            map.put("date", DateUtils.formatYmdhms(new Date()));
+            String wechatTmpl
+                    = "【运营商状态变更】\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
+            String smsTmpl
+                    = "<运营商状态变更>\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
+            String smsMsg = FormatUtils.format(smsTmpl, map);
+            notifyService.sendMonitorSms(smsMsg);
+            String wechatMsg = FormatUtils.format(wechatTmpl, map);
+            notifyService.sendMonitorWeChat(wechatMsg);
+            return true;
+        } catch (Throwable e) {
+            logger.error("sendMsgForOperatorStatusUpdate ", e);
+            return false;
+        }
     }
 }

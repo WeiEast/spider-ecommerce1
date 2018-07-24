@@ -1,7 +1,5 @@
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
-
 /**
  * 通知消息
  * Created by zhouxinghai on 2017/9/29
@@ -26,15 +24,5 @@ public interface NotifyService {
      * @param body 内容
      */
     Boolean sendMonitorSms(String body);
-
-    /**
-     * 运营商状态变更
-     * @param change 变更的运营商
-     * @param from   变更前
-     * @param to     变更后
-     * @param auto   操作方式:自动/手动
-     * @return
-     */
-    Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, WebsiteOperator from, WebsiteOperator to, Boolean enable, Boolean auto);
 
 }

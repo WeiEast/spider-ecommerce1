@@ -1,7 +1,8 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
@@ -20,11 +21,7 @@ import com.datatrees.notify.async.util.BeanUtil;
 import com.datatrees.notify.sms.bean.SmsResult;
 import com.datatrees.notify.sms.newservice.SmsNewService;
 import com.datatrees.notify.sms.newservice.entity.message.SmsMessage;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.common.utils.FormatUtils;
 import com.datatrees.rawdatacentral.service.NotifyService;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,34 +116,6 @@ public class NotifyServiceImpl implements NotifyService {
             return true;
         } catch (Throwable e) {
             logger.error("resu sms msg  error mobile={},sms={},result={}", smsReceiver, body, JSON.toJSONString(result), e);
-            return false;
-        }
-    }
-
-    @Override
-    public Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, WebsiteOperator from, WebsiteOperator to, Boolean enable, Boolean auto) {
-        try {
-            String saasEnv = TaskUtils.getSassEnv();
-            Map<String, Object> map = new HashMap<>();
-            map.put("changeWebsiteName", change.getWebsiteName());
-            map.put("changeWebsiteTitle", change.getWebsiteTitle());
-            map.put("env", saasEnv);
-            map.put("enable", enable ? "启用" : "禁用");
-            map.put("auto", auto ? " 自动" : "手动");
-            map.put("fromWebsiteTitle", from.getWebsiteTitle());
-            map.put("toWebsiteTitle", to.getWebsiteTitle());
-            map.put("date", DateUtils.formatYmdhms(new Date()));
-            String wechatTmpl
-                    = "【运营商状态变更】\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
-            String smsTmpl
-                    = "<运营商状态变更>\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
-            String smsMsg = FormatUtils.format(smsTmpl, map);
-            sendMonitorSms(smsMsg);
-            String wechatMsg = FormatUtils.format(wechatTmpl, map);
-            sendMonitorWeChat(wechatMsg);
-            return true;
-        } catch (Throwable e) {
-            logger.error("sendMsgForOperatorStatusUpdate ", e);
             return false;
         }
     }
