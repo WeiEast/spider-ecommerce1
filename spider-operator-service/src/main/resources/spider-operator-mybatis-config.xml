@@ -6,9 +6,9 @@
     </settings>
     <typeHandlers>
         <typeHandler javaType="java.util.concurrent.atomic.AtomicInteger"
-                     handler="com.datatrees.rawdatacentral.dao.typehandler.AtomicIntegerTypeHander"/>
+                     handler="com.datatrees.spider.share.service.typehandler.AtomicIntegerTypeHander"/>
         <typeHandler javaType="java.util.concurrent.atomic.AtomicLong"
-                     handler="com.datatrees.rawdatacentral.dao.typehandler.AtomicLongTypeHander"/>
+                     handler="com.datatrees.spider.share.service.typehandler.AtomicLongTypeHander"/>
     </typeHandlers>
 
 </configuration>

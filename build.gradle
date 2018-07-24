@@ -37,6 +37,7 @@ subprojects {
         all*.exclude group: "org.apache.ibatis", module: "ibatis-sqlmap"
         all*.exclude group: "org.springframework", module: "spring-ibatis"
         all*.exclude group: "com.datatrees.crawler", module: "crawler-core"
+        all*.exclude group: "io.netty", module: "netty-all"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {

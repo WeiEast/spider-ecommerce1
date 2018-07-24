@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+
+    <bean id="rawdatacentralSessionFactoryBean"  class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="rawdatacentralDataSource"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:sqlmap/rawdatacentral/*DAO.xml</value>
+                <value>classpath*:sqlmap/rawdatacentral/mapper/*Mapper.xml</value>
+            </list>
+        </property>
+        <!--<property name="typeAliasesPackage" value="com.datatrees.rawdatacentral.domain.model.example"/>-->
+        <property name="configLocation" value="classpath:rawdatacentral-mybatis-config.xml"/>
+    </bean>
+
+    <bean id="rawdatacentralSqlsessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="rawdatacentralSessionFactoryBean"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="annotationClass" value="javax.annotation.Resource"/>
+        <property name="basePackage" value="com.datatrees.rawdatacentral.dao"/>
+        <property name="sqlSessionTemplateBeanName" value="rawdatacentralSqlsessionTemplate" />
+        <property name="sqlSessionFactoryBeanName" value="rawdatacentralSessionFactoryBean" />
+    </bean>
+
+
+</beans>

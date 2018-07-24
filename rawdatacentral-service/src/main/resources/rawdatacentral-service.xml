@@ -12,7 +12,7 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
     <import resource="rawdatacentral-diamond.xml"/>
     <import resource="rawdatacentral-redis.xml"/>
-    <import resource="rawdatacentral-datasource-mysql.xml"/>
+    <import resource="rawdatacentral-mybatis.xml"/>
 
     <import resource="rawdatacentral-dubbo-reference.xml"/>
     <import resource="rawdatacentral-mq.xml"/>

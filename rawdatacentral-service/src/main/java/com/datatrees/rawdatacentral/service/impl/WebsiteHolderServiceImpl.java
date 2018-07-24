@@ -7,12 +7,11 @@ import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.service.WebsiteHolderService;
 import com.datatrees.rawdatacentral.service.website.WebsiteHolder;
 import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WebsiteHolderServiceImpl implements WebsiteHolderService, InitializingBean {
+public class WebsiteHolderServiceImpl implements WebsiteHolderService {
 
     @Resource
     private ApplicationContext         context;
@@ -21,6 +20,9 @@ public class WebsiteHolderServiceImpl implements WebsiteHolderService, Initializ
 
     @Override
     public Website getWebsite(long taskId, String websiteName) {
+        if (MapUtils.isEmpty(holderMap)) {
+            holderMap = context.getBeansOfType(WebsiteHolder.class);
+        }
         if (MapUtils.isEmpty(holderMap)) {
             return null;
         }
@@ -32,8 +34,4 @@ public class WebsiteHolderServiceImpl implements WebsiteHolderService, Initializ
         return null;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        holderMap = context.getBeansOfType(WebsiteHolder.class);
-    }
 }
