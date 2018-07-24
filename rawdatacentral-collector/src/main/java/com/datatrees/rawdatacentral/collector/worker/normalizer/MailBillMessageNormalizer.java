@@ -16,7 +16,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.rawdatacentral.core.common.DataNormalizer;
+import com.datatrees.rawdatacentral.core.normalizers.MessageNormalizer;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
  * @since 2015年7月31日 上午11:50:36
  */
 @Service
-public class MailBillMessageNormalizer implements DataNormalizer {
+public class MailBillMessageNormalizer implements MessageNormalizer {
 
     private static final Logger       logger            = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
 

@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.rawdatacentral.core.common.DataNormalizer;
+import com.datatrees.rawdatacentral.core.normalizers.MessageNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.DefaultData;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
  * @since 2015年7月31日 上午11:50:36
  */
 @Service
-public class DefaultMessageNormalizer implements DataNormalizer {
+public class DefaultMessageNormalizer implements MessageNormalizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMessageNormalizer.class);
 
