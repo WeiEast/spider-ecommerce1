@@ -5,5 +5,7 @@
     <import resource="classpath:spring/rawdatacentral.core.spring.xml"/>
     <import resource="classpath:spring/collector.spring.xml"/>
 
+    <import resource="classpath*:spider-operator-web.xml" />
+
 
 </beans>

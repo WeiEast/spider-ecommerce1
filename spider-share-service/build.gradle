@@ -1,8 +1,18 @@
 dependencies {
     compile project(':spider-share-dao')
 
-    compile "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
     compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
     compile "org.springframework:spring-oxm:${springVersion}"
 
+    compile("com.alibaba:dubbo:${dubboVersion}") {
+        exclude(module: "netty")
+    }
+
+    compile "com.101tec:zkclient:${zkclientVersion}"
+
+    compile "com.alibaba.rocketmq:rocketmq-client:${rocketmqClientVersion}"
+
+
+    compile "com.alibaba:druid:${druidVersion}"
+    compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
 }

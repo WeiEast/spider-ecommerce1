@@ -13,6 +13,7 @@ dependencies {
 
     compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessageVersion}", changing: true) {
         exclude(module: "guava")
+        exclude(module: "spring-boot-starter-amqp")
     }
     compile("com.alibaba:dubbo:${dubboVersion}"){
         exclude(module: 'nettty')

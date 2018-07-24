@@ -3,35 +3,29 @@
        xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-    <dubbo:provider timeout="30000" retries="3"/>
 
-    <!--注册到dubbo -->
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerService" ref="crawlerServiceImpl"/>
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerTaskService" ref="crawlerTaskServiceImpl"/>
-    <dubbo:service interface="com.datatrees.spider.operator.api.WebsiteGroupApi" ref="websiteGroupServiceApiImpl"/>
-    <!--运营商-->
-    <dubbo:service interface="com.datatrees.spider.operator.api.OperatorApi"
-                   ref="crawlerOperatorServiceImpl"/>
-    <dubbo:service interface="com.datatrees.spider.operator.api.WebsiteOperatorApi"
-                   ref="websiteOperatorServiceApiImpl"/>
-    <!--学信网-->
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.RpcEducationService" ref="rpcEducationServiceImpl"/>
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.RpcOssService" ref="rpcOssServiceImpl"/>
+    <!--&lt;!&ndash;注册到dubbo &ndash;&gt;-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerService" ref="crawlerServiceImpl"/>-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerTaskService" ref="crawlerTaskServiceImpl"/>-->
 
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiForQQ"
-                   ref="mailServiceApiForQQImpl"/>
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.CommonPluginApi"
-                   ref="commonPluginApiImpl"/>
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR"
-                   ref="economicApiForTaoBaoQRImpl"/>
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.mail._163.MailServiceApiFor163"
-                   ref="mailServiceApiFor163Impl"/>
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.mail.sina.MailServiceApiForSina"
-                   ref="mailServiceApiForSinaImpl"/>
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.mail._126.MailServiceApiFor126"
-                   ref="mailServiceApiFor126Impl"/>
-    <dubbo:service interface="com.datatrees.rawdatacentral.api.mail.exmail_qq.MailServiceApiForExMailQQ"
-                   ref="mailServiceApiForExMailQQImpl"/>
+    <!--&lt;!&ndash;学信网&ndash;&gt;-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.RpcEducationService" ref="rpcEducationServiceImpl"/>-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.RpcOssService" ref="rpcOssServiceImpl"/>-->
+
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiForQQ"-->
+                   <!--ref="mailServiceApiForQQImpl"/>-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CommonPluginApi"-->
+                   <!--ref="commonPluginApiImpl"/>-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR"-->
+                   <!--ref="economicApiForTaoBaoQRImpl"/>-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.mail._163.MailServiceApiFor163"-->
+                   <!--ref="mailServiceApiFor163Impl"/>-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.mail.sina.MailServiceApiForSina"-->
+                   <!--ref="mailServiceApiForSinaImpl"/>-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.mail._126.MailServiceApiFor126"-->
+                   <!--ref="mailServiceApiFor126Impl"/>-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.mail.exmail_qq.MailServiceApiForExMailQQ"-->
+                   <!--ref="mailServiceApiForExMailQQImpl"/>-->
 
 </beans>
 
