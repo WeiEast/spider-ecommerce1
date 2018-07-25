@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.CrawlerTaskService;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.spider.share.common.TaskUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;

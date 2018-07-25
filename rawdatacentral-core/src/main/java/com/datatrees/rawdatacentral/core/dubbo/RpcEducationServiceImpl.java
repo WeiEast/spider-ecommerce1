@@ -8,7 +8,7 @@ import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RpcEducationService;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.spider.share.common.TaskUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
 import com.datatrees.spider.share.domain.TopicEnum;

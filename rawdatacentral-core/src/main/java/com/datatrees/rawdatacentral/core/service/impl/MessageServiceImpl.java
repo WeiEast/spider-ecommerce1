@@ -12,7 +12,7 @@ import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.spider.share.common.TaskUtils;
 import com.datatrees.spider.share.common.utils.RegexpUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.TopicEnum;

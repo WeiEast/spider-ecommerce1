@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.http;
+package com.datatrees.spider.share.common;
 
 import java.net.HttpCookie;
 import java.util.*;

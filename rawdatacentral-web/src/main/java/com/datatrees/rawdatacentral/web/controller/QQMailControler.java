@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream;
 
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiForQQ;
-import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
+import com.datatrees.spider.share.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.spider.share.domain.ProcessResult;
 import org.apache.commons.codec.binary.Base64;

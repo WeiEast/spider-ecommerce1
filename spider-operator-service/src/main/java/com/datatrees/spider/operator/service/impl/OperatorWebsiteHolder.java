@@ -3,7 +3,7 @@ package com.datatrees.spider.operator.service.impl;
 import javax.annotation.Resource;
 
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
+import com.datatrees.spider.share.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.website.WebsiteHolder;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;

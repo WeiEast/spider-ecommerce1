@@ -9,7 +9,7 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
-import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.spider.share.common.TaskUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
