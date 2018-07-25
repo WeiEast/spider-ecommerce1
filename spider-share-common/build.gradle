@@ -15,6 +15,7 @@ dependencies {
     compile "com.google.guava:guava:${guavaVersion}"
     compile 'com.google.zxing:core:3.3.3'
     compile "org.redisson:redisson:${redissonVersion}"
+    compile "org.springframework.boot:spring-boot:${springBootVersion}"
 }
 
 
