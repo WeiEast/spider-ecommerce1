@@ -23,7 +23,7 @@ import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveType;
-import com.datatrees.rawdatacentral.domain.exception.LoginFailException;
+import com.datatrees.spider.share.domain.exception.LoginFailException;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.google.gson.reflect.TypeToken;
@@ -195,7 +195,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         if (loginCount == 0) {
             monitorService.sendTaskLog(taskId, "登录-->校验-->失败", ErrorCode.LOGIN_TIMEOUT_ERROR, "用户登录次数:0");
             logger.info("login timeout taskId={},websiteName={},loginCount={}", taskId, websiteName, loginCount);
-            throw new com.datatrees.rawdatacentral.domain.exception.LoginTimeOutException(taskId);
+            throw new com.datatrees.spider.share.domain.exception.LoginTimeOutException(taskId);
         }
         monitorService.sendTaskLog(taskId, "登录-->校验-->失败", ErrorCode.LOGIN_TIMEOUT_ERROR, "用户登录次数:" + loginCount);
         logger.info("login fail taskId={},websiteName={},loginCount={},errorCode={}", taskId, websiteName, loginCount, errorCode);

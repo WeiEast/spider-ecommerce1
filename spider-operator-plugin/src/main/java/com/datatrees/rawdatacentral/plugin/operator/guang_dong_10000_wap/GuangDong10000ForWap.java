@@ -11,7 +11,7 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;

@@ -18,7 +18,7 @@ import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.rawdatacentral.domain.exception.CommonException;
+import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.vo;
+package com.datatrees.spider.share.domain.http;
 
 import java.io.Serializable;
 import java.util.Date;

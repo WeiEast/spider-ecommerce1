@@ -24,7 +24,7 @@ import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.TopicTag;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.common.exmail.qq.com.h5.util.EncryptExMailQQUtils;
 import com.datatrees.rawdatacentral.plugin.common.exmail.qq.com.h5.util.ExMailErrorEnum;
 import com.datatrees.spider.share.domain.ErrorCode;

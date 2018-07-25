@@ -25,7 +25,7 @@ import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.ProcessStatus;
-import com.datatrees.rawdatacentral.domain.enums.QRStatus;
+import com.datatrees.spider.share.domain.QRStatus;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;

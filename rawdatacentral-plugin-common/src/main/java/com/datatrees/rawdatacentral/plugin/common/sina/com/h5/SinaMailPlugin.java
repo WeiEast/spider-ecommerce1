@@ -18,7 +18,7 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import org.apache.commons.lang.StringUtils;

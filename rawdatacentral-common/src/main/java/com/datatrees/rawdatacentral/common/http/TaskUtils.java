@@ -15,8 +15,8 @@ import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.http.HttpHeadKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.StepEnum;
-import com.datatrees.rawdatacentral.domain.vo.Cookie;
-import com.datatrees.rawdatacentral.domain.vo.Request;
+import com.datatrees.spider.share.domain.http.Cookie;
+import com.datatrees.spider.share.domain.http.Request;
 import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -193,21 +193,21 @@ public class TaskUtils {
     }
 
     public static void saveCookie(long taskId, Set<com.gargoylesoftware.htmlunit.util.Cookie> cookies) {
-        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookies);
+        List<Cookie> list = TaskUtils.getCookies(cookies);
         saveCookie(taskId, list);
     }
 
     public static void saveCookie(long taskId, String host, BasicCookieStore cookieStore, CloseableHttpResponse httpResponse) {
-        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
+        List<Cookie> list = TaskUtils.getCookies(taskId, host, cookieStore, httpResponse);
         saveCookie(taskId, list);
     }
 
-    public static void saveCookie(long taskId, List<com.datatrees.rawdatacentral.domain.vo.Cookie> cookies) {
+    public static void saveCookie(long taskId, List<Cookie> cookies) {
         if (CollectionUtils.isEmpty(cookies)) {
             return;
         }
         String redisKey = RedisKeyPrefixEnum.TASK_COOKIE.getRedisKey(taskId);
-        for (com.datatrees.rawdatacentral.domain.vo.Cookie cookie : cookies) {
+        for (Cookie cookie : cookies) {
             String name = "[" + cookie.getName() + "][" + cookie.getDomain() + "]";
             RedisUtils.hset(redisKey, name, JSON.toJSONString(cookie, SerializerFeature.DisableCircularReferenceDetect),
                     RedisKeyPrefixEnum.TASK_COOKIE.toSeconds());

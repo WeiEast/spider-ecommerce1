@@ -11,7 +11,7 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.Extractor;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
-import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
 import com.datatrees.rawdatacentral.extractor.builder.impl.DefaultExtractResultBuilder;
 import com.datatrees.rawdatacentral.extractor.builder.impl.DefaultProcessorContextBuilder;

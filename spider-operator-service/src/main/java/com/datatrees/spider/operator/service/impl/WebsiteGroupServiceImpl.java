@@ -13,7 +13,7 @@ import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.WeightUtils;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.exception.CommonException;
+import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.spider.operator.dao.WebsiteGroupDAO;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;

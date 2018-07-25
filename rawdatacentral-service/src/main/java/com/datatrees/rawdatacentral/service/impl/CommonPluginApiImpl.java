@@ -23,7 +23,7 @@ import com.datatrees.spider.share.domain.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
-import com.datatrees.rawdatacentral.domain.vo.Cookie;
+import com.datatrees.spider.share.domain.http.Cookie;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.spider.share.domain.ErrorCode;

@@ -37,7 +37,7 @@ public interface MailServiceApiFor163 {
      * 查询二维码登陆状态
      * 必填参数: taskId
      * <p>
-     * 二维码状态详见:@see com.datatrees.rawdatacentral.domain.enums.QRStatus
+     * 二维码状态详见:@see com.datatrees.spider.share.domain.QRStatus
      * </p>
      * @param param
      * @return

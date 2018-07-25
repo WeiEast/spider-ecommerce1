@@ -66,7 +66,7 @@ public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
         if (StringUtils.isNotBlank(encoding)) {
             client.setDefaultResponseCharset(encoding);
         }
-        com.datatrees.rawdatacentral.domain.vo.Response invoke = client.invoke();
+        com.datatrees.spider.share.domain.http.Response invoke = client.invoke();
         logger.info("task http service do taskId={},websiteName={},linkUrl={},status={}", taskId, websiteName, linkUrl, invoke.getStatusCode());
 
         String content = invoke.getPageContent();

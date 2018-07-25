@@ -22,7 +22,7 @@ public class HtmlunitUtils {
             HtmlPage page = webClient.getPage("https://ah.ac.10086.cn/login");
             pageContent = page.asXml();
             Set<Cookie> cookies = webClient.getCookieManager().getCookies();
-            List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookies);
+            List<com.datatrees.spider.share.domain.http.Cookie> list = TaskUtils.getCookies(cookies);
             System.out.println(JSON.toJSONString(list));
 
         } catch (Throwable e) {

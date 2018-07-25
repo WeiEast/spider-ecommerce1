@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.exception;
+package com.datatrees.spider.share.domain.exception;
 
 import com.datatrees.spider.share.domain.ErrorCode;
 

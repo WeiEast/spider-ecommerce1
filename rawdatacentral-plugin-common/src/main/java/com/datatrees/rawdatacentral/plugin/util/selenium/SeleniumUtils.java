@@ -75,12 +75,12 @@ public class SeleniumUtils {
      * @param from
      * @return
      */
-    public static com.datatrees.rawdatacentral.domain.vo.Cookie toHttpCookie(Cookie from) {
+    public static com.datatrees.spider.share.domain.http.Cookie toHttpCookie(Cookie from) {
         String domain = from.getDomain();
         if (domain.startsWith(".")) {
             domain = domain.substring(1);
         }
-        com.datatrees.rawdatacentral.domain.vo.Cookie to = new com.datatrees.rawdatacentral.domain.vo.Cookie();
+        com.datatrees.spider.share.domain.http.Cookie to = new com.datatrees.spider.share.domain.http.Cookie();
         to.setDomain(domain);
         to.setPath(from.getPath());
         to.setName(from.getName());
@@ -103,8 +103,8 @@ public class SeleniumUtils {
         return to;
     }
 
-    public static List<com.datatrees.rawdatacentral.domain.vo.Cookie> getCookies(RemoteWebDriver driver) {
-        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = new ArrayList<>();
+    public static List<com.datatrees.spider.share.domain.http.Cookie> getCookies(RemoteWebDriver driver) {
+        List<com.datatrees.spider.share.domain.http.Cookie> list = new ArrayList<>();
         Set<Cookie> cookies = driver.manage().getCookies();
         if (null == cookies || cookies.isEmpty()) {
             return list;

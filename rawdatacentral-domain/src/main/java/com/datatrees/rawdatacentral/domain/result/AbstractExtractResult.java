@@ -11,7 +11,7 @@ package com.datatrees.rawdatacentral.domain.result;
 import java.io.Serializable;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.enums.ExtractCode;
+import com.datatrees.spider.share.domain.ExtractCode;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

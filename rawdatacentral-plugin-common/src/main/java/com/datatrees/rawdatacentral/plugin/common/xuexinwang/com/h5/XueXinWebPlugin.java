@@ -25,7 +25,7 @@ import com.datatrees.rawdatacentral.domain.education.EducationParam;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
 import com.datatrees.spider.share.domain.ErrorCode;

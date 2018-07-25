@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.exception;
+package com.datatrees.spider.share.domain.exception;
 
 /**
  * Created by zhouxinghai on 2017/6/2.

@@ -31,7 +31,7 @@ import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.ProcessStatus;
-import com.datatrees.rawdatacentral.domain.enums.QRStatus;
+import com.datatrees.spider.share.domain.QRStatus;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;

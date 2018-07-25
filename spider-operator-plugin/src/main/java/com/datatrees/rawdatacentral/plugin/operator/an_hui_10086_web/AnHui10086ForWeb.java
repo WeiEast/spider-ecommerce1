@@ -19,7 +19,7 @@ import com.datatrees.rawdatacentral.common.utils.JsoupXpathUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.rawdatacentral.domain.vo.Response;
+import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginService;

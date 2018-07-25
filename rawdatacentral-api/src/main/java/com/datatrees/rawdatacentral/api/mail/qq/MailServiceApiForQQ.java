@@ -37,7 +37,7 @@ public interface MailServiceApiForQQ {
      * 查询二维码登陆状态
      * 必填参数: taskId
      * <p>
-     * 二维码状态详见:com.datatrees.rawdatacentral.domain.enums.QRStatus
+     * 二维码状态详见:com.datatrees.spider.share.domain.QRStatus
      * </p>
      * @param param
      * @return

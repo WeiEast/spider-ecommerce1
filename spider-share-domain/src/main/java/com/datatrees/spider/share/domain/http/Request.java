@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.vo;
+package com.datatrees.spider.share.domain.http;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.datatrees.spider.share.domain.http.HttpHeadKey;
 import com.datatrees.spider.share.domain.RequestType;
+import com.datatrees.spider.share.domain.http.NameValue;
 
 /**
  * 请求
@@ -31,7 +32,7 @@ public class Request implements Serializable {
     private String              websiteName;
 
     @JSONField(ordinal = 2)
-    private boolean             isRedirect             = false;//是否重定向了
+    private boolean             isRedirect     = false;//是否重定向了
 
     @JSONField(ordinal = 3)
     private String              proxy;
@@ -43,28 +44,28 @@ public class Request implements Serializable {
     private String              url;
 
     @JSONField(ordinal = 6)
-    private Map<String, Object> params                 = new HashMap<>();
+    private Map<String, Object> params         = new HashMap<>();
 
     @JSONField(ordinal = 7)
     private String              remarkId;
 
     @JSONField(ordinal = 8)
-    private List<NameValue>     headers                = new ArrayList<>();
+    private List<NameValue>     headers        = new ArrayList<>();
 
     @JSONField(ordinal = 9)
     private long                requestTimestamp;
 
     @JSONField(ordinal = 10)
-    private Map<String, String> requestCookies         = new HashMap<>();
+    private Map<String, String> requestCookies = new HashMap<>();
 
     @JSONField(ordinal = 12)
-    private String              contentType            = "application/x-www-form-urlencoded; charset=UTF-8";
+    private String              contentType    = "application/x-www-form-urlencoded; charset=UTF-8";
 
     @JSONField(ordinal = 12)
-    private Charset             charset                = Charset.forName("ISO-8859-1");
+    private Charset             charset        = Charset.forName("ISO-8859-1");
 
     @JSONField(ordinal = 13)
-    private RequestType         type                   = RequestType.GET;
+    private RequestType         type           = RequestType.GET;
 
     @JSONField(ordinal = 9)
     private int                 maxRetry               = 1;

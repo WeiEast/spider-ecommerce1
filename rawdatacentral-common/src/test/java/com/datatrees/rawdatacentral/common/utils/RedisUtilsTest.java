@@ -22,7 +22,7 @@ public class RedisUtilsTest {
         HtmlPage page = webClient.getPage("https://ah.ac.10086.cn/login");
         String content = page.asXml();
         Set<Cookie> cookies = webClient.getCookieManager().getCookies();
-        List<com.datatrees.rawdatacentral.domain.vo.Cookie> list = TaskUtils.getCookies(cookies);
+        List<com.datatrees.spider.share.domain.http.Cookie> list = TaskUtils.getCookies(cookies);
         String spid = JsoupXpathUtils.selectFirst(content, "//form[@id='oldLogin']/input[@name='spid']/@value");
         String title = JsoupXpathUtils.selectFirst(content, "/titel");
         webClient.close();

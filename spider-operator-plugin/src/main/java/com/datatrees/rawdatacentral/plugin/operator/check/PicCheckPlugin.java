@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.directive.DirectiveEnum;
-import com.datatrees.rawdatacentral.domain.exception.CommonException;
+import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.model.OperatorParam;

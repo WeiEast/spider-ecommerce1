@@ -7,7 +7,7 @@ import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.domain.result.ProcessResult;
-import com.datatrees.rawdatacentral.domain.vo.Cookie;
+import com.datatrees.spider.share.domain.http.Cookie;
 
 /**
  * 通用插件服务
