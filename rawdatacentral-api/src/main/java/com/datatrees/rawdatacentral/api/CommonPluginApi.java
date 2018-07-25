@@ -5,8 +5,8 @@ import java.util.List;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
-import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
-import com.datatrees.rawdatacentral.domain.result.ProcessResult;
+import com.datatrees.spider.share.domain.LoginMessage;
+import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.share.domain.http.Cookie;
 
 /**

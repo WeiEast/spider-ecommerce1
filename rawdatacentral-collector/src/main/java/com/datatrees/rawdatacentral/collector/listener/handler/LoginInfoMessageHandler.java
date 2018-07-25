@@ -15,7 +15,7 @@ import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.StepEnum;
 import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.TopicTag;
-import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
+import com.datatrees.spider.share.domain.LoginMessage;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.mq.MessageHandler;
 import com.treefinance.crawler.exception.UnsupportedWebsiteException;

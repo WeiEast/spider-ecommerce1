@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.rawdatacentral.domain.vo;
+package com.datatrees.spider.share.domain.website;
 
 import java.util.Date;
 

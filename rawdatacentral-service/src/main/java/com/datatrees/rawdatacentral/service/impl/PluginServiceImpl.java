@@ -12,7 +12,7 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
+import com.datatrees.spider.share.domain.PluginUpgradeResult;
 import com.datatrees.rawdatacentral.service.PluginService;
 import com.google.common.cache.*;
 import org.apache.commons.io.FileUtils;

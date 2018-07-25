@@ -23,7 +23,7 @@ import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.StepEnum;
-import com.datatrees.spider.share.domain.WebsiteType;
+import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.rawdatacentral.service.WebsiteHolderService;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.model.OperatorGroup;

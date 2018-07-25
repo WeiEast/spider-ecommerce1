@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import com.datatrees.rawdatacentral.domain.vo.PluginUpgradeResult;
+import com.datatrees.spider.share.domain.PluginUpgradeResult;
 
 /**
  * 插件管理

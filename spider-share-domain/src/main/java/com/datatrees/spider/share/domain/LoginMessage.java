@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.mq.message;
+package com.datatrees.spider.share.domain;
 
 import java.io.Serializable;
 

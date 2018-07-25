@@ -5,7 +5,7 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
-import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
 
 /**
  * 站点配置

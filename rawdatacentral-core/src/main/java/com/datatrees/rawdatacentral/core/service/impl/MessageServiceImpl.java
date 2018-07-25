@@ -17,7 +17,7 @@ import com.datatrees.rawdatacentral.common.utils.RegexpUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.TopicTag;
-import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
+import com.datatrees.spider.share.domain.LoginMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

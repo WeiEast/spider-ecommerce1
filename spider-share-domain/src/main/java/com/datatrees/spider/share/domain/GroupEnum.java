@@ -11,6 +11,8 @@ package com.datatrees.spider.share.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.datatrees.spider.share.domain.website.WebsiteType;
+
 /**
  * 爬虫分组
  * Created by zhouxinghai on 2017/6/22

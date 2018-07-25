@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
 
 /**
  * Created by zhouxinghai on 2017/6/29

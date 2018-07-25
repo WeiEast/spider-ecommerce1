@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.collector.listener.handler;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
-import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
+import com.datatrees.spider.share.domain.LoginMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

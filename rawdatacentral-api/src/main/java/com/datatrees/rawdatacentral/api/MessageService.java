@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.api;
 
-import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
+import com.datatrees.spider.share.domain.LoginMessage;
 
 /**
  * 消息服务

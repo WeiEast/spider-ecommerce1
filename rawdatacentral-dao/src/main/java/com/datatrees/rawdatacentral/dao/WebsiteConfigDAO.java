@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.domain.vo.WebsiteConfig;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import org.apache.ibatis.annotations.Param;
 
 /**

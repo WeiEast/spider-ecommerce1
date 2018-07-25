@@ -15,7 +15,7 @@ public interface MailServiceApiForQQ {
      * 必填参数: taskId,username,password
      * <p>
      * 结果异步获取
-     * 详见:@see com.datatrees.rawdatacentral.domain.result.ProcessResult
+     * 详见:@see com.datatrees.spider.share.domain.ProcessResult
      * </p>
      * @return
      */
@@ -26,7 +26,7 @@ public interface MailServiceApiForQQ {
      * 必填参数: taskId
      * <p>
      * 结果异步获取
-     * 详见:@see com.datatrees.rawdatacentral.domain.result.ProcessResult
+     * 详见:@see com.datatrees.spider.share.domain.ProcessResult
      * </p>
      * @param param
      * @return

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.vo;
+package com.datatrees.spider.share.domain;
 
 import java.io.File;
 

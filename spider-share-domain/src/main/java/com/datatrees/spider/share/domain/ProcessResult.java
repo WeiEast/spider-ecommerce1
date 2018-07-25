@@ -1,11 +1,8 @@
-package com.datatrees.rawdatacentral.domain.result;
+package com.datatrees.spider.share.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.datatrees.spider.share.domain.ProcessStatus;
-import com.datatrees.spider.share.domain.ErrorCode;
 
 public class ProcessResult<T> implements Serializable {
 

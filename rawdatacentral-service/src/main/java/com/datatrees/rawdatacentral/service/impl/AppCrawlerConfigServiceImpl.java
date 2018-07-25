@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.dao.AppCrawlerConfigDao;
 import com.datatrees.rawdatacentral.domain.appconfig.AppCrawlerConfigParam;
 import com.datatrees.rawdatacentral.domain.appconfig.CrawlerProjectParam;
 import com.datatrees.rawdatacentral.domain.appconfig.ProjectParam;
-import com.datatrees.spider.share.domain.WebsiteType;
+import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.AppCrawlerConfig;
 import com.datatrees.rawdatacentral.domain.model.AppCrawlerConfigCriteria;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;

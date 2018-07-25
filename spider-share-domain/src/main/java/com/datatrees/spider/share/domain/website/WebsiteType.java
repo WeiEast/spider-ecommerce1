@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.spider.share.domain;
+package com.datatrees.spider.share.domain.website;
 
 import java.util.HashMap;
 import java.util.Map;
