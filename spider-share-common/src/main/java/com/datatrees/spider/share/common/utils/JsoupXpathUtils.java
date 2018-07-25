@@ -1,9 +1,8 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.spider.share.common.utils;
 
 import java.util.*;
 
 import cn.wanghaomiao.xpath.model.JXDocument;
-import com.datatrees.spider.share.common.utils.CheckUtils;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;

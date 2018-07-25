@@ -14,6 +14,7 @@ import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;

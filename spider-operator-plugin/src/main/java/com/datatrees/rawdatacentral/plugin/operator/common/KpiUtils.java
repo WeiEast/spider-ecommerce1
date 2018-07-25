@@ -9,7 +9,7 @@ import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.TopicEnum;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
+import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;

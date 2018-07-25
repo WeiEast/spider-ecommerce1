@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.common.http;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.treefinance.proxy.api.ProxyProvider;

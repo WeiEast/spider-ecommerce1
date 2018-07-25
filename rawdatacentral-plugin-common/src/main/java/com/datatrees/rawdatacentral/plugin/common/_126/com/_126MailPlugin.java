@@ -16,7 +16,7 @@ import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.qr.QRUtils;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.ProcessResultUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;

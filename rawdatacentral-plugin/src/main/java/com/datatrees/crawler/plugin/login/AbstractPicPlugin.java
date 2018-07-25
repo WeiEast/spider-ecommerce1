@@ -21,7 +21,7 @@ import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
 import com.datatrees.crawler.plugin.login.AbstractLoginPlugin.ContentType;
 import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.directive.DirectiveEnum;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;

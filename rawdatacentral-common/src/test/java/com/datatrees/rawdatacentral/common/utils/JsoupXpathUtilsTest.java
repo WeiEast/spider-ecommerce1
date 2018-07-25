@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.spider.share.common.utils.CollectionUtils;
+import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
 import org.jsoup.nodes.Element;
 import org.junit.Test;
 

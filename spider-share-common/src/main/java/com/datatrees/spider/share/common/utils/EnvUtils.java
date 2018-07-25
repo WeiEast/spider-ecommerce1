@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.spider.share.common.utils;
 
 import com.datatrees.spider.share.domain.AttributeKey;
 

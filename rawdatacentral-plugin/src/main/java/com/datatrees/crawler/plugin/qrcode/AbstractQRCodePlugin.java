@@ -12,7 +12,7 @@ import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
 import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveType;
