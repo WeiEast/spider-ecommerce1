@@ -4,7 +4,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.model.OperatorParam;

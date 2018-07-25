@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.treefinance.crawler.framework.exception.ExtensionException;
 import com.treefinance.crawler.framework.exception.PluginException;

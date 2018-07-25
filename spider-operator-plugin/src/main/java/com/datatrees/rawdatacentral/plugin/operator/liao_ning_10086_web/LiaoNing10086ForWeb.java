@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.model.OperatorParam;

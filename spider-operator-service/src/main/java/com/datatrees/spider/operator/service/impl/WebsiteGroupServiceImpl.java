@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.WeightUtils;

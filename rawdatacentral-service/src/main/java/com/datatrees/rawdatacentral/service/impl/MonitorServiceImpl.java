@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.api.CrawlerTaskService;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.spider.share.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.TopicTag;

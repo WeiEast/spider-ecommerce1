@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.spider.share.common.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

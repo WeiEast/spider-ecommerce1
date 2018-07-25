@@ -14,7 +14,7 @@ import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
 import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;

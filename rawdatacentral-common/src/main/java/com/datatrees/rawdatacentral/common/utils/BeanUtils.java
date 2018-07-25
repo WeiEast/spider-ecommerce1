@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.common.utils;
 
 import java.lang.reflect.Field;
 
+import com.datatrees.spider.share.common.utils.CheckUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.spider.share.common.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,6 @@ public class RegexpUtils {
     }
 
     public static String selectFirst(String source, String regex, int groupIndex) {
-        CheckUtils.checkNotBlank(source, "source is blank");
-        CheckUtils.checkNotBlank(regex, "regex is blank");
         Matcher matcher = Pattern.compile(regex).matcher(source);
         if (matcher.find()) {
             return matcher.group(groupIndex);
@@ -22,8 +20,6 @@ public class RegexpUtils {
     }
 
     public static List<String> selectList(String source, String regex) {
-        CheckUtils.checkNotBlank(source, "source is blank");
-        CheckUtils.checkNotBlank(regex, "regex is blank");
         Matcher matcher = Pattern.compile(regex).matcher(source);
         List<String> list = new ArrayList<>();
         while (matcher.find()) {
@@ -33,8 +29,6 @@ public class RegexpUtils {
     }
 
     public static String selectLast(String source, String regex, int groupIndex) {
-        CheckUtils.checkNotBlank(source, "source is blank");
-        CheckUtils.checkNotBlank(regex, "regex is blank");
         Matcher matcher = Pattern.compile(regex).matcher(source);
         String selectText = null;
         while (matcher.find()) {

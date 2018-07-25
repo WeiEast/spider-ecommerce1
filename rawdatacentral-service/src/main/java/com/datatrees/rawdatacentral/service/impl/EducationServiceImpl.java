@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.RequestType;

@@ -35,7 +35,7 @@ import com.datatrees.rawdatacentral.collector.utils.OperatorUtils;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.common.utils.IpUtils;
+import com.datatrees.spider.share.common.utils.IpUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.datatrees.spider.share.common.utils.DateUtils;
+import com.datatrees.spider.share.common.utils.RegexpUtils;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
