@@ -2,7 +2,6 @@ package com.datatrees.rawdatacentral.service.mq;
 
 import javax.annotation.Resource;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,9 +10,9 @@ import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.rawdatacentral.common.utils.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +22,14 @@ import org.springframework.stereotype.Service;
  * Created by zhouxinghai on 2017/10/17
  */
 @Service
-public class MessageListener implements MessageListenerConcurrently, InitializingBean {
+public class MessageListener implements MessageListenerConcurrently {
 
-    private static final Logger                                   logger          = LoggerFactory.getLogger(MessageListener.class);
+    private static final Logger             logger          = LoggerFactory.getLogger(MessageListener.class);
 
-    private static final Charset                                  DEFAULT_CHARSET = Charset.forName("UTF-8");
-
-    private static final Map<String, Map<String, MessageHandler>> handlers        = new HashMap<>();
+    private static final Charset            DEFAULT_CHARSET = Charset.forName("UTF-8");
 
     @Resource
-    private              ApplicationContext                       applicationContext;
+    private              ApplicationContext applicationContext;
 
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
@@ -87,22 +84,14 @@ public class MessageListener implements MessageListenerConcurrently, Initializin
     }
 
     private MessageHandler getMessageHandler(String topic, String tag) {
-        if (handlers.isEmpty() || !handlers.containsKey(topic)) {
-            return null;
-        }
-        return handlers.get(topic).get(tag);
-    }
-
-    @Override
-    public void afterPropertiesSet() {
         Map<String, MessageHandler> map = applicationContext.getBeansOfType(MessageHandler.class);
         for (Map.Entry<String, MessageHandler> entry : map.entrySet()) {
             MessageHandler handler = entry.getValue();
-            if (!handlers.containsKey(handler.getTopic())) {
-                handlers.put(handler.getTopic(), new HashMap<>());
+            if (StringUtils.equals(handler.getTopic(), topic) && StringUtils.equals(handler.getTag(), tag)) {
+                return handler;
             }
-            handlers.get(handler.getTopic()).put(handler.getTag(), handler);
-            logger.info("register message handler topic={},tag={},handler={}", handler.getTopic(), handler.getTag(), handler.getClass().getName());
         }
+        return null;
     }
+
 }
