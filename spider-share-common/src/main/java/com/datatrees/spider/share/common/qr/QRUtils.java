@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.qr;
+package com.datatrees.spider.share.common.qr;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

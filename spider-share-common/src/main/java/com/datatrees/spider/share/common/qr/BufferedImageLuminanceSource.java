@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.qr;
+package com.datatrees.spider.share.common.qr;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
