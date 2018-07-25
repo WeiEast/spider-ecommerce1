@@ -1,5 +1,6 @@
 package com.datatrees.rawdatacentral.common.utils;
 
+import com.datatrees.spider.share.common.utils.RedisUtils;
 import org.junit.Test;
 
 public class BackRedisUtilsTest {

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.http;
+package com.datatrees.spider.share.common.http;
 
 import java.io.File;
 import java.io.IOException;

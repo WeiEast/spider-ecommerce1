@@ -13,7 +13,7 @@ import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveType;

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.common.utils.*;
+import com.datatrees.spider.share.common.http.URIUtils;
 import com.datatrees.spider.share.common.utils.*;
 import com.datatrees.spider.share.domain.http.HttpHeadKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;

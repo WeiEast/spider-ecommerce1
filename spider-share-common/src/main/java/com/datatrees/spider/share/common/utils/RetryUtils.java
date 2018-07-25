@@ -1,9 +1,7 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.spider.share.common.utils;
 
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.rawdatacentral.common.retry.RetryHandler;
-import com.datatrees.spider.share.common.utils.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

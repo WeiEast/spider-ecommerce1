@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.mail._126.MailServiceApiFor126;
-import com.datatrees.rawdatacentral.common.utils.RedisUtils;
+import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;

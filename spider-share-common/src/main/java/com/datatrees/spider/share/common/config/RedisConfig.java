@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.config;
+package com.datatrees.spider.share.common.config;
 
 public class RedisConfig {
 
