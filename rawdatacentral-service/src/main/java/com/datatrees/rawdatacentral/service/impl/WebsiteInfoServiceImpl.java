@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.List;
 
-import com.datatrees.spider.share.common.TaskUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoCriteria;

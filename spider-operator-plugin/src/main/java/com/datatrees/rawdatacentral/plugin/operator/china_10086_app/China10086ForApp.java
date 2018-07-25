@@ -10,7 +10,7 @@ import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.TaskUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.domain.RequestType;

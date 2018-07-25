@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service.website;
 import javax.annotation.Resource;
 
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.spider.share.common.utils.WebsiteUtils;
+import com.datatrees.spider.share.service.utils.WebsiteUtils;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;

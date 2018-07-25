@@ -12,7 +12,7 @@ import com.datatrees.rawdatacentral.api.*;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.rawdatacentral.common.http.ProxyUtils;
-import com.datatrees.spider.share.common.TaskUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.*;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.rawdatacentral.domain.education.EducationParam;

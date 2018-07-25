@@ -1,11 +1,13 @@
-package com.datatrees.spider.share.common.utils;
+package com.datatrees.spider.share.service.utils;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.util.Base64;
 
-import com.datatrees.spider.share.common.TaskUtils;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.RedisUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
