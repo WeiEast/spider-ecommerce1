@@ -23,7 +23,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
+import com.datatrees.spider.share.domain.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.lang3.StringUtils;

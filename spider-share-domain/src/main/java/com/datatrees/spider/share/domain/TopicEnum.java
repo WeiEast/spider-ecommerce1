@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.enums;
+package com.datatrees.spider.share.domain;
 
 /**
  * 消息topic

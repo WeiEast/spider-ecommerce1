@@ -15,7 +15,7 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
-import com.datatrees.rawdatacentral.domain.enums.WebsiteType;
+import com.datatrees.spider.share.domain.WebsiteType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

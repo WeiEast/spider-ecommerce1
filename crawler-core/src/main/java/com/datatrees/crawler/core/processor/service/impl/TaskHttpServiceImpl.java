@@ -17,7 +17,7 @@ import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.enums.RequestType;
+import com.datatrees.spider.share.domain.RequestType;
 import org.apache.commons.lang3.StringUtils;
 
 public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {

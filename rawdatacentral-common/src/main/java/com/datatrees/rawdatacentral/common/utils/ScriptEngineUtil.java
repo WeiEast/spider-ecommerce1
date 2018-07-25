@@ -6,7 +6,7 @@ import javax.script.ScriptEngineManager;
 import java.util.Base64;
 
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

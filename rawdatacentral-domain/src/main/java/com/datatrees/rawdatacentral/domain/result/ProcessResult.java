@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.enums.ProcessStatus;
+import com.datatrees.spider.share.domain.ProcessStatus;
 import com.datatrees.spider.share.domain.ErrorCode;
 
 public class ProcessResult<T> implements Serializable {

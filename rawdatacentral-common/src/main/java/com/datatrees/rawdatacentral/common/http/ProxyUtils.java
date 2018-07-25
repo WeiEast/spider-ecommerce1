@@ -5,7 +5,7 @@ import com.datatrees.rawdatacentral.api.ProxyService;
 import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
-import com.datatrees.rawdatacentral.domain.enums.RedisKeyPrefixEnum;
+import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.treefinance.proxy.api.ProxyProvider;
 import com.treefinance.proxy.domain.IpLocale;
 import com.treefinance.proxy.domain.Proxy;

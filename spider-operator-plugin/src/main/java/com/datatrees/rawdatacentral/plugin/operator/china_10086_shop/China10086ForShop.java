@@ -16,7 +16,7 @@ import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.PerpertyKey;
-import com.datatrees.rawdatacentral.domain.enums.RequestType;
+import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginService;

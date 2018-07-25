@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.datatrees.rawdatacentral.domain.constant.HttpHeadKey;
-import com.datatrees.rawdatacentral.domain.enums.RequestType;
+import com.datatrees.spider.share.domain.RequestType;
 
 /**
  * 请求

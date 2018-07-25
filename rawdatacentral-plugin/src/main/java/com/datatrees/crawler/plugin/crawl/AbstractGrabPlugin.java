@@ -13,7 +13,7 @@ import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
 import com.datatrees.rawdatacentral.domain.constant.DirectiveType;
-import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
+import com.datatrees.spider.share.domain.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

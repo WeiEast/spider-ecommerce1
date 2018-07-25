@@ -23,7 +23,7 @@ import com.datatrees.crawler.plugin.login.AbstractLoginPlugin.ContentType;
 import com.datatrees.rawdatacentral.api.MonitorService;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
+import com.datatrees.spider.share.domain.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.google.gson.reflect.TypeToken;
