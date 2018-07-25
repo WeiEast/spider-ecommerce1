@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.api.RedisService;
-import com.datatrees.rawdatacentral.domain.constant.DirectiveRedisCode;
-import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
+import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;

@@ -6,7 +6,7 @@ import java.util.Map;
 import com.datatrees.spider.operator.domain.model.OperatorGroup;
 import com.datatrees.spider.operator.domain.model.OperatorLoginConfig;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * 运营商接口

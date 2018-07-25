@@ -16,7 +16,7 @@ import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import com.ibm.icu.text.SimpleDateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;

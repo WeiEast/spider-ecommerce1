@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.constant;
+package com.datatrees.spider.share.domain.directive;
 
 /**
  * redis 交互指令任务状态

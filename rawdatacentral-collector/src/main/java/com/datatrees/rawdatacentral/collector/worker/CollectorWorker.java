@@ -39,7 +39,7 @@ import com.datatrees.rawdatacentral.domain.exception.LoginTimeOutException;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.exception.ConfigException;
 import com.treefinance.crawler.framework.expression.StandardExpression;

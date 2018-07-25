@@ -20,7 +20,7 @@ import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
 import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
 import com.datatrees.spider.share.service.normalizers.SubmitNormalizerFactory;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.filestore.FileStoreService;

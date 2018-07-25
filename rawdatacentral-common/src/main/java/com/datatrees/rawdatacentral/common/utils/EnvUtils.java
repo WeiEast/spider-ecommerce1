@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.common.utils;
 
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.spider.share.domain.AttributeKey;
 
 public class EnvUtils {
 

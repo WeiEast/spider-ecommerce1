@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.common.utils.RedisUtils;
 import com.datatrees.rawdatacentral.common.utils.WebsiteUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.lang3.StringUtils;

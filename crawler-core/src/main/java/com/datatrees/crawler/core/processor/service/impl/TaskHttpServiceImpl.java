@@ -16,7 +16,7 @@ import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CollectionUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RequestType;
 import org.apache.commons.lang3.StringUtils;
 

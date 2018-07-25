@@ -5,7 +5,7 @@ package com.datatrees.rawdatacentral.api.internal;
  */
 
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * 学信网注册功能

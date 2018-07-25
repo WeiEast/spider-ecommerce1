@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.domain;
+package com.datatrees.spider.share.domain.directive;
 
 /**
  * 交互指令

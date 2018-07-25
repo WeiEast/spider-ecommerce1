@@ -14,15 +14,14 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.ScriptEngineUtil;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
-import com.datatrees.rawdatacentral.domain.constant.PerpertyKey;
-import com.datatrees.spider.share.domain.RequestType;
+import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.RequestType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -418,7 +417,7 @@ public class China10086ForShop implements OperatorPluginService {
 
     private String getProvinceName(String provinceCode) {
         CheckUtils.checkNotBlank(provinceCode, "provinceCode is blank");
-        String json = PropertiesConfiguration.getInstance().get(PerpertyKey.OPERATOR_10086_SHOP_PROVINCE_CODE);
+        String json = PropertiesConfiguration.getInstance().get("operator.10086.shop.province.code");
         CheckUtils.checkNotBlank(json, "propery operator.10086.shop.province.code not found");
         Map<String, String> map = JSON.parseObject(json, new TypeReference<Map<String, String>>() {});
         return map.get(provinceCode);

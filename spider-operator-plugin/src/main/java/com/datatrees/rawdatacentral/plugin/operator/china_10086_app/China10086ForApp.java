@@ -23,7 +23,7 @@ import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;

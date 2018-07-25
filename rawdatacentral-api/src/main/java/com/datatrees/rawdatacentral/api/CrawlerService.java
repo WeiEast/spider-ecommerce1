@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * 爬虫对外dubbo接口

@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.api;
 import java.util.List;
 
 import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * 监控

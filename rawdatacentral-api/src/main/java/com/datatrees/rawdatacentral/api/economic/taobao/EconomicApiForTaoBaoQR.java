@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.api.economic.taobao;
 
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * 淘宝二维码登录接口

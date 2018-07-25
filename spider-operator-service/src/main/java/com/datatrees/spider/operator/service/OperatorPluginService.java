@@ -3,7 +3,7 @@ package com.datatrees.spider.operator.service;
 import java.util.Map;
 
 import com.datatrees.spider.operator.domain.model.OperatorParam;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * 运营商登陆接口

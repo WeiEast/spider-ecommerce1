@@ -15,7 +15,7 @@ import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

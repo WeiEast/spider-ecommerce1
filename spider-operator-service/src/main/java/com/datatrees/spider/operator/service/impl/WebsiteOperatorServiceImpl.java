@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.*;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.RequestType;

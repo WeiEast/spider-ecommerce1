@@ -17,10 +17,10 @@ import com.datatrees.rawdatacentral.common.http.TaskUtils;
 import com.datatrees.rawdatacentral.common.utils.BeanFactoryUtils;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.common.utils.TemplateUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

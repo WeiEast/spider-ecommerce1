@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.constant;
+package com.datatrees.spider.share.domain.http;
 
 /**
  * Created by zhouxinghai on 2017/7/17.

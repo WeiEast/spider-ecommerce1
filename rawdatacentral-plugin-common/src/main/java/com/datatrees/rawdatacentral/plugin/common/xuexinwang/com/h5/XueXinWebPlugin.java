@@ -29,7 +29,7 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
 import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;

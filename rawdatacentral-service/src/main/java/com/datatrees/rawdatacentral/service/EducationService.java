@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * Created by zhangyanjia on 2017/11/30.

@@ -9,7 +9,7 @@ import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;

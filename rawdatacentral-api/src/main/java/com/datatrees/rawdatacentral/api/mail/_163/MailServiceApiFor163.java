@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.api.mail._163;
 
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
  * 163邮箱模拟登陆接口

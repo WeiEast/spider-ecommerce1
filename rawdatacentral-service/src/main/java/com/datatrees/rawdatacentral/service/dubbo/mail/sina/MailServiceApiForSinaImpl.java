@@ -8,7 +8,7 @@ import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

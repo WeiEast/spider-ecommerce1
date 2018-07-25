@@ -1,10 +1,11 @@
-package com.datatrees.spider.share.domain;
+package com.datatrees.spider.share.domain.http;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.spider.share.domain.ErrorCode;
 
 /**
  * http接口返回信息 Created by zhouxinghai on 2017/4/27.

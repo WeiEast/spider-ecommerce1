@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.common.http.TaskUtils;
-import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
+import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.common.utils.DateUtils;
 import com.google.common.base.Preconditions;

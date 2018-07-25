@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.constant;
+package com.datatrees.spider.share.domain.directive;
 
 /**
  * 交互指令类型

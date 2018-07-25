@@ -12,7 +12,7 @@ import com.datatrees.rawdatacentral.api.RedisService;
 import com.datatrees.rawdatacentral.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.DateUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

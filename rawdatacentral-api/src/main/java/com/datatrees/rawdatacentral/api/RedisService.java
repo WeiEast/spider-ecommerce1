@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.result.DirectiveResult;
+import com.datatrees.spider.share.domain.directive.DirectiveResult;
 
 /**
  * redis操作

@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.api.internal;
 
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 
 public interface QRPluginService {
 

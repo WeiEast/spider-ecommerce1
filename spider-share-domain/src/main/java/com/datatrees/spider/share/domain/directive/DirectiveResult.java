@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.result;
+package com.datatrees.spider.share.domain.directive;
 
 import java.io.Serializable;
 

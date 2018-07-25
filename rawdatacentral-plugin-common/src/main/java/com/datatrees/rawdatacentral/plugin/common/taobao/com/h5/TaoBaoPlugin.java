@@ -34,7 +34,7 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util.QRUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import com.treefinance.proxy.domain.IpLocale;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;

@@ -7,7 +7,7 @@ import com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import org.springframework.stereotype.Service;
 
 /**

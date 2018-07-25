@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.domain.vo.Response;
 import com.datatrees.rawdatacentral.service.EducationService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.HttpResult;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import org.apache.http.Consts;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
