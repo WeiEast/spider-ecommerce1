@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.mq;
+package com.datatrees.spider.share.service.mq;
 
 /**
  * 通用topic处理

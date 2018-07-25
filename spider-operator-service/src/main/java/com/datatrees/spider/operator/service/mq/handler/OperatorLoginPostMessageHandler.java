@@ -13,7 +13,7 @@ import com.datatrees.rawdatacentral.domain.constant.AttributeKey;
 import com.datatrees.rawdatacentral.domain.enums.DirectiveEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
-import com.datatrees.rawdatacentral.service.mq.MessageHandler;
+import com.datatrees.spider.share.service.mq.MessageHandler;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.model.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginPostService;

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.mq;
+package com.datatrees.spider.share.service.mq;
 
 import javax.annotation.Resource;
 import java.nio.charset.Charset;
@@ -9,7 +9,7 @@ import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import com.alibaba.rocketmq.common.message.MessageExt;
-import com.datatrees.rawdatacentral.common.utils.DateUtils;
+import com.datatrees.spider.share.common.utils.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

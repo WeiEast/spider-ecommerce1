@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.common.utils;
+package com.datatrees.spider.share.common.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

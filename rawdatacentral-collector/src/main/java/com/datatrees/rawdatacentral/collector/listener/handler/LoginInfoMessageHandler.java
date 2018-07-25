@@ -17,7 +17,7 @@ import com.datatrees.rawdatacentral.domain.enums.TopicEnum;
 import com.datatrees.rawdatacentral.domain.enums.TopicTag;
 import com.datatrees.rawdatacentral.domain.mq.message.LoginMessage;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.service.mq.MessageHandler;
+import com.datatrees.spider.share.service.mq.MessageHandler;
 import com.treefinance.crawler.exception.UnsupportedWebsiteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

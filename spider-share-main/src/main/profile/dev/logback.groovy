@@ -1,7 +1,7 @@
 
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
-import com.datatrees.rawdatacentral.common.utils.DateUtils
+import com.datatrees.spider.share.common.utils.DateUtils
 
 import java.nio.charset.Charset
 
