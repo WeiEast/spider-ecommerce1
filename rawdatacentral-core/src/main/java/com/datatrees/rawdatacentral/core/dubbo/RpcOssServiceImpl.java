@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.core.dubbo;
 
-import com.datatrees.rawdatacentral.api.RpcOssService;
+import com.datatrees.spider.share.service.RpcOssService;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.core.oss.OssUtils;

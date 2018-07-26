@@ -8,8 +8,8 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.spider.share.service.MessageService;
+import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.utils.ProxyUtils;
 import com.datatrees.spider.share.service.utils.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;

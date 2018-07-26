@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.api.MonitorService;
+import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.collector.listener.handler.CollectorMessageUtils;
 import com.datatrees.spider.share.domain.TopicEnum;

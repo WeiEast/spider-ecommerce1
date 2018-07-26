@@ -20,7 +20,7 @@ import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.BeanResourceFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.rawdatacentral.api.MessageService;
+import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.RedisService;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
