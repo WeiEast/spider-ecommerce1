@@ -6,6 +6,10 @@ package com.datatrees.spider.share.domain;
  */
 public enum TopicEnum {
 
+    SPIDER_OPERATOR("spider_operator", "爬虫运营商"),
+    SPIDER_ECOMMERCE("spider_ecommerce", "爬虫电商"),
+    SPIDER_BANK("spider_bank", "爬虫账单"),
+    SPIDER_OTHER("spider_other", "爬虫其他"),
     TASK_NEXT_DIRECTIVE("task_next_directive", "交互指令"),
     CRAWLER_MONITOR("crawler_monitor", " 爬虫监控"),
     TASK_LOG("task_log", "任务状态日志"),

@@ -4,12 +4,12 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.collector.listener.handler.CollectorMessageUtils;
+import com.datatrees.spider.share.domain.LoginMessage;
 import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.TopicTag;
-import com.datatrees.spider.share.domain.LoginMessage;
+import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.mq.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class OperatorCrawlerStartMessageHandler implements MessageHandler {
 
     @Override
     public String getTopic() {
-        return TopicEnum.RAWDATA_INPUT.getCode();
+        return TopicEnum.SPIDER_OPERATOR.getCode();
     }
 
 }

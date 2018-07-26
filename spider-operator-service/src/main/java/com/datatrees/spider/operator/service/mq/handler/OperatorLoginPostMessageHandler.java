@@ -129,7 +129,7 @@ public class OperatorLoginPostMessageHandler implements MessageHandler {
 
     @Override
     public String getTopic() {
-        return TopicEnum.RAWDATA_INPUT.getCode();
+        return TopicEnum.SPIDER_OPERATOR.getCode();
     }
 
 }
