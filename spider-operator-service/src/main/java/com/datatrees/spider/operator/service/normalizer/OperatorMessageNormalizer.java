@@ -6,19 +6,24 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.collector.worker.normalizer;
+package com.datatrees.spider.operator.service.normalizer;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.OperatorData;
+import com.datatrees.rawdatacentral.dao.OperatorDAO;
 import com.datatrees.rawdatacentral.domain.model.Operator;
-import com.datatrees.rawdatacentral.service.OperatorService;
+import com.datatrees.rawdatacentral.domain.model.example.OperatorExample;
+import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +37,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class OperatorMessageNormalizer implements MessageNormalizer {
 
-    private static final Logger          LOGGER = LoggerFactory.getLogger(OperatorMessageNormalizer.class);
+    private static final Logger       logger = LoggerFactory.getLogger(OperatorMessageNormalizer.class);
 
     @Resource
-    private              OperatorService operatorService;
+    private              RedisService redisService;
+
+    @Resource
+    private              OperatorDAO  operatorDAO;
 
     @Override
     public boolean normalize(Object data) {
@@ -65,11 +73,30 @@ public class OperatorMessageNormalizer implements MessageNormalizer {
     }
 
     private int getOperatorId(ExtractMessage message) {
-        Operator operator = operatorService.getByWebsiteId(message.getWebsiteId());
+        Operator operator = getByWebsiteId(message.getWebsiteId());
         if (operator == null) {
-            LOGGER.warn("operator not found websiteId={}", message.getWebsiteId());
+            logger.warn("operator not found websiteId={}", message.getWebsiteId());
             return 0;
         }
         return operator.getId();
+    }
+
+    private Operator getByWebsiteId(Integer websiteId) {
+        if (null == websiteId) {
+            logger.warn("invalid param websiteId is null");
+            return null;
+        }
+        String key = "rawdatacentral_operator_websiteid_" + websiteId;
+        Operator operator = redisService.getCache(key, new TypeReference<Operator>() {});
+        if (null == operator) {
+            OperatorExample example = new OperatorExample();
+            example.createCriteria().andWebsiteidEqualTo(websiteId).andIsenabledEqualTo(true);
+            List<Operator> list = operatorDAO.selectByExample(example);
+            if (null != list && !list.isEmpty()) {
+                operator = list.get(0);
+                redisService.cache(key, operator, 1, TimeUnit.HOURS);
+            }
+        }
+        return operator;
     }
 }
