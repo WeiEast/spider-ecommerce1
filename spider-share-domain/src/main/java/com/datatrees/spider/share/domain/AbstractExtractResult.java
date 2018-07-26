@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.domain.result;
+package com.datatrees.spider.share.domain;
 
 import java.io.Serializable;
 import java.util.Map;

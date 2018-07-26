@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.core.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
+import com.datatrees.spider.share.domain.AbstractExtractResult;
 
 /**
  * Created by wuminlang on 15/7/28.

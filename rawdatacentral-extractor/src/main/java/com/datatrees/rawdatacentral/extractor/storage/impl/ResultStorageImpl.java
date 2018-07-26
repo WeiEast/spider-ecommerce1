@@ -14,7 +14,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
 import com.datatrees.rawdatacentral.domain.model.*;
-import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
+import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -13,7 +13,7 @@ import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.*;
 import com.datatrees.rawdatacentral.domain.model.*;
-import com.datatrees.rawdatacentral.domain.result.AbstractExtractResult;
+import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.rawdatacentral.extractor.builder.ExtractResultBuilder;
 import com.datatrees.rawdatacentral.extractor.common.StoragePathUtil;
 import org.apache.commons.lang.BooleanUtils;

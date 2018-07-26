@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.datatrees.rawdatacentral.domain.model.base.AbstractTask;
+import com.datatrees.spider.share.domain.AbstractTask;
 
 /** create by system from table t_tasklog(task log info) */
 public class Task extends AbstractTask implements Serializable {
