@@ -1,7 +1,6 @@
 dependencies {
     compile project(":spider-share-service")
     compile project(":spider-share-api")
-    compile project(":rawdatacentral-common")
     compile project(":rawdatacentral-dao")
     compile project(":crawler-core")
     compile project(":rawdatacentral-plugin")
@@ -26,6 +25,7 @@ dependencies {
     compile 'com.datatrees.common:notify-common-facade:3.5.6'
 
     compile 'org.projectlombok:lombok:1.16.18'
+
     compile 'com.treefinance.saas:grap-server-facade:1.0.0-SNAPSHOT'
     compile 'com.treefinance.saas:merchant-center-facade:1.0.3-SNAPSHOT'
 }

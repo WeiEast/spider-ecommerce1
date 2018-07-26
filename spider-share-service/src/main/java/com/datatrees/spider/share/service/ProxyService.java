@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api;
+package com.datatrees.spider.share.service;
 
 import com.treefinance.proxy.domain.Proxy;
 

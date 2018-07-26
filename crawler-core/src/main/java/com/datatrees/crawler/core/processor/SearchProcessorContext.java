@@ -29,7 +29,7 @@ import com.datatrees.crawler.core.processor.common.resource.LoginResource;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.page.DummyPage;
-import com.datatrees.rawdatacentral.common.http.ProxyUtils;
+import com.datatrees.spider.share.service.utils.ProxyUtils;
 import com.google.common.collect.ImmutableList;
 import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;

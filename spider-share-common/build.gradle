@@ -17,7 +17,6 @@ dependencies {
     compile "org.redisson:redisson:${redissonVersion}"
     compile "org.springframework.boot:spring-boot:${springBootVersion}"
 
-    compile "com.treefinance.proxy:proxy-api:${proxyApiVersion}"
 
 }
 

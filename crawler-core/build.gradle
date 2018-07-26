@@ -10,7 +10,7 @@ ext {
 
 dependencies {
     compile project(':rawdatacentral-api')
-    compile project(':rawdatacentral-common')
+    compile project(':spider-share-service')
     compile "com.treefinance.toolkit:toolkit:${toolkit}"
     compile "com.google.guava:guava:${guavaVersion}"
     compile 'commons-httpclient:commons-httpclient:3.1'

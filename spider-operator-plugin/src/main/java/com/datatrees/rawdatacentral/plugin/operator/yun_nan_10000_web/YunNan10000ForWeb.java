@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.plugin.operator.yun_nan_10000_web;
 import java.net.URLEncoder;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.service.util.TaskHttpClient;
+import com.datatrees.spider.share.service.utils.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;

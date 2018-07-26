@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.service.util.TaskHttpClient;
+import com.datatrees.spider.share.service.utils.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.service.utils.ScriptEngineUtil;
 import com.datatrees.spider.share.domain.RequestType;

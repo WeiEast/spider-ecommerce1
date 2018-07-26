@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
-import com.datatrees.rawdatacentral.service.util.TaskHttpClient;
+import com.datatrees.spider.share.service.utils.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.service.utils.ScriptEngineUtil;
 import com.datatrees.spider.share.domain.RequestType;

@@ -11,7 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.format.unit.TimeUnit;
-import com.datatrees.rawdatacentral.service.util.TaskHttpClient;
+import com.datatrees.spider.share.service.utils.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.service.utils.ScriptEngineUtil;
 import com.datatrees.spider.share.common.utils.TemplateUtils;

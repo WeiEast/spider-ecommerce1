@@ -1,8 +1,11 @@
 dependencies {
     compile project(':rawdatacentral-domain')
-//    compile project(":spider-operator-api")
+    compile project(":spider-share-api")
 
     compile "com.treefinance.proxy:proxy-api:${proxyApiVersion}"
+    compile "com.treefinance.proxy:proxy-api:${proxyApiVersion}"
+
+
 
 }
 apply from: rootProject.file('upload.gradle')

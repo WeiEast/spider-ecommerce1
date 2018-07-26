@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service.proxy;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
-import com.datatrees.rawdatacentral.api.ProxyService;
+import com.datatrees.spider.share.service.ProxyService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

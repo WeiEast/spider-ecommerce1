@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.util;
+package com.datatrees.spider.share.service.utils;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.http.RequestIdUtils;
 import com.datatrees.spider.share.common.http.URIUtils;

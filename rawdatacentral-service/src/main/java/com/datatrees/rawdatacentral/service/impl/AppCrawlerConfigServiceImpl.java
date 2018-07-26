@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.config.search.BusinessType;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.spider.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
 import com.datatrees.rawdatacentral.dao.AppCrawlerConfigDao;
 import com.datatrees.rawdatacentral.domain.appconfig.AppCrawlerConfigParam;

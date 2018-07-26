@@ -31,6 +31,7 @@ import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.crawler.core.processor.service.impl.DefaultService;
 import com.datatrees.crawler.core.processor.service.impl.GrabServiceImpl;
 import com.datatrees.crawler.core.processor.service.impl.PluginServiceImpl;
+import com.datatrees.crawler.core.processor.service.impl.TaskHttpServiceImpl;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.format.Formatter;
 import com.treefinance.crawler.framework.format.base.BooleanFormatter;
@@ -90,6 +91,7 @@ public final class ProcessorFactory {
         register(ServiceType.Plugin_Service, PluginServiceImpl.class);
         register(ServiceType.Grab_Service, GrabServiceImpl.class);
         register(ServiceType.Default, DefaultService.class);
+        register(ServiceType.Task_Http_Service, TaskHttpServiceImpl.class);
 
         register(ResultType.DATE, DateFormatter.class);
         register(ResultType.String, StringFormatter.class);

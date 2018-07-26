@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.spider.share.service.RedisService;
 import com.datatrees.rawdatacentral.dao.BankDAO;
 import com.datatrees.rawdatacentral.dao.BankMailDAO;
 import com.datatrees.rawdatacentral.domain.model.Bank;

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.rawdatacentral.common.http.ProxyUtils;
+import com.datatrees.spider.share.service.utils.ProxyUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;

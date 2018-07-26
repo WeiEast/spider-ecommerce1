@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.spider.share.service.RedisService;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import org.junit.Test;
 

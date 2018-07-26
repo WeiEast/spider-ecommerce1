@@ -1,8 +1,8 @@
-package com.datatrees.rawdatacentral.common.http;
+package com.datatrees.spider.share.service.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.api.ProxyService;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.spider.share.service.ProxyService;
+import com.datatrees.spider.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;

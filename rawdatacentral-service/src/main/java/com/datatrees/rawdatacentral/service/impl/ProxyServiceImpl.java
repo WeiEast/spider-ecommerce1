@@ -4,8 +4,8 @@ import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.api.ProxyService;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.spider.share.service.ProxyService;
+import com.datatrees.spider.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;

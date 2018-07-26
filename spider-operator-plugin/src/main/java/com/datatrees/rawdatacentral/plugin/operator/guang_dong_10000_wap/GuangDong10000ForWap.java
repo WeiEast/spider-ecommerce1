@@ -8,7 +8,7 @@ import com.alibaba.fastjson.JSONPath;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.rawdatacentral.service.util.TaskHttpClient;
+import com.datatrees.spider.share.service.utils.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;

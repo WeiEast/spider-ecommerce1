@@ -8,8 +8,7 @@ ext {
 }
 
 dependencies {
-    compile project(':rawdatacentral-common')
-    compile project(':crawler-core')
+    compile project(':rawdatacentral-service')
 
     compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessageVersion}", changing: true) {
         exclude(module: "guava")

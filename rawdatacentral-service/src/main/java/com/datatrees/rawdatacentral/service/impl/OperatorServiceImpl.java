@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.api.RedisService;
+import com.datatrees.spider.share.service.RedisService;
 import com.datatrees.rawdatacentral.dao.OperatorDAO;
 import com.datatrees.rawdatacentral.domain.model.Operator;
 import com.datatrees.rawdatacentral.domain.model.example.OperatorExample;
