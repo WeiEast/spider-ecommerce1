@@ -8,7 +8,7 @@
 
 package com.datatrees.rawdatacentral.submitter.normalizer;
 
-import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
 import com.datatrees.spider.share.service.normalizers.SubmitNormalizer;
 import org.springframework.stereotype.Service;

@@ -14,7 +14,7 @@ import java.util.Map;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.DefaultData;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

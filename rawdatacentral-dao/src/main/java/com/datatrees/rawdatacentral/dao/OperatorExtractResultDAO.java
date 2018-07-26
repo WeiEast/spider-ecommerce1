@@ -18,6 +18,6 @@ import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
 @Resource
 public interface OperatorExtractResultDAO {
 
-    public int insert(OperatorExtractResult result);
+    int insert(OperatorExtractResult result);
 
 }

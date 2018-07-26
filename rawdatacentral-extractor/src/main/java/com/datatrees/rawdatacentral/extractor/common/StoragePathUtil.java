@@ -13,7 +13,7 @@ import java.util.Date;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.spider.share.domain.ResultType;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

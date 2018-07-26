@@ -15,7 +15,7 @@ import java.util.Map;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
 import com.datatrees.rawdatacentral.domain.model.Ecommerce;
 import com.datatrees.rawdatacentral.service.EcommerceService;

@@ -18,7 +18,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;

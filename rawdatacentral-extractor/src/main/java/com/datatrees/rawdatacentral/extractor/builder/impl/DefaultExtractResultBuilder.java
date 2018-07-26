@@ -10,12 +10,12 @@ package com.datatrees.rawdatacentral.extractor.builder.impl;
 
 import com.datatrees.rawdatacentral.core.common.UniqueKeyGenUtil;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
-import com.datatrees.rawdatacentral.core.model.ResultType;
+import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.*;
 import com.datatrees.rawdatacentral.domain.model.*;
-import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.rawdatacentral.extractor.builder.ExtractResultBuilder;
 import com.datatrees.rawdatacentral.extractor.common.StoragePathUtil;
+import com.datatrees.spider.share.domain.AbstractExtractResult;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +27,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultExtractResultBuilder implements ExtractResultBuilder {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * ExtractResultBuilder#buildExtractResult(com.datatrees
-     * .rawdatacentral.core.model.ExtractMessage)
-     */
     @Override
     public AbstractExtractResult buildExtractResult(ExtractMessage extractMessage) {
         ResultType resultType = extractMessage.getResultType();

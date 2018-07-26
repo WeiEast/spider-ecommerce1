@@ -15,6 +15,7 @@ import java.util.Map;
 
 import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 import com.datatrees.spider.share.domain.ExtractCode;
+import com.datatrees.spider.share.domain.ResultType;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -23,29 +24,29 @@ import com.datatrees.spider.share.domain.ExtractCode;
  */
 public class ExtractMessage {
 
-    private int                  taskLogId;//TaskLog Id
+    private int                                          taskLogId;//TaskLog Id
 
-    private Long                 taskId;
+    private Long                                         taskId;
 
-    private int                  websiteId;// search websiteid
+    private int                                          websiteId;// search websiteid
 
-    private ResultType           ResultType;
+    private com.datatrees.spider.share.domain.ResultType ResultType;
 
-    private int                  typeId;// maybe bankid，operatorid，ecommerceid
+    private int                                          typeId;// maybe bankid，operatorid，ecommerceid
 
-    private Object               messageObject;
+    private Object                                       messageObject;
 
-    private ExtractCode          extractCode;
+    private ExtractCode                                  extractCode;
 
-    private Map<String, String>  submitkeyResult = new HashMap<String, String>();
+    private Map<String, String>                          submitkeyResult = new HashMap<String, String>();
 
-    private ParentTask           task;
+    private ParentTask                                   task;
 
-    private List<ExtractMessage> subExtractMessageList;
+    private List<ExtractMessage>                         subExtractMessageList;
 
-    private Integer              messageIndex;
+    private Integer                                      messageIndex;
 
-    private String               websiteName;
+    private String                                       websiteName;
 
     public Long getTaskId() {
         return taskId;
