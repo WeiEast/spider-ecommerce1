@@ -10,7 +10,6 @@ public interface WebsiteInfoService {
     /**
      * 根据环境和站点名获取运营商配置
      * @param websiteName
-     * @param env
      * @return
      */
     WebsiteInfoWithBLOBs getByWebsiteNameFromInfo(String websiteName);

@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.nio.charset.Charset;
 
 import com.datatrees.rawdatacentral.collector.actor.Collector;
-import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.service.util.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
 import com.datatrees.spider.share.domain.RequestType;

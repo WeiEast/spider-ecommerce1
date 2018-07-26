@@ -16,4 +16,7 @@ dependencies {
 
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
+
+    compile "com.treefinance.proxy:proxy-api:${proxyApiVersion}"
+
 }

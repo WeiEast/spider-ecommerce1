@@ -1,4 +1,4 @@
-package com.datatrees.crawler.core.processor.service.impl;
+package com.datatrees.rawdatacentral.service.plugin;
 
 import javax.annotation.Nonnull;
 
@@ -13,7 +13,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.service.util.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
 import com.datatrees.spider.share.domain.AttributeKey;

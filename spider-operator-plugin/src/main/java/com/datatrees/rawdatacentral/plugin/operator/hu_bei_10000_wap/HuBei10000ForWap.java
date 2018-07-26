@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.plugin.operator.hu_bei_10000_wap;
 import java.net.URLEncoder;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.common.http.TaskHttpClient;
+import com.datatrees.rawdatacentral.service.util.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
