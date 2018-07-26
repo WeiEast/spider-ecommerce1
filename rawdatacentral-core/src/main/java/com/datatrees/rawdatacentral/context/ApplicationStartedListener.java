@@ -57,7 +57,7 @@ public class ApplicationStartedListener implements ApplicationListener<ContextRe
         LOGGER.info("Starting mq consumer");
         MessageListener messageListener = applicationContext.getBean(MessageListener.class);
         DefaultMQPushConsumer loginInfoConsumer = applicationContext.getBean(DefaultMQPushConsumer.class);
-        loginInfoConsumer.subscribe(TopicEnum.RAWDATA_INPUT.getCode(), "*");
+        loginInfoConsumer.subscribe(TopicEnum.SPIDER_OPERATOR.getCode(), "*");
         loginInfoConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
         loginInfoConsumer.setMessageModel(MessageModel.CLUSTERING);
         loginInfoConsumer.setConsumeMessageBatchMaxSize(1);
