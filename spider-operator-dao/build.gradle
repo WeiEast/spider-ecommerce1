@@ -1,5 +1,7 @@
 dependencies {
     compile project(":spider-operator-domain")
+    compile project(":spider-share-domain")
+    compile project(":spider-share-dao")
     compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}") {
         exclude(module: 'spring-boot-starter')
         exclude(module: 'spring-boot-starter-jdbc')
