@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.rawdatacentral.core.model.message;
+package com.datatrees.spider.share.domain;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

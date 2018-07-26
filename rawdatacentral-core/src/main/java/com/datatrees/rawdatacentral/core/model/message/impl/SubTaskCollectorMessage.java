@@ -10,6 +10,7 @@ package com.datatrees.rawdatacentral.core.model.message.impl;
 
 import com.datatrees.rawdatacentral.core.model.message.SubTaskAble;
 import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
+import com.datatrees.spider.share.domain.CollectorMessage;
 import org.apache.commons.lang.BooleanUtils;
 
 /**

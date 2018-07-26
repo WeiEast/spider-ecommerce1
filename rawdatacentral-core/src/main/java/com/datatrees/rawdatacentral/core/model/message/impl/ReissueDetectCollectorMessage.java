@@ -15,6 +15,7 @@ import java.util.Set;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
+import com.datatrees.spider.share.domain.CollectorMessage;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

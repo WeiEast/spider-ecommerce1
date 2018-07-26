@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.spider.share.service.utils.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.spider.share.domain.CollectorMessage;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import org.apache.http.entity.ContentType;

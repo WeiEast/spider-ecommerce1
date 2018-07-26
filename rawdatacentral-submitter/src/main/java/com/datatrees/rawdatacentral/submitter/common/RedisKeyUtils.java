@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.submitter.common;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
-import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.spider.share.domain.CollectorMessage;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

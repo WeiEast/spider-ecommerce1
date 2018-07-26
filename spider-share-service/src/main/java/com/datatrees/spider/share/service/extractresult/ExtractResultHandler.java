@@ -9,5 +9,5 @@ public interface ExtractResultHandler {
 
 
 
-    AbstractExtractResult build(ExtractMessage extractMessage)
+    //AbstractExtractResult build(ExtractMessage extractMessage)
 }

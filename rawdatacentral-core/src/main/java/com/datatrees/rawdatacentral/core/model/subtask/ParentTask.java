@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.spider.share.domain.CollectorMessage;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

@@ -6,13 +6,13 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.core.model.message.impl;
+package com.datatrees.spider.share.domain;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.datatrees.rawdatacentral.core.model.message.MessageInfo;
+import com.datatrees.spider.share.domain.MessageInfo;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

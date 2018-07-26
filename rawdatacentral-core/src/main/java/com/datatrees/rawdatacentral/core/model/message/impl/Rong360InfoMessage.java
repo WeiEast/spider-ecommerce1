@@ -8,6 +8,8 @@
 
 package com.datatrees.rawdatacentral.core.model.message.impl;
 
+import com.datatrees.spider.share.domain.CollectorMessage;
+
 /**
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
  * @version 1.0

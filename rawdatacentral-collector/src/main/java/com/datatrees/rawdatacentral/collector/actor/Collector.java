@@ -46,7 +46,7 @@ import com.datatrees.rawdatacentral.core.message.MessageFactory;
 import com.datatrees.rawdatacentral.core.model.message.SubTaskAble;
 import com.datatrees.rawdatacentral.core.model.message.TaskRelated;
 import com.datatrees.rawdatacentral.core.model.message.TemplteAble;
-import com.datatrees.rawdatacentral.core.model.message.impl.CollectorMessage;
+import com.datatrees.spider.share.domain.CollectorMessage;
 import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
 import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.core.oss.OssUtils;
