@@ -13,7 +13,7 @@ import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
-import com.datatrees.rawdatacentral.core.model.message.impl.ResultMessage;
+import com.datatrees.spider.share.domain.ResultMessage;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
