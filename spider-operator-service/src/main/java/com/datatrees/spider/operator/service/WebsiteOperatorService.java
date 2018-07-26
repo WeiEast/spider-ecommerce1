@@ -128,4 +128,15 @@ public interface WebsiteOperatorService {
      */
     Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, WebsiteOperator from, WebsiteOperator to, Boolean enable, Boolean auto);
 
+    /**
+     * 发送消息,启动爬虫
+     * @return
+     */
+    boolean sendOperatorCrawlerStartMessage(Long taskId, String websiteName);
+
+    /**
+     * 发送消息,启动登陆后处理
+     * @return
+     */
+    boolean sendOperatorLoginPostMessage(Long taskId, String websiteName);
 }

@@ -11,13 +11,10 @@ import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
 import com.datatrees.rawdatacentral.api.MessageService;
-import com.datatrees.spider.share.service.RedisService;
-import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.RegexpUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.TopicEnum;
-import com.datatrees.spider.share.domain.TopicTag;
-import com.datatrees.spider.share.domain.LoginMessage;
+import com.datatrees.spider.share.service.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -133,32 +130,6 @@ public class MessageServiceImpl implements MessageService {
         }
         logger.error("send message fail topic={},content={},charsetName={}", topic, content, charsetName);
         return false;
-    }
-
-    @Override
-    public boolean sendOperatorCrawlerStartMessage(Long taskId, String websiteName) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(AttributeKey.TASK_ID, taskId);
-        map.put(AttributeKey.WEBSITE_NAME, websiteName);
-        String cookieString = TaskUtils.getCookieString(taskId);
-        map.put(AttributeKey.COOKIE, cookieString);
-        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_CRAWLER_START.getTag(), map, DEFAULT_CHARSET_NAME);
-        return true;
-    }
-
-    @Override
-    public boolean sendOperatorLoginPostMessage(Long taskId, String websiteName) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(AttributeKey.TASK_ID, taskId);
-        map.put(AttributeKey.WEBSITE_NAME, websiteName);
-        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_LOGIN_POST.getTag(), map, DEFAULT_CHARSET_NAME);
-        return true;
-    }
-
-    @Override
-    public boolean sendLoginMessage(LoginMessage loginMessage) {
-        sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), loginMessage, DEFAULT_CHARSET_NAME);
-        return true;
     }
 
 }

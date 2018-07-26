@@ -94,7 +94,7 @@ public class OperatorLoginPostMessageHandler implements MessageHandler {
             if (null != result && result.getStatus()) {
                 logger.info("登陆后-->处理-->成功,taskId={},websiteName={}", taskId, websiteName);
                 monitorService.sendTaskLog(taskId, websiteName, "登陆后-->处理-->成功");
-                messageService.sendOperatorCrawlerStartMessage(param.getTaskId(), param.getWebsiteName());
+                websiteOperatorService.sendOperatorCrawlerStartMessage(param.getTaskId(), param.getWebsiteName());
                 logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
             } else {
                 logger.warn("登陆后-->处理-->失败,taskId={},websiteName={},result={}", taskId, websiteName, JSON.toJSONString(result));

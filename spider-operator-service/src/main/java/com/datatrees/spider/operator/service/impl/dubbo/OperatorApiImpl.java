@@ -13,16 +13,6 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.api.MonitorService;
-import com.datatrees.spider.share.service.ProxyService;
-import com.datatrees.spider.share.service.RedisService;
-import com.datatrees.spider.share.service.utils.ProxyUtils;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.*;
-import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.StepEnum;
-import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.rawdatacentral.service.WebsiteHolderService;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.model.OperatorGroup;
@@ -33,9 +23,13 @@ import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.common.utils.*;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.website.WebsiteType;
+import com.datatrees.spider.share.service.ProxyService;
+import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.service.utils.ProxyUtils;
 import com.datatrees.spider.share.service.utils.WebsiteUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -502,9 +496,9 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
                 }
                 TaskUtils.addStep(param.getTaskId(), StepEnum.LOGIN_SUCCESS);
                 if (pluginService instanceof OperatorPluginPostService) {
-                    messageService.sendOperatorLoginPostMessage(param.getTaskId(), param.getWebsiteName());
+                    websiteOperatorService.sendOperatorLoginPostMessage(param.getTaskId(), param.getWebsiteName());
                 } else {
-                    messageService.sendOperatorCrawlerStartMessage(param.getTaskId(), param.getWebsiteName());
+                    websiteOperatorService.sendOperatorCrawlerStartMessage(param.getTaskId(), param.getWebsiteName());
                 }
                 logger.info("发送消息,启动爬虫,taskId={},websiteName={}", param.getTaskId(), param.getWebsiteName());
             }
@@ -581,4 +575,5 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
         return newResult;
 
     }
+
 }

@@ -10,17 +10,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.spider.share.service.RedisService;
-import com.datatrees.spider.share.service.utils.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.*;
-import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.exception.CommonException;
+import com.datatrees.rawdatacentral.api.MessageService;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
-import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
@@ -35,7 +26,12 @@ import com.datatrees.spider.operator.domain.model.field.InputField;
 import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
-import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.common.utils.*;
+import com.datatrees.spider.share.domain.*;
+import com.datatrees.spider.share.domain.exception.CommonException;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
+import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.service.utils.TaskHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -48,6 +44,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     private static final Logger              logger                   = LoggerFactory.getLogger(WebsiteOperatorServiceImpl.class);
 
     private static final Map<String, String> hosts                    = new HashMap<>();
+
+    private static final String                 DEFAULT_CHARSET_NAME   = "UTF-8";
 
     /**
      * 插件名称
@@ -82,6 +80,9 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Resource
     private WebsiteConfigService websiteConfigService;
+
+    @Resource
+    private MessageService       messageService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -454,5 +455,25 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
             logger.error("sendMsgForOperatorStatusUpdate ", e);
             return false;
         }
+    }
+
+    @Override
+    public boolean sendOperatorCrawlerStartMessage(Long taskId, String websiteName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
+        String cookieString = TaskUtils.getCookieString(taskId);
+        map.put(AttributeKey.COOKIE, cookieString);
+        messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_CRAWLER_START.getTag(), map, DEFAULT_CHARSET_NAME);
+        return true;
+    }
+
+    @Override
+    public boolean sendOperatorLoginPostMessage(Long taskId, String websiteName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(AttributeKey.TASK_ID, taskId);
+        map.put(AttributeKey.WEBSITE_NAME, websiteName);
+        messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_LOGIN_POST.getTag(), map, DEFAULT_CHARSET_NAME);
+        return true;
     }
 }
