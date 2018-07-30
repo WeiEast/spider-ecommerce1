@@ -34,6 +34,11 @@ public class EbankBillExtractResultHandler implements ExtractResultHandler {
     }
 
     @Override
+    public Class<? extends AbstractExtractResult> getSupportResult() {
+        return EBankExtractResult.class;
+    }
+
+    @Override
     public void save(AbstractExtractResult result) {
         eBankExtractResultDao.insert((EBankExtractResult) result);
     }

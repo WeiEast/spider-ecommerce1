@@ -34,6 +34,11 @@ public class EcommerceExtractResultHandler implements ExtractResultHandler {
     }
 
     @Override
+    public Class<? extends AbstractExtractResult> getSupportResult() {
+        return EcommerceExtractResult.class;
+    }
+
+    @Override
     public void save(AbstractExtractResult result) {
         ecommerceExtractResultDao.insert((EcommerceExtractResult) result);
     }

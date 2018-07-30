@@ -41,6 +41,11 @@ public class MailExtractResultHandler implements ExtractResultHandler {
     }
 
     @Override
+    public Class<? extends AbstractExtractResult> getSupportResult() {
+        return MailExtractResult.class;
+    }
+
+    @Override
     public void save(AbstractExtractResult result) {
         mailExtractResultDao.insert((MailExtractResult) result);
     }

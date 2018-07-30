@@ -33,6 +33,11 @@ public class DefaultExtractResultHandler implements ExtractResultHandler {
     }
 
     @Override
+    public Class<? extends AbstractExtractResult> getSupportResult() {
+        return DefaultExtractResult.class;
+    }
+
+    @Override
     public void save(AbstractExtractResult result) {
         defaultExtractResultDAO.insert((DefaultExtractResult) result);
     }
