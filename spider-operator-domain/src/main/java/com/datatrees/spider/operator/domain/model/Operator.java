@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.domain.model;
+package com.datatrees.spider.operator.domain.model;
 
 import java.io.Serializable;
 import java.util.Date;
