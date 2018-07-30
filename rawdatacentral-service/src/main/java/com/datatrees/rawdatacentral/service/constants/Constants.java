@@ -17,23 +17,8 @@ import com.datatrees.common.conf.PropertiesConfiguration;
  */
 public interface Constants {
 
-    public String WEBSITE_CONTEXT_ID_PREFIX   = "WEBSITE_CONTEXT_ID_PREFIX";
-    public String WEBSITE_CONTEXT_NAME_PREFIX = "WEBSITE_CONTEXT_NAME_PREFIX";
-    public String BANK_MAP_KEY                = "BANK_MAP_KEY";
-    public String BANK_EMAIL_MAP_KEY          = "BANK_EMAIL_MAP_KEY";
-    public String KEYWORD_MAP_KEY             = "KEYWORD_MAP_KEY";
-    public String OPERATOR_MAP_KEY            = "OPERATOR_MAP_KEY";
-    public String ECOMMERCE_MAP_KEY           = "ECOMMERCE_MAP_KEY";
-    public String BANK_WEBSIYE_MAP_KEY        = "BANK_WEBSIYE_MAP_KEY";
-    public String PROPERTIES_MAP_KEY          = "PROPERTIES_MAP_KEY";
-    String GSON_TYPE                     = "GSON_TYPE";
-    String SUBMIT_TO_GATEWAY_KEY         = "CLAWER_REQUEST_";
-    String OBTAIN_FROM_GATEWAY_KEY       = "GATEWAY_RESPONSE_";
-    int    REDIS_KEY_TIMEOUT             = PropertiesConfiguration.getInstance().getInt("rawdatacentral.redisKey.timeout", 600);
-    int    GATEWAY_MAX_WAITTIME          = PropertiesConfiguration.getInstance().getInt("rawdatacentral.gateway.timeout", 90000);
-    String DEFAULT_ENCODE_CHARSETNAME    = "UTF-8";
-    int    PROXY_CALLBACK_CORE_POOL_SIZE = PropertiesConfiguration.getInstance().getInt("proxy.callback.coreSize", 1);
-    int    PROXY_CALLBACK_MAX_POOL_SIZE  = PropertiesConfiguration.getInstance().getInt("proxy.callback.maxSize", 5);
-    int    PROXY_CALLBACK_MAX_TASK_SIZE  = PropertiesConfiguration.getInstance().getInt("proxy.callback.maxtasknum", 100);
+    String GSON_TYPE                  = "GSON_TYPE";
+    int    REDIS_KEY_TIMEOUT          = PropertiesConfiguration.getInstance().getInt("rawdatacentral.redisKey.timeout", 600);
+    String DEFAULT_ENCODE_CHARSETNAME = "UTF-8";
 
 }

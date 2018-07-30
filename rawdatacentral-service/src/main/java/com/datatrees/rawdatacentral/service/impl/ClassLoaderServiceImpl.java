@@ -8,12 +8,12 @@ import java.util.concurrent.TimeUnit;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.ConfigServiceApi;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.common.utils.ClassLoaderUtils;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.PluginService;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.ClassLoaderUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.google.common.cache.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,9 +27,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingBean {
 
-    private static final Logger                            logger                   = LoggerFactory.getLogger("plugin_log");
-
-    private static final String                            OPERATOR_PLUGIN_FILENAME = "rawdatacentral-plugin-operator.jar";
+    private static final Logger                            logger = LoggerFactory.getLogger("plugin_log");
 
     private static       LoadingCache<String, ClassLoader> classLoacerCache;
 
