@@ -3,8 +3,8 @@ package com.datatrees.spider.operator.service.extract;
 import javax.annotation.Resource;
 
 import com.datatrees.rawdatacentral.core.model.data.OperatorData;
-import com.datatrees.rawdatacentral.dao.OperatorExtractResultDAO;
-import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
+import com.datatrees.spider.operator.dao.OperatorExtractResultDAO;
+import com.datatrees.spider.operator.domain.model.OperatorExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.ExtractMessage;

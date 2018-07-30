@@ -6,11 +6,11 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.operator.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
+import com.datatrees.spider.operator.domain.model.OperatorExtractResult;
 
 /**
  * Created by zhouxinghai on 2017/6/29

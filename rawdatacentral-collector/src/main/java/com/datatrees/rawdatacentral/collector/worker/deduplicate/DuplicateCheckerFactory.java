@@ -8,14 +8,11 @@
 
 package com.datatrees.rawdatacentral.collector.worker.deduplicate;
 
-import javax.annotation.Resource;
 import java.util.Set;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.impl.DuplicateCheckerImpl;
-import com.datatrees.rawdatacentral.core.service.ExtractorResultService;
-import com.datatrees.rawdatacentral.service.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,19 +25,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class DuplicateCheckerFactory {
 
-    private static final Logger                 log                         = LoggerFactory.getLogger(DuplicateCheckerFactory.class);
+    private static final Logger log                         = LoggerFactory.getLogger(DuplicateCheckerFactory.class);
 
-    private              long                   duplicateCheckerWithinHours = PropertiesConfiguration.getInstance()
-            .getLong("duplicate.checker.within.hours", 48);
+    private              long   duplicateCheckerWithinHours = PropertiesConfiguration.getInstance().getLong("duplicate.checker.within.hours", 48);
 
-    private              int                    websiteTaskCountThreshold   = PropertiesConfiguration.getInstance()
-            .getInt("website.task.count.threshold", 2);
-
-    @Resource
-    private              ExtractorResultService extractorResultService;
-
-    @Resource
-    private              TaskService            taskService;
+    private              int    websiteTaskCountThreshold   = PropertiesConfiguration.getInstance().getInt("website.task.count.threshold", 2);
+    //
+    //@Resource
+    //private              ExtractorResultService extractorResultService;
+    //
+    //@Resource
+    //private              TaskService            taskService;
 
     public DuplicateChecker duplicateCheckerBuild(Website website, int userId) {
         //        List<Task> tasks =
