@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.spider.share.service.utils.TaskHttpClient;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.*;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
@@ -19,7 +19,7 @@ import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
-import com.datatrees.spider.share.service.utils.ScriptEngineUtil;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

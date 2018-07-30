@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.service;
+package com.datatrees.spider.share.common.share.service;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +12,7 @@ import com.datatrees.spider.share.domain.directive.DirectiveResult;
  * redis操作
  * Created by zhouxinghai on 2017/5/23
  */
+@Deprecated
 public interface RedisService {
 
     /**

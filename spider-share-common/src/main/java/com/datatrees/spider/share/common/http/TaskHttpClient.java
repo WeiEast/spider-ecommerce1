@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.service.utils;
+package com.datatrees.spider.share.common.http;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -11,8 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.http.RequestIdUtils;
-import com.datatrees.spider.share.common.http.URIUtils;
 import com.datatrees.spider.share.common.utils.*;
 import com.datatrees.spider.share.domain.http.HttpHeadKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;

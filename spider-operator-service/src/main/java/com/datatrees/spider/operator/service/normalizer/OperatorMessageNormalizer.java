@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.core.model.data.OperatorData;
 import com.datatrees.spider.operator.dao.OperatorDAO;
 import com.datatrees.spider.share.domain.model.Operator;
 import com.datatrees.spider.share.domain.model.example.OperatorExample;
-import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

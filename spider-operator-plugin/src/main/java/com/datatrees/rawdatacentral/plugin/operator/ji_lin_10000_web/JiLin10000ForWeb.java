@@ -9,10 +9,10 @@ import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.spider.share.service.utils.TaskHttpClient;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.service.utils.ScriptEngineUtil;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;

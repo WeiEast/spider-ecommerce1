@@ -14,7 +14,7 @@ import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.common.utils.RegexpUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.TopicEnum;
-import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

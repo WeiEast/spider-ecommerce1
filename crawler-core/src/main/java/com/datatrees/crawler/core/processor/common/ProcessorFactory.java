@@ -29,7 +29,6 @@ import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.processor.segment.impl.*;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.crawler.core.processor.service.impl.DefaultService;
-import com.datatrees.crawler.core.processor.service.impl.GrabServiceImpl;
 import com.datatrees.crawler.core.processor.service.impl.PluginServiceImpl;
 import com.datatrees.crawler.core.processor.service.impl.TaskHttpServiceImpl;
 import com.treefinance.crawler.exception.UnexpectedException;
@@ -89,7 +88,6 @@ public final class ProcessorFactory {
         register(OperationType.RETURNMATCH, ReturnMatchOperationImpl.class);
 
         register(ServiceType.Plugin_Service, PluginServiceImpl.class);
-        register(ServiceType.Grab_Service, GrabServiceImpl.class);
         register(ServiceType.Default, DefaultService.class);
         register(ServiceType.Task_Http_Service, TaskHttpServiceImpl.class);
 

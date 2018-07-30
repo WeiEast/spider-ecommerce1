@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;

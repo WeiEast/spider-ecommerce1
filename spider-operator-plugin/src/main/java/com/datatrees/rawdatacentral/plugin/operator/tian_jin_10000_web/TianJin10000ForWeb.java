@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.plugin.operator.tian_jin_10000_web;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import com.datatrees.spider.share.service.utils.TaskHttpClient;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.domain.RequestType;

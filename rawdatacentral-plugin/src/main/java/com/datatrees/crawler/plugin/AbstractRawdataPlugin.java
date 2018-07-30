@@ -18,7 +18,7 @@ import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.MapUtils;

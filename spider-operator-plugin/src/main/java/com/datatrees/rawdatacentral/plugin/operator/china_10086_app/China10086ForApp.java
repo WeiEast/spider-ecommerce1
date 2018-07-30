@@ -9,7 +9,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.spider.share.service.utils.TaskHttpClient;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;

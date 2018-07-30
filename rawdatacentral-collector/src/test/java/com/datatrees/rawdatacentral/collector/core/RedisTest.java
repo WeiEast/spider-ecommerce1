@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import org.apache.commons.lang3.RandomUtils;

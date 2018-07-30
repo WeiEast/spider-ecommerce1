@@ -18,10 +18,7 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.BeanResourceFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.spider.share.service.RedisService;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
@@ -74,22 +71,6 @@ public abstract class ServiceBase<S extends AbstractService> extends ProcessorIn
                 logger.debug("originUrl: {}, baseDomainUrl: {}", current.getUrl(), baseDomainUrl);
             }
         }
-    }
-
-    /**
-     * 获取redis服务
-     * @return
-     */
-    protected RedisService getRedisService() {
-        return BeanResourceFactory.getInstance().getBean(RedisService.class);
-    }
-
-    /**
-     * 获取消息服务
-     * @return
-     */
-    protected MessageService getMessageService() {
-        return BeanResourceFactory.getInstance().getBean(MessageService.class);
     }
 
 }

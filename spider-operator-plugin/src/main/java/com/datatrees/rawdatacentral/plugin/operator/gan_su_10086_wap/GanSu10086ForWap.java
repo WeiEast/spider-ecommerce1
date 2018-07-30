@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
-import com.datatrees.spider.share.service.utils.TaskHttpClient;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.RegexpUtils;
-import com.datatrees.spider.share.service.utils.ScriptEngineUtil;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import com.datatrees.spider.share.domain.http.HttpHeadKey;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;

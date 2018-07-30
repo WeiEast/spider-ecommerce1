@@ -1,7 +1,8 @@
-package com.datatrees.spider.share.service;
+package com.datatrees.spider.share.common.share.service;
 
 import com.treefinance.proxy.domain.Proxy;
 
+@Deprecated
 public interface ProxyService {
 
     /**

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.spider.share.service.utils.TaskHttpClient;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;

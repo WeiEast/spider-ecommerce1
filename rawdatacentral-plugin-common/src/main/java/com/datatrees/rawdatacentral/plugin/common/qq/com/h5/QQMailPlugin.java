@@ -13,11 +13,11 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
 import com.datatrees.rawdatacentral.api.internal.QRPluginService;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
-import com.datatrees.spider.share.service.utils.ProxyUtils;
+import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.ProcessResultUtils;

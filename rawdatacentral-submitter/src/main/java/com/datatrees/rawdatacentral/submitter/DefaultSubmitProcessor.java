@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
-import com.datatrees.spider.share.service.RedisService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.BackRedisUtils;
 import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
