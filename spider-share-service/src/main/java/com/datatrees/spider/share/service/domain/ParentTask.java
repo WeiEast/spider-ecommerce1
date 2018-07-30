@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.core.model.subtask;
+package com.datatrees.spider.share.service.domain;
 
 import java.util.HashMap;
 import java.util.Map;

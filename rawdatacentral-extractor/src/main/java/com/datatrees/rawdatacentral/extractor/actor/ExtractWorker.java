@@ -9,14 +9,14 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.Extractor;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;
-import com.datatrees.spider.share.domain.ExtractCode;
-import com.datatrees.spider.share.domain.AbstractExtractResult;
-import com.datatrees.rawdatacentral.extractor.builder.impl.DefaultExtractResultBuilder;
 import com.datatrees.rawdatacentral.extractor.builder.impl.DefaultProcessorContextBuilder;
 import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
 import com.datatrees.rawdatacentral.submitter.SubmitProcessor;
+import com.datatrees.spider.share.domain.AbstractExtractResult;
+import com.datatrees.spider.share.domain.ExtractCode;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
+import com.datatrees.spider.share.service.extract.ExtractResultHandlerFactory;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class ExtractWorker {
     private              DefaultProcessorContextBuilder contextBuilder;
 
     @Resource
-    private              DefaultExtractResultBuilder    resultBuilder;
+    private              ExtractResultHandlerFactory    resultHandlerFactory;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void doSubExtractProcess(ExtractMessage extractMessage, Object obj, int messageIndex) {
@@ -133,7 +133,7 @@ public class ExtractWorker {
      */
     public void process(ExtractMessage extractMessage) {
         ExtractorProcessorContext context = contextBuilder.buildExtractorProcessorContext(extractMessage);
-        AbstractExtractResult result = resultBuilder.buildExtractResult(extractMessage);
+        AbstractExtractResult result = resultHandlerFactory.build(extractMessage);
         if (result != null) {
             long start = System.currentTimeMillis();
             // extract & submit results to redis

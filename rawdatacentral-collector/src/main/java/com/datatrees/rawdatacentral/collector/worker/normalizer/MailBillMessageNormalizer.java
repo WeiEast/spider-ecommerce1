@@ -18,7 +18,7 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
 import com.datatrees.rawdatacentral.service.BankService;

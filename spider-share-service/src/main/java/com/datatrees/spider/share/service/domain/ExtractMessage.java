@@ -6,14 +6,13 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.core.model;
+package com.datatrees.spider.share.service.domain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.core.model.subtask.ParentTask;
 import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.spider.share.domain.ResultType;
 

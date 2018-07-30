@@ -8,6 +8,8 @@
 
 package com.datatrees.rawdatacentral.core.model.subtask;
 
+import com.datatrees.spider.share.service.domain.ParentTask;
+
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0

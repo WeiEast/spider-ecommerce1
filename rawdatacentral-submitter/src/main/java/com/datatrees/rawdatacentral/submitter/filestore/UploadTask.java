@@ -6,7 +6,7 @@ import java.util.*;
 
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.rawdatacentral.core.common.SubmitConstant;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.rawdatacentral.core.oss.OssService;
 import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.core.oss.OssUtils;

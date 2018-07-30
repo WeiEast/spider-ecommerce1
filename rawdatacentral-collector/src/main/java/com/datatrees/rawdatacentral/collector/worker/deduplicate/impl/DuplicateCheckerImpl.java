@@ -11,7 +11,7 @@ package com.datatrees.rawdatacentral.collector.worker.deduplicate.impl;
 import java.util.Set;
 
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
-import com.datatrees.rawdatacentral.core.common.UniqueKeyGenUtil;
+import com.datatrees.spider.share.service.utils.UniqueKeyGenUtil;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

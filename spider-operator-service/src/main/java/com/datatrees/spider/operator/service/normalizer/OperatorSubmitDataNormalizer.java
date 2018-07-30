@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.submitter.normalizer;
+package com.datatrees.spider.operator.service.normalizer;
 
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.SubmitMessage;

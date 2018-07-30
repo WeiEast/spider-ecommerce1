@@ -9,7 +9,7 @@
 package com.datatrees.rawdatacentral.extractor.builder;
 
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

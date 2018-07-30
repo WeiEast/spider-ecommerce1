@@ -6,13 +6,13 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.extractor.common;
+package com.datatrees.spider.share.service.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
 
 /**

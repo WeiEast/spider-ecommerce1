@@ -13,7 +13,6 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -23,16 +22,15 @@ import org.springframework.stereotype.Component;
  * @since 2015年7月31日 上午11:53:47
  */
 @Component
-public class MessageNormalizerFactory implements InitializingBean {
+public class MessageNormalizerFactory {
 
-    private static final Logger                        logger = LoggerFactory.getLogger(MessageNormalizerFactory.class);
-
-    private              Collection<MessageNormalizer> normalizers;
+    private static final Logger             logger = LoggerFactory.getLogger(MessageNormalizerFactory.class);
 
     @Resource
-    private              ApplicationContext            context;
+    private              ApplicationContext context;
 
     public boolean normalize(Object message) {
+        Collection<MessageNormalizer> normalizers = context.getBeansOfType(MessageNormalizer.class).values();
         for (MessageNormalizer messageNormalizer : normalizers) {
             try {
                 if (messageNormalizer.normalize(message)) {
@@ -45,8 +43,4 @@ public class MessageNormalizerFactory implements InitializingBean {
         return false;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        normalizers = context.getBeansOfType(MessageNormalizer.class).values();
-    }
 }

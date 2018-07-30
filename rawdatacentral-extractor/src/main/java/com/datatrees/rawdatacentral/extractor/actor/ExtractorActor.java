@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.extractor.actor;
 import javax.annotation.Resource;
 
 import com.datatrees.common.actor.AbstractActor;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;

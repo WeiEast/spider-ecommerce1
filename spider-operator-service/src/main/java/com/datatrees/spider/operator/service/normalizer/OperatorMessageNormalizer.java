@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.rawdatacentral.core.model.ExtractMessage;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.OperatorData;
 import com.datatrees.spider.operator.dao.OperatorDAO;
