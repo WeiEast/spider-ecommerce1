@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.collector.utils;
+package com.datatrees.spider.share.service.utils.operator;
 
 import java.util.HashMap;
 import java.util.Map;

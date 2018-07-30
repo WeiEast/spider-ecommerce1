@@ -31,7 +31,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorResult;
 import com.datatrees.crawler.plugin.login.LoginTimeOutException;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.rawdatacentral.collector.utils.OperatorUtils;
+import com.datatrees.spider.share.service.utils.operator.OperatorUtils;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorker;
 import com.datatrees.rawdatacentral.collector.worker.CollectorWorkerFactory;
 import com.datatrees.spider.share.common.utils.TaskUtils;
