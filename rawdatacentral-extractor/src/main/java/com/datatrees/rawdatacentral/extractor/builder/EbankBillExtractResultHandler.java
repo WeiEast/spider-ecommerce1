@@ -1,6 +1,9 @@
 package com.datatrees.rawdatacentral.extractor.builder;
 
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.core.model.data.EBankData;
+import com.datatrees.rawdatacentral.dao.EbankExtractResultDAO;
 import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ResultType;
@@ -10,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EbankBillExtractResultHandler implements ExtractResultHandler {
+
+    @Resource
+    private EbankExtractResultDAO eBankExtractResultDao;
 
     @Override
     public ResultType getSupportResultType() {
@@ -25,5 +31,10 @@ public class EbankBillExtractResultHandler implements ExtractResultHandler {
         result.setUrl(((EBankData) object).getUrl());
         result.setExtraInfo(((EBankData) object).getExtraInfo());
         return result;
+    }
+
+    @Override
+    public void save(AbstractExtractResult result) {
+        eBankExtractResultDao.insert((EBankExtractResult) result);
     }
 }

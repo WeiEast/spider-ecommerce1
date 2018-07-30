@@ -9,4 +9,8 @@ public interface ExtractResultHandler {
     ResultType getSupportResultType();
 
     AbstractExtractResult build(ExtractMessage extractMessage);
+
+    Class<? extends AbstractExtractResult> getSupportResult();
+
+    void save(AbstractExtractResult result);
 }

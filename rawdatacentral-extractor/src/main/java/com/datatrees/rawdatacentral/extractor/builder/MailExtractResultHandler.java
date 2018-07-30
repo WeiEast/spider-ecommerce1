@@ -1,6 +1,9 @@
 package com.datatrees.rawdatacentral.extractor.builder;
 
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
+import com.datatrees.rawdatacentral.dao.MailExtractResultDAO;
 import com.datatrees.rawdatacentral.domain.model.MailExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ResultType;
@@ -11,6 +14,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MailExtractResultHandler implements ExtractResultHandler {
+
+    @Resource
+    private MailExtractResultDAO mailExtractResultDao;
 
     @Override
     public ResultType getSupportResultType() {
@@ -32,5 +38,10 @@ public class MailExtractResultHandler implements ExtractResultHandler {
         result.setExtraInfo(((MailBillData) object).getExtraInfo());
         result.setMailHeader(((MailBillData) object).getMailHeader());
         return result;
+    }
+
+    @Override
+    public void save(AbstractExtractResult result) {
+        mailExtractResultDao.insert((MailExtractResult) result);
     }
 }

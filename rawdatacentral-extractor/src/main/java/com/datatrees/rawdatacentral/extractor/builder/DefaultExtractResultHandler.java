@@ -1,6 +1,9 @@
 package com.datatrees.rawdatacentral.extractor.builder;
 
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.core.model.data.DefaultData;
+import com.datatrees.rawdatacentral.dao.DefaultExtractResultDAO;
 import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ResultType;
@@ -10,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultExtractResultHandler implements ExtractResultHandler {
+
+    @Resource
+    private DefaultExtractResultDAO defaultExtractResultDAO;
 
     @Override
     public ResultType getSupportResultType() {
@@ -24,5 +30,10 @@ public class DefaultExtractResultHandler implements ExtractResultHandler {
         result.setUniqueSign(((DefaultData) object).getUniqueSign());
         result.setExtraInfo(((DefaultData) object).getExtraInfo());
         return result;
+    }
+
+    @Override
+    public void save(AbstractExtractResult result) {
+        defaultExtractResultDAO.insert((DefaultExtractResult) result);
     }
 }

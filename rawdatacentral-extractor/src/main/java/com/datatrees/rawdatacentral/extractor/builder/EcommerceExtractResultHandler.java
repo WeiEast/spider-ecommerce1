@@ -1,6 +1,9 @@
 package com.datatrees.rawdatacentral.extractor.builder;
 
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
+import com.datatrees.rawdatacentral.dao.EcommerceExtractResultDAO;
 import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ResultType;
@@ -10,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EcommerceExtractResultHandler implements ExtractResultHandler {
+
+    @Resource
+    private EcommerceExtractResultDAO ecommerceExtractResultDao;
 
     @Override
     public ResultType getSupportResultType() {
@@ -25,5 +31,10 @@ public class EcommerceExtractResultHandler implements ExtractResultHandler {
         result.setUrl(((EcommerceData) object).getUrl());
         result.setExtraInfo(((EcommerceData) object).getExtraInfo());
         return result;
+    }
+
+    @Override
+    public void save(AbstractExtractResult result) {
+        ecommerceExtractResultDao.insert((EcommerceExtractResult) result);
     }
 }

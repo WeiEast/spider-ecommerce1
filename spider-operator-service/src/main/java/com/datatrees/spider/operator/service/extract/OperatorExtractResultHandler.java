@@ -1,6 +1,9 @@
 package com.datatrees.spider.operator.service.extract;
 
+import javax.annotation.Resource;
+
 import com.datatrees.rawdatacentral.core.model.data.OperatorData;
+import com.datatrees.rawdatacentral.dao.OperatorExtractResultDAO;
 import com.datatrees.rawdatacentral.domain.model.OperatorExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ResultType;
@@ -10,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OperatorExtractResultHandler implements ExtractResultHandler {
+
+    @Resource
+    private OperatorExtractResultDAO operatorExtractResultDao;
 
     @Override
     public ResultType getSupportResultType() {
@@ -25,5 +31,15 @@ public class OperatorExtractResultHandler implements ExtractResultHandler {
         result.setUniqueSign(((OperatorData) object).getUniqueSign());
         result.setExtraInfo(((OperatorData) object).getExtraInfo());
         return result;
+    }
+
+    @Override
+    public Class<? extends AbstractExtractResult> getSupportResult() {
+        return OperatorExtractResult.class;
+    }
+
+    @Override
+    public void save(AbstractExtractResult result) {
+        operatorExtractResultDao.insert((OperatorExtractResult) result);
     }
 }
