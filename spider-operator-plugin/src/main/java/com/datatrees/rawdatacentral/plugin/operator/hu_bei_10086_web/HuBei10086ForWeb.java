@@ -18,7 +18,7 @@ import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;

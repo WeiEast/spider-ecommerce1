@@ -25,7 +25,7 @@ import com.datatrees.spider.share.domain.directive.DirectiveEnum;
 import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import com.datatrees.spider.operator.api.OperatorApi;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;

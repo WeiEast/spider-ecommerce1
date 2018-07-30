@@ -19,7 +19,7 @@ import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean.*;
 import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.utils.MD5Util;
 import com.datatrees.rawdatacentral.plugin.operator.common.KpiUtils;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;

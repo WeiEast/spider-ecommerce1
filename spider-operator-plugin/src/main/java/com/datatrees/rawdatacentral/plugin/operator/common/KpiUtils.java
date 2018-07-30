@@ -13,7 +13,7 @@ import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.TopicEnum;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.domain.OperatorParam;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

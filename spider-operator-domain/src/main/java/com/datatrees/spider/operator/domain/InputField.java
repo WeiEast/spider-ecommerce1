@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2017
  */
 
-package com.datatrees.spider.operator.domain.model.field;
+package com.datatrees.spider.operator.domain;
 
 import java.io.Serializable;
 import java.util.HashSet;

@@ -15,7 +15,7 @@ import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.TopicTag;
 import com.datatrees.spider.share.service.mq.MessageHandler;
 import com.datatrees.spider.operator.api.OperatorApi;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.operator.service.OperatorPluginService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;

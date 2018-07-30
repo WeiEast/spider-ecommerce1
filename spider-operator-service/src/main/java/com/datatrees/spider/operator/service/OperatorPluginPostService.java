@@ -2,7 +2,7 @@ package com.datatrees.spider.operator.service;
 
 import java.util.Map;
 
-import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**

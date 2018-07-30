@@ -18,7 +18,7 @@ import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.operator.api.OperatorApi;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import org.slf4j.Logger;

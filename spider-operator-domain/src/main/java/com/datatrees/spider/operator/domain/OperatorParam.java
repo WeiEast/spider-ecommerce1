@@ -1,4 +1,4 @@
-package com.datatrees.spider.operator.domain.model;
+package com.datatrees.spider.operator.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;

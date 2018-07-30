@@ -14,7 +14,7 @@ import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
-import com.datatrees.spider.operator.domain.model.OperatorParam;
+import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.OperatorPluginPostService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
