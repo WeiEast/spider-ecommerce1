@@ -19,8 +19,8 @@ import com.datatrees.spider.operator.domain.OperatorGroup;
 import com.datatrees.spider.operator.domain.OperatorLoginConfig;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorLoginPostPlugin;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.share.common.utils.*;
@@ -284,7 +284,7 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
                 return result.failure(ErrorCode.TASK_INIT_ERROR);
             }
             Long taskId = param.getTaskId();
-            OperatorPluginService pluginService = getPluginService(param.getWebsiteName(), taskId);
+            OperatorPlugin pluginService = getPluginService(param.getWebsiteName(), taskId);
             result = pluginService.submit(param);
             TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(param.getFormType()), System.currentTimeMillis() + "");
             if (null != result && result.getStatus()) {
@@ -335,7 +335,7 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
         return result;
     }
 
-    private OperatorPluginService getPluginService(String websiteName, Long taskId) {
+    private OperatorPlugin getPluginService(String websiteName, Long taskId) {
         return websiteOperatorService.getOperatorPluginService(websiteName, taskId);
     }
 
@@ -483,7 +483,7 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
      * 超过20秒不启动爬虫
      * @param param
      */
-    private void sendSubmitSuccessMessage(OperatorPluginService pluginService, HttpResult result, OperatorParam param, long startTime) {
+    private void sendSubmitSuccessMessage(OperatorPlugin pluginService, HttpResult result, OperatorParam param, long startTime) {
         if (null != result && result.getStatus()) {
             WebsiteOperator operator = websiteOperatorService.getByWebsiteName(param.getWebsiteName());
             String sendLoginStage = operator.getStartStage();
@@ -495,7 +495,7 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
                     return;
                 }
                 TaskUtils.addStep(param.getTaskId(), StepEnum.LOGIN_SUCCESS);
-                if (pluginService instanceof OperatorPluginPostService) {
+                if (pluginService instanceof OperatorLoginPostPlugin) {
                     websiteOperatorService.sendOperatorLoginPostMessage(param.getTaskId(), param.getWebsiteName());
                 } else {
                     websiteOperatorService.sendOperatorCrawlerStartMessage(param.getTaskId(), param.getWebsiteName());

@@ -15,7 +15,7 @@ import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -28,7 +28,7 @@ import org.springframework.util.CollectionUtils;
 /**
  * Created by guimeichao on 17/11/7.
  */
-public class JiangXi10086ForWeb implements OperatorPluginService {
+public class JiangXi10086ForWeb implements OperatorPlugin {
 
     private static Logger logger = LoggerFactory.getLogger(JiangXi10086ForWeb.class);
 

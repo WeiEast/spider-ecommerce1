@@ -23,7 +23,7 @@ import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample
 import com.datatrees.spider.operator.domain.FieldBizType;
 import com.datatrees.spider.operator.domain.FieldInitSetting;
 import com.datatrees.spider.operator.domain.InputField;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.share.common.utils.*;
@@ -378,7 +378,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Override
-    public OperatorPluginService getOperatorPluginService(String websiteName, Long taskId) {
+    public OperatorPlugin getOperatorPluginService(String websiteName, Long taskId) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         WebsiteOperator websiteOperator = getByWebsiteName(websiteName);
         if (null == websiteOperator) {
@@ -394,10 +394,10 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         }
         try {
             Class loginClass = classLoaderService.loadPlugin(pluginFileName, mainLoginClass, taskId);
-            if (!OperatorPluginService.class.isAssignableFrom(loginClass)) {
-                throw new RuntimeException("mainLoginClass not impl " + OperatorPluginService.class.getName());
+            if (!OperatorPlugin.class.isAssignableFrom(loginClass)) {
+                throw new RuntimeException("mainLoginClass not impl " + OperatorPlugin.class.getName());
             }
-            return (OperatorPluginService) loginClass.newInstance();
+            return (OperatorPlugin) loginClass.newInstance();
         } catch (Throwable e) {
             logger.error("getOperatorService error websiteName={}", websiteName, e);
             throw new RuntimeException("getOperatorPluginService error websiteName=" + websiteName, e);

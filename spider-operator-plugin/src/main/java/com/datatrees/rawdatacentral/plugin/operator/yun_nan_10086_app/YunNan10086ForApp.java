@@ -13,7 +13,7 @@ import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 之后则会提示：您当日查询此类详单已上限，请明日再试。
  * Created by guimeichao on 17/8/28.
  */
-public class YunNan10086ForApp implements OperatorPluginService {
+public class YunNan10086ForApp implements OperatorPlugin {
 
     private static final Logger logger       = LoggerFactory.getLogger(YunNan10086ForApp.class);
 

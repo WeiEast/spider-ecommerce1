@@ -6,6 +6,7 @@ import java.util.Map;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.operator.domain.OperatorLoginConfig;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 
 /**
  * 运营商配置
@@ -109,7 +110,7 @@ public interface WebsiteOperatorService {
      * @param taskId
      * @return
      */
-    OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
+    OperatorPlugin getOperatorPluginService(String websiteName, Long taskId);
 
     /**
      * 将WebsiteOperator转化成Website

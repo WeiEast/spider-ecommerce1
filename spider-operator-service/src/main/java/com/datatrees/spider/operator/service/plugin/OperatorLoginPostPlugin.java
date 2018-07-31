@@ -1,4 +1,4 @@
-package com.datatrees.spider.operator.service;
+package com.datatrees.spider.operator.service.plugin;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import com.datatrees.spider.share.domain.http.HttpResult;
  * 运营商登陆登陆后处理接口
  * Created by zhouxinghai on 2017/7/13.
  */
-public interface OperatorPluginPostService extends OperatorPluginService {
+public interface OperatorLoginPostPlugin extends OperatorPlugin {
 
     /**
      * 登陆后处理接口

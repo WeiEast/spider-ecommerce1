@@ -16,8 +16,8 @@ import com.datatrees.spider.share.domain.TopicTag;
 import com.datatrees.spider.share.service.mq.MessageHandler;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorLoginPostPlugin;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
@@ -88,8 +88,8 @@ public class OperatorLoginPostMessageHandler implements MessageHandler {
             return true;
         }
         try {
-            OperatorPluginService pluginService = websiteOperatorService.getOperatorPluginService(websiteName, taskId);
-            OperatorPluginPostService postService = (OperatorPluginPostService) pluginService;
+            OperatorPlugin pluginService = websiteOperatorService.getOperatorPluginService(websiteName, taskId);
+            OperatorLoginPostPlugin postService = (OperatorLoginPostPlugin) pluginService;
             result = postService.loginPost(param);
             if (null != result && result.getStatus()) {
                 logger.info("登陆后-->处理-->成功,taskId={},websiteName={}", taskId, websiteName);

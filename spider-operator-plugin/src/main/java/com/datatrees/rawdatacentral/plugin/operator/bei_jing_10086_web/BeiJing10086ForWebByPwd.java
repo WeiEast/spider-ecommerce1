@@ -18,7 +18,7 @@ import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.service.plugin.OperatorLoginPostPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * 一天最多只能发送8条短信随机码
  * Created by guimeichao on 17/9/13.
  */
-public class BeiJing10086ForWebByPwd implements OperatorPluginPostService {
+public class BeiJing10086ForWebByPwd implements OperatorLoginPostPlugin {
 
     private static final Logger logger = LoggerFactory.getLogger(BeiJing10086ForWebByPwd.class);
 

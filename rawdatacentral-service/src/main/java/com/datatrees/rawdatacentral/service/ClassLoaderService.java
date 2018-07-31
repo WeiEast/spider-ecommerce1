@@ -1,7 +1,7 @@
 package com.datatrees.rawdatacentral.service;
 
 import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
-import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.CommonPluginParam;
 
 public interface ClassLoaderService {
 

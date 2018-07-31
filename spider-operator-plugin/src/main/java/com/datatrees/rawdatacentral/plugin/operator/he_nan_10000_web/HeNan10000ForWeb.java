@@ -13,7 +13,7 @@ import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.service.plugin.OperatorLoginPostPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * User: yand
  * Date: 2017/9/21
  */
-public class HeNan10000ForWeb implements OperatorPluginPostService {
+public class HeNan10000ForWeb implements OperatorLoginPostPlugin {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(HeNan10000ForWeb.class);
 

@@ -17,7 +17,7 @@ import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
  * User: yand
  * Date: 2017/10/10
  */
-public class JiLin10000ForWeb implements OperatorPluginService {
+public class JiLin10000ForWeb implements OperatorPlugin {
 
     private static Logger                     logger     = LoggerFactory.getLogger(JiLin10000ForWeb.class);
 

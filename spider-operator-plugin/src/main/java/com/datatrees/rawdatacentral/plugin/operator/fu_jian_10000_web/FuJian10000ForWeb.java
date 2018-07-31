@@ -17,7 +17,7 @@ import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.plugin.operator.common.LoginUtilsForChina10000Web;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 因web版个人信息不足，需从wap版查询 姓名、身份证、入网时间
  * Created by guimeichao on 17/9/19.
  */
-public class FuJian10000ForWeb implements OperatorPluginService {
+public class FuJian10000ForWeb implements OperatorPlugin {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(FuJian10000ForWeb.class);
 

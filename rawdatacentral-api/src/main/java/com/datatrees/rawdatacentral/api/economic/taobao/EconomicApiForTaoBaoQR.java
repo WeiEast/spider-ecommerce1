@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.api.economic.taobao;
 
-import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**

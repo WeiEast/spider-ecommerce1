@@ -29,7 +29,7 @@ import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.LoginMessage;
-import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util.QRUtils;
 import com.datatrees.spider.share.domain.ErrorCode;

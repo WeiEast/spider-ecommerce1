@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.plugin;
+package com.datatrees.spider.share.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;

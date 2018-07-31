@@ -17,7 +17,7 @@ import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * 这个网站如果出现:{"retCode":"400000","retMsg":"parameter illegal!"},请将get/post请求互换
  * Created by zhouxinghai on 2017/7/17.
  */
-public class China10086ForShop implements OperatorPluginService {
+public class China10086ForShop implements OperatorPlugin {
 
     private static final Logger  logger       = LoggerFactory.getLogger(China10086ForShop.class);
 

@@ -18,7 +18,7 @@ import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * 登陆后需验证服务密码，获取后续查询权限
  * Created by guimeichao on 17/8/23.
  */
-public class GuangDong10086ForWeb implements OperatorPluginService {
+public class GuangDong10086ForWeb implements OperatorPlugin {
 
     private static final Logger logger = LoggerFactory.getLogger(GuangDong10086ForWeb.class);
 

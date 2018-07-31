@@ -25,7 +25,7 @@ import com.datatrees.spider.share.domain.StepEnum;
 import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.TopicTag;
 import com.datatrees.spider.share.domain.LoginMessage;
-import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.share.domain.http.Cookie;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;

@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.domain.education;
 import java.io.Serializable;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.CommonPluginParam;
 
 /**
  * Created by zhangyanjia on 2017/11/30.

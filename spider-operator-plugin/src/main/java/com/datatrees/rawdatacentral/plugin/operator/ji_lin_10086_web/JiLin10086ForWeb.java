@@ -12,7 +12,7 @@ import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * 登录页 http://www.jl.10086.cn/service/GroupLogin/popuplogin.jsp
  * Created by guimeichao on 17/11/9.
  */
-public class JiLin10086ForWeb implements OperatorPluginService {
+public class JiLin10086ForWeb implements OperatorPlugin {
 
     private static Logger logger = LoggerFactory.getLogger(JiLin10086ForWeb.class);
 

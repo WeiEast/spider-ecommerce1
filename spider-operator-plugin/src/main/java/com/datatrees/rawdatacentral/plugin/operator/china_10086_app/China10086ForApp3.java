@@ -19,7 +19,7 @@ import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.bean.*;
 import com.datatrees.rawdatacentral.plugin.operator.china_10086_app.utils.MD5Util;
 import com.datatrees.rawdatacentral.plugin.operator.common.KpiUtils;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginPostService;
+import com.datatrees.spider.operator.service.plugin.OperatorLoginPostPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 18/3/26.
  */
-public class China10086ForApp3 implements OperatorPluginPostService {
+public class China10086ForApp3 implements OperatorLoginPostPlugin {
 
     private static final Logger logger = LoggerFactory.getLogger(China10086ForApp3.class);
 

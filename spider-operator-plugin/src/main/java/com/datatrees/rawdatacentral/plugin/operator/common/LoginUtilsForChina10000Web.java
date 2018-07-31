@@ -13,7 +13,7 @@ import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.OperatorPluginService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 17/10/18.
  */
-public class LoginUtilsForChina10000Web implements OperatorPluginService {
+public class LoginUtilsForChina10000Web implements OperatorPlugin {
 
     private static final Logger logger     = LoggerFactory.getLogger(LoginUtilsForChina10000Web.class);
 

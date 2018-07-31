@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.web.controller;
 import javax.annotation.Resource;
 
 import com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR;
-import com.datatrees.rawdatacentral.domain.plugin.CommonPluginParam;
+import com.datatrees.spider.share.domain.CommonPluginParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
