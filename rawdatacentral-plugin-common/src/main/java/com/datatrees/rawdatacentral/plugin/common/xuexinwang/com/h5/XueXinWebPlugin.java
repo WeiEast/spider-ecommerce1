@@ -13,7 +13,7 @@ import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.RpcOssService;
-import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by wangpan on 4/27/18 5:19 PM
  */
-public class XueXinWebPlugin implements CommonPluginService, XueXinPluginService {
+public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
 
     private static final Logger         logger         = LoggerFactory.getLogger(XueXinWebPlugin.class);
 

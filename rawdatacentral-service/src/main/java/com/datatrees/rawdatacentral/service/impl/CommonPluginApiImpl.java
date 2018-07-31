@@ -9,7 +9,7 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.*;
-import com.datatrees.rawdatacentral.api.internal.QRPluginService;
+import com.datatrees.rawdatacentral.api.internal.QRPlugin;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
@@ -273,7 +273,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
         try {
-            return ((QRPluginService) (classLoaderService.getCommonPluginService(param))).refeshQRCode(param);
+            return ((QRPlugin) (classLoaderService.getCommonPluginService(param))).refeshQRCode(param);
         } catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
         }
@@ -282,7 +282,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
         try {
-            return ((QRPluginService) (classLoaderService.getCommonPluginService(param))).queryQRStatus(param);
+            return ((QRPlugin) (classLoaderService.getCommonPluginService(param))).queryQRStatus(param);
         } catch (Throwable e) {
             return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
         }

@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.api.internal;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
 
-public interface QRPluginService {
+public interface QRPlugin {
 
     /**
      * 刷新登陆二维码

@@ -17,8 +17,8 @@ import com.datatrees.crawler.plugin.qrcode.QRCodeVerification;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
-import com.datatrees.rawdatacentral.api.internal.QRPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
+import com.datatrees.rawdatacentral.api.internal.QRPlugin;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by guimeichao on 18/4/8.
  */
-public class TaoBaoPlugin implements QRPluginService, CommonPluginService {
+public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
 
     private static final Logger         logger                   = LoggerFactory.getLogger(TaoBaoPlugin.class);
 

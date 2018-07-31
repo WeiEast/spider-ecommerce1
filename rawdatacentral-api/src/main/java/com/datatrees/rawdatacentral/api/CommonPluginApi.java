@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.api;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
-import com.datatrees.rawdatacentral.api.internal.QRPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
+import com.datatrees.rawdatacentral.api.internal.QRPlugin;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.spider.share.domain.LoginMessage;
 import com.datatrees.spider.share.domain.ProcessResult;
@@ -12,7 +12,7 @@ import com.datatrees.spider.share.domain.http.Cookie;
 /**
  * 通用插件服务
  */
-public interface CommonPluginApi extends CommonPluginService, QRPluginService, XueXinPluginService {
+public interface CommonPluginApi extends CommonPlugin, QRPlugin, XueXinPluginService {
 
     /**
      * 查询处理结果

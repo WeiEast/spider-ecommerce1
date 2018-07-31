@@ -11,7 +11,7 @@ import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.datatrees.crawler.plugin.login.ErrorMessage;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by zhangyanjia on 2018/2/1.
  */
-public class SinaMailPlugin implements CommonPluginService {
+public class SinaMailPlugin implements CommonPlugin {
 
     private static final Logger  logger                  = LoggerFactory.getLogger(SinaMailPlugin.class);
 

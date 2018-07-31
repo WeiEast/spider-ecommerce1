@@ -9,8 +9,8 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
-import com.datatrees.rawdatacentral.api.internal.QRPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
+import com.datatrees.rawdatacentral.api.internal.QRPlugin;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * User: yand
  * Date: 2018/2/26
  */
-public class _126MailPlugin implements CommonPluginService, QRPluginService {
+public class _126MailPlugin implements CommonPlugin, QRPlugin {
 
     private static final Logger         logger = LoggerFactory.getLogger(_126MailPlugin.class);
 

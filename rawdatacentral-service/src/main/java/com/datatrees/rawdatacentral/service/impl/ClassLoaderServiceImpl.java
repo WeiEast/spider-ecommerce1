@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.ConfigServiceApi;
-import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.PluginService;
@@ -66,13 +66,13 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     }
 
     @Override
-    public CommonPluginService getCommonPluginService(String pluginName, String className, Long taskId) {
+    public CommonPlugin getCommonPluginService(String pluginName, String className, Long taskId) {
         try {
             Class loginClass = loadPlugin(pluginName, className, taskId);
-            if (!CommonPluginService.class.isAssignableFrom(loginClass)) {
-                throw new RuntimeException("mainLoginClass not impl " + CommonPluginService.class.getName());
+            if (!CommonPlugin.class.isAssignableFrom(loginClass)) {
+                throw new RuntimeException("mainLoginClass not impl " + CommonPlugin.class.getName());
             }
-            return (CommonPluginService) loginClass.newInstance();
+            return (CommonPlugin) loginClass.newInstance();
         } catch (Throwable e) {
             logger.error("get common plugin internal error pluginName={},className={},taskId={}", pluginName, className, taskId, e);
             throw new RuntimeException(
@@ -81,7 +81,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     }
 
     @Override
-    public CommonPluginService getCommonPluginService(CommonPluginParam pluginParam) {
+    public CommonPlugin getCommonPluginService(CommonPluginParam pluginParam) {
         String pluginName = pluginParam.getPluginName();
         String className = pluginParam.getPluginClassName();
         Long taskId = pluginParam.getTaskId();

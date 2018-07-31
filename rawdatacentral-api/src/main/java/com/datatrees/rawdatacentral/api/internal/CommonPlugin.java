@@ -8,7 +8,7 @@ import com.datatrees.spider.share.domain.http.HttpResult;
  * 使用前自行约定
  * Created by zhouxinghai on 2018/01/04.
  */
-public interface CommonPluginService {
+public interface CommonPlugin {
 
     /**
      * 初始化

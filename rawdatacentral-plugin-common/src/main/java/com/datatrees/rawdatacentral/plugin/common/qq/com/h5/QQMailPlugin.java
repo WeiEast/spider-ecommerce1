@@ -14,8 +14,8 @@ import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.rawdatacentral.api.internal.CommonPluginService;
-import com.datatrees.rawdatacentral.api.internal.QRPluginService;
+import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
+import com.datatrees.rawdatacentral.api.internal.QRPlugin;
 import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
@@ -48,7 +48,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QQMailPlugin implements CommonPluginService, QRPluginService {
+public class QQMailPlugin implements CommonPlugin, QRPlugin {
 
     private static final Logger         logger  = LoggerFactory.getLogger(QQMailPlugin.class);
 
