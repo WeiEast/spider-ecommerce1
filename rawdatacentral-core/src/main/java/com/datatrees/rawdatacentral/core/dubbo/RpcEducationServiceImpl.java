@@ -60,7 +60,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
 
     @Override
     public HttpResult<Object> loginSubmit(CommonPluginParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getLoginName() == null || param.getPassword() == null) {
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getUsername() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         Long taskId = param.getTaskId();
@@ -136,7 +136,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     @Override
     public HttpResult<Object> registerSubmit(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null ||
-                param.getPwd() == null || param.getSurePwd() == null || param.getRealName() == null || param.getIdCard() == null ||
+                param.getPassword() == null || param.getPassword() == null || param.getRealName() == null || param.getIdCard() == null ||
                 param.getIdCardType() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
