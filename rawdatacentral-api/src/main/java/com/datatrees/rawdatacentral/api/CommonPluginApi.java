@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.datatrees.spider.share.api.CommonPlugin;
 import com.datatrees.spider.share.api.QRPlugin;
-import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.spider.share.domain.LoginMessage;
 import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.share.domain.http.Cookie;
@@ -12,7 +11,7 @@ import com.datatrees.spider.share.domain.http.Cookie;
 /**
  * 通用插件服务
  */
-public interface CommonPluginApi extends CommonPlugin, QRPlugin, XueXinPluginService {
+public interface CommonPluginApi extends CommonPlugin, QRPlugin {
 
     /**
      * 查询处理结果

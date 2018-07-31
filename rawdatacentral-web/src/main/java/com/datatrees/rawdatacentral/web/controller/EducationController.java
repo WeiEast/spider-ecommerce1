@@ -28,7 +28,7 @@ public class EducationController {
      */
     @RequestMapping("/login/init")
     public Object loginInit(CommonPluginParam param) {
-        return educationService.loginInit(param);
+        return educationService.init(param);
     }
 
     /**

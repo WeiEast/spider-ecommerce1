@@ -10,7 +10,6 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
 import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
 import com.datatrees.spider.share.api.CommonPlugin;
@@ -20,10 +19,7 @@ import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.CommonPluginParam;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.RequestType;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.share.service.MessageService;
@@ -39,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by wangpan on 4/27/18 5:19 PM
  */
-public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
+public class XueXinWebPlugin implements CommonPlugin {
 
     private static final Logger         logger         = LoggerFactory.getLogger(XueXinWebPlugin.class);
 
@@ -110,9 +106,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
         return null;
     }
 
-    @Override
-    public HttpResult<Object> init(CommonPluginParam commonPluginParam) {
-        CommonPluginParam param = (CommonPluginParam) commonPluginParam;
+    private HttpResult<Object> initForLogin(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -149,11 +143,9 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
         }
     }
 
-    @Override
-    public HttpResult<Object> submit(CommonPluginParam commonPluginParam) {
+    private HttpResult<Object> submitForLogin(CommonPluginParam param) {
         messageService = BeanFactoryUtils.getBean(MessageService.class);
         monitorService = BeanFactoryUtils.getBean(MonitorService.class);
-        CommonPluginParam param = (CommonPluginParam) commonPluginParam;
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getUsername() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -245,18 +237,52 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
     }
 
     @Override
+    public HttpResult<Object> init(CommonPluginParam param) {
+        switch (param.getFormType()) {
+            case FormType.REGISTER:
+                return initForRegister(param);
+            case FormType.LOGIN:
+                return initForLogin(param);
+            default:
+                return new HttpResult<Object>().success();
+        }
+    }
+
+    @Override
     public HttpResult<Object> refeshPicCode(CommonPluginParam param) {
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.REGISTER:
+                return refreshPicCodeForRegister(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
     public HttpResult<Object> refeshSmsCode(CommonPluginParam param) {
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case FormType.REGISTER:
+                return refeshSmsCodeForRegister(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
     public HttpResult<Object> validatePicCode(CommonPluginParam param) {
         return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+    }
+
+    @Override
+    public HttpResult<Object> submit(CommonPluginParam param) {
+        switch (param.getFormType()) {
+            case FormType.REGISTER:
+                return submitForRegister(param);
+            case FormType.LOGIN:
+                return submitForLogin(param);
+            default:
+                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     @Override
@@ -269,8 +295,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
         }
     }
 
-    @Override
-    public HttpResult<Object> registerInit(CommonPluginParam param) {
+    private HttpResult<Object> initForRegister(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -290,8 +315,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
         }
     }
 
-    @Override
-    public HttpResult<Object> registerRefreshPicCode(CommonPluginParam param) {
+    private HttpResult<Object> refreshPicCodeForRegister(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -322,8 +346,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
         }
     }
 
-    @Override
-    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
+    private HttpResult<Object> refeshSmsCodeForRegister(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -366,8 +389,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
         }
     }
 
-    @Override
-    public HttpResult<Object> registerSubmit(CommonPluginParam param) {
+    private HttpResult<Object> submitForRegister(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null ||
                 param.getPassword() == null || param.getPassword() == null || param.getRealName() == null || param.getIdCard() == null ||
                 param.getIdCardType() == null) {

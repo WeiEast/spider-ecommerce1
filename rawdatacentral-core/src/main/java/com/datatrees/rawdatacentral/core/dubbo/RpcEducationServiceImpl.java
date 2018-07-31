@@ -38,24 +38,8 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     private              MessageService  messageService;
 
     @Override
-    public HttpResult<Object> loginInit(CommonPluginParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null) {
-            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
-        }
-        Long taskId = param.getTaskId();
-        String websiteName = param.getWebsiteName();
-        param.setFormType(FormType.LOGIN);
-        //提供username字段，防止初始化出错
-        param.setUsername("未知");
-        HttpResult<Object> result = commonPluginApi.init(param);
-        if (!result.getStatus()) {
-            monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->失败");
-            logger.error("学信网登录-->初始化-->失败,result={}", result);
-            return result;
-        }
-        monitorService.sendTaskLog(taskId, websiteName, "学信网登录-->初始化-->成功");
-        logger.info("学信网登录-->初始化-->成功,result={}", result);
-        return result;
+    public HttpResult<Object> init(CommonPluginParam param) {
+        return commonPluginApi.init(param);
     }
 
     @Override
@@ -85,70 +69,18 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> registerInit(CommonPluginParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null) {
-            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
-        }
-        HttpResult<Object> result = commonPluginApi.registerInit(param);
-        if (!result.getStatus()) {
-            monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->初始化-->失败");
-            logger.error("学信网注册-->初始化-->失败,result={}", result);
-            return result;
-        }
-        monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->初始化-->成功");
-        logger.info("学信网注册-->初始化-->成功,result={}", result);
-        return result;
+    public HttpResult<Object> refeshPicCode(CommonPluginParam param) {
+        return commonPluginApi.refeshPicCode(param);
     }
 
     @Override
-    public HttpResult<Object> registerRefeshPicCode(CommonPluginParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
-            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
-        }
-
-        HttpResult<Object> result = commonPluginApi.registerRefreshPicCode(param);
-        if (!result.getStatus()) {
-            monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->刷新图片验证码-->失败");
-            logger.error("学信网注册-->刷新图片验证码-->失败,result={}", result);
-            return result;
-        }
-        monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->刷新图片验证码-->成功");
-        logger.info("学信网注册-->刷新图片验证码-->成功,param={}", param);
-        return result;
+    public HttpResult<Object> refeshSmsCode(CommonPluginParam param) {
+        return commonPluginApi.refeshSmsCode(param);
     }
 
     @Override
-    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null || param.getMobile() == null) {
-            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
-        }
-        HttpResult<Object> result = commonPluginApi.registerValidatePicCodeAndSendSmsCode(param);
-        if (!result.getStatus()) {
-            monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->校验图片验证码-->失败");
-            logger.error("学信网注册-->校验图片验证码-->失败");
-            return result;
-        }
-        monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->校验图片验证码-->成功");
-        logger.info("学信网注册-->校验图片验证码-->成功");
-        return result;
-    }
-
-    @Override
-    public HttpResult<Object> registerSubmit(CommonPluginParam param) {
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null ||
-                param.getPassword() == null || param.getPassword() == null || param.getRealName() == null || param.getIdCard() == null ||
-                param.getIdCardType() == null) {
-            throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
-        }
-        HttpResult<Object> result = commonPluginApi.registerSubmit(param);
-        if (!result.getStatus()) {
-            monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->校验信息-->失败");
-            logger.error("学信网注册-->校验信息-->失败");
-            return result;
-        }
-        monitorService.sendTaskLog(param.getTaskId(), param.getWebsiteName(), "学信网注册-->校验信息-->注册成功");
-        logger.info("学信网注册-->校验信息-->注册成功");
-        return result;
+    public HttpResult<Object> submit(CommonPluginParam param) {
+        return null;
     }
 
 }
