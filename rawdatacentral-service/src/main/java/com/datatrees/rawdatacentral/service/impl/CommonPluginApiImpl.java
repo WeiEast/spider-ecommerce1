@@ -111,13 +111,13 @@ public class CommonPluginApiImpl implements CommonPluginApi {
                 //爬虫状态
                 if (!result.getStatus()) {
                     TaskUtils.addStep(taskId, StepEnum.INIT_FAIL);
-                    monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->失败");
-                    logger.warn("登录-->初始化-->失败");
+                    monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
+                    logger.warn("{}-->初始化-->失败", param.getActionName());
                     return result;
                 }
                 TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
-                monitorService.sendTaskLog(taskId, websiteName, "登录-->初始化-->成功");
-                logger.info("登录-->初始化-->成功");
+                monitorService.sendTaskLog(taskId, websiteName,TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
+                logger.info("{}-->初始化-->成功", param.getActionName());
                 return result.success();
             }
             result = classLoaderService.getCommonPluginService(param).init(param);
