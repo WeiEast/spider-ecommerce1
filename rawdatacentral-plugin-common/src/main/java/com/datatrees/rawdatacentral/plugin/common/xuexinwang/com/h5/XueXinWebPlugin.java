@@ -10,26 +10,25 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
+import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
+import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
+import com.datatrees.spider.share.api.CommonPlugin;
+import com.datatrees.spider.share.common.http.ProxyUtils;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.common.utils.RedisUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
+import com.datatrees.spider.share.domain.CommonPluginParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
+import com.datatrees.spider.share.domain.RequestType;
+import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.RpcOssService;
-import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
-import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
-import com.datatrees.spider.share.common.http.ProxyUtils;
-import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
-import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.CommonPluginParam;
-import com.datatrees.spider.share.domain.http.Response;
-import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
-import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.http.HttpResult;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
@@ -113,7 +112,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
 
     @Override
     public HttpResult<Object> init(CommonPluginParam commonPluginParam) {
-        EducationParam param = (EducationParam) commonPluginParam;
+        CommonPluginParam param = (CommonPluginParam) commonPluginParam;
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -154,14 +153,14 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
     public HttpResult<Object> submit(CommonPluginParam commonPluginParam) {
         messageService = BeanFactoryUtils.getBean(MessageService.class);
         monitorService = BeanFactoryUtils.getBean(MonitorService.class);
-        EducationParam param = (EducationParam) commonPluginParam;
-        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getLoginName() == null || param.getPassword() == null) {
+        CommonPluginParam param = (CommonPluginParam) commonPluginParam;
+        if (param.getTaskId() == null || param.getWebsiteName() == null || param.getUsername() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         HttpResult<Object> result = new HttpResult<>();
         Response response = null;
         try {
-            TaskUtils.addTaskShare(param.getTaskId(), "username", param.getLoginName());
+            TaskUtils.addTaskShare(param.getTaskId(), "username", param.getUsername());
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "学信网");
             Map<String, Object> map = new HashMap<>();
             String ltKey = new StringBuilder("lt_" + param.getTaskId()).toString();
@@ -176,14 +175,14 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
             if (param.getPicCode() != null) {
                 url = url + "/passport/login?service=https://my.chsi.com.cn/archive/j_spring_cas_security_check";
                 templateData = "username={}&password={}&captcha={}&lt={}&execution={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
-                data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), param.getPicCode(), lt, execution);
-                logger.info("学信网请求登录参数url={},loginName={},password={},lt={},picCode={},execution={}", url, param.getLoginName(), param.getPassword(),
+                data = TemplateUtils.format(templateData, param.getUsername(), param.getPassword(), param.getPicCode(), lt, execution);
+                logger.info("学信网请求登录参数url={},loginName={},password={},lt={},picCode={},execution={}", url, param.getUsername(), param.getPassword(),
                         lt, param.getPicCode(), execution);
             } else {
                 url = url + js;
                 templateData = "username={}&password={}&lt={}&execution={}&_eventId=submit&submit=%E7%99%BB%C2%A0%C2%A0%E5%BD%95";
-                data = TemplateUtils.format(templateData, param.getLoginName(), param.getPassword(), lt, execution);
-                logger.info("学信网请求登录参数url={},loginName={},password={},lt={},execution={}", url, param.getLoginName(), param.getPassword(), lt,
+                data = TemplateUtils.format(templateData, param.getUsername(), param.getPassword(), lt, execution);
+                logger.info("学信网请求登录参数url={},loginName={},password={},lt={},execution={}", url, param.getUsername(), param.getPassword(), lt,
                         execution);
             }
 
@@ -271,7 +270,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
     }
 
     @Override
-    public HttpResult<Object> registerInit(EducationParam param) {
+    public HttpResult<Object> registerInit(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -292,7 +291,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
     }
 
     @Override
-    public HttpResult<Object> registerRefreshPicCode(EducationParam param) {
+    public HttpResult<Object> registerRefreshPicCode(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -324,7 +323,7 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
     }
 
     @Override
-    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
+    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -368,9 +367,9 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
     }
 
     @Override
-    public HttpResult<Object> registerSubmit(EducationParam param) {
+    public HttpResult<Object> registerSubmit(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null ||
-                param.getPwd() == null || param.getSurePwd() == null || param.getRealName() == null || param.getIdCard() == null ||
+                param.getPassword() == null || param.getPassword() == null || param.getRealName() == null || param.getIdCard() == null ||
                 param.getIdCardType() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -392,9 +391,8 @@ public class XueXinWebPlugin implements CommonPlugin, XueXinPluginService {
             url = "https://account.chsi.com.cn/account/registerprocess.action";
             templateDate
                     = "from=&mphone={}&vcode={}&password={}&password1={}&xm={}&credentialtype={}&sfzh={}&from=&email=&pwdreq1=&pwdanswer1=&pwdreq2=&pwdanswer2=&pwdreq3=&pwdanswer3=&continueurl=&serviceId=&serviceNote=1&serviceNote_res=0";
-            date = TemplateUtils
-                    .format(templateDate, param.getMobile(), param.getSmsCode(), param.getPwd(), param.getSurePwd(), name, param.getIdCardType(),
-                            param.getIdCard());
+            date = TemplateUtils.format(templateDate, param.getMobile(), param.getSmsCode(), param.getPassword(), param.getPassword(), name,
+                    param.getIdCardType(), param.getIdCard());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(url).setRequestBody(date)
                     .invoke();
             pageContent = response.getPageContent();

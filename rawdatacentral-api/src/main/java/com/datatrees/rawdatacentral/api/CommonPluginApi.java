@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.api;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
-import com.datatrees.rawdatacentral.api.internal.QRPlugin;
+import com.datatrees.spider.share.api.CommonPlugin;
+import com.datatrees.spider.share.api.QRPlugin;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
 import com.datatrees.spider.share.domain.LoginMessage;
 import com.datatrees.spider.share.domain.ProcessResult;

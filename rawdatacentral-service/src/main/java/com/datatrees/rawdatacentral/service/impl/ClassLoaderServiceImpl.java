@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.ConfigServiceApi;
-import com.datatrees.rawdatacentral.api.internal.CommonPlugin;
+import com.datatrees.spider.share.api.CommonPlugin;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.PluginService;

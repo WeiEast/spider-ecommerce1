@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api.internal;
+package com.datatrees.spider.share.api;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;

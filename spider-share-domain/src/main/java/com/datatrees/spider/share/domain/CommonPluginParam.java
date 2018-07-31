@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.datatrees.spider.share.domain.FormType;
 
 public class CommonPluginParam implements Serializable {
 
@@ -59,6 +58,11 @@ public class CommonPluginParam implements Serializable {
      * 身份证号码
      */
     private String              idCard;
+
+    /**
+     * 身份证类型
+     */
+    private String              idCardType;
 
     /**
      * 分组代码
@@ -281,5 +285,13 @@ public class CommonPluginParam implements Serializable {
 
     public void setUserIp(String userIp) {
         this.userIp = userIp;
+    }
+
+    public String getIdCardType() {
+        return idCardType;
+    }
+
+    public void setIdCardType(String idCardType) {
+        this.idCardType = idCardType;
     }
 }

@@ -8,31 +8,20 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.*;
-import com.datatrees.rawdatacentral.api.internal.QRPlugin;
+import com.datatrees.rawdatacentral.api.CommonPluginApi;
 import com.datatrees.rawdatacentral.api.internal.XueXinPluginService;
-import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.rawdatacentral.service.ClassLoaderService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.spider.share.api.QRPlugin;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.*;
-import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.StepEnum;
-import com.datatrees.spider.share.domain.TopicEnum;
-import com.datatrees.spider.share.domain.TopicTag;
-import com.datatrees.spider.share.domain.LoginMessage;
-import com.datatrees.spider.share.domain.CommonPluginParam;
-import com.datatrees.spider.share.domain.ProcessResult;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.Cookie;
-import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.service.MessageService;
+import com.datatrees.spider.share.service.MonitorService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -289,7 +278,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     }
 
     @Override
-    public HttpResult<Object> registerInit(EducationParam param) {
+    public HttpResult<Object> registerInit(CommonPluginParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerInit(param);
         } catch (Throwable e) {
@@ -298,7 +287,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     }
 
     @Override
-    public HttpResult<Object> registerRefreshPicCode(EducationParam param) {
+    public HttpResult<Object> registerRefreshPicCode(CommonPluginParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerRefreshPicCode(param);
         } catch (Throwable e) {
@@ -307,7 +296,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     }
 
     @Override
-    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
+    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerValidatePicCodeAndSendSmsCode(param);
         } catch (Throwable e) {
@@ -316,7 +305,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
     }
 
     @Override
-    public HttpResult<Object> registerSubmit(EducationParam param) {
+    public HttpResult<Object> registerSubmit(CommonPluginParam param) {
         try {
             return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerSubmit(param);
         } catch (Throwable e) {

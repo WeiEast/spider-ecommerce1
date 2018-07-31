@@ -5,17 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.rawdatacentral.api.CommonPluginApi;
-import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.rawdatacentral.api.RpcEducationService;
 import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.rawdatacentral.domain.education.EducationParam;
-import com.datatrees.spider.share.domain.TopicEnum;
-import com.datatrees.spider.share.domain.TopicTag;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.service.MessageService;
+import com.datatrees.spider.share.service.MonitorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -43,7 +38,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     private              MessageService  messageService;
 
     @Override
-    public HttpResult<Object> loginInit(EducationParam param) {
+    public HttpResult<Object> loginInit(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -64,7 +59,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> loginSubmit(EducationParam param) {
+    public HttpResult<Object> loginSubmit(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getLoginName() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -90,7 +85,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> registerInit(EducationParam param) {
+    public HttpResult<Object> registerInit(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -106,7 +101,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> registerRefeshPicCode(EducationParam param) {
+    public HttpResult<Object> registerRefeshPicCode(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -123,7 +118,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(EducationParam param) {
+    public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -139,7 +134,7 @@ public class RpcEducationServiceImpl implements RpcEducationService {
     }
 
     @Override
-    public HttpResult<Object> registerSubmit(EducationParam param) {
+    public HttpResult<Object> registerSubmit(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null ||
                 param.getPwd() == null || param.getSurePwd() == null || param.getRealName() == null || param.getIdCard() == null ||
                 param.getIdCardType() == null) {
