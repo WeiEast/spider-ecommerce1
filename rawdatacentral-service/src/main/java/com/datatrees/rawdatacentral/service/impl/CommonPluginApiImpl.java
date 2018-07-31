@@ -50,7 +50,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
-        HttpResult<Object> result = new HttpResult<>();
+        HttpResult<Object> result = null;
         try {
             Long taskId = param.getTaskId();
             String websiteName = param.getWebsiteName();
@@ -116,7 +116,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
                     return result;
                 }
                 TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
-                monitorService.sendTaskLog(taskId, websiteName,TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
+                monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->成功", param.getActionName()));
                 logger.info("{}-->初始化-->成功", param.getActionName());
                 return result.success();
             }
