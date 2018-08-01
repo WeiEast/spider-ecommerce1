@@ -17,13 +17,6 @@ public interface RpcEducationService {
     HttpResult<Object> init(CommonPluginParam param);
 
     /**
-     * 学信网登录提交接口
-     * @param param
-     * @return
-     */
-    HttpResult<Object> loginSubmit(CommonPluginParam param);
-
-    /**
      * 学信网注册刷新图片接口
      * @param param
      * @return

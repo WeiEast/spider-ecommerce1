@@ -129,7 +129,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
             logger.info("{}-->初始化-->成功", param.getActionName());
             return result;
         } catch (Throwable e) {
-            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+            return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
 
@@ -138,7 +138,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         try {
             return classLoaderService.getCommonPluginService(param).refeshPicCode(param);
         } catch (Throwable e) {
-            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+            return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
 
@@ -147,7 +147,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         try {
             return classLoaderService.getCommonPluginService(param).refeshSmsCode(param);
         } catch (Throwable e) {
-            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+            return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
 
@@ -165,7 +165,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
             if (null != result && result.getStatus()) {
                 if (StringUtils.equals(FormType.LOGIN, param.getFormType())) {
                     if (StringUtils.isNotBlank(param.getUsername())) {
-                        TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getUsername().toString());
+                        TaskUtils.addTaskShare(taskId, AttributeKey.USERNAME, param.getUsername());
                     }
                     if (null != param.getMobile()) {
                         TaskUtils.addTaskShare(taskId, AttributeKey.MOBILE, param.getMobile().toString());
@@ -201,7 +201,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
             return result;
         } catch (Throwable e) {
-            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+            return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         } finally {
             monitorService.sendMethodUseTime(param.getTaskId(), param.getWebsiteName(), param.getFormType(), this.getClass().getName(), "submit",
                     Arrays.asList(param), result, startTime, System.currentTimeMillis());
@@ -213,7 +213,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         try {
             return classLoaderService.getCommonPluginService(param).validatePicCode(param);
         } catch (Throwable e) {
-            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+            return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
 
@@ -222,7 +222,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         try {
             return classLoaderService.getCommonPluginService(param).defineProcess(param);
         } catch (Throwable e) {
-            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+            return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
 
@@ -263,7 +263,7 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         try {
             return ((QRPlugin) (classLoaderService.getCommonPluginService(param))).refeshQRCode(param);
         } catch (Throwable e) {
-            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+            return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
 
@@ -272,43 +272,8 @@ public class CommonPluginApiImpl implements CommonPluginApi {
         try {
             return ((QRPlugin) (classLoaderService.getCommonPluginService(param))).queryQRStatus(param);
         } catch (Throwable e) {
-            return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
+            return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
 
-    //@Override
-    //public HttpResult<Object> registerInit(CommonPluginParam param) {
-    //    try {
-    //        return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerInit(param);
-    //    } catch (Throwable e) {
-    //        return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
-    //    }
-    //}
-    //
-    //@Override
-    //public HttpResult<Object> registerRefreshPicCode(CommonPluginParam param) {
-    //    try {
-    //        return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerRefreshPicCode(param);
-    //    } catch (Throwable e) {
-    //        return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
-    //    }
-    //}
-    //
-    //@Override
-    //public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
-    //    try {
-    //        return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerValidatePicCodeAndSendSmsCode(param);
-    //    } catch (Throwable e) {
-    //        return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
-    //    }
-    //}
-    //
-    //@Override
-    //public HttpResult<Object> registerSubmit(CommonPluginParam param) {
-    //    try {
-    //        return ((XueXinPluginService) (classLoaderService.getCommonPluginService(param))).registerSubmit(param);
-    //    } catch (Throwable e) {
-    //        return new HttpResult<Object>().failure(ErrorCode.SYS_ERROR);
-    //    }
-    //}
 }

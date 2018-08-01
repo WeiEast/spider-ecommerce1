@@ -106,6 +106,65 @@ public class XueXinWebPlugin implements CommonPlugin {
         return null;
     }
 
+    @Override
+    public HttpResult<Object> init(CommonPluginParam param) {
+        switch (param.getFormType()) {
+            case FormType.REGISTER:
+                return initForRegister(param);
+            case FormType.LOGIN:
+                return initForLogin(param);
+            default:
+                return new HttpResult<>().success();
+        }
+    }
+
+    @Override
+    public HttpResult<Object> refeshPicCode(CommonPluginParam param) {
+        switch (param.getFormType()) {
+            case FormType.REGISTER:
+                return refreshPicCodeForRegister(param);
+            default:
+                return new HttpResult<>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> refeshSmsCode(CommonPluginParam param) {
+        switch (param.getFormType()) {
+            case FormType.REGISTER:
+                return refeshSmsCodeForRegister(param);
+            default:
+                return new HttpResult<>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> validatePicCode(CommonPluginParam param) {
+        return new HttpResult<>().failure(ErrorCode.NOT_SUPORT_METHOD);
+    }
+
+    @Override
+    public HttpResult<Object> submit(CommonPluginParam param) {
+        switch (param.getFormType()) {
+            case FormType.REGISTER:
+                return submitForRegister(param);
+            case FormType.LOGIN:
+                return submitForLogin(param);
+            default:
+                return new HttpResult<>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
+    @Override
+    public HttpResult<Object> defineProcess(CommonPluginParam param) {
+        switch (param.getFormType()) {
+            case "OCR":
+                return processForOCR(param);
+            default:
+                return new HttpResult<>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
+    }
+
     private HttpResult<Object> initForLogin(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
@@ -225,6 +284,8 @@ public class XueXinWebPlugin implements CommonPlugin {
                 map.put("directive", "login_success");
                 map.put("information", "登陆成功");
                 logger.info("登录-->成功");
+
+                messageService.sendLoginSuccessMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), param.getTaskId());
                 return result.success(map);
             }
             map.put("directive", "login_fail");
@@ -233,65 +294,6 @@ public class XueXinWebPlugin implements CommonPlugin {
         } catch (Exception e) {
             logger.error("登录-->失败，param={},response={},异常信息e={}", JSON.toJSONString(param), response, e.getMessage());
             return result.failure(ErrorCode.LOGIN_FAIL);
-        }
-    }
-
-    @Override
-    public HttpResult<Object> init(CommonPluginParam param) {
-        switch (param.getFormType()) {
-            case FormType.REGISTER:
-                return initForRegister(param);
-            case FormType.LOGIN:
-                return initForLogin(param);
-            default:
-                return new HttpResult<Object>().success();
-        }
-    }
-
-    @Override
-    public HttpResult<Object> refeshPicCode(CommonPluginParam param) {
-        switch (param.getFormType()) {
-            case FormType.REGISTER:
-                return refreshPicCodeForRegister(param);
-            default:
-                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
-        }
-    }
-
-    @Override
-    public HttpResult<Object> refeshSmsCode(CommonPluginParam param) {
-        switch (param.getFormType()) {
-            case FormType.REGISTER:
-                return refeshSmsCodeForRegister(param);
-            default:
-                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
-        }
-    }
-
-    @Override
-    public HttpResult<Object> validatePicCode(CommonPluginParam param) {
-        return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
-    }
-
-    @Override
-    public HttpResult<Object> submit(CommonPluginParam param) {
-        switch (param.getFormType()) {
-            case FormType.REGISTER:
-                return submitForRegister(param);
-            case FormType.LOGIN:
-                return submitForLogin(param);
-            default:
-                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
-        }
-    }
-
-    @Override
-    public HttpResult<Object> defineProcess(CommonPluginParam param) {
-        switch (param.getFormType()) {
-            case "OCR":
-                return processForOCR(param);
-            default:
-                return new HttpResult<Object>().failure(ErrorCode.NOT_SUPORT_METHOD);
         }
     }
 

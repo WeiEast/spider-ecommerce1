@@ -1,7 +1,5 @@
 package com.datatrees.spider.share.service;
 
-import com.datatrees.spider.share.domain.LoginMessage;
-
 /**
  * 消息服务
  * Created by zhouxinghai on 2017/5/11.
@@ -79,5 +77,13 @@ public interface MessageService {
      */
     boolean sendMessage(String topic, String tags, Object msg, String charsetName);
 
+    /**
+     * 发送登陆成功消息
+     * @param topic
+     * @param tag
+     * @param taskId
+     * @return
+     */
+    void sendLoginSuccessMessage(String topic, String tag, long taskId);
 
 }
