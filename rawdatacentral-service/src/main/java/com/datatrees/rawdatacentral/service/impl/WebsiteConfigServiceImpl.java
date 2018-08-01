@@ -15,7 +15,7 @@ import com.datatrees.spider.share.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.service.WebsiteInfoService;
+import com.datatrees.spider.share.service.WebsiteInfoService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;

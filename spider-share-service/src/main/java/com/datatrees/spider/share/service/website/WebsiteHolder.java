@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.service;
+package com.datatrees.spider.share.service.website;
 
 import com.datatrees.crawler.core.domain.Website;
 

@@ -13,7 +13,7 @@ import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.service.WebsiteInfoService;
+import com.datatrees.spider.share.service.WebsiteInfoService;
 import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
 import com.datatrees.spider.operator.domain.FieldBizType;
 import com.datatrees.spider.operator.domain.FieldInitSetting;
