@@ -11,7 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
@@ -110,7 +110,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     public void importWebsite(WebsiteOperator config) {
         CheckUtils.checkNotNull(config, "config is null");
         CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteInfoWithBLOBs info = websiteInfoService.getByWebsiteNameFromInfo(config.getWebsiteName());
+        WebsiteInfo info = websiteInfoService.getByWebsiteNameFromInfo(config.getWebsiteName());
         if (null == info) {
             logger.warn("WebsiteConfig not found websiteName={}", config.getWebsiteName());
             throw new CommonException("websiteName config not found");

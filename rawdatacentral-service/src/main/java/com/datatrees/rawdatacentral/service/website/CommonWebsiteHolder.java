@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.share.service.utils.WebsiteUtils;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class CommonWebsiteHolder implements WebsiteHolder {
 
     @Override
     public Website getWebsite(long taskId, String websiteName) {
-        WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
+        WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
         return websiteConfigService.buildWebsite(websiteInfo);
     }
 }

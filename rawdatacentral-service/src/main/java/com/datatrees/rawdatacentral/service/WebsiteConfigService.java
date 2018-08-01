@@ -4,7 +4,7 @@ import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 
 /**
@@ -54,10 +54,10 @@ public interface WebsiteConfigService {
     Website buildWebsite(WebsiteConfig websiteConfig);
 
     /**
-     * 将WebsiteInfoWithBLOBs转化成Website
+     * 将WebsiteInfo转化成Website
      * @param websiteInfo
      * @return
      */
-    Website buildWebsite(WebsiteInfoWithBLOBs websiteInfo);
+    Website buildWebsite(WebsiteInfo websiteInfo);
 
 }

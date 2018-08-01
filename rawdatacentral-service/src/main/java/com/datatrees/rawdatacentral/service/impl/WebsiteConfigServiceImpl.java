@@ -20,7 +20,7 @@ import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfoWithBLOBs;
+import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
@@ -88,7 +88,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     private WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
         CheckUtils.checkNotNull(websiteName, "websiteName is null");
-        WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
+        WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
         if (null == websiteInfo) {
             logger.warn("WebsiteConfig not found websiteId={}", websiteName);
             return null;
@@ -142,7 +142,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         confUpdate.setExtractorConfig(extractConfig);
         confUpdate.setSearchConfig(searchConfig);
         confUpdate.setUpdatedAt(new Date());
-        WebsiteInfoWithBLOBs websiteInfo = new WebsiteInfoWithBLOBs();
+        WebsiteInfo websiteInfo = new WebsiteInfo();
         websiteInfo.setWebsiteId(websiteConfig.getWebsiteId());
         websiteInfo.setSearchConfig(searchConfig);
         websiteInfo.setExtractorConfig(extractConfig);
@@ -253,12 +253,12 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public Website buildWebsite(WebsiteInfoWithBLOBs websiteInfo) {
+    public Website buildWebsite(WebsiteInfo websiteInfo) {
         WebsiteConfig config = buildWebsiteConfigFromWebsiteInfo(websiteInfo);
         return buildWebsite(config);
     }
 
-    private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfoWithBLOBs info) {
+    private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfo info) {
         CheckUtils.checkNotNull(info, "info is null");
         WebsiteConfig config = new WebsiteConfig();
         config.setWebsiteId(info.getWebsiteId());
