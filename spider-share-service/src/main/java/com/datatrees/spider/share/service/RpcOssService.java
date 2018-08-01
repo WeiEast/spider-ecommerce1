@@ -5,5 +5,5 @@ package com.datatrees.spider.share.service;
  */
 public interface RpcOssService {
 
-    public void upload(String path, byte[] pageContent);
+    void upload(String path, byte[] pageContent);
 }
