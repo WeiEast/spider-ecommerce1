@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.api;
+package com.datatrees.spider.share.service.plugin;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
