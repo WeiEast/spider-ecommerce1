@@ -14,7 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.plugin.qrcode.QRCodeVerification;
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.api.CommonPlugin;
@@ -438,7 +438,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
             loginMessage.setAccountNo(StringUtils.defaultString(accountNo));
             TaskUtils.addTaskShare(param.getTaskId(), "username", accountNo);
 
-            BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+            BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(loginMessage);
         }
 
         /**

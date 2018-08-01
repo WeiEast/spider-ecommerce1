@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.service.dubbo.mail.sina;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.api.mail.sina.MailServiceApiForSina;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.CommonPluginParam;
@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailServiceApiForSinaImpl implements MailServiceApiForSina {
 
-    private static final Logger          logger = LoggerFactory.getLogger(MailServiceApiForSinaImpl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(MailServiceApiForSinaImpl.class);
 
     @Resource
-    private              CommonPluginApi commonPluginApi;
+    private              CommonPluginService commonPluginService;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
@@ -30,7 +30,7 @@ public class MailServiceApiForSinaImpl implements MailServiceApiForSina {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         param.setWebsiteName(GroupEnum.MAIL_SINA_H5.getWebsiteName());
-        HttpResult<Object> result = commonPluginApi.init(param);
+        HttpResult<Object> result = commonPluginService.init(param);
         return result;
 
     }
@@ -42,7 +42,7 @@ public class MailServiceApiForSinaImpl implements MailServiceApiForSina {
         }
         param.setWebsiteName(GroupEnum.MAIL_SINA_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
-        HttpResult<Object> result = commonPluginApi.submit(param);
+        HttpResult<Object> result = commonPluginService.submit(param);
 
         return result;
     }
@@ -53,6 +53,6 @@ public class MailServiceApiForSinaImpl implements MailServiceApiForSina {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         param.setWebsiteName(GroupEnum.MAIL_SINA_H5.getWebsiteName());
-        return commonPluginApi.refeshPicCode(param);
+        return commonPluginService.refeshPicCode(param);
     }
 }

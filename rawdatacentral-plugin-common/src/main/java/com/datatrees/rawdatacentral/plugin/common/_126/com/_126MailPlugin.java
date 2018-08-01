@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.api.CommonPlugin;
@@ -118,7 +118,7 @@ public class _126MailPlugin implements CommonPlugin, QRPlugin {
                             loginMessage.setAccountNo(username);
                             loginMessage.setEndUrl(currentUrl);
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
-                            BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage, SeleniumUtils.getCookies(driver));
+                            BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(loginMessage, SeleniumUtils.getCookies(driver));
                             monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                             return;
                         }
@@ -233,7 +233,7 @@ public class _126MailPlugin implements CommonPlugin, QRPlugin {
                             loginMessage.setAccountNo(null);
                             loginMessage.setEndUrl(endUrl);
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, endUrl);
-                            BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage, SeleniumUtils.getCookies(driver));
+                            BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(loginMessage, SeleniumUtils.getCookies(driver));
                             TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.SUCCESS);
                             monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                             return;

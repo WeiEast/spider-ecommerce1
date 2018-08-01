@@ -11,7 +11,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
@@ -38,7 +38,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
     @Override
     public String process(String... args) throws Exception {
         monitorService = BeanFactoryUtils.getBean(MonitorService.class);
-        CommonPluginApi pluginService = BeanFactoryUtils.getBean(CommonPluginApi.class);
+        CommonPluginService pluginService = BeanFactoryUtils.getBean(CommonPluginService.class);
         AbstractProcessorContext context = PluginFactory.getProcessorContext();
         Map<String, Object> pluginResult = new HashMap<>();
 

@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service.dubbo.mail._163;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.api.mail._163.MailServiceApiFor163;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.GroupEnum;
@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
 
-    private static final Logger          logger = LoggerFactory.getLogger(MailServiceApiFor163Impl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(MailServiceApiFor163Impl.class);
 
     @Resource
-    private              CommonPluginApi commonPluginApi;
+    private              CommonPluginService commonPluginService;
 
     @Override
     public HttpResult<Object> login(CommonPluginParam param) {
@@ -34,13 +34,13 @@ public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
         Boolean initStatus = RedisUtils.setnx(initKey, "true", RedisKeyPrefixEnum.LOGIN_INIT.toSeconds());
         logger.info("rec login request initStatus:{},param:{}", initStatus, JSON.toJSONString(param));
         if (initStatus) {
-            HttpResult<Object> initResult = commonPluginApi.init(param);
+            HttpResult<Object> initResult = commonPluginService.init(param);
             if (!initResult.getStatus()) {
                 RedisUtils.del(initKey);
                 return new HttpResult<>().failure(ErrorCode.TASK_INIT_ERROR);
             }
         }
-        return commonPluginApi.submit(param);
+        return commonPluginService.submit(param);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
         param.setWebsiteName(GroupEnum.MAIL_163_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
-        return commonPluginApi.refeshQRCode(param);
+        return commonPluginService.refeshQRCode(param);
     }
 
     @Override
@@ -56,6 +56,6 @@ public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
         param.setWebsiteName(GroupEnum.MAIL_163_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
-        return commonPluginApi.queryQRStatus(param);
+        return commonPluginService.queryQRStatus(param);
     }
 }

@@ -11,7 +11,7 @@ import com.datatrees.spider.share.domain.http.HttpResult;
 /**
  * 通用插件服务
  */
-public interface CommonPluginApi {
+public interface CommonPluginService {
 
     /**
      * 初始化

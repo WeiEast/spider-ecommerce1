@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.service.dubbo.economic.taobao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.CommonPluginParam;
@@ -17,14 +17,14 @@ import org.springframework.stereotype.Service;
 public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
 
     @Resource
-    private CommonPluginApi commonPluginApi;
+    private CommonPluginService commonPluginService;
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
         param.setWebsiteName(GroupEnum.TAOBAO_COM_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
-        return commonPluginApi.refeshQRCode(param);
+        return commonPluginService.refeshQRCode(param);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class EconomicApiForTaoBaoQRImpl implements EconomicApiForTaoBaoQR {
         param.setWebsiteName(GroupEnum.TAOBAO_COM_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
-        return commonPluginApi.queryQRStatus(param);
+        return commonPluginService.queryQRStatus(param);
     }
 }

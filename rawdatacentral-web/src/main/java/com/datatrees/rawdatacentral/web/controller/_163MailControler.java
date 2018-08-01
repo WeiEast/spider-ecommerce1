@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.api.mail._163.MailServiceApiFor163;
 import com.datatrees.spider.share.common.utils.ProcessResultUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
@@ -30,7 +30,7 @@ public class _163MailControler {
     private              MailServiceApiFor163 mailServiceApiFor163;
 
     @Resource
-    private              CommonPluginApi      commonPluginApi;
+    private              CommonPluginService  commonPluginService;
 
     @RequestMapping("/login")
     public Object login(CommonPluginParam param) {
@@ -39,7 +39,7 @@ public class _163MailControler {
 
     @RequestMapping("/queryLoginStatus")
     public Object queryLoginStatus(Long processId) {
-        return commonPluginApi.queryProcessResult(processId);
+        return commonPluginService.queryProcessResult(processId);
     }
 
     @RequestMapping("/refeshQRCode")

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.share.service.RedisService;
@@ -171,7 +171,7 @@ public class QQMailPlugin implements CommonPlugin, QRPlugin {
                         loginMessage.setEndUrl(currentUrl);
                         loginMessage.setCookie(cookieString);
                         logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
-                        BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                        BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(loginMessage);
 
                         monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                         ProcessResultUtils.saveProcessResult(processResult.success());
@@ -356,7 +356,7 @@ public class QQMailPlugin implements CommonPlugin, QRPlugin {
                             loginMessage.setEndUrl(currentUrl);
                             loginMessage.setCookie(cookieString);
                             logger.info("登陆成功,taskId={},websiteName={},endUrl={}", taskId, websiteName, currentUrl);
-                            BeanFactoryUtils.getBean(CommonPluginApi.class).sendLoginSuccessMsg(loginMessage);
+                            BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(loginMessage);
                             monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->校验-->成功", FormType.getName(param.getFormType())));
                             return;
                         }

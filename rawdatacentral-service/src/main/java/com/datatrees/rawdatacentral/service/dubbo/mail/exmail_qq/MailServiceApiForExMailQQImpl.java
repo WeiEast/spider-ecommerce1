@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.service.dubbo.mail.exmail_qq;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.api.mail.exmail_qq.MailServiceApiForExMailQQ;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.CommonPluginParam;
@@ -19,10 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailServiceApiForExMailQQImpl implements MailServiceApiForExMailQQ {
 
-    private static final Logger          logger = LoggerFactory.getLogger(MailServiceApiForExMailQQImpl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(MailServiceApiForExMailQQImpl.class);
 
     @Resource
-    private              CommonPluginApi commonPluginApi;
+    private              CommonPluginService commonPluginService;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
@@ -30,7 +30,7 @@ public class MailServiceApiForExMailQQImpl implements MailServiceApiForExMailQQ 
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         param.setWebsiteName(GroupEnum.EXMAIL_QQ_H5.getWebsiteName());
-        HttpResult<Object> result = commonPluginApi.init(param);
+        HttpResult<Object> result = commonPluginService.init(param);
         return result;
 
     }
@@ -43,7 +43,7 @@ public class MailServiceApiForExMailQQImpl implements MailServiceApiForExMailQQ 
         param.setWebsiteName(GroupEnum.EXMAIL_QQ_H5.getWebsiteName());
 
         param.setFormType(FormType.LOGIN);
-        HttpResult<Object> result = commonPluginApi.submit(param);
+        HttpResult<Object> result = commonPluginService.submit(param);
         return result;
     }
 }

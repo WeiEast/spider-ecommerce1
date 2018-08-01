@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.web.controller;
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiForQQ;
 import com.datatrees.spider.share.common.utils.ProcessResultUtils;
 import com.datatrees.spider.share.domain.CommonPluginParam;
@@ -28,7 +28,7 @@ public class QQMailControler {
     private              MailServiceApiForQQ mailServiceApiForQQ;
 
     @Resource
-    private              CommonPluginApi     commonPluginApi;
+    private              CommonPluginService commonPluginService;
 
     @RequestMapping("/login")
     public Object login(CommonPluginParam param) {
@@ -37,7 +37,7 @@ public class QQMailControler {
 
     @RequestMapping("/queryLoginStatus")
     public Object queryLoginStatus(Long processId) {
-        return commonPluginApi.queryProcessResult(processId);
+        return commonPluginService.queryProcessResult(processId);
     }
 
     @RequestMapping("/refeshQRCode")

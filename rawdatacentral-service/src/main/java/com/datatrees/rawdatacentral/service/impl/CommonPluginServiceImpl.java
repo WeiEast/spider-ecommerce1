@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.spider.share.api.QRPlugin;
@@ -28,9 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CommonPluginApiImpl implements CommonPluginApi {
+public class CommonPluginServiceImpl implements CommonPluginService {
 
-    private static final Logger               logger = LoggerFactory.getLogger(CommonPluginApiImpl.class);
+    private static final Logger               logger = LoggerFactory.getLogger(CommonPluginServiceImpl.class);
 
     @Resource
     private              ClassLoaderService   classLoaderService;

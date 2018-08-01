@@ -14,7 +14,7 @@
 
     <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.mail.qq.MailServiceApiForQQ"-->
                    <!--ref="mailServiceApiForQQImpl"/>-->
-    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CommonPluginApi"-->
+    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CommonPluginServicevice"-->
                    <!--ref="commonPluginApiImpl"/>-->
     <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR"-->
                    <!--ref="economicApiForTaoBaoQRImpl"/>-->

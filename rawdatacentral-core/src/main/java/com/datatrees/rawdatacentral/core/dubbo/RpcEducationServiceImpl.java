@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.core.dubbo;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.api.CommonPluginApi;
+import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.api.RpcEducationService;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -16,29 +16,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class RpcEducationServiceImpl implements RpcEducationService {
 
-    private static final Logger          logger = LoggerFactory.getLogger(RpcEducationServiceImpl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(RpcEducationServiceImpl.class);
 
     @Resource
-    private              CommonPluginApi commonPluginApi;
+    private              CommonPluginService commonPluginService;
 
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
-        return commonPluginApi.init(param);
+        return commonPluginService.init(param);
     }
 
     @Override
     public HttpResult<Object> refeshPicCode(CommonPluginParam param) {
-        return commonPluginApi.refeshPicCode(param);
+        return commonPluginService.refeshPicCode(param);
     }
 
     @Override
     public HttpResult<Object> refeshSmsCode(CommonPluginParam param) {
-        return commonPluginApi.refeshSmsCode(param);
+        return commonPluginService.refeshSmsCode(param);
     }
 
     @Override
     public HttpResult<Object> submit(CommonPluginParam param) {
-        return commonPluginApi.submit(param);
+        return commonPluginService.submit(param);
     }
 
 }
