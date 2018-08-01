@@ -5,26 +5,21 @@
         <username>root</username>
         <password>Tianxing@0701</password>
         <host>192.168.5.24</host>
-        <database_name>tc</database_name>
+        <database_name>rawdatacentral</database_name>
     </database>
     <target>
-        <model_target_package>com.treefinance.tc.domain.model</model_target_package>
-        <model_target_project>tc-domain/src/main/java</model_target_project>
-        <mapper_target_package>com.treefinance.tc.dao</mapper_target_package>
-        <mapper_target_project>tc-dao/src/main/java</mapper_target_project>
-        <sqlmap_target_package>sqlmap.tc.mapper</sqlmap_target_package>
-        <sqlmap_target_project>tc-dao/src/main/resources</sqlmap_target_project>
+        <model_target_package>com.datatrees.spider.share.domain.model</model_target_package>
+        <model_target_project>spider-share-domain/src/main/java</model_target_project>
+        <mapper_target_package>com.datatrees.spider.share.dao</mapper_target_package>
+        <mapper_target_project>spider-share-dao/src/main/java</mapper_target_project>
+        <sqlmap_target_package>sqlmap.share.mapper</sqlmap_target_package>
+        <sqlmap_target_project>spider-share-dao/src/main/resources</sqlmap_target_project>
     </target>
     <tables>
-        <table tableName="http_test_result" comment="http测试用例结果" enableDeleteByExample="true">
-            <generatedKey column="result_id" sqlStatement="MySql" identity="true" />
-            <columnOverride column="url_params" jdbcType="VARCHAR" />
-            <columnOverride column="headers" jdbcType="VARCHAR" />
-            <columnOverride column="body_params" jdbcType="VARCHAR" />
-            <columnOverride column="body_data" jdbcType="VARCHAR" />
-            <columnOverride column="response_data" jdbcType="VARCHAR" />
-            <columnOverride column="response_headers" jdbcType="VARCHAR" />
-            <columnOverride column="validate_rule" jdbcType="VARCHAR" />
+        <table tableName="website_info" comment="非运营商配置" enableDeleteByExample="true">
+            <generatedKey column="website_id" sqlStatement="MySql" identity="true" />
+            <columnOverride column="search_config" jdbcType="VARCHAR" />
+            <columnOverride column="extractor_config" jdbcType="VARCHAR" />
         </table>
         <!--<table tableName="env_set" comment="变量集" enableDeleteByExample="true">-->
             <!--<generatedKey column="env_set_id" sqlStatement="MySql" identity="true" />-->
