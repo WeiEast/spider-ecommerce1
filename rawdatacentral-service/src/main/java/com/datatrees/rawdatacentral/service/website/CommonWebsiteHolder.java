@@ -26,6 +26,6 @@ public class CommonWebsiteHolder implements WebsiteHolder {
     @Override
     public Website getWebsite(long taskId, String websiteName) {
         WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
-        return websiteConfigService.buildWebsiteFromWebsiteInfo(websiteInfo);
+        return websiteConfigService.buildWebsite(websiteInfo);
     }
 }

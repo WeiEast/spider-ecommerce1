@@ -14,25 +14,11 @@ import com.datatrees.spider.share.domain.website.WebsiteConfig;
 public interface WebsiteConfigService {
 
     /**
-     * 获取站点配置
-     * @param websiteName
-     * @return
-     */
-    WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName);
-
-    /**
      * 获取爬虫里的Website
      * @param websiteName
      * @return
      */
     Website getWebsiteByWebsiteName(String websiteName);
-
-    /**
-     * 从WebsiteConfig转换
-     * @param websiteConfig
-     * @return
-     */
-    Website getFromWebsiteConfig(WebsiteConfig websiteConfig);
 
     /**
      * 获取WebsiteConf
@@ -72,6 +58,6 @@ public interface WebsiteConfigService {
      * @param websiteInfo
      * @return
      */
-    Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo);
+    Website buildWebsite(WebsiteInfoWithBLOBs websiteInfo);
 
 }

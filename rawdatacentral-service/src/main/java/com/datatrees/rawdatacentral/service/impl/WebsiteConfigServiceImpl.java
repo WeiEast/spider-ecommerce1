@@ -86,8 +86,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
 
-    @Override
-    public WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
+    private WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
         CheckUtils.checkNotNull(websiteName, "websiteName is null");
         WebsiteInfoWithBLOBs websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
         if (null == websiteInfo) {
@@ -102,16 +101,11 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public Website getWebsiteByWebsiteName(String websiteName) {
         WebsiteConfig config = getWebsiteConfigByWebsiteName(websiteName);
         if (null != config) {
-            return getFromWebsiteConfig(config);
+            return buildWebsite(config);
         }
         return null;
     }
 
-    @Override
-    public Website getFromWebsiteConfig(WebsiteConfig websiteConfig) {
-        CheckUtils.checkNotNull(websiteConfig, "websiteConfig is null");
-        return buildWebsite(websiteConfig);
-    }
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -259,7 +253,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     }
 
     @Override
-    public Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo) {
+    public Website buildWebsite(WebsiteInfoWithBLOBs websiteInfo) {
         WebsiteConfig config = buildWebsiteConfigFromWebsiteInfo(websiteInfo);
         return buildWebsite(config);
     }
