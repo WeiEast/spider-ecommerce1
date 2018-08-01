@@ -3,13 +3,13 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.List;
 
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.dao.WebsiteInfoDAO;
-import com.datatrees.spider.share.domain.model.WebsiteInfoCriteria;
-import com.datatrees.spider.share.domain.model.WebsiteInfo;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.dao.WebsiteInfoDAO;
 import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.model.WebsiteInfo;
+import com.datatrees.spider.share.domain.model.example.WebsiteInfoExample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,10 +28,10 @@ public class WebsiteInfoServiceImpl implements WebsiteInfoService {
     @Override
     public WebsiteInfo getByWebsiteName(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteInfoCriteria example = new WebsiteInfoCriteria();
+        WebsiteInfoExample example = new WebsiteInfoExample();
         String env = TaskUtils.getSassEnv();
         example.createCriteria().andWebsiteNameEqualTo(websiteName).andEnvEqualTo(env);
-        List<WebsiteInfo> list = websiteInfoDAO.selectByExampleWithBLOBs(example);
+        List<WebsiteInfo> list = websiteInfoDAO.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }
 }

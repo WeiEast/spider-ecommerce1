@@ -12,7 +12,7 @@ public class CreateCode {
         String generator_xml = this.getClass().getClassLoader().getResource("generator.xml").getPath();
         String driverFile = this.getClass().getClassLoader().getResource("mysql-connector-java-5.1.36.jar").getPath();
 
-        String projectRoot = StringUtils.substringBefore(this.getClass().getClassLoader().getResource("").getPath(), "/tc-generator");
+        String projectRoot = StringUtils.substringBefore(this.getClass().getClassLoader().getResource("").getPath(), "/spider-generator");
         new CodeGenerator(projectRoot, generator_xml, driverFile).createCode();
     }
 }

@@ -20,6 +20,7 @@
             <generatedKey column="website_id" sqlStatement="MySql" identity="true" />
             <columnOverride column="search_config" jdbcType="VARCHAR" />
             <columnOverride column="extractor_config" jdbcType="VARCHAR" />
+            <columnOverride column="website_type" javaType="java.lang.Integer" />
         </table>
         <!--<table tableName="env_set" comment="变量集" enableDeleteByExample="true">-->
             <!--<generatedKey column="env_set_id" sqlStatement="MySql" identity="true" />-->
