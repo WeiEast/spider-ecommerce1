@@ -1,7 +1,6 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
-import java.util.Date;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
@@ -11,20 +10,18 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
-import com.datatrees.spider.share.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.service.BankService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.spider.share.service.WebsiteInfoService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.spider.share.common.share.service.ProxyService;
-import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
+import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteHolderService;
+import com.datatrees.spider.share.service.WebsiteInfoService;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -43,16 +40,10 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     private              WebsiteInfoService   websiteInfoService;
 
     @Resource
-    private              WebsiteInfoDAO       websiteInfoDAO;
-
-    @Resource
     private              PluginManager        pluginManager;
 
     @Resource
     private              BankService          bankService;
-
-    @Resource
-    private              RedisService         redisService;
 
     @Resource
     private              ProxyService         proxyService;
@@ -122,28 +113,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             conf.setSmsTemplate(config.getSmsTemplate());
         }
         return conf;
-    }
-
-    @Override
-    public boolean updateWebsiteConf(String websiteName, String searchConfig, String extractConfig) {
-        CheckUtils.checkNotBlank(websiteName, "websiteName is blank");
-        //        CheckUtils.checkNotBlank(searchConfig, "searchConfig is blank");
-        CheckUtils.checkNotBlank(extractConfig, "extractConfig is blank");
-
-        WebsiteConfig websiteConfig = getWebsiteConfigByWebsiteName(websiteName);
-        CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + websiteName);
-        WebsiteInfo websiteInfo = new WebsiteInfo();
-        websiteInfo.setWebsiteId(websiteConfig.getWebsiteId());
-        websiteInfo.setSearchConfig(searchConfig);
-        websiteInfo.setExtractorConfig(extractConfig);
-        websiteInfo.setUpdatedAt(new Date());
-        int i = websiteInfoDAO.updateByPrimaryKeySelective(websiteInfo);
-        if (i == 0) {
-            logger.warn("updateWebsiteInfo error websiteName={}", websiteName);
-            return false;
-        }
-        logger.info("updateWebsiteInfo success websiteName={}", websiteName);
-        return true;
     }
 
     @Override

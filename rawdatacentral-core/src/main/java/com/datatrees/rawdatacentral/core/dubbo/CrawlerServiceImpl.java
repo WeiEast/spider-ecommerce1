@@ -36,7 +36,7 @@ import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import com.datatrees.spider.share.domain.ProcessResult;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import org.apache.commons.lang3.StringUtils;

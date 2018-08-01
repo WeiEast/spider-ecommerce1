@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.plugin.QRPlugin;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.share.service.ProxyService;

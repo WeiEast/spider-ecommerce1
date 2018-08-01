@@ -56,7 +56,7 @@ import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.rawdatacentral.domain.model.Task;
 import com.datatrees.rawdatacentral.service.TaskService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;

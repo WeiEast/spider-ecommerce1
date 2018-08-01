@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service;
+package com.datatrees.spider.share.service;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
@@ -26,14 +26,6 @@ public interface WebsiteConfigService {
      * @return
      */
     WebsiteConf getWebsiteConf(String websiteName);
-
-    /**
-     * 根据websiteName更新searchConfigSource,extractConfigSource
-     * @param websiteName
-     * @param searchConfig
-     * @param extractConfig
-     */
-    boolean updateWebsiteConf(String websiteName, String searchConfig, String extractConfig);
 
     /**
      * 获取SearchProcessorContext,taskInit使用

@@ -13,4 +13,12 @@ public interface WebsiteInfoService {
      * @return
      */
     WebsiteInfo getByWebsiteName(String websiteName);
+
+    /**
+     * 根据websiteName更新searchConfigSource,extractConfigSource
+     * @param websiteName
+     * @param searchConfig
+     * @param extractConfig
+     */
+    void updateWebsiteConf(String websiteName, String searchConfig, String extractConfig);
 }
