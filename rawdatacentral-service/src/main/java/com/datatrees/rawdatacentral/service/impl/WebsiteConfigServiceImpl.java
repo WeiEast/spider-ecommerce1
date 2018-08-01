@@ -11,20 +11,20 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
+import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
+import com.datatrees.rawdatacentral.domain.model.Bank;
+import com.datatrees.rawdatacentral.service.BankService;
+import com.datatrees.rawdatacentral.service.WebsiteConfigService;
+import com.datatrees.rawdatacentral.service.WebsiteInfoService;
+import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
-import com.datatrees.rawdatacentral.service.BankService;
-import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteHolderService;
-import com.datatrees.rawdatacentral.service.WebsiteInfoService;
-import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -83,7 +83,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         };
     }
 
-
     private WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
         CheckUtils.checkNotNull(websiteName, "websiteName is null");
         WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteName(websiteName);
@@ -94,7 +93,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return buildWebsiteConfigFromWebsiteInfo(websiteInfo);
     }
 
-
     @Override
     public Website getWebsiteByWebsiteName(String websiteName) {
         WebsiteConfig config = getWebsiteConfigByWebsiteName(websiteName);
@@ -103,7 +101,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         return null;
     }
-
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -135,11 +132,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
         WebsiteConfig websiteConfig = getWebsiteConfigByWebsiteName(websiteName);
         CheckUtils.checkNotNull(websiteConfig, "website not found websiteName=" + websiteName);
-        com.datatrees.rawdatacentral.domain.model2.WebsiteConf confUpdate = new com.datatrees.rawdatacentral.domain.model2.WebsiteConf();
-        confUpdate.setWebsiteConfId(websiteConfig.getWebsiteConfId());
-        confUpdate.setExtractorConfig(extractConfig);
-        confUpdate.setSearchConfig(searchConfig);
-        confUpdate.setUpdatedAt(new Date());
         WebsiteInfo websiteInfo = new WebsiteInfo();
         websiteInfo.setWebsiteId(websiteConfig.getWebsiteId());
         websiteInfo.setSearchConfig(searchConfig);
@@ -153,7 +145,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         logger.info("updateWebsiteInfo success websiteName={}", websiteName);
         return true;
     }
-
 
     @Override
     public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
