@@ -3,8 +3,8 @@ package com.datatrees.rawdatacentral.service;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
+import com.datatrees.spider.share.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 
 /**

@@ -12,7 +12,7 @@ package com.datatrees.rawdatacentral.api;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**

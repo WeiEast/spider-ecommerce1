@@ -2,9 +2,8 @@ package com.datatrees.rawdatacentral.dao.mapper;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfoCriteria;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
+import com.datatrees.spider.share.domain.model.WebsiteInfo;
+import com.datatrees.spider.share.domain.model.WebsiteInfoCriteria;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 

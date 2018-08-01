@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.rawdatacentral.domain.model;
+package com.datatrees.spider.share.domain.model;
 
 import java.io.Serializable;
 

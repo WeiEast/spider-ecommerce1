@@ -10,7 +10,7 @@
         <result column="ExtractorConfig" property="extractorConfigSource"/>
     </resultMap>
 
-    <resultMap type="com.datatrees.rawdatacentral.domain.model.WebsiteConf" id="RM-WebsiteConf">
+    <resultMap type="com.datatrees.spider.share.domain.model.WebsiteConf" id="RM-WebsiteConf">
         <result column="WebsiteName" property="websiteName"/>
         <result column="WebsiteType" property="websiteType"/>
         <result column="Conf" property="initSetting"/>

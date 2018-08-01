@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
+import com.datatrees.spider.share.domain.model.WebsiteInfo;
 
 /**
  * Created by zhangyanjia on 2018/3/20.
