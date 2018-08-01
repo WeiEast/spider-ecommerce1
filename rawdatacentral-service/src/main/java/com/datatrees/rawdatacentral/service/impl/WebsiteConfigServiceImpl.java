@@ -81,16 +81,12 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             logger.warn("WebsiteConfig not found websiteId={}", websiteName);
             return null;
         }
-        return buildWebsiteConfigFromWebsiteInfo(websiteInfo);
+        return buildWebsiteConfig(websiteInfo);
     }
 
     @Override
     public Website getWebsiteByWebsiteName(String websiteName) {
-        WebsiteConfig config = getWebsiteConfigByWebsiteName(websiteName);
-        if (null != config) {
-            return buildWebsite(config);
-        }
-        return null;
+        return websiteHolderService.getWebsite(websiteName);
     }
 
     @Override
@@ -117,7 +113,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
-        Website website = websiteHolderService.getWebsite(taskId, websiteName);
+        Website website = websiteHolderService.getWebsite(websiteName);
         if (website != null) {
             SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website, taskId);
             searchProcessorContext.setPluginManager(pluginManager);
@@ -132,7 +128,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public ExtractorProcessorContext getExtractorProcessorContext(Long taskId, String websiteName) {
         logger.info("getExtractorProcessorContext start,taskId={},websiteName={}", taskId, websiteName);
-        Website website = websiteHolderService.getWebsite(taskId, websiteName);
+        Website website = websiteHolderService.getWebsite(websiteName);
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
             extractorProcessorContext.setPluginManager(pluginManager);
@@ -212,11 +208,11 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public Website buildWebsite(WebsiteInfo websiteInfo) {
-        WebsiteConfig config = buildWebsiteConfigFromWebsiteInfo(websiteInfo);
+        WebsiteConfig config = buildWebsiteConfig(websiteInfo);
         return buildWebsite(config);
     }
 
-    private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfo info) {
+    private WebsiteConfig buildWebsiteConfig(WebsiteInfo info) {
         CheckUtils.checkNotNull(info, "info is null");
         WebsiteConfig config = new WebsiteConfig();
         config.setWebsiteId(info.getWebsiteId());

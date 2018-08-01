@@ -11,25 +11,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.spider.share.service.WebsiteHolderService;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.OperatorGroup;
 import com.datatrees.spider.operator.domain.OperatorLoginConfig;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
-import com.datatrees.spider.operator.service.plugin.OperatorLoginPostPlugin;
-import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.service.plugin.OperatorLoginPostPlugin;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.share.common.http.ProxyUtils;
+import com.datatrees.spider.share.common.share.service.ProxyService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.*;
 import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.website.WebsiteType;
-import com.datatrees.spider.share.common.share.service.ProxyService;
-import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.spider.share.common.http.ProxyUtils;
+import com.datatrees.spider.share.service.MessageService;
+import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.spider.share.service.WebsiteHolderService;
 import com.datatrees.spider.share.service.utils.WebsiteUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -102,7 +102,7 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
 
                         //从新的运营商表读取配置
                         WebsiteOperator websiteOperator = websiteOperatorService.getByWebsiteName(websiteName);
-                        Website website = websiteHolderService.getWebsite(taskId, websiteName);
+                        Website website = websiteHolderService.getWebsite(websiteName);
                         redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
 
                         //缓存task基本信息

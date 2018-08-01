@@ -4,8 +4,8 @@ import javax.annotation.Resource;
 import java.util.Map;
 
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.spider.share.service.website.WebsiteHolder;
 import com.datatrees.spider.share.service.WebsiteHolderService;
+import com.datatrees.spider.share.service.website.WebsiteHolder;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class WebsiteHolderServiceImpl implements WebsiteHolderService {
     private Map<String, WebsiteHolder> holderMap;
 
     @Override
-    public Website getWebsite(long taskId, String websiteName) {
+    public Website getWebsite(String websiteName) {
         if (MapUtils.isEmpty(holderMap)) {
             holderMap = context.getBeansOfType(WebsiteHolder.class);
         }
@@ -27,8 +27,8 @@ public class WebsiteHolderServiceImpl implements WebsiteHolderService {
             return null;
         }
         for (Map.Entry<String, WebsiteHolder> holder : holderMap.entrySet()) {
-            if (holder.getValue().support(taskId, websiteName)) {
-                return holder.getValue().getWebsite(taskId, websiteName);
+            if (holder.getValue().support(websiteName)) {
+                return holder.getValue().getWebsite(websiteName);
             }
         }
         return null;
