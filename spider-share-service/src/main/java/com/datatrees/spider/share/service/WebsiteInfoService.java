@@ -1,6 +1,7 @@
 package com.datatrees.spider.share.service;
 
 import com.datatrees.spider.share.domain.model.WebsiteInfo;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
 
 /**
  * Created by zhangyanjia on 2018/3/20.
@@ -21,4 +22,6 @@ public interface WebsiteInfoService {
      * @param extractConfig
      */
     void updateWebsiteConf(String websiteName, String searchConfig, String extractConfig);
+
+    WebsiteConfig buildWebsiteConfig(WebsiteInfo websiteInfo);
 }

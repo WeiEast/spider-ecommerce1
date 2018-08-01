@@ -8,8 +8,10 @@ import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.dao.WebsiteInfoDAO;
 import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.model.example.WebsiteInfoExample;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.WebsiteInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,5 +49,31 @@ public class WebsiteInfoServiceImpl implements WebsiteInfoService {
         websiteInfoUpdate.setUpdatedAt(new Date());
         websiteInfoDAO.updateByPrimaryKeySelective(websiteInfoUpdate);
         logger.info("updateWebsiteInfo success websiteName={}", websiteName);
+    }
+
+    @Override
+    public WebsiteConfig buildWebsiteConfig(WebsiteInfo websiteInfo) {
+        CheckUtils.checkNotNull(websiteInfo, "info is null");
+        WebsiteConfig config = new WebsiteConfig();
+        config.setWebsiteId(websiteInfo.getWebsiteId());
+        config.setWebsiteName(websiteInfo.getWebsiteName());
+        config.setWebsiteType(websiteInfo.getWebsiteType().toString());
+        config.setIsenabled(true);
+        config.setLoginTip(websiteInfo.getLoginTip());
+        config.setVerifyTip(websiteInfo.getVerifyTip());
+        config.setResetType(websiteInfo.getResetType());
+        config.setSmsReceiver(websiteInfo.getSmsReceiver());
+        config.setSmsTemplate(websiteInfo.getSmsTemplate());
+        config.setResetTip(websiteInfo.getResetTip());
+        config.setResetURL(websiteInfo.getResetUrl());
+        config.setInitSetting(websiteInfo.getLoginConfig());
+        config.setSearchConfig(websiteInfo.getSearchConfig());
+        config.setExtractorConfig(websiteInfo.getExtractorConfig());
+        config.setWebsiteTitle(websiteInfo.getWebsiteTitle());
+        config.setGroupCode(websiteInfo.getGroupCode());
+        if (websiteInfo.getGroupCode() != null && !("".equals(websiteInfo.getGroupCode()))) {
+            config.setGroupName(GroupEnum.getByGroupCode(websiteInfo.getGroupCode()).getGroupName());
+        }
+        return config;
     }
 }

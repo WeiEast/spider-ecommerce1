@@ -3,10 +3,10 @@ package com.datatrees.spider.operator.service;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.operator.domain.OperatorLoginConfig;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
 
 /**
  * 运营商配置
@@ -106,12 +106,7 @@ public interface WebsiteOperatorService {
      */
     OperatorPlugin getOperatorPluginService(String websiteName, Long taskId);
 
-    /**
-     * 将WebsiteOperator转化成Website
-     * @param websiteOperator
-     * @return
-     */
-    Website buildWebsite(WebsiteOperator websiteOperator);
+    WebsiteConfig buildWebsiteConfig(WebsiteOperator websiteOperator);
 
     /**
      * 运营商状态变更

@@ -1,6 +1,7 @@
 package com.datatrees.spider.share.service.website;
 
 import com.datatrees.crawler.core.domain.Website;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
 
 /**
  * 运营商,电商,website表不一样
@@ -22,5 +23,7 @@ public interface WebsiteHolder {
      * @return
      */
     Website getWebsite(String websiteName);
+
+    WebsiteConfig getWebsiteConfig(String websiteName);
 
 }

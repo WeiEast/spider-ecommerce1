@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.share.domain.model.WebsiteInfo;
+import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteInfoService;
 import com.datatrees.spider.share.service.utils.WebsiteUtils;
@@ -26,7 +27,13 @@ public class CommonWebsiteHolder implements WebsiteHolder {
 
     @Override
     public Website getWebsite(String websiteName) {
+        WebsiteConfig websiteConfig = getWebsiteConfig(websiteName);
+        return websiteConfigService.buildWebsite(websiteConfig);
+    }
+
+    @Override
+    public WebsiteConfig getWebsiteConfig(String websiteName) {
         WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteName(websiteName);
-        return websiteConfigService.buildWebsite(websiteInfo);
+        return websiteInfoService.buildWebsiteConfig(websiteInfo);
     }
 }

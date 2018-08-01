@@ -9,11 +9,8 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.NotifyService;
-import com.datatrees.spider.share.service.WebsiteConfigService;
-import com.datatrees.spider.share.service.WebsiteInfoService;
 import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
 import com.datatrees.spider.operator.domain.FieldBizType;
 import com.datatrees.spider.operator.domain.FieldInitSetting;
@@ -31,6 +28,7 @@ import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.MessageService;
+import com.datatrees.spider.share.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -67,9 +65,6 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Resource
     private NotifyService        notifyService;
-
-    @Resource
-    private WebsiteInfoService   websiteInfoService;
 
     @Resource
     private RedisService         redisService;
@@ -344,8 +339,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Override
-    public Website buildWebsite(WebsiteOperator operator) {
-        CheckUtils.checkNotNull(operator, "operator is null");
+    public WebsiteConfig buildWebsiteConfig(WebsiteOperator operator) {
         WebsiteConfig config = new WebsiteConfig();
         config.setWebsiteId(operator.getWebsiteId());
         config.setWebsiteName(operator.getWebsiteName());
@@ -365,7 +359,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         config.setWebsiteTitle(operator.getWebsiteTitle());
         config.setGroupCode(operator.getGroupCode());
         config.setGroupName(GroupEnum.getByGroupCode(operator.getGroupCode()).getGroupName());
-        return websiteConfigService.buildWebsite(config);
+        return config;
     }
 
     @Override

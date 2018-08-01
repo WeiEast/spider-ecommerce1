@@ -14,14 +14,10 @@ import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.spider.share.common.share.service.ProxyService;
-import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.spider.share.domain.model.WebsiteConf;
-import com.datatrees.spider.share.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteHolderService;
-import com.datatrees.spider.share.service.WebsiteInfoService;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -35,9 +31,6 @@ import org.springframework.stereotype.Service;
 public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     private static final Logger               logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
-
-    @Resource
-    private              WebsiteInfoService   websiteInfoService;
 
     @Resource
     private              PluginManager        pluginManager;
@@ -72,39 +65,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
                 return type;
             }
         };
-    }
-
-    private WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
-        CheckUtils.checkNotNull(websiteName, "websiteName is null");
-        WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteName(websiteName);
-        if (null == websiteInfo) {
-            logger.warn("WebsiteConfig not found websiteId={}", websiteName);
-            return null;
-        }
-        return buildWebsiteConfig(websiteInfo);
-    }
-
-
-    @Override
-    public WebsiteConf getWebsiteConf(String websiteName) {
-        CheckUtils.checkNotNull(websiteName, "websiteName is null");
-        WebsiteConf conf = null;
-        WebsiteConfig config = getWebsiteConfigByWebsiteName(websiteName);
-        if (null != config) {
-            conf = new WebsiteConf();
-            conf.setSimulate(config.getSimulate());
-            conf.setWebsiteName(config.getWebsiteName());
-            conf.setWebsiteType(config.getWebsiteType());
-            conf.setInitSetting(config.getInitSetting());
-            conf.setLoginTip(config.getLoginTip());
-            conf.setVerifyTip(config.getVerifyTip());
-            conf.setResetTip(config.getResetTip());
-            conf.setResetType(config.getResetType());
-            conf.setResetURL(config.getResetURL());
-            conf.setSmsReceiver(config.getSmsReceiver());
-            conf.setSmsTemplate(config.getSmsTemplate());
-        }
-        return conf;
     }
 
     @Override
@@ -200,37 +160,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             website.setWebsiteTitle(websiteConfig.getWebsiteTitle());
         }
         return website;
-    }
-
-    @Override
-    public Website buildWebsite(WebsiteInfo websiteInfo) {
-        WebsiteConfig config = buildWebsiteConfig(websiteInfo);
-        return buildWebsite(config);
-    }
-
-    private WebsiteConfig buildWebsiteConfig(WebsiteInfo info) {
-        CheckUtils.checkNotNull(info, "info is null");
-        WebsiteConfig config = new WebsiteConfig();
-        config.setWebsiteId(info.getWebsiteId());
-        config.setWebsiteName(info.getWebsiteName());
-        config.setWebsiteType(info.getWebsiteType().toString());
-        config.setIsenabled(true);
-        config.setLoginTip(info.getLoginTip());
-        config.setVerifyTip(info.getVerifyTip());
-        config.setResetType(info.getResetType());
-        config.setSmsReceiver(info.getSmsReceiver());
-        config.setSmsTemplate(info.getSmsTemplate());
-        config.setResetTip(info.getResetTip());
-        config.setResetURL(info.getResetUrl());
-        config.setInitSetting(info.getLoginConfig());
-        config.setSearchConfig(info.getSearchConfig());
-        config.setExtractorConfig(info.getExtractorConfig());
-        config.setWebsiteTitle(info.getWebsiteTitle());
-        config.setGroupCode(info.getGroupCode());
-        if (info.getGroupCode() != null && !("".equals(info.getGroupCode()))) {
-            config.setGroupName(GroupEnum.getByGroupCode(info.getGroupCode()).getGroupName());
-        }
-        return config;
     }
 
 }

@@ -21,24 +21,19 @@ import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.ProcessResultUtils;
-import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
-import com.datatrees.spider.share.domain.AttributeKey;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
-import com.datatrees.spider.share.domain.directive.DirectiveType;
-import com.datatrees.spider.share.domain.ProcessStatus;
-import com.datatrees.spider.share.domain.QRStatus;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
-import com.datatrees.spider.share.domain.ProcessResult;
-import com.datatrees.spider.share.service.WebsiteConfigService;
-import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
+import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.spider.share.service.WebsiteHolderService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +51,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     private static final Logger               logger = LoggerFactory.getLogger(CrawlerServiceImpl.class);
 
     @Resource
-    private              WebsiteConfigService websiteConfigService;
+    private              WebsiteHolderService websiteHolderService;
 
     @Resource
     private              RedisService         redisService;
@@ -85,7 +80,7 @@ public class CrawlerServiceImpl implements CrawlerService {
             logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
             return null;
         }
-        WebsiteConf conf = websiteConfigService.getWebsiteConf(newWebsiteName);
+        WebsiteConf conf = websiteHolderService.getWebsiteConf(newWebsiteName);
         if (null != conf) {
             //中文
             conf.setName(websiteName);
