@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public final class MailParserImpl {
     private static final Logger logger                = LoggerFactory.getLogger(MailParserImpl.class);
     private static final String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
-    private static final String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
+    private static final String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.attachmentType", "attachment");
 
     public static Map parseMessage(String websiteName, String contentString, boolean bodyParser) throws IOException {
         try (InputStream fis = IOUtils.toInputStream(contentString)) {
