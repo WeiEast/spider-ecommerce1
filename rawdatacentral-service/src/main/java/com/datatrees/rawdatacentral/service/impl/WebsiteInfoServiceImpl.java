@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
+import com.datatrees.spider.share.dao.WebsiteInfoDAO;
 import com.datatrees.spider.share.domain.model.WebsiteInfoCriteria;
 import com.datatrees.spider.share.domain.model.WebsiteInfo;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;

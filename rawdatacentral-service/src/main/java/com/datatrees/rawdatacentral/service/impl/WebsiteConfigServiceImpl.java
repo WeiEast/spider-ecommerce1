@@ -11,7 +11,7 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
-import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
+import com.datatrees.spider.share.dao.WebsiteInfoDAO;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;

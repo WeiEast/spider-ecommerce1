@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<generator xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="rp.xsd">
+    <database>
+        <username>root</username>
+        <password>Tianxing@0701</password>
+        <host>192.168.5.24</host>
+        <database_name>tc</database_name>
+    </database>
+    <target>
+        <model_target_package>com.treefinance.tc.domain.model</model_target_package>
+        <model_target_project>tc-domain/src/main/java</model_target_project>
+        <mapper_target_package>com.treefinance.tc.dao</mapper_target_package>
+        <mapper_target_project>tc-dao/src/main/java</mapper_target_project>
+        <sqlmap_target_package>sqlmap.tc.mapper</sqlmap_target_package>
+        <sqlmap_target_project>tc-dao/src/main/resources</sqlmap_target_project>
+    </target>
+    <tables>
+        <table tableName="http_test_result" comment="http测试用例结果" enableDeleteByExample="true">
+            <generatedKey column="result_id" sqlStatement="MySql" identity="true" />
+            <columnOverride column="url_params" jdbcType="VARCHAR" />
+            <columnOverride column="headers" jdbcType="VARCHAR" />
+            <columnOverride column="body_params" jdbcType="VARCHAR" />
+            <columnOverride column="body_data" jdbcType="VARCHAR" />
+            <columnOverride column="response_data" jdbcType="VARCHAR" />
+            <columnOverride column="response_headers" jdbcType="VARCHAR" />
+            <columnOverride column="validate_rule" jdbcType="VARCHAR" />
+        </table>
+        <!--<table tableName="env_set" comment="变量集" enableDeleteByExample="true">-->
+            <!--<generatedKey column="env_set_id" sqlStatement="MySql" identity="true" />-->
+        <!--</table>-->
+        <!--<table tableName="env" comment="变量" enableDeleteByExample="true">-->
+        <!--</table>-->
+        <!--<table tableName="interface_menu" comment="接口库目录" enableDeleteByExample="true">-->
+            <!--<generatedKey column="menu_id" sqlStatement="MySql" identity="true" />-->
+        <!--</table>-->
+        <!--<table tableName="test_case_menu" comment="测试用例目录" enableDeleteByExample="true">-->
+            <!--<generatedKey column="menu_id" sqlStatement="MySql" identity="true" />-->
+        <!--</table>-->
+        <!--<table tableName="team" comment="团队" enableCountByExample="true">-->
+            <!--<generatedKey column="team_id" sqlStatement="MySql" identity="true" />-->
+        <!--</table>-->
+        <!--<table tableName="team_user" comment="团队" enableCountByExample="true" />-->
+    </tables>
+</generator>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="generator" type="generatorType" />
+    <xsd:complexType name="generatorType">
+        <xsd:sequence>
+            <xsd:element name="database" type="databaseType"/>
+            <xsd:element name="target" type="targetType"/>
+            <xsd:element name="tables" type="tablesType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="databaseType">
+        <xsd:sequence>
+            <xsd:element name="driver_jar" type="xsd:string"/>
+            <xsd:element name="username" type="xsd:string"/>
+            <xsd:element name="password" type="xsd:string"/>
+            <xsd:element name="host" type="xsd:string"/>
+            <xsd:element name="database_name" type="xsd:string"/>
+            <xsd:element name="type">
+                <xsd:simpleType>
+                    <xsd: base="xsd:string">
+                        <xsd:enumeration value="mysql"/>
+                        <xsd:enumeration value="sqlserver"/>
+                        <xsd:enumeration value="oracle"/>
+                    </xsd:>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="targetType">
+        <xsd:sequence>
+            <xsd:element name="model_target_package" type="xsd:string"/>
+            <xsd:element name="model_target_project" type="xsd:string"/>
+            <xsd:element name="mapper_target_package" type="xsd:string"/>
+            <xsd:element name="mapper_target_project" type="xsd:string"/>
+            <xsd:element name="sqlmap_target_package" type="xsd:string"/>
+            <xsd:element name="sqlmap_target_project" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="tablesType">
+        <xsd:sequence>
+            <xsd:element name="table">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="tableName"/>
+                            <xsd:attribute name="comment"/>
+                        </xsd:extension>
+                        <xsd:extension base="xsd:boolean">
+                            <xsd:attribute name="enableInsert" default="false"/>
+                            <xsd:attribute name="enableInsertSelective" default="true"/>
+                            <xsd:attribute name="enableSelectByPrimaryKey" default="true"/>
+                            <xsd:attribute name="enableSelectByExample" default="true"/>
+                            <xsd:attribute name="enableCountByExample" default="true"/>
+                            <xsd:attribute name="enableUpdateByExample" default="false"/>
+                            <xsd:attribute name="enableUpdateByExampleSelective" default="true"/>
+                            <xsd:attribute name="enableUpdateByPrimaryKey" default="false"/>
+                            <xsd:attribute name="enableUpdateByPrimaryKeySelective" default="true"/>
+                            <xsd:attribute name="enableDeleteByPrimaryKey" default="true"/>
+                            <xsd:attribute name="enableDeleteByExample" default="false"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+</xsd:schema>d
+
+

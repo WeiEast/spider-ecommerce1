@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.datatrees.rawdatacentral.dao.mapper.WebsiteInfoMapper">
+<mapper namespace="com.datatrees.spider.share.dao.mapper.WebsiteInfoMapper">
   <resultMap id="BaseResultMap" type="com.datatrees.spider.share.domain.model.WebsiteInfo">
     <!--
       WARNING - @mbg.generated
