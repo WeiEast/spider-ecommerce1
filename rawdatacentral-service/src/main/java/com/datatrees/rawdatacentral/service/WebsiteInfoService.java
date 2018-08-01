@@ -12,5 +12,5 @@ public interface WebsiteInfoService {
      * @param websiteName
      * @return
      */
-    WebsiteInfo getByWebsiteNameFromInfo(String websiteName);
+    WebsiteInfo getByWebsiteName(String websiteName);
 }

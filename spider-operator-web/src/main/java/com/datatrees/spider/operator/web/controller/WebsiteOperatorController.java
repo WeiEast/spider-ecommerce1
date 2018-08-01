@@ -3,12 +3,12 @@ package com.datatrees.spider.operator.web.controller;
 import javax.annotation.Resource;
 import java.util.HashMap;
 
-import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
+import com.datatrees.spider.share.common.share.service.RedisService;
+import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,24 +31,6 @@ public class WebsiteOperatorController {
 
     @Resource
     private              RedisService           redisService;
-
-    /**
-     * 从老运营商导入配置
-     * @param config
-     * @return
-     */
-    @RequestMapping("/importWebsite")
-    public HttpResult<Object> importWebsite(WebsiteOperator config) {
-        HttpResult<Object> result = new HttpResult<>();
-        try {
-            websiteOperatorService.importWebsite(config);
-            logger.info("importWebsite success websiteName={}", config.getWebsiteName());
-            return result.success(true);
-        } catch (Exception e) {
-            logger.error("importWebsite error websiteName={}", config.getWebsiteName(), e);
-            return result.failure();
-        }
-    }
 
     /**
      * 根据websiteName更新searchConfig和extractorConfig

@@ -3,7 +3,6 @@ package com.datatrees.rawdatacentral.service.impl;
 import javax.annotation.Resource;
 import java.util.Date;
 
-import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
 import com.datatrees.crawler.core.domain.config.ExtractorConfig;
@@ -17,7 +16,6 @@ import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.rawdatacentral.dao.WebsiteInfoDAO;
 import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.domain.model.WebsiteConf;
 import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
@@ -88,7 +86,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     private WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
         CheckUtils.checkNotNull(websiteName, "websiteName is null");
-        WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteNameFromInfo(websiteName);
+        WebsiteInfo websiteInfo = websiteInfoService.getByWebsiteName(websiteName);
         if (null == websiteInfo) {
             logger.warn("WebsiteConfig not found websiteId={}", websiteName);
             return null;

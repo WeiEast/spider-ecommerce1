@@ -38,12 +38,6 @@ public interface WebsiteOperatorService {
     List<WebsiteOperator> queryByGroupCode(String groupCode);
 
     /**
-     * 从老配置导入配置信息
-     * @param config 自定义信息
-     */
-    void importWebsite(WebsiteOperator config);
-
-    /**
      * 更新配置
      * @param config
      */

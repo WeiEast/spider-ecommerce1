@@ -26,7 +26,7 @@ public class WebsiteInfoServiceImpl implements WebsiteInfoService {
     private              WebsiteInfoDAO websiteInfoDAO;
 
     @Override
-    public WebsiteInfo getByWebsiteNameFromInfo(String websiteName) {
+    public WebsiteInfo getByWebsiteName(String websiteName) {
         CheckUtils.checkNotBlank(websiteName, ErrorCode.EMPTY_WEBSITE_NAME);
         WebsiteInfoCriteria example = new WebsiteInfoCriteria();
         String env = TaskUtils.getSassEnv();

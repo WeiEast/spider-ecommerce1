@@ -10,28 +10,27 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
 import com.datatrees.rawdatacentral.service.NotifyService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
-import com.datatrees.spider.operator.domain.OperatorLoginConfig;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
-import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.spider.operator.domain.FieldBizType;
 import com.datatrees.spider.operator.domain.FieldInitSetting;
 import com.datatrees.spider.operator.domain.InputField;
-import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.operator.domain.OperatorLoginConfig;
+import com.datatrees.spider.operator.domain.model.WebsiteOperator;
+import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.*;
 import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
-import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.service.MessageService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -45,7 +44,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     private static final Map<String, String> hosts                    = new HashMap<>();
 
-    private static final String                 DEFAULT_CHARSET_NAME   = "UTF-8";
+    private static final String              DEFAULT_CHARSET_NAME     = "UTF-8";
 
     /**
      * 插件名称
@@ -104,66 +103,6 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         String env = TaskUtils.getSassEnv();
         example.createCriteria().andGroupCodeEqualTo(groupCode).andEnvEqualTo(env);
         return websiteOperatorDAO.selectByExample(example);
-    }
-
-    @Override
-    public void importWebsite(WebsiteOperator config) {
-        CheckUtils.checkNotNull(config, "config is null");
-        CheckUtils.checkNotBlank(config.getWebsiteName(), ErrorCode.EMPTY_WEBSITE_NAME);
-        WebsiteInfo info = websiteInfoService.getByWebsiteNameFromInfo(config.getWebsiteName());
-        if (null == info) {
-            logger.warn("WebsiteConfig not found websiteName={}", config.getWebsiteName());
-            throw new CommonException("websiteName config not found");
-        }
-
-        WebsiteConfig source = new WebsiteConfig();
-        source.setWebsiteId(info.getWebsiteId());
-        source.setWebsiteName(info.getWebsiteName());
-        source.setWebsiteType(info.getWebsiteType().toString());
-        source.setIsenabled(true);
-        source.setLoginTip(info.getLoginTip());
-        source.setVerifyTip(info.getVerifyTip());
-        source.setResetType(info.getResetType());
-        source.setSmsReceiver(info.getSmsReceiver());
-        source.setSmsTemplate(info.getSmsTemplate());
-        source.setResetTip(info.getResetTip());
-        source.setResetURL(info.getResetUrl());
-        source.setInitSetting(info.getLoginConfig());
-        source.setSearchConfig(info.getSearchConfig());
-        source.setExtractorConfig(info.getExtractorConfig());
-        source.setWebsiteTitle(info.getWebsiteTitle());
-        source.setGroupCode(info.getGroupCode());
-        if (info.getGroupCode() != null) {
-            source.setGroupName(GroupEnum.getByGroupCode(info.getGroupCode()).getGroupName());
-        }
-        if (StringUtils.isBlank(config.getOperatorType())) {
-            String websiteType = RegexpUtils.select(config.getWebsiteName(), "\\d+", 0);
-            config.setOperatorType(websiteType);
-        }
-        String region = config.getWebsiteTitle().split("\\(")[0].replaceAll("移动", "").replaceAll("联通", "").replaceAll("电信", "");
-        config.setRegionName(region);
-
-        config.setEnv(TaskUtils.getSassEnv());
-        config.setWebsiteId(source.getWebsiteId());
-        config.setWebsiteName(source.getWebsiteName());
-        config.setSearchConfig(source.getSearchConfig());
-        config.setExtractorConfig(source.getExtractorConfig());
-        config.setLoginTip(source.getLoginTip());
-        config.setVerifyTip(source.getVerifyTip());
-        config.setResetType(source.getResetType());
-        config.setResetTip(source.getResetTip());
-        if (!StringUtils.equals("null", source.getSmsTemplate())) {
-            config.setSmsTemplate(source.getSmsTemplate());
-        }
-        if (!StringUtils.equals("null", source.getResetURL())) {
-            config.setResetUrl(source.getResetURL());
-        }
-        config.setSmsReceiver(source.getSmsReceiver());
-        config.setSimulate(source.getSimulate());
-        if (StringUtils.isBlank(config.getLoginConfig())) {
-            config.setLoginConfig(source.getInitSetting().trim().replaceAll(" ", "").replaceAll("\\n", ""));
-        }
-        websiteOperatorDAO.insertSelective(config);
     }
 
     @Override
