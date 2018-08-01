@@ -60,7 +60,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
                 if (type instanceof AbstractWebsiteConfig && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
                     String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
                     logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class " + type.getClass());
-                    Website website = getWebsiteByWebsiteName(parentWebsiteName);
+                    Website website = websiteHolderService.getWebsite(parentWebsiteName);
                     if (website != null) {
                         if (type instanceof SearchConfig) {
                             ((SearchConfig) type).clone(website.getSearchConfig());
@@ -84,10 +84,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return buildWebsiteConfig(websiteInfo);
     }
 
-    @Override
-    public Website getWebsiteByWebsiteName(String websiteName) {
-        return websiteHolderService.getWebsite(websiteName);
-    }
 
     @Override
     public WebsiteConf getWebsiteConf(String websiteName) {
@@ -143,7 +139,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId, Long taskId) {
         Bank bank = bankService.getByBankIdFromCache(bankId);
         if (bank != null) {
-            Website website = getWebsiteByWebsiteName(bank.getWebsiteName());
+            Website website = websiteHolderService.getWebsite(bank.getWebsiteName());
             if (website != null) {
                 ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
                 extractorProcessorContext.setPluginManager(pluginManager);

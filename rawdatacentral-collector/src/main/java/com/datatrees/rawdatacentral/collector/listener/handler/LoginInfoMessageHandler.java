@@ -5,18 +5,13 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
-import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.StepEnum;
-import com.datatrees.spider.share.domain.TopicEnum;
-import com.datatrees.spider.share.domain.TopicTag;
-import com.datatrees.spider.share.domain.LoginMessage;
-import com.datatrees.spider.share.service.WebsiteConfigService;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.domain.*;
+import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.spider.share.service.WebsiteHolderService;
 import com.datatrees.spider.share.service.mq.MessageHandler;
 import com.treefinance.crawler.exception.UnsupportedWebsiteException;
 import org.slf4j.Logger;
@@ -37,10 +32,10 @@ public class LoginInfoMessageHandler implements MessageHandler {
     private              RedisService         redisService;
 
     @Resource
-    private              WebsiteConfigService websiteConfigService;
+    private              MonitorService       monitorService;
 
     @Resource
-    private              MonitorService       monitorService;
+    private              WebsiteHolderService websiteHolderService;
 
     @Override
     public String getTag() {
@@ -69,7 +64,7 @@ public class LoginInfoMessageHandler implements MessageHandler {
             TaskUtils.addStep(taskId, StepEnum.INIT);
             String websiteName = loginInfo.getWebsiteName();
             //这里电商,邮箱,老运营商
-            Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
+            Website website = websiteHolderService.getWebsite(websiteName);
             if (website == null) {
                 throw new UnsupportedWebsiteException("Unsupported website: " + websiteName);
             }

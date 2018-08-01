@@ -10,8 +10,6 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.rawdatacentral.api.CommonPluginService;
 import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.spider.share.service.WebsiteConfigService;
-import com.datatrees.spider.share.service.plugin.QRPlugin;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;
@@ -21,6 +19,8 @@ import com.datatrees.spider.share.domain.http.Cookie;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.spider.share.service.WebsiteHolderService;
+import com.datatrees.spider.share.service.plugin.QRPlugin;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
     private              RedisService         redisService;
 
     @Resource
-    private              WebsiteConfigService websiteConfigService;
+    private              WebsiteHolderService websiteHolderService;
 
     @Resource
     private              MonitorService       monitorService;
@@ -74,7 +74,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
                 RedisUtils.del(RedisKeyPrefixEnum.TASK_WEBSITE.getRedisKey(taskId));
 
                 //这里电商,邮箱,老运营商
-                Website website = websiteConfigService.getWebsiteByWebsiteName(websiteName);
+                Website website = websiteHolderService.getWebsite(websiteName);
                 redisService.cache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, website);
                 //缓存task基本信息
                 TaskUtils.initTaskShare(taskId, websiteName);

@@ -14,13 +14,6 @@ import com.datatrees.spider.share.domain.website.WebsiteConfig;
 public interface WebsiteConfigService {
 
     /**
-     * 获取爬虫里的Website
-     * @param websiteName
-     * @return
-     */
-    Website getWebsiteByWebsiteName(String websiteName);
-
-    /**
      * 获取WebsiteConf
      * @param websiteName
      * @return
