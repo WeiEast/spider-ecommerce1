@@ -15,24 +15,10 @@ public interface WebsiteConfigService {
 
     /**
      * 获取站点配置
-     * @param websiteId
-     * @return
-     */
-    WebsiteConfig getWebsiteConfigByWebsiteId(Integer websiteId);
-
-    /**
-     * 获取站点配置
      * @param websiteName
      * @return
      */
     WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName);
-
-    /**
-     * 获取爬虫里的Website
-     * @param websiteId
-     * @return
-     */
-    Website getWebsiteByWebsiteId(Integer websiteId);
 
     /**
      * 获取爬虫里的Website
@@ -65,13 +51,6 @@ public interface WebsiteConfigService {
 
     /**
      * 获取SearchProcessorContext,taskInit使用
-     * @param taskId
-     * @return
-     */
-    SearchProcessorContext getSearchProcessorContext(Long taskId);
-
-    /**
-     * 获取SearchProcessorContext,taskInit使用
      * @param websiteName
      * @return
      */
@@ -94,12 +73,5 @@ public interface WebsiteConfigService {
      * @return
      */
     Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo);
-
-    /**
-     * 根据taskId从缓存取Website
-     * @param taskId
-     * @return
-     */
-    Website getWebsiteFromCache(Long taskId);
 
 }

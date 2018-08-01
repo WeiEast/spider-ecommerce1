@@ -85,16 +85,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         };
     }
 
-    @Override
-    public WebsiteConfig getWebsiteConfigByWebsiteId(Integer websiteId) {
-        CheckUtils.checkNotNull(websiteId, "websiteId is null");
-        WebsiteInfoWithBLOBs websiteInfo = websiteInfoDAO.selectByPrimaryKey(websiteId);
-        if (null == websiteInfo) {
-            logger.warn("WebsiteConfig not found websiteId={}", websiteId);
-            return null;
-        }
-        return buildWebsiteConfigFromWebsiteInfo(websiteInfo);
-    }
 
     @Override
     public WebsiteConfig getWebsiteConfigByWebsiteName(String websiteName) {
@@ -107,14 +97,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return buildWebsiteConfigFromWebsiteInfo(websiteInfo);
     }
 
-    @Override
-    public Website getWebsiteByWebsiteId(Integer websiteId) {
-        WebsiteConfig config = getWebsiteConfigByWebsiteId(websiteId);
-        if (null != config) {
-            return getFromWebsiteConfig(config);
-        }
-        return null;
-    }
 
     @Override
     public Website getWebsiteByWebsiteName(String websiteName) {
@@ -180,18 +162,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         return true;
     }
 
-    @Override
-    public SearchProcessorContext getSearchProcessorContext(Long taskId) {
-        Website website = getWebsiteFromCache(taskId);
-        if (website != null) {
-            SearchProcessorContext searchProcessorContext = new SearchProcessorContext(website, taskId);
-            searchProcessorContext.setPluginManager(pluginManager);
-            searchProcessorContext.setProxyManager(new SimpleProxyManager(taskId, website.getWebsiteName(), proxyService));
-            searchProcessorContext.init();
-            return searchProcessorContext;
-        }
-        return null;
-    }
 
     @Override
     public SearchProcessorContext getSearchProcessorContext(Long taskId, String websiteName) {
@@ -292,32 +262,6 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     public Website buildWebsiteFromWebsiteInfo(WebsiteInfoWithBLOBs websiteInfo) {
         WebsiteConfig config = buildWebsiteConfigFromWebsiteInfo(websiteInfo);
         return buildWebsite(config);
-    }
-
-    @Override
-    public Website getWebsiteFromCache(Long taskId) {
-        Website website = redisService.getCache(RedisKeyPrefixEnum.TASK_WEBSITE, taskId, new TypeReference<Website>() {});
-        if (website != null) {
-            if (StringUtils.isNotEmpty(website.getSearchConfigSource())) {
-                try {
-                    SearchConfig searchConfig = XmlConfigParser.getInstance()
-                            .parse(website.getSearchConfigSource(), SearchConfig.class, parentConfigHandler);
-                    website.setSearchConfig(searchConfig);
-                } catch (Exception e) {
-                    logger.error("parse searchConfig  error websiteId={},websiteName={}", website.getId(), website.getWebsiteName(), e);
-                }
-            }
-            if (StringUtils.isNotEmpty(website.getExtractorConfigSource())) {
-                try {
-                    ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
-                            .parse(website.getExtractorConfigSource(), ExtractorConfig.class, parentConfigHandler);
-                    website.setExtractorConfig(extractorConfig);
-                } catch (Exception e) {
-                    logger.error("parse extractorConfig  error websiteId={},websiteName={}", website.getId(), website.getWebsiteName(), e);
-                }
-            }
-        }
-        return website;
     }
 
     private WebsiteConfig buildWebsiteConfigFromWebsiteInfo(WebsiteInfoWithBLOBs info) {
