@@ -1,11 +1,11 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service;
 
 import javax.annotation.Resource;
 import java.util.Map;
 
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.rawdatacentral.service.WebsiteHolderService;
-import com.datatrees.rawdatacentral.service.website.WebsiteHolder;
+import com.datatrees.spider.share.service.WebsiteHolderService;
+import com.datatrees.spider.share.service.WebsiteHolder;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;

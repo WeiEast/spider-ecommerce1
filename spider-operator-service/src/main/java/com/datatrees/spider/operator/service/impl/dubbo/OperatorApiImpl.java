@@ -13,7 +13,7 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.rawdatacentral.service.WebsiteHolderService;
+import com.datatrees.spider.share.service.WebsiteHolderService;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.OperatorGroup;
 import com.datatrees.spider.operator.domain.OperatorLoginConfig;

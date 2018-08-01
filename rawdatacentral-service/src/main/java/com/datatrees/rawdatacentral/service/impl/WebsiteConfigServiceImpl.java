@@ -22,7 +22,7 @@ import com.datatrees.rawdatacentral.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.service.WebsiteHolderService;
+import com.datatrees.spider.share.service.WebsiteHolderService;
 import com.datatrees.rawdatacentral.service.WebsiteInfoService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
