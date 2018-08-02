@@ -6,18 +6,18 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.bank.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.domain.model.EBankExtractResult;
+import com.datatrees.spider.bank.domain.model.MailExtractResult;
 
 /**
  * Created by zhouxinghai on 2017/6/29
  */
 @Resource
-public interface EbankExtractResultDAO {
+public interface MailExtractResultDAO {
 
-    public int insert(EBankExtractResult result);
+    public int insert(MailExtractResult result);
 
 }

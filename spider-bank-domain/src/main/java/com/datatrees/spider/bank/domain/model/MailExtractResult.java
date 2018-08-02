@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.domain.model;
+package com.datatrees.spider.bank.domain.model;
 
 import java.util.Date;
 
