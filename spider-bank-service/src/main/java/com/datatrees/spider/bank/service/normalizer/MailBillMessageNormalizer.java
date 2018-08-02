@@ -56,7 +56,7 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
     @Override
     public boolean normalize(Object data) {
         ExtractMessage message = ((ExtractMessage) data);
-        Object object = ((ExtractMessage) message).getMessageObject();
+        Object object =  message.getMessageObject();
         if (object instanceof MailBillData) {
             message.setResultType(ResultType.MAILBILL);
             message.setTypeId(this.getBankId((MailBillData) object));

@@ -1,6 +1,8 @@
 package com.datatrees.rawdatacentral.service.impl;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
@@ -10,8 +12,6 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.service.BankService;
 import com.datatrees.rawdatacentral.service.proxy.SimpleProxyManager;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.domain.GroupEnum;
@@ -30,13 +30,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
-    private static final Logger               logger = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
+    private static final Logger               logger  = LoggerFactory.getLogger(WebsiteConfigServiceImpl.class);
+
+    private static       Map<Integer, String> bankIds = new HashMap<>();
 
     @Resource
     private              PluginManager        pluginManager;
-
-    @Resource
-    private              BankService          bankService;
 
     @Resource
     private              ProxyService         proxyService;
@@ -97,15 +96,13 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Override
     public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId, Long taskId) {
-        Bank bank = bankService.getByBankIdFromCache(bankId);
-        if (bank != null) {
-            Website website = websiteHolderService.getWebsite(bank.getWebsiteName());
-            if (website != null) {
-                ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
-                extractorProcessorContext.setPluginManager(pluginManager);
-                extractorProcessorContext.init();
-                return extractorProcessorContext;
-            }
+        String websiteName = bankIds.get(bankId);
+        Website website = websiteHolderService.getWebsite(websiteName);
+        if (website != null) {
+            ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
+            extractorProcessorContext.setPluginManager(pluginManager);
+            extractorProcessorContext.init();
+            return extractorProcessorContext;
         }
         return null;
     }
@@ -160,6 +157,11 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
             website.setWebsiteTitle(websiteConfig.getWebsiteTitle());
         }
         return website;
+    }
+
+    @Override
+    public void initBankCache(Map<Integer, String> map) {
+        bankIds.putAll(map);
     }
 
 }

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.rawdatacentral.dao.BankDAO;
 import com.datatrees.rawdatacentral.dao.BankMailDAO;
 import com.datatrees.rawdatacentral.domain.model.Bank;
@@ -15,6 +14,7 @@ import com.datatrees.rawdatacentral.domain.model.BankMail;
 import com.datatrees.rawdatacentral.domain.model.example.BankExample;
 import com.datatrees.rawdatacentral.domain.model.example.BankMailExample;
 import com.datatrees.rawdatacentral.service.BankService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,20 +46,6 @@ public class BankServiceImpl implements BankService {
         return bank;
     }
 
-    //    @Override
-    //    public Bank getByWebsiteIdFromCache(Integer websiteId) {
-    //        String key = "rawdatacentral_bank_website_id" + websiteId;
-    //        Bank bank = redisService.getCache(key, new TypeReference<Bank>() {
-    //        });
-    //        if (null == bank) {
-    //            bank = getEnabledByWebsiteId(websiteId);
-    //            if (null != bank) {
-    //                redisService.cache(key, bank, 1, TimeUnit.DAYS);
-    //            }
-    //        }
-    //        return bank;
-    //    }
-
     @Override
     public Bank getByWebsiteName(String websiteName) {
         BankExample example = new BankExample();
@@ -81,25 +67,6 @@ public class BankServiceImpl implements BankService {
         }
         return null;
     }
-
-    //    @Override
-    //    public Bank getEnabledByWebsiteId(Integer websiteId) {
-    //        if (null != websiteId) {
-    //            BankExample example = new BankExample();
-    //            BankExample.Criteria criteria = example.createCriteria();
-    //            criteria.andWebsiteidEqualTo(websiteId).andIsenabledEqualTo(true);
-    //            List<Bank> list = bankDAO.selectByExample(example);
-    //            if (!list.isEmpty()) {
-    //                Bank bank = list.get(0);
-    //                if (!bank.getIsenabled()) {
-    //                    logger.warn("bank is disabled websiteId={},bankId={}", websiteId, bank.getBankId());
-    //                    return null;
-    //                }
-    //                return bank;
-    //            }
-    //        }
-    //        return null;
-    //    }
 
     @Override
     public Map<String, Integer> getMailBankMap() {
