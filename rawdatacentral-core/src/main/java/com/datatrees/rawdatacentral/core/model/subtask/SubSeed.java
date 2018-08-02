@@ -13,7 +13,7 @@ import java.util.HashMap;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年12月19日 下午4:25:02
  */

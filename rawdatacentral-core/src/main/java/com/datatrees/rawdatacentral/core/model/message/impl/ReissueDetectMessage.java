@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.core.model.MailBill;
 import com.datatrees.spider.share.domain.MessageInfo;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2016年1月18日 上午10:41:53
  */

@@ -47,7 +47,7 @@ import com.treefinance.crawler.framework.format.special.FileFormatter;
 import com.treefinance.crawler.framework.format.special.ResourceStringFormatter;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 1:23:56 PM
  */

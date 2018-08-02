@@ -5,7 +5,7 @@ import com.datatrees.rawdatacentral.collector.bdb.wapper.BDBEnvironmentWapper;
 import com.datatrees.rawdatacentral.collector.bdb.wapper.BDBWapper;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月20日 上午12:43:39
  */

@@ -16,7 +16,7 @@ import com.datatrees.rawdatacentral.collector.subtask.container.Mutex;
 import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年12月21日 上午11:12:57
  */

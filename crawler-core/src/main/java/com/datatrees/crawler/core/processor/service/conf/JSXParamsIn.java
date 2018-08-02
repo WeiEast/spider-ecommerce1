@@ -3,7 +3,7 @@ package com.datatrees.crawler.core.processor.service.conf;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0 2012-04-19
  * @since 1.0
  */

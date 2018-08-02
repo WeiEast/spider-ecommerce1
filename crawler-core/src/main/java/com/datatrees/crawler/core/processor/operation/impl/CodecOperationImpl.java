@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * handle codec operation decode/encode etc..
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 27, 2014 12:30:43 PM
  */

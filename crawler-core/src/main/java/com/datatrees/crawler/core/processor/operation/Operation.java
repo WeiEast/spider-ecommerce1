@@ -21,7 +21,7 @@ import com.treefinance.toolkit.util.json.GsonUtils;
 import com.treefinance.toolkit.util.json.Jackson;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 1:45:54 PM
  */

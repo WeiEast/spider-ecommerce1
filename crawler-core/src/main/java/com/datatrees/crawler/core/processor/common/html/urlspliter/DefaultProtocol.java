@@ -6,7 +6,7 @@ import java.util.List;
 import com.datatrees.common.conf.PropertiesConfiguration;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2014-12-18 下午7:31:52
  */

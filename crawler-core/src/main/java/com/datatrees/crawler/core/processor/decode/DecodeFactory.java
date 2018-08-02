@@ -13,7 +13,7 @@ import com.datatrees.crawler.core.domain.config.properties.UnicodeMode;
 import com.datatrees.crawler.core.processor.decode.impl.*;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 12, 2014 8:03:50 PM
  */

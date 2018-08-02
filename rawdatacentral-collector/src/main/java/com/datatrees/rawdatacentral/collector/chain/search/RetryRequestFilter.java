@@ -9,7 +9,7 @@ import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.spider.share.domain.model.Task;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 上午3:19:21
  */

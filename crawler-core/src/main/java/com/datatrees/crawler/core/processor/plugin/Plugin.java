@@ -24,7 +24,7 @@ import com.datatrees.crawler.core.processor.common.exception.PluginInvokeExcepti
 import org.apache.commons.collections.MapUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 19, 2014 1:10:48 PM
  */

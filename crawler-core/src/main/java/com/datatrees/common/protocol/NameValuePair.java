@@ -11,7 +11,7 @@ package com.datatrees.common.protocol;
 import com.datatrees.common.protocol.util.LangUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 1:51:25 PM
  */

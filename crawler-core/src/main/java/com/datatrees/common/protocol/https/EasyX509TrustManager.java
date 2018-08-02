@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
  * you are perfectly aware of security implications of accepting
  * self-signed certificates
  * </p>
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * <p>
  * DISCLAIMER: HttpClient developers DO NOT actively support this component.
  * The component is provided as a reference material, which may be inappropriate

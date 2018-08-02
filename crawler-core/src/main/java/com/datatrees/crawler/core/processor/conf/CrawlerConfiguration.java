@@ -13,7 +13,7 @@ import com.datatrees.common.conf.DefaultConfiguration;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 13, 2014 10:10:55 AM
  */

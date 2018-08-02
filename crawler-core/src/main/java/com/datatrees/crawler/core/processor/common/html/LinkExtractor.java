@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 /**
  * LinkExtractor.java 1.0 Jul 19, 2011
  * A callback extracting links.
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 1.0
  */

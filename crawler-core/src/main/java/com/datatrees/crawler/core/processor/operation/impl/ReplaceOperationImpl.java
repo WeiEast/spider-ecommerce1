@@ -19,7 +19,7 @@ import com.treefinance.crawler.framework.expression.ExpressionEngine;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:19 PM
  */

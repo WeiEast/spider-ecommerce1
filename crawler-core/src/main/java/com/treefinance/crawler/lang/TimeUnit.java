@@ -9,7 +9,7 @@
 package com.treefinance.crawler.lang;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 13, 2014 10:00:08 PM
  */

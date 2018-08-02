@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * parser segment content and send request or extract urls
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 8:57:12 PM
  */

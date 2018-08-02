@@ -10,7 +10,7 @@ package org.apache.commons.httpclient;
 
 /**
  * will store original cookie which contains "
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2016年1月7日 上午11:32:46
  */

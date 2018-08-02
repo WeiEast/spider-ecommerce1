@@ -21,7 +21,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 3:14:15 PM
  */

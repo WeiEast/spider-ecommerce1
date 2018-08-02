@@ -17,7 +17,7 @@ import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.spider.share.domain.ResultType;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月28日 下午11:12:56
  */

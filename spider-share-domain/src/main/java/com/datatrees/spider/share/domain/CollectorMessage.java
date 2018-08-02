@@ -15,7 +15,7 @@ import java.util.Set;
 import com.datatrees.spider.share.domain.MessageInfo;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月28日 下午4:14:22
  */

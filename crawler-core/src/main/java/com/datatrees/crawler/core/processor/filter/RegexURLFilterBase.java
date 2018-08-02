@@ -14,7 +14,7 @@ import java.util.List;
 import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 7:25:43 PMO
  */

@@ -11,7 +11,7 @@ package com.datatrees.crawler.core.processor.common;
 import com.datatrees.crawler.core.util.SynchronizedMap;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年8月3日 下午1:52:39
  */

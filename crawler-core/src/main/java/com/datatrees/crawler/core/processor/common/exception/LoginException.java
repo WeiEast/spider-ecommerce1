@@ -9,7 +9,7 @@
 package com.datatrees.crawler.core.processor.common.exception;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月19日 下午12:51:33
  */

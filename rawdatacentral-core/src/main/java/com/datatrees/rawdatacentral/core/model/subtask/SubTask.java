@@ -11,7 +11,7 @@ package com.datatrees.rawdatacentral.core.model.subtask;
 import com.datatrees.spider.share.service.domain.ParentTask;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年12月19日 下午3:57:07
  */

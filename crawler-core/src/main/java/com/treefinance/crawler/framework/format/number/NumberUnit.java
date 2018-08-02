@@ -9,7 +9,7 @@
 package com.treefinance.crawler.framework.format.number;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 31, 2014 10:18:20 AM
  */

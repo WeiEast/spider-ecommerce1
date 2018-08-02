@@ -9,7 +9,7 @@
 package com.datatrees.crawler.core.domain;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 13, 2014 10:20:51 AM
  */

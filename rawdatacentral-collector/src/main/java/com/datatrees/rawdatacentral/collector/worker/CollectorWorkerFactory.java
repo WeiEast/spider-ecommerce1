@@ -18,7 +18,7 @@ import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import org.springframework.stereotype.Service;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2016年1月18日 下午3:34:47
  */

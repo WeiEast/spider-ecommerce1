@@ -9,7 +9,7 @@
 package com.datatrees.crawler.core.processor.cookie.fetcher;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 26, 2014 4:48:59 PM
  */

@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecke
 import com.datatrees.spider.share.service.utils.UniqueKeyGenUtil;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年8月7日 下午3:15:11
  */

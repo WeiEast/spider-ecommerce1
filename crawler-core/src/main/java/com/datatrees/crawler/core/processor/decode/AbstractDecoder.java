@@ -16,7 +16,7 @@ import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.crawler.core.domain.config.properties.UnicodeMode;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 12, 2014 8:04:46 PM
  */

@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * HTMLParser.java 1.0 Jul 19, 2011
  * The content parser of page html content.
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 1.0
  */

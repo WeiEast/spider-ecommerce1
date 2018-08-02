@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * UrlUtils.java
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Dec 25, 2012 2:37:27 PM
  */

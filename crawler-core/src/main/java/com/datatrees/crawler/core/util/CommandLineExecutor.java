@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import static com.google.common.collect.ImmutableMap.copyOf;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月6日 上午12:22:34
  */

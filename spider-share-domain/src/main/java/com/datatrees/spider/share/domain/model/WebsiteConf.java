@@ -11,7 +11,7 @@ package com.datatrees.spider.share.domain.model;
 import java.io.Serializable;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2016年11月7日 下午4:30:49
  */

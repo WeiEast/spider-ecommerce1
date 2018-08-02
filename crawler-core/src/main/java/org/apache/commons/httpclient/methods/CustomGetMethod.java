@@ -9,7 +9,7 @@
 package org.apache.commons.httpclient.methods;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年11月5日 下午3:23:18
  */

@@ -20,7 +20,7 @@ import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.util.CalculateUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年9月5日 下午8:16:43
  */

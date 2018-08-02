@@ -17,7 +17,7 @@ import com.datatrees.crawler.core.domain.config.operation.impl.ProxySetOperation
 import com.datatrees.crawler.core.processor.operation.Operation;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */

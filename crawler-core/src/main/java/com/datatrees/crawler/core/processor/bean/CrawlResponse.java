@@ -15,7 +15,7 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 1:48:37 PM
  */

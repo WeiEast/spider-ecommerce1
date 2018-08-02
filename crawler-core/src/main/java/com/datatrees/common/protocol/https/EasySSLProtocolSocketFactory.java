@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  *     client.executeMethod(httpget);
  *     </pre>
  * </p>
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * <p>
  * DISCLAIMER: HttpClient developers DO NOT actively support this component.
  * The component is provided as a reference material, which may be inappropriate

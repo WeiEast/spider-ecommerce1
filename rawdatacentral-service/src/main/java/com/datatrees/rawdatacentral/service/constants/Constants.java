@@ -11,7 +11,7 @@ package com.datatrees.rawdatacentral.service.constants;
 import com.datatrees.common.conf.PropertiesConfiguration;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月29日 下午5:26:35
  */

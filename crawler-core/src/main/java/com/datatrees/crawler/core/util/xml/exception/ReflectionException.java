@@ -1,6 +1,6 @@
 /**
  * ReflectionException.java
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Jan 5, 2013 9:58:07 AM
  */
@@ -8,7 +8,7 @@
 package com.datatrees.crawler.core.util.xml.exception;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Jan 5, 2013 9:58:07 AM
  */

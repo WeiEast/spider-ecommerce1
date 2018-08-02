@@ -18,7 +18,7 @@ import com.datatrees.crawler.core.domain.config.segment.impl.BaseSegment;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 10:37:37 AM
  */

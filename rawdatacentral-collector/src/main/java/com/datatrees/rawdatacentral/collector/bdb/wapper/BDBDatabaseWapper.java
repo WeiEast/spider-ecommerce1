@@ -4,7 +4,7 @@ import com.sleepycat.je.Database;
 import com.sleepycat.je.SecondaryDatabase;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月20日 上午12:46:33
  */

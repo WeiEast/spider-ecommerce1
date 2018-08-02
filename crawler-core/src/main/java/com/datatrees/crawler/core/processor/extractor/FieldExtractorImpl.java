@@ -45,7 +45,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * field extractor should be parallel
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 1:45:17 PM
  */
