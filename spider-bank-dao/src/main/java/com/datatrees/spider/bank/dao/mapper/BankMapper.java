@@ -1,9 +1,9 @@
-package com.datatrees.rawdatacentral.dao.mapper;
+package com.datatrees.spider.bank.dao.mapper;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.domain.model.example.BankExample;
+import com.datatrees.spider.bank.domain.model.Bank;
+import com.datatrees.spider.bank.domain.model.example.BankExample;
 
 /** create by system from table t_bank(Bank basic info) */
 public interface BankMapper {

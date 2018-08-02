@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.rawdatacentral.dao.BankDAO;
-import com.datatrees.rawdatacentral.dao.BankMailDAO;
-import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.domain.model.BankMail;
-import com.datatrees.rawdatacentral.domain.model.example.BankExample;
-import com.datatrees.rawdatacentral.domain.model.example.BankMailExample;
+import com.datatrees.spider.bank.dao.BankDAO;
+import com.datatrees.spider.bank.dao.BankMailDAO;
+import com.datatrees.spider.bank.domain.model.Bank;
+import com.datatrees.spider.bank.domain.model.BankMail;
+import com.datatrees.spider.bank.domain.model.example.BankExample;
+import com.datatrees.spider.bank.domain.model.example.BankMailExample;
 import com.datatrees.spider.bank.service.BankService;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import org.slf4j.Logger;

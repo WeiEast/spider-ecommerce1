@@ -1,8 +1,8 @@
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.bank.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.dao.mapper.BankMapper;
+import com.datatrees.spider.bank.dao.mapper.BankMapper;
 
 /** create by system from table t_bank(Bank basic info) */
 @Resource

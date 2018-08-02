@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.datatrees.rawdatacentral.dao.BankMailDAO">
-  <resultMap id="BaseResultMap" type="com.datatrees.rawdatacentral.domain.model.BankMail">
-    <id column="Id" jdbcType="SMALLINT" property="id" />
-    <result column="BankId" jdbcType="INTEGER" property="bankId" />
-    <result column="BankEmailAddr" jdbcType="VARCHAR" property="bankEmailAddr" />
+<mapper namespace="com.datatrees.spider.bank.dao.BankDAO">
+  <resultMap id="BaseResultMap" type="com.datatrees.spider.bank.domain.model.Bank">
+    <id column="Id" jdbcType="SMALLINT" property="bankId" />
+    <result column="WebsiteId" jdbcType="INTEGER" property="websiteId" />
+    <result column="WebsiteName" jdbcType="VARCHAR" property="websiteName" />
+    <result column="BankMark" jdbcType="VARCHAR" property="bankMark" />
+    <result column="BankName" jdbcType="VARCHAR" property="bankName" />
+    <result column="OrderIndex" jdbcType="SMALLINT" property="orderIndex" />
+    <result column="MatchText" jdbcType="VARCHAR" property="matchText" />
+    <result column="isenabled" jdbcType="BIT" property="isenabled" />
     <result column="CreatedAt" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="UpdatedAt" jdbcType="TIMESTAMP" property="updatedAt" />
   </resultMap>
@@ -67,15 +72,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    Id, BankId, BankEmailAddr, CreatedAt, UpdatedAt
+    Id, WebsiteId,WebsiteName, BankMark, BankName, OrderIndex, MatchText, isenabled, CreatedAt, UpdatedAt
   </sql>
-  <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.BankMailExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.datatrees.spider.bank.domain.model.example.BankExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from t_bank_email
+    from t_bank
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -89,24 +94,39 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from t_bank_email
-    where Id = #{id,jdbcType=SMALLINT}
+    from t_bank
+    where Id = #{bankId,jdbcType=SMALLINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from t_bank_email
-    where Id = #{id,jdbcType=SMALLINT}
+    delete from t_bank
+    where Id = #{bankId,jdbcType=SMALLINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.datatrees.rawdatacentral.domain.model.BankMail">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+  <insert id="insertSelective" parameterType="com.datatrees.spider.bank.domain.model.Bank">
+    <selectKey keyProperty="bankId" order="AFTER" resultType="java.lang.Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into t_bank_email
+    insert into t_bank
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="bankId != null">
-        BankId,
+      <if test="websiteId != null">
+        WebsiteId,
       </if>
-      <if test="bankEmailAddr != null">
-        BankEmailAddr,
+      <if test="websiteName != null">
+        WebsiteName,
+      </if>
+      <if test="bankMark != null">
+        BankMark,
+      </if>
+      <if test="bankName != null">
+        BankName,
+      </if>
+      <if test="orderIndex != null">
+        OrderIndex,
+      </if>
+      <if test="matchText != null">
+        MatchText,
+      </if>
+      <if test="isenabled != null">
+        isenabled,
       </if>
       <if test="createdAt != null">
         CreatedAt,
@@ -116,11 +136,26 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="bankId != null">
-        #{bankId,jdbcType=INTEGER},
+      <if test="websiteId != null">
+        #{websiteId,jdbcType=INTEGER},
       </if>
-      <if test="bankEmailAddr != null">
-        #{bankEmailAddr,jdbcType=VARCHAR},
+      <if test="websiteName != null">
+        #{websiteName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankMark != null">
+        #{bankMark,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null">
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderIndex != null">
+        #{orderIndex,jdbcType=SMALLINT},
+      </if>
+      <if test="matchText != null">
+        #{matchText,jdbcType=VARCHAR},
+      </if>
+      <if test="isenabled != null">
+        #{isenabled,jdbcType=BIT},
       </if>
       <if test="createdAt != null">
         #{createdAt,jdbcType=TIMESTAMP},
@@ -130,20 +165,35 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.BankMailExample" resultType="java.lang.Long">
-    select count(*) from t_bank_email
+  <select id="countByExample" parameterType="com.datatrees.spider.bank.domain.model.example.BankExample" resultType="java.lang.Long">
+    select count(*) from t_bank
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByPrimaryKeySelective" parameterType="com.datatrees.rawdatacentral.domain.model.BankMail">
-    update t_bank_email
+  <update id="updateByPrimaryKeySelective" parameterType="com.datatrees.spider.bank.domain.model.Bank">
+    update t_bank
     <set>
-      <if test="bankId != null">
-        BankId = #{bankId,jdbcType=INTEGER},
+      <if test="websiteId != null">
+        WebsiteId = #{websiteId,jdbcType=INTEGER},
       </if>
-      <if test="bankEmailAddr != null">
-        BankEmailAddr = #{bankEmailAddr,jdbcType=VARCHAR},
+      <if test="websiteName != null">
+        WebsiteName = #{websiteName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankMark != null">
+        BankMark = #{bankMark,jdbcType=VARCHAR},
+      </if>
+      <if test="bankName != null">
+        BankName = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderIndex != null">
+        OrderIndex = #{orderIndex,jdbcType=SMALLINT},
+      </if>
+      <if test="matchText != null">
+        MatchText = #{matchText,jdbcType=VARCHAR},
+      </if>
+      <if test="isenabled != null">
+        isenabled = #{isenabled,jdbcType=BIT},
       </if>
       <if test="createdAt != null">
         CreatedAt = #{createdAt,jdbcType=TIMESTAMP},
@@ -152,6 +202,6 @@
         UpdatedAt = #{updatedAt,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where Id = #{id,jdbcType=SMALLINT}
+    where Id = #{bankId,jdbcType=SMALLINT}
   </update>
 </mapper>

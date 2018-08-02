@@ -2,7 +2,7 @@ package com.datatrees.spider.bank.service;
 
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.model.Bank;
+import com.datatrees.spider.bank.domain.model.Bank;
 
 /**
  * 银行配置信息
