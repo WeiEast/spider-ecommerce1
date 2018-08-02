@@ -6,12 +6,12 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.share.dao;
 
 import javax.annotation.Resource;
 import java.util.Date;
 
-import com.datatrees.rawdatacentral.dao.mapper.TaskMapper;
+import com.datatrees.spider.share.dao.mapper.TaskMapper;
 
 /**
  * Created by zhouxinghai on 2017/6/29
