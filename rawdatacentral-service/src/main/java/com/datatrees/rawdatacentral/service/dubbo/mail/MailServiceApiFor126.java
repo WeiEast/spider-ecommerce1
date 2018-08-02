@@ -1,14 +1,14 @@
-package com.datatrees.rawdatacentral.api.mail._163;
+package com.datatrees.rawdatacentral.service.dubbo.mail;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
- * 163邮箱模拟登陆接口
- * @author zhouxinghai
- * @date 2017/12/29
+ * 126邮箱模拟登陆接口
+ * User: yand
+ * Date: 2018/2/27
  */
-public interface MailServiceApiFor163 {
+public interface MailServiceApiFor126 {
 
     /**
      * 提交登陆请求
@@ -43,4 +43,5 @@ public interface MailServiceApiFor163 {
      * @return
      */
     HttpResult<Object> queryQRStatus(CommonPluginParam param);
+
 }

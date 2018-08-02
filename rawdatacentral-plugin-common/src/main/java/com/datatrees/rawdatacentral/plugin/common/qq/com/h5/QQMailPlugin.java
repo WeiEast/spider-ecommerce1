@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.rawdatacentral.api.CommonPluginService;
+import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.share.service.RedisService;

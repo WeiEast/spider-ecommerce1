@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.service.dubbo.economic.taobao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.api.CommonPluginService;
-import com.datatrees.rawdatacentral.api.economic.taobao.EconomicApiForTaoBaoQR;
+import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.rawdatacentral.service.dubbo.EconomicApiForTaoBaoQR;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.FormType;

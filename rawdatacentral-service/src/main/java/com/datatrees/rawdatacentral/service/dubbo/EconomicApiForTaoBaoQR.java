@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api.economic.taobao;
+package com.datatrees.rawdatacentral.service.dubbo;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;

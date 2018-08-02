@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api.mail.qq;
+package com.datatrees.rawdatacentral.service.dubbo.mail;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;

@@ -1,13 +1,12 @@
-package com.datatrees.rawdatacentral.api.mail.exmail_qq;
+package com.datatrees.rawdatacentral.service.dubbo.mail;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
- * 腾讯企业邮箱登录接口
- * Created by zhangyanjia on 2018/2/26.
+ * Created by zhangyanjia on 2018/1/26.
  */
-public interface MailServiceApiForExMailQQ {
+public interface MailServiceApiForSina {
 
     /**
      * 登录初始化接口
@@ -31,4 +30,13 @@ public interface MailServiceApiForExMailQQ {
      * 这时map中多一个key：errorMessage--提示的错误信息
      */
     HttpResult<Object> login(CommonPluginParam param);
+
+    /**
+     * 刷新图片接口
+     * 必填参数：taskId
+     * 返回结果
+     * 详见:@see com.datatrees.spider.share.domain.http.HttpResult
+     * @return 成功时status为true，data返回图片验证码信息；失败和异常时status为false，data返回错误信息
+     */
+    HttpResult<Object> refeshPicCode(CommonPluginParam param);
 }

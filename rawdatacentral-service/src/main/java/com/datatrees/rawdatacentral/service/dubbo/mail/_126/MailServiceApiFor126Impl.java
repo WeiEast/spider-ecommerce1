@@ -3,8 +3,8 @@ package com.datatrees.rawdatacentral.service.dubbo.mail._126;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.api.CommonPluginService;
-import com.datatrees.rawdatacentral.api.mail._126.MailServiceApiFor126;
+import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiFor126;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;

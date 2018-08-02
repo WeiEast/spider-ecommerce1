@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.web.controller;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.api.mail.exmail_qq.MailServiceApiForExMailQQ;
+import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForExMailQQ;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

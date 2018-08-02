@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api;
+package com.datatrees.rawdatacentral.service.dubbo;
 
 import java.util.List;
 
