@@ -21,7 +21,7 @@ import com.datatrees.rawdatacentral.core.common.SubmitConstant;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.MailBillData;
-import com.datatrees.rawdatacentral.service.BankService;
+import com.datatrees.spider.bank.service.BankService;
 import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

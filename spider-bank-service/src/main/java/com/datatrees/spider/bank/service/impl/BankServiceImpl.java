@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.bank.service.impl;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import com.datatrees.rawdatacentral.domain.model.Bank;
 import com.datatrees.rawdatacentral.domain.model.BankMail;
 import com.datatrees.rawdatacentral.domain.model.example.BankExample;
 import com.datatrees.rawdatacentral.domain.model.example.BankMailExample;
-import com.datatrees.rawdatacentral.service.BankService;
+import com.datatrees.spider.bank.service.BankService;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,38 +34,12 @@ public class BankServiceImpl implements BankService {
     private              BankMailDAO  bankMailDAO;
 
     @Override
-    public Bank getByBankIdFromCache(Integer bankId) {
-        String key = "rawdatacentral_bank_" + bankId;
-        Bank bank = redisService.getCache(key, new TypeReference<Bank>() {});
-        if (null == bank) {
-            bank = getEnabledByBankId(bankId);
-            if (null != bank) {
-                redisService.cache(key, bank, 1, TimeUnit.DAYS);
-            }
-        }
-        return bank;
-    }
-
-    @Override
     public Bank getByWebsiteName(String websiteName) {
         BankExample example = new BankExample();
         example.createCriteria().andWebsiteNameEqualTo(websiteName);
         List<Bank> list = bankDAO.selectByExample(example);
 
         return list.isEmpty() ? null : list.get(0);
-    }
-
-    @Override
-    public Bank getEnabledByBankId(Integer bankId) {
-        if (null != bankId) {
-            Bank bank = bankDAO.selectByPrimaryKey(bankId);
-            if (null != bank && !bank.getIsenabled()) {
-                logger.warn("bank is disabled bankId={}", bank.getBankId());
-                return null;
-            }
-            return bank;
-        }
-        return null;
     }
 
     @Override

@@ -18,7 +18,7 @@ import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.EBankData;
 import com.datatrees.rawdatacentral.domain.model.Bank;
-import com.datatrees.rawdatacentral.service.BankService;
+import com.datatrees.spider.bank.service.BankService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
