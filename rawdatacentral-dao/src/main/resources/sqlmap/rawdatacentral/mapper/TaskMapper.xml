@@ -89,7 +89,7 @@
     ExtractSucceedCount, ExtractFailedCount, StoreFailedCount, NotExtractCount, NetworkTraffic, 
     StartedAt, FinishedAt, CreatedAt
   </sql>
-  <select id="selectByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.TaskExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.datatrees.spider.share.domain.model.example.TaskExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -252,7 +252,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.datatrees.rawdatacentral.domain.model.example.TaskExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.datatrees.spider.share.domain.model.example.TaskExample" resultType="java.lang.Long">
     select count(*) from t_tasklog
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />

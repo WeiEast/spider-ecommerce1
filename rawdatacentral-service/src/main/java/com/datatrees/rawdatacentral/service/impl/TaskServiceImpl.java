@@ -15,7 +15,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.rawdatacentral.dao.TaskDAO;
 import com.datatrees.spider.share.domain.model.Task;
-import com.datatrees.rawdatacentral.domain.model.example.TaskExample;
+import com.datatrees.spider.share.domain.model.example.TaskExample;
 import com.datatrees.rawdatacentral.service.TaskService;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
