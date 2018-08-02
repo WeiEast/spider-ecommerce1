@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service;
+package com.datatrees.spider.share.service;
 
 /**
  * 通知消息

@@ -16,7 +16,7 @@ import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.service.plugin.QRPlugin;
-import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
+import com.datatrees.spider.share.service.ThreadPoolService;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;

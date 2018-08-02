@@ -18,5 +18,9 @@ dependencies {
     compile "com.alibaba:druid:${druidVersion}"
     compile "mysql:mysql-connector-java:${mysqlConnectorJavaVersion}"
 
+    compile 'com.datatrees.common:notify-common-facade:3.5.6'
+    compile 'com.treefinance.saas:grap-server-facade:1.0.0-SNAPSHOT'
+    compile 'com.treefinance.saas:merchant-center-facade:1.0.3-SNAPSHOT'
+
 
 }

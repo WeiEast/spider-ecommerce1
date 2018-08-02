@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.spider.share.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.NotifyService;
+import com.datatrees.spider.share.service.NotifyService;
 import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
 import com.datatrees.spider.operator.domain.FieldBizType;
 import com.datatrees.spider.operator.domain.FieldInitSetting;

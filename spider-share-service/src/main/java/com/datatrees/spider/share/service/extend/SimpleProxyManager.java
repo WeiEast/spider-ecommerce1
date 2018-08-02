@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.proxy;
+package com.datatrees.spider.share.service.extend;
 
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.proxy.Proxy;

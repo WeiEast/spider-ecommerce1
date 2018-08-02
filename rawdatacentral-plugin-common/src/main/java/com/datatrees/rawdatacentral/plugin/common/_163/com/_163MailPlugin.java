@@ -11,7 +11,7 @@ import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.service.plugin.QRPlugin;
-import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
+import com.datatrees.spider.share.service.ThreadPoolService;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;

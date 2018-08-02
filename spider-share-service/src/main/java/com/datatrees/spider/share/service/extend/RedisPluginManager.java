@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.plugin;
+package com.datatrees.spider.share.service.extend;
 
 import java.util.Objects;
 

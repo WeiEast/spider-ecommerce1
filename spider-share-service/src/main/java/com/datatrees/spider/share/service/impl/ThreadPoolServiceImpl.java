@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service.impl;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.rawdatacentral.api.internal.ThreadPoolService;
+import com.datatrees.spider.share.service.ThreadPoolService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
