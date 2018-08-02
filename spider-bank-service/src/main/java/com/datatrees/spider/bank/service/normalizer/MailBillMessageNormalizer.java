@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.collector.worker.normalizer;
+package com.datatrees.spider.bank.service.normalizer;
 
 import javax.annotation.Resource;
 import java.util.*;
