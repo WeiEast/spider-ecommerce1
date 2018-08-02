@@ -1,5 +1,4 @@
 apply from: rootProject.file('upload.gradle')
 dependencies {
-    compile "com.alibaba:fastjson:${fastjsonVersion}"
     compile project(":spider-share-domain")
 }

@@ -1,6 +1,6 @@
 dependencies {
     compile project(":spider-bank-domain")
-    compile project(":spider-share-domain")
+
 //    compile project(":spider-share-dao")
 //    compile project(":rawdatacentral-dao")
 
