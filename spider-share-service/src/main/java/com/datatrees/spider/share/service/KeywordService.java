@@ -1,8 +1,8 @@
-package com.datatrees.rawdatacentral.service;
+package com.datatrees.spider.share.service;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.model.Keyword;
+import com.datatrees.spider.share.domain.model.Keyword;
 
 /**
  * 搜索关键字
@@ -15,5 +15,5 @@ public interface KeywordService {
      * @param websiteType websiteType
      * @return
      */
-    public List<Keyword> queryByWebsiteType(Integer websiteType);
+    List<Keyword> queryByWebsiteType(Integer websiteType);
 }

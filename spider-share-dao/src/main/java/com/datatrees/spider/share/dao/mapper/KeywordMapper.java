@@ -1,9 +1,9 @@
-package com.datatrees.rawdatacentral.dao.mapper;
+package com.datatrees.spider.share.dao.mapper;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.model.Keyword;
-import com.datatrees.rawdatacentral.domain.model.example.KeywordExample;
+import com.datatrees.spider.share.domain.model.Keyword;
+import com.datatrees.spider.share.domain.model.example.KeywordExample;
 
 /** create by system from table t_keyword(keyword) */
 public interface KeywordMapper {

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.rawdatacentral.dao.KeywordDAO;
-import com.datatrees.rawdatacentral.domain.model.Keyword;
-import com.datatrees.rawdatacentral.domain.model.example.KeywordExample;
-import com.datatrees.rawdatacentral.service.KeywordService;
+import com.datatrees.spider.share.dao.KeywordDAO;
+import com.datatrees.spider.share.domain.model.Keyword;
+import com.datatrees.spider.share.domain.model.example.KeywordExample;
+import com.datatrees.spider.share.service.KeywordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
