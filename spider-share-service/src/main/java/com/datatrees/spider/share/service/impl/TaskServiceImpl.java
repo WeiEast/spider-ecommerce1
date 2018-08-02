@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -16,7 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.spider.share.dao.TaskDAO;
 import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.domain.model.example.TaskExample;
-import com.datatrees.rawdatacentral.service.TaskService;
+import com.datatrees.spider.share.service.TaskService;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 

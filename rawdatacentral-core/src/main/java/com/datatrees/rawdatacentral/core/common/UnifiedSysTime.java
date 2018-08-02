@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.core.common;
 import java.util.Date;
 
 import com.datatrees.spider.share.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.service.TaskService;
+import com.datatrees.spider.share.service.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

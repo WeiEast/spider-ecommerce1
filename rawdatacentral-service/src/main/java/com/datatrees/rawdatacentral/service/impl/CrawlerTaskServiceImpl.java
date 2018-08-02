@@ -9,7 +9,7 @@ import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.model.Task;
-import com.datatrees.rawdatacentral.service.TaskService;
+import com.datatrees.spider.share.service.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

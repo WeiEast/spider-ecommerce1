@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.service;
+package com.datatrees.spider.share.service;
 
 import java.util.Date;
 
