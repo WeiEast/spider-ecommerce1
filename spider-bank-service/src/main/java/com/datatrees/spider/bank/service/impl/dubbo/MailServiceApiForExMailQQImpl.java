@@ -1,9 +1,9 @@
-package com.datatrees.rawdatacentral.service.dubbo.mail.exmail_qq;
+package com.datatrees.spider.bank.service.impl.dubbo;
 
 import javax.annotation.Resource;
 
 import com.datatrees.spider.share.service.CommonPluginService;
-import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForExMailQQ;
+import com.datatrees.spider.bank.api.MailServiceApiForExMailQQ;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.ErrorCode;

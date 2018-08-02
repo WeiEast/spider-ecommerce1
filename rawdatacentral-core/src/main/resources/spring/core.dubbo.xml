@@ -12,19 +12,19 @@
     <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.RpcEducationService" ref="rpcEducationServiceImpl"/>-->
     <!--<dubbo:service interface="com.datatrees.spider.share.service.RpcOssService" ref="rpcOssServiceImpl"/>-->
 
-    <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForQQ"-->
+    <!--<dubbo:service interface="com.datatrees.spider.bank.api.MailServiceApiForQQ"-->
                    <!--ref="mailServiceApiForQQImpl"/>-->
     <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CommonPluginServicevice"-->
                    <!--ref="commonPluginApiImpl"/>-->
     <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.EconomicApiForTaoBaoQR"-->
                    <!--ref="economicApiForTaoBaoQRImpl"/>-->
-    <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiFor163"-->
+    <!--<dubbo:service interface="com.datatrees.spider.bank.api.MailServiceApiFor163"-->
                    <!--ref="mailServiceApiFor163Impl"/>-->
-    <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForSina"-->
+    <!--<dubbo:service interface="com.datatrees.spider.bank.api.MailServiceApiForSina"-->
                    <!--ref="mailServiceApiForSinaImpl"/>-->
-    <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiFor126"-->
+    <!--<dubbo:service interface="com.datatrees.spider.bank.api.MailServiceApiFor126"-->
                    <!--ref="mailServiceApiFor126Impl"/>-->
-    <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForExMailQQ"-->
+    <!--<dubbo:service interface="com.datatrees.spider.bank.api.MailServiceApiForExMailQQ"-->
                    <!--ref="mailServiceApiForExMailQQImpl"/>-->
 
 </beans>

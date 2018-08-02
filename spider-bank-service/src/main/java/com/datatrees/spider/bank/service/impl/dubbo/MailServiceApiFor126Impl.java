@@ -1,10 +1,10 @@
-package com.datatrees.rawdatacentral.service.dubbo.mail._163;
+package com.datatrees.spider.bank.service.impl.dubbo;
 
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.spider.share.service.CommonPluginService;
-import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiFor163;
+import com.datatrees.spider.bank.api.MailServiceApiFor126;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
@@ -16,17 +16,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * User: yand
+ * Date: 2018/2/27
+ */
 @Service
-public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
+public class MailServiceApiFor126Impl implements MailServiceApiFor126 {
 
-    private static final Logger              logger = LoggerFactory.getLogger(MailServiceApiFor163Impl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(MailServiceApiFor126Impl.class);
 
     @Resource
     private              CommonPluginService commonPluginService;
 
     @Override
     public HttpResult<Object> login(CommonPluginParam param) {
-        param.setWebsiteName(GroupEnum.MAIL_163_H5.getWebsiteName());
+        param.setWebsiteName(GroupEnum.MAIL_126_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
 
@@ -45,7 +49,7 @@ public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
 
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
-        param.setWebsiteName(GroupEnum.MAIL_163_H5.getWebsiteName());
+        param.setWebsiteName(GroupEnum.MAIL_126_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
         return commonPluginService.refeshQRCode(param);
@@ -53,7 +57,7 @@ public class MailServiceApiFor163Impl implements MailServiceApiFor163 {
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
-        param.setWebsiteName(GroupEnum.MAIL_163_H5.getWebsiteName());
+        param.setWebsiteName(GroupEnum.MAIL_126_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
         return commonPluginService.queryQRStatus(param);

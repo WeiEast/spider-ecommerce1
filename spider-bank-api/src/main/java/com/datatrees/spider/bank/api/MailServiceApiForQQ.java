@@ -1,14 +1,14 @@
-package com.datatrees.rawdatacentral.service.dubbo.mail;
+package com.datatrees.spider.bank.api;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
 
 /**
- * 163邮箱模拟登陆接口
+ * QQ邮箱模拟登陆接口
  * @author zhouxinghai
  * @date 2017/12/29
  */
-public interface MailServiceApiFor163 {
+public interface MailServiceApiForQQ {
 
     /**
      * 提交登陆请求
@@ -37,7 +37,7 @@ public interface MailServiceApiFor163 {
      * 查询二维码登陆状态
      * 必填参数: taskId
      * <p>
-     * 二维码状态详见:@see com.datatrees.spider.share.domain.QRStatus
+     * 二维码状态详见:com.datatrees.spider.share.domain.QRStatus
      * </p>
      * @param param
      * @return

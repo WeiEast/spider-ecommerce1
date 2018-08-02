@@ -1,10 +1,10 @@
-package com.datatrees.rawdatacentral.service.dubbo.mail.qq;
+package com.datatrees.spider.bank.service.impl.dubbo;
 
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.spider.share.service.CommonPluginService;
-import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForQQ;
+import com.datatrees.spider.bank.api.MailServiceApiForQQ;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
