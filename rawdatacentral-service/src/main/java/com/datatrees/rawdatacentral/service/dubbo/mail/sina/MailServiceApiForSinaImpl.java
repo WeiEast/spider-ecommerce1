@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.service.dubbo.mail.sina;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForSina;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.CommonPluginParam;

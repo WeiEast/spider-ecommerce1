@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.service.dubbo.mail.qq;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForQQ;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.GroupEnum;

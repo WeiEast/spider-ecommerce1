@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -9,8 +9,8 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.rawdatacentral.api.ConfigServiceApi;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.domain.CommonPluginParam;
-import com.datatrees.rawdatacentral.service.ClassLoaderService;
-import com.datatrees.rawdatacentral.service.PluginService;
+import com.datatrees.spider.share.service.ClassLoaderService;
+import com.datatrees.spider.share.service.PluginService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.ClassLoaderUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;

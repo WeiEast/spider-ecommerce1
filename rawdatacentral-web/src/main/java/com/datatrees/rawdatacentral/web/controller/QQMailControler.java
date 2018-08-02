@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.web.controller;
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 
-import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiForQQ;
 import com.datatrees.spider.share.common.utils.ProcessResultUtils;
 import com.datatrees.spider.share.domain.CommonPluginParam;

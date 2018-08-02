@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -13,7 +13,7 @@ import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.PluginUpgradeResult;
-import com.datatrees.rawdatacentral.service.PluginService;
+import com.datatrees.spider.share.service.PluginService;
 import com.google.common.cache.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

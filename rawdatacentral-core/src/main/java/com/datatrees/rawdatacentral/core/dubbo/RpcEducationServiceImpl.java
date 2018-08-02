@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.core.dubbo;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.rawdatacentral.service.dubbo.RpcEducationService;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;

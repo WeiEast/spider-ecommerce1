@@ -11,7 +11,7 @@ import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;

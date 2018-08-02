@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;

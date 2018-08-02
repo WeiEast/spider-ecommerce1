@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.rawdatacentral.service.dubbo.mail.MailServiceApiFor126;
 import com.datatrees.spider.share.common.utils.ProcessResultUtils;
 import com.datatrees.spider.share.domain.AttributeKey;

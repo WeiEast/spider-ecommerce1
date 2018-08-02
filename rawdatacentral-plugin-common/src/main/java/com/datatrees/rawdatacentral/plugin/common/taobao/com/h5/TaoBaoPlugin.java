@@ -14,7 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.plugin.qrcode.QRCodeVerification;
-import com.datatrees.rawdatacentral.service.dubbo.CommonPluginService;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
