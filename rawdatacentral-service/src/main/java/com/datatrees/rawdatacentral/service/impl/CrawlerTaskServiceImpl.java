@@ -8,7 +8,7 @@ import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.rawdatacentral.service.TaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

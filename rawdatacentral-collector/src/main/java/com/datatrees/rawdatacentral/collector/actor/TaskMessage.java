@@ -13,7 +13,7 @@ import java.util.Map;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
 import com.datatrees.spider.share.domain.CollectorMessage;
-import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.http.HttpResult;
 

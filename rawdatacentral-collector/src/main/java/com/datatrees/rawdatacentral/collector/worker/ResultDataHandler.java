@@ -23,7 +23,7 @@ import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.domain.ParentTask;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizerFactory;
-import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.spider.share.domain.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

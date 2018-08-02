@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.service;
 
 import java.util.Date;
 
-import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.spider.share.domain.model.Task;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

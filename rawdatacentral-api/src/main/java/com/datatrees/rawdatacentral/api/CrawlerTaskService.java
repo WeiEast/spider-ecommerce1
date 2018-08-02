@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.api;
 
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.spider.share.domain.model.Task;
 
 /**
  * 对外Task服务

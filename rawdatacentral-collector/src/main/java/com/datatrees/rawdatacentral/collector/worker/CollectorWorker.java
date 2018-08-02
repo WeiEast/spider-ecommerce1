@@ -36,7 +36,7 @@ import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
-import com.datatrees.rawdatacentral.domain.model.Task;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.http.HttpResult;
