@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.core.message;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.ReflectionUtils;
-import com.datatrees.rawdatacentral.service.constants.Constants;
+import com.datatrees.spider.share.service.constants.Constants;
 
 public class GsonMessageConverter implements MessageConverter {
 

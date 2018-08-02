@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
-import com.datatrees.rawdatacentral.api.CrawlerTaskService;
+import com.datatrees.spider.share.api.SpiderTaskApi;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.DateUtils;
@@ -28,15 +28,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class MonitorServiceImpl implements MonitorService {
 
-    private static final Logger             logger               = LoggerFactory.getLogger(MonitorServiceImpl.class);
+    private static final Logger            logger               = LoggerFactory.getLogger(MonitorServiceImpl.class);
 
-    private static final String             DEFAULT_CHARSET_NAME = "UTF-8";
-
-    @Resource
-    private              CrawlerTaskService crawlerTaskService;
+    private static final String            DEFAULT_CHARSET_NAME = "UTF-8";
 
     @Resource
-    private              DefaultMQProducer  defaultMQProducer;
+    private              SpiderTaskApi     crawlerTaskService;
+
+    @Resource
+    private              DefaultMQProducer defaultMQProducer;
 
     @Override
     public void initTask(Long taskId, String websiteName, Object userName) {

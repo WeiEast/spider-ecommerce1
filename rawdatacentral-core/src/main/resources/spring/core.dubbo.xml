@@ -6,7 +6,7 @@
 
     <!--&lt;!&ndash;注册到dubbo &ndash;&gt;-->
     <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerService" ref="crawlerServiceImpl"/>-->
-    <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CrawlerTaskService" ref="crawlerTaskServiceImpl"/>-->
+    <!--<dubbo:service interface="com.datatrees.spider.share.api.SpiderTaskApi="crawlerTaskServiceImpl"/>-->
 
     <!--&lt;!&ndash;学信网&ndash;&gt;-->
     <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.RpcEducationService" ref="rpcEducationServiceImpl"/>-->

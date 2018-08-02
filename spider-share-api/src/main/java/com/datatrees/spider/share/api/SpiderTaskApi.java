@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.api;
+package com.datatrees.spider.share.api;
 
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import com.datatrees.spider.share.domain.model.Task;
 /**
  * 对外Task服务
  */
-public interface CrawlerTaskService {
+public interface SpiderTaskApi {
 
     /**
      * 根据taskId获取task

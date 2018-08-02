@@ -9,14 +9,11 @@ dependencies {
     compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
 //    compile "org.springframework.boot:spring-boot-starter-redis:${springBootStarterRedisVersion}"
 
-    compile "org.springframework.data:spring-data-redis:${springDataRedisVersion}"
-    compile "redis.clients:jedis:${jedisVersion}"
 
 
 
-    compile(group: "com.github.diamond", name: "super-diamond-client", version: "${superDiamondClientVersion}", changing: true) {
-        exclude(module: 'guava')
-    }
+
+
     compile "org.javassist:javassist:${javassistVersion}"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"

@@ -1,9 +1,9 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service.impl.dubbo;
 
 import javax.annotation.Resource;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.api.CrawlerTaskService;
+import com.datatrees.spider.share.api.SpiderTaskApi;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CrawlerTaskServiceImpl implements CrawlerTaskService {
+public class SpiderTaskApiImpl implements SpiderTaskApi {
 
-    private static final Logger      logger = LoggerFactory.getLogger(CrawlerTaskServiceImpl.class);
+    private static final Logger      logger = LoggerFactory.getLogger(SpiderTaskApiImpl.class);
 
     @Resource
     private              TaskService taskService;

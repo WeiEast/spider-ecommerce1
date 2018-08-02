@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.service.constants;
+package com.datatrees.spider.share.service.constants;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 

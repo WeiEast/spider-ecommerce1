@@ -10,7 +10,7 @@ import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.rawdatacentral.core.oss.OssService;
 import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
 import com.datatrees.rawdatacentral.core.oss.OssUtils;
-import com.datatrees.rawdatacentral.service.constants.Constants;
+import com.datatrees.spider.share.service.constants.Constants;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
 import org.apache.commons.collections.CollectionUtils;

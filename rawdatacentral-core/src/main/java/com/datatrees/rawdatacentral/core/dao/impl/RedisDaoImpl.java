@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
-import com.datatrees.rawdatacentral.service.constants.Constants;
+import com.datatrees.spider.share.service.constants.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
