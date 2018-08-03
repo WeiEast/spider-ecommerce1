@@ -2,7 +2,7 @@ package com.datatrees.spider.bank.service.extract;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.core.model.data.EBankData;
+import com.datatrees.spider.bank.domain.EBankData;
 import com.datatrees.spider.bank.dao.EbankExtractResultDAO;
 import com.datatrees.spider.bank.domain.model.EBankExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
