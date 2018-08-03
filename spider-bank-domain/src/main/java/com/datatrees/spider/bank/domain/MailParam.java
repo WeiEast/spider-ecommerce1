@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.mail;
+package com.datatrees.spider.bank.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;

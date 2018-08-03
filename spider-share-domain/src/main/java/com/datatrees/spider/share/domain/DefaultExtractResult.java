@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.domain.model;
+package com.datatrees.spider.share.domain;
 
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 

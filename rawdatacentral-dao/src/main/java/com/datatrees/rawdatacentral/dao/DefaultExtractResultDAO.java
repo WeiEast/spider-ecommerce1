@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
+import com.datatrees.spider.share.domain.DefaultExtractResult;
 
 /**
  * Created by zhouxinghai on 2017/6/29

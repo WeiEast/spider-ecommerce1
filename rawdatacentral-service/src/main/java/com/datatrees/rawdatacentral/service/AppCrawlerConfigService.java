@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.service;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.appconfig.AppCrawlerConfigParam;
-import com.datatrees.rawdatacentral.domain.appconfig.CrawlerProjectParam;
+import com.datatrees.spider.share.domain.param.AppCrawlerConfigParam;
+import com.datatrees.spider.share.domain.param.CrawlerProjectParam;
 
 /**
  * User: yand

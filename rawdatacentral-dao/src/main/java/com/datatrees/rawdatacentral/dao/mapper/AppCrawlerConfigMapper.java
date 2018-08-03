@@ -2,8 +2,8 @@ package com.datatrees.rawdatacentral.dao.mapper;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.model.AppCrawlerConfig;
-import com.datatrees.rawdatacentral.domain.model.AppCrawlerConfigCriteria;
+import com.datatrees.spider.share.domain.model.AppCrawlerConfig;
+import com.datatrees.spider.share.domain.model.example.AppCrawlerConfigCriteria;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 

@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import com.datatrees.spider.share.domain.DefaultData;
 import com.datatrees.rawdatacentral.dao.DefaultExtractResultDAO;
-import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
+import com.datatrees.spider.share.domain.DefaultExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.ExtractMessage;

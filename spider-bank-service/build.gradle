@@ -4,7 +4,6 @@ dependencies {
     compile project(":spider-bank-api")
     compile project(":spider-share-service")
 
-    compile project(":rawdatacentral-domain")
     compile project(":rawdatacentral-service")
     compile project(":rawdatacentral-collector")
 }

@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':rawdatacentral-domain')
+
     compile project(":spider-share-api")
 
     compile "com.treefinance.proxy:proxy-api:${proxyApiVersion}"

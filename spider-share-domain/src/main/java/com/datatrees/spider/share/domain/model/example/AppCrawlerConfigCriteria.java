@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.model;
+package com.datatrees.spider.share.domain.model.example;
 
 import java.util.ArrayList;
 import java.util.Date;

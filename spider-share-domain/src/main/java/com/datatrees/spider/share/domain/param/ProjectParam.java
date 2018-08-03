@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.domain.appconfig;
+package com.datatrees.spider.share.domain.param;
 
 import com.alibaba.fastjson.JSON;
 

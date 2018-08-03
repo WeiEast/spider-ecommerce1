@@ -1,8 +1,9 @@
-package com.datatrees.rawdatacentral.domain.appconfig;
+package com.datatrees.spider.share.domain.param;
 
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.spider.share.domain.param.ProjectParam;
 
 /**
  * User: yand

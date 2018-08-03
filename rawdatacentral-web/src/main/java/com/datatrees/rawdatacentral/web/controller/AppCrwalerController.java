@@ -3,7 +3,7 @@ package com.datatrees.rawdatacentral.web.controller;
 import javax.annotation.Resource;
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.appconfig.AppCrawlerConfigParam;
+import com.datatrees.spider.share.domain.param.AppCrawlerConfigParam;
 import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
 import com.treefinance.saas.knife.common.CommonStateCode;
 import com.treefinance.saas.knife.result.Results;
