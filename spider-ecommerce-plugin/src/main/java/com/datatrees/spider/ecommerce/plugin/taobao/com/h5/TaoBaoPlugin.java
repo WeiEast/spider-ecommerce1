@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.common.taobao.com.h5;
+package com.datatrees.spider.ecommerce.plugin.taobao.com.h5;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

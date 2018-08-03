@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5;
+package com.datatrees.spider.extra.plugin.xuexinwang.com.h5;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
@@ -10,8 +10,8 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.HttpUtils;
-import com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils.Sign;
+import com.datatrees.spider.extra.plugin.xuexinwang.com.h5.utils.HttpUtils;
+import com.datatrees.spider.extra.plugin.xuexinwang.com.h5.utils.Sign;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;

@@ -1,4 +1,3 @@
 dependencies {
     compile project(':spider-bank-service')
-    compile project(':rawdatacentral-plugin-common')
 }

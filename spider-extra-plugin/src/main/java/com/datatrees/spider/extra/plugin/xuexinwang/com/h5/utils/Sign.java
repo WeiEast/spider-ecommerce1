@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.common.xuexinwang.com.h5.utils;
+package com.datatrees.spider.extra.plugin.xuexinwang.com.h5.utils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
