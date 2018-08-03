@@ -1,18 +1,13 @@
-package com.datatrees.rawdatacentral.web.controller;
+package com.datatrees.spider.share.web.controller;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.spider.share.service.ClassLoaderService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class StatusController {
-
-    @Resource
-    private ClassLoaderService classLoaderService;
 
     @RequestMapping("/")
     public String index() {
