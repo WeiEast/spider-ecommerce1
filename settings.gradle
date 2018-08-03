@@ -1,4 +1,5 @@
 rootProject.name = 'spider'
+include ':rawdatacentral-collector'
 include ':rawdatacentral-plugin'
 include 'crawler-core'
 
