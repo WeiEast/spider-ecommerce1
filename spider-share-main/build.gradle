@@ -22,7 +22,6 @@ dependencies {
     compile project(':spider-ecommerce-web')
     compile project(':spider-extra-web')
     compile project(':spider-bank-web')
-    compile project(":rawdatacentral-web")
     compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     compile("org.seleniumhq.selenium:selenium-java:${seleniumVersion}") {
         exclude(module: "guava")

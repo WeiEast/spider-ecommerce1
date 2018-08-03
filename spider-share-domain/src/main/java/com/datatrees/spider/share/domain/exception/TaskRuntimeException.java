@@ -32,4 +32,9 @@ public class TaskRuntimeException extends RuntimeException {
         this.taskId = taskId;
         this.errorMsg = errorMsg;
     }
+
+    public TaskRuntimeException(String errorMsg) {
+        super(errorMsg);
+        this.errorMsg = errorMsg;
+    }
 }

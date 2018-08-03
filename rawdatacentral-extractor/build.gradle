@@ -1,3 +1,5 @@
 dependencies {
-  compile project(':rawdatacentral-submitter')
+  compile project(':spider-share-service')
+  compile 'com.datatrees.common:common-actor:2.1.2'
+
 }

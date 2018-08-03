@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.submitter.common;
+package com.datatrees.spider.share.service.util;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class RedisKeyUtils {
 
     private static final Logger log          = LoggerFactory.getLogger(RedisKeyUtils.class);

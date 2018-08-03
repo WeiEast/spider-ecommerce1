@@ -12,7 +12,7 @@ import com.datatrees.crawler.core.processor.extractor.Extractor;
 import com.datatrees.spider.share.service.domain.SubmitMessage;
 import com.datatrees.spider.share.service.extract.impl.DefaultProcessorContextBuilder;
 import com.datatrees.spider.share.service.ResultStorage;
-import com.datatrees.rawdatacentral.submitter.SubmitProcessor;
+import com.datatrees.spider.share.service.submitter.SubmitProcessor;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.spider.share.service.domain.ExtractMessage;

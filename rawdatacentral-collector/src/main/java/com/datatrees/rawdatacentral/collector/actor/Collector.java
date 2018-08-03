@@ -28,7 +28,7 @@ import com.datatrees.crawler.core.domain.config.login.LoginType;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
-import com.datatrees.crawler.plugin.login.LoginTimeOutException;
+import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.util.operator.OperatorUtils;
@@ -57,9 +57,9 @@ import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.TaskService;
 import com.datatrees.spider.share.service.WebsiteConfigService;
-import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
-import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
-import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
+import com.datatrees.spider.share.service.util.RedisKeyUtils;
+import com.datatrees.spider.share.service.domain.SubmitFile;
+import com.datatrees.spider.share.service.util.ZipCompressUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import org.apache.commons.collections.CollectionUtils;
@@ -431,7 +431,7 @@ public class Collector {
             }
         }
         if (needSendToMQ) {
-            if (submitkeyResult != null) result.putAll(submitkeyResult);
+            if (submitkeyResult != null) {result.putAll(submitkeyResult);}
             result.putAll(taskMessage.getCollectorMessage().getSendBack());
             result.put("taskId", task.getTaskId());
             result.put("websiteName", resultMessage.getWebsiteName());

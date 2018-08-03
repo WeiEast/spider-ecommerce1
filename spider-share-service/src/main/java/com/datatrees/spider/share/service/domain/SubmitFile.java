@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.rawdatacentral.submitter.common;
+package com.datatrees.spider.share.service.domain;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

@@ -25,6 +25,7 @@ import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.exception.LoginFailException;
+import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
 import com.datatrees.spider.share.service.MonitorService;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.MapUtils;

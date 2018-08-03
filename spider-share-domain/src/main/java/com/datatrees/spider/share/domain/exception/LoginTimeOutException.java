@@ -11,4 +11,8 @@ public class LoginTimeOutException extends TaskRuntimeException {
     public LoginTimeOutException(long taskId) {
         super(taskId, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorCode(), "登陆超时");
     }
+
+    public LoginTimeOutException(String s) {
+        super(s);
+    }
 }

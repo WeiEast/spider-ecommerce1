@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.submitter;
+package com.datatrees.spider.share.service.submitter;
 
 public interface SubmitProcessor {
 

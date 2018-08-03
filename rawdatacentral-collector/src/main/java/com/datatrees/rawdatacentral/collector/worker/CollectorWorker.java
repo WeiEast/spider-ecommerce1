@@ -37,7 +37,7 @@ import com.datatrees.spider.share.service.extra.SubTaskManager;
 import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
 import com.datatrees.spider.share.domain.model.Task;
-import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
+import com.datatrees.spider.share.service.util.RedisKeyUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.google.gson.reflect.TypeToken;

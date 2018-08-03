@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.submitter.filestore;
+package com.datatrees.spider.share.service;
 
 import com.datatrees.spider.share.service.domain.SubmitMessage;
 

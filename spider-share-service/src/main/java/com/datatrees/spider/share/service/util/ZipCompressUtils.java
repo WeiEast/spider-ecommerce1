@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.submitter.common;
+package com.datatrees.spider.share.service.util;
 
 import java.io.*;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 
+import com.datatrees.spider.share.service.domain.SubmitFile;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipOutputStream;

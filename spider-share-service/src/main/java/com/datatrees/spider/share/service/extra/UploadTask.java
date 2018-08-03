@@ -1,18 +1,18 @@
-package com.datatrees.rawdatacentral.submitter.filestore;
+package com.datatrees.spider.share.service.extra;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.util.*;
 
 import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.datatrees.spider.share.service.constants.Constants;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
+import com.datatrees.spider.share.service.domain.SubmitFile;
 import com.datatrees.spider.share.service.oss.OssService;
 import com.datatrees.spider.share.service.oss.OssServiceProvider;
 import com.datatrees.spider.share.service.oss.OssUtils;
-import com.datatrees.spider.share.service.constants.Constants;
-import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
-import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;
+import com.datatrees.spider.share.service.util.ZipCompressUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
@@ -29,7 +29,7 @@ public class UploadTask implements Runnable {
 
     private              String         ossKey;
 
-    UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
+    public UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
         this.extractMessage = extractMessage;
         this.fieldList = fieldList;
         this.ossKey = OssUtils.getObjectKey(ossKey);

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.submitter;
+package com.datatrees.spider.share.service.submitter;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ import com.datatrees.spider.share.service.normalizers.SubmitNormalizerFactory;
 import com.datatrees.spider.share.service.extra.SubTaskManager;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;
-import com.datatrees.rawdatacentral.submitter.filestore.FileStoreService;
+import com.datatrees.spider.share.service.util.RedisKeyUtils;
+import com.datatrees.spider.share.service.FileStoreService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;

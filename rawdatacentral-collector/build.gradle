@@ -1,5 +1,8 @@
 dependencies {
     compile project(':rawdatacentral-extractor')
+    compile project(':rawdatacentral-plugin')
+
+
     compile "com.sleepycat:je:${jeVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testCompile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
