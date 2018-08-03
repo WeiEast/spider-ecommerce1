@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.lock;
+package com.datatrees.spider.share.service.lock;
 
 import java.util.concurrent.TimeUnit;
 

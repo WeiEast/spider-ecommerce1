@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service;
+package com.datatrees.spider.ecommerce.service;
 
 import com.datatrees.spider.share.domain.model.Ecommerce;
 
@@ -13,5 +13,5 @@ public interface EcommerceService {
      * @param websiteId
      * @return
      */
-    public Ecommerce getByWebsiteId(Integer websiteId);
+    Ecommerce getByWebsiteId(Integer websiteId);
 }

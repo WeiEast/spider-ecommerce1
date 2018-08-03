@@ -9,7 +9,7 @@ import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.ecommerce.dao.EcommerceDAO;
 import com.datatrees.spider.share.domain.model.Ecommerce;
 import com.datatrees.spider.share.domain.model.example.EcommerceExample;
-import com.datatrees.rawdatacentral.service.EcommerceService;
+import com.datatrees.spider.ecommerce.service.EcommerceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

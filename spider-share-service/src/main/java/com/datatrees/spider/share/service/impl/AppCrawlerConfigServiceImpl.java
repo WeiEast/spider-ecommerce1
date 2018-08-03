@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -17,9 +17,9 @@ import com.datatrees.spider.share.domain.param.ProjectParam;
 import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.spider.share.domain.model.AppCrawlerConfig;
 import com.datatrees.spider.share.domain.model.example.AppCrawlerConfigCriteria;
-import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
-import com.datatrees.rawdatacentral.service.lock.DistributedLocks;
-import com.datatrees.rawdatacentral.service.lock.LockingFailureException;
+import com.datatrees.spider.share.service.AppCrawlerConfigService;
+import com.datatrees.spider.share.service.lock.DistributedLocks;
+import com.datatrees.spider.share.service.lock.LockingFailureException;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;

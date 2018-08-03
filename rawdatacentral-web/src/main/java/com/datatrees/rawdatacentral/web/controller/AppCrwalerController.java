@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import com.datatrees.spider.share.domain.param.AppCrawlerConfigParam;
-import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
+import com.datatrees.spider.share.service.AppCrawlerConfigService;
 import com.treefinance.saas.knife.common.CommonStateCode;
 import com.treefinance.saas.knife.result.Results;
 import com.treefinance.saas.knife.result.SaasResult;

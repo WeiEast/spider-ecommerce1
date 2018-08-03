@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.rawdatacentral.service.AppCrawlerConfigService;
+import com.datatrees.spider.share.service.AppCrawlerConfigService;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
