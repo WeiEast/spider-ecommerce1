@@ -10,7 +10,6 @@ import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
-import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.rawdatacentral.core.dao.RedisDao;
 import com.datatrees.rawdatacentral.core.message.MessageFactory;
 import com.datatrees.spider.share.domain.ResultMessage;
@@ -33,21 +32,12 @@ public class GatewayServiceImpl implements DataResource {
     @Resource
     private              DefaultMQProducer defaultMQProducer;
 
-    @Resource
-    private              MessageService    messageService;
-
     private String genRedisKey(Map<String, Object> parameters) {
         StringBuilder sb = new StringBuilder();
         String taskId = String.valueOf(parameters.get("taskId"));
         return sb.append("verify_result_").append(taskId).toString();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.datatrees.crawler.core.processor.common.resource.DataResource#getData
-     * (java.util.Map)
-     */
     @Override
     public Object getData(Map<String, Object> parameters) {
         try {
@@ -62,12 +52,6 @@ public class GatewayServiceImpl implements DataResource {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.datatrees.crawler.core.processor.common.resource.DataResource#setData
-     * (java.util.Map, java.lang.Object)
-     */
     @Override
     public boolean sendToQueue(Map<String, Object> parameters) {
         try {
@@ -112,13 +96,6 @@ public class GatewayServiceImpl implements DataResource {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.datatrees.crawler.core.processor.common.resource.DataResource#ttlPush(java.lang.String,
-     * java.lang.String, long)
-     */
     @Override
     public boolean ttlPush(String key, String value, long timeOut) {
         try {
@@ -131,12 +108,6 @@ public class GatewayServiceImpl implements DataResource {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.datatrees.crawler.core.processor.common.resource.DataResource#deleteKey(java.lang.String)
-     */
     @Override
     public boolean clearData(Map<String, Object> parameters) {
         try {

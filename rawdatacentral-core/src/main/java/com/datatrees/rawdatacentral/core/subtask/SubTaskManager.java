@@ -20,9 +20,8 @@ import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
  */
 public interface SubTaskManager {
 
-    @SuppressWarnings("rawtypes")
-    public List<Map> getSyncedSubTaskResults(int taskid);
+    List<Map> getSyncedSubTaskResults(int taskid);
 
-    public void submitSubTask(SubTask task);
+    void submitSubTask(SubTask task);
 
 }

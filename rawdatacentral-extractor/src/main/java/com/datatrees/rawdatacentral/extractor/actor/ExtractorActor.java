@@ -21,11 +21,6 @@ public class ExtractorActor extends AbstractActor {
     @Resource
     private              ExtractWorker extractWorker;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.datatrees.common.actor.AbstractActor#processMessage(java.lang.Object)
-     */
     @Override
     public void processMessage(Object message) {
         logger.info("starting task worker for [" + message.toString() + "]");
@@ -36,11 +31,6 @@ public class ExtractorActor extends AbstractActor {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.datatrees.common.actor.AbstractActor#processComplete(java.lang.Object)
-     */
     @Override
     public void processComplete(Object message) {
         if (message instanceof ExtractMessage) {

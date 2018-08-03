@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.service.impl;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -10,17 +10,15 @@ import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.StringUtils;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.domain.TopicTag;
-import com.datatrees.spider.share.service.MessageService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.RegexpUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.TopicEnum;
-import com.datatrees.spider.share.common.share.service.RedisService;
+import com.datatrees.spider.share.service.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import scala.annotation.target.param;
 
 /**
  * Created by zhouxinghai on 2017/5/11.
