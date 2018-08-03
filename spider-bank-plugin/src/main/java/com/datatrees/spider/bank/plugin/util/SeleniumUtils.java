@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.plugin.util.selenium;
+package com.datatrees.spider.bank.plugin.util;
 
 import java.net.URL;
 import java.util.ArrayList;

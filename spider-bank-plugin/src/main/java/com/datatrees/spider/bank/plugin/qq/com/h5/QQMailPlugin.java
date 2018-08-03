@@ -34,7 +34,7 @@ import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.bank.plugin.qq.com.h5.util.ImageOcrUtils;
 import com.datatrees.spider.bank.plugin.qq.com.h5.util.ImageUtils;
 import com.datatrees.spider.bank.plugin.qq.com.h5.util.domain.ColorPoint;
-import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
+import com.datatrees.spider.bank.plugin.util.SeleniumUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;

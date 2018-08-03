@@ -29,7 +29,7 @@ import com.datatrees.spider.share.domain.LoginMessage;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.share.domain.http.Response;
-import com.datatrees.rawdatacentral.plugin.util.selenium.SeleniumUtils;
+import com.datatrees.spider.bank.plugin.util.SeleniumUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
