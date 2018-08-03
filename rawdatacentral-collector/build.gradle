@@ -1,6 +1,6 @@
 dependencies {
-    compile project(':rawdatacentral-extractor')
     compile project(':rawdatacentral-plugin')
+    compile project(':spider-share-service')
 
 
     compile "com.sleepycat:je:${jeVersion}"

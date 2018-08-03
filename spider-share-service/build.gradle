@@ -32,5 +32,8 @@ dependencies {
     compile 'com.treefinance.saas:grap-server-facade:1.0.0-SNAPSHOT'
     compile 'com.treefinance.saas:merchant-center-facade:1.0.3-SNAPSHOT'
 
+    compile 'com.datatrees.common:common-actor:2.1.2'
+
+
 
 }

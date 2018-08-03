@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.extractor.actor;
+package com.datatrees.spider.share.service.extract;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -16,7 +16,6 @@ import com.datatrees.spider.share.service.submitter.SubmitProcessor;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.service.extract.ExtractResultHandlerFactory;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
