@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.service.utils.operator;
+package com.datatrees.spider.share.service.util.operator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.service.utils.WebsiteUtils;
+import com.datatrees.spider.share.service.util.WebsiteUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.ErrorCode;

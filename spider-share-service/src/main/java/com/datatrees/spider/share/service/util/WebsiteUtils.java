@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.service.utils;
+package com.datatrees.spider.share.service.util;
 
 import javax.annotation.Nonnull;
 import java.util.*;

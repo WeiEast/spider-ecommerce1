@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.spider.share.service.utils;
+package com.datatrees.spider.share.service.util;
 
 import java.util.UUID;
 

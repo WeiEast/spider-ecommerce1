@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.rocketmq.common.ThreadFactoryImpl;
-import com.datatrees.rawdatacentral.core.common.SubmitConstant;
+import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.domain.SubmitMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

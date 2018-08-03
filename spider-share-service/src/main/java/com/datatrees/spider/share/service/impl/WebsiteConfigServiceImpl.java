@@ -12,7 +12,7 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
 import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
-import com.datatrees.spider.share.service.extend.SimpleProxyManager;
+import com.datatrees.spider.share.service.extra.SimpleProxyManager;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;

@@ -12,6 +12,20 @@
 
     <bean class="com.datatrees.spider.share.common.utils.BeanFactoryUtils"/>
 
+
+    <bean id="messageFactory" class="com.datatrees.spider.share.service.message.MessageFactory">
+        <property name="defaultTopic" value="${core.mq.default.topic}"/>
+        <property name="flag" value="${core.mq.flag}"/>
+        <property name="defaultTags" value="${core.mq.default.tags}"/>
+        <property name="defaultKeys" value="${core.mq.default.keys}"/>
+        <property name="waitStoreMsgOK" value="${core.mq.waitStoreMsgOK}"/>
+    </bean>
+
+    <bean id="zookeeperClient" class="com.datatrees.common.zookeeper.ZooKeeperClient">
+        <constructor-arg index="0" value="${core.zookeeper.address}"/>
+        <constructor-arg index="1" value="${core.zookeeper.sessionTimeOut}"/>
+    </bean>
+
     <context:component-scan base-package="com.datatrees.spider.share.service"/>
 
 

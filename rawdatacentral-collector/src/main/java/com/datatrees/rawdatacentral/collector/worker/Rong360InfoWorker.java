@@ -15,7 +15,7 @@ import java.util.Map;
 
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
-import com.datatrees.spider.share.service.utils.UniqueKeyGenUtil;
+import com.datatrees.spider.share.service.util.UniqueKeyGenUtil;
 import com.datatrees.rawdatacentral.core.model.message.impl.Rong360InfoMessage;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;

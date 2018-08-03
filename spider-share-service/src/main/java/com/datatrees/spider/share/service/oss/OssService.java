@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.oss;
+package com.datatrees.spider.share.service.oss;
 
 import java.io.*;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.List;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.*;
-import com.datatrees.rawdatacentral.core.common.StreamUtils;
-import com.datatrees.rawdatacentral.core.common.SubmitConstant;
+import com.datatrees.spider.share.service.constants.SubmitConstant;
+import com.datatrees.spider.share.service.util.StreamUtils;
 import org.apache.commons.lang.StringUtils;
 
 public class OssService {

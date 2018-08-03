@@ -5,11 +5,11 @@ import java.io.FileInputStream;
 import java.util.*;
 
 import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.rawdatacentral.core.common.SubmitConstant;
+import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.rawdatacentral.core.oss.OssService;
-import com.datatrees.rawdatacentral.core.oss.OssServiceProvider;
-import com.datatrees.rawdatacentral.core.oss.OssUtils;
+import com.datatrees.spider.share.service.oss.OssService;
+import com.datatrees.spider.share.service.oss.OssServiceProvider;
+import com.datatrees.spider.share.service.oss.OssUtils;
 import com.datatrees.spider.share.service.constants.Constants;
 import com.datatrees.rawdatacentral.submitter.common.SubmitFile;
 import com.datatrees.rawdatacentral.submitter.common.ZipCompressUtils;

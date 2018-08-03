@@ -15,7 +15,7 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.rawdatacentral.collector.common.CollectorConstants;
-import com.datatrees.rawdatacentral.core.common.UnifiedSysTime;
+import com.datatrees.spider.share.service.util.UnifiedSysTime;
 import com.datatrees.spider.share.domain.model.Keyword;
 import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.KeywordService;

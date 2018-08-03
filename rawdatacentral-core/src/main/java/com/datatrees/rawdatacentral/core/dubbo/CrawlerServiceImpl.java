@@ -21,7 +21,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.rawdatacentral.api.CrawlerService;
-import com.datatrees.rawdatacentral.core.common.ActorLockEventWatcher;
+import com.datatrees.spider.share.service.extra.ActorLockEventWatcher;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.ProcessResultUtils;

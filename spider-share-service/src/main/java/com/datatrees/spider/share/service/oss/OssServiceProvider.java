@@ -1,6 +1,6 @@
-package com.datatrees.rawdatacentral.core.oss;
+package com.datatrees.spider.share.service.oss;
 
-import com.datatrees.rawdatacentral.core.common.SubmitConstant;
+import com.datatrees.spider.share.service.constants.SubmitConstant;
 
 public class OssServiceProvider {
 

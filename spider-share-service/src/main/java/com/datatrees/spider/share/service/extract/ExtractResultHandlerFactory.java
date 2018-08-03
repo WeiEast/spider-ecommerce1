@@ -3,11 +3,10 @@ package com.datatrees.spider.share.service.extract;
 import javax.annotation.Resource;
 import java.util.Collection;
 
-import com.datatrees.crawler.core.domain.config.operation.impl.escape.HandlingType;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.service.utils.StoragePathUtil;
-import com.datatrees.spider.share.service.utils.UniqueKeyGenUtil;
+import com.datatrees.spider.share.service.util.StoragePathUtil;
+import com.datatrees.spider.share.service.util.UniqueKeyGenUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;

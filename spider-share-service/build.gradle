@@ -24,6 +24,8 @@ dependencies {
         exclude(module: 'guava')
     }
 
+    compile "com.aliyun.oss:aliyun-sdk-oss:${aliyunSdkOssVersion}"
+
     compile 'com.datatrees.common:notify-common-facade:3.5.6'
     compile 'com.treefinance.saas:grap-server-facade:1.0.0-SNAPSHOT'
     compile 'com.treefinance.saas:merchant-center-facade:1.0.3-SNAPSHOT'

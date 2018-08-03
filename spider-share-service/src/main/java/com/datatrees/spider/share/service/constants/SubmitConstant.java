@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.common;
+package com.datatrees.spider.share.service.constants;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 

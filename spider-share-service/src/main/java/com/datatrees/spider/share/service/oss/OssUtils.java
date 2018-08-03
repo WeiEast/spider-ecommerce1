@@ -1,6 +1,6 @@
-package com.datatrees.rawdatacentral.core.oss;
+package com.datatrees.spider.share.service.oss;
 
-import static com.datatrees.rawdatacentral.core.common.SubmitConstant.ALIYUN_OSS_OBJECT_PATH_ROOT;
+import static com.datatrees.spider.share.service.constants.SubmitConstant.ALIYUN_OSS_OBJECT_PATH_ROOT;
 
 /**
  * @author Jerry

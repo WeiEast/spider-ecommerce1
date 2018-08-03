@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.core.message;
+package com.datatrees.spider.share.service.message;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;

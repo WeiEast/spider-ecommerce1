@@ -1,4 +1,4 @@
-package com.datatrees.spider.share.service.extend;
+package com.datatrees.spider.share.service.extra;
 
 import java.util.Objects;
 

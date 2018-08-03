@@ -30,7 +30,7 @@ import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.WebsiteHolderService;
-import com.datatrees.spider.share.service.utils.WebsiteUtils;
+import com.datatrees.spider.share.service.util.WebsiteUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
