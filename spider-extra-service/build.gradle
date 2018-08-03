@@ -6,6 +6,5 @@ dependencies {
 
 
 
-    compile project(":rawdatacentral-collector")
 }
 

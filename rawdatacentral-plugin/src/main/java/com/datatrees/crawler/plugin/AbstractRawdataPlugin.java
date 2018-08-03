@@ -85,7 +85,7 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
         map.put("taskSequence", ProcessorContextUtil.getTaskUnique(PluginFactory.getProcessorContext()));
         map.putAll(preParamMap);
         postSendMessageToApp(map);
-        //        DataResource gatewayService = BeanResourceFactory.getInstance().getBean(DataResource.class);
+        //        DataResource gatewayService = BeanFactoryUtils.getBean(DataResource.class);
         //        return gatewayService.sendToQueue(map);
         logger.info("needn't sendMessageToApp,send result:" + GsonUtils.toJson(map));
         return true;

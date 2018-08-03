@@ -35,5 +35,7 @@ dependencies {
     compile 'com.datatrees.common:common-actor:2.1.2'
 
 
-
+    compile project(':rawdatacentral-plugin')
+    compile project(':spider-share-service')
+    compile "com.sleepycat:je:${jeVersion}"
 }
