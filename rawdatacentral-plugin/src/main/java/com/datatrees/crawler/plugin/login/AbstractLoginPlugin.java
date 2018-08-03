@@ -18,14 +18,14 @@ import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
 import com.datatrees.crawler.plugin.qrcode.QRCodeVerification;
-import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
+import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.exception.LoginFailException;
-import com.datatrees.spider.share.domain.directive.DirectiveResult;
-import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.service.MonitorService;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -280,10 +280,11 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         Object taskId = ProcessorContextUtil.getTaskUnique(PluginFactory.getProcessorContext());
         String key = REDIS_PREFIX + userId + "_" + taskId;
         String result = new String(CodecUtils.encrypt((userName + "$$$" + passWord).getBytes()));
-        DataResource gatewayService = BeanResourceFactory.getInstance().getBean(DataResource.class);
+        DataResource gatewayService = BeanFactoryUtils.getBean(DataResource.class);
         gatewayService.ttlPush(key, result, defaultTimeToLiveTime);
     }
 
+    @Override
     protected void postSendMessageToApp(Map<String, Object> map) {
         if (map != null) {
             map.putAll(PluginFactory.getProcessorContext().getStatusContext());

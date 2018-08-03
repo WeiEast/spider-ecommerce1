@@ -12,11 +12,11 @@ import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.common.BeanResourceFactory;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.domain.AttributeKey;
@@ -58,7 +58,7 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
     }
 
     protected Map<String, Object> getResultFromApp(Map<String, ?> preParamMap) {
-        DataResource gatewayService = BeanResourceFactory.getInstance().getBean(DataResource.class);
+        DataResource gatewayService = BeanFactoryUtils.getBean(DataResource.class);
         String taskId = PluginFactory.getProcessorContext().getString(AttributeKey.TASK_ID);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("taskId", taskId);
@@ -126,7 +126,7 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
      */
     @Deprecated
     private DataResource getDataResource() {
-        return BeanResourceFactory.getInstance().getBean(DataResource.class);
+        return BeanFactoryUtils.getBean(DataResource.class);
     }
 
     /**
@@ -134,7 +134,7 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
      * @return
      */
     protected RedisService getRedisService() {
-        return BeanResourceFactory.getInstance().getBean(RedisService.class);
+        return BeanFactoryUtils.getBean(RedisService.class);
     }
 
     /**
@@ -142,7 +142,7 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
      * @return
      */
     protected MessageService getMessageService() {
-        return BeanResourceFactory.getInstance().getBean(MessageService.class);
+        return BeanFactoryUtils.getBean(MessageService.class);
     }
 
     /**
