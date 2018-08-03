@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
-import com.datatrees.rawdatacentral.dao.AppCrawlerConfigDao;
+import com.datatrees.spider.share.dao.AppCrawlerConfigDao;
 import com.datatrees.spider.share.domain.param.AppCrawlerConfigParam;
 import com.datatrees.spider.share.domain.param.CrawlerProjectParam;
 import com.datatrees.spider.share.domain.param.ProjectParam;

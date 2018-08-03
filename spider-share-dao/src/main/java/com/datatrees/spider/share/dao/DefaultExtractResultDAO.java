@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.share.dao;
 
 import javax.annotation.Resource;
 

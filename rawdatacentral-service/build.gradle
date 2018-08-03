@@ -1,6 +1,5 @@
 dependencies {
     compile project(":spider-share-service")
-    compile project(":rawdatacentral-dao")
     compile project(":crawler-core")
 //    compile project(":rawdatacentral-plugin")
 

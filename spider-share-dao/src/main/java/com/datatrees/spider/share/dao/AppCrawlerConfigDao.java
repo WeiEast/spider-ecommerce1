@@ -1,8 +1,8 @@
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.share.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.dao.mapper.AppCrawlerConfigMapper;
+import com.datatrees.spider.share.dao.mapper.AppCrawlerConfigMapper;
 
 /**
  * User: yand
