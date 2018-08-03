@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.extractor.builder;
+package com.datatrees.spider.ecommerce.service.normalizer;
 
 import javax.annotation.Resource;
 
