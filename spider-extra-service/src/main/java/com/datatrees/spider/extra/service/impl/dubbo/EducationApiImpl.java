@@ -1,9 +1,9 @@
-package com.datatrees.rawdatacentral.core.dubbo;
+package com.datatrees.spider.extra.service.impl.dubbo;
 
 import javax.annotation.Resource;
 
+import com.datatrees.spider.extra.api.EducationApi;
 import com.datatrees.spider.share.service.CommonPluginService;
-import com.datatrees.rawdatacentral.service.dubbo.RpcEducationService;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import org.slf4j.Logger;
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
  * Created by zhangyanjia on 2017/12/1.
  */
 @Service
-public class RpcEducationServiceImpl implements RpcEducationService {
+public class EducationApiImpl implements EducationApi {
 
-    private static final Logger              logger = LoggerFactory.getLogger(RpcEducationServiceImpl.class);
+    private static final Logger              logger = LoggerFactory.getLogger(EducationApiImpl.class);
 
     @Resource
     private              CommonPluginService commonPluginService;

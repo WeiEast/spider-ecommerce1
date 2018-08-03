@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.dubbo;
+package com.datatrees.spider.extra.api;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
@@ -7,7 +7,7 @@ import com.datatrees.spider.share.domain.http.HttpResult;
  * 学信网接口
  * Created by zhangyanjia on 2017/12/1.
  */
-public interface RpcEducationService {
+public interface EducationApi {
 
     /**
      * 学信网登录初始化接口
