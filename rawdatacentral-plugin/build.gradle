@@ -8,7 +8,8 @@ ext {
 }
 
 dependencies {
-    compile project(':rawdatacentral-service')
+
+    compile project(':spider-share-service')
 
     compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessageVersion}", changing: true) {
         exclude(module: "guava")

@@ -6,13 +6,13 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.extractor.storage.impl;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
+import com.datatrees.spider.share.service.ResultStorage;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.service.extract.ExtractResultHandlerFactory;
 import org.apache.commons.lang3.StringUtils;

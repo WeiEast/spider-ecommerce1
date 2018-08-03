@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.extractor.builder;
+package com.datatrees.spider.share.service.extract.impl;
 
 import javax.annotation.Resource;
 

@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.dubbo.economic.taobao.util;
+package com.datatrees.spider.ecommerce.plugin.util;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
