@@ -6,11 +6,11 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.ecommerce.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
+import com.datatrees.spider.share.domain.model.EcommerceExtractResult;
 
 /**
  * Created by zhouxinghai on 2017/6/29

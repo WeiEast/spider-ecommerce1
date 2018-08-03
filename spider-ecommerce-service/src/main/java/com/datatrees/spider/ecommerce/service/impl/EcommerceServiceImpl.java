@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.impl;
+package com.datatrees.spider.ecommerce.service.impl;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -6,9 +6,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.rawdatacentral.dao.EcommerceDAO;
-import com.datatrees.rawdatacentral.domain.model.Ecommerce;
-import com.datatrees.rawdatacentral.domain.model.example.EcommerceExample;
+import com.datatrees.spider.ecommerce.dao.EcommerceDAO;
+import com.datatrees.spider.share.domain.model.Ecommerce;
+import com.datatrees.spider.share.domain.model.example.EcommerceExample;
 import com.datatrees.rawdatacentral.service.EcommerceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

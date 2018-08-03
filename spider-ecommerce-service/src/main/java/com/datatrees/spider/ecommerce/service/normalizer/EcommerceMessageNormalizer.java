@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.collector.worker.normalizer;
+package com.datatrees.spider.ecommerce.service.normalizer;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
-import com.datatrees.rawdatacentral.domain.model.Ecommerce;
+import com.datatrees.spider.share.domain.model.Ecommerce;
 import com.datatrees.rawdatacentral.service.EcommerceService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

@@ -1,9 +1,9 @@
-package com.datatrees.rawdatacentral.dao.mapper;
+package com.datatrees.spider.ecommerce.dao.mapper;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.domain.model.Ecommerce;
-import com.datatrees.rawdatacentral.domain.model.example.EcommerceExample;
+import com.datatrees.spider.share.domain.model.Ecommerce;
+import com.datatrees.spider.share.domain.model.example.EcommerceExample;
 
 /** create by system from table t_ecommerce(ecommerce basic info) */
 public interface EcommerceMapper {

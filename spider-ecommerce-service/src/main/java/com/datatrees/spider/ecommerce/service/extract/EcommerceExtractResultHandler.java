@@ -1,10 +1,10 @@
-package com.datatrees.spider.ecommerce.service.normalizer;
+package com.datatrees.spider.ecommerce.service.extract;
 
 import javax.annotation.Resource;
 
 import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
-import com.datatrees.rawdatacentral.dao.EcommerceExtractResultDAO;
-import com.datatrees.rawdatacentral.domain.model.EcommerceExtractResult;
+import com.datatrees.spider.ecommerce.dao.EcommerceExtractResultDAO;
+import com.datatrees.spider.share.domain.model.EcommerceExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.ExtractMessage;

@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.service;
 
-import com.datatrees.rawdatacentral.domain.model.Ecommerce;
+import com.datatrees.spider.share.domain.model.Ecommerce;
 
 /**
  * 电商配置

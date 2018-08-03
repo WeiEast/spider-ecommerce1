@@ -1,8 +1,8 @@
-package com.datatrees.rawdatacentral.dao;
+package com.datatrees.spider.ecommerce.dao;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.dao.mapper.EcommerceMapper;
+import com.datatrees.spider.ecommerce.dao.mapper.EcommerceMapper;
 
 /** create by system from table t_ecommerce(ecommerce basic info) */
 @Resource
