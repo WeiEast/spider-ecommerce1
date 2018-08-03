@@ -39,20 +39,12 @@ public class ActorLockEventWatcher extends AbstractLockerWatcher {
         this.zookeeperClient = zookeeperClient;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.datatrees.common.zookeeper.Locker#await()
-     */
+
     @Override
     public void await() {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher#detectLeader()
-     */
+
     @Override
     protected void detectLeader() {
         try {
