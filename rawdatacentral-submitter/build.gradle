@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':rawdatacentral-core')
+    compile project(':spider-share-service')
     compile "ant:ant:${antVersion}"
     compile "javax.mail:mail:${mailVersion}"
     testCompile "junit:junit:${junitVersion}"

@@ -6,14 +6,18 @@
  * Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.rawdatacentral.core.model.message;
+package com.datatrees.spider.share.service.domain;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
- * @since 2016年1月18日 下午5:26:00
+ * @since 2016年1月18日 下午5:39:23
  */
-public interface TemplteAble {
+public interface SubTaskAble extends TaskRelated, TemplteAble {
 
-    public String getTemplateId();
+    public SubSeed getSubSeed();
+
+    public boolean isSynced();
+
+    public boolean noStatus();
 }

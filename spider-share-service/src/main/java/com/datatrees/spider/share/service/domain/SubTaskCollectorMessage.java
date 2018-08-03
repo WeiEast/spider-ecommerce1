@@ -6,9 +6,9 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.core.model.message.impl;
+package com.datatrees.spider.share.service.domain;
 
-import com.datatrees.rawdatacentral.core.model.message.SubTaskAble;
+import com.datatrees.spider.share.service.domain.SubTaskAble;
 import com.datatrees.spider.share.service.domain.SubSeed;
 import com.datatrees.spider.share.domain.CollectorMessage;
 import org.apache.commons.lang.BooleanUtils;

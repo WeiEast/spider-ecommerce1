@@ -19,7 +19,7 @@ import com.datatrees.spider.share.service.domain.ParentTask;
 import com.datatrees.spider.share.service.domain.SubSeed;
 import com.datatrees.spider.share.service.domain.SubTask;
 import com.datatrees.spider.share.service.normalizers.SubmitNormalizerFactory;
-import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
+import com.datatrees.spider.share.service.extra.SubTaskManager;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.rawdatacentral.submitter.common.RedisKeyUtils;

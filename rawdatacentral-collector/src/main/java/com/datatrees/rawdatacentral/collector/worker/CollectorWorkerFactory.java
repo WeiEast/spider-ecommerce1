@@ -14,7 +14,7 @@ import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
 import com.datatrees.rawdatacentral.collector.search.CrawlExecutor;
 import com.datatrees.rawdatacentral.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.spider.share.service.dao.RedisDao;
-import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
+import com.datatrees.spider.share.service.extra.SubTaskManager;
 import org.springframework.stereotype.Service;
 
 /**

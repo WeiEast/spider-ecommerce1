@@ -7,7 +7,7 @@
  * Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.rawdatacentral.core.dubbo;
+package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;

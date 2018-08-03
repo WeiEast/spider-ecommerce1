@@ -21,7 +21,7 @@ import com.datatrees.rawdatacentral.collector.subtask.container.impl.SimpleSubTa
 import com.datatrees.rawdatacentral.collector.subtask.pool.SubTaskExecutor;
 import com.datatrees.spider.share.service.domain.SubSeed;
 import com.datatrees.spider.share.service.domain.SubTask;
-import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
+import com.datatrees.spider.share.service.extra.SubTaskManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;

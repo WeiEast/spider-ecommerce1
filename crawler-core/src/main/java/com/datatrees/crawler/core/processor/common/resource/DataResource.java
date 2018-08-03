@@ -2,6 +2,7 @@ package com.datatrees.crawler.core.processor.common.resource;
 
 import java.util.Map;
 
+@Deprecated
 public interface DataResource extends Resource {
 
     public Object getData(Map<String, Object> parameters);

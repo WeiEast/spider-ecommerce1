@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.core.subtask;
+package com.datatrees.spider.share.service.extra;
 
 import java.util.List;
 import java.util.Map;

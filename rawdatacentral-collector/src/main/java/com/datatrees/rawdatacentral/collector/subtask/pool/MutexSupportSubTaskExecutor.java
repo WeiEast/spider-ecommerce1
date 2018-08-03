@@ -17,7 +17,7 @@ import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.rawdatacentral.collector.actor.Collector;
 import com.datatrees.rawdatacentral.collector.subtask.container.Container;
 import com.datatrees.rawdatacentral.collector.subtask.container.Mutex;
-import com.datatrees.rawdatacentral.core.model.message.impl.SubTaskCollectorMessage;
+import com.datatrees.spider.share.service.domain.SubTaskCollectorMessage;
 import com.datatrees.spider.share.service.domain.SubTask;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
