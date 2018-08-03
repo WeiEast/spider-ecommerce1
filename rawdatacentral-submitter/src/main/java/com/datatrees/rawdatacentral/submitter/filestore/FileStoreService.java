@@ -1,6 +1,6 @@
 package com.datatrees.rawdatacentral.submitter.filestore;
 
-import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import com.datatrees.spider.share.service.domain.SubmitMessage;
 
 public interface FileStoreService {
 

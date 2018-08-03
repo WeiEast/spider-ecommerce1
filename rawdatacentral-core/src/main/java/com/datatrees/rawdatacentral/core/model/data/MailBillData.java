@@ -10,6 +10,8 @@ package com.datatrees.rawdatacentral.core.model.data;
 
 import java.util.Date;
 
+import com.datatrees.spider.share.domain.AbstractData;
+
 /**
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0

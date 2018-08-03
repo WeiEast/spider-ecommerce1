@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.collector.worker.normalizer;
+package com.datatrees.spider.share.service.normalizers.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
-import com.datatrees.rawdatacentral.core.model.data.DefaultData;
+import com.datatrees.spider.share.domain.DefaultData;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.datatrees.spider.share.domain.ResultType;
-import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import com.datatrees.spider.share.service.domain.SubmitMessage;
 import com.datatrees.spider.share.service.normalizers.SubmitNormalizer;
 import com.datatrees.spider.bank.domain.model.MailExtractResult;
 import org.springframework.stereotype.Service;

@@ -5,7 +5,7 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.worker.deduplicate.DuplicateChecker;
-import com.datatrees.rawdatacentral.core.model.data.AbstractData;
+import com.datatrees.spider.share.domain.AbstractData;
 
 /**
  * @author <A HREF="mailto:deng_kui@vobile.cn">Deng Kui</A>

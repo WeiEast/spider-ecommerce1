@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.core.model;
+package com.datatrees.spider.share.service.domain;
 
 import java.util.HashMap;
 import java.util.Map;

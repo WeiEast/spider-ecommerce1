@@ -2,7 +2,7 @@ package com.datatrees.rawdatacentral.extractor.builder;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.core.model.data.DefaultData;
+import com.datatrees.spider.share.domain.DefaultData;
 import com.datatrees.rawdatacentral.dao.DefaultExtractResultDAO;
 import com.datatrees.rawdatacentral.domain.model.DefaultExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;

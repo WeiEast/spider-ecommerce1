@@ -6,10 +6,10 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.submitter.normalizer;
+package com.datatrees.spider.share.service.normalizers.impl;
 
 import com.datatrees.spider.share.domain.ResultType;
-import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import com.datatrees.spider.share.service.domain.SubmitMessage;
 import com.datatrees.spider.share.service.normalizers.SubmitNormalizer;
 import org.springframework.stereotype.Service;
 

@@ -9,7 +9,7 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.Extractor;
-import com.datatrees.rawdatacentral.core.model.SubmitMessage;
+import com.datatrees.spider.share.service.domain.SubmitMessage;
 import com.datatrees.rawdatacentral.extractor.builder.impl.DefaultProcessorContextBuilder;
 import com.datatrees.rawdatacentral.extractor.storage.ResultStorage;
 import com.datatrees.rawdatacentral.submitter.SubmitProcessor;
