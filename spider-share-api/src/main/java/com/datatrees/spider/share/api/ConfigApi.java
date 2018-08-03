@@ -1,6 +1,6 @@
-package com.datatrees.rawdatacentral.api;
+package com.datatrees.spider.share.api;
 
-public interface ConfigServiceApi {
+public interface ConfigApi {
 
     String getProperty(String name);
 

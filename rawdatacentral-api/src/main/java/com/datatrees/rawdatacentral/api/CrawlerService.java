@@ -12,8 +12,8 @@ package com.datatrees.rawdatacentral.api;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
 
 /**
  * 爬虫对外dubbo接口
@@ -22,10 +22,10 @@ import com.datatrees.spider.share.domain.http.HttpResult;
 public interface CrawlerService {
 
     // 未来可以增加每个网页显示什么字段，给什么提示，有多少tab，点击每个tab访问什么连接的配置
-    public WebsiteConf getWebsiteConf(String websiteName);
+    WebsiteConf getWebsiteConf(String websiteName);
 
     // 未来可以增加每个网页显示什么字段，给什么提示，有多少tab，点击每个tab访问什么连接的配置
-    public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
+    List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
 
     /**
      * 运营商登陆,获取验证码
@@ -38,7 +38,7 @@ public interface CrawlerService {
      * @param extra    附加信息,目前null
      * @return
      */
-    public HttpResult<String> fetchLoginCode(long taskId, int type, String username, String password, Map<String, String> extra);
+    HttpResult<String> fetchLoginCode(long taskId, int type, String username, String password, Map<String, String> extra);
 
     /**
      * 模拟登陆,一般是运营商
@@ -50,7 +50,7 @@ public interface CrawlerService {
      * @param extra          附加信息
      * @return
      */
-    public HttpResult<String> login(long taskId, String username, String password, String code, String randomPassword, Map<String, String> extra);
+    HttpResult<String> login(long taskId, String username, String password, String code, String randomPassword, Map<String, String> extra);
 
     /**
      * 抓取过程中导入图片验证码和短信验证码,如果后端校验失败会重新发出指令附带图片验证码信息
@@ -63,7 +63,7 @@ public interface CrawlerService {
      * @param extra       附加信息,目前null
      * @return
      */
-    public HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code, Map<String, String> extra);
+    HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code, Map<String, String> extra);
 
     /**
      * 爬取过程中,向APP端弹出二维码,前端扫描和确认,将这个动作告诉插件,后端调用相关接口校验是否是一件扫描或者确认
@@ -79,7 +79,7 @@ public interface CrawlerService {
      * @param extra       附加信息,目前null
      * @return
      */
-    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra);
+    HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra);
 
     /**
      * 取消任务
@@ -87,7 +87,7 @@ public interface CrawlerService {
      * @param extra  附加信息,目前null
      * @return
      */
-    public HttpResult<Boolean> cancel(long taskId, Map<String, String> extra);
+    HttpResult<Boolean> cancel(long taskId, Map<String, String> extra);
 
     /**
      * 导入前端爬取结果
@@ -100,6 +100,6 @@ public interface CrawlerService {
      * @param extra       附加信息,暂时没有
      * @return
      */
-    public HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies, Map<String, String> extra);
+    HttpResult<Boolean> importAppCrawlResult(String directiveId, long taskId, String html, String cookies, Map<String, String> extra);
 
 }

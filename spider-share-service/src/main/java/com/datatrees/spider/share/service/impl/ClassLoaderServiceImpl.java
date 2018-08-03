@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.rawdatacentral.api.ConfigServiceApi;
+import com.datatrees.spider.share.api.ConfigApi;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.service.ClassLoaderService;
@@ -37,7 +37,7 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     private              PluginService                     pluginService;
 
     @Resource
-    private              ConfigServiceApi                  configServiceApi;
+    private              ConfigApi                         configApi;
 
     public static LoadingCache<String, ClassLoader> getClassLoacerCache() {
         return classLoacerCache;
@@ -117,13 +117,13 @@ public class ClassLoaderServiceImpl implements ClassLoaderService, InitializingB
     }
 
     private String getDefaultPluginFile(String websiteName, Long taskId) {
-        String pluginName = configServiceApi.getProperty("plugin.file", websiteName);
+        String pluginName = configApi.getProperty("plugin.file", websiteName);
         logger.info("get default plugin file,webisteName={},taskId={},pluginFile={}", websiteName, taskId, pluginName);
         return pluginName;
     }
 
     private String getDefaultPluginClass(String websiteName, Long taskId) {
-        String pluginClass = configServiceApi.getProperty("plugin.class", websiteName);
+        String pluginClass = configApi.getProperty("plugin.class", websiteName);
         logger.info("get default plugin class,webisteName={},taskId={},pluginClass={}", websiteName, taskId, pluginClass);
         return pluginClass;
     }

@@ -1,11 +1,11 @@
-package com.datatrees.rawdatacentral.collector.service;
+package com.datatrees.spider.share.service.impl.dubbo;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.rawdatacentral.api.ConfigServiceApi;
+import com.datatrees.spider.share.api.ConfigApi;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConfigServiceApiImpl implements ConfigServiceApi {
+public class ConfigApiImpl implements ConfigApi {
 
     @Override
     public String getProperty(String name) {
