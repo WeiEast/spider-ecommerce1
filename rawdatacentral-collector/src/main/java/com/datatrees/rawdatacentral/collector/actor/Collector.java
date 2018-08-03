@@ -41,7 +41,7 @@ import com.datatrees.spider.share.service.util.WebsiteUtils;
 import com.datatrees.spider.share.service.extra.ActorLockEventWatcher;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.util.UnifiedSysTime;
-import com.datatrees.rawdatacentral.core.dao.RedisDao;
+import com.datatrees.spider.share.service.dao.RedisDao;
 import com.datatrees.spider.share.service.message.MessageFactory;
 import com.datatrees.rawdatacentral.core.model.message.SubTaskAble;
 import com.datatrees.rawdatacentral.core.model.message.TaskRelated;

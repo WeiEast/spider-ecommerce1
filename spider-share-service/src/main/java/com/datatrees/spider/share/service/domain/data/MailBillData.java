@@ -1,5 +1,5 @@
 
-package com.datatrees.rawdatacentral.core.model.data;
+package com.datatrees.spider.share.service.domain.data;
 
 import java.util.Date;
 

@@ -16,7 +16,7 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
-import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
+import com.datatrees.spider.share.service.domain.data.EcommerceData;
 import com.datatrees.spider.share.domain.model.Ecommerce;
 import com.datatrees.spider.ecommerce.service.EcommerceService;
 import org.apache.commons.lang.StringUtils;

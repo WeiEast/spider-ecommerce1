@@ -8,7 +8,7 @@
 
 package com.datatrees.rawdatacentral.core.model.message;
 
-import com.datatrees.rawdatacentral.core.model.subtask.SubSeed;
+import com.datatrees.spider.share.service.domain.SubSeed;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

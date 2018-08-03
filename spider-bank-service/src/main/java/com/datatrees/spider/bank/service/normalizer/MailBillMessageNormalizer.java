@@ -20,7 +20,7 @@ import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
-import com.datatrees.rawdatacentral.core.model.data.MailBillData;
+import com.datatrees.spider.share.service.domain.data.MailBillData;
 import com.datatrees.spider.bank.service.BankService;
 import com.treefinance.crawler.framework.util.SourceFieldUtils;
 import org.apache.commons.lang3.StringUtils;

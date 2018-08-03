@@ -10,7 +10,7 @@ import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
-import com.datatrees.rawdatacentral.core.dao.RedisDao;
+import com.datatrees.spider.share.service.dao.RedisDao;
 import com.datatrees.spider.share.service.message.MessageFactory;
 import com.datatrees.spider.share.domain.ResultMessage;
 import org.apache.commons.lang.StringUtils;

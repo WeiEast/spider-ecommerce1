@@ -11,7 +11,7 @@ package com.datatrees.rawdatacentral.core.subtask;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
+import com.datatrees.spider.share.service.domain.SubTask;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

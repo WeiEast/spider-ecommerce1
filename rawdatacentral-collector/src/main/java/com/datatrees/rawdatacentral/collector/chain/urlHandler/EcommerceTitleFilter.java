@@ -5,7 +5,7 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.rawdatacentral.collector.chain.Context;
 import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
-import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
+import com.datatrees.spider.share.service.domain.data.EcommerceData;
 import com.datatrees.spider.share.domain.website.WebsiteType;
 
 public class EcommerceTitleFilter extends RemovedFetchLinkNodeFilter {

@@ -1,5 +1,4 @@
 rootProject.name = 'spider'
-include ':rawdatacentral-api'
 include ':rawdatacentral-core'
 include ':rawdatacentral-collector'
 include ':rawdatacentral-extractor'

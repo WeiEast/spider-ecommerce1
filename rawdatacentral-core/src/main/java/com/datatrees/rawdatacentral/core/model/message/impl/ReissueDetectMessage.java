@@ -10,7 +10,7 @@ package com.datatrees.rawdatacentral.core.model.message.impl;
 
 import java.util.List;
 
-import com.datatrees.rawdatacentral.core.model.MailBill;
+import com.datatrees.spider.share.service.domain.MailBill;
 import com.datatrees.spider.share.domain.MessageInfo;
 
 /**

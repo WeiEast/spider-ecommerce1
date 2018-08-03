@@ -2,7 +2,7 @@ package com.datatrees.spider.bank.service.extract;
 
 import javax.annotation.Resource;
 
-import com.datatrees.rawdatacentral.core.model.data.MailBillData;
+import com.datatrees.spider.share.service.domain.data.MailBillData;
 import com.datatrees.spider.bank.dao.MailExtractResultDAO;
 import com.datatrees.spider.bank.domain.model.MailExtractResult;
 import com.datatrees.spider.share.domain.AbstractExtractResult;

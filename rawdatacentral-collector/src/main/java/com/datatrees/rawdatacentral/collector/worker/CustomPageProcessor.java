@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import akka.dispatch.Future;
 import com.datatrees.rawdatacentral.collector.actor.TaskMessage;
-import com.datatrees.rawdatacentral.core.model.data.EcommerceData;
+import com.datatrees.spider.share.service.domain.data.EcommerceData;
 import com.treefinance.crawler.framework.extension.spider.PageProcessor;
 import com.treefinance.crawler.framework.extension.spider.page.AlipayRecordPage;
 import com.treefinance.crawler.framework.extension.spider.page.Page;

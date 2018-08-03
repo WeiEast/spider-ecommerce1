@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.datatrees.rawdatacentral.collector.subtask.container.Container;
 import com.datatrees.rawdatacentral.collector.subtask.container.Mutex;
-import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
+import com.datatrees.spider.share.service.domain.SubTask;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

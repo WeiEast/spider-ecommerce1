@@ -9,7 +9,7 @@
 package com.datatrees.rawdatacentral.collector.subtask.container.impl;
 
 import com.datatrees.rawdatacentral.collector.subtask.container.Container;
-import com.datatrees.rawdatacentral.core.model.subtask.SubTask;
+import com.datatrees.spider.share.service.domain.SubTask;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

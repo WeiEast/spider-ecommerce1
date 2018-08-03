@@ -7,7 +7,7 @@
  * Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.rawdatacentral.api;
+package com.datatrees.spider.share.api;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import com.datatrees.spider.share.domain.model.WebsiteConf;
  * 爬虫对外dubbo接口
  * Created by zhouxinghai on 2017/5/23
  */
+@Deprecated
 public interface CrawlerService {
 
     // 未来可以增加每个网页显示什么字段，给什么提示，有多少tab，点击每个tab访问什么连接的配置

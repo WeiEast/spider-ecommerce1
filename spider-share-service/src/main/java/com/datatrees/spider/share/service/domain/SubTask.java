@@ -6,9 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.rawdatacentral.core.model.subtask;
-
-import com.datatrees.spider.share.service.domain.ParentTask;
+package com.datatrees.spider.share.service.domain;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

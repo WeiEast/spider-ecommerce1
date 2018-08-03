@@ -31,7 +31,7 @@ import com.datatrees.rawdatacentral.collector.search.SearchProcessor;
 import com.datatrees.rawdatacentral.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.rawdatacentral.collector.worker.filter.TemplateFilter;
 import com.datatrees.spider.share.common.utils.DateUtils;
-import com.datatrees.rawdatacentral.core.dao.RedisDao;
+import com.datatrees.spider.share.service.dao.RedisDao;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.rawdatacentral.core.subtask.SubTaskManager;
 import com.datatrees.spider.share.domain.ExtractCode;
