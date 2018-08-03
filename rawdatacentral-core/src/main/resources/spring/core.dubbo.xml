@@ -16,7 +16,7 @@
                    <!--ref="mailServiceApiForQQImpl"/>-->
     <!--<dubbo:service interface="com.datatrees.rawdatacentral.api.CommonPluginServicevice"-->
                    <!--ref="commonPluginApiImpl"/>-->
-    <!--<dubbo:service interface="com.datatrees.rawdatacentral.service.dubbo.EconomicApiForTaoBaoQR"-->
+    <!--<dubbo:service interface="com.datatrees.spider.ecommerce.api.EconomicApiForTaoBaoQR"-->
                    <!--ref="economicApiForTaoBaoQRImpl"/>-->
     <!--<dubbo:service interface="com.datatrees.spider.bank.api.MailServiceApiFor163"-->
                    <!--ref="mailServiceApiFor163Impl"/>-->

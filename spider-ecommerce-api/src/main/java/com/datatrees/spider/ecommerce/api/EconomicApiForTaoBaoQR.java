@@ -1,4 +1,4 @@
-package com.datatrees.rawdatacentral.service.dubbo;
+package com.datatrees.spider.ecommerce.api;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.HttpResult;
