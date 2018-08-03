@@ -2,6 +2,7 @@ package com.datatrees.rawdatacentral.core.common;
 
 import java.util.Date;
 
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.DateUtils;
 import com.datatrees.spider.share.service.TaskService;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ public enum UnifiedSysTime {
 
     private static final long        JET_LAG;
 
-    private static       TaskService service = (TaskService) BeansFactory.getService("taskServiceImpl", TaskService.class);
+    private static       TaskService service = (TaskService) BeanFactoryUtils.getBean(TaskService.class);
 
     static {
         Date dbTime = service.selectNow();
