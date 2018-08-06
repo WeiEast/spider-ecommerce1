@@ -1,5 +1,5 @@
 #!/bin/sh
-gradle clean spider-share-domain:upload  spider-operator-domain:upload rawdatacentral-domain:upload  -x test
-gradle spider-share-api:upload rawdatacentral-api:upload  clean spider-operator-api:upload -x test
+gradle clean spider-share-domain:upload  spider-share-api:upload spider-share-common:upload  -x test
+gradle spider-operator-domain:upload  spider-operator-api:upload -x test
 
 

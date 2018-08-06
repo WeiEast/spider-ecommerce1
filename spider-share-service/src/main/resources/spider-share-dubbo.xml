@@ -13,6 +13,8 @@
 
     <dubbo:protocol name="dubbo" port="20192"/>
 
+    <dubbo:service interface="com.datatrees.spider.share.api.SpiderTaskApi" id="spiderTaskApiImpl" />
+
     <!--代理-->
     <dubbo:reference interface="com.treefinance.proxy.api.ProxyProvider" id="proxyProvider" check="false"/>
     <dubbo:reference interface="com.datatrees.notify.sms.newservice.SmsNewService" id="smsNewService" check="false"/>

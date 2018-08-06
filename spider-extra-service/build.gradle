@@ -2,7 +2,7 @@ dependencies {
 
     compile project(":spider-extra-dao")
     compile project(":spider-extra-api")
-    compile project(":spider-spider.share-service")
+    compile project(":spider-share-service")
 
 
 

@@ -1,7 +1,7 @@
 dependencies {
     compile project(":spider-ecommerce-domain")
 
-//    compile project(":spider-spider.share-dao")
+//    compile project(":spider-share-dao")
     compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}") {
         exclude(module: 'spring-boot-starter')
         exclude(module: 'spring-boot-starter-jdbc')
