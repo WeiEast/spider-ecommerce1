@@ -11,7 +11,7 @@
 
     <dubbo:registry address="${dubbo.zookeeper.address}" file="${user.home}/.dubbo/spider-share.cache"/>
 
-    <dubbo:protocol name="dubbo" port="20192"/>
+    <dubbo:protocol name="dubbo" port="20195"/>
 
     <dubbo:service interface="com.datatrees.spider.share.api.SpiderTaskApi" ref="spiderTaskApiImpl"/>
 
