@@ -255,7 +255,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
             String cookieString = TaskUtils.getCookieString(cookies);
             map.put(AttributeKey.COOKIE, cookieString);
         }
-        BeanFactoryUtils.getBean(MessageService.class).sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map);
+        //BeanFactoryUtils.getBean(MessageService.class).sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map);
     }
 
     @Override

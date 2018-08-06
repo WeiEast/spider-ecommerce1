@@ -397,7 +397,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         map.put(AttributeKey.WEBSITE_NAME, websiteName);
         String cookieString = TaskUtils.getCookieString(taskId);
         map.put(AttributeKey.COOKIE, cookieString);
-        messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_CRAWLER_START.getTag(), map, DEFAULT_CHARSET_NAME);
+        messageService.sendMessage(TopicEnum.SPIDER_OPERATOR.getCode(), TopicTag.OPERATOR_CRAWLER_START.getTag(), map, DEFAULT_CHARSET_NAME);
         return true;
     }
 
@@ -406,7 +406,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.TASK_ID, taskId);
         map.put(AttributeKey.WEBSITE_NAME, websiteName);
-        messageService.sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.OPERATOR_LOGIN_POST.getTag(), map, DEFAULT_CHARSET_NAME);
+        messageService.sendMessage(TopicEnum.SPIDER_OPERATOR.getCode(), TopicTag.OPERATOR_LOGIN_POST.getTag(), map, DEFAULT_CHARSET_NAME);
         return true;
     }
 }

@@ -287,7 +287,7 @@ public class SinaMailPlugin implements CommonPlugin {
                 String cookies = TaskUtils.getCookieString(taskId);
                 mqMap.put(AttributeKey.COOKIE, cookies);
                 BeanFactoryUtils.getBean(MessageService.class)
-                        .sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), mqMap, DEFAULT_CHARSET_NAME);
+                        .sendMessage(TopicEnum.SPIDER_BANK.getCode(), TopicTag.LOGIN_INFO.getTag(), mqMap, DEFAULT_CHARSET_NAME);
                 return result.success(map);
             } else if (pageContent.contains("2092")) {
                 map.put("directive", "login_fail");

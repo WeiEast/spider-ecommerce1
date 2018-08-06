@@ -12,7 +12,6 @@ import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.datatrees.spider.extra.plugin.xuexinwang.com.h5.utils.HttpUtils;
 import com.datatrees.spider.extra.plugin.xuexinwang.com.h5.utils.Sign;
-import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
@@ -25,6 +24,7 @@ import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.RpcOssService;
+import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
@@ -285,7 +285,7 @@ public class XueXinWebPlugin implements CommonPlugin {
                 map.put("information", "登陆成功");
                 logger.info("登录-->成功");
 
-                messageService.sendLoginSuccessMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), param.getTaskId());
+                messageService.sendLoginSuccessMessage(TopicEnum.SPIDER_EXTRA.getCode(), TopicTag.LOGIN_INFO.getTag(), param.getTaskId());
                 return result.success(map);
             }
             map.put("directive", "login_fail");
