@@ -1,5 +1,5 @@
 apply from: rootProject.file('upload.gradle')
 dependencies {
 
-    compile project(":spider-share-domain")
+    compile project(":spider-spider.share-domain")
 }

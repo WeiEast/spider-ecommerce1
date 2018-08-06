@@ -43,7 +43,6 @@ public class ExtractWorker {
     @Resource
     private              ExtractResultHandlerFactory    resultHandlerFactory;
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private void doSubExtractProcess(ExtractMessage extractMessage, Object obj, int messageIndex) {
         try {
             if (obj != null && obj instanceof Map && MapUtils.isNotEmpty((Map) obj)) {

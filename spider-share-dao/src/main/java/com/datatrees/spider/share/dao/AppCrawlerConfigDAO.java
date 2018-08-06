@@ -9,4 +9,4 @@ import com.datatrees.spider.share.dao.mapper.AppCrawlerConfigMapper;
  * Date: 2018/4/2
  */
 @Resource
-public interface AppCrawlerConfigDao extends AppCrawlerConfigMapper {}
+public interface AppCrawlerConfigDAO extends AppCrawlerConfigMapper {}

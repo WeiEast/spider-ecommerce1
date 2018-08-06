@@ -63,6 +63,6 @@ logger("org.apache.http.client.protocol.ResponseProcessCookies", INFO)
 //logger("org.apache.http.client.protocol.ResponseProcessCookies",DEBUG)
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
 logger("com.alibaba.dubbo.rpc.protocol.dubbo", OFF)
-logger("com.datatrees.spider.share.service.impl.FileStoreServiceImpl", OFF)
-logger("com.datatrees.spider.share.service.impl.AppCrawlerConfigServiceImpl", DEBUG)
+logger("com.datatrees.spider.spider.share.service.impl.FileStoreServiceImpl", OFF)
+logger("com.datatrees.spider.spider.share.service.impl.AppCrawlerConfigServiceImpl", DEBUG)
 

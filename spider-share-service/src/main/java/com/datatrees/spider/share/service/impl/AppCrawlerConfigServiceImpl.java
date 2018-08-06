@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
-import com.datatrees.spider.share.dao.AppCrawlerConfigDao;
+import com.datatrees.spider.share.dao.AppCrawlerConfigDAO;
 import com.datatrees.spider.share.domain.param.AppCrawlerConfigParam;
 import com.datatrees.spider.share.domain.param.CrawlerProjectParam;
 import com.datatrees.spider.share.domain.param.ProjectParam;
@@ -51,7 +51,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             .softValues().build();
 
     @Resource
-    private              AppCrawlerConfigDao                 appCrawlerConfigDao;
+    private              AppCrawlerConfigDAO                 appCrawlerConfigDAO;
 
     @Resource
     private              RedisService                        redisService;
@@ -83,14 +83,14 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
 
     private List<AppCrawlerConfig> selectAll() {
         AppCrawlerConfigCriteria criteria = new AppCrawlerConfigCriteria();
-        return appCrawlerConfigDao.selectByExample(criteria);
+        return appCrawlerConfigDAO.selectByExample(criteria);
     }
 
     private List<AppCrawlerConfig> selectListByAppId(String appId) {
         AppCrawlerConfigCriteria criteria = new AppCrawlerConfigCriteria();
         criteria.createCriteria().andAppIdEqualTo(appId);
         criteria.setOrderByClause("website_type asc");
-        return appCrawlerConfigDao.selectByExample(criteria);
+        return appCrawlerConfigDAO.selectByExample(criteria);
     }
 
     @Override
@@ -275,12 +275,12 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         AppCrawlerConfigCriteria criteria = new AppCrawlerConfigCriteria();
                         criteria.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(crawlerProjectParam.getWebsiteType())
                                 .andProjectEqualTo(projectParam.getCode());
-                        int i = appCrawlerConfigDao.updateByExampleSelective(config, criteria);
+                        int i = appCrawlerConfigDAO.updateByExampleSelective(config, criteria);
                         if (i == 0) {
                             config.setAppId(appId);
                             config.setWebsiteType(crawlerProjectParam.getWebsiteType());
                             config.setProject(projectParam.getCode());
-                            appCrawlerConfigDao.insertSelective(config);
+                            appCrawlerConfigDAO.insertSelective(config);
                         }
                         map.put(projectParam.getCode(), config.getCrawlerStatus());
                     }

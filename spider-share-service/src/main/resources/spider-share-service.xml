@@ -6,8 +6,9 @@
 
     <import resource="spider-share-diamond.xml"/>
     <import resource="spider-share-datasource-mysql.xml"/>
+    <import resource="spider-share-mybatis.xml"/>
     <import resource="spider-share-redis.xml"/>
-    <import resource="classpath:spider-share-dubbo.xml"/>
+    <import resource="spider-share-dubbo.xml"/>
     <import resource="spider-share-mq.xml"/>
     <import resource="spider-share-extractor.xml"/>
 

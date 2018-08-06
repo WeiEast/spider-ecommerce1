@@ -1,8 +1,8 @@
 dependencies {
-    compile project(':spider-share-api')
-    compile project(':spider-share-dao')
+    compile project(':spider-spider.share-api')
+    compile project(':spider-spider.share-dao')
     compile project(':crawler-core')
-    compile project(':spider-share-common')
+    compile project(':spider-spider.share-common')
 
     compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
     compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"

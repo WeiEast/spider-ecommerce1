@@ -15,7 +15,7 @@ public interface MailServiceApiFor126 {
      * 必填参数: taskId,username,password
      * <p>
      * 结果异步获取
-     * 详见:@see com.datatrees.spider.share.domain.ProcessResult
+     * 详见:@see com.datatrees.spider.spider.share.domain.ProcessResult
      * </p>
      * @return
      */
@@ -26,7 +26,7 @@ public interface MailServiceApiFor126 {
      * 必填参数: taskId
      * <p>
      * 结果异步获取
-     * 详见:@see com.datatrees.spider.share.domain.ProcessResult
+     * 详见:@see com.datatrees.spider.spider.share.domain.ProcessResult
      * </p>
      * @param param
      * @return
@@ -37,7 +37,7 @@ public interface MailServiceApiFor126 {
      * 查询二维码登陆状态
      * 必填参数: taskId
      * <p>
-     * 二维码状态详见:@see com.datatrees.spider.share.domain.QRStatus
+     * 二维码状态详见:@see com.datatrees.spider.spider.share.domain.QRStatus
      * </p>
      * @param param
      * @return

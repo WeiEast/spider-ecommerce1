@@ -9,11 +9,5 @@
         <property name="producerGroup" value="${core.mq.producerGroup}"/>
     </bean>
 
-    <bean id="loginInfoConsumer" class="com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer" destroy-method="shutdown">
-        <property name="namesrvAddr" value="${core.mq.host}"/>
-        <property name="consumerGroup" value="${core.mq.producerGroup}"/>
-        <property name="consumeThreadMin" value="${core.mq.thread.min}"/>
-        <property name="consumeThreadMax" value="${core.mq.thread.max}"/>
-    </bean>
 
 </beans>

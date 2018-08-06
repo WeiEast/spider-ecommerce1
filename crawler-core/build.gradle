@@ -9,7 +9,7 @@ ext {
 }
 
 dependencies {
-    compile project(':spider-share-common')
+    compile project(':spider-spider.share-common')
     compile "com.treefinance.toolkit:toolkit:${toolkit}"
     compile "com.google.guava:guava:${guavaVersion}"
     compile 'commons-httpclient:commons-httpclient:3.1'
