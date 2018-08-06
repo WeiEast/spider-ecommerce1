@@ -47,7 +47,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     /**
      * 插件名称
      */
-    private static final String              OPERATOR_PLUGIN_FILENAME = "rawdatacentral-plugin-operator.jar";
+    private static final String              OPERATOR_PLUGIN_FILENAME = "spider-operator-plugin.jar";
 
     static {
         hosts.put("开发", "192.168.5.15:6789");

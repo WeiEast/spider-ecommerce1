@@ -4,7 +4,7 @@ host="rawdatacentral.approach.saas.treefinance.com.cn"
 
 url="http://$host/plugin/uploadPlugin"
 gradle clean install -x test
-list=`find rawdatacentral-plugin-operator/build/libs/rawdatacentral-plugin-operator.jar -name '*.jar' | grep -v 'sources'`
+list=`find rawdatacentral-plugin-operator/build/libs/spider-operator-plugin.jar -name '*.jar' | grep -v 'sources'`
 for file in $list
 do
     curl  -F "file=@$file" $url

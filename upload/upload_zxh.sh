@@ -4,7 +4,7 @@ host="192.168.5.15:6789"
 
 url="http://$host/website/uploadPluginJar"
 gradle clean install -x test
-list=`find rawdatacentral-plugin-operator/build/libs/rawdatacentral-plugin-operator.jar -name '*.jar' | grep -v 'sources'`
+list=`find rawdatacentral-plugin-operator/build/libs/spider-operator-plugin.jar -name '*.jar' | grep -v 'sources'`
 for file in $list
 do
     curl  -F "jar=@$file" $url
