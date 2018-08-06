@@ -1,5 +1,3 @@
-
-
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import com.datatrees.spider.share.common.utils.DateUtils
 
@@ -7,10 +5,10 @@ import java.nio.charset.Charset
 
 scan("60 seconds")
 def charsetName = "UTF-8"
-def appName = "rawdatacentral"
-def serverIp = System.getProperty("server.ip","127.0.0.1")
+def appName = "spider"
+def serverIp = System.getProperty("server.ip", "127.0.0.1")
 
-def ips =serverIp.split("\\.");
+def ips = serverIp.split("\\.");
 // 日志路径
 def publishDate = DateUtils.format(new Date(), "MMdd")
 def logPath = "/dashu/log/${appName}/${publishDate}/${ips[2]}.${ips[3]}"

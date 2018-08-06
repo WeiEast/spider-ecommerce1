@@ -1,25 +1,41 @@
+APP_NAME='spider-share-main'
+echo "预设项目名称:$APP_NAME"
+JAR_NAME=`ls $APP_NAME*.jar | tail -1`
+APP_HOME=`pwd`
+if test -z "$APP_NAME"
+then
+	echo "没有找到任何启动包(jar),搜索路径:$APP_HOME "
+	echo "stop "
+	exit;
+fi
+echo "找到启动文件:$JAR_NAME"
+PID=`jps -l | grep $APP_NAME | awk '{print $1}'`
+OLD_JAR_NAME=`jps -l | grep $APP_NAME | awk '{print $2}'`
 
+
+. jvm.conf
+. service.conf
 
 
 function restartApp(){
 	if test -n "$PID" ;then
-		echo -e "\033[31mfind app is runing PID=$PID,APP_NAME=$APP_NAME ,kill $PID\033[0m"
-		kill -9 $PID
+		echo -e "\033[31m发现服务已经存在,正在停止服务$OLD_JAR_NAME($PID) \033[0m"
+		kill $PID
 		NEWPID=`jps -l | grep $APP_NAME | awk '{print $1}'`
 		while test "$PID" == "$NEWPID" 
 		do
-			echo "wait kill $PID,sleep 30ms"
+			echo "正在停止服务$OLD_JAR_NAME($PID),等待30ms"
 			sleep 0.03
 			NEWPID=`jps -l | grep $APP_NAME | awk '{print $1}'`
 		done
-		echo "wait kill $PID success"
+		echo "服务$OLD_JAR_NAME($PID)停止完成"
 	fi;
 	if test ! -d "logs" ;then mkdir logs ; fi
-	nohup java $jvm_opt -jar $APP_NAME > /dev/null 2>logs/log &
-	echo "nohup java $jvm_opt -jar $APP_NAME > /dev/null 2>logs/log &"
+	nohup java $jvm_opt -jar $JAR_NAME > /dev/null 2>logs/log &
+	echo "正在启动服务$JAR_NAME"
 	echo "jps -l | grep $APP_NAME | awk '{print \$1}'"
 	PID=`jps -l | grep $APP_NAME | awk '{print $1}'`
-	echo -e "\033[31mstart app PID=$PID \033[0m"
+	echo -e "\033[31m服务启动完成:$JAR_NAME($PID) \033[0m"
 	exit;
 }
 
@@ -32,25 +48,6 @@ function stopApp(){
 	fi;
 	exit;
 }
-
-
-APP_NAME=`ls -rt *.jar | tail -n 1`
-APP_HOME=`pwd`
-if test -z "$APP_NAME" 
-then
-	echo "not found any jar in $APP_HOME "
-	echo "stop "
-	exit;
-fi
-echo "APP_HOME=$APP_HOME"
-echo "APP_NAME=$APP_NAME"
-PID=`jps -l | grep rawdatacentral | awk '{print $1}'`
-
-. jvm.conf
-. service.conf
-
-
-
 
 
 case "$1" in

@@ -8,6 +8,7 @@
     <import resource="spider-share-datasource-mysql.xml"/>
     <import resource="spider-share-mybatis.xml"/>
     <import resource="spider-share-redis.xml"/>
+    <context:component-scan base-package="com.datatrees.spider.share.service"/>
     <import resource="spider-share-dubbo.xml"/>
     <import resource="spider-share-mq.xml"/>
     <import resource="spider-share-extractor.xml"/>
@@ -28,7 +29,7 @@
         <constructor-arg index="1" value="${core.zookeeper.sessionTimeOut}"/>
     </bean>
 
-    <context:component-scan base-package="com.datatrees.spider.share.service"/>
+
 
 
 </beans>

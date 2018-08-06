@@ -7,7 +7,7 @@ import java.nio.charset.Charset
 
 scan("60 seconds")
 def charsetName = "UTF-8"
-def appName = "rawdatacentral"
+def appName = "spider"
 def serverIp = System.getProperty("server.ip","127.0.0.1")
 
 def ips =serverIp.split("\\.");

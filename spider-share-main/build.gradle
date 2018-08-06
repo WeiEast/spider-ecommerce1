@@ -3,7 +3,7 @@ plugins {
 }
 
 bootRepackage {
-    mainClass = "com.datatrees.spider.spider.share.main.Application"
+    mainClass = "com.datatrees.spider.share.main.Application"
 }
 
 sourceSets {
