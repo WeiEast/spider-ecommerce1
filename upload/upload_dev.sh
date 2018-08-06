@@ -3,14 +3,14 @@ host="192.168.5.25:6789"
 
 url="http://$host/plugin/uploadPlugin"
 gradle clean install -x test
-list=`find rawdatacentral-plugin-operator/build/libs/rawdatacentral-plugin-operator.jar -name '*.jar' | grep -v 'sources'`
+list=`find spider-operator-plugin/build/libs/spider-operator-plugin.jar -name '*.jar' | grep -v 'sources'`
 for file in $list
 do
     curl  -F "file=@$file" $url
-    curl  -F "file=@$file;fileName=rawdatacentral-plugin-operator-$HOSTNAME.jar" $url
+    curl  -F "file=@$file;fileName=spider-operator-plugin-$HOSTNAME.jar" $url
 done
 
-list=`find rawdatacentral-plugin-operator/src/main/resources -name '*.js'`
+list=`find spider-operator-plugin/src/main/resources -name '*.js'`
 for file in $list
 do
    parent_name=`dirname $file`
