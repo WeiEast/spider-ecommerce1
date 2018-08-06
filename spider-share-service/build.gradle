@@ -4,6 +4,7 @@ dependencies {
     compile project(':crawler-core')
     compile project(':spider-share-common')
 
+    compile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
     compile "org.springframework.boot:spring-boot-starter-aop:${springBootVersion}"
     compile "org.springframework:spring-oxm:${springVersion}"
 
@@ -41,7 +42,7 @@ dependencies {
         exclude(module: "guava")
         exclude(module: "spring-boot-starter-amqp")
     }
-    compile("com.alibaba:dubbo:${dubboVersion}"){
+    compile("com.alibaba:dubbo:${dubboVersion}") {
         exclude(module: 'nettty')
     }
     compile "org.javassist:javassist:${javassistVersion}"
@@ -49,11 +50,11 @@ dependencies {
     compile "org.apache.pdfbox:pdfbox:${pdfbox}"
     compile "net.mabboud.fontverter:FontVerter:${fontverter}"
     compile "net.sourceforge.jexcelapi:jxl:${jxl}"
-    compile ("com.sun.mail:javax.mail:${javaxMailVersion}")
-    compile ("com.datatrees.crawler.plugin:plugin-utils:${pluginUtilsVersion}"){
+    compile("com.sun.mail:javax.mail:${javaxMailVersion}")
+    compile("com.datatrees.crawler.plugin:plugin-utils:${pluginUtilsVersion}") {
         exclude module: 'guava'
     }
 
-    compile ("net.sourceforge.htmlunit:htmlunit:${htmlunitVersion}")
-    compile ("ant:ant:${antVersion}")
+    compile("net.sourceforge.htmlunit:htmlunit:${htmlunitVersion}")
+    compile("ant:ant:${antVersion}")
 }

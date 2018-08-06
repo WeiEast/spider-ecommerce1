@@ -2,12 +2,6 @@ package com.datatrees.spider.share.service.mq;
 
 import java.util.Map;
 
-import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
-import com.alibaba.rocketmq.client.exception.MQClientException;
-import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
-import com.alibaba.rocketmq.common.protocol.heartbeat.MessageModel;
-import com.datatrees.spider.share.domain.TopicEnum;
-import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
 import com.treefinance.crawler.framework.context.control.IBusinessTypeFilter;
 import org.apache.commons.collections.MapUtils;
@@ -39,29 +33,6 @@ public class ApplicationStartedListener implements ApplicationListener<ContextRe
             LOGGER.info("Registering crawling-business filters into decider.");
             BusinessTypeDecider.registerFilters(beans.values());
         }
-
-        try {
-            startMqConsumer(applicationContext);
-        } catch (MQClientException e) {
-            throw new UnexpectedException("Unexpected exception when starting mq consumer.", e);
-        }
     }
 
-    /**
-     * // 等应用容器启动完成后再开始启动mq consumer，开始消费
-     * @param applicationContext spring容器
-     * @exception MQClientException
-     */
-    private void startMqConsumer(ApplicationContext applicationContext) throws MQClientException {
-        LOGGER.info("Starting mq consumer");
-        MessageListener messageListener = applicationContext.getBean(MessageListener.class);
-        DefaultMQPushConsumer loginInfoConsumer = applicationContext.getBean(DefaultMQPushConsumer.class);
-        loginInfoConsumer.subscribe(TopicEnum.SPIDER_OPERATOR.getCode(), "*");
-        loginInfoConsumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        loginInfoConsumer.setMessageModel(MessageModel.CLUSTERING);
-        loginInfoConsumer.setConsumeMessageBatchMaxSize(1);
-        loginInfoConsumer.registerMessageListener(messageListener);
-        loginInfoConsumer.start();
-        LOGGER.info("Started mq consumer");
-    }
 }
