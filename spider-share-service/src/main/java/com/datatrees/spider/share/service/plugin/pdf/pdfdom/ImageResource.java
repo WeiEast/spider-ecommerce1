@@ -1,4 +1,4 @@
-package com.datatrees.crawler.plugin.pdf.pdfdom;
+package com.datatrees.spider.share.service.plugin.pdf.pdfdom;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

@@ -1,4 +1,4 @@
-package com.datatrees.crawler.plugin.util;
+package com.datatrees.spider.share.service.plugin.util;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;

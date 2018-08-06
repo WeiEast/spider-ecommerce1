@@ -1,4 +1,4 @@
-package com.datatrees.crawler.plugin.pdf;
+package com.datatrees.spider.share.service.plugin.pdf;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.geom.AffineTransform;
@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
-import com.datatrees.crawler.plugin.pdf.pdfdom.*;
+import com.datatrees.spider.share.service.plugin.pdf.pdfdom.*;
 import org.apache.pdfbox.contentstream.operator.Operator;
 import org.apache.pdfbox.contentstream.operator.color.*;
 import org.apache.pdfbox.contentstream.operator.state.*;

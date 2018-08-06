@@ -1,4 +1,4 @@
-package com.datatrees.crawler.plugin.login;
+package com.datatrees.spider.share.service.plugin.login;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -18,8 +18,8 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
-import com.datatrees.crawler.plugin.login.AbstractLoginPlugin.ContentType;
+import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
+import com.datatrees.spider.share.service.plugin.login.AbstractLoginPlugin.ContentType;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;

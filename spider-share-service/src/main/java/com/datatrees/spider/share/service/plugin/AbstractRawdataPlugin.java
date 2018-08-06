@@ -5,7 +5,7 @@
  * strictly prohibited. All rights are reserved. Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.crawler.plugin;
+package com.datatrees.spider.share.service.plugin;
 
 import java.util.HashMap;
 import java.util.Map;

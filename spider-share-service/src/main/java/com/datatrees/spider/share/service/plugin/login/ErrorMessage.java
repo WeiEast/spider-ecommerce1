@@ -1,4 +1,4 @@
-package com.datatrees.crawler.plugin.login;
+package com.datatrees.spider.share.service.plugin.login;
 
 public interface ErrorMessage {
 

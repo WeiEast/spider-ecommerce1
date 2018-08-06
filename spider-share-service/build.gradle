@@ -36,4 +36,24 @@ dependencies {
 
     compile "com.sleepycat:je:${jeVersion}"
 
+
+    compile(group: "com.datatrees.common", name: "common-message", version: "${commonMessageVersion}", changing: true) {
+        exclude(module: "guava")
+        exclude(module: "spring-boot-starter-amqp")
+    }
+    compile("com.alibaba:dubbo:${dubboVersion}"){
+        exclude(module: 'nettty')
+    }
+    compile "org.javassist:javassist:${javassistVersion}"
+    compile "com.101tec:zkclient:${zkclientVersion}"
+    compile "org.apache.pdfbox:pdfbox:${pdfbox}"
+    compile "net.mabboud.fontverter:FontVerter:${fontverter}"
+    compile "net.sourceforge.jexcelapi:jxl:${jxl}"
+    compile ("com.sun.mail:javax.mail:${javaxMailVersion}")
+    compile ("com.datatrees.crawler.plugin:plugin-utils:${pluginUtilsVersion}"){
+        exclude module: 'guava'
+    }
+
+    compile ("net.sourceforge.htmlunit:htmlunit:${htmlunitVersion}")
+    compile ("ant:ant:${antVersion}")
 }

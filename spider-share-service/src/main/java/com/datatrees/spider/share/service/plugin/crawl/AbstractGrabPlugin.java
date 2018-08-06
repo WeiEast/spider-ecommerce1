@@ -1,4 +1,4 @@
-package com.datatrees.crawler.plugin.crawl;
+package com.datatrees.spider.share.service.plugin.crawl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.crawler.plugin.AbstractRawdataPlugin;
+import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveType;

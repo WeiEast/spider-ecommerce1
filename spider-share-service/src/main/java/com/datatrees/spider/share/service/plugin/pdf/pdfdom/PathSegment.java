@@ -1,4 +1,4 @@
-package com.datatrees.crawler.plugin.pdf.pdfdom;
+package com.datatrees.spider.share.service.plugin.pdf.pdfdom;
 
 public class PathSegment {
 

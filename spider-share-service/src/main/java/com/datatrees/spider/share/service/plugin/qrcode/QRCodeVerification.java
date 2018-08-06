@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2016
  */
 
-package com.datatrees.crawler.plugin.qrcode;
+package com.datatrees.spider.share.service.plugin.qrcode;
 
 import java.util.Map;
 
