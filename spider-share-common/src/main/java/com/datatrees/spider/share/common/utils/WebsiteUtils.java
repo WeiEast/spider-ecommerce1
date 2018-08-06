@@ -1,13 +1,10 @@
-package com.datatrees.spider.share.service.util;
+package com.datatrees.spider.share.common.utils;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.spider.share.common.utils.DateUtils;
-import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.google.common.base.Preconditions;

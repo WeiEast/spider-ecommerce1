@@ -37,7 +37,7 @@ import com.datatrees.spider.share.service.collector.worker.CollectorWorkerFactor
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.IpUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.service.util.WebsiteUtils;
+import com.datatrees.spider.share.common.utils.WebsiteUtils;
 import com.datatrees.spider.share.service.extra.ActorLockEventWatcher;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.util.UnifiedSysTime;

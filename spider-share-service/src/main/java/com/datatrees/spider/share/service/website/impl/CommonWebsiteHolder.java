@@ -7,7 +7,7 @@ import com.datatrees.spider.share.domain.model.WebsiteInfo;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteInfoService;
-import com.datatrees.spider.share.service.util.WebsiteUtils;
+import com.datatrees.spider.share.common.utils.WebsiteUtils;
 import com.datatrees.spider.share.service.website.WebsiteHolder;
 import org.springframework.stereotype.Component;
 
