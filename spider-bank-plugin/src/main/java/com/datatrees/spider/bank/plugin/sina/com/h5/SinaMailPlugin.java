@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
-import com.datatrees.crawler.plugin.login.ErrorMessage;
+import com.datatrees.spider.share.service.plugin.login.ErrorMessage;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;

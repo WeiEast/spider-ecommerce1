@@ -10,8 +10,8 @@ import java.util.List;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.plugin.pdf.AbstractPDFDomParser;
-import com.datatrees.crawler.plugin.pdf.pdfdom.*;
+import com.datatrees.spider.share.service.plugin.pdf.AbstractPDFDomParser;
+import com.datatrees.spider.share.service.plugin.pdf.pdfdom.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.slf4j.Logger;
