@@ -1,6 +1,4 @@
-#增加运营商启用标记
-ALTER TABLE `website_operator` ADD `enable` TINYINT(1)  NULL  DEFAULT '1'  COMMENT '是否启用(0:不启用,1:启用)'  AFTER `website_title`;
-ALTER TABLE `website_operator` CHANGE `enable` `enable` TINYINT(1)  NOT NULL  DEFAULT '1'  COMMENT '是否启用(0:不启用,1:启用)';
-ALTER TABLE `website_operator` CHANGE `proxy_enable` `proxy_enable` TINYINT(1)  NULL  DEFAULT '0'  COMMENT '代理(0:不启用,1:启用)';
-ALTER TABLE `website_group` ADD `enable` TINYINT(1)  NULL  DEFAULT '1'  COMMENT '是否启用(0:不启用,1:启用)'  AFTER `website_title`;
-ALTER TABLE `website_group` CHANGE `enable` `enable` TINYINT(1)  NOT NULL  DEFAULT '1'  COMMENT '是否启用(0:不启用,1:启用)';
+select m.search_config,REPLACE(m.search_config,'com.datatrees.rawdatacentral.plugin.operator','com.datatrees.spider.operator.plugin') from website_operator m;
+
+update website_operator set plugin_class = REPLACE(plugin_class,'com.datatrees.rawdatacentral.plugin.operator','com.datatrees.spider.operator.plugin');
+update website_operator set search_config = REPLACE(search_config,'com.datatrees.rawdatacentral.plugin.operator','com.datatrees.spider.operator.plugin');
