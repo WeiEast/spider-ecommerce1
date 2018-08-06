@@ -1,11 +1,14 @@
 package com.datatrees.spider.share.main;
 
+import java.util.Arrays;
+
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -19,7 +22,9 @@ import org.springframework.http.converter.HttpMessageConverter;
 public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
+        //String[] names = context.getBeanDefinitionNames();
+        //Arrays.stream(names).forEach(System.out::println);
     }
 
     @Bean

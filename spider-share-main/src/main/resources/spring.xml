@@ -3,7 +3,8 @@
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 
-    <import resource="classpath*:spider-share-web.xml"/>
+    <import resource="classpath*:spider-share-service.xml"/>
+    <import resource="classpath*:spider-*-web.xml"/>
 
 
 </beans>

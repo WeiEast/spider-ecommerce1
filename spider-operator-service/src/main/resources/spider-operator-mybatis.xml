@@ -21,7 +21,7 @@
     </bean>
 
 
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <bean id="operatorMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="annotationClass" value="javax.annotation.Resource"/>
         <property name="basePackage" value="com.datatrees.spider.operator.dao"/>
         <property name="sqlSessionFactoryBeanName" value="operatorSessionFactoryBean"/>
