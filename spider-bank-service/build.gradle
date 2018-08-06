@@ -5,6 +5,6 @@ dependencies {
     compile project(":spider-share-service")
 
 
-    compile project(":rawdatacentral-collector")
+
 }
 
