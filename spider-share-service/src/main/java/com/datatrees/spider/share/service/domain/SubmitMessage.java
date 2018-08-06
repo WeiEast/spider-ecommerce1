@@ -3,7 +3,6 @@ package com.datatrees.spider.share.service.domain;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 
 /**
@@ -56,12 +55,7 @@ public class SubmitMessage {
         return submitkeyResult;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
-    @Override
+     @Override
     public String toString() {
         return "SubmitMessage [extractMessage=" + extractMessage + ", result=" + result + "]";
     }
