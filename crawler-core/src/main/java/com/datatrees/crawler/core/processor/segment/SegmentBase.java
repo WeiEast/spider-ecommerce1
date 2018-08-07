@@ -56,7 +56,19 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
 
     @Override
     protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
-        return request.getInput() == null;
+        if (request.getInput() == null) {
+            logger.warn("Empty input content used for segment processing and skip. segment: {}, taskId: {}", segment.getName(), context.getTaskId());
+            return true;
+        }
+
+        context = RequestUtil.getProcessorContext(request);
+        String businessType = segment.getBusinessType();
+        if (!BusinessTypeDecider.support(businessType, context)) {
+            logger.warn("Business forbidden in segment processing and skip. segment: {}, businessType: {}, taskId: {}", segment.getName(), businessType, context.getTaskId());
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -68,17 +80,11 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                 throw new ResultEmptyException(segment + " result should not be Empty!");
             }
         } else {
-            context = RequestUtil.getProcessorContext(request);
-            String businessType = segment.getBusinessType();
-            if (BusinessTypeDecider.support(businessType, context)) {
-                String original = (String) request.getInput();
-                try {
-                    doProcess(request, response);
-                } finally {
-                    request.setInput(original);
-                }
-            } else {
-                logger.warn("Skip segment processor with the forbidden business. businessType: {}, taskId: {}", businessType, context.getTaskId());
+            String original = (String) request.getInput();
+            try {
+                doProcess(request, response);
+            } finally {
+                request.setInput(original);
             }
         }
 
