@@ -19,13 +19,6 @@ public interface WebsiteGroupService {
     void deleteByGroupCode(String groupCode);
 
     /**
-     * 获取最大权重运营商
-     * @param groupCode 分组
-     * @return
-     */
-    WebsiteGroup queryMaxWeightWebsite(String groupCode);
-
-    /**
      * 根据运营商查询groupCode
      * @param groupCode 分组
      * @return
@@ -38,23 +31,6 @@ public interface WebsiteGroupService {
      * @param config    运营商-->权重
      */
     List<WebsiteGroup> configGroup(String groupCode, Map<String, Integer> config);
-
-    /**
-     * 根据groupCode更新缓存
-     * 计算MAX_WEIGHT_OPERATOR
-     * weith>0
-     * @param groupCode 分组
-     * @return
-     */
-    void updateCacheByGroupCode(String groupCode);
-
-    /**
-     * 根据groupCode更新缓存
-     * 计算MAX_WEIGHT_OPERATOR
-     * weith>0
-     * @return
-     */
-    void updateCache();
 
     /**
      * 更新配置状态

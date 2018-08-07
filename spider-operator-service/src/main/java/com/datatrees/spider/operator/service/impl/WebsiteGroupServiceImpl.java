@@ -4,21 +4,16 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
 
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.common.utils.CollectionUtils;
-import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.common.utils.WeightUtils;
-import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.spider.operator.dao.WebsiteGroupDAO;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.example.WebsiteGroupExample;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.WeightUtils;
+import com.datatrees.spider.share.domain.GroupEnum;
+import com.datatrees.spider.share.domain.exception.CommonException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -44,8 +39,6 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService, Initializin
     @Value("${core.redis.password}")
     private              String                 redisPassword;
 
-    private              Random                 random = new Random();
-
     @Override
     public List<WebsiteGroup> queryByGroupCode(String groupCode) {
         CheckUtils.checkNotBlank(groupCode, "groupCode is blank");
@@ -60,13 +53,6 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService, Initializin
         example.createCriteria().andGroupCodeEqualTo(groupCode);
         websiteGroupDAO.deleteByExample(example);
         clearOperatorQueueByGroupCode(groupCode);
-        updateCacheByGroupCode(groupCode);
-    }
-
-    @Override
-    public WebsiteGroup queryMaxWeightWebsite(String groupCode) {
-        CheckUtils.checkNotBlank(groupCode, "groupCode is blank");
-        return websiteGroupDAO.queryMaxWeightWebsite(groupCode);
     }
 
     @Override
@@ -88,40 +74,8 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService, Initializin
             operatorGroup.setWebsiteTitle(websiteOperatorService.getByWebsiteName(entry.getKey()).getWebsiteTitle());
             websiteGroupDAO.insertSelective(operatorGroup);
         }
-        updateCacheByGroupCode(groupCode);
         clearOperatorQueueByGroupCode(groupCode);
         return queryByGroupCode(groupCode);
-    }
-
-    @Override
-    public void updateCacheByGroupCode(String groupCode) {
-        CheckUtils.checkNotBlank(groupCode, "groupCode is null");
-        List<WebsiteGroup> list = queryByGroupCode(groupCode);
-        if (CollectionUtils.isEmpty(list)) {
-            return;
-        }
-        WebsiteGroup maxWeight = null;
-        if (list.size() == 1) {
-            maxWeight = list.get(0);
-        } else {
-            List<WebsiteGroup> enables = list.stream().filter(group -> group.getEnable()).sorted((a, b) -> a.getWeight().compareTo(b.getWeight()))
-                    .collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(enables)) {
-                maxWeight = enables.get(enables.size() - 1);
-            } else {
-                maxWeight = list.get(random.nextInt(list.size()));
-                logger.info("random selecet website groupCode={},websiteName={}", groupCode, maxWeight.getWebsiteName());
-            }
-        }
-        RedisUtils.set(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(groupCode), maxWeight.getWebsiteName());
-    }
-
-    @Override
-    public void updateCache() {
-        for (GroupEnum group : GroupEnum.values()) {
-            updateCacheByGroupCode(group.getGroupCode());
-        }
-        logger.info("update operator group config success");
     }
 
     @Override

@@ -85,6 +85,4 @@ public interface OperatorApi {
      */
     HttpResult<List<Map<String, List<OperatorGroup>>>> queryGroups();
 
-    //OperatorPluginService getOperatorPluginService(String websiteName, Long taskId);
-
 }

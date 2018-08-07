@@ -9,8 +9,6 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.spider.share.service.ClassLoaderService;
-import com.datatrees.spider.share.service.NotifyService;
 import com.datatrees.spider.operator.dao.WebsiteOperatorDAO;
 import com.datatrees.spider.operator.domain.FieldBizType;
 import com.datatrees.spider.operator.domain.FieldInitSetting;
@@ -27,7 +25,9 @@ import com.datatrees.spider.share.common.utils.*;
 import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
+import com.datatrees.spider.share.service.ClassLoaderService;
 import com.datatrees.spider.share.service.MessageService;
+import com.datatrees.spider.share.service.NotifyService;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -249,7 +249,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         operatorUpdate.setEnable(enable);
         websiteOperatorDAO.updateByPrimaryKeySelective(operatorUpdate);
         websiteGroupService.updateEnable(websiteName, enable);
-        websiteGroupService.updateCache();
+        websiteGroupService.clearOperatorQueueByWebsite(websiteName);
 
         WebsiteOperator from = null;
         if (StringUtils.isNotBlank(fromWebsiteName)) {
