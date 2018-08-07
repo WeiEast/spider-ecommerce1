@@ -2,24 +2,18 @@ package com.datatrees.spider.operator.web.controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.spider.share.common.utils.CollectionUtils;
-import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
-import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.treefinance.saas.knife.common.CommonStateCode;
 import com.treefinance.saas.knife.result.Results;
 import com.treefinance.saas.knife.result.SaasResult;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -76,60 +70,6 @@ public class WebsiteGroupController {
             logger.error("deleteGroupConfig error groupCode={}", groupCode, e);
             return result.failure();
         }
-    }
-
-    /**
-     * 统计运营商使用版本情况
-     * @return
-     */
-    @RequestMapping("/statistics")
-    public Object statistics() {
-        Map<String, List<String>> map = new HashMap<>();
-        map.put("有本地-->没有使用", new ArrayList<>());
-        map.put("有本地-->使用全国版", new ArrayList<>());
-        map.put("有本地-->使用本地版", new ArrayList<>());
-
-        map.put("无本地-->使用全国版", new ArrayList<>());
-        map.put("无本地-->使用老版", new ArrayList<>());
-        map.put("未识别", new ArrayList<>());
-
-        for (GroupEnum group : GroupEnum.values()) {
-            if (group.getWebsiteType() != WebsiteType.OPERATOR) {
-                continue;
-            }
-            if (group == GroupEnum.CHINA_10086 || group == GroupEnum.CHINA_10000 || group == GroupEnum.CHINA_10010) {
-                continue;
-            }
-            String maxWeightWebsiteName = RedisUtils.get(RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(group.getGroupCode()));
-            List<WebsiteOperator> operators = websiteOperatorService.queryByGroupCode(group.getGroupCode());
-
-            String template = "{}({})";
-            if (CollectionUtils.isEmpty(operators)) {
-                //无本地
-                if (StringUtils.isBlank(maxWeightWebsiteName)) {
-                    map.get("无本地-->使用老版").add(TemplateUtils.format(template, group.getGroupName(), group.getWebsiteName()));
-                } else if (StringUtils.contains(maxWeightWebsiteName, "china")) {
-                    map.get("无本地-->使用全国版").add(TemplateUtils.format(template, group.getGroupName(), maxWeightWebsiteName));
-                } else {
-                    map.get("未识别").add(TemplateUtils.format(template, group.getGroupName(), maxWeightWebsiteName));
-                }
-            } else {
-                WebsiteOperator operator = operators.get(0);
-                //有本地
-                if (StringUtils.isBlank(maxWeightWebsiteName)) {
-                    map.get("有本地-->没有使用").add(TemplateUtils.format(template, group.getGroupName(), operator.getWebsiteName()));
-                } else {
-                    if (StringUtils.equals(maxWeightWebsiteName, operator.getWebsiteName())) {
-                        map.get("有本地-->使用本地版").add(TemplateUtils.format(template, group.getGroupName(), operator.getWebsiteName()));
-                    } else if (StringUtils.contains(maxWeightWebsiteName, "china")) {
-                        map.get("有本地-->使用全国版").add(TemplateUtils.format(template, group.getGroupName(), maxWeightWebsiteName));
-                    } else {
-                        map.get("未识别").add(TemplateUtils.format(template, group.getGroupName(), maxWeightWebsiteName));
-                    }
-                }
-            }
-        }
-        return map;
     }
 
     @RequestMapping("/updateEnable")

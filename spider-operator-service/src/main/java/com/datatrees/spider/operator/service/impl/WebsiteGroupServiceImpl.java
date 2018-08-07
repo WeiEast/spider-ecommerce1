@@ -129,7 +129,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService, Initializin
     public Integer queryEnableCount(String groupCode) {
         WebsiteGroupExample example = new WebsiteGroupExample();
         WebsiteGroupExample.Criteria criteria = example.createCriteria();
-        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(true);
+        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(true).andWeightGreaterThan(0);
         return websiteGroupDAO.countByExample(example);
     }
 
@@ -137,7 +137,7 @@ public class WebsiteGroupServiceImpl implements WebsiteGroupService, Initializin
     public List<WebsiteGroup> queryEnable(String groupCode) {
         WebsiteGroupExample example = new WebsiteGroupExample();
         WebsiteGroupExample.Criteria criteria = example.createCriteria();
-        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(true);
+        criteria.andGroupCodeEqualTo(groupCode).andEnableEqualTo(true).andWeightGreaterThan(0);
         example.setOrderByClause("weight desc");
         return websiteGroupDAO.selectByExample(example);
     }

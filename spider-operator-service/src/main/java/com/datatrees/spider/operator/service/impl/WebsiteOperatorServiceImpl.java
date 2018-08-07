@@ -1,10 +1,7 @@
 package com.datatrees.spider.operator.service.impl;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -14,6 +11,7 @@ import com.datatrees.spider.operator.domain.FieldBizType;
 import com.datatrees.spider.operator.domain.FieldInitSetting;
 import com.datatrees.spider.operator.domain.InputField;
 import com.datatrees.spider.operator.domain.OperatorLoginConfig;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.spider.operator.domain.model.example.WebsiteOperatorExample;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
@@ -29,6 +27,7 @@ import com.datatrees.spider.share.service.ClassLoaderService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.NotifyService;
 import com.datatrees.spider.share.service.WebsiteConfigService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -239,10 +238,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Override
-    public Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto) {
+    public List<WebsiteGroup> updateWebsiteStatus(String groupCode, String websiteName, boolean enable, boolean auto) {
         WebsiteOperator websiteOperatorDb = getByWebsiteName(websiteName);
-        String redisKey = RedisKeyPrefixEnum.MAX_WEIGHT_OPERATOR.getRedisKey(websiteOperatorDb.getGroupCode());
-        String fromWebsiteName = RedisUtils.get(redisKey);
 
         WebsiteOperator operatorUpdate = new WebsiteOperator();
         operatorUpdate.setWebsiteId(websiteOperatorDb.getWebsiteId());
@@ -251,24 +248,14 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         websiteGroupService.updateEnable(websiteName, enable);
         websiteGroupService.clearOperatorQueueByWebsite(websiteName);
 
-        WebsiteOperator from = null;
-        if (StringUtils.isNotBlank(fromWebsiteName)) {
-            from = getByWebsiteName(fromWebsiteName);
+        List<WebsiteGroup> enableList = null;
+        if (StringUtils.isNoneBlank(groupCode)) {
+            enableList = websiteGroupService.queryEnable(groupCode);
+        } else {
+            enableList = new ArrayList<>();
         }
-
-        String toWebsiteName = RedisUtils.get(redisKey);
-        WebsiteOperator to = null;
-        if (StringUtils.isNotBlank(toWebsiteName)) {
-            to = getByWebsiteName(toWebsiteName);
-        }
-        Map<String, WebsiteOperator> map = new HashMap<>();
-        map.put(AttributeKey.FROM, from);
-        map.put(AttributeKey.TO, to);
-
-        if (null != from && null != to) {
-            sendMsgForOperatorStatusUpdate(websiteOperatorDb, from, to, enable, auto);
-        }
-        return map;
+        sendMsgForOperatorStatusUpdate(websiteOperatorDb, enableList, enable, auto);
+        return enableList;
     }
 
     @Override
@@ -362,23 +349,30 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         return config;
     }
 
-    @Override
-    public Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, WebsiteOperator from, WebsiteOperator to, Boolean enable, Boolean auto) {
+    private Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, List<WebsiteGroup> enableList, Boolean enable, Boolean auto) {
         try {
+            StringBuilder remark = new StringBuilder();
+            if (CollectionUtils.isEmpty(enableList)) {
+                remark.append("无备用版本");
+            } else {
+                enableList.forEach(g -> {
+                    remark.append(" ").append(g.getWebsiteTitle());
+                });
+            }
+
             String saasEnv = TaskUtils.getSassEnv();
             Map<String, Object> map = new HashMap<>();
             map.put("changeWebsiteName", change.getWebsiteName());
             map.put("changeWebsiteTitle", change.getWebsiteTitle());
             map.put("env", saasEnv);
+            map.put("remark", remark);
             map.put("enable", enable ? "启用" : "禁用");
             map.put("auto", auto ? " 自动" : "手动");
-            map.put("fromWebsiteTitle", from.getWebsiteTitle());
-            map.put("toWebsiteTitle", to.getWebsiteTitle());
             map.put("date", DateUtils.formatYmdhms(new Date()));
             String wechatTmpl
-                    = "【运营商状态变更】\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
+                    = "【运营商状态变更】\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n${remark}";
             String smsTmpl
-                    = "<运营商状态变更>\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n操作前:${fromWebsiteTitle}\n操作后:${toWebsiteTitle}";
+                    = "<运营商状态变更>\n环境:${env}\n配置:${changeWebsiteName}\n名称:${changeWebsiteTitle}\n操作:${enable}\n操作方式:${auto}\n时间:${date}\n${remark}";
             String smsMsg = FormatUtils.format(smsTmpl, map);
             notifyService.sendMonitorSms(smsMsg);
             String wechatMsg = FormatUtils.format(wechatTmpl, map);

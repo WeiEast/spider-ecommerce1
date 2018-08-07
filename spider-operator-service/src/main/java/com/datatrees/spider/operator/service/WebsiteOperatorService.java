@@ -1,9 +1,9 @@
 package com.datatrees.spider.operator.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.datatrees.spider.operator.domain.OperatorLoginConfig;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
@@ -89,7 +89,7 @@ public interface WebsiteOperatorService {
      * @param auto        true:自动,false:手动
      * @return from, to
      */
-    Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, boolean enable, boolean auto);
+    List<WebsiteGroup> updateWebsiteStatus(String groupCode, String websiteName, boolean enable, boolean auto);
 
     /**
      * 获取登陆配置
@@ -107,16 +107,6 @@ public interface WebsiteOperatorService {
     OperatorPlugin getOperatorPluginService(String websiteName, Long taskId);
 
     WebsiteConfig buildWebsiteConfig(WebsiteOperator websiteOperator);
-
-    /**
-     * 运营商状态变更
-     * @param change 变更的运营商
-     * @param from   变更前
-     * @param to     变更后
-     * @param auto   操作方式:自动/手动
-     * @return
-     */
-    Boolean sendMsgForOperatorStatusUpdate(WebsiteOperator change, WebsiteOperator from, WebsiteOperator to, Boolean enable, Boolean auto);
 
     /**
      * 发送消息,启动爬虫

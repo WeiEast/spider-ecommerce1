@@ -2,9 +2,9 @@ package com.datatrees.spider.operator.service.impl.dubbo;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 
 import com.datatrees.spider.operator.api.WebsiteOperatorApi;
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
 import com.datatrees.spider.operator.service.impl.WebsiteOperatorServiceImpl;
@@ -42,8 +42,8 @@ public class WebsiteOperatorApiImpl implements WebsiteOperatorApi {
     }
 
     @Override
-    public Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, Boolean enable, Boolean auto) {
-        return websiteOperatorService.updateWebsiteStatus(websiteName, enable, auto);
+    public List<WebsiteGroup> updateWebsiteStatus(String groupCode, String websiteName, Boolean enable, Boolean auto) {
+        return websiteOperatorService.updateWebsiteStatus(groupCode, websiteName, enable, auto);
     }
 
 }

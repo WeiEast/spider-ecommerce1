@@ -1,8 +1,8 @@
 package com.datatrees.spider.operator.api;
 
 import java.util.List;
-import java.util.Map;
 
+import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.domain.model.WebsiteOperator;
 
 /**
@@ -43,7 +43,7 @@ public interface WebsiteOperatorApi {
      * @param auto        true:自动,false:手动,微信通知不一样
      * @return
      */
-    Map<String, WebsiteOperator> updateWebsiteStatus(String websiteName, Boolean enable, Boolean auto);
+    List<WebsiteGroup> updateWebsiteStatus(String groupCode, String websiteName, Boolean enable, Boolean auto);
 
 }
 

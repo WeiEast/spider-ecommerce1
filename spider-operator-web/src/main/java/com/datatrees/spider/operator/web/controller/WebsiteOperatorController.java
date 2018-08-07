@@ -123,8 +123,8 @@ public class WebsiteOperatorController {
      * 启用/禁用
      */
     @RequestMapping("/updateEnable")
-    public Object updateEnable(String websiteName, Boolean enable) {
-        return websiteOperatorService.updateWebsiteStatus(websiteName, enable, false);
+    public Object updateEnable(String groupCode, String websiteName, Boolean enable) {
+        return websiteOperatorService.updateWebsiteStatus(groupCode, websiteName, enable, false);
     }
 
     @RequestMapping("/mappingPluginFile")
