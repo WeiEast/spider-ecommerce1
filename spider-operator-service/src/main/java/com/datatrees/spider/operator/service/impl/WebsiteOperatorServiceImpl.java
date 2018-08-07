@@ -26,7 +26,6 @@ import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.ClassLoaderService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.NotifyService;
-import com.datatrees.spider.share.service.WebsiteConfigService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -57,25 +56,22 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     }
 
     @Resource
-    private WebsiteOperatorDAO   websiteOperatorDAO;
+    private WebsiteOperatorDAO  websiteOperatorDAO;
 
     @Resource
-    private WebsiteGroupService  websiteGroupService;
+    private WebsiteGroupService websiteGroupService;
 
     @Resource
-    private NotifyService        notifyService;
+    private NotifyService       notifyService;
 
     @Resource
-    private RedisService         redisService;
+    private RedisService        redisService;
 
     @Resource
-    private ClassLoaderService   classLoaderService;
+    private ClassLoaderService  classLoaderService;
 
     @Resource
-    private WebsiteConfigService websiteConfigService;
-
-    @Resource
-    private MessageService       messageService;
+    private MessageService      messageService;
 
     @Override
     public WebsiteOperator getByWebsiteName(String websiteName) {
@@ -353,19 +349,21 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         try {
             StringBuilder remark = new StringBuilder();
             if (CollectionUtils.isEmpty(enableList)) {
-                remark.append("无备用版本");
+                remark.append("暂无备用版本可用,请及时修复");
             } else {
+                remark.append("可用版本:");
                 enableList.forEach(g -> {
                     remark.append(" ").append(g.getWebsiteTitle());
                 });
             }
 
             String saasEnv = TaskUtils.getSassEnv();
+
             Map<String, Object> map = new HashMap<>();
             map.put("changeWebsiteName", change.getWebsiteName());
             map.put("changeWebsiteTitle", change.getWebsiteTitle());
             map.put("env", saasEnv);
-            map.put("remark", remark);
+            map.put("remark", remark.toString());
             map.put("enable", enable ? "启用" : "禁用");
             map.put("auto", auto ? " 自动" : "手动");
             map.put("date", DateUtils.formatYmdhms(new Date()));
