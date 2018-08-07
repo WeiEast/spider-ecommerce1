@@ -1,11 +1,12 @@
 package com.datatrees.spider.share.service.mq;
 
+import com.alibaba.rocketmq.common.message.MessageExt;
+
 /**
  * 通用topic处理
  */
 public interface MessageHandler {
 
-    //@Value("${core.message.loginInfo.topic}")
 
     /**
      * 业务类型
@@ -17,7 +18,7 @@ public interface MessageHandler {
      * 处理消息
      * @return
      */
-    boolean consumeMessage(String msg);
+    boolean consumeMessage(MessageExt messageExt,String msg);
 
     /**
      * 消费失败最大重试次数

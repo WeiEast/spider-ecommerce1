@@ -59,7 +59,7 @@ public class MessageListener implements MessageListenerConcurrently {
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         }
         try {
-            Boolean result = handler.consumeMessage(body);
+            Boolean result = handler.consumeMessage(messageExt, body);
             if (!result) {
                 if (reconsumeTimes < maxRetry) {
                     logger.warn("{}-->失败,稍后重试,msg={},msgId={},retry={},key={}", bizType, body, msgId, reconsumeTimes, messageExt.getKeys());

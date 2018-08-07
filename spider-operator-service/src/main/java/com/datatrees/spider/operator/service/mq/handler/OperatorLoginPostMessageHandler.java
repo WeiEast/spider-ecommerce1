@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.util.operator.OperatorUtils;
@@ -63,7 +64,7 @@ public class OperatorLoginPostMessageHandler implements MessageHandler {
     }
 
     @Override
-    public boolean consumeMessage(String msg) {
+    public boolean consumeMessage(MessageExt messageExt,String msg) {
         JSONObject json = JSON.parseObject(msg);
         Long taskId = json.getLong(AttributeKey.TASK_ID);
         String websiteName = json.getString(AttributeKey.WEBSITE_NAME);

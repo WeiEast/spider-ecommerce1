@@ -4,6 +4,8 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.rocketmq.common.message.MessageExt;
+import com.datatrees.spider.share.domain.CollectorMessage;
 import com.datatrees.spider.share.service.collector.actor.Collector;
 import com.datatrees.spider.share.service.collector.listener.handler.CollectorMessageUtils;
 import com.datatrees.spider.share.domain.LoginMessage;
@@ -42,11 +44,14 @@ public class OperatorCrawlerStartMessageHandler implements MessageHandler {
     }
 
     @Override
-    public boolean consumeMessage(String msg) {
+    public boolean consumeMessage(MessageExt messageExt,String msg) {
         LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
         Long taskId = loginInfo.getTaskId();
         monitorService.sendTaskLog(taskId, loginInfo.getWebsiteName(), "爬虫-->启动-->成功");
-        collector.processMessage(CollectorMessageUtils.buildCollectorMessage(loginInfo));
+        CollectorMessage message = CollectorMessageUtils.buildCollectorMessage(loginInfo);
+        message.setMsgId(messageExt.getMsgId());
+        message.setBornTimestamp(messageExt.getBornTimestamp());
+        collector.processMessage(message);
         return true;
     }
 

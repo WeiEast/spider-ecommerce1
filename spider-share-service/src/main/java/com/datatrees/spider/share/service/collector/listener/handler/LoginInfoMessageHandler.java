@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.rocketmq.common.message.MessageExt;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.RedisUtils;
@@ -53,7 +54,7 @@ public class LoginInfoMessageHandler implements MessageHandler {
     }
 
     @Override
-    public boolean consumeMessage(String msg) {
+    public boolean consumeMessage(MessageExt messageExt, String msg) {
         LoginMessage loginInfo = JSON.parseObject(msg, LoginMessage.class);
         Long taskId = loginInfo.getTaskId();
         TaskUtils.addStep(taskId, StepEnum.REC_INIT_MSG);
@@ -81,8 +82,11 @@ public class LoginInfoMessageHandler implements MessageHandler {
             monitorService.initTask(taskId, websiteName, loginInfo.getAccountNo());
             TaskUtils.addStep(taskId, StepEnum.INIT_SUCCESS);
             monitorService.sendTaskLog(taskId, websiteName, "爬虫-->启动-->成功");
+            CollectorMessage message = buildCollectorMessage(loginInfo);
+            message.setMsgId(messageExt.getMsgId());
+            message.setBornTimestamp(messageExt.getBornTimestamp());
             //启动爬虫
-            collector.processMessage(buildCollectorMessage(loginInfo));
+            collector.processMessage(message);
             return true;
         }
         logger.warn("重复消息,不处理,taskId={},websiteName={}", taskId, loginInfo.getWebsiteName());
