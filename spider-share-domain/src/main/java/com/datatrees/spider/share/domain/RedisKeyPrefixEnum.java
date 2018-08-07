@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 public enum RedisKeyPrefixEnum {
 
     WEBSITENAME_TRANSFORM_MAP("websitename.transform.map", 60, TimeUnit.MINUTES, "websitename中文转英文名称"),
-    WEBSITE_CONF_WEBSITENAME("website.conf.websitename", 60, TimeUnit.MINUTES, "根据websitename查找website.conf"),
     LOCK("lock", 5, TimeUnit.SECONDS, "共享锁"),
     TASK_COOKIE("task.cookie", 30, TimeUnit.MINUTES, "根据taskId共享cookie"),
     TASK_WEBSITE("task.website", 30, TimeUnit.MINUTES, "根据taskId保存website"),
@@ -27,7 +26,6 @@ public enum RedisKeyPrefixEnum {
     MAX_WEIGHT_OPERATOR("max.weight.operator", 30, TimeUnit.DAYS, "最大权重运营商"),
     WEBSITE_LAST_INFO("website.last.info", 365, TimeUnit.DAYS, "站点最近记录"),
     WEBSITE_PLUGIN_FILE_NAME("website.plugin.file.name", 60, TimeUnit.MINUTES, "为website制定jar"),
-    WEBSITE_OPERATOR("website.operator", 1, TimeUnit.HOURS, "运营商配置"),
     WEBSITE_PROXY("website.proxy", 1, TimeUnit.HOURS, "运营商指定代理"),
     WEBSITE_MONITOR_ID("website.monitor.id", 3, TimeUnit.DAYS, "website_monitor主键"),
     WEBSITE_DAY_LIST("website.day.list", 3, TimeUnit.DAYS, "站点信息统计"),
