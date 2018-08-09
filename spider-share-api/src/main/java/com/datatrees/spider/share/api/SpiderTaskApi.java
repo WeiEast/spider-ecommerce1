@@ -52,4 +52,11 @@ public interface SpiderTaskApi {
      */
     HttpResult<Boolean> importCrawlCode(String directiveId, long taskId, int type, String code, Map<String, String> extra);
 
+    /**
+     * 取消任务
+     * @param taskId 网关任务id
+     * @param extra  附加信息,目前null
+     * @return
+     */
+    HttpResult<Boolean> cancel(long taskId, Map<String, String> extra);
 }

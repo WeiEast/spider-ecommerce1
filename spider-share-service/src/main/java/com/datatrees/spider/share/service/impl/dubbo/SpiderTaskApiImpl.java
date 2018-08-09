@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.spider.share.api.SpiderTaskApi;
+import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.ProcessResultUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
@@ -16,7 +18,9 @@ import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.model.Task;
+import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.TaskService;
+import com.datatrees.spider.share.service.extra.ActorLockEventWatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +29,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class SpiderTaskApiImpl implements SpiderTaskApi {
 
-    private static final Logger       logger = LoggerFactory.getLogger(SpiderTaskApiImpl.class);
+    private static final Logger          logger = LoggerFactory.getLogger(SpiderTaskApiImpl.class);
 
     @Resource
-    private              TaskService  taskService;
+    private              TaskService     taskService;
 
     @Resource
-    private              RedisService redisService;
+    private              RedisService    redisService;
+
+    @Resource
+    private              ProxyService    proxyService;
+
+    @Resource
+    private              ZooKeeperClient zooKeeperClient;
+
+    @Resource
+    private              MonitorService  monitorService;
 
     @Override
     public Task getByTaskId(Long taskId) {
@@ -105,5 +118,47 @@ public class SpiderTaskApiImpl implements SpiderTaskApi {
             logger.error("import error taskId={},directiveId={},code={},extra={}", taskId, directiveId, code, JSON.toJSONString(extra), e);
             return result.failure();
         }
+    }
+
+    @Override
+    public HttpResult<Boolean> cancel(long taskId, Map<String, String> extra) {
+        HttpResult<Boolean> result = new HttpResult<Boolean>();
+        String websiteName = TaskUtils.getTaskShare(taskId, AttributeKey.WEBSITE_NAME);
+        if (StringUtils.equals(websiteName, "alipay.com") || StringUtils.equals(websiteName, "taobao.com") ||
+                StringUtils.equals(websiteName, "taobao.com.h5")) {
+            logger.info("电商拒绝取消,哈哈.......taskId={},websiteName={}", taskId, websiteName);
+            return result.success();
+        }
+
+        DirectiveResult<Map<String, String>> sendDirective = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN, taskId);
+        String directiveId = redisService.createDirectiveId();
+        sendDirective.setDirectiveId(directiveId);
+        Map<String, String> directiveData = new HashMap<>();
+        sendDirective.fill(DirectiveRedisCode.CANCEL, directiveData);
+        redisService.saveDirectiveResult(sendDirective);
+
+        // 清理与任务绑定的代理
+        proxyService.clear(taskId);
+
+        ActorLockEventWatcher watcher = new ActorLockEventWatcher("CollectorActor", taskId + "", null, zooKeeperClient);
+        logger.info("cancel taskId={}", taskId);
+        result.setData(false);
+        if (watcher.cancel()) {
+            logger.info("cancel task success,taskId={}", taskId);
+            result.setData(true);
+            result.success();
+        }
+        String reason = null;
+        if (null != extra && extra.containsKey("reason")) {
+            reason = extra.get("reason");
+        }
+        ErrorCode errorCode = ErrorCode.TASK_CANCEL;
+        if (StringUtils.equals("timeout", reason)) {
+            errorCode = ErrorCode.TASK_CANCEL_BY_SYSTEM;
+        } else if (StringUtils.equals("user", reason)) {
+            errorCode = ErrorCode.TASK_CANCEL_BY_USER;
+        }
+        monitorService.sendTaskCompleteMsg(taskId, null, errorCode.getErrorCode(), errorCode.getErrorMsg());
+        return result.failure();
     }
 }
