@@ -10,7 +10,9 @@ package com.datatrees.crawler.core.processor;
 
 import java.util.*;
 
+import com.datatrees.crawler.core.domain.Cookie;
 import com.datatrees.crawler.core.domain.Website;
+import com.datatrees.crawler.core.domain.WebsiteAccount;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.domain.config.login.LoginConfig;
 import com.datatrees.crawler.core.domain.config.login.LoginType;
@@ -24,6 +26,7 @@ import com.datatrees.crawler.core.domain.config.search.SearchSequenceUnit;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.domain.config.search.SearchType;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.exception.NoProxyException;
 import com.datatrees.crawler.core.processor.common.resource.LoginResource;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
@@ -338,20 +341,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return isAllowCircularRedirects();
     }
 
-    /**
-     * @return the loginResource
-     */
-    public LoginResource getLoginResource() {
-        return loginResource;
-    }
-
-    /**
-     * @param loginResource the loginResource to set
-     */
-    public void setLoginResource(LoginResource loginResource) {
-        this.loginResource = loginResource;
-    }
-
     public LoginConfig getLoginConfig() {
         return getSearchConfig().getLoginConfig();
     }
@@ -444,5 +433,37 @@ public class SearchProcessorContext extends AbstractProcessorContext {
             return properties.getHttpClientType();
         }
         return null;
+    }
+
+    public LoginResource getLoginResource() {
+        return loginResource;
+    }
+
+    public void setLoginResource(LoginResource loginResource) {
+        this.loginResource = loginResource;
+    }
+
+    public String getLoginAccountKey() {
+        return ProcessorContextUtil.getAccountKey(this);
+    }
+
+    public WebsiteAccount getLoginAccount() {
+        if (loginResource == null) {
+            return null;
+        }
+
+        return loginResource.getAccount(getLoginAccountKey());
+    }
+
+    public Cookie getLoginCookies() {
+        if (loginResource == null) {
+            return null;
+        }
+
+        return loginResource.getCookie(getLoginAccountKey());
+    }
+
+    public void storeCookies() {
+        loginResource.putCookie(getLoginAccountKey(), ProcessorContextUtil.getCookieString(this));
     }
 }

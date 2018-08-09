@@ -8,6 +8,7 @@ import com.datatrees.spider.share.service.AppCrawlerConfigService;
 import com.treefinance.saas.knife.common.CommonStateCode;
 import com.treefinance.saas.knife.result.Results;
 import com.treefinance.saas.knife.result.SaasResult;
+import com.treefinance.saas.merchant.center.facade.result.console.MerchantAppLicenseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +29,8 @@ public class AppCrwalerController {
     private              AppCrawlerConfigService appCrawlerConfigService;
 
     @RequestMapping("/getList")
-    public SaasResult<List<AppCrawlerConfigParam>> getAppCrawlerConfigList() {
-        return Results.newSuccessResult(appCrawlerConfigService.getAppCrawlerConfigList());
+    public SaasResult<List<AppCrawlerConfigParam>> getAppCrawlerConfigList(@RequestBody List<MerchantAppLicenseResult> appIds) {
+        return Results.newSuccessResult(appCrawlerConfigService.getAppCrawlerConfigList(appIds));
 
     }
 

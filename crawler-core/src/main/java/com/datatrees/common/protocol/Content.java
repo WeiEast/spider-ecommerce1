@@ -3,6 +3,7 @@
  * The copying and reproduction of this document and/or its content (whether wholly or partly) or
  * any incorporation of the same into any other material in any media or format of any kind is
  * strictly prohibited. All rights are reserved.
+ * 
  * Copyright (c) datatrees.com Inc. 2015
  */
 
@@ -12,55 +13,56 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.protocol.util.EncodingDetector;
 import com.datatrees.common.util.PatternUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Content {
 
-    static final         Content  NULL            = new Null();
+    private static       Logger  log             = LoggerFactory.getLogger(Content.class);
 
-    private static final Pattern  CHARSET_PATTERN = Pattern.compile(Constant.HEADER_CHARSET_PATTERN, Pattern.CASE_INSENSITIVE);
+    private static final Pattern CHARSET_PATTERN = Pattern.compile(Constant.HEADER_CHARSET_PATTERN,
+        Pattern.CASE_INSENSITIVE);
+    static final         Content NULL            = new Null();
 
-    private static       Logger   log             = LoggerFactory.getLogger(Content.class);
+    private String   url;
 
-    private              int      version;
+    private String   base;
 
-    private              String   url;
+    private byte[]   content;
 
-    private              String   base;
+    private String   contentType;
 
-    private              byte[]   content;
+    private String   mimeType;
 
-    private              String   contentType;
+    private String   charSet;
 
-    private              String   mimeType;
+    private Metadata metadata;
 
-    private              String   charSet;
-
-    private              Metadata metadata;
-
-    private              int      responseCode;
+    private int      responseCode;
 
     public Content() {
         metadata = new Metadata();
     }
 
-    public Content(String url, String base, byte[] content, String contentType, Metadata metadata, Configuration conf) {
-        this(url, base, content, contentType, metadata);
+    public Content(byte[] content, String contentType) {
+        this(StringUtils.EMPTY, StringUtils.EMPTY, content, contentType,new Metadata());
     }
 
     public Content(String url, String base, byte[] content, String contentType, Metadata metadata) {
-        if (url == null) throw new IllegalArgumentException("null url");
-        if (base == null) throw new IllegalArgumentException("null base");
-        if (content == null) throw new IllegalArgumentException("null content");
-        if (metadata == null) throw new IllegalArgumentException("null metadata");
+        if (url == null)
+            throw new IllegalArgumentException("null url");
+        if (base == null)
+            throw new IllegalArgumentException("null base");
+        if (content == null)
+            throw new IllegalArgumentException("null content");
+        if (metadata == null)
+            throw new IllegalArgumentException("null metadata");
 
         this.url = url;
         this.base = base;
@@ -147,10 +149,6 @@ public class Content {
         return content;
     }
 
-    public void setContent(byte[] content) {
-        this.content = content;
-    }
-
     public String getContentAsString() {
         String charset = getCharSet();
         if (StringUtils.isEmpty(getCharSet())) {
@@ -169,6 +167,10 @@ public class Content {
         return new String(content, CharsetUtil.getCharset(charset));
     }
 
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
     /**
      * @return the mimeType
      */
@@ -185,8 +187,9 @@ public class Content {
 
     /**
      * The media type of the retrieved content.
+     * 
      * @see <a href="http://www.iana.org/assignments/media-types/">
-     * http://www.iana.org/assignments/media-types/</a>
+     *      http://www.iana.org/assignments/media-types/</a>
      */
     public String getContentType() {
         return contentType;
@@ -219,14 +222,14 @@ public class Content {
             return false;
         }
         Content that = (Content) o;
-        return this.url.equals(that.url) && this.base.equals(that.base) && Arrays.equals(this.getContent(), that.getContent()) &&
-                this.contentType.equals(that.contentType) && this.metadata.equals(that.metadata);
+        return this.url.equals(that.url) && this.base.equals(that.base)
+               && Arrays.equals(this.getContent(), that.getContent()) && this.contentType.equals(that.contentType)
+               && this.metadata.equals(that.metadata);
     }
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("Version: ").append(version).append("\n");
         builder.append("url: ").append(url).append("\n");
         builder.append("base: ").append(base).append("\n");
         builder.append("contentType: ").append(contentType).append("\n");
@@ -237,6 +240,7 @@ public class Content {
         return builder.toString();
     }
 
-    private static class Null extends Content {}
+    private static class Null extends Content {
+    }
 
 }

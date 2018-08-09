@@ -40,7 +40,7 @@ class ExpressionMatcher {
     private ExpressionMatcher() {
     }
 
-    private ExpressionMatcher(String text) {
+    private ExpressionMatcher(@Nullable String text) {
         this.text = StringUtils.defaultString(text);
         this.empty = this.text.isEmpty();
         if (!this.empty) {
@@ -52,7 +52,7 @@ class ExpressionMatcher {
         }
     }
 
-    public static ExpressionMatcher match(String text) {
+    public static ExpressionMatcher match(@Nullable String text) {
         return new ExpressionMatcher(text);
     }
 

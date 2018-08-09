@@ -17,25 +17,30 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
-        int index = operation.getIndex();
+    protected Object doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String value = operation.getValue();
 
         value = StandardExpression.eval(value, request, response);
 
         logger.debug("Actual append text: {}", value);
 
-        String input = (String) operatingData;
-
-        String outPut;
-        if (index < 0) {
-            outPut = input + value;
-        } else {
-            outPut = StringUtils.substring(input, 0, index) + value + StringUtils.substring(input, index, input.length());
+        if (StringUtils.isEmpty(value)) {
+            return operatingData;
         }
 
-        return outPut;
+        String input = (String) operatingData;
+
+        int index = operation.getIndex();
+        if (index < 0 || index >= input.length()) {
+            return input + value;
+        } else if(index == 0){
+            return value + input;
+        } else {
+            String prefix = input.substring(0, index);
+            String suffix = input.substring( index, input.length());
+
+            return prefix + value + suffix;
+        }
     }
 
 }

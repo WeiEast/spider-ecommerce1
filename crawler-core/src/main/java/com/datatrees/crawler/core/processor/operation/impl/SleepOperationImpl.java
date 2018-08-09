@@ -17,7 +17,7 @@ import com.datatrees.crawler.core.domain.config.operation.impl.SleepOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
@@ -28,13 +28,20 @@ public class SleepOperationImpl extends Operation<SleepOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
-        Integer sleepTime = operation.getValue();
-        if (sleepTime != null) {
-            logger.debug("Start to Sleep: {}", sleepTime);
-            Thread.sleep(sleepTime);
+    protected boolean isSkipped(SleepOperation operation, Request request, Response response) {
+        // invalid sleep operation and skip
+        boolean flag = operation.getValue() == null;
+        if (flag) {
+            logger.warn("invalid sleep operation and skip");
         }
+        return flag;
+    }
+
+    @Override
+    protected Object doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        Integer sleepTime = operation.getValue();
+        logger.debug("Start to Sleep: {}", sleepTime);
+        Thread.sleep(sleepTime);
 
         return null;
     }

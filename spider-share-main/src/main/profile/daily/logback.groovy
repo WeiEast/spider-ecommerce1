@@ -14,6 +14,13 @@ def ips =serverIp.split("\\.");
 // 日志路径
 def publishDate = DateUtils.format(new Date(), "MMdd")
 def logPath = "/dashu/log/${appName}/${publishDate}/${ips[2]}.${ips[3]}"
+// 控制台
+appender("consoleAppender", ConsoleAppender) {
+    encoder(PatternLayoutEncoder) {
+        pattern = "%d{yyyy-MM-dd HH:mm:ss} [%p] [%.10t] [%c{1}][%M][%L] %m%n"
+        charset = Charset.forName(charsetName)
+    }
+}
 
 // 业务日志
 appender("sysAppender", RollingFileAppender) {
@@ -43,6 +50,6 @@ appender("pluginAppender", RollingFileAppender) {
     }
 }
 
-root(INFO, ["sysAppender"])
+root(INFO, ["consoleAppender", "sysAppender"])
 logger("plugin_log", INFO, ["pluginAppender"], false)
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)

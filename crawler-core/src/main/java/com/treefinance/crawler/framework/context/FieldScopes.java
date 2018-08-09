@@ -1,6 +1,7 @@
 package com.treefinance.crawler.framework.context;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import com.datatrees.common.pipeline.Request;
@@ -36,14 +37,16 @@ public final class FieldScopes {
     public static Object getVisibleField(String name, Request request, Response response) {
         Object result = null;
         FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
-        FieldExtractResult fieldExtractResult = fieldExtractResultSet.get(name);
-        if (fieldExtractResult != null) {
-            result = fieldExtractResult.getResult();
+        if (fieldExtractResultSet != null) {
+            FieldExtractResult fieldExtractResult = fieldExtractResultSet.get(name);
+            if (fieldExtractResult != null) {
+                result = fieldExtractResult.getResult();
+            }
         }
         if (result == null) {
             result = RequestUtil.getSourceMap(request).get(name);
         }
-        LOGGER.debug("Search visible field in extracted field scope or global field scope. - name: {},result: {}", name, result);
+        LOGGER.debug("Search field in extracted fields or global fields. - name: {}, value: {}", name, result);
 
         return result;
     }
@@ -75,7 +78,7 @@ public final class FieldScopes {
      * 合并值栈，优先级按列表由前往后降序。
      */
     @Nonnull
-    public static Map<String, Object> merge(@Nonnull List<Map<String, Object>> fieldScopes) {
+    public static Map<String, Object> merge(@Nullable List<Map<String, Object>> fieldScopes) {
         if (CollectionUtils.isEmpty(fieldScopes)) {
             return Collections.emptyMap();
         }

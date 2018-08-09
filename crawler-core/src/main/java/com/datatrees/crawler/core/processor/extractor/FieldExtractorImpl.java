@@ -116,7 +116,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         } catch (ResultEmptyException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("Error processing field extractor: {}", fieldExtractor, e);
+            logger.warn("Error processing field extractor: {}", fieldExtractor, e);
 
             fieldResult = null;
         }

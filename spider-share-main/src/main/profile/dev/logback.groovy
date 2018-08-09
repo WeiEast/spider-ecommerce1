@@ -66,4 +66,6 @@ logger("com.alibaba.dubbo.rpc.cluster.support.wrapper", OFF)
 logger("com.alibaba.dubbo.rpc.protocol.dubbo", OFF)
 logger("com.datatrees.spider.spider.share.service.impl.FileStoreServiceImpl", OFF)
 logger("com.datatrees.spider.spider.share.service.impl.AppCrawlerConfigServiceImpl", DEBUG)
+logger("com.datatrees.crawler.core.processor.operation", DEBUG)
+logger("com.datatrees.crawler.core.processor.extractor", DEBUG)
 

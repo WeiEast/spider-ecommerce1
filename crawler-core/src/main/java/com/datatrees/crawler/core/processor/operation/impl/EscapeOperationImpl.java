@@ -20,7 +20,7 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年11月19日 下午12:05:28
  */
@@ -31,104 +31,86 @@ public class EscapeOperationImpl extends Operation<EscapeOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
+    protected boolean isSkipped(EscapeOperation operation, Request request, Response response) {
+        // invalid escape operation and skip
+        boolean flag = operation.getEscapeType() == null || operation.getHandlingType() == null;
+        if (flag) {
+            logger.warn("Invalid escape operation and skip. 'escape-type' or 'handling-type' was null.");
+        }
+        return flag;
+    }
 
-        // get input
-        String orginal = (String) operatingData;
+    @Override
+    protected Object doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
+
         EscapeType escapeType = operation.getEscapeType();
-        HandlingType handlType = operation.getHandlingType();
+        HandlingType handlingType = operation.getHandlingType();
 
-        logger.debug("escape-Type: {}, handling-Type: {}", escapeType, handlType);
-
-        return handlerEscape(orginal, escapeType, handlType);
-    }
-
-    private String handlerEscape(String orginal, EscapeType escapeType, HandlingType handlType) {
-        String result = orginal;
-
-        try {
-            if (escapeType != null && handlType != null) {
-                switch (escapeType) {
-                    case HTML:
-                        result = handlerHtml(handlType, orginal);
-                        break;
-                    case JAVA:
-                        result = handlerJava(handlType, orginal);
-                        break;
-                    case JS:
-                        result = handlerJs(handlType, orginal);
-                        break;
-                    case XML:
-                        result = handlerXml(handlType, orginal);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } catch (Exception e) {
-            logger.error("handlerEscape error!", e);
+        String result;
+        switch (escapeType) {
+            case HTML:
+                result = handleHtml(handlingType, input);
+                break;
+            case JAVA:
+                result = handleJava(handlingType, input);
+                break;
+            case JS:
+                result = handleJs(handlingType, input);
+                break;
+            default:
+                result = handleXml(handlingType, input);
+                break;
         }
+
         return result;
     }
 
-    private String handlerXml(HandlingType handlType, String orginal) throws Exception {
-        String result = orginal;
-        switch (handlType) {
-            case ESCAPE:
-                result = StringEscapeUtils.escapeXml(orginal);
-                break;
-            case UNESCAPE:
-                result = StringEscapeUtils.unescapeXml(orginal);
-                break;
-            default:
-                break;
+    private String handleXml(HandlingType handlingType, String content) {
+        String result;
+
+        if (HandlingType.ESCAPE.equals(handlingType)) {
+            result = StringEscapeUtils.escapeXml(content);
+        } else {
+            result = StringEscapeUtils.unescapeXml(content);
         }
+
         return result;
     }
 
-    private String handlerJs(HandlingType handlType, String orginal) throws Exception {
-        String result = orginal;
-        switch (handlType) {
-            case ESCAPE:
-                result = StringEscapeUtils.escapeJavaScript(orginal);
-                break;
-            case UNESCAPE:
-                result = StringEscapeUtils.unescapeJavaScript(orginal);
-                break;
-            default:
-                break;
+    private String handleJs(HandlingType handlingType, String input) {
+        String result;
+
+        if (HandlingType.ESCAPE.equals(handlingType)) {
+            result = StringEscapeUtils.escapeJavaScript(input);
+        } else {
+            result = StringEscapeUtils.unescapeJavaScript(input);
         }
+
         return result;
     }
 
-    private String handlerHtml(HandlingType handlType, String orginal) throws Exception {
-        String result = orginal;
-        switch (handlType) {
-            case ESCAPE:
-                result = StringEscapeUtils.escapeHtml(orginal);
-                break;
-            case UNESCAPE:
-                result = StringEscapeUtils.unescapeHtml(orginal);
-                break;
-            default:
-                break;
+    private String handleHtml(HandlingType handlingType, String content) {
+        String result;
+
+        if (HandlingType.ESCAPE.equals(handlingType)) {
+            result = StringEscapeUtils.escapeHtml(content);
+        } else {
+            result = StringEscapeUtils.unescapeHtml(content);
         }
+
         return result;
     }
 
-    private String handlerJava(HandlingType handlType, String orginal) throws Exception {
-        String result = orginal;
-        switch (handlType) {
-            case ESCAPE:
-                result = StringEscapeUtils.escapeJava(orginal);
-                break;
-            case UNESCAPE:
-                result = StringEscapeUtils.unescapeJava(orginal);
-                break;
-            default:
-                break;
+    private String handleJava(HandlingType handlingType, String content) {
+        String result;
+
+        if (HandlingType.ESCAPE.equals(handlingType)) {
+            result = StringEscapeUtils.escapeJava(content);
+        } else {
+            result = StringEscapeUtils.unescapeJava(content);
         }
+
         return result;
     }
 

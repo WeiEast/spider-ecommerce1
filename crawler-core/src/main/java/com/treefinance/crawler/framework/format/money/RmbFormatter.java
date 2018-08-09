@@ -4,9 +4,8 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -20,10 +19,10 @@ public class RmbFormatter extends ConfigurableFormatter<Number> {
     private static final String PAYMENT_NUM_REGEX = "([\\.,\\d]+)";
 
     @Override
-    protected Number toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected Number toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         String numPart = RegExp.group(value, PAYMENT_NUM_REGEX, 1);
 
-        String actualPattern = StringUtils.trim(pattern);
+        String actualPattern = config.trimmedPattern();
         Map<String, RMBUnit> rmbMapper = buildRMPUnitMapping(actualPattern);
         RMBUnit unit = findRMBUnit(rmbMapper, value);
 
@@ -33,7 +32,7 @@ public class RmbFormatter extends ConfigurableFormatter<Number> {
         }
 
         if (unit == null) {
-            logger.debug("can't find current RMB conf! input: {}, numPart: {}, pattern: {}", value, numPart, pattern);
+            logger.debug("can't find current RMB conf! input: {}, numPart: {}, pattern: {}", value, numPart, actualPattern);
             unit = RMBUnit.YUAN;
         }
 

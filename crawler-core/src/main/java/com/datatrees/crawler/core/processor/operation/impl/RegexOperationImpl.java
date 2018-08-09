@@ -16,11 +16,13 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.RegexOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.toolkit.util.RegExp;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:57:53 PM
  */
@@ -31,27 +33,34 @@ public class RegexOperationImpl extends Operation<RegexOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull RegexOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
-        String regex = operation.getRegex();
-        String orginal = (String) operatingData;
+    protected void validate(RegexOperation operation, Request request, Response response) throws Exception {
+        super.validate(operation, request, response);
 
-        regex = StandardExpression.eval(regex, request, response);
-
-        Object result = null;
-        if (operation.getGroupIndex() == null || operation.getGroupIndex() < 0) {
-            result = RegExp.getMatcher(regex, orginal);
-            if (!((Matcher) result).find()) {
-                result = null;
-            }
-        } else {
-            int index = operation.getGroupIndex();
-            logger.debug("regex: {}, index: {}", regex, index);
-
-            result = RegExp.group(orginal, regex, index, null);
-
-            logger.debug("original: {}, dest: {}", orginal, result);
+        if (StringUtils.isEmpty(operation.getRegex())) {
+            throw new InvalidOperationException("Invalid regex operation! - 'regex/text()' must not be empty.");
         }
-        return result;
+    }
+
+    @Override
+    protected Object doOperation(@Nonnull RegexOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String regex = StandardExpression.eval(operation.getRegex(), request, response);
+
+        logger.debug("Actual regexp: {}", regex);
+
+        String input = (String) operatingData;
+
+        Integer groupIndex = operation.getGroupIndex();
+        if (groupIndex == null || groupIndex < 0) {
+            Matcher result = RegExp.getMatcher(regex, input);
+            if (result.find()) {
+                return result;
+            }
+
+            return null;
+        }
+
+        logger.debug("regex: {}, index: {}", regex, groupIndex);
+
+        return RegExp.group(input, regex, groupIndex, null);
     }
 }

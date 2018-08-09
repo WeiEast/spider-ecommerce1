@@ -9,6 +9,8 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -16,6 +18,7 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReturnMatchOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.treefinance.crawler.framework.expression.StandardExpression;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author <A HREF="mailto:zhangjiachen@datatrees.com.cn">zhangjiachen</A>
@@ -29,29 +32,22 @@ public class ReturnMatchOperationImpl extends Operation<ReturnMatchOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ReturnMatchOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
-        String value = operation.getValue();
-        String orginal = (String) operatingData;
+    protected Object doOperation(@Nonnull ReturnMatchOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
 
-        value = StandardExpression.eval(value, request, response);
+        String value = StandardExpression.eval(operation.getValue(), request, response);
 
-        logger.debug("input: {}", value);
+        logger.debug("return match keys: {}", value);
 
-        StringBuilder result = new StringBuilder();
+        if (StringUtils.isBlank(value)) {
+            return null;
+        }
+
         String[] matchedKeys = value.split(",");
-        for (String matchedKey : matchedKeys) {
-            if (orginal.contains(matchedKey)) {
-                result.append(matchedKey + ",");
-            }
-        }
-        if (result.length() >= 1) {
-            if (result.charAt(result.length() - 1) == ',') {
-                result = new StringBuilder(result.substring(0, result.length() - 1));
-            }
-        }
 
-        return result.toString();
+        String result = Arrays.stream(matchedKeys).map(String::trim).filter(key -> !key.isEmpty() && input.contains(key)).collect(Collectors.joining(","));
+
+        return result.isEmpty() ? null : result;
     }
 
 }

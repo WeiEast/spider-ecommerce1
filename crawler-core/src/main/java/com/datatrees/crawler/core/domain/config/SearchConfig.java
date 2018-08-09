@@ -21,7 +21,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 3:14:15 PM
  */
@@ -32,35 +32,19 @@ public class SearchConfig extends AbstractWebsiteConfig {
     /**
      *
      */
-    private static final long                       serialVersionUID = -3594853402134944912L;
-
-    private              List<String>               protocolTypeList;
-
-    private              List<UrlFilter>            urlFilterList;
-
-    private              Properties                 properties;
-
-    private              List<AbstractService>      serviceList;
-
-    private              List<Parser>               parserList;
-
-    private              List<Page>                 pageList;
-
-    private              List<SearchTemplateConfig> searchTemplateConfigList;
-
-    private              LoginConfig                loginConfig;
-
-    private              List<String>               resultTagList;
+    private static final long serialVersionUID = -3594853402134944912L;
+    private List<String>               protocolTypeList = new ArrayList<>();
+    private List<UrlFilter>            urlFilterList = new ArrayList<>();
+    private Properties                 properties;
+    private List<AbstractService>      serviceList = new ArrayList<>();
+    private List<Parser>               parserList = new ArrayList<>();
+    private List<Page>                 pageList = new ArrayList<>();
+    private List<SearchTemplateConfig> searchTemplateConfigList = new ArrayList<>();
+    private LoginConfig                loginConfig;
+    private List<String>               resultTagList = new ArrayList<>();
 
     public SearchConfig() {
         super();
-        protocolTypeList = new ArrayList<String>();
-        urlFilterList = new ArrayList<UrlFilter>();
-        serviceList = new ArrayList<AbstractService>();
-        parserList = new ArrayList<Parser>();
-        pageList = new ArrayList<Page>();
-        searchTemplateConfigList = new ArrayList<SearchTemplateConfig>();
-        resultTagList = new ArrayList<String>();
     }
 
     @ChildTag("result-tag-list/result-tag")

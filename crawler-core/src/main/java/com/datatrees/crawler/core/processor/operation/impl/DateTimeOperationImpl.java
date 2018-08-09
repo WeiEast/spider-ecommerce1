@@ -8,14 +8,15 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.StringUtils;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.BaseType;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.DateTimeFieldType;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.ExpressionEngine;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 import org.joda.time.LocalDate;
@@ -33,9 +34,16 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
+    protected void validate(DateTimeOperation operation, Request request, Response response) throws Exception {
+        super.validate(operation, request, response);
 
+        if (operation.getBaseType() == null) {
+            throw new InvalidOperationException("Invalid datetime operation! - Attribute 'base-type' must not be null.");
+        }
+    }
+
+    @Override
+    protected Object doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         BaseType baseType = operation.getBaseType();
 
         ExpressionEngine expressionEngine = new ExpressionEngine(request, response);
@@ -43,20 +51,81 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
         int offset = 0;
         if (StringUtils.isNotBlank(operation.getOffset())) {
             String offsetString = expressionEngine.eval(operation.getOffset());
-            offset = Integer.valueOf(offsetString);
-        }
-
-        Object src = operatingData;
-        if (src instanceof String) {
-            src = expressionEngine.eval((String) src);
+            offset = Integer.parseInt(offsetString);
         }
 
         DateTimeFieldType dateTimeFieldType = operation.getDateTimeFieldType();
-        logger.debug("baseType: {}, dateTimeFieldType: {}, offset: {}", baseType, dateTimeFieldType, offset);
 
-        Object result = null;
+        DateTime baseDateTime = buildBaseDateTime(baseType, operatingData, expressionEngine, operation.getSourceFormat());
 
-        DateTime baseDateTime = null;
+        baseDateTime = addDateTimeOffset(baseDateTime, dateTimeFieldType, offset);
+
+        if (BooleanUtils.isTrue(operation.getCalibrate())) {
+            baseDateTime = timeCalibrate(baseDateTime, baseType);
+        }
+
+        Object result;
+        String format = operation.getFormat();
+        if (StringUtils.isNotBlank(format)) {
+            if (format.matches("^\\s*timestamp\\s*$")) {
+                result = baseDateTime.toDate().getTime();
+            } else {
+                result = baseDateTime.toString(format);
+            }
+        } else {
+            result = baseDateTime.toDate();
+        }
+
+        return result;
+    }
+
+    @Nonnull
+    private DateTime addDateTimeOffset(@Nonnull DateTime baseDateTime, DateTimeFieldType dateTimeFieldType, int offset) {
+        if (offset == 0 || dateTimeFieldType == null) {
+            return baseDateTime;
+        }
+
+        DateTime rawResultObj;
+        switch (dateTimeFieldType) {
+            case YEAR: {
+                rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.years(), offset);
+                break;
+            }
+            case MONTH: {
+                rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.months(), offset);
+                break;
+            }
+            case WEEK: {
+                rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.weeks(), offset);
+                break;
+            }
+            case WEEK_YEAR: {
+                rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.weekyears(), offset);
+                break;
+            }
+            case DATE: {
+                rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.days(), offset);
+                break;
+            }
+            case HOUR: {
+                rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.hours(), offset);
+                break;
+            }
+            case MINUTE: {
+                rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.minutes(), offset);
+                break;
+            }
+            default: {
+                rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.seconds(), offset);
+                break;
+            }
+        }
+        return rawResultObj;
+    }
+
+    @Nonnull
+    private DateTime buildBaseDateTime(@Nonnull BaseType baseType, @Nonnull Object operatingData, @Nonnull ExpressionEngine expressionEngine, String datePattern) {
+        DateTime baseDateTime;
         switch (baseType) {
             case NOW: {
                 baseDateTime = new DateTime();
@@ -86,112 +155,48 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
                 baseDateTime = new LocalDate().dayOfYear().withMaximumValue().toDateTimeAtStartOfDay();
                 break;
             }
-            case CUSTOM: {
-                logger.debug("custom src: {}", src);
+            default: {
+                logger.debug("custom src: {}", operatingData);
 
-                if (src instanceof String) {
-                    String sourceFormat = StringUtils.isBlank(operation.getSourceFormat()) ? "yyyy-MM-dd" : operation.getSourceFormat();
+                if (operatingData instanceof String) {
+                    String val = expressionEngine.eval((String) operatingData);
+
+                    String sourceFormat = StringUtils.isBlank(datePattern) ? "yyyy-MM-dd" : datePattern;
                     DateTimeFormatter df = DateTimeFormat.forPattern(sourceFormat);
-                    baseDateTime = df.parseDateTime((String) src);
+                    baseDateTime = df.parseDateTime(val);
                 } else {
-                    baseDateTime = new DateTime(src);
+                    baseDateTime = new DateTime(operatingData);
                 }
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-
-        DateTime rawResultObj = null;
-        if (offset != 0 && dateTimeFieldType != null) {
-            switch (dateTimeFieldType) {
-                case YEAR: {
-                    rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.years(), offset);
-                    break;
-                }
-                case MONTH: {
-                    rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.months(), offset);
-                    break;
-                }
-                case WEEK: {
-                    rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.weeks(), offset);
-                    break;
-                }
-                case WEEK_YEAR: {
-                    rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.weekyears(), offset);
-                    break;
-                }
-                case DATE: {
-                    rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.days(), offset);
-                    break;
-                }
-                case HOUR: {
-                    rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.hours(), offset);
-                    break;
-                }
-                case MINUTE: {
-                    rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.minutes(), offset);
-                    break;
-                }
-                case SECOND: {
-                    rawResultObj = baseDateTime.withFieldAdded(DurationFieldType.seconds(), offset);
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
-        } else {
-            rawResultObj = baseDateTime;
-        }
-        if (BooleanUtils.isTrue(operation.getCalibrate())) {
-            rawResultObj = timeCalibrate(rawResultObj, baseType);
-        }
-        String format = operation.getFormat();
-        if (StringUtils.isNotBlank(format) && rawResultObj != null) {
-            if (format.equals("timestamp")) {
-                result = rawResultObj.toDate().getTime();
-            } else {
-                result = rawResultObj.toString(format);
-            }
-        } else {
-            result = rawResultObj != null ? rawResultObj.toDate() : "";
-        }
-
-        return result;
-    }
-
-    private DateTime timeCalibrate(DateTime baseDateTime, BaseType baseType) {
-        switch (baseType) {
-            case FIRST_DAY_OF_THIS_WEEK: {
-                baseDateTime = baseDateTime.dayOfWeek().withMinimumValue();
-                break;
-            }
-            case LAST_DAY_OF_THIS_WEEK: {
-                baseDateTime = baseDateTime.dayOfWeek().withMaximumValue();
-                break;
-            }
-            case FIRST_DAY_OF_THIS_MONTH: {
-                baseDateTime = baseDateTime.dayOfMonth().withMinimumValue();
-                break;
-            }
-            case LAST_DAY_OF_THIS_MONTH: {
-                baseDateTime = baseDateTime.dayOfMonth().withMaximumValue();
-                break;
-            }
-            case FIRST_DAY_OF_THIS_YEAR: {
-                baseDateTime = baseDateTime.dayOfYear().withMinimumValue();
-                break;
-            }
-            case LAST_DAY_OF_THIS_YEAR: {
-                baseDateTime = baseDateTime.dayOfYear().withMaximumValue();
-                break;
-            }
-            default: {
                 break;
             }
         }
         return baseDateTime;
+    }
+
+    @Nonnull
+    private DateTime timeCalibrate(@Nonnull DateTime baseDateTime, @Nonnull BaseType baseType) {
+        switch (baseType) {
+            case FIRST_DAY_OF_THIS_WEEK: {
+                return baseDateTime.dayOfWeek().withMinimumValue();
+            }
+            case LAST_DAY_OF_THIS_WEEK: {
+                return baseDateTime.dayOfWeek().withMaximumValue();
+            }
+            case FIRST_DAY_OF_THIS_MONTH: {
+                return baseDateTime.dayOfMonth().withMinimumValue();
+            }
+            case LAST_DAY_OF_THIS_MONTH: {
+                return baseDateTime.dayOfMonth().withMaximumValue();
+            }
+            case FIRST_DAY_OF_THIS_YEAR: {
+                return baseDateTime.dayOfYear().withMinimumValue();
+            }
+            case LAST_DAY_OF_THIS_YEAR: {
+                return baseDateTime.dayOfYear().withMaximumValue();
+            }
+            default: {
+                return baseDateTime;
+            }
+        }
     }
 }

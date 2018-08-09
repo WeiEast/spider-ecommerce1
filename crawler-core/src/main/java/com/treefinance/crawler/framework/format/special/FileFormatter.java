@@ -6,19 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.protocol.util.UrlUtils;
-import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.treefinance.crawler.framework.format.CommonFormatter;
+import com.treefinance.crawler.framework.format.FormatConfig;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -28,13 +24,12 @@ import org.apache.commons.io.IOUtils;
 public class FileFormatter extends CommonFormatter<FileWapper> {
 
     @Override
-    protected FileWapper toFormat(@Nonnull String value, String pattern, Request request, Response response) throws Exception {
+    protected FileWapper toFormat(@Nonnull String value, @Nonnull FormatConfig config) throws Exception {
         OutputStream output = null;
         try {
             FileWapper fileWapper = new FileWapper();
-            AbstractProcessorContext processorContext = RequestUtil.getProcessorContext(request);
-            Website website = processorContext.getWebsite();
-            File file = new File(FileUtils.getFileRandomPath(website.getWebsiteName()));
+            AbstractProcessorContext processorContext = config.getProcessorContext();
+            File file = new File(FileUtils.getFileRandomPath(processorContext.getWebsiteName()));
             output = new FileOutputStream(file);
             if (UrlUtils.isUrl(value)) {
                 String cookie = ProcessorContextUtil.getCookieString(processorContext);
@@ -45,11 +40,11 @@ public class FileFormatter extends CommonFormatter<FileWapper> {
                 IOUtils.write(value.getBytes(CharsetUtil.UTF_8_NAME), output);
                 fileWapper.setMimeType("text/html");
                 fileWapper.setCharSet("UTF-8");
-                fileWapper.setSourceURL(RequestUtil.getCurrentUrl(request).getUrl());
+                fileWapper.setSourceURL(config.getCurrentUrl());
             }
             fileWapper.setSize(file.length());
 
-            Object result = SourceUtil.getSourceMap("fileName", request, response);
+            Object result = config.getSourceFieldValue("fileName");
             fileWapper.setName(result != null ? result.toString() : file.getName());
 
             fileWapper.setFile(file);
@@ -64,4 +59,5 @@ public class FileFormatter extends CommonFormatter<FileWapper> {
 
         return null;
     }
+
 }

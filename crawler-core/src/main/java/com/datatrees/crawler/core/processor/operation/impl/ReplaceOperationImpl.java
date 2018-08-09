@@ -16,10 +16,10 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReplaceOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.treefinance.crawler.framework.expression.ExpressionEngine;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:19 PM
  */
@@ -30,17 +30,27 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ReplaceOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
-        String from = operation.getFrom();
-        String to = operation.getTo();
+    protected boolean isSkipped(ReplaceOperation operation, Request request, Response response) {
+        boolean empty = StringUtils.isEmpty(operation.getFrom());
+        if (empty) {
+            logger.warn("empty 'from' value in replace operation and skip.");
+        }
+        return empty;
+    }
 
+    @Override
+    protected Object doOperation(@Nonnull ReplaceOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         ExpressionEngine expressionEngine = null;
+
+        String from = operation.getFrom();
         if (StringUtils.isNotBlank(from)) {
             expressionEngine = new ExpressionEngine(request, response);
             from = expressionEngine.eval(from);
         }
 
+        logger.debug("Actual replace from: {}", from);
+
+        String to = StringUtils.defaultString(operation.getTo());
         if (StringUtils.isNotBlank(to)) {
             if (expressionEngine == null) {
                 expressionEngine = new ExpressionEngine(request, response);
@@ -48,8 +58,10 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
             to = expressionEngine.eval(to);
         }
 
-        String orginal = (String) operatingData;
+        logger.debug("Actual replace to: {}", to);
 
-        return orginal.replaceAll(from, to);
+        String input = (String) operatingData;
+
+        return input.replaceAll(from, to);
     }
 }

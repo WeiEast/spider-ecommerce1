@@ -17,10 +17,11 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MatchGroupOperation;
 import com.datatrees.crawler.core.processor.common.SourceUtil;
 import com.datatrees.crawler.core.processor.operation.Operation;
-import org.apache.commons.lang.StringUtils;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
@@ -31,18 +32,27 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
-        String sourceId = operation.getSourceId();
-        Matcher matcher = null;
+    protected void validate(MatchGroupOperation operation, Request request, Response response) throws Exception {
+        super.validate(operation, request, response);
+
+        if (StringUtils.isEmpty(operation.getSourceId())) {
+            throw new InvalidOperationException("Invalid match-group operation! - Attribute 'source' must not be empty.");
+        }
+    }
+
+    @Override
+    protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        Matcher matcher = (Matcher) SourceUtil.getSourceMap(operation.getSourceId(), request, response);
+
         String result = null;
-        if (StringUtils.isNotEmpty(sourceId)) {
-            matcher = (Matcher) SourceUtil.getSourceMap(sourceId, request, response);
-        }
         if (matcher != null) {
-            result = matcher.group(operation.getGroupIndex());
+            Integer index = operation.getGroupIndex();
+            if (index == null) {
+                index = 0;
+            }
+            result = matcher.group(index);
         }
-        logger.debug("After match group. index: {}, result: {}", operation.getGroupIndex(), result);
+
         return result;
     }
 

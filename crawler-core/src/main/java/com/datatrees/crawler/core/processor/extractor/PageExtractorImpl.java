@@ -9,27 +9,22 @@
 package com.datatrees.crawler.core.processor.extractor;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.common.util.ReflectionUtils;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
-import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.source.PageSourceImpl;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月14日 下午9:14:20
  */
@@ -59,27 +54,25 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
             return;
         }
 
-        Object value = segmentResultMap.get(abstractSegment.getName());
-        if (value == null) {
-            segmentResultMap.put(abstractSegment.getName(), segResult);
-        } else {
-            if (value instanceof Collection) {
-                if (segResult instanceof Collection) {
-                    ((Collection) value).addAll((Collection) segResult);
-                } else {
-                    ((Collection) value).add(segResult);
-                }
-            } else {
-                List newValue = new ArrayList();
-                if (segResult instanceof Collection) {
-                    newValue.addAll((Collection) segResult);
-                } else {
-                    newValue.add(segResult);
-                }
-                segmentResultMap.put(abstractSegment.getName(), newValue);
-            }
-        }
+        Object oldValue = segmentResultMap.putIfAbsent(abstractSegment.getName(), segResult);
 
+        if (oldValue instanceof Collection) {
+            if (segResult instanceof Collection) {
+                ((Collection) oldValue).addAll((Collection) segResult);
+            } else {
+                ((Collection) oldValue).add(segResult);
+            }
+        } else if (oldValue != null) {
+            List newValue = new ArrayList();
+            newValue.add(oldValue);
+
+            if (segResult instanceof Collection) {
+                newValue.addAll((Collection) segResult);
+            } else {
+                newValue.add(segResult);
+            }
+            segmentResultMap.put(abstractSegment.getName(), newValue);
+        }
     }
 
     @SuppressWarnings("rawtypes")
@@ -107,43 +100,4 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
         ResponseUtil.setResponsePageExtractResultMap(resp, segmentResultMap);
     }
 
-    @SuppressWarnings({"unused", "rawtypes", "unchecked"})
-    private Object resultMapConvert(Map<String, Object> resultMap) {
-        String className = null;
-        try {
-            if (resultMap == null || resultMap.isEmpty() ||
-                    StringUtils.isBlank((className = (String) resultMap.get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
-                return resultMap;
-            } else {
-                // Reflect to class instance
-                Object instance = ReflectionUtils.newInstance(className);
-                if (instance instanceof Map) {// no need to Convert
-                    resultMap.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
-                    ((Map) instance).putAll(resultMap);
-                    return instance;
-                }
-                Class userClass = instance.getClass();
-                Field[] fs = userClass.getDeclaredFields();
-                for (int i = 0; i < fs.length; i++) {
-                    Field f = fs[i];
-                    f.setAccessible(true); // set Accessible
-                    int fieldModifiers = f.getModifiers();
-                    if ((fieldModifiers & Modifier.FINAL) == Modifier.FINAL) {
-                        continue;
-                    }
-                    Object value = resultMap.get(f.getName());
-                    if (value instanceof Map) {// no need to Convert
-                        value = resultMapConvert((Map<String, Object>) value);
-                    }
-
-                    f.set(instance, value);// set value
-                    logger.debug("set name: {}\t value = {}", f.getName(), resultMap.get(f.getName()));
-                }
-                return instance;
-            }
-        } catch (Exception e) {
-            logger.error(resultMap + " convert to " + className + " error " + e.getMessage());
-            return resultMap;
-        }
-    }
 }

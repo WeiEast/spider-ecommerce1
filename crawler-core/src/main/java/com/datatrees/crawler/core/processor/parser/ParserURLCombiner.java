@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.datatrees.crawler.core.processor.Constants;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -23,12 +24,15 @@ public class ParserURLCombiner {
     public static final String EMP = "EMP";
 
     public static String encodeUrl(String url, String... args) {
-        StringBuilder sb = new StringBuilder().append(url);
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                sb.append(Constants.PARSER_SPLIT).append(args[i]);
-            }
+        if (ArrayUtils.isEmpty(args)) {
+            return url;
         }
+
+        StringBuilder sb = new StringBuilder(url);
+        for (String arg : args) {
+            sb.append(Constants.PARSER_SPLIT).append(arg);
+        }
+
         return sb.toString();
     }
 

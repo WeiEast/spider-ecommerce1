@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
+import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DecodeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.decode.DecodeType;
@@ -21,66 +22,55 @@ import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import com.datatrees.crawler.core.processor.decode.impl.StandardDecode;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年11月19日 下午12:05:28
  */
 public class DecodeOperationImpl extends Operation<DecodeOperation> {
 
-    private static final Logger log = LoggerFactory.getLogger(DecodeOperationImpl.class);
-
     public DecodeOperationImpl(@Nonnull DecodeOperation operation, @Nonnull FieldExtractor extractor) {
         super(operation, extractor);
     }
 
-    /**
-     * @param original
-     * @param decodeType
-     * @param charset
-     * @return
-     */
-    public static String decode(String original, DecodeType decodeType, String charset) {
-        String result = original;
-        try {
-            if (decodeType != null && original != null) {
-                switch (decodeType) {
-                    case STANDARD:
-                        result = new StandardDecode().decode(original, charset);
-                        break;
-                    case BASIC:
-                        result = new BasicDecode().decode(original, charset);
-                        break;
-                    case HEX:
-                        result = new HexDecoder().decode(original, charset);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } catch (Exception e) {
-            log.error("handlerDecode error!", e);
+    @Override
+    protected boolean isSkipped(DecodeOperation operation, Request request, Response response) {
+        // invalid decode operation and skip
+        boolean flag = operation.getDecodeType() == null;
+        if (flag) {
+            logger.warn("Invalid decode operation and skip. 'decode-type' was null.");
         }
-        return result;
+        return flag;
     }
 
     @Override
-    protected Object doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
-        // get input
-        String orginal = (String) operatingData;
+    protected Object doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String input = (String) operatingData;
 
-        String charSet = StringUtils.isEmpty(operation.getCharset()) ?
-                (StringUtils.isEmpty(RequestUtil.getContentCharset(request)) ? "UTF-8" : RequestUtil.getContentCharset(request)) :
-                operation.getCharset();
+        String charset = operation.getCharset();
+        if (StringUtils.isEmpty(charset)) {
+            charset = RequestUtil.getContentCharset(request);
+            if (StringUtils.isEmpty(charset)) {
+                charset = CharsetUtil.UTF_8_NAME;
+            }
+        }
 
         DecodeType decodeType = operation.getDecodeType();
 
-        log.debug("decode-type: {}", decodeType);
+        String result;
+        switch (decodeType) {
+            case BASIC:
+                result = new BasicDecode().decode(input, charset);
+                break;
+            case HEX:
+                result = new HexDecoder().decode(input, charset);
+                break;
+            default:
+                result = new StandardDecode().decode(input, charset);
+                break;
+        }
 
-        return decode(orginal, decodeType, charSet);
+        return result;
     }
 }

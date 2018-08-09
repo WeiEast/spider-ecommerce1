@@ -10,8 +10,7 @@ package com.datatrees.crawler.core.processor.common;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractResult;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
+import com.treefinance.crawler.framework.context.FieldScopes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,25 +19,17 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2015年7月21日 下午7:24:26
  */
-public class SourceUtil {
+public final class SourceUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceUtil.class);
 
+    private SourceUtil() {
+    }
+
     public static Object getSourceMap(String sourceId, Request request, Response response) {
-        Object result = null;
-        FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
-        if (fieldExtractResultSet != null) {
-            FieldExtractResult extractResult = fieldExtractResultSet.get(sourceId);
-            if (extractResult != null) {
-                result = extractResult.getResult();
-            }
-        }
+        Object result = FieldScopes.getVisibleField(sourceId, request, response);
 
-        if (result == null) {
-            result = RequestUtil.getSourceMap(request).get(sourceId);
-        }
-
-        LOGGER.debug("source from sourceId: {}, result: {}", sourceId, result);
+        LOGGER.debug("Field value from sourceId: {}, result: {}", sourceId, result);
 
         return result;
     }

@@ -24,24 +24,19 @@ import com.google.common.net.HttpHeaders;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 21, 2014 10:00:52 AM
  */
 public class LoginUtil {
 
-    private static final Logger    logger = LoggerFactory.getLogger(LoginUtil.class);
-
-    private static       LoginUtil loginUtil;
-
-    static {
-        loginUtil = new LoginUtil();
-    }
+    private static final Logger logger = LoggerFactory.getLogger(LoginUtil.class);
+    private static LoginUtil loginUtil = new LoginUtil();
 
     private LoginUtil() {
     }
@@ -81,7 +76,7 @@ public class LoginUtil {
         } catch (Exception ex) {
             logger.error("LoginUtil doLogin throw exception, error message:[" + ex.getMessage() + "]");
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     private ProtocolOutput getProtocolOutput(LinkNode linkNode, SearchProcessorContext context) {
@@ -113,10 +108,17 @@ public class LoginUtil {
     @SuppressWarnings("unchecked")
     public boolean doLoginByCookies(LoginConfig config, SearchProcessorContext context) throws ResultEmptyException {
         try {
-            LoginCheckConfig loginCheckConfig = config.getLoginCheckConfig();
+            String cookie = ProcessorContextUtil.getCookieString(context);
 
+            if (StringUtils.isEmpty(cookie)) {
+                logger.warn("Empty cookies!");
+                return false;
+            }
+
+            LoginCheckConfig loginCheckConfig = config.getLoginCheckConfig();
             String checkUrl = StandardExpression.eval(loginCheckConfig.getCheckUrl(), context.getContext());
             logger.info("do login check, url: {}", checkUrl);
+
             LinkNode linkNode = new LinkNode(checkUrl);
 
             // // add json headers
@@ -137,8 +139,7 @@ public class LoginUtil {
         return false;
     }
 
-    private boolean checkLoginResult(ProtocolOutput out, LoginCheckConfig loginCheckConfig,
-            SearchProcessorContext context) throws ResultEmptyException {
+    private boolean checkLoginResult(ProtocolOutput out, LoginCheckConfig loginCheckConfig, SearchProcessorContext context) throws ResultEmptyException {
         if (out != null && out.getContent() != null) {
             String responseBody = out.getContent().getContentAsString();
 
@@ -163,17 +164,15 @@ public class LoginUtil {
             RequestUtil.setProcessorContext(request, context);
 
             // decode
-            responseBody = DecodeUtil.decodeContent(responseBody, request);
-            request.setInput(responseBody);
+            request.setInput(DecodeUtil.decodeContent(responseBody, request));
             for (AbstractSegment abstractSegment : segments) {
                 try {
                     Response segResponse = Response.build();
                     SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
                     segmentBase.invoke(request, segResponse);
+                } catch (ResultEmptyException e) {
+                    throw e;
                 } catch (Exception e) {
-                    if (e instanceof ResultEmptyException) {
-                        throw (ResultEmptyException) e;
-                    }
                     logger.error("invoke segment processor error!", e);
                 }
             }

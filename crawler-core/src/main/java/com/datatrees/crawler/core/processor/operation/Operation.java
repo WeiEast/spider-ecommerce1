@@ -101,7 +101,10 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
                 entity.update(operation);
             }
         } catch (Exception e) {
-            throw new ProcessingException("Error doing operation[ " + Jackson.toJSONString(operation) + "]", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error doing operation[{}]\nOperating data:\n{}", Jackson.toJSONString(operation), data);
+            }
+            throw new ProcessingException("Error doing operation[" + Jackson.toJSONString(operation) + "]", e);
         }
     }
 

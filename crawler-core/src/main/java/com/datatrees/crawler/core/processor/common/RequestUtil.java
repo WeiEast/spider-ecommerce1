@@ -9,7 +9,6 @@
 package com.datatrees.crawler.core.processor.common;
 
 import javax.annotation.Nonnull;
-import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,11 +21,12 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
 import com.treefinance.crawler.framework.format.number.NumberUnit;
 import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 3, 2014 8:14:36 PM
  */
@@ -154,20 +154,15 @@ public class RequestUtil {
         req.setAttribute(Constants.PARSER_WEBSITE_CONFIG, website);
     }
 
-    public static void setDateFormat(Request req, Map<String, DateFormat> format) {
-        req.setAttribute(Constants.CRAWLER_DATE_FROMAT, format);
-    }
-
     @SuppressWarnings("unchecked")
-    public static Map<String, DateFormat> getDateFormat(Request req) {
-        return (Map<String, DateFormat>) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new HashMap<>());
+    public static DateTimeFormats getDateFormat(Request req) {
+        return (DateTimeFormats) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
     }
 
     @SuppressWarnings("unchecked")
     @Nonnull
     public static Map<String, NumberUnit> getNumberFormat(Request req, Configuration configuration) {
-        return (Map<String, NumberUnit>) req
-                .computeAttributeIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(configuration));
+        return (Map<String, NumberUnit>) req.computeAttributeIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(configuration));
     }
 
     public static String getSearchTemplate(Request req) {

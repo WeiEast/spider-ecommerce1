@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.datatrees.spider.share.domain.param.AppCrawlerConfigParam;
 import com.datatrees.spider.share.domain.param.CrawlerProjectParam;
+import com.treefinance.saas.merchant.center.facade.result.console.MerchantAppLicenseResult;
 
 /**
  * User: yand
@@ -21,7 +22,7 @@ public interface AppCrawlerConfigService {
      * 获取所有商户信息
      * @return
      */
-    List<AppCrawlerConfigParam> getAppCrawlerConfigList();
+    List<AppCrawlerConfigParam> getAppCrawlerConfigList(List<MerchantAppLicenseResult> appIds);
 
     /**
      * 修改商户配置信息

@@ -9,6 +9,7 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
+import java.util.regex.Pattern;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
@@ -18,28 +19,27 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
 public class SetOperationImpl extends Operation<SetOperation> {
 
-    private static final String EMPTY_TAG = "${empty}";
+    private static final Pattern EMPTY_PATTERN = Pattern.compile("^\\s*\\$\\{empty}\\s*$", Pattern.CASE_INSENSITIVE);
 
     public SetOperationImpl(@Nonnull SetOperation operation, @Nonnull FieldExtractor extractor) {
         super(operation, extractor);
     }
 
     @Override
-    protected Object doOperation(@Nonnull SetOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
-        String output = operation.getValue();
+    protected Object doOperation(@Nonnull SetOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+        String value = operation.getValue();
 
-        if (EMPTY_TAG.equals(output)) {
-            output = StringUtils.EMPTY;
+        if(EMPTY_PATTERN.matcher(value).matches()){
+            value = StringUtils.EMPTY;
         }
 
-        return output;
+        return value;
     }
 
 }

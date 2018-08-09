@@ -1,0 +1,26 @@
+package com.datatrees.crawler.core.util.xml.Impl;
+
+import java.io.InputStream;
+import java.nio.charset.Charset;
+
+import com.datatrees.crawler.core.domain.config.SearchConfig;
+import com.treefinance.toolkit.util.io.Streams;
+import org.junit.Test;
+
+/**
+ * @author Jerry
+ * @since 01:53 2018/7/10
+ */
+public class XmlConfigParserTest {
+
+    @Test
+    public void parse() throws Exception {
+        String text;
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream("searchConfig.xml")) {
+            text = Streams.readToString(stream,Charset.defaultCharset());
+        }
+
+        SearchConfig searchConfig = XmlConfigParser.getInstance().parse(text, SearchConfig.class);
+        System.out.println(searchConfig);
+    }
+}

@@ -11,12 +11,12 @@ import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
 import com.datatrees.spider.share.dao.AppCrawlerConfigDAO;
+import com.datatrees.spider.share.domain.model.AppCrawlerConfig;
+import com.datatrees.spider.share.domain.model.example.AppCrawlerConfigCriteria;
 import com.datatrees.spider.share.domain.param.AppCrawlerConfigParam;
 import com.datatrees.spider.share.domain.param.CrawlerProjectParam;
 import com.datatrees.spider.share.domain.param.ProjectParam;
 import com.datatrees.spider.share.domain.website.WebsiteType;
-import com.datatrees.spider.share.domain.model.AppCrawlerConfig;
-import com.datatrees.spider.share.domain.model.example.AppCrawlerConfigCriteria;
 import com.datatrees.spider.share.service.AppCrawlerConfigService;
 import com.datatrees.spider.share.service.lock.DistributedLocks;
 import com.datatrees.spider.share.service.lock.LockingFailureException;
@@ -24,10 +24,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.treefinance.crawler.exception.UnexpectedException;
-import com.treefinance.saas.merchant.center.facade.request.common.BaseRequest;
 import com.treefinance.saas.merchant.center.facade.result.console.AppBizLicenseSimpleResult;
 import com.treefinance.saas.merchant.center.facade.result.console.MerchantAppLicenseResult;
-import com.treefinance.saas.merchant.center.facade.result.console.MerchantResult;
 import com.treefinance.saas.merchant.center.facade.service.MerchantBaseInfoFacade;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -44,21 +42,14 @@ import org.springframework.stereotype.Service;
 public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, InitializingBean {
 
     private static final Logger                              logger       = LoggerFactory.getLogger(AppCrawlerConfigServiceImpl.class);
-
     private static final String                              CACHE_PREFIX = "com.treefinance.crawler.business.control.";
-
-    private final        Cache<String, Map<String, Boolean>> localCache   = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.MINUTES)
-            .softValues().build();
-
+    private final        Cache<String, Map<String, Boolean>> localCache   = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.MINUTES).softValues().build();
     @Resource
     private              AppCrawlerConfigDAO                 appCrawlerConfigDAO;
-
     @Resource
     private              RedisService                        redisService;
-
     @Resource
     private              MerchantBaseInfoFacade              merchantBaseInfoFacade;
-
     @Autowired
     private              DistributedLocks                    distributedLocks;
 
@@ -69,9 +60,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
             List<AppCrawlerConfig> list = selectAll();
 
             if (CollectionUtils.isNotEmpty(list)) {
-                Map<String, Map<String, Boolean>> map = list.stream().filter(config -> StringUtils.isNotEmpty(config.getAppId())).collect(Collectors
-                        .groupingBy(AppCrawlerConfig::getAppId,
-                                Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (v1, v2) -> v2)));
+                Map<String, Map<String, Boolean>> map = list.stream().filter(config -> StringUtils.isNotEmpty(config.getAppId())).collect(Collectors.groupingBy(AppCrawlerConfig::getAppId, Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (v1, v2) -> v2)));
 
                 map.forEach((appId, configMap) -> {
                     redisService.putMap(CACHE_PREFIX + appId, configMap);
@@ -108,8 +97,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                 if (CollectionUtils.isEmpty(map)) {
                     List<AppCrawlerConfig> list = this.selectListByAppId(appId);
                     if (CollectionUtils.isNotEmpty(list)) {
-                        map = list.stream()
-                                .collect(Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (o1, o2) -> o2));
+                        map = list.stream().collect(Collectors.toMap(AppCrawlerConfig::getProject, AppCrawlerConfig::getCrawlerStatus, (o1, o2) -> o2));
 
                         try {
                             redisService.putMap(redisKey, map);
@@ -133,17 +121,11 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     }
 
     @Override
-    public List<AppCrawlerConfigParam> getAppCrawlerConfigList() {
-        MerchantResult<List<MerchantAppLicenseResult>> merchantResult = merchantBaseInfoFacade.queryAllMerchantAppLicense(new BaseRequest());
-        List<MerchantAppLicenseResult> appList = merchantResult.getData();
-        logger.debug("Merchant list: {}, size: {}", appList, appList.size());
-
-        if (CollectionUtils.isEmpty(appList)) {
+    public List<AppCrawlerConfigParam> getAppCrawlerConfigList(List<MerchantAppLicenseResult> appIds) {
+        if (CollectionUtils.isEmpty(appIds)) {
             return Collections.emptyList();
         }
-
-        return appList.parallelStream().map(this::getAppCrawlerConfigParamByAppId).sorted(Comparator.comparing(AppCrawlerConfigParam::getAppId))
-                .collect(Collectors.toList());
+        return appIds.parallelStream().map(this::getAppCrawlerConfigParamByAppId).collect(Collectors.toList());
     }
 
     private AppCrawlerConfigParam getAppCrawlerConfigParamByAppId(MerchantAppLicenseResult merchant) {
@@ -172,8 +154,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                     Iterator<AppCrawlerConfig> iterator = configs.iterator();
                     while (iterator.hasNext()) {
                         AppCrawlerConfig config = iterator.next();
-                        logger.debug("业务标签设置 websiteType: {}, project: {}, status: {}", config.getWebsiteType(), config.getProject(),
-                                config.getCrawlerStatus());
+                        logger.debug("业务标签设置 websiteType: {}, project: {}, status: {}", config.getWebsiteType(), config.getProject(), config.getCrawlerStatus());
                         if (websiteType.val() == config.getWebsiteType()) {
                             BusinessType businessType = BusinessType.getBusinessType(config.getProject());
                             if (businessType == null || !businessType.isEnable()) {
@@ -201,10 +182,8 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         map.computeIfAbsent(uniqueKey(businessType), s -> convertProjectParam(businessType, null));
                     }
 
-                    List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getOrder))
-                            .collect(Collectors.toList());
-                    List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName)
-                            .collect(Collectors.toList());
+                    List<ProjectParam> projects = map.values().stream().sorted(Comparator.comparing(ProjectParam::getOrder)).collect(Collectors.toList());
+                    List<String> names = projects.stream().filter(projectParam -> projectParam.getCrawlerStatus() == 1).map(ProjectParam::getName).collect(Collectors.toList());
                     projectNames.addAll(names);
 
                     logger.debug("appId: {}, websiteType: {}, projects: {}", param.getAppId(), websiteType.getType(), projects);
@@ -217,8 +196,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
         if (projectConfigInfos.isEmpty()) {
             param.setProjectConfigInfos(projectConfigInfos);
         } else {
-            param.setProjectConfigInfos(
-                    projectConfigInfos.stream().sorted(Comparator.comparing(CrawlerProjectParam::getWebsiteType)).collect(Collectors.toList()));
+            param.setProjectConfigInfos(projectConfigInfos.stream().sorted(Comparator.comparing(CrawlerProjectParam::getWebsiteType)).collect(Collectors.toList()));
         }
 
         return param;
@@ -273,8 +251,7 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
                         config.setCrawlerStatus(projectParam.getCrawlerStatus() != 0);
 
                         AppCrawlerConfigCriteria criteria = new AppCrawlerConfigCriteria();
-                        criteria.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(crawlerProjectParam.getWebsiteType())
-                                .andProjectEqualTo(projectParam.getCode());
+                        criteria.createCriteria().andAppIdEqualTo(appId).andWebsiteTypeEqualTo(crawlerProjectParam.getWebsiteType()).andProjectEqualTo(projectParam.getCode());
                         int i = appCrawlerConfigDAO.updateByExampleSelective(config, criteria);
                         if (i == 0) {
                             config.setAppId(appId);

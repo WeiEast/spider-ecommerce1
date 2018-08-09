@@ -20,7 +20,7 @@ import com.datatrees.crawler.core.processor.operation.Operation;
 import org.apache.commons.lang.BooleanUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:58:34 PM
  */
@@ -31,12 +31,10 @@ public class MailParserOperationImpl extends Operation<MailParserOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull MailParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull MailParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String result = (String) operatingData;
 
-        return MailParserImpl.INSTANCE
-                .parseMessage(RequestUtil.getProcessorContext(request).getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser()));
+        return MailParserImpl.parseMessage(RequestUtil.getProcessorContext(request).getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser()));
     }
 
 }

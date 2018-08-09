@@ -22,7 +22,7 @@ import com.datatrees.crawler.core.util.xml.annotation.Tag;
 import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 2:23:17 PM
  */
@@ -32,31 +32,19 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
     /**
      *
      */
-    private static final long                    serialVersionUID = 169636932735670442L;
-
-    private              String                  field;
-
-    private              String                  sourceId;
-
-    private              String                  encoding;
-
-    private              ResultType              resultType;
-
-    private              String                  format;
-
-    private              AbstractPlugin          plugin;
-
-    private              List<AbstractOperation> operationList;
-
-    private              Boolean                 notEmpty;
-
-    private              FieldVisibleType        fieldVisibleType;
-
-    private              Boolean                 standBy;
-
-    private              String                  defaultValue;
-
-    private              String                  businessType;
+    private static final long serialVersionUID = 169636932735670442L;
+    private String                  field;
+    private String                  sourceId;
+    private String                  encoding;
+    private ResultType              resultType;
+    private String                  format;
+    private AbstractPlugin          plugin;
+    private List<AbstractOperation> operationList;
+    private Boolean                 notEmpty;
+    private FieldVisibleType        fieldVisibleType;
+    private Boolean                 standBy;
+    private String                  defaultValue;
+    private String                  businessType;
 
     public FieldExtractor() {
         super();
@@ -148,11 +136,7 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
         return Collections.unmodifiableList(operationList);
     }
 
-    @Node(value = "operation", types = {ParserOperation.class, RegexOperation.class, ReplaceOperation.class, TemplateOperation.class,
-            XpathOperation.class, JsonPathOperation.class, CodecOperation.class, TrimOperation.class, ReturnOperation.class, SetOperation.class,
-            ExtractOperation.class, AppendOperation.class, MatchGroupOperation.class, DateTimeOperation.class, TripleOperation.class,
-            MailParserOperation.class, CalculateOperation.class, EscapeOperation.class, DecodeOperation.class, ProxySetOperation.class,
-            MappingOperation.class, SleepOperation.class, ReturnMatchOperation.class})
+    @Node(value = "operation", types = {ParserOperation.class, RegexOperation.class, ReplaceOperation.class, TemplateOperation.class, XpathOperation.class, JsonPathOperation.class, CodecOperation.class, TrimOperation.class, ReturnOperation.class, SetOperation.class, ExtractOperation.class, AppendOperation.class, MatchGroupOperation.class, DateTimeOperation.class, TripleOperation.class, MailParserOperation.class, CalculateOperation.class, EscapeOperation.class, DecodeOperation.class, ProxySetOperation.class, MappingOperation.class, SleepOperation.class, ReturnMatchOperation.class})
     public void setOperationList(AbstractOperation operation) {
         this.operationList.add(operation);
     }
@@ -187,14 +171,9 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
         this.businessType = businessType;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "FieldExtractor [id =" + getId() + ",field=" + field + ",businessType=" + businessType + "]";
+        return "FieldExtractor [id =" + getId() + ",field=" + field + (businessType != null ? ",businessType=" + businessType : "") + "]";
     }
 
 }

@@ -15,11 +15,12 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.CalculateOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.util.CalculateUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月21日 上午10:29:59
  */
@@ -30,15 +31,19 @@ public class CalculateOperationImpl extends Operation<CalculateOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull CalculateOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
+    protected void validate(CalculateOperation operation, Request request, Response response) throws Exception {
+        super.validate(operation, request, response);
+
+        if (StringUtils.isEmpty(operation.getValue())) {
+            throw new InvalidOperationException("Invalid calculate operation! - 'calculate/text()' must not be empty.");
+        }
+    }
+
+    @Override
+    protected Object doOperation(@Nonnull CalculateOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
         String expression = operation.getValue();
 
-        Object result = null;
-        // regex support get value from context
-        if (StringUtils.isNotEmpty(expression)) {
-            result = CalculateUtils.calculate(expression, request, response, null, null);
-        }
+        Object result = CalculateUtils.calculate(expression, request, response, null, null);
 
         return result == null ? null : result.toString();
     }

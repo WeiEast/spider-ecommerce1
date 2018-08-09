@@ -35,9 +35,8 @@ public class TrimOperationImpl extends Operation<TrimOperation> {
         String input = (String) operatingData;
 
         String output = StringUtils.trim(input);
-        output = CharMatcher.whitespace().trimFrom(output);
 
-        return output;
+        return CharMatcher.whitespace().trimFrom(output);
     }
 
 }

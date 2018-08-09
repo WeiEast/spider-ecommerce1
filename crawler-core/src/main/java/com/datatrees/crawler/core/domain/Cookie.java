@@ -13,24 +13,27 @@ import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 16, 2014 5:34:03 PM
  */
 public class Cookie implements Serializable {
 
+    public static final Cookie EMPTY = new Cookie();
     /**
      *
      */
     private static final long serialVersionUID = -3894508724345166182L;
-
     @SerializedName("username")
-    String userName;
-
-    String cookie;
+    private String userName;
+    private String cookie;
 
     public Cookie() {
         super();
+    }
+
+    public Cookie(String cookie) {
+        this.cookie = cookie;
     }
 
     public Cookie(String userName, String cookie) {
@@ -57,7 +60,7 @@ public class Cookie implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#toString()
      */
     @Override

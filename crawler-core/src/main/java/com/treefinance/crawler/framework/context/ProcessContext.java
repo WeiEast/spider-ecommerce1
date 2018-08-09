@@ -60,11 +60,11 @@ public abstract class ProcessContext implements CrawlerContext {
     }
 
     public String getWebsiteName() {
-        return getWebsite().getWebsiteName();
+        return website.getWebsiteName();
     }
 
     public String getWebsiteType() {
-        return getWebsite().getWebsiteType();
+        return website.getWebsiteType();
     }
 
     @Override
